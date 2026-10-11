@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 2309,
+  "canonical_url": "https://workingfamilies.org/candidates/",
+  "capture_method": "manual_upload",
+  "content_sha256": "51deae92c453132d2c184f4b4c075a93f06a46fa22ea735926ccbd080f26588a",
+  "http_status": null,
+  "id": "capture-washington-working-families-party-20261011T010831Z-07fcfbad8277",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Manually saved browser-visible Washington table excerpt, with intertag whitespace normalized. Browser HTTP status was not exposed; no status asserted.",
+  "requested_url": "https://workingfamilies.org/candidates/",
+  "retrieved_at": "2026-10-11T01:08:31Z",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "storage_reference": "sha256/51/51deae92c453132d2c184f4b4c075a93f06a46fa22ea735926ccbd080f26588a",
+  "storage_scope": "local_only",
+  "title": "WFP Our 2026 Candidates: browser Washington table after View More (DOM excerpt, whitespace normalized)",
+  "updated_at": null
+}

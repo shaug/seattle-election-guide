@@ -1,0 +1,14 @@
+schema_version: "1.0"
+election_id: wa-2026-general
+entries:
+  - corrected_on: 2026-10-10
+    headline: "Updated King County Democrats’ LD32 Position 2 endorsement."
+    body: >-
+      The guide previously recorded King County Democrats endorsing Lauren Davis alone.
+      Their current official list endorses both Lauren Davis and Imraan Siddiqi.
+      Both choices are now recorded, with the organization’s one point split equally.
+    provenance:
+      - label: "King County Democrats’ official 2026 endorsements"
+        url: https://www.kcdems.org/our-party/e/2026-endorsements/
+      - label: "October 10 endorsement reconciliation"
+        url: https://github.com/shaug/seattle-election-guide/issues/508

@@ -1,0 +1,888 @@
+{
+  "approval_text": "approved",
+  "approved_decisions": [
+    {
+      "action": "add",
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "race_id": "initiative-26-645",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "race_id": "initiative-26-001",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "race_id": "initiative-26-638",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "race_id": "us-house-7",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "race_id": "us-house-9",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "race_id": "ld-11-state-representative-1",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "race_id": "ld-32-state-senator",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "race_id": "ld-32-state-representative-1",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "race_id": "ld-32-state-representative-2",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "race_id": "ld-34-state-representative-2",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "race_id": "ld-36-state-senator",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "race_id": "ld-37-state-senator",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "race_id": "ld-37-state-representative-1",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "race_id": "ld-37-state-representative-2",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen"
+      ],
+      "race_id": "ld-43-state-senator",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "race_id": "ld-43-state-representative-1",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "race_id": "ld-46-state-senator",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-46-state-representative-1--will-dreher"
+      ],
+      "race_id": "ld-46-state-representative-1",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "race_id": "ld-46-state-representative-2",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "race_id": "king-county-assessor",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "race_id": "king-county-council-2",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "race_id": "king-county-council-8",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "race_id": "supreme-court-justice-1",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "race_id": "supreme-court-justice-3",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "race_id": "supreme-court-justice-4",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "race_id": "supreme-court-justice-5",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "race_id": "supreme-court-justice-7",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "king-county-district-court-west-judge-1--bardi-martin"
+      ],
+      "race_id": "king-county-district-court-west-judge-1",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "race_id": "seattle-city-council-5",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "race_id": "seattle-municipal-court-judge-5",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "race_id": "seattle-proposition-1-transit",
+      "source_id": "the-stranger",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "race_id": "initiative-26-645",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "race_id": "initiative-26-001",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "race_id": "initiative-26-638",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "race_id": "ld-32-state-representative-1",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "race_id": "ld-43-state-senator",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "race_id": "king-county-assessor",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "race_id": "king-county-council-8",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "race_id": "seattle-city-council-5",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "race_id": "seattle-municipal-court-judge-5",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "race_id": "seattle-proposition-1-transit",
+      "source_id": "tech-4-housing",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-23212114ba7a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "race_id": "ld-46-state-representative-1",
+      "source_id": "tech-4-taxes",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "race_id": "ld-37-state-senator",
+      "source_id": "tech-4-taxes",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "race_id": "ld-32-state-representative-2",
+      "source_id": "tech-4-taxes",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "race_id": "ld-37-state-representative-1",
+      "source_id": "tech-4-taxes",
+      "verified_manual_entry_ids": [
+        "manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "race_id": "initiative-26-645",
+      "source_id": "king-county-democrats",
+      "verified_manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-cf9f628223f9"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble",
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "race_id": "ld-32-state-representative-1",
+      "source_id": "king-county-democrats",
+      "verified_manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-cf9f628223f9"
+      ]
+    },
+    {
+      "action": "update",
+      "candidate_ids": [
+        "ld-32-state-representative-2--lauren-davis",
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "race_id": "ld-32-state-representative-2",
+      "source_id": "king-county-democrats",
+      "verified_manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-cf9f628223f9"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "race_id": "ld-46-state-representative-1",
+      "source_id": "king-county-democrats",
+      "verified_manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-cf9f628223f9"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "race_id": "ld-43-state-senator",
+      "source_id": "washington-bus",
+      "verified_manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-c2c115831bca"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "race_id": "seattle-city-council-5",
+      "source_id": "washington-bus",
+      "verified_manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-99ed31e6dfad"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "race_id": "ld-37-state-senator",
+      "source_id": "washington-bus",
+      "verified_manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-1b00b353eaaa"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "race_id": "king-county-council-2",
+      "source_id": "washington-bus",
+      "verified_manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-bedca16a0cc3"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "race_id": "ld-32-state-representative-1",
+      "source_id": "washington-bus",
+      "verified_manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-922fd66d4045"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "race_id": "ld-37-state-representative-1",
+      "source_id": "washington-bus",
+      "verified_manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-8ea3b76133c9"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "race_id": "ld-37-state-representative-2",
+      "source_id": "washington-bus",
+      "verified_manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-05ceadea452a"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "race_id": "ld-37-state-representative-2",
+      "source_id": "washington-working-families-party",
+      "verified_manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-517bfb311a59"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-43-state-representative-2--shaun-scott"
+      ],
+      "race_id": "ld-43-state-representative-2",
+      "source_id": "washington-working-families-party",
+      "verified_manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-517bfb311a59"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "race_id": "ld-46-state-representative-2",
+      "source_id": "washington-working-families-party",
+      "verified_manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-517bfb311a59"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "race_id": "ld-36-state-senator",
+      "source_id": "washington-working-families-party",
+      "verified_manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-517bfb311a59"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "race_id": "ld-43-state-senator",
+      "source_id": "washington-working-families-party",
+      "verified_manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-517bfb311a59"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "race_id": "initiative-26-001",
+      "source_id": "oneamerica-votes",
+      "verified_manual_entry_ids": [
+        "manual-oneamerica-votes-20261011T011018Z-d1bb8403fd93"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "race_id": "initiative-26-638",
+      "source_id": "oneamerica-votes",
+      "verified_manual_entry_ids": [
+        "manual-oneamerica-votes-20261011T011018Z-d1bb8403fd93"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "race_id": "king-county-council-2",
+      "source_id": "washington-community-action-network",
+      "verified_manual_entry_ids": [
+        "manual-washington-community-action-network-20261011T011018Z-b143b6a4290e"
+      ]
+    },
+    {
+      "action": "add",
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "race_id": "king-county-council-8",
+      "source_id": "washington-community-action-network",
+      "verified_manual_entry_ids": [
+        "manual-washington-community-action-network-20261011T011018Z-021db67b8329"
+      ]
+    }
+  ],
+  "approved_discovery_source_ids": [
+    "king-county-democrats",
+    "oneamerica-votes",
+    "tech-4-housing",
+    "tech-4-taxes",
+    "the-stranger",
+    "washington-bus",
+    "washington-community-action-network",
+    "washington-working-families-party"
+  ],
+  "baseline": {
+    "source-decisions.yaml": "9996691a56d809ba418c901eb9907d21ab020b5e5bf13034af0539ec47302d90",
+    "wa-2026-general-canonical-dataset.json": "16b44e35c14a7d68203e0ed4335243221f697241f86354b8f3e153365bb129e0",
+    "wa-2026-general-inventory.json": "46072aa86d3a63dc66c88ae8c347b813dfc3dea2b0334d87b835eb9d80640ed6",
+    "wa-2026-general.yaml": "00a38879d59b9a45cd3cee3b799f784eade9fd629439d2e8f57e7ccd3c50e1e6"
+  },
+  "corrections": [
+    {
+      "author": "shaug",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence": "capture-the-stranger-20261011T010722Z-df2465eb47ac",
+      "kind": "source_label_correction",
+      "new_value": "Jaime Michelle Hawk",
+      "prior_value": "Jamie Michelle Hawk",
+      "race_id": "supreme-court-justice-3",
+      "reason": "Supreme Court Position 3 and unique ballot identity resolve the source spelling. Human must confirm this explicit alias treatment.",
+      "review_status": "verified",
+      "source_id": "the-stranger",
+      "status": "pending",
+      "timestamp": "2026-10-11T01:24:53Z",
+      "verified_manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-949d132192b0"
+      ]
+    },
+    {
+      "author": "shaug",
+      "capture_ids": [
+        "capture-king-county-democrats-20261011T010722Z-8db51a3344bb"
+      ],
+      "evidence": "capture-king-county-democrats-20261011T010722Z-8db51a3344bb",
+      "kind": "source_label_correction",
+      "new_value": "Initiative IP26-645 - No",
+      "prior_value": "Ballot Measure IL26-645 - OPPOSE",
+      "race_id": "initiative-26-645",
+      "reason": "The heading mistypes IL, but the Vote NO on IP26-645 link and Millionaires Tax description identify the measure. Human must confirm this mapping.",
+      "review_status": "verified",
+      "source_id": "king-county-democrats",
+      "status": "pending",
+      "timestamp": "2026-10-11T01:24:53Z",
+      "verified_manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-cf9f628223f9"
+      ]
+    },
+    {
+      "author": "shaug",
+      "capture_ids": [
+        "capture-king-county-democrats-20261011T010722Z-8db51a3344bb"
+      ],
+      "evidence": "capture-king-county-democrats-20261011T010722Z-8db51a3344bb",
+      "kind": "change_record",
+      "new_value": [
+        "ld-32-state-representative-2--lauren-davis",
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "prior_value": [
+        "ld-32-state-representative-2--lauren-davis"
+      ],
+      "race_id": "ld-32-state-representative-2",
+      "reason": "Current official list adds Imraan Siddiqi beside retained Lauren Davis. This is one dual decision, one point split equally.",
+      "review_status": "verified",
+      "source_id": "king-county-democrats",
+      "status": "pending",
+      "timestamp": "2026-10-11T01:24:53Z",
+      "verified_manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-cf9f628223f9"
+      ]
+    },
+    {
+      "author": "shaug",
+      "capture_ids": [
+        "capture-king-county-democrats-20261011T010722Z-8db51a3344bb"
+      ],
+      "evidence": "capture-king-county-democrats-20261011T010722Z-8db51a3344bb",
+      "kind": "source_label_correction",
+      "new_value": "Gerry Pollet, LD46 Representative Position 1",
+      "prior_value": "Gerry Pollet, LD 46 Representative Pos. 2",
+      "race_id": "ld-46-state-representative-1",
+      "reason": "The source separately lists Farivar for Position 2. Pollet appears only in Position 1 in the frozen ballot. Human must confirm the source position typo before publication.",
+      "review_status": "verified",
+      "source_id": "king-county-democrats",
+      "status": "pending",
+      "timestamp": "2026-10-11T01:24:53Z",
+      "verified_manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-cf9f628223f9"
+      ]
+    },
+    {
+      "author": "shaug",
+      "capture_ids": [
+        "capture-washington-bus-20261011T010723Z-d46c9e5bbbfd"
+      ],
+      "evidence": "capture-washington-bus-20261011T010723Z-d46c9e5bbbfd",
+      "kind": "source_label_correction",
+      "new_value": "Kelabe Tewolde, LD37 Representative Position 1",
+      "prior_value": "Kelabe Tewolde, Legislative District No. 37, State Representative, Pos. 2",
+      "race_id": "ld-37-state-representative-1",
+      "reason": "The two LD37 House image labels are swapped. Frozen ballot uniquely places Tewolde in Position 1. Human must confirm the corrected race match.",
+      "review_status": "verified",
+      "source_id": "washington-bus",
+      "status": "pending",
+      "timestamp": "2026-10-11T01:24:53Z",
+      "verified_manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-8ea3b76133c9"
+      ]
+    },
+    {
+      "author": "shaug",
+      "capture_ids": [
+        "capture-washington-bus-20261011T010723Z-f55404f17b9c"
+      ],
+      "evidence": "capture-washington-bus-20261011T010723Z-f55404f17b9c",
+      "kind": "source_label_correction",
+      "new_value": "Jaelynn Scott, LD37 Representative Position 2",
+      "prior_value": "Jaelynn Scott, Legislative District No. 37, State Representative, Pos. 1",
+      "race_id": "ld-37-state-representative-2",
+      "reason": "The two LD37 House image labels are swapped. Frozen ballot uniquely places Scott in Position 2. Human must confirm the corrected race match.",
+      "review_status": "verified",
+      "source_id": "washington-bus",
+      "status": "pending",
+      "timestamp": "2026-10-11T01:24:53Z",
+      "verified_manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-05ceadea452a"
+      ]
+    }
+  ],
+  "election_id": "wa-2026-general",
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/508",
+  "manual_entry_successors": {
+    "manual-king-county-democrats-20261011T011018Z-c4b9f878ea3b": "manual-king-county-democrats-20261011T011018Z-cf9f628223f9",
+    "manual-oneamerica-votes-20261011T011018Z-15769b0c3539": "manual-oneamerica-votes-20261011T011018Z-d1bb8403fd93",
+    "manual-tech-4-housing-20261011T011018Z-55ce2661486d": "manual-tech-4-housing-20261011T011018Z-23212114ba7a",
+    "manual-tech-4-taxes-20261011T011018Z-86be8d2ed9f4": "manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef",
+    "manual-the-stranger-20261011T011018Z-9d2c99bf93fd": "manual-the-stranger-20261011T011018Z-949d132192b0",
+    "manual-washington-bus-20261011T011018Z-0d7bb40aa6fa": "manual-washington-bus-20261011T011018Z-8ea3b76133c9",
+    "manual-washington-bus-20261011T011018Z-60a6392b6888": "manual-washington-bus-20261011T011018Z-99ed31e6dfad",
+    "manual-washington-bus-20261011T011018Z-7ae6a30544c8": "manual-washington-bus-20261011T011018Z-c2c115831bca",
+    "manual-washington-bus-20261011T011018Z-a0ff47636758": "manual-washington-bus-20261011T011018Z-1b00b353eaaa",
+    "manual-washington-bus-20261011T011018Z-b980f7dfa365": "manual-washington-bus-20261011T011018Z-922fd66d4045",
+    "manual-washington-bus-20261011T011018Z-bfe962a5832b": "manual-washington-bus-20261011T011018Z-bedca16a0cc3",
+    "manual-washington-bus-20261011T011018Z-d4e8bffc6a68": "manual-washington-bus-20261011T011018Z-05ceadea452a",
+    "manual-washington-community-action-network-20261011T011018Z-8989491758cb": "manual-washington-community-action-network-20261011T011018Z-b143b6a4290e",
+    "manual-washington-community-action-network-20261011T011018Z-a6084af9a856": "manual-washington-community-action-network-20261011T011018Z-021db67b8329",
+    "manual-washington-working-families-party-20261011T011018Z-0b55339acf93": "manual-washington-working-families-party-20261011T011018Z-517bfb311a59"
+  },
+  "proposal_path": "data/review/proposals/wa-2026-general-2026-10-10.json",
+  "proposal_sha256": "d6e57a79b10d6e3901117ec94bf40bbabca5b75bfc179a7d05ea94db8bc8a262",
+  "record_type": "endorsement_refresh_approval",
+  "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-11T01:24:53Z",
+  "reviewed_by": "shaug",
+  "schema_version": "1.0",
+  "stable_panel_hash": "b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95"
+}

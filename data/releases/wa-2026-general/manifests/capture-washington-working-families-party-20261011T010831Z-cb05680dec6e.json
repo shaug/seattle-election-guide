@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 7032,
+  "canonical_url": "https://workingfamilies.org/candidates/",
+  "capture_method": "manual_upload",
+  "content_sha256": "2d46cc88509147e156f9b6dd03876b98f4f220f26df0848438d54c083481f117",
+  "http_status": null,
+  "id": "capture-washington-working-families-party-20261011T010831Z-cb05680dec6e",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://workingfamilies.org/candidates/",
+  "retrieved_at": "2026-10-11T01:08:31Z",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "storage_reference": "sha256/2d/2d46cc88509147e156f9b6dd03876b98f4f220f26df0848438d54c083481f117",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington Working Families Party",
+  "updated_at": null
+}

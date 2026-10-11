@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-working-families-party-20261011T010831Z-07fcfbad8277",
+  "entered_at": "2026-10-11T01:10:18.434680Z",
+  "entry_method": "manual",
+  "evidence_locator": "Our 2026 Candidates; Washington filter, View More expanded to 17 rows; named candidate and office. Current-cycle index, not a separate general slate. Browser DOM table excerpt has normalized whitespace.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-working-families-party-20261011T011018Z-517bfb311a59",
+  "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-11T01:24:53Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "transcription": "Legislative District 37 State Representative — Position 2: Jaelynn Scott\nLegislative District 43 State Representative — Position 2: Shaun Scott\nLegislative District 46 State Representative — Position 2: Darya Farivar\nLegislative District 36 State Senator: Noel C. Frame\nLegislative District 43 State Senator: Hannah Sabio-Howell"
+}

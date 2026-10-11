@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-community-action-network-20261011T010723Z-07bb27e7e6f2",
+  "entered_at": "2026-10-11T01:10:18.434680Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official endorsement gallery; 2026 General Endorsements image, ENDORSED name / King County Council district. Empty image alt text does not transcribe the graphic.",
+  "evidence_type": "image",
+  "id": "manual-washington-community-action-network-20261011T011018Z-021db67b8329",
+  "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-11T01:24:53Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "transcription": "Metropolitan King County Council — District 8: Teresa Mosqueda"
+}

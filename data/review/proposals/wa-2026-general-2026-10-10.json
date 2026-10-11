@@ -1,0 +1,2004 @@
+{
+  "baseline": {
+    "source-decisions.yaml": "9996691a56d809ba418c901eb9907d21ab020b5e5bf13034af0539ec47302d90",
+    "wa-2026-general-canonical-dataset.json": "16b44e35c14a7d68203e0ed4335243221f697241f86354b8f3e153365bb129e0",
+    "wa-2026-general-inventory.json": "46072aa86d3a63dc66c88ae8c347b813dfc3dea2b0334d87b835eb9d80640ed6",
+    "wa-2026-general.yaml": "00a38879d59b9a45cd3cee3b799f784eade9fd629439d2e8f57e7ccd3c50e1e6"
+  },
+  "baseline_decision_count": 617,
+  "completion_gate": "Human verification of the transcriptions and explicit source-label mappings is required before applying to the release ledger. Pending records are not endorsements.",
+  "decisions": [
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Initiative IP26-645 — State and Local Taxes; No.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "initiative-26-645--no": "1"
+      },
+      "proposed_candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "proposed_choice_names": [
+        "No"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "initiative-26-645",
+      "race_label": "Initiative IP26-645 — State and Local Taxes",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Initiative IL26-001 — Parental Rights in Public Schools; No.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "initiative-26-001--no": "1"
+      },
+      "proposed_candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "proposed_choice_names": [
+        "No"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "initiative-26-001",
+      "race_label": "Initiative IL26-001 — Parental Rights in Public Schools",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Initiative IL26-638 — Participation in K-12 School Athletics; No.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "initiative-26-638--no": "1"
+      },
+      "proposed_candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "proposed_choice_names": [
+        "No"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "initiative-26-638",
+      "race_label": "Initiative IL26-638 — Participation in K-12 School Athletics",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: U.S. Representative — Congressional District 7; Pramila Jayapal.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "us-house-7--pramila-jayapal": "1"
+      },
+      "proposed_candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "proposed_choice_names": [
+        "Pramila Jayapal"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "us-house-7",
+      "race_label": "U.S. Representative — Congressional District 7",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: U.S. Representative — Congressional District 9; Adam Smith.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "us-house-9--adam-smith": "1"
+      },
+      "proposed_candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "proposed_choice_names": [
+        "Adam Smith"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "us-house-9",
+      "race_label": "U.S. Representative — Congressional District 9",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 11 State Representative — Position 1; Ashley Fedan.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-11-state-representative-1--ashley-fedan": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "proposed_choice_names": [
+        "Ashley Fedan"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-11-state-representative-1",
+      "race_label": "Legislative District 11 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 32 State Senator; Cindy Ryu.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-32-state-senator--cindy-ryu": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "proposed_choice_names": [
+        "Cindy Ryu"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-32-state-senator",
+      "race_label": "Legislative District 32 State Senator",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 32 State Representative — Position 1; Keith Scully.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-32-state-representative-1--keith-scully": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "proposed_choice_names": [
+        "Keith Scully"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-32-state-representative-1",
+      "race_label": "Legislative District 32 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 32 State Representative — Position 2; Imraan Siddiqi.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-32-state-representative-2--imraan-siddiqi": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "proposed_choice_names": [
+        "Imraan Siddiqi"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-32-state-representative-2",
+      "race_label": "Legislative District 32 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 34 State Representative — Position 2; Joe Fitzgibbon.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-34-state-representative-2--joe-fitzgibbon": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "proposed_choice_names": [
+        "Joe Fitzgibbon"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-34-state-representative-2",
+      "race_label": "Legislative District 34 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 36 State Senator; Noel C. Frame.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-36-state-senator--noel-c-frame": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "proposed_choice_names": [
+        "Noel C. Frame"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-36-state-senator",
+      "race_label": "Legislative District 36 State Senator",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 37 State Senator; Chipalo Street.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-37-state-senator--chipalo-street": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "proposed_choice_names": [
+        "Chipalo Street"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-37-state-senator",
+      "race_label": "Legislative District 37 State Senator",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 37 State Representative — Position 1; Kelabe Tewolde.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-37-state-representative-1--kelabe-tewolde": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "proposed_choice_names": [
+        "Kelabe Tewolde"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-37-state-representative-1",
+      "race_label": "Legislative District 37 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 37 State Representative — Position 2; Jaelynn Scott.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "proposed_choice_names": [
+        "Jaelynn Scott"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-37-state-representative-2",
+      "race_label": "Legislative District 37 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 43 State Senator; Jamie Pedersen.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-43-state-senator--jamie-pedersen": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen"
+      ],
+      "proposed_choice_names": [
+        "Jamie Pedersen"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-43-state-senator",
+      "race_label": "Legislative District 43 State Senator",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 43 State Representative — Position 1; Nicole Macri.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-43-state-representative-1--nicole-macri": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "proposed_choice_names": [
+        "Nicole Macri"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-43-state-representative-1",
+      "race_label": "Legislative District 43 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 46 State Senator; Javier Valdez.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-46-state-senator--javier-valdez": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "proposed_choice_names": [
+        "Javier Valdez"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-46-state-senator",
+      "race_label": "Legislative District 46 State Senator",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 46 State Representative — Position 1; Will Dreher.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-46-state-representative-1--will-dreher": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-46-state-representative-1--will-dreher"
+      ],
+      "proposed_choice_names": [
+        "Will Dreher"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-46-state-representative-1",
+      "race_label": "Legislative District 46 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 46 State Representative — Position 2; Darya Farivar.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-46-state-representative-2--darya-farivar": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "proposed_choice_names": [
+        "Darya Farivar"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "ld-46-state-representative-2",
+      "race_label": "Legislative District 46 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: King County Assessor; Rob Foxcurran.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "king-county-assessor--rob-foxcurran": "1"
+      },
+      "proposed_candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "proposed_choice_names": [
+        "Rob Foxcurran"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "king-county-assessor",
+      "race_label": "King County Assessor",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Metropolitan King County Council — District 2; Rebecca Saldaña.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "king-county-council-2--rebecca-saldana": "1"
+      },
+      "proposed_candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "proposed_choice_names": [
+        "Rebecca Saldaña"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "king-county-council-2",
+      "race_label": "Metropolitan King County Council — District 2",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Metropolitan King County Council — District 8; Teresa Mosqueda.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "king-county-council-8--teresa-mosqueda": "1"
+      },
+      "proposed_candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "proposed_choice_names": [
+        "Teresa Mosqueda"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "king-county-council-8",
+      "race_label": "Metropolitan King County Council — District 8",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 1; Colleen Melody.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "supreme-court-justice-1--colleen-melody": "1"
+      },
+      "proposed_candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "proposed_choice_names": [
+        "Colleen Melody"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "supreme-court-justice-1",
+      "race_label": "Washington Supreme Court Justice — Position 1",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 3; Jaime Michelle Hawk.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "supreme-court-justice-3--jaime-michelle-hawk": "1"
+      },
+      "proposed_candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "proposed_choice_names": [
+        "Jaime Michelle Hawk"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "supreme-court-justice-3",
+      "race_label": "Washington Supreme Court Justice — Position 3",
+      "review_status": "pending",
+      "source_id": "the-stranger",
+      "source_label_correction": {
+        "author": "OpenAI Codex",
+        "evidence": "capture-the-stranger-20261011T010722Z-df2465eb47ac",
+        "new_value": "Jaime Michelle Hawk",
+        "prior_value": "Jamie Michelle Hawk",
+        "reason": "Supreme Court Position 3 and unique ballot identity resolve the source spelling. Human must confirm this explicit alias treatment.",
+        "status": "pending",
+        "timestamp": "2026-10-11T01:10:18.434680Z"
+      }
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 4; Ian Birk.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "supreme-court-justice-4--ian-birk": "1"
+      },
+      "proposed_candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "proposed_choice_names": [
+        "Ian Birk"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "supreme-court-justice-4",
+      "race_label": "Washington Supreme Court Justice — Position 4",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 5; Theo Angelis.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "supreme-court-justice-5--theo-angelis": "1"
+      },
+      "proposed_candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "proposed_choice_names": [
+        "Theo Angelis"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "supreme-court-justice-5",
+      "race_label": "Washington Supreme Court Justice — Position 5",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 7; Debra L. Stephens.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "supreme-court-justice-7--debra-l-stephens": "1"
+      },
+      "proposed_candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "proposed_choice_names": [
+        "Debra L. Stephens"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "supreme-court-justice-7",
+      "race_label": "Washington Supreme Court Justice — Position 7",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: King County District Court West Electoral District — Judge Position 1; Bardi Martin.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "king-county-district-court-west-judge-1--bardi-martin": "1"
+      },
+      "proposed_candidate_ids": [
+        "king-county-district-court-west-judge-1--bardi-martin"
+      ],
+      "proposed_choice_names": [
+        "Bardi Martin"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "king-county-district-court-west-judge-1",
+      "race_label": "King County District Court West Electoral District — Judge Position 1",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Seattle City Council — District 5; Nilu Jenks.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "proposed_candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "proposed_choice_names": [
+        "Nilu Jenks"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "seattle-city-council-5",
+      "race_label": "Seattle City Council — District 5",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Seattle Municipal Court Judge — Position 5; Gabe Rothstein.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "seattle-municipal-court-judge-5--gabe-rothstein": "1"
+      },
+      "proposed_candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "proposed_choice_names": [
+        "Gabe Rothstein"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "seattle-municipal-court-judge-5",
+      "race_label": "Seattle Municipal Court Judge — Position 5",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+        "capture-the-stranger-20261011T010722Z-df2465eb47ac"
+      ],
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Seattle Proposition 1 — Seattle Transit Measure; Yes.",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "manual_entry_ids": [
+        "manual-the-stranger-20261011T011018Z-9d2c99bf93fd"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "seattle-proposition-1-transit--yes": "1"
+      },
+      "proposed_candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "proposed_choice_names": [
+        "Yes"
+      ],
+      "publication_date": "2026-10-09",
+      "race_id": "seattle-proposition-1-transit",
+      "race_label": "Seattle Proposition 1 — Seattle Transit Measure",
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: Initiative IP26-645 — State and Local Taxes; No.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "initiative-26-645--no": "1"
+      },
+      "proposed_candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "proposed_choice_names": [
+        "No"
+      ],
+      "race_id": "initiative-26-645",
+      "race_label": "Initiative IP26-645 — State and Local Taxes",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: Initiative IL26-001 — Parental Rights in Public Schools; No.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "initiative-26-001--no": "1"
+      },
+      "proposed_candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "proposed_choice_names": [
+        "No"
+      ],
+      "race_id": "initiative-26-001",
+      "race_label": "Initiative IL26-001 — Parental Rights in Public Schools",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: Initiative IL26-638 — Participation in K-12 School Athletics; No.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "initiative-26-638--no": "1"
+      },
+      "proposed_candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "proposed_choice_names": [
+        "No"
+      ],
+      "race_id": "initiative-26-638",
+      "race_label": "Initiative IL26-638 — Participation in K-12 School Athletics",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: Legislative District 32 State Representative — Position 1; Danica Noble.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-32-state-representative-1--danica-noble": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "proposed_choice_names": [
+        "Danica Noble"
+      ],
+      "race_id": "ld-32-state-representative-1",
+      "race_label": "Legislative District 32 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: Legislative District 43 State Senator; Hannah Sabio-Howell.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-43-state-senator--hannah-sabio-howell": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "proposed_choice_names": [
+        "Hannah Sabio-Howell"
+      ],
+      "race_id": "ld-43-state-senator",
+      "race_label": "Legislative District 43 State Senator",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: King County Assessor; Rob Foxcurran.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "king-county-assessor--rob-foxcurran": "1"
+      },
+      "proposed_candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "proposed_choice_names": [
+        "Rob Foxcurran"
+      ],
+      "race_id": "king-county-assessor",
+      "race_label": "King County Assessor",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: Metropolitan King County Council — District 8; Teresa Mosqueda.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "king-county-council-8--teresa-mosqueda": "1"
+      },
+      "proposed_candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "proposed_choice_names": [
+        "Teresa Mosqueda"
+      ],
+      "race_id": "king-county-council-8",
+      "race_label": "Metropolitan King County Council — District 8",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: Seattle City Council — District 5; Nilu Jenks.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "proposed_candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "proposed_choice_names": [
+        "Nilu Jenks"
+      ],
+      "race_id": "seattle-city-council-5",
+      "race_label": "Seattle City Council — District 5",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: Seattle Municipal Court Judge — Position 5; Gabe Rothstein.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "seattle-municipal-court-judge-5--gabe-rothstein": "1"
+      },
+      "proposed_candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "proposed_choice_names": [
+        "Gabe Rothstein"
+      ],
+      "race_id": "seattle-municipal-court-judge-5",
+      "race_label": "Seattle Municipal Court Judge — Position 5",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-housing-20261011T010723Z-5922ff5e6774"
+      ],
+      "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence. Target: Seattle Proposition 1 — Seattle Transit Measure; Yes.",
+      "evidence_url": "https://www.tech4housing.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-housing-20261011T011018Z-55ce2661486d"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "seattle-proposition-1-transit--yes": "1"
+      },
+      "proposed_candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "proposed_choice_names": [
+        "Yes"
+      ],
+      "race_id": "seattle-proposition-1-transit",
+      "race_label": "Seattle Proposition 1 — Seattle Transit Measure",
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f"
+      ],
+      "evidence_locator": "2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle index, not an election-specific general slate. Target: Legislative District 46 State Representative — Position 1; Gerry Pollet.",
+      "evidence_url": "https://tech4taxes.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-taxes-20261011T011018Z-86be8d2ed9f4"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-46-state-representative-1--gerry-pollet": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "proposed_choice_names": [
+        "Gerry Pollet"
+      ],
+      "race_id": "ld-46-state-representative-1",
+      "race_label": "Legislative District 46 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f"
+      ],
+      "evidence_locator": "2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle index, not an election-specific general slate. Target: Legislative District 37 State Senator; Tatiana Brown.",
+      "evidence_url": "https://tech4taxes.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-taxes-20261011T011018Z-86be8d2ed9f4"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-37-state-senator--tatiana-brown": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "proposed_choice_names": [
+        "Tatiana Brown"
+      ],
+      "race_id": "ld-37-state-senator",
+      "race_label": "Legislative District 37 State Senator",
+      "review_status": "pending",
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f"
+      ],
+      "evidence_locator": "2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle index, not an election-specific general slate. Target: Legislative District 32 State Representative — Position 2; Imraan Siddiqi.",
+      "evidence_url": "https://tech4taxes.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-taxes-20261011T011018Z-86be8d2ed9f4"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-32-state-representative-2--imraan-siddiqi": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "proposed_choice_names": [
+        "Imraan Siddiqi"
+      ],
+      "race_id": "ld-32-state-representative-2",
+      "race_label": "Legislative District 32 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f"
+      ],
+      "evidence_locator": "2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle index, not an election-specific general slate. Target: Legislative District 37 State Representative — Position 1; Kelabe Tewolde.",
+      "evidence_url": "https://tech4taxes.org/endorsements",
+      "manual_entry_ids": [
+        "manual-tech-4-taxes-20261011T011018Z-86be8d2ed9f4"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-37-state-representative-1--kelabe-tewolde": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "proposed_choice_names": [
+        "Kelabe Tewolde"
+      ],
+      "race_id": "ld-37-state-representative-1",
+      "race_label": "Legislative District 37 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-king-county-democrats-20261011T010722Z-8db51a3344bb"
+      ],
+      "evidence_locator": "2026 Endorsements; Ballot measures (IP26-645 link) and State offices named LD32 and LD46 rows. Preserve both named LD32 choices. Target: Initiative IP26-645 — State and Local Taxes; No.",
+      "evidence_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+      "manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-c4b9f878ea3b"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "initiative-26-645--no": "1"
+      },
+      "proposed_candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "proposed_choice_names": [
+        "No"
+      ],
+      "race_id": "initiative-26-645",
+      "race_label": "Initiative IP26-645 — State and Local Taxes",
+      "review_status": "pending",
+      "source_id": "king-county-democrats",
+      "source_label_correction": {
+        "author": "OpenAI Codex",
+        "evidence": "capture-king-county-democrats-20261011T010722Z-8db51a3344bb",
+        "new_value": "Initiative IP26-645 - No",
+        "prior_value": "Ballot Measure IL26-645 - OPPOSE",
+        "reason": "The heading mistypes IL, but the Vote NO on IP26-645 link and Millionaires Tax description identify the measure. Human must confirm this mapping.",
+        "status": "pending",
+        "timestamp": "2026-10-11T01:10:18.434680Z"
+      }
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-king-county-democrats-20261011T010722Z-8db51a3344bb"
+      ],
+      "evidence_locator": "2026 Endorsements; Ballot measures (IP26-645 link) and State offices named LD32 and LD46 rows. Preserve both named LD32 choices. Target: Legislative District 32 State Representative — Position 1; Danica Noble, Keith Scully.",
+      "evidence_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+      "manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-c4b9f878ea3b"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-32-state-representative-1--danica-noble": "1/2",
+        "ld-32-state-representative-1--keith-scully": "1/2"
+      },
+      "proposed_candidate_ids": [
+        "ld-32-state-representative-1--danica-noble",
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "proposed_choice_names": [
+        "Danica Noble",
+        "Keith Scully"
+      ],
+      "race_id": "ld-32-state-representative-1",
+      "race_label": "Legislative District 32 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "king-county-democrats"
+    },
+    {
+      "action": "update",
+      "capture_ids": [
+        "capture-king-county-democrats-20261011T010722Z-8db51a3344bb"
+      ],
+      "change_record": {
+        "author": "OpenAI Codex",
+        "evidence": "capture-king-county-democrats-20261011T010722Z-8db51a3344bb",
+        "new_value": [
+          "ld-32-state-representative-2--lauren-davis",
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "prior_value": [
+          "ld-32-state-representative-2--lauren-davis"
+        ],
+        "reason": "Current official list adds Imraan Siddiqi beside retained Lauren Davis. This is one dual decision, one point split equally.",
+        "status": "pending",
+        "timestamp": "2026-10-11T01:10:18.434680Z"
+      },
+      "evidence_locator": "2026 Endorsements; Ballot measures (IP26-645 link) and State offices named LD32 and LD46 rows. Preserve both named LD32 choices. Target: Legislative District 32 State Representative — Position 2; Lauren Davis, Imraan Siddiqi.",
+      "evidence_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+      "manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-c4b9f878ea3b"
+      ],
+      "prior_candidate_ids": [
+        "ld-32-state-representative-2--lauren-davis"
+      ],
+      "proposed_allocations": {
+        "ld-32-state-representative-2--imraan-siddiqi": "1/2",
+        "ld-32-state-representative-2--lauren-davis": "1/2"
+      },
+      "proposed_candidate_ids": [
+        "ld-32-state-representative-2--lauren-davis",
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "proposed_choice_names": [
+        "Lauren Davis",
+        "Imraan Siddiqi"
+      ],
+      "race_id": "ld-32-state-representative-2",
+      "race_label": "Legislative District 32 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "king-county-democrats"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-king-county-democrats-20261011T010722Z-8db51a3344bb"
+      ],
+      "evidence_locator": "2026 Endorsements; Ballot measures (IP26-645 link) and State offices named LD32 and LD46 rows. Preserve both named LD32 choices. Target: Legislative District 46 State Representative — Position 1; Gerry Pollet.",
+      "evidence_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+      "manual_entry_ids": [
+        "manual-king-county-democrats-20261011T011018Z-c4b9f878ea3b"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-46-state-representative-1--gerry-pollet": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "proposed_choice_names": [
+        "Gerry Pollet"
+      ],
+      "race_id": "ld-46-state-representative-1",
+      "race_label": "Legislative District 46 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "king-county-democrats",
+      "source_label_correction": {
+        "author": "OpenAI Codex",
+        "evidence": "capture-king-county-democrats-20261011T010722Z-8db51a3344bb",
+        "new_value": "Gerry Pollet, LD46 Representative Position 1",
+        "prior_value": "Gerry Pollet, LD 46 Representative Pos. 2",
+        "reason": "The source separately lists Farivar for Position 2. Pollet appears only in Position 1 in the frozen ballot. Human must confirm the source position typo before publication.",
+        "status": "pending",
+        "timestamp": "2026-10-11T01:10:18.434680Z"
+      }
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-bus-20261011T010723Z-f28d04da4bcb"
+      ],
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 43 State Senator; Hannah Sabio-Howell.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/75296ef1-b742-4513-89d3-53d616ab85a6/hannahfix.png",
+      "manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-7ae6a30544c8"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-43-state-senator--hannah-sabio-howell": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "proposed_choice_names": [
+        "Hannah Sabio-Howell"
+      ],
+      "race_id": "ld-43-state-senator",
+      "race_label": "Legislative District 43 State Senator",
+      "review_status": "pending",
+      "source_id": "washington-bus"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-bus-20261011T010723Z-35b46c8a38b3"
+      ],
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Seattle City Council — District 5; Nilu Jenks.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/bdc0d946-db26-4f0d-89e8-cf37e338d51a/5.png",
+      "manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-60a6392b6888"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "proposed_candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "proposed_choice_names": [
+        "Nilu Jenks"
+      ],
+      "race_id": "seattle-city-council-5",
+      "race_label": "Seattle City Council — District 5",
+      "review_status": "pending",
+      "source_id": "washington-bus"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-bus-20261011T010723Z-ab1a1678a561"
+      ],
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 37 State Senator; Tatiana Brown.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/4bbbb2c9-7efe-43aa-9c64-dc49bbc929a0/3.png",
+      "manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-a0ff47636758"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-37-state-senator--tatiana-brown": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "proposed_choice_names": [
+        "Tatiana Brown"
+      ],
+      "race_id": "ld-37-state-senator",
+      "race_label": "Legislative District 37 State Senator",
+      "review_status": "pending",
+      "source_id": "washington-bus"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-bus-20261011T010723Z-6c1740663489"
+      ],
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Metropolitan King County Council — District 2; Rebecca Saldaña.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/aeb1c339-40ba-4121-b042-52a101e7b5c8/6.png",
+      "manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-bfe962a5832b"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "king-county-council-2--rebecca-saldana": "1"
+      },
+      "proposed_candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "proposed_choice_names": [
+        "Rebecca Saldaña"
+      ],
+      "race_id": "king-county-council-2",
+      "race_label": "Metropolitan King County Council — District 2",
+      "review_status": "pending",
+      "source_id": "washington-bus"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-bus-20261011T010723Z-969c0dda7736"
+      ],
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 32 State Representative — Position 1; Danica Noble.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/940fffd0-5926-4a03-88c4-ed0462c701d0/4.png",
+      "manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-b980f7dfa365"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-32-state-representative-1--danica-noble": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "proposed_choice_names": [
+        "Danica Noble"
+      ],
+      "race_id": "ld-32-state-representative-1",
+      "race_label": "Legislative District 32 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "washington-bus"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-bus-20261011T010723Z-d46c9e5bbbfd"
+      ],
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 37 State Representative — Position 1; Kelabe Tewolde.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/a724c019-e27a-4506-94f5-1322380e3138/6.png",
+      "manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-0d7bb40aa6fa"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-37-state-representative-1--kelabe-tewolde": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "proposed_choice_names": [
+        "Kelabe Tewolde"
+      ],
+      "race_id": "ld-37-state-representative-1",
+      "race_label": "Legislative District 37 State Representative — Position 1",
+      "review_status": "pending",
+      "source_id": "washington-bus",
+      "source_label_correction": {
+        "author": "OpenAI Codex",
+        "evidence": "capture-washington-bus-20261011T010723Z-d46c9e5bbbfd",
+        "new_value": "Kelabe Tewolde, LD37 Representative Position 1",
+        "prior_value": "Kelabe Tewolde, Legislative District No. 37, State Representative, Pos. 2",
+        "reason": "The two LD37 House image labels are swapped. Frozen ballot uniquely places Tewolde in Position 1. Human must confirm the corrected race match.",
+        "status": "pending",
+        "timestamp": "2026-10-11T01:10:18.434680Z"
+      }
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-bus-20261011T010723Z-f55404f17b9c"
+      ],
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 37 State Representative — Position 2; Jaelynn Scott.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/01954ef8-74b1-403b-9a83-9368740e1695/5.png",
+      "manual_entry_ids": [
+        "manual-washington-bus-20261011T011018Z-d4e8bffc6a68"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "proposed_choice_names": [
+        "Jaelynn Scott"
+      ],
+      "race_id": "ld-37-state-representative-2",
+      "race_label": "Legislative District 37 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "washington-bus",
+      "source_label_correction": {
+        "author": "OpenAI Codex",
+        "evidence": "capture-washington-bus-20261011T010723Z-f55404f17b9c",
+        "new_value": "Jaelynn Scott, LD37 Representative Position 2",
+        "prior_value": "Jaelynn Scott, Legislative District No. 37, State Representative, Pos. 1",
+        "reason": "The two LD37 House image labels are swapped. Frozen ballot uniquely places Scott in Position 2. Human must confirm the corrected race match.",
+        "status": "pending",
+        "timestamp": "2026-10-11T01:10:18.434680Z"
+      }
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-working-families-party-20261011T010831Z-07fcfbad8277"
+      ],
+      "evidence_locator": "Our 2026 Candidates; Washington filter, View More expanded to 17 rows; named candidate and office. Current-cycle index, not a separate general slate. Browser DOM table excerpt has normalized whitespace. Target: Legislative District 37 State Representative — Position 2; Jaelynn Scott.",
+      "evidence_url": "https://workingfamilies.org/candidates/",
+      "manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-0b55339acf93"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "proposed_choice_names": [
+        "Jaelynn Scott"
+      ],
+      "race_id": "ld-37-state-representative-2",
+      "race_label": "Legislative District 37 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "washington-working-families-party"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-working-families-party-20261011T010831Z-07fcfbad8277"
+      ],
+      "evidence_locator": "Our 2026 Candidates; Washington filter, View More expanded to 17 rows; named candidate and office. Current-cycle index, not a separate general slate. Browser DOM table excerpt has normalized whitespace. Target: Legislative District 43 State Representative — Position 2; Shaun Scott.",
+      "evidence_url": "https://workingfamilies.org/candidates/",
+      "manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-0b55339acf93"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-43-state-representative-2--shaun-scott": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-43-state-representative-2--shaun-scott"
+      ],
+      "proposed_choice_names": [
+        "Shaun Scott"
+      ],
+      "race_id": "ld-43-state-representative-2",
+      "race_label": "Legislative District 43 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "washington-working-families-party"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-working-families-party-20261011T010831Z-07fcfbad8277"
+      ],
+      "evidence_locator": "Our 2026 Candidates; Washington filter, View More expanded to 17 rows; named candidate and office. Current-cycle index, not a separate general slate. Browser DOM table excerpt has normalized whitespace. Target: Legislative District 46 State Representative — Position 2; Darya Farivar.",
+      "evidence_url": "https://workingfamilies.org/candidates/",
+      "manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-0b55339acf93"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-46-state-representative-2--darya-farivar": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "proposed_choice_names": [
+        "Darya Farivar"
+      ],
+      "race_id": "ld-46-state-representative-2",
+      "race_label": "Legislative District 46 State Representative — Position 2",
+      "review_status": "pending",
+      "source_id": "washington-working-families-party"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-working-families-party-20261011T010831Z-07fcfbad8277"
+      ],
+      "evidence_locator": "Our 2026 Candidates; Washington filter, View More expanded to 17 rows; named candidate and office. Current-cycle index, not a separate general slate. Browser DOM table excerpt has normalized whitespace. Target: Legislative District 36 State Senator; Noel C. Frame.",
+      "evidence_url": "https://workingfamilies.org/candidates/",
+      "manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-0b55339acf93"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-36-state-senator--noel-c-frame": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "proposed_choice_names": [
+        "Noel C. Frame"
+      ],
+      "race_id": "ld-36-state-senator",
+      "race_label": "Legislative District 36 State Senator",
+      "review_status": "pending",
+      "source_id": "washington-working-families-party"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-working-families-party-20261011T010831Z-07fcfbad8277"
+      ],
+      "evidence_locator": "Our 2026 Candidates; Washington filter, View More expanded to 17 rows; named candidate and office. Current-cycle index, not a separate general slate. Browser DOM table excerpt has normalized whitespace. Target: Legislative District 43 State Senator; Hannah Sabio-Howell.",
+      "evidence_url": "https://workingfamilies.org/candidates/",
+      "manual_entry_ids": [
+        "manual-washington-working-families-party-20261011T011018Z-0b55339acf93"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "ld-43-state-senator--hannah-sabio-howell": "1"
+      },
+      "proposed_candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "proposed_choice_names": [
+        "Hannah Sabio-Howell"
+      ],
+      "race_id": "ld-43-state-senator",
+      "race_label": "Legislative District 43 State Senator",
+      "review_status": "pending",
+      "source_id": "washington-working-families-party"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-oneamerica-votes-20261011T010723Z-6badda3e27c2"
+      ],
+      "evidence_locator": "2026 endorsements, Initiatives heading; endorses No Hate in WA State Campaign and urges VOTE NO on IL26-001 / IL26-638 this November. Target: Initiative IL26-001 — Parental Rights in Public Schools; No.",
+      "evidence_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+      "manual_entry_ids": [
+        "manual-oneamerica-votes-20261011T011018Z-15769b0c3539"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "initiative-26-001--no": "1"
+      },
+      "proposed_candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "proposed_choice_names": [
+        "No"
+      ],
+      "race_id": "initiative-26-001",
+      "race_label": "Initiative IL26-001 — Parental Rights in Public Schools",
+      "review_status": "pending",
+      "source_id": "oneamerica-votes"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-oneamerica-votes-20261011T010723Z-6badda3e27c2"
+      ],
+      "evidence_locator": "2026 endorsements, Initiatives heading; endorses No Hate in WA State Campaign and urges VOTE NO on IL26-001 / IL26-638 this November. Target: Initiative IL26-638 — Participation in K-12 School Athletics; No.",
+      "evidence_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+      "manual_entry_ids": [
+        "manual-oneamerica-votes-20261011T011018Z-15769b0c3539"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "initiative-26-638--no": "1"
+      },
+      "proposed_candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "proposed_choice_names": [
+        "No"
+      ],
+      "race_id": "initiative-26-638",
+      "race_label": "Initiative IL26-638 — Participation in K-12 School Athletics",
+      "review_status": "pending",
+      "source_id": "oneamerica-votes"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-community-action-network-20261011T010723Z-daf7801a3785"
+      ],
+      "evidence_locator": "Official endorsement gallery; 2026 General Endorsements image, ENDORSED name / King County Council district. Empty image alt text does not transcribe the graphic. Target: Metropolitan King County Council — District 2; Rebecca Saldaña.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/5fe1ff20-4d88-4a9f-9c32-8a83d8996014/2026+General+Endorsements++-+2.PNG",
+      "manual_entry_ids": [
+        "manual-washington-community-action-network-20261011T011018Z-8989491758cb"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "king-county-council-2--rebecca-saldana": "1"
+      },
+      "proposed_candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "proposed_choice_names": [
+        "Rebecca Saldaña"
+      ],
+      "race_id": "king-county-council-2",
+      "race_label": "Metropolitan King County Council — District 2",
+      "review_status": "pending",
+      "source_id": "washington-community-action-network"
+    },
+    {
+      "action": "add",
+      "capture_ids": [
+        "capture-washington-community-action-network-20261011T010723Z-07bb27e7e6f2"
+      ],
+      "evidence_locator": "Official endorsement gallery; 2026 General Endorsements image, ENDORSED name / King County Council district. Empty image alt text does not transcribe the graphic. Target: Metropolitan King County Council — District 8; Teresa Mosqueda.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/96031cac-155f-4c00-b312-347cf37d7c8c/2026+General+Endorsements++-+1.PNG",
+      "manual_entry_ids": [
+        "manual-washington-community-action-network-20261011T011018Z-a6084af9a856"
+      ],
+      "prior_candidate_ids": [],
+      "proposed_allocations": {
+        "king-county-council-8--teresa-mosqueda": "1"
+      },
+      "proposed_candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "proposed_choice_names": [
+        "Teresa Mosqueda"
+      ],
+      "race_id": "king-county-council-8",
+      "race_label": "Metropolitan King County Council — District 8",
+      "review_status": "pending",
+      "source_id": "washington-community-action-network"
+    }
+  ],
+  "election_id": "wa-2026-general",
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/508",
+  "panel_contract_hash": "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
+  "prepared_at": "2026-10-11T01:10:18.434680Z",
+  "prepared_by": "OpenAI Codex",
+  "proposed_addition_count": 64,
+  "proposed_changed_decision_count": 1,
+  "publication_status": "not_for_publication",
+  "record_type": "endorsement_refresh_proposal",
+  "review_status": "pending",
+  "schema_version": "1.0",
+  "source_discovery_updates": [
+    {
+      "prior_value": {
+        "canonical_url": "https://www.thestranger.com/category/election-endorsements/",
+        "checked_at": "2026-10-04T04:56:52Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-the-stranger-20261004T045652Z-05ddb946821f.",
+        "media_type": "text/html",
+        "notes": "Archive still leads with the 2026 primary guide; no general guide found.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.thestranger.com/category/election-endorsements/",
+        "status": "not_found",
+        "updated_at": null
+      },
+      "proposed_value": {
+        "canonical_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+        "checked_at": "2026-10-11T01:07:22.845378Z",
+        "evidence_locator": "Issue #508 targeted official-source refresh. Captures capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac.",
+        "media_type": "text/html",
+        "notes": "Official October 9 general-election cheat sheet: 31 Seattle-inventory decisions. Hawk source spelling and frozen-ballot alias treatment documented in the #508 packet.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+        "status": "published",
+        "updated_at": null
+      },
+      "review_status": "pending",
+      "source_id": "the-stranger"
+    },
+    {
+      "prior_value": {
+        "canonical_url": "https://bsky.app/profile/tech4housing.org/post/3mpkb7wcjok2z",
+        "checked_at": "2026-10-04T04:56:52Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-tech-4-housing-20261004T045652Z-6a77e1f6d5b0.",
+        "media_type": "text/html",
+        "notes": "Current official capture retains the prior publication decision text.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://bsky.app/profile/tech4housing.org/post/3mpkb7wcjok2z",
+        "status": "published",
+        "updated_at": null
+      },
+      "proposed_value": {
+        "canonical_url": "https://www.tech4housing.org/endorsements",
+        "checked_at": "2026-10-11T01:07:23.077654Z",
+        "evidence_locator": "Issue #508 targeted official-source refresh. Captures capture-tech-4-housing-20261011T010723Z-5922ff5e6774.",
+        "media_type": "text/html",
+        "notes": "Official website 2026 General section supplies ten additions beyond the three retained Bluesky choices; primary section and LD48 / Tacoma choices excluded.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.tech4housing.org/endorsements",
+        "status": "published",
+        "updated_at": null
+      },
+      "review_status": "pending",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "prior_value": {
+        "canonical_url": "https://tech4taxes.org/endorsements",
+        "checked_at": "2026-10-04T04:56:52Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa.",
+        "media_type": "text/html",
+        "notes": "Current official capture retains the prior publication decision text.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://tech4taxes.org/endorsements",
+        "status": "published",
+        "updated_at": null
+      },
+      "proposed_value": {
+        "canonical_url": "https://tech4taxes.org/endorsements",
+        "checked_at": "2026-10-11T01:07:22.975031Z",
+        "evidence_locator": "Issue #508 targeted official-source refresh. Captures capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f.",
+        "media_type": "text/html",
+        "notes": "Official 2025-2026 candidate index supplies four additions; current-cycle evidence, not a separate general slate. IP26-645 social-profile lead remains unverified.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://tech4taxes.org/endorsements",
+        "status": "published",
+        "updated_at": null
+      },
+      "review_status": "pending",
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "prior_value": {
+        "canonical_url": "https://www.washingtoncan.org/endorsements",
+        "checked_at": "2026-10-04T04:56:52Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-washington-community-action-network-20261004T045652Z-fdad3f223455. Supplemental captures capture-washington-community-action-network-20261004T045922Z-080aa37b091f, capture-washington-community-action-network-20261004T045923Z-baee3c92a842.",
+        "media_type": "text/html",
+        "notes": "Verified material delta: No on IL26-001, IL26-638, IP26-645. Two existing candidate decisions preserved. Image text, rather than the erroneous 648 filename, supplies the 645 mapping.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.washingtoncan.org/endorsements",
+        "status": "published",
+        "updated_at": null
+      },
+      "proposed_value": {
+        "canonical_url": "https://www.washingtoncan.org/endorsements",
+        "checked_at": "2026-10-11T01:07:23.909422Z",
+        "evidence_locator": "Issue #508 targeted official-source refresh. Captures capture-washington-community-action-network-20261011T010723Z-daf7801a3785, capture-washington-community-action-network-20261011T010723Z-07bb27e7e6f2, capture-washington-community-action-network-20261011T010723Z-d3ff4b835ed4.",
+        "media_type": "text/html",
+        "notes": "Visible official county council graphics endorse Saldana District 2 and Mosqueda District 8; links existed in the October 3 gallery capture but empty alt text omitted their decisions from the earlier ledger.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.washingtoncan.org/endorsements",
+        "status": "published",
+        "updated_at": null
+      },
+      "review_status": "pending",
+      "source_id": "washington-community-action-network"
+    },
+    {
+      "prior_value": {
+        "canonical_url": "https://workingfamilies.org/state/washington/",
+        "checked_at": "2026-10-04T04:56:53Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-washington-working-families-party-20261004T045653Z-3bd0d468ecd5.",
+        "media_type": "text/html",
+        "notes": "Current official capture retains the prior publication decision text.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://workingfamilies.org/state/washington/",
+        "status": "published",
+        "updated_at": null
+      },
+      "proposed_value": {
+        "canonical_url": "https://workingfamilies.org/candidates/",
+        "checked_at": "2026-10-11T01:08:31Z",
+        "evidence_locator": "Issue #508 targeted official-source refresh. Captures capture-washington-working-families-party-20261011T010831Z-07fcfbad8277.",
+        "media_type": "text/html",
+        "notes": "Official Our 2026 Candidates Washington table expanded with View More to 17 rows: ten Seattle-inventory choices, seven out-of-scope choices. Current-cycle evidence supplies five additions including uncontested Shaun Scott.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://workingfamilies.org/candidates/",
+        "status": "published",
+        "updated_at": null
+      },
+      "review_status": "pending",
+      "source_id": "washington-working-families-party"
+    },
+    {
+      "prior_value": {
+        "canonical_url": "https://www.washingtonbus.org/endorsements",
+        "checked_at": "2026-10-04T04:56:53Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-washington-bus-20261004T045653Z-30f108b8466d.",
+        "media_type": "text/html",
+        "notes": "Official page still labels its 2026 endorsements PRIMARY; older 2025 general list not reused.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.washingtonbus.org/endorsements",
+        "status": "not_found",
+        "updated_at": null
+      },
+      "proposed_value": {
+        "canonical_url": "https://www.washingtonbus.org/endorsements",
+        "checked_at": "2026-10-11T01:07:23.755424Z",
+        "evidence_locator": "Issue #508 targeted official-source refresh. Captures capture-washington-bus-20261011T010723Z-f28d04da4bcb, capture-washington-bus-20261011T010723Z-35b46c8a38b3, capture-washington-bus-20261011T010723Z-ab1a1678a561, capture-washington-bus-20261011T010723Z-6c1740663489, capture-washington-bus-20261011T010723Z-969c0dda7736, capture-washington-bus-20261011T010723Z-d46c9e5bbbfd, capture-washington-bus-20261011T010723Z-f55404f17b9c, capture-washington-bus-20261011T010723Z-98b510bd408e.",
+        "media_type": "text/html",
+        "notes": "Official gallery now headed 2026 GENERAL ELECTION ENDORSEMENTS. Seven Seattle candidates and seven out-of-scope candidates; swapped LD37 House image labels documented in the #508 packet.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.washingtonbus.org/endorsements",
+        "status": "published",
+        "updated_at": null
+      },
+      "review_status": "pending",
+      "source_id": "washington-bus"
+    },
+    {
+      "prior_value": {
+        "canonical_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+        "checked_at": "2026-10-04T04:56:53Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-king-county-democrats-20261004T045653Z-7099181e37eb.",
+        "media_type": "text/html",
+        "notes": "Removed Jenne Alderks in LD1 Pos2; that race is outside the frozen Seattle inventory, so no published decision changes.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+        "status": "published",
+        "updated_at": null
+      },
+      "proposed_value": {
+        "canonical_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+        "checked_at": "2026-10-11T01:07:22.876684Z",
+        "evidence_locator": "Issue #508 targeted official-source refresh. Captures capture-king-county-democrats-20261011T010722Z-8db51a3344bb.",
+        "media_type": "text/html",
+        "notes": "Current official 2026 list adds IP26-645 No, LD32 Position 1 dual and Pollet; LD32 Position 2 adds Siddiqi beside Davis. IP/IL heading and Pollet position treatments documented in the #508 packet.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+        "status": "published",
+        "updated_at": null
+      },
+      "review_status": "pending",
+      "source_id": "king-county-democrats"
+    },
+    {
+      "prior_value": {
+        "canonical_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+        "checked_at": "2026-10-04T04:56:56Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-oneamerica-votes-20261004T045656Z-5a5ae1a02f34.",
+        "media_type": "text/html",
+        "notes": "Current official capture retains the prior publication decision text.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+        "status": "published",
+        "updated_at": null
+      },
+      "proposed_value": {
+        "canonical_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+        "checked_at": "2026-10-11T01:07:23.361505Z",
+        "evidence_locator": "Issue #508 targeted official-source refresh. Captures capture-oneamerica-votes-20261011T010723Z-6badda3e27c2.",
+        "media_type": "text/html",
+        "notes": "Official Initiatives section urges No on IL26-001 and IL26-638 this November; wording also existed in the October 3 capture and was omitted from the earlier ledger.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+        "status": "published",
+        "updated_at": null
+      },
+      "review_status": "pending",
+      "source_id": "oneamerica-votes"
+    }
+  ],
+  "stable_panel_hash": "b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95"
+}
