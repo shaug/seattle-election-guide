@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 172108,
+  "canonical_url": "https://www.washingtoncan.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "f7b6577fe18957573cddb852ed34d0de43d4b638be7f3d18c8326665b9ea7273",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261011T010723Z-d3ff4b835ed4",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official third-party artifact retained in the primary checkout durable local store for review only.",
+  "requested_url": "https://www.washingtoncan.org/endorsements",
+  "retrieved_at": "2026-10-11T01:07:23.640936Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/f7/f7b6577fe18957573cddb852ed34d0de43d4b638be7f3d18c8326665b9ea7273",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network 2026 general endorsement evidence (washington-community-action-network)",
+  "updated_at": null
+}

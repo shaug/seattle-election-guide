@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 6555,
+  "canonical_url": "https://tech4taxes.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "527c535032153d03784b96f8d5fe0283ff1d16aa1909ded33a55a86d2b9cbff8",
+  "http_status": 200,
+  "id": "capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official third-party artifact retained in the primary checkout durable local store for review only.",
+  "requested_url": "https://tech4taxes.org/endorsements",
+  "retrieved_at": "2026-10-11T01:07:22.975031Z",
+  "schema_version": "1.0",
+  "source_id": "tech-4-taxes",
+  "storage_reference": "sha256/52/527c535032153d03784b96f8d5fe0283ff1d16aa1909ded33a55a86d2b9cbff8",
+  "storage_scope": "local_only",
+  "title": "tech-4-taxes 2026 general endorsement evidence (tech-4-taxes)",
+  "updated_at": null
+}
