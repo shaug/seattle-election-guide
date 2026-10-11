@@ -437,7 +437,6 @@
           "published_label": "BEST CHOICE",
           "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
           "evidence_locator": "King County Voters Guide > Supreme Court > Justice Position #03; BEST CHOICE label.",
-          "match_note": "Jaime Hawk resolves to the existing Jaime Michelle Hawk choice in Supreme Court position 3.",
           "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
         },
         {
@@ -666,7 +665,6 @@
           "published_label": "No Recommendation",
           "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
           "evidence_locator": "King County Voters Guide > Metropolitan King County Council — District 2; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
-          "match_note": "Rebecca Saldana maps to Rebecca Saldaña. The publisher omits the district numeral; the named county-council candidate uniquely resolves to district 2 in the frozen inventory.",
           "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
         },
         {
