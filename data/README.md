@@ -60,8 +60,9 @@ records which datasets answered (`docs/MONITORING.md`, "The archive"). It carrie
 no per-visitor data — the `Source IP`, `Source user agent`, and `Source browser` dimensions are
 never requested and the archive model rejects them, because this repository is public and a
 committed identifier would be unretractable from every fork. `election-guide analytics export`
-writes it; see the [monitoring guide](../docs/MONITORING.md) for the retention deadline that
-makes it necessary.
+can still write manual exports. The daily workflow is retired and the existing archive through
+October 10, 2026 is preserved (#512); use a separate directory for future investigations, as
+described in the [monitoring guide](../docs/MONITORING.md).
 
 `election-guide export build` writes the complete release bundle to `build/` by default. The
 bundle contains canonical consensus and view-model JSON, race and source CSVs, the full

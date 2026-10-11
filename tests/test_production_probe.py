@@ -10,8 +10,8 @@ from __future__ import annotations
 import json
 import socketserver
 import threading
-from collections.abc import Iterator
-from contextlib import suppress
+from collections.abc import Generator, Iterator
+from contextlib import contextmanager, suppress
 from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -172,7 +172,7 @@ class _MalformedStatusLineHandler(socketserver.StreamRequestHandler):
         self.wfile.write(b"GARBAGE NOT HTTP\r\n\r\n")
 
 
-def _start(handler: type[BaseHTTPRequestHandler]) -> Iterator[str]:
+def _start(handler: type[BaseHTTPRequestHandler]) -> Generator[str, None, None]:
     httpd = HTTPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     thread.start()
@@ -354,6 +354,52 @@ def test_run_production_check_catches_a_commit_mismatch(server: str) -> None:
     assert not report.ok
     assert report.commit is not None
     assert report.commit.observed == COMMIT
+
+
+def test_availability_checks_the_served_routes_without_a_release_expectation(server: str) -> None:
+    report = run_production_check(server, expected_git_commit=None, timeout=5)
+
+    assert report.ok
+    assert report.commit is None
+    assert report.deployment_contract is None
+    assert report.data_freshness is None
+    assert [result.check.path for result in report.route_results] == [
+        "/",
+        "/e/wa-2026-primary/",
+        "/e/wa-2026-primary/voter-guide.pdf",
+    ]
+
+
+def test_availability_reports_an_unreachable_site() -> None:
+    report = run_production_check("http://127.0.0.1:1", expected_git_commit=None, timeout=1)
+
+    assert not report.ok
+    assert report.manifest.observed.error is not None
+
+
+@pytest.mark.parametrize("bad_redirect_path", ["/", "/e/wa-2026-primary/voter-guide.pdf"])
+def test_availability_rejects_redirects_to_a_foreign_host(
+    bad_redirect_path: str,
+) -> None:
+    class _WrongRedirectHandler(_Handler):
+        def _absolute(self, path: str) -> str:
+            if self.path == bad_redirect_path:
+                return f"https://wrong.example{path}"
+            return super()._absolute(path)
+
+    with contextmanager(_start)(_WrongRedirectHandler) as server:
+        report = run_production_check(server, expected_git_commit=None, timeout=5)
+
+    assert not report.ok
+    failed = [result.check.path for result in report.route_results if not result.ok]
+    assert failed == [bad_redirect_path]
+
+
+def test_a_publication_contract_cannot_omit_its_expected_commit(server: str) -> None:
+    with pytest.raises(ValueError, match="expected Git commit"):
+        run_production_check(
+            server, expected_git_commit=None, timeout=5, site_manifest=_site_manifest()
+        )
 
 
 def test_run_production_check_alerts_on_stale_published_data_inside_the_window(

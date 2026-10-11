@@ -20,7 +20,7 @@ from election_guide.single_issue_alert import plan_alert_action as _plan_alert_a
 from election_guide.single_issue_alert import reconcile as _reconcile
 
 MARKER = "production-check:monitor"
-ISSUE_TITLE = "Production is not serving the expected build"
+ISSUE_TITLE = "Production availability check failed"
 ISSUE_LABELS: tuple[str, ...] = ("type: ops", "area: operations")
 
 __all__ = [

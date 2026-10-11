@@ -129,19 +129,21 @@ def _fetch_body(base_url: str, path: str, *, timeout: float) -> tuple[Observatio
 def run_production_check(
     base_url: str,
     *,
-    expected_git_commit: str,
+    expected_git_commit: str | None,
     timeout: float,
     active_window: bool = False,
     checked_at: datetime | None = None,
     site_manifest: SiteManifest | None = None,
 ) -> ProductionCheckReport:
-    """Fetch the deployment manifest, then check the routes and commit it implies.
+    """Check served routes, optionally against an explicitly expected release.
 
     Route checks and the commit comparison only run once the manifest itself
     is confirmed healthy and parseable — there is no current election to
     check routes for otherwise, and reporting a live-and-serving-something
     site as commit-mismatched would blame the wrong check.
     """
+    if site_manifest is not None and expected_git_commit is None:
+        raise ValueError("a publication contract requires an expected Git commit")
     observed_at = checked_at or datetime.now(UTC)
     manifest_observation, manifest_body = fetch_manifest_body(base_url, timeout=timeout)
     manifest_result, manifest, manifest_parse_error = evaluate_manifest(
@@ -157,7 +159,7 @@ def run_production_check(
 
     deployment_contract = (
         None
-        if site_manifest is None
+        if site_manifest is None or expected_git_commit is None
         else evaluate_deployment_contract(
             site_manifest,
             manifest,
@@ -183,7 +185,9 @@ def run_production_check(
         )
     archive_index = None
     if site_manifest is None:
-        route_checks = plan_route_checks(manifest.current_election_id)
+        route_checks = plan_route_checks(
+            manifest.current_election_id, canonical_origin=base_url.rstrip("/")
+        )
         route_results = tuple(
             RouteCheckResult(check=check, observed=probe(base_url, check, timeout=timeout))
             for check in route_checks
@@ -218,7 +222,11 @@ def run_production_check(
         release_manifest=release_result,
         release_manifest_parse_error=release_parse_error,
         route_results=route_results,
-        commit=CommitCheck(expected=expected_git_commit, observed=current.git_commit),
+        commit=(
+            None
+            if expected_git_commit is None
+            else CommitCheck(expected=expected_git_commit, observed=current.git_commit)
+        ),
         data_freshness=(
             None
             if release_manifest is None
