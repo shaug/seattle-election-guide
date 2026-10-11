@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 117050,
+  "canonical_url": "https://ndaction.org/",
+  "capture_method": "static_html",
+  "content_sha256": "14681d8bd6d9cf491a11fa054c2a8cc2c38a24042c51ae94299da4f4da43abde",
+  "http_status": 200,
+  "id": "capture-nondriver-action-20261011T153802Z-a0d3a13d0bfd",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for evidence review; only manifest metadata and brief factual transcriptions enter Git.",
+  "requested_url": "https://ndaction.org/",
+  "retrieved_at": "2026-10-11T15:38:02.651052Z",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "storage_reference": "sha256/14/14681d8bd6d9cf491a11fa054c2a8cc2c38a24042c51ae94299da4f4da43abde",
+  "storage_scope": "local_only",
+  "title": "nondriver identity",
+  "updated_at": null
+}

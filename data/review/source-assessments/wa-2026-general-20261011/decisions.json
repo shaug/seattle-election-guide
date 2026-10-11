@@ -1,0 +1,715 @@
+{
+  "schema_version": "1.0",
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/509",
+  "election_id": "wa-2026-general",
+  "review_status": "pending",
+  "production_use": "None: assessment only, absent from the release ledger and frozen production registry.",
+  "sources": [
+    {
+      "source_id": "young-democrats-of-washington",
+      "decisions": [
+        {
+          "race_id": "us-house-7",
+          "status": "endorsed",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "published_choice_names": [
+            "Pramila Jayapal"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb",
+          "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-07.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154356Z-cd0525889b37"
+        },
+        {
+          "race_id": "us-house-9",
+          "status": "endorsed",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "published_choice_names": [
+            "Adam Smith"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb",
+          "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-09.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154356Z-cd0525889b37"
+        },
+        {
+          "race_id": "supreme-court-justice-3",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "published_choice_names": [
+            "Jaime Hawk"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb",
+          "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, Washington State Supreme Court, Pos. 3.",
+          "match_note": "Jaime Hawk resolves to the existing Jaime Michelle Hawk choice in Supreme Court position 3.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154356Z-cd0525889b37"
+        },
+        {
+          "race_id": "ld-32-state-senator",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-32-state-senator--cindy-ryu"
+          ],
+          "published_choice_names": [
+            "Cindy Ryu"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+          "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, Senate; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a"
+        },
+        {
+          "race_id": "ld-32-state-representative-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble",
+            "ld-32-state-representative-1--keith-scully"
+          ],
+          "published_choice_names": [
+            "Danica Noble",
+            "Keith Scully"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+          "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 1; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a"
+        },
+        {
+          "race_id": "ld-32-state-representative-2",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "published_choice_names": [
+            "Imraan Siddiqi"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+          "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 2; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a"
+        },
+        {
+          "race_id": "ld-37-state-representative-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ],
+          "published_choice_names": [
+            "Sharon Tomiko Santos"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+          "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 37th LD, House Pos. 1; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a"
+        },
+        {
+          "race_id": "ld-37-state-representative-2",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "published_choice_names": [
+            "Jaelynn Scott"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+          "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 37th LD, House Pos. 2; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a"
+        },
+        {
+          "race_id": "ld-43-state-senator",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen",
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "published_choice_names": [
+            "Jamie Pedersen",
+            "Hannah Sabio-Howell"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+          "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 43rd LD, Senate; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a"
+        },
+        {
+          "race_id": "ld-46-state-representative-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "published_choice_names": [
+            "Gerry Pollet"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+          "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 46th LD, House Pos. 1; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a"
+        },
+        {
+          "race_id": "ld-46-state-senator",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "published_choice_names": [
+            "Javier Valdez"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+          "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 46th LD, Senate; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a"
+        },
+        {
+          "race_id": "king-county-council-2",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-council-2--toshiko-grace-hasegawa",
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "published_choice_names": [
+            "Toshiko Hasegawa",
+            "Rebecca Saldaña"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b",
+          "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, King County Council, District 2; every name listed for this race.",
+          "match_note": "Toshiko Hasegawa maps to Toshiko Grace Hasegawa for King County Council district 2.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-78da41e972fb"
+        },
+        {
+          "race_id": "king-county-council-8",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "published_choice_names": [
+            "Teresa Mosqueda"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b",
+          "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, King County Council, District 8; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-78da41e972fb"
+        },
+        {
+          "race_id": "seattle-city-council-5",
+          "status": "endorsed",
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "published_choice_names": [
+            "Nilu Jenks"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b",
+          "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, Seattle City Council, District 5; every name listed for this race.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-78da41e972fb"
+        },
+        {
+          "race_id": "initiative-26-001",
+          "status": "endorsed",
+          "candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "published_choice_names": [
+            "No"
+          ],
+          "published_label": "Campaign endorsement: Vote NO",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b",
+          "evidence_locator": "Carousel slide 3 of 3: Ballot Measure Campaigns, No Hate in WA State Campaign for Vote NO on Initiative 001 and Initiative 638; Initiative 001.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-78da41e972fb"
+        },
+        {
+          "race_id": "initiative-26-638",
+          "status": "endorsed",
+          "candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "published_choice_names": [
+            "No"
+          ],
+          "published_label": "Campaign endorsement: Vote NO",
+          "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b",
+          "evidence_locator": "Carousel slide 3 of 3: Ballot Measure Campaigns, No Hate in WA State Campaign for Vote NO on Initiative 001 and Initiative 638; Initiative 638.",
+          "manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-78da41e972fb"
+        }
+      ]
+    },
+    {
+      "source_id": "nondriver-action",
+      "decisions": [
+        {
+          "race_id": "seattle-proposition-1-transit",
+          "status": "endorsed",
+          "candidate_ids": [
+            "seattle-proposition-1-transit--yes"
+          ],
+          "published_choice_names": [
+            "Yes"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-nondriver-action-20261011T153802Z-a003f33059a9",
+          "evidence_locator": "2026 Endorsements > November Election > King County > Seattle Transit Measure. Vote Yes; endorsement section above the candidate questionnaires.",
+          "manual_entry_id": "manual-nondriver-action-20261011T154358Z-b5b4367d0251"
+        },
+        {
+          "race_id": "seattle-city-council-5",
+          "status": "endorsed",
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "published_choice_names": [
+            "Nilu Jenks"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-nondriver-action-20261011T153802Z-a003f33059a9",
+          "evidence_locator": "2026 Endorsements > November Election > King County > Seattle City Council District 5; endorsement section above the candidate questionnaires.",
+          "manual_entry_id": "manual-nondriver-action-20261011T154358Z-b5b4367d0251"
+        },
+        {
+          "race_id": "king-county-council-2",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "published_choice_names": [
+            "Rebecca Saldana"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-nondriver-action-20261011T153802Z-a003f33059a9",
+          "evidence_locator": "2026 Endorsements > November Election > King County > King County Council District Rebecca Saldana; endorsement section above the candidate questionnaires.",
+          "match_note": "Rebecca Saldana maps to Rebecca Saldaña. The publisher omits the district numeral; the named county-council candidate uniquely resolves to district 2 in the frozen inventory.",
+          "manual_entry_id": "manual-nondriver-action-20261011T154358Z-b5b4367d0251"
+        },
+        {
+          "race_id": "king-county-council-8",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "published_choice_names": [
+            "Teresa Mosqueda"
+          ],
+          "published_label": "Endorsement",
+          "capture_id": "capture-nondriver-action-20261011T153802Z-a003f33059a9",
+          "evidence_locator": "2026 Endorsements > November Election > King County > King County Council District 8; endorsement section above the candidate questionnaires.",
+          "manual_entry_id": "manual-nondriver-action-20261011T154358Z-b5b4367d0251"
+        }
+      ]
+    },
+    {
+      "source_id": "citizens-against-aipac-corruption",
+      "decisions": [
+        {
+          "race_id": "us-house-7",
+          "status": "endorsed",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "published_choice_names": [
+            "Pramila Jayapal"
+          ],
+          "published_label": "Endorsed incumbent",
+          "capture_id": "capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8",
+          "evidence_locator": "Candidates Endorsed By Citizens Against AIPAC Corruption > Our Endorsed Incumbents > PRAMILA JAYAPAL, U.S. Representative, WA-07, General Election November 3, 2026.",
+          "manual_entry_id": "manual-citizens-against-aipac-corruption-20261011T154358Z-a7da1fe8e732"
+        }
+      ]
+    },
+    {
+      "source_id": "king-county-republican-party",
+      "decisions": [
+        {
+          "race_id": "us-house-7",
+          "status": "endorsed",
+          "candidate_ids": [
+            "us-house-7--nirav-sheth"
+          ],
+          "published_choice_names": [
+            "Nirav Sheth"
+          ],
+          "published_label": "KCGOP ENDORSED",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Congressional District 7; KCGOP ENDORSED label.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "us-house-9",
+          "status": "endorsed",
+          "candidate_ids": [
+            "us-house-9--doug-basler"
+          ],
+          "published_choice_names": [
+            "Doug Basler"
+          ],
+          "published_label": "KCGOP ENDORSED",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Congressional District 9; KCGOP ENDORSED label.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-46-state-senator",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-46-state-senator--sandra-stephens"
+          ],
+          "published_choice_names": [
+            "Sandra Stephens"
+          ],
+          "published_label": "KCGOP ENDORSED",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 46 > State Senator; KCGOP ENDORSED label.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-36-state-senator",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-36-state-senator--jillian-england"
+          ],
+          "published_choice_names": [
+            "Jillian England"
+          ],
+          "published_label": "BEST CHOICE",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 36 > State Senator; BEST CHOICE label.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "king-county-assessor",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-assessor--dominique-m-scarimbolo"
+          ],
+          "published_choice_names": [
+            "Dominique Scarimbolo"
+          ],
+          "published_label": "BEST CHOICE",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > King County > Countywide > Assessor; BEST CHOICE label.",
+          "match_note": "Dominique Scarimbolo resolves to the existing Dominique M Scarimbolo choice for King County Assessor; the guide omits the middle initial.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "seattle-city-council-5",
+          "status": "endorsed",
+          "candidate_ids": [
+            "seattle-city-council-5--julie-kang"
+          ],
+          "published_choice_names": [
+            "Julie Kang"
+          ],
+          "published_label": "BEST CHOICE",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Seattle City Council District 5; BEST CHOICE label.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "supreme-court-justice-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-1--scott-edwards"
+          ],
+          "published_choice_names": [
+            "Scott Edwards"
+          ],
+          "published_label": "BEST CHOICE",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Supreme Court > Justice Position #01; BEST CHOICE label.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "supreme-court-justice-3",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-3--david-stevens"
+          ],
+          "published_choice_names": [
+            "David Stevens"
+          ],
+          "published_label": "BEST CHOICE",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Supreme Court > Justice Position #03; BEST CHOICE label.",
+          "match_note": "Jaime Hawk resolves to the existing Jaime Michelle Hawk choice in Supreme Court position 3.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "supreme-court-justice-4",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-4--sean-odonnell"
+          ],
+          "published_choice_names": [
+            "Sean O'Donnell"
+          ],
+          "published_label": "BEST CHOICE",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Supreme Court > Justice Position #04; BEST CHOICE label.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "supreme-court-justice-5",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-5--dave-larson"
+          ],
+          "published_choice_names": [
+            "Dave Larson"
+          ],
+          "published_label": "BEST CHOICE",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Supreme Court > Justice Position #05; BEST CHOICE label.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "supreme-court-justice-7",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-7--todd-a-bloom"
+          ],
+          "published_choice_names": [
+            "Todd A. Bloom"
+          ],
+          "published_label": "BEST CHOICE",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Supreme Court > Justice Position #07; BEST CHOICE label.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "initiative-26-001",
+          "status": "endorsed",
+          "candidate_ids": [
+            "initiative-26-001--yes"
+          ],
+          "published_choice_names": [
+            "Yes"
+          ],
+          "published_label": "VOTE YES",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "Initiative > Statewide > I-001; VOTE YES.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "initiative-26-638",
+          "status": "endorsed",
+          "candidate_ids": [
+            "initiative-26-638--yes"
+          ],
+          "published_choice_names": [
+            "Yes"
+          ],
+          "published_label": "VOTE YES",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "Initiative > Statewide > I-638; VOTE YES.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "initiative-26-645",
+          "status": "endorsed",
+          "candidate_ids": [
+            "initiative-26-645--yes"
+          ],
+          "published_choice_names": [
+            "Yes"
+          ],
+          "published_label": "VOTE YES",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "Initiative > Statewide > I-645; VOTE YES.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "seattle-proposition-1-transit",
+          "status": "endorsed",
+          "candidate_ids": [
+            "seattle-proposition-1-transit--no"
+          ],
+          "published_choice_names": [
+            "No"
+          ],
+          "published_label": "VOTE NO",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "Ballot Measure > City of Seattle > Proposition No. 1 > Seattle Transit Measure; VOTE NO.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-11-state-representative-1",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 11 State Representative — Position 1; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-32-state-representative-1",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 32 State Representative — Position 1; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-32-state-representative-2",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 32 State Representative — Position 2; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-32-state-senator",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 32 State Senator; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-34-state-representative-2",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 34 State Representative — Position 2; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-37-state-representative-1",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 37 State Representative — Position 1; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-37-state-representative-2",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 37 State Representative — Position 2; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-37-state-senator",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 37 State Senator; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-43-state-representative-1",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 43 State Representative — Position 1; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-43-state-senator",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 43 State Senator; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-46-state-representative-1",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 46 State Representative — Position 1; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "ld-46-state-representative-2",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Legislative District 46 State Representative — Position 2; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "king-county-council-2",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Metropolitan King County Council — District 2; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "match_note": "Rebecca Saldana maps to Rebecca Saldaña. The publisher omits the district numeral; the named county-council candidate uniquely resolves to district 2 in the frozen inventory.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "king-county-council-4",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Metropolitan King County Council — District 4; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "king-county-council-8",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Metropolitan King County Council — District 8; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "seattle-municipal-court-judge-5",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > Seattle Municipal Court Judge — Position 5; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        },
+        {
+          "race_id": "king-county-district-court-west-judge-1",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "published_choice_names": [],
+          "published_label": "No Recommendation",
+          "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+          "evidence_locator": "King County Voters Guide > King County District Court West Electoral District — Judge Position 1; explicit No Recommendation row. Missing rows elsewhere are not transcribed as abstentions.",
+          "manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8"
+        }
+      ]
+    }
+  ]
+}
