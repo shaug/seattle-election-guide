@@ -45,7 +45,7 @@ sources:
     not admitted to the frozen production panel.
   eligibility:
     kind: none
-    rationale: Capture and pending transcription only. Future production eligibility
+    rationale: Capture and human-verified transcription only. Future production eligibility
       requires a reviewed panel version.
   discovery:
     status: published
@@ -70,7 +70,7 @@ sources:
     not admitted to the frozen production panel.
   eligibility:
     kind: none
-    rationale: Capture and pending transcription only. Future production eligibility
+    rationale: Capture and human-verified transcription only. Future production eligibility
       requires a reviewed panel version.
   discovery:
     status: published
@@ -95,7 +95,7 @@ sources:
     not admitted to the frozen production panel.
   eligibility:
     kind: none
-    rationale: Capture and pending transcription only. Future production eligibility
+    rationale: Capture and human-verified transcription only. Future production eligibility
       requires a reviewed panel version.
   discovery:
     status: published
@@ -120,7 +120,7 @@ sources:
     not admitted to the frozen production panel.
   eligibility:
     kind: none
-    rationale: Capture and pending transcription only. Future production eligibility
+    rationale: Capture and human-verified transcription only. Future production eligibility
       requires a reviewed panel version.
   discovery:
     status: published

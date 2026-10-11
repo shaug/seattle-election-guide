@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b",
+  "entered_at": "2026-10-11T15:43:57.835925Z",
+  "entry_method": "manual",
+  "evidence_locator": "Carousel slide 3 of 3: Ballot Measure Campaigns, No Hate in WA State Campaign for Vote NO on Initiative 001 and Initiative 638; Carousel slide 3 of 3: Local & County Offices, King County Council, District 2; Carousel slide 3 of 3: Local & County Offices, King County Council, District 8; Carousel slide 3 of 3: Local & County Offices, Seattle City Council, District 5",
+  "evidence_type": "image",
+  "id": "manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884",
+  "review_note": "Issue #509: shaug replied \"verified\" in this Codex session after presentation of PR #515's six transcriptions covering 53 decisions: 36 affirmative and 17 explicit no-recommendation entries, including three co-endorsements. OpenAI Codex prepared the transcription; shaug is the human verifier. This records transcription verification, not production source or panel admission. Supersedes pending record manual-young-democrats-of-washington-20261011T154357Z-78da41e972fb.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-11T23:35:51Z",
+  "reviewed_by": "shaug",
+  "reviewer": "codex-agent-transcription",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "transcription": "Metropolitan King County Council — District 2: Toshiko Hasegawa, Rebecca Saldaña [Endorsement]\nMetropolitan King County Council — District 8: Teresa Mosqueda [Endorsement]\nSeattle City Council — District 5: Nilu Jenks [Endorsement]\nInitiative IL26-001 — Parental Rights in Public Schools: No [Campaign endorsement: Vote NO]\nInitiative IL26-638 — Participation in K-12 School Athletics: No [Campaign endorsement: Vote NO]"
+}

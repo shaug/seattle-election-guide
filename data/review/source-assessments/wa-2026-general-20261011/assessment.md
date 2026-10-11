@@ -2,7 +2,7 @@
 
 Scope: [issue #509](https://github.com/shaug/seattle-election-guide/issues/509), following the electioncheatsheet.org reconciliation in [PR #510](https://github.com/shaug/seattle-election-guide/pull/510). The user supplied the Young Democrats announcement and authorized continuing with actionable evidence.
 
-This package records **36 affirmative decisions** (endorsements or recommendations) and **17 explicit no-recommendation decisions**. All six manual transcriptions are **pending**, not approved release claims. The evidence matches all 36 affirmative rows currently attributed to these four organizations by Election Cheat Sheet. Its published data omits explicit no-recommendation rows. Co-endorsement order is preserved from the official announcement; set comparison does not infer preference from ordering.
+This package records **36 affirmative decisions** (endorsements or recommendations) and **17 explicit no-recommendation decisions**. All six manual transcriptions are **human-verified** by `shaug`, as recorded in [verification.json](verification.json). Production source admission remains a separate review. The evidence matches all 36 affirmative rows currently attributed to these four organizations by Election Cheat Sheet. Its published data omits explicit no-recommendation rows. Co-endorsement order is preserved from the official announcement; set comparison does not infer preference from ordering.
 
 ## Source identity and eligibility assessment
 
@@ -12,7 +12,7 @@ Disposition is based on publisher identity, program, election, and ballot scope.
 
 | Organization | Evidence and identity | Reasoned disposition / next step |
 |---|---|---|
-| Young Democrats of Washington | User-confirmed `youngdemswa` account; October 8 announcement explicitly announces statewide endorsements shortly before election day. All three official carousel images were read and retained. | Usable general-election endorsement publisher. Recommend considering one statewide Democratic Party source, eligible for explicitly decided Seattle-ballot races. Disclose affiliation with the Democratic Party and related district/caucus organizations; a shared party does not establish duplicate decision-making. Human review must confirm all slides and the three co-endorsements before admission. |
+| Young Democrats of Washington | User-confirmed `youngdemswa` account; October 8 announcement explicitly announces statewide endorsements shortly before election day. All three official carousel images were read and retained. | Usable general-election endorsement publisher. Recommend considering one statewide Democratic Party source, eligible for explicitly decided Seattle-ballot races. Disclose affiliation with the Democratic Party and related district/caucus organizations; a shared party does not establish duplicate decision-making. Human verification now covers all slides and the three co-endorsements. Production admission and multi-candidate handling remain a separate review. |
 | Nondriver Action | Its own November endorsement section, mission, and reciprocal affiliation with Nondrivers Alliance. The Alliance identifies Nondriver Action as its 501(c)(4), describes its own fiscal sponsorship by Alliance for a Just Society, and documents roots in DRW's Disability Mobility Initiative. | Usable endorsement publisher. Recommend considering one Nondriver Action source in transportation/urbanism, with rights/representation selection also supported by its explicit disability-justice mission. Preserve disclosed affiliation and history. Do not relabel these as endorsements by DRW, DMI, or Nondrivers Alliance, and do not count those related identities separately for the same slate. Shared personnel/history does not by itself establish duplicate endorsement votes. |
 | Citizens Against AIPAC Corruption / Track AIPAC | Track AIPAC's endorsement page names CAAC as publisher and lists Jayapal as an endorsed incumbent for WA-07, November 3. CAAC's own About page identifies Track AIPAC and Beat AIPAC as its operations. | One usable organizational endorsement, not two publishers. Recommend considering CAAC under rights/representation based on its stated Palestinian-rights endorsement criteria. Its program is federal; include only directly published Seattle-ballot decisions, not state/local recommendations from the separate Organize for Peace site. Confirm classification and overlap disclosure before admission; do not infer broad progressive affiliation from Jayapal's endorsement alone. |
 | King County Republican Party | Official current guide explicitly distinguishes formal endorsement, best-choice recommendation, measure position, and no recommendation. Its Seattle candidates and measures match the November inventory; this is a current-cycle guide, not a separately dated November slate. | Evidence is usable for a possible conservative comparison. Defer production inclusion pending an intended product/policy change. Never include it in progressive consensus. Adding a second comparison source also requires changing the current exactly-one-comparison registry contract and the comparison category's centrist wording in a separately scoped review. |
@@ -21,9 +21,9 @@ Nondriver Action is related to the excluded DMI program, not an unrelated organi
 
 Progressive Voters Guide remains a Fuse publication excluded under the existing duplicate-publisher policy. Its compiled recommendations are not added to Fuse's own endorsements.
 
-## Verified locations; pending transcriptions
+## Verified evidence and transcriptions
 
-“Verified locations” means the official publications were inspected and retained. It does not confer human approval on these draft decisions. [decisions.json](decisions.json) binds every row to an immutable capture, exact evidence locator, existing race/choice identifiers, and a pending manual-entry record. [captures.json](captures.json) indexes all evidence.
+The official publications were inspected and retained. After presentation of this package, `shaug` replied “verified” in this Codex session. [verification.json](verification.json) records that confirmation and maps the six original pending records to immutable verified successors. [decisions.json](decisions.json) binds every row to its verified manual-entry record, immutable capture, exact evidence locator, and existing race/choice identifiers. [captures.json](captures.json) indexes all evidence. This verifies the transcriptions; source eligibility and panel admission remain separate decisions.
 
 ### Young Democrats — 16 decisions
 
@@ -48,7 +48,7 @@ Progressive Voters Guide remains a Fuse publication excluded under the existing 
 | Initiative 26-001 | No — endorsed No Hate in WA State campaign explicitly says Vote NO | 3 |
 | Initiative 26-638 | No — same campaign explicitly says Vote NO | 3 |
 
-The three two-candidate rows are each one co-endorsement decision. They would require explicit multi-candidate review and the existing equal-split policy if admitted. The screenshot supplied by the user covers slide 1; the additional two slides were obtained from the public post and remain pending human review.
+The three two-candidate rows are each one co-endorsement decision. They would require explicit multi-candidate review and the existing equal-split policy if admitted. The screenshot supplied by the user covers slide 1; the additional two slides were obtained from the public post. All three slide transcriptions are now human-verified.
 
 Jaime Hawk maps to Jaime Michelle Hawk in Supreme Court position 3; Toshiko Hasegawa maps to Toshiko Grace Hasegawa in county district 2. The Northeast and Southwest district-court endorsements on slide 1 do not belong to the frozen Seattle inventory, which includes West electoral district races. Other congressional and legislative districts on the statewide list are likewise outside this inventory.
 
@@ -78,11 +78,11 @@ Full third-party images and HTML remain in durable, ignored local storage in the
 
 Direct retrieval of CAAC's endorsement page and KCGOP's guide returned HTTP 403. Both were readable in an ordinary logged-out public browser without authentication, challenges, or bypasses. Their retained artifacts are explicitly labeled HTML wrappers of browser-visible text, not original response HTML. They use `manual_upload` with no invented HTTP status. Nondriver pages and CAAC's About page were captured directly with observed HTTP 200. Publication dates are recorded only when stated.
 
-Each of the six race transcriptions went through the manual-entry adapter using the research registry, with status `pending` and transcriber `codex-agent-transcription`. No verifier or human approval is invented. The package changes no production source registry, inventory, release ledger, canonical dataset, snapshot catalog, or scoring policy.
+Each of the six transcriptions went through the manual-entry adapter using the research registry, with transcriber `codex-agent-transcription`. The original pending records remain unchanged. Six verified successors record `shaug` as human verifier, the confirmation recording time, and the exact “verified” reply; the reviewed content and capture references are unchanged. The package changes no production source registry, inventory, release ledger, canonical dataset, snapshot catalog, or scoring policy.
 
 ## Remaining work
 
-1. Human review of the six transcriptions and source dispositions, including the three Young Democrats co-endorsements and disclosed name/heading mappings.
+1. Review the proposed source eligibility, category, and overlap dispositions for production admission. Human verification of all six transcriptions, including co-endorsements and disclosed name/heading mappings, is complete and recorded.
 2. A reviewed new production panel version for any admitted organizations, with permanent codes, category/overlap decisions, release provenance, and required multi-candidate approvals. This evidence package does not itself authorize those structural changes.
 3. A separately scoped product decision for a conservative comparison and its registry/category contract changes.
 4. Existing unresolved sources remain unresolved: Urbanist general-election carry-forward; WA4PJ endorsement versus rating and primary timing; Stonewall general-election evidence; DSA's specific initiative positions; Tech 4 Taxes' specific Initiative 645 position; inaccessible Times evidence. None is filled from an aggregator alone by this assessment.
