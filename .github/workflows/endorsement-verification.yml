@@ -1,0 +1,110 @@
+name: Endorsement verification
+
+on:
+  schedule:
+    - cron: "37 2,8,14,20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+# The Calendar watcher uses the same group. Reads and issue appends are one
+# serialized transaction, including manual retries and overlapping schedules.
+concurrency:
+  group: election-maintenance
+  cancel-in-progress: false
+
+env:
+  ARCHIVE_BRANCH: codex/endorsement-verification-state
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Mint the existing archive App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.ANALYTICS_ARCHIVE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ANALYTICS_ARCHIVE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-workflows: write
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+      - name: Continue committed evidence and incorporate current main
+        run: |
+          archive_ref="$(git ls-remote --heads origin "$ARCHIVE_BRANCH")"
+          if [ -n "$archive_ref" ]; then
+            git fetch origin "$ARCHIVE_BRANCH"
+            git checkout -B "$ARCHIVE_BRANCH" FETCH_HEAD
+            git fetch origin main
+            git -c user.name="github-actions[bot]" \
+                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                merge --no-edit origin/main
+          else
+            git checkout -B "$ARCHIVE_BRANCH"
+          fi
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: make sync
+      - name: Execute due work with private temporary captures
+        run: |
+          checked_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          uv run election-guide verification validate config/verification.yaml
+          uv run election-guide verification run config/verification.yaml \
+            --checked-at "$checked_at" --live \
+            > "$RUNNER_TEMP/endorsement-verification-report.json"
+          uv run election-guide verification validate config/verification.yaml
+        env:
+          ENDORSEMENT_EVIDENCE_KEY: ${{ secrets.ENDORSEMENT_EVIDENCE_KEY }}
+      - name: Validate before proposing an archive diff
+        run: make check
+      - name: Commit only public JSON records and encrypted captures
+        id: archive
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -d data/verification ]; then
+            git add data/verification
+            if ! git diff --cached --quiet; then
+              git commit -m "chore(data): retain endorsement verification observations"
+            fi
+          fi
+          # Push the commit before using its SHA in an issue's durable links.
+          if [ -d data/verification ]; then
+            git push origin "HEAD:refs/heads/$ARCHIVE_BRANCH"
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            if ! git diff --quiet origin/main...HEAD -- data/verification; then
+              echo "pending=true" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+      - name: Open or retain the evidence review PR
+        if: steps.archive.outputs.pending == 'true'
+        run: |
+          pr_number="$(gh pr list --head "$ARCHIVE_BRANCH" --base main --state open \
+            --json number,isCrossRepository \
+            --jq '.[] | select(.isCrossRepository == false) | .number')"
+          if [ -z "$pr_number" ]; then
+            gh pr create --head "$ARCHIVE_BRANCH" --base main \
+              --title "chore(data): retain endorsement verification evidence" \
+              --body-file .github/endorsement-verification-pr.md
+          fi
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+      - name: Reconcile source and manual review observations
+        if: steps.archive.outputs.available == 'true'
+        run: |
+          as_of="$(TZ=America/Los_Angeles date +%F)"
+          uv run election-guide verification reconcile config/verification.yaml \
+            --repository "$GITHUB_REPOSITORY" --revision "$(git rev-parse HEAD)" \
+            --as-of "$as_of" --watch
+        env:
+          GH_TOKEN: ${{ github.token }}

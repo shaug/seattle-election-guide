@@ -39,7 +39,9 @@ Raw captures are addressed by content hash and governed by `SOURCE_POLICY.md`.
 - **Configuration:** elections, jurisdictions, sources, scoring, and rendering policy.
 - **Collection:** HTTPX for static content and Playwright only when browser rendering is
   necessary. Collection never runs as an implicit part of publication.
-- **Evidence storage:** Locally obtained artifacts are stored by SHA-256 outside Git. Immutable
+- **Evidence storage:** Restricted plaintext artifacts are stored by SHA-256 outside Git. Recurring
+  verification retains authenticated encrypted captures alongside its immutable Git records;
+  the key is held separately. Permitted official-authority bytes are tracked directly. Immutable
   JSON manifests preserve retrieval metadata and redistribution constraints; unavailable sources
   remain explicit metadata-only records.
 - **Extraction:** source-specific adapters produce evidence-linked claims without deciding

@@ -102,6 +102,13 @@ def extract_decisions(
         ocr_confidence=ocr_confidence,
     )
     decisions: list[AdapterDecision] = []
+    if spec.section_pattern:
+        sections = list(re.finditer(spec.section_pattern, text, flags=re.IGNORECASE | re.MULTILINE))
+        if len(sections) != 1 or sections[0].re.groups != 1:
+            raise ExtractionError(
+                "adapter requires exactly one publication section and capture group"
+            )
+        text = sections[0].group(1)
     covered = list(re.finditer(spec.decision_pattern, text, flags=re.IGNORECASE | re.MULTILINE))
     covered_excerpts = [" ".join(match.group(0).split()) for match in covered]
     if not covered_excerpts:

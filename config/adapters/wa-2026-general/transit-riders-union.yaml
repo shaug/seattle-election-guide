@@ -1,0 +1,65 @@
+# Reviewed general-election facts; changed bytes always require review.
+schema_version: '1.0'
+source_id: transit-riders-union
+adapter_kind: static_html
+extractor_version: 1.0.0
+complete: true
+decision_pattern: (?:^32nd\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+1:\s+Danica\s+Noble$|^32nd\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+2:\s+Imraan\s+Siddiqi$|^37th\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+1:\s+Kelabe\s+Tewolde$|^37th\s+Legislative\s+District,\s+Washington\s+State\s+Senate:\s+Tatiana\s+Brown$|^43rd\s+Legislative\s+District,\s+Washington\s+State\s+Senate:\s+Hannah\s+Sabio\-Howell$|^King\s+County\s+Council\s+District\s+2:\s+Toshiko\s+Grace\s+Hasegawa\s+and\s+Rebecca\s+Saldaña$|^Seattle\s+City\s+Council\s+District\s+5:\s+Nilu\s+Jenks$|^Seattle\s+Municipal\s+Court\s+Judge:\s+Gabe\s+Rothstein$)
+rules:
+- race_id: ld-32-state-representative-1
+  pattern: ^32nd\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+1:\s+Danica\s+Noble$
+  status: endorsed
+  candidate_ids:
+  - ld-32-state-representative-1--danica-noble
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-32-state-representative-2
+  pattern: ^32nd\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+2:\s+Imraan\s+Siddiqi$
+  status: endorsed
+  candidate_ids:
+  - ld-32-state-representative-2--imraan-siddiqi
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-37-state-representative-1
+  pattern: ^37th\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+1:\s+Kelabe\s+Tewolde$
+  status: endorsed
+  candidate_ids:
+  - ld-37-state-representative-1--kelabe-tewolde
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-37-state-senator
+  pattern: ^37th\s+Legislative\s+District,\s+Washington\s+State\s+Senate:\s+Tatiana\s+Brown$
+  status: endorsed
+  candidate_ids:
+  - ld-37-state-senator--tatiana-brown
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-43-state-senator
+  pattern: ^43rd\s+Legislative\s+District,\s+Washington\s+State\s+Senate:\s+Hannah\s+Sabio\-Howell$
+  status: endorsed
+  candidate_ids:
+  - ld-43-state-senator--hannah-sabio-howell
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: king-county-council-2
+  pattern: ^King\s+County\s+Council\s+District\s+2:\s+Toshiko\s+Grace\s+Hasegawa\s+and\s+Rebecca\s+Saldaña$
+  status: dual_endorsement
+  candidate_ids:
+  - king-county-council-2--toshiko-grace-hasegawa
+  - king-county-council-2--rebecca-saldana
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: seattle-city-council-5
+  pattern: ^Seattle\s+City\s+Council\s+District\s+5:\s+Nilu\s+Jenks$
+  status: endorsed
+  candidate_ids:
+  - seattle-city-council-5--nilu-jenks
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: seattle-municipal-court-judge-5
+  pattern: ^Seattle\s+Municipal\s+Court\s+Judge:\s+Gabe\s+Rothstein$
+  status: endorsed
+  candidate_ids:
+  - seattle-municipal-court-judge-5--gabe-rothstein
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'

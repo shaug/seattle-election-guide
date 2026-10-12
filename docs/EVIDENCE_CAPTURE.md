@@ -231,3 +231,26 @@ IDs agree, and the underlying artifact still matches its hash. Import writes can
 write-once JSON under `data/review/manual/`. A metadata-only unavailable record cannot support a
 manual transcription; capture the reviewer-visible screenshot, image, PDF, or permitted extract
 first.
+
+## Encrypted recurring-verification custody (#497)
+
+The two roots above describe **plaintext** capture storage. Recurring verification
+adds `data/verification/<election>/vault/sha256/<prefix>/<digest>.json` for
+AES-256-GCM ciphertext, not raw artifact bytes. SOURCE_POLICY.md authorizes this
+specific encrypted Git custody for publicly accessible responses. Keys stay in
+private maintainer custody and the `ENDORSEMENT_EVIDENCE_KEY` Actions secret.
+
+`verification seal` preserves the original content address, authenticates existing
+envelopes, and reuses unchanged ciphertext. `verification restore` authenticates
+all envelopes before writing original bytes into an external/private or ignored
+local directory. Neither command outputs the raw page. The runner uses private
+temporary directories, seals captures before publishing observations, and removes
+plaintext at transaction end. Archive validation checks public record identities,
+capture/snapshot/check links, and envelope sizes without needing a PR secret.
+Keyed runs additionally verify decrypted hashes. The original manifest's
+`local_only` scope remains truthful about the raw capture; the vault supplies its
+separate durable encrypted custody without rewriting provenance IDs.
+
+Use the [verification runbook](runbooks/endorsement-source-daily-verification.md)
+for first-baseline review, the Git archive branch, key recovery, and failure
+reporting. Do not commit keys or upload decrypted captures.
