@@ -25,6 +25,7 @@ import {
 import {
   countingSummary,
   endorsementCountLabel,
+  guideCardLabel,
   hasNoMajority,
   percentageLabel,
   raceDetailAccessibleSummary,
@@ -117,6 +118,7 @@ const RUNNERS = {
     supportSummaryCompact(rational(leaderUnits), explicitCount),
   'recommendation-label': ({ scored: race, labels }) =>
     recommendationLabel(scored(race), labelMap(labels)),
+  'guide-card-label': ({ scored: race, labels }) => guideCardLabel(scored(race), labelMap(labels)),
   'race-detail-support-summary': ({ scored: race, leaderCount }) =>
     raceDetailSupportSummary(scored(race), null, leaderCount),
   'race-detail-accessible-summary': ({ scored: race, labels, leaderCount }) =>

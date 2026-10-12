@@ -278,6 +278,13 @@ then any sticky strip, then content.
 
 ## Data display
 
+- **Sparse endorsements still name the measured leader on the guide card.**
+  When endorsements exist but fall below the consensus floor, the heading
+  names the candidate or choice. The warning below explains that there are
+  too few endorsements to measure agreement; the meter and source count stay
+  visible. With no endorsements, the heading remains "Too few endorsements".
+  This display does not create a consensus recommendation (issue
+  [#532](https://github.com/shaug/seattle-election-guide/issues/532)).
 - **Every quantity has exactly one value on screen.** Under a personalized
   lens, every computed number — counts, shares, meters, "Leading choice"
   kickers — shows the lens value; the audited baseline appears only as the

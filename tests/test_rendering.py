@@ -429,6 +429,44 @@ def test_shared_site_band_orders_nav_by_dependency() -> None:
     assert band.index(">Comparisons</a>") < band.index(">How this works</a>")
 
 
+@pytest.mark.parametrize("choice_count", [0, 1, 2])
+def test_guide_card_names_endorsed_choices_without_hiding_insufficiency(
+    tmp_path: Path, choice_count: int
+) -> None:
+    candidates = _candidate_ids()
+    decisions: list[tuple[str, EndorsementStatus, list[str]]] = (
+        [
+            (
+                CONSENSUS_SOURCE_IDS[0],
+                "dual_endorsement" if choice_count == 2 else "endorsed",
+                candidates[:choice_count],
+            )
+        ]
+        if choice_count
+        else []
+    )
+    dataset = _dataset(tmp_path, decisions)
+    snapshot_root = _snapshot_store(tmp_path, dataset)
+    report = score_dataset(dataset, _configuration(), computed_at=NOW)
+    view_model = build_publication_bundle(
+        dataset, report, git_commit="render-fixture", snapshot_root=snapshot_root
+    ).view_model
+    race = next(
+        race for section in view_model.sections for race in section.races if race.id == RACE_ID
+    )
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
+    card = html.split(f'id="race-{RACE_ID}"', 1)[1].split("</article>", 1)[0]
+    heading = re.search(r'<h3 data-display-role="recommendation">(.*?)</h3>', card)
+    assert heading is not None
+    assert unescape(heading.group(1)) == (
+        " / ".join(race.support_leader_candidate_labels) if choice_count else "Too few endorsements"
+    )
+    assert f'href="/e/{view_model.metadata.election_id}/races/{RACE_ID}/"' in card
+    assert ('data-display-role="insufficient-warning"' in card) == (choice_count < 2)
+    assert "screen-meter" in card
+    assert (">N/A</strong>" in card) == (choice_count == 0)
+
+
 def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path: Path) -> None:
     view_model = _view_model(tmp_path)
     gap_source = next(source for source in view_model.sources if source.endorsement_count == 0)

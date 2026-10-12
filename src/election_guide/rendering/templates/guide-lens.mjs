@@ -29,8 +29,8 @@ import {
 import {
   allSourcesSummary,
   countingSummary,
+  guideCardLabel,
   hasNoMajority,
-  recommendationLabel,
   supportSummary,
   supportSummaryCompact,
 } from './guide-format.mjs';
@@ -139,7 +139,7 @@ export function createGuideLens(payload) {
    */
   const cardViews = (raceId, scored, selectedTotal, allSources) => {
     const labels = candidateLabelsByRaceId.get(raceId) ?? new Map();
-    const recommendation = recommendationLabel(scored, labels);
+    const recommendation = guideCardLabel(scored, labels);
     const endorsements = meterEndorsementsFromCells(scored.meterCells, sourceNameByCode, labels);
     const leaderUnits = meterLeaderUnits(scored, endorsements);
     return {

@@ -184,6 +184,7 @@ def render_html_document(
         **context.footer_update_context(view_model),
         filter_scope_groups=filter_scope_groups,
         has_no_majority=context.has_no_majority,
+        guide_card_label=context.guide_card_label,
         screen_support_summary=partial(context.screen_support_summary, sources=sources_by_id),
         screen_support_summary_compact=partial(
             context.screen_support_summary_compact, sources=sources_by_id

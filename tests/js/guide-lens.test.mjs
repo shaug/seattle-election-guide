@@ -264,7 +264,7 @@ test('reselecting every source restores the audited values', async () => {
 // sentence the retired lens-only twin used to carry — so they are asserted here
 // rather than left to a whole-document search that the inlined bundle would
 // satisfy on its own (docs/FRONTEND.md § Cross-language mirrors).
-test('an insufficient race states the shortage, in the wording that applies', async () => {
+test('an insufficient race names the leader while warning about the shortage', async () => {
   // Three endorsing sources required, so both the one-source lens and the
   // two-source audited baseline fall short. Both sources back Ada here: a tie
   // outranks Insufficient in the grade order, and a tied audited baseline would
@@ -274,8 +274,14 @@ test('an insufficient race states the shortage, in the wording that applies', as
   strict.personalization.races[0].cells[1].allocation = { ada: '1' };
   const { document, lens } = await build(strict);
   const note = () => document.querySelector('[data-lens-foot] .insufficient-note');
+  const heading = () => document.querySelector('[data-lens-result] h3').textContent;
 
   lens.render(['strn']);
+  assert.equal(heading(), 'Ada Lovelace');
+  assert.equal(
+    document.querySelector('[data-lens-result] .screen-meter strong').textContent,
+    '100%',
+  );
   assert.equal(
     note().textContent,
     'Too few endorsements to measure agreement among your selected sources.',
@@ -285,7 +291,15 @@ test('an insufficient race states the shortage, in the wording that applies', as
   // The audited restore is a render, so it must put the server's own wording
   // back rather than leaving the personalized sentence behind.
   lens.render(['strn', 'mlkl']);
+  assert.equal(heading(), 'Ada Lovelace');
   assert.equal(note().textContent, 'Too few endorsements to measure agreement.');
+
+  lens.render([]);
+  assert.equal(heading(), 'Too few endorsements');
+  assert.equal(
+    document.querySelector('[data-lens-result] .screen-meter strong').textContent,
+    'N/A',
+  );
 });
 
 // I41's threshold is a Python/JavaScript mirror — guide.html.j2 writes

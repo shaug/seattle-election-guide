@@ -12,6 +12,7 @@ import {
   countingSummary,
   endorsementCountLabel,
   filterStatusParts,
+  guideCardLabel,
   hasNoMajority,
   percentageLabel,
   raceDetailAccessibleSummary,
@@ -101,6 +102,24 @@ test('the headline names the leader, the tie, or the absence of evidence', () =>
 // carries it. `leaderUnits` is `null` exactly when there is no single choice
 // to attribute it to — a tie, or no consensus — which is the caption's pre-v2
 // fallback wording.
+test('sparse guide cards show measured leaders and preserve the empty state', () => {
+  assert.equal(
+    guideCardLabel(scored({ grade: 'Insufficient', explicitCount: 1 }), LABELS),
+    'Ada Lovelace',
+  );
+  assert.equal(
+    guideCardLabel(
+      scored({ grade: 'Insufficient', winnerId: null, winnerIds: [], explicitCount: 0 }),
+      LABELS,
+    ),
+    'Too few endorsements',
+  );
+  assert.equal(
+    guideCardLabel(scored({ grade: 'TIED', isTied: true, winnerIds: ['a', 'b'] }), LABELS),
+    'Ada Lovelace / Blaise Pascal',
+  );
+});
+
 test('the caption states the exact count, never the leader by name', () => {
   assert.equal(supportSummary(new Rational(3n), 4), '3 of 4 endorsements');
   assert.equal(supportSummary(new Rational(7n, 2n), 4, 9), '3½ of 9 selected sources');

@@ -373,6 +373,11 @@ def _race_cases(
             "expected": race.recommendation_label,
         },
         {
+            "mirror": "guide-card-label",
+            "input": {"scored": scored, "labels": labels},
+            "expected": context.guide_card_label(race),
+        },
+        {
             "mirror": "race-detail-support-summary",
             "input": {"scored": scored, "leaderCount": leader_count},
             "expected": context.race_detail_support_summary(race),

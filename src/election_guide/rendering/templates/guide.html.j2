@@ -101,7 +101,7 @@
                  guide-card.mjs renders — from the audited view model until a
                  selection diverges, from the personalized one afterwards. #}
               <div class="screen-race-result" data-lens-result>
-                <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
+                <h3 data-display-role="recommendation">{{ guide_card_label(race) }}</h3>
                 {{ segmented_meter(meter_view(race)) }}
               </div>
               {# I39: the primary block ends with the caption directly under

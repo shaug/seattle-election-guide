@@ -445,6 +445,265 @@
       "source": "endorsement_count_label as shipped"
     },
     {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "TIED",
+          "isTied": true,
+          "winnerId": null,
+          "winnerIds": [
+            "king-county-assessor--christopher-roberts",
+            "king-county-assessor--rob-foxcurran"
+          ],
+          "winnerShare": "1/2",
+          "explicitCount": 2
+        },
+        "labels": {
+          "king-county-assessor--christopher-roberts": "Christopher Roberts",
+          "king-county-assessor--rob-foxcurran": "Rob Foxcurran"
+        }
+      },
+      "expected": "Christopher Roberts / Rob Foxcurran",
+      "source": "published race king-county-assessor on the district-sources panel",
+      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "A",
+          "isTied": false,
+          "winnerId": "king-county-council-8--teresa-mosqueda",
+          "winnerIds": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "winnerShare": "1",
+          "explicitCount": 2
+        },
+        "labels": {
+          "king-county-council-8--teresa-mosqueda": "Teresa Mosqueda"
+        }
+      },
+      "expected": "Teresa Mosqueda",
+      "source": "published race king-county-council-8 on the district-sources panel",
+      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "TIED",
+          "isTied": true,
+          "winnerId": null,
+          "winnerIds": [
+            "ld-11-state-representative-1--ashley-fedan",
+            "ld-11-state-representative-1--david-hackney"
+          ],
+          "winnerShare": "1/2",
+          "explicitCount": 1
+        },
+        "labels": {
+          "ld-11-state-representative-1--ashley-fedan": "Ashley Fedan",
+          "ld-11-state-representative-1--david-hackney": "David Hackney"
+        }
+      },
+      "expected": "Ashley Fedan / David Hackney",
+      "source": "published race ld-11-state-representative-1 on the district-sources panel",
+      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "TIED",
+          "isTied": true,
+          "winnerId": null,
+          "winnerIds": [
+            "ld-32-state-representative-1--keith-scully",
+            "ld-32-state-representative-1--danica-noble"
+          ],
+          "winnerShare": "1/2",
+          "explicitCount": 2
+        },
+        "labels": {
+          "ld-32-state-representative-1--danica-noble": "Danica Noble",
+          "ld-32-state-representative-1--keith-scully": "Keith Scully"
+        }
+      },
+      "expected": "Keith Scully / Danica Noble",
+      "source": "published race ld-32-state-representative-1 on the two-sources panel",
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "C",
+          "isTied": false,
+          "winnerId": "ld-32-state-representative-2--lauren-davis",
+          "winnerIds": [
+            "ld-32-state-representative-2--lauren-davis"
+          ],
+          "winnerShare": "21/38",
+          "explicitCount": 19
+        },
+        "labels": {
+          "ld-32-state-representative-2--lauren-davis": "Lauren Davis",
+          "ld-32-state-representative-2--imraan-siddiqi": "Imraan Siddiqi"
+        }
+      },
+      "expected": "Lauren Davis",
+      "source": "published race ld-32-state-representative-2 on the audited panel",
+      "note": "The published panel: the shares, grades, and captions the guide ships."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "A",
+          "isTied": false,
+          "winnerId": "ld-32-state-representative-2--imraan-siddiqi",
+          "winnerIds": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "winnerShare": "1",
+          "explicitCount": 2
+        },
+        "labels": {
+          "ld-32-state-representative-2--imraan-siddiqi": "Imraan Siddiqi"
+        }
+      },
+      "expected": "Imraan Siddiqi",
+      "source": "published race ld-32-state-representative-2 on the two-sources panel",
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "A+",
+          "isTied": false,
+          "winnerId": "ld-34-state-representative-2--joe-fitzgibbon",
+          "winnerIds": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ],
+          "winnerShare": "18/19",
+          "explicitCount": 19
+        },
+        "labels": {
+          "ld-34-state-representative-2--joe-fitzgibbon": "Joe Fitzgibbon",
+          "ld-34-state-representative-2--mary-anito": "Mary Anito"
+        }
+      },
+      "expected": "Joe Fitzgibbon",
+      "source": "published race ld-34-state-representative-2 on the audited panel",
+      "note": "The published panel: the shares, grades, and captions the guide ships."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "A",
+          "isTied": false,
+          "winnerId": "ld-37-state-senator--chipalo-street",
+          "winnerIds": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "winnerShare": "29/36",
+          "explicitCount": 18
+        },
+        "labels": {
+          "ld-37-state-senator--chipalo-street": "Chipalo Street",
+          "ld-37-state-senator--tatiana-brown": "Tatiana Brown"
+        }
+      },
+      "expected": "Chipalo Street",
+      "source": "published race ld-37-state-senator on the audited panel",
+      "note": "The published panel: the shares, grades, and captions the guide ships."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "Insufficient",
+          "isTied": false,
+          "winnerId": "us-house-7--pramila-jayapal",
+          "winnerIds": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "winnerShare": "1",
+          "explicitCount": 1
+        },
+        "labels": {
+          "us-house-7--pramila-jayapal": "Pramila Jayapal"
+        }
+      },
+      "expected": "Pramila Jayapal",
+      "source": "published race us-house-7 on the single-source panel",
+      "note": "One source falls below the explicit-source floor, so every race is insufficient and the races it did not cover have no share at all."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "A+",
+          "isTied": false,
+          "winnerId": "us-house-7--pramila-jayapal",
+          "winnerIds": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "winnerShare": "1",
+          "explicitCount": 20
+        },
+        "labels": {
+          "us-house-7--pramila-jayapal": "Pramila Jayapal"
+        }
+      },
+      "expected": "Pramila Jayapal",
+      "source": "published race us-house-7 on the audited panel",
+      "note": "The published panel: the shares, grades, and captions the guide ships."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "B",
+          "isTied": false,
+          "winnerId": "us-house-9--adam-smith",
+          "winnerIds": [
+            "us-house-9--adam-smith"
+          ],
+          "winnerShare": "8/11",
+          "explicitCount": 11
+        },
+        "labels": {
+          "us-house-9--adam-smith": "Adam Smith",
+          "us-house-9--kshama-sawant": "Kshama Sawant",
+          "us-house-9--melissa-chaudhry": "Melissa Chaudhry"
+        }
+      },
+      "expected": "Adam Smith",
+      "source": "published race us-house-9 on the audited panel",
+      "note": "The published panel: the shares, grades, and captions the guide ships."
+    },
+    {
+      "mirror": "guide-card-label",
+      "input": {
+        "scored": {
+          "grade": "Insufficient",
+          "isTied": false,
+          "winnerId": null,
+          "winnerIds": [],
+          "winnerShare": null,
+          "explicitCount": 0
+        },
+        "labels": {}
+      },
+      "expected": "Too few endorsements",
+      "source": "published race ld-11-state-representative-2 on the single-source panel",
+      "note": "One source falls below the explicit-source floor, so every race is insufficient and the races it did not cover have no share at all."
+    },
+    {
       "mirror": "meter-accessible-label",
       "input": {
         "standings": [
