@@ -598,6 +598,30 @@ class PublicationViewModel(PublicationModel):
     `#290`'s corrections page, and every page's nav link to it, render only
     when this is not `None` and carries at least one entry."""
 
+    @property
+    def guide_sections(self) -> list[PublicationSection]:
+        """The general-election overview omits unendorsed, unopposed races.
+
+        Keep the full sections for exports, comparisons, race pages, and
+        legacy-link routing. Visibility uses the audited panel's affirmative
+        cells, including comparison sources, independently of a reader's lens.
+        """
+        if self.metadata.election_type != "general":
+            return self.sections
+        sections: list[PublicationSection] = []
+        for section in self.sections:
+            races = [
+                race
+                for race in section.races
+                if race.is_contested
+                or any(
+                    cell.state in {"endorsement", "multi_endorsement"} for cell in race.source_cells
+                )
+            ]
+            if races:
+                sections.append(section.model_copy(update={"races": races}))
+        return sections
+
     @model_validator(mode="after")
     def validate_schema_fields(self) -> PublicationViewModel:
         registry_hash = self.metadata.source_registry_hash

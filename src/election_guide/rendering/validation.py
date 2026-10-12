@@ -60,11 +60,12 @@ def validate_rendered_guide(
         race_parser.feed(race_html)
     race_parser.close()
     expected_races = [race for section in view_model.sections for race in section.races]
-    expected_race_ids = [race.id for race in expected_races]
+    overview_races = [race for section in view_model.guide_sections for race in section.races]
+    expected_race_ids = [race.id for race in overview_races]
     source_by_id = {source.id: source for source in view_model.sources}
     mismatched_html_roles: list[str] = []
     mismatched_meter_structure: list[str] = []
-    for race in expected_races:
+    for race in overview_races:
         for role, expected_values in _html_semantic_values(race, source_by_id).items():
             observed_values = [
                 _normalized_text(" ".join(parts))
@@ -87,6 +88,9 @@ def validate_rendered_guide(
         # `_html_semantic_values`'s "share" role already checks.
         if parser.meter_block_counts.get(race.id, 0) != len(meter.blocks):
             mismatched_meter_structure.append(f"{race.id}/share-block-count")
+    # Individual race pages retain the complete ballot, including races the
+    # general-election overview omits. Audit all of their evidence and meters.
+    for race in expected_races:
         # The race page's own headline no longer draws a meter at all
         # (docs/METER_V2.md, Chrome geometry: "The headline meter's own
         # fate"; #325) — every standing candidate's own section draws one
@@ -203,7 +207,7 @@ def validate_rendered_guide(
         f"/e/{view_model.metadata.election_id}/release-manifest.json",
         # Every card's core recommendation area links its race's own page
         # (issue #136), where the evidence links now live.
-        *(race_page_path(view_model.metadata.election_id, race.id) for race in expected_races),
+        *(race_page_path(view_model.metadata.election_id, race.id) for race in overview_races),
     }
     if view_model.results is None:
         # Slot 4's "How to vote" (issue 192). King County Elections administers
@@ -216,10 +220,17 @@ def validate_rendered_guide(
         expected_html_links.add(f"/e/{view_model.metadata.election_id}/comparisons/")
     if view_model.metadata.results_capture_urls:
         # The results-strip provenance "evidence" link (#286) appears on the
-        # page once a race's own `results_capture_urls` entry resolves, so
-        # validation needs the same gate -- one url per counting authority in
-        # the file (issue #417), not one for the whole page.
-        expected_html_links.update(view_model.metadata.results_capture_urls.values())
+        # page only for a rendered race with certified results. Omitted
+        # overview cards retain their receipts on their individual pages.
+        for race in overview_races:
+            result = context.race_results_view(
+                race,
+                view_model.results,
+                election_type=view_model.metadata.election_type,
+                capture_urls=view_model.metadata.results_capture_urls,
+            )
+            if result is not None and result.capture_url is not None:
+                expected_html_links.add(result.capture_url)
     if view_model.corrections is not None and view_model.corrections.entries:
         # The band's nav grows a Corrections link under the same "state, not
         # option" gate `documents.py`'s `_corrections_href` follows (#290).

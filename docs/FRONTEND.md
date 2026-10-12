@@ -233,7 +233,7 @@ purpose and watch the check fail.
   parity test boots its audited page in the lightweight DOM and diffs what lit
   rendered against what Jinja did: `compare-markup-parity.test.mjs` for the
   Comparisons table's row groups, `guide-markup-parity.test.mjs` for all three
-  card regions of every race on the ballot after a lens is applied and cleared,
+  card regions of every rendered race after a lens is applied and cleared,
   and `sources-markup-parity.test.mjs` for the sources tree and count line at
   boot. The audited pages are committed
   under `tests/js/fixtures/`, rendered by `tests/page_parity.py` and

@@ -60,7 +60,7 @@ def build_rendered_guide(
             encoding="utf-8",
             newline="\n",
         )
-        expected_race_count = sum(len(section.races) for section in view_model.sections)
+        expected_race_count = sum(len(section.races) for section in view_model.guide_sections)
         screenshots = [
             render_screenshot(
                 html_path,

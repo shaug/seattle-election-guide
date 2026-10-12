@@ -323,7 +323,8 @@ def _capture_emulated_viewport(
                     "const controlQuery=new URLSearchParams(window.location.search);"
                     "const controls={"
                     "compact:document.documentElement.dataset.ballotView==='compact',"
-                    "scopePreserved:Boolean(scopedOption&&filter.value===scopedOption.value),"
+                    "scopePreserved:scopedOption?filter.value===scopedOption.value:"
+                    "filter.value==='all'&&filter.options.length===1,"
                     "contested:Boolean(contestedFilter?.checked),"
                     "pairedSelectors:binarySelectors.length===2&&"
                     "Math.abs(selectorWidths[0]-selectorWidths[1])<=1&&"
@@ -333,8 +334,13 @@ def _capture_emulated_viewport(
                     "countMatches:compactCards.length===expectedCompactCards.length,"
                     "urlView:controlQuery.get('view')==='compact',"
                     "urlRaces:controlQuery.get('races')==='contested',"
-                    "urlFilter:controlQuery.get('filter')===scopedOption?.value,"
-                    "denseColumns:compactColumns===expectedCompactColumns,"
+                    "urlFilter:controlQuery.get('filter')===(scopedOption?.value??null),"
+                    # An empty overview has no scoped option or grid, and a
+                    # contested-only filter can also hide every visible card.
+                    # Check absence in that state; retain the column check
+                    # whenever any compact card should remain.
+                    "denseColumns:expectedCompactCards.length===0?!compactGrid:"
+                    "compactColumns===expectedCompactColumns,"
                     "noOverflow:document.documentElement.scrollWidth<=window.innerWidth+1,"
                     "compactMetersLeftAligned:compactCards.every(card=>{"
                     "const meter=card.querySelector('.screen-meter');"
