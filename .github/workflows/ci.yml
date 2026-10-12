@@ -285,7 +285,6 @@ jobs:
           uv run election-guide hosting check-production
           https://seattleelections.guide
           --expected-git-commit "$GITHUB_SHA"
-          --dry-run
           --output dist/production-probe.json
       - name: Preserve production verification evidence
         if: always()

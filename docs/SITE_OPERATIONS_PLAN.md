@@ -487,25 +487,25 @@ at roughly T+30. Documentation only.
 The worst outcome for this project is the guide being down, stale, or wrong during the week voters
 use it. This epic makes those states detectable and recoverable.
 
-## O14 — Check availability and verify production deployments
+## O14 — Verify production deployments and retain manual diagnostics
 
-**Policy update, October 11, 2026 (#512).** The original scheduled comparison against `main`
-and pre-election cadence are superseded. A merge can deliberately remain unpublished.
+**Policy update, October 11, 2026 (#523).** Retire hourly availability monitoring and its alert
+issues, superseding #512. The site has no backing state or service to repair after an unchanged
+deployment fails. Deployment verification has an actionable fix-or-rollback response.
 
-**Outcome.** One hourly availability probe raises an alert when the served manifest or core
-routes fail. Every dispatched run executes the probe, including a delayed scheduled run.
+**Outcome.** Every production upload is verified against its exact commit, with evidence saved
+even on failure. Manual production checks remain available and are always read-only.
 
-**Scope.** Request `/deployment-manifest.json`, `/`, the current guide declared by the served
-manifest, and its legacy PDF redirect. Preserve the single alert issue and close it on recovery.
-Do not compare against unpublished `main` commits or pending release declarations. After a
-production deployment, run strict release verification against the uploaded job's explicit SHA
-and preserve its evidence; a mismatch fails that deployment job without an automatic rollback.
+**Scope.** Remove the production availability workflow and production-specific GitHub alert
+reconciliation. After a production deployment, run strict release verification against the
+uploaded job's explicit SHA and preserve its evidence; a mismatch fails that deployment job
+without an automatic rollback. Retain the manual `--availability-only` probe without release
+expectations. Keep source-link alerts and recurring endorsement maintenance separate.
 
 **Acceptance.**
-- [ ] A healthy site produces a passing run and no issue.
-- [ ] A missing guide or unreachable manifest raises an alert.
-- [ ] The alert issue is updated rather than duplicated and closes on recovery.
-- [ ] Delayed scheduled runs still execute the availability probe.
+- [ ] No hourly production workflow remains.
+- [ ] Healthy and failing manual checks never access GitHub or mutate issues.
+- [ ] A failed check exits nonzero and can preserve its JSON evidence.
 - [ ] Strict post-deploy verification uses the deployed SHA rather than a newer `main` head.
 
 ## O15 — Write and rehearse the rollback procedure
@@ -527,7 +527,7 @@ observed timings. The rehearsal is part of the ticket, not a follow-up.
 ## O16 — Check published data freshness during release verification
 
 **Policy update, October 11, 2026 (#512).** Data age is checked by the strict release probe,
-including after a production upload, rather than by the scheduled availability monitor.
+including after a production upload. Scheduled availability monitoring is retired (#523).
 
 **Outcome.** Strict verification detects stale published data inside an active election window.
 
