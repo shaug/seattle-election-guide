@@ -186,6 +186,9 @@ uv run election-guide release verify-lineage \
 Both identities must be full Git commit IDs in the current repository, and the release candidate
 must be an ancestor of the distinct production candidate. The command independently verifies each
 bundle, including its exact declared file set and every manifest hash, before comparing anything.
+Within each bundle, timestamp identities must agree as timezone-aware instants. The builder emits
+both `Z` and `+00:00` for UTC; these spellings are equivalent. Different instants, missing timezones,
+and malformed timestamps are rejected, including in consensus rows and the release notes.
 It then requires the same election, release, source panel and registry, canonical dataset,
 source-decision snapshots, scoring input, and deterministic release content.
 

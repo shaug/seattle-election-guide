@@ -65,6 +65,108 @@ def test_release_verify_lineage_accepts_only_commit_bound_provenance_changes(
     }
 
 
+def test_release_verify_lineage_does_not_normalize_time_copies_in_notes_prose(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    repository, release_sha, production_sha, release_bundle, production_bundle = _lineage_fixture(
+        tmp_path
+    )
+    for bundle, timestamp in (
+        (release_bundle, "2026-10-16T16:00:00Z"),
+        (production_bundle, "2026-10-16T17:00:00Z"),
+    ):
+        notes = bundle / "RELEASE_NOTES.md"
+        notes.write_text(notes.read_text() + f"\nAdditional prose: - Built at: {timestamp}.\n")
+        _rehash_release_manifest(bundle, "RELEASE_NOTES.md")
+    monkeypatch.chdir(repository)
+
+    result = _invoke_lineage(release_bundle, production_bundle, release_sha, production_sha)
+
+    assert result.exit_code == 1
+    assert "release content differs: RELEASE_NOTES.md" in json.loads(result.stdout)["errors"]
+
+
+@pytest.mark.parametrize("mixed_side", ["release", "production"])
+def test_release_verify_lineage_accepts_the_builders_mixed_utc_spelling(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mixed_side: str
+) -> None:
+    repository, release_sha, production_sha, release_bundle, production_bundle = _lineage_fixture(
+        tmp_path
+    )
+    bundle = release_bundle if mixed_side == "release" else production_bundle
+    manifest_path = bundle / "release-manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    utc_spelling = manifest["generated_at"]
+    manifest["generated_at"] = utc_spelling.replace("Z", "+00:00")
+    manifest_path.write_bytes(_json_bytes(manifest))
+    notes_path = bundle / "RELEASE_NOTES.md"
+    notes_path.write_text(notes_path.read_text().replace(utc_spelling, manifest["generated_at"]))
+    _rehash_release_manifest(bundle, "RELEASE_NOTES.md")
+    monkeypatch.chdir(repository)
+
+    result = _invoke_lineage(release_bundle, production_bundle, release_sha, production_sha)
+
+    assert result.exit_code == 0, result.stdout
+    assert json.loads(result.stdout)["result"] == "pass"
+
+
+@pytest.mark.parametrize(
+    ("relative", "time_path"),
+    [
+        ("data/consensus.json", ("computed_at",)),
+        ("data/consensus.json", ("races", 0, "computed_at")),
+        ("data/publication_view_model.json", ("metadata", "generated_at")),
+        ("data/validation_report.json", ("generated_at",)),
+        ("data/provenance_manifest.json", ("generated_at",)),
+        ("data/build_manifest.json", ("generated_at",)),
+    ],
+)
+def test_release_verify_lineage_accepts_equivalent_internal_times(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    relative: str,
+    time_path: tuple[str | int, ...],
+) -> None:
+    repository, release_sha, production_sha, release_bundle, production_bundle = _lineage_fixture(
+        tmp_path
+    )
+    _rewrite_timestamp(production_bundle, relative, time_path, "2026-10-16T17:00:00+00:00")
+    monkeypatch.chdir(repository)
+
+    result = _invoke_lineage(release_bundle, production_bundle, release_sha, production_sha)
+
+    assert result.exit_code == 0, result.stdout
+    assert json.loads(result.stdout)["result"] == "pass"
+
+
+@pytest.mark.parametrize("invalid_time", ["2026-10-16T17:00:01Z", "2026-10-16T17:00:00", "invalid"])
+@pytest.mark.parametrize(
+    ("relative", "time_path"),
+    [
+        ("data/validation_report.json", ("generated_at",)),
+        ("data/consensus.json", ("races", 0, "computed_at")),
+        ("RELEASE_NOTES.md", ()),
+    ],
+)
+def test_release_verify_lineage_rejects_inconsistent_or_unaware_times(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    relative: str,
+    time_path: tuple[str | int, ...],
+    invalid_time: str,
+) -> None:
+    repository, release_sha, production_sha, release_bundle, production_bundle = _lineage_fixture(
+        tmp_path
+    )
+    _rewrite_timestamp(production_bundle, relative, time_path, invalid_time)
+    monkeypatch.chdir(repository)
+
+    result = _invoke_lineage(release_bundle, production_bundle, release_sha, production_sha)
+
+    assert result.exit_code == 1
+    assert json.loads(result.stdout)["result"] == "fail"
+
+
 @pytest.mark.parametrize(
     "relative",
     [
@@ -603,6 +705,43 @@ def _invoke_lineage(
             production_sha,
         ],
     )
+
+
+def _rewrite_timestamp(
+    bundle: Path, relative: str, time_path: tuple[str | int, ...], timestamp: str
+) -> None:
+    """Prepare a hash-valid bundle whose one timestamp is the controlled input."""
+    path = bundle / relative
+    if relative == "RELEASE_NOTES.md":
+        notes = path.read_text()
+        built_line = next(line for line in notes.splitlines() if line.startswith("- Built at: "))
+        path.write_text(notes.replace(built_line, f"- Built at: {timestamp}"))
+    else:
+        payload = json.loads(path.read_text())
+        value = payload
+        for key in time_path[:-1]:
+            value = value[key]
+        value[time_path[-1]] = timestamp
+        path.write_bytes(_json_bytes(payload))
+
+    consensus_hash = hashlib.sha256((bundle / "data/consensus.json").read_bytes()).hexdigest()
+    for name in ("data/provenance_manifest.json", "data/build_manifest.json"):
+        manifest_path = bundle / name
+        manifest = json.loads(manifest_path.read_text())
+        manifest["consensus_output_hash"] = consensus_hash
+        if name == "data/build_manifest.json":
+            for artifact in manifest["artifact_hashes"]:
+                manifest["artifact_hashes"][artifact] = hashlib.sha256(
+                    (bundle / "data" / artifact).read_bytes()
+                ).hexdigest()
+        manifest_path.write_bytes(_json_bytes(manifest))
+    release_path = bundle / "release-manifest.json"
+    release = json.loads(release_path.read_text())
+    for artifact in release["artifact_hashes"]:
+        release["artifact_hashes"][artifact] = hashlib.sha256(
+            (bundle / artifact).read_bytes()
+        ).hexdigest()
+    release_path.write_bytes(_json_bytes(release))
 
 
 def _rehash_release_manifest(bundle: Path, relative: str) -> None:
