@@ -36,7 +36,7 @@ def test_six_general_sources_match_reviewed_facts_and_cover_all_eligible_sources
     assert result.exit_code == 0, result.output
     report = json.loads(result.output)
     expected = yaml.safe_load(
-        (ROOT / "data/releases/wa-2026-general/source-decisions.yaml").read_text()
+        (ROOT / "tests/fixtures/verification/reviewed-decisions.yaml").read_text()
     )
     assert len(report["automatic"]) == 6
     for event in report["automatic"]:

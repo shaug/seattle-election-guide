@@ -1,0 +1,280 @@
+# Independently reviewed #474 ledger, frozen with the October 4 source fixtures.
+# Source commit: af033cb6eff162a7f6becd01177962ae74795ce0
+# Source path: data/releases/wa-2026-general/source-decisions.yaml
+sources:
+- source_id: washington-working-families-party
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--kelabe-tewolde
+- source_id: sage-leaders
+  decisions:
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+    - ld-37-state-senator--tatiana-brown
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--hannah-sabio-howell
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--kelabe-tewolde
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--imraan-siddiqi
+- source_id: transit-riders-union
+  decisions:
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--danica-noble
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--imraan-siddiqi
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--kelabe-tewolde
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--tatiana-brown
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--hannah-sabio-howell
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--toshiko-grace-hasegawa
+    - king-county-council-2--rebecca-saldana
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: seattle-municipal-court-judge-5
+    candidate_ids:
+    - seattle-municipal-court-judge-5--gabe-rothstein
+- source_id: seattle-gay-news
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--tatiana-brown
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--kelabe-tewolde
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--hannah-sabio-howell
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+- source_id: seiu-775
+  decisions:
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: us-house-9
+    candidate_ids:
+    - us-house-9--adam-smith
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--david-hackney
+  - race_id: ld-11-state-representative-2
+    candidate_ids:
+    - ld-11-state-representative-2--steve-bergquist
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-1
+    candidate_ids:
+    - ld-34-state-representative-1--brianna-k-thomas
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-43-state-representative-2
+    candidate_ids:
+    - ld-43-state-representative-2--shaun-scott
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+- source_id: ufcw-3000
+  decisions:
+  - race_id: king-county-assessor
+    candidate_ids:
+    - king-county-assessor--rob-foxcurran
+  - race_id: king-county-prosecuting-attorney
+    candidate_ids:
+    - king-county-prosecuting-attorney--leesa-manion
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--david-hackney
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--danica-noble
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+    - ld-32-state-representative-2--imraan-siddiqi
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--jesse-salomon
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-1
+    candidate_ids:
+    - ld-34-state-representative-1--brianna-k-thomas
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
