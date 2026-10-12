@@ -117,7 +117,9 @@ each HTTP fetch retains the existing public-peer, redirect, time, and size limit
 ## Results and finite review tasks
 
 The Calendar watcher reads committed archive state independently of the source
-job. Both workflows share `election-maintenance` concurrency, which serializes
+job. It uses the pending archive branch when present, or the checked-out mainline
+state after an evidence PR merges and its branch is deleted. Both workflows
+share `election-maintenance` concurrency, which serializes
 read/create/append across scheduled and manual runs. Local reconciliation must
 also be run by one operator at a time. Use the workflow for overlapping requests.
 

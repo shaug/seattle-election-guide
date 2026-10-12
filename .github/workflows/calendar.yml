@@ -66,10 +66,10 @@ jobs:
           if [ -n "$archive_ref" ]; then
             git fetch origin codex/endorsement-verification-state
             revision="$(git rev-parse FETCH_HEAD)"
-            if git cat-file -e "$revision:data/verification" 2>/dev/null; then
-              mkdir -p "$state_root"
-              git archive "$revision" data/verification | tar -x -C "$state_root" --strip-components=2
-            fi
+          fi
+          if git cat-file -e "$revision:data/verification" 2>/dev/null; then
+            mkdir -p "$state_root"
+            git archive "$revision" data/verification | tar -x -C "$state_root" --strip-components=2
           fi
           as_of="$(TZ=America/Los_Angeles date +%F)"
           uv run election-guide verification reconcile config/verification.yaml \
