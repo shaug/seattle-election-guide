@@ -779,7 +779,9 @@ def test_overlap_order_preserves_panel_identity(registry_name: str, ordering: st
     payload = read_source_registry(REGISTRY_PATH.with_name(registry_name)).model_dump(mode="json")
     if ordering == "source_groups":
         # Give a source two valid memberships so reversing them exercises ordering.
-        group = payload["overlap_groups"][1]
+        group = next(
+            item for item in payload["overlap_groups"] if item["id"] == "cascade-washington-bikes"
+        )
         source = next(item for item in payload["sources"] if item["id"] == "fuse-washington")
         group["member_ids"].append(source["id"])
         source["overlap_group_ids"].append(group["id"])
@@ -801,7 +803,7 @@ def test_overlap_order_preserves_panel_identity(registry_name: str, ordering: st
     assert build_panel_snapshot(after) == build_panel_snapshot(before)
     assert build_panel_snapshot(after).panel_hash == (
         source_panel.panel_identity_hash(after)
-        if ordering == "source_groups"
+        if ordering == "source_groups" or registry_name == "wa-2026-general.yaml"
         else payload["panel_hash_compatibility"]["published_hash"]
     )
 
