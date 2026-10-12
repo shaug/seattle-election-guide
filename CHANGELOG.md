@@ -9,6 +9,15 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-general.6 — 2026-10-12
+
+### Added
+
+- Add verified general-election sources and Tech 4 Taxes decision
+
+### Other
+
+- Restore the completed primary archive and reject retired meters (#526)
 ## 2026-primary.3 — 2026-10-12
 
 ### Added
