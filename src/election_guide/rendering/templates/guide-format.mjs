@@ -112,6 +112,20 @@ export function recommendationLabel(scored, labels) {
 }
 
 /**
+ * Mirrors `guide_card_label` in `rendering/context.py`: the summary card
+ * names the measured leader while its warning explains insufficient coverage.
+ *
+ * @param {ScoredRace} scored
+ * @param {ReadonlyMap<string, string>} labels
+ * @returns {string}
+ */
+export function guideCardLabel(scored, labels) {
+  if (scored.grade === 'Insufficient' && scored.winnerId !== null)
+    return labels.get(scored.winnerId) ?? scored.winnerId;
+  return recommendationLabel(scored, labels);
+}
+
+/**
  * The caption's pre-v2 wording, kept as the fallback for a tie or a race with
  * no single recommended choice: there is no one candidate's count to lead the
  * sentence with, so the sentence states only the denominator, as it always did

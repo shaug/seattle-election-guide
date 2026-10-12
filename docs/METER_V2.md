@@ -244,8 +244,9 @@ All ratified with the rest of the design (added in the August 4 review pass):
   label, no blocks, no seams, and the accessible name "No endorsements recorded". The
   `meter-unavailable-label` mirror keeps its literal.
 - **Insufficient grade.** The meter renders normally. A single-endorsement race is one full-width teal
-  block; the grade label ("Too few endorsements") and the caption ("1 of 1 endorsements") carry
-  the insufficiency.
+  block; the guide card names the measured leader, and the warning below it
+  ("Too few endorsements to measure agreement.") explains the insufficiency
+  (issue [#532](https://github.com/shaug/seattle-election-guide/issues/532)).
 - **Minimum block width.** When a chrome's width divided by the endorsement count drops below
   ~3px per block, per-block seams are dropped and the meter degrades to plain candidate runs
   (boundaries and split bands only). Countability yields before legibility does.
@@ -365,7 +366,7 @@ Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during
 | 14 | Reveal | Hover/focus trades the percent for seams and tooltips; touch always shows seams, never the percent |
 | 15 | Tongue tips | `.25rem` on the single interior corner; square at every meter edge |
 | 16 | N/A state | Empty track, muted "N/A", no blocks |
-| 17 | Insufficient grade | Meter renders; the grade label and count caption carry the insufficiency |
+| 17 | Insufficient grade | Meter renders; the warning below the named leader explains the insufficiency (#532) |
 | 18 | Color-pool exhaustion | Overflow candidates step toward the track; never a shared swatch |
 | 19 | Minimum block width | Below ~3px per block, degrade to plain candidate runs |
 | 20 | Per-candidate mini-meter | Retired; superseded by entry 27's static per-section meter (a shared-bar candidate-context treatment shipped in #315 first, then was closed as not-planned) |

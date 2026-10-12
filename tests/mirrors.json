@@ -197,6 +197,15 @@
       ],
       "note": "Sole leader, tie, and insufficiency each choose different words. The fixture's panels reach all three from real bundles."
     },
+    "guide-card-label": {
+      "client": "guide-format.mjs guideCardLabel",
+      "server": "rendering/context.py guide_card_label",
+      "proof": "parity-fixture",
+      "evidence": [
+        "symbol:guide_card_label"
+      ],
+      "note": "Guide card headings name the measured support leader even below the consensus floor, while zero endorsements keep the unavailable heading. The audited recommendation label and recommendation candidate IDs retain their consensus meaning. The fixture reaches sparse, empty, tied, and ordinary races."
+    },
     "race-detail-support-summary": {
       "client": "guide-format.mjs raceDetailSupportSummary",
       "server": "rendering/context.py race_detail_support_summary",

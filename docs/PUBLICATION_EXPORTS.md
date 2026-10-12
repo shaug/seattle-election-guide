@@ -83,8 +83,11 @@ distinguishes missing or inaccessible published results from an explicit decisio
 it does not change eligibility or scoring.
 
 An `Insufficient` race retains its measured support leader for audit, but has no recommendation
-candidate and displays `Too few endorsements`. This prevents a renderer from turning one source's
-choice into a consensus recommendation.
+candidate and its audit recommendation label remains `Too few endorsements`. The guide card
+displays the measured support leader's name when endorsements exist, with the insufficiency
+warning below it; zero endorsements retain the unavailable heading. The display does not turn
+one source's choice into a consensus recommendation (issue
+[#532](https://github.com/shaug/seattle-election-guide/issues/532)).
 
 Each endorsement group contains one candidate or choice and only the consensus-panel sources that
 affirmatively endorsed it. Multi-candidate endorsements appear under every endorsed choice with a

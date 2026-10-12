@@ -634,6 +634,13 @@ def _meter_support_summary_fallback(race: PublicationRace) -> str:
     return f"Based on {race.explicit_endorsement_count} endorsing {noun}"
 
 
+def guide_card_label(race: PublicationRace) -> str:
+    """Name the measured leader even when coverage cannot establish consensus."""
+    if race.grade == "Insufficient" and race.support_leader_candidate_ids:
+        return race.support_leader_label
+    return race.recommendation_label
+
+
 def screen_support_summary(race: PublicationRace, sources: dict[str, PublicationSource]) -> str:
     """The meter's own caption (I39), stating the recommended choice's exact
     endorsement count rather than only the denominator (docs/METER_V2.md,

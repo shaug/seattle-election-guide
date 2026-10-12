@@ -371,7 +371,7 @@ def _html_semantic_values(
 ) -> dict[str, list[str]]:
     return {
         "race-label": [race.race_label],
-        "recommendation": [race.recommendation_label],
+        "recommendation": [context.guide_card_label(race)],
         "share": ["N/A" if race.percentage_whole is None else race.percentage_label],
         # H34: the default caption renders as two sibling elements (full
         # sentence, then the compact-mode short form), both always present in
