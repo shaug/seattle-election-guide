@@ -9,6 +9,27 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-primary.3 — 2026-10-12
+
+### Added
+
+- Automate recurring endorsement verification (#502)
+
+### Documentation
+
+- Add 2026-general.5 changelog (#518)
+- Assess additional general election endorsement evidence (#515)
+- Retire manual production deployment approval (#522)
+
+### Fixed
+
+- Compare lineage timestamps as aware instants (#520)
+- Retire hourly production monitoring (#524)
+
+### Tooling
+
+- Bump ruff (#501)
+- Bump the npm-dependencies group with 2 updates (#500)
 ## 2026-general.5 — 2026-10-11
 
 ### Added

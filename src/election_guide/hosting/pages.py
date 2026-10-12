@@ -431,6 +431,9 @@ def _verify_staged_pages_site(
 
     if not required_assets.issubset(deployment.assets):
         raise ValueError("deployment manifest is missing required public archive assets")
+    for relative in sorted(deployment.assets):
+        if relative.endswith(".html"):
+            _verify_meter_markup(site_dir / relative)
     return deployment
 
 
@@ -466,9 +469,9 @@ def _resolve_released_bundles(
 ) -> dict[str, Path]:
     """Fill in every declared bundle not supplied locally from its published release.
 
-    Only the current election is built from source. A historical election cannot be
-    rebuilt — its pinned artifact hashes came from the rendering code of its own
-    time — so its bundle is downloaded from the release that published it.
+    Only the current election is built during staging. Historical bundles are
+    downloaded from their declared releases; a correction requires publishing a
+    new release and updating the pins, never rebuilding an existing identity.
     """
     resolved = dict(bundle_dirs)
     for declaration in site_manifest.elections:
@@ -537,6 +540,7 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
         raise ValueError(f"bundle {declaration.bundle_id!r} release manifest hash differs")
 
     verify_release_bundle_artifacts(bundle_dir, status=status, manifest=manifest)
+    _verify_meter_markup(bundle_dir / status.guide_html_artifact)
     if declaration.bundle_sha256 is not None:
         # Naming both digests is what makes a drifted pin actionable: the fix is
         # to recompute it with `hosting bundle-hash` and review the difference,
@@ -548,6 +552,17 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
                 f"expected {declaration.bundle_sha256}, found {found}"
             )
     return _VerifiedBundle(declaration, bundle_dir, status, manifest, view_model)
+
+
+def _verify_meter_markup(html_path: Path) -> None:
+    # This custom property belongs exclusively to the retired percentage-only
+    # chrome, including its embedded client renderer. Immutable old releases
+    # remain valid audit records, but must not reintroduce it on the served site.
+    if b"--meter-fill" in html_path.read_bytes():
+        raise ValueError(
+            f"{html_path} contains the retired endorsement meter; "
+            "publish a replacement release before staging"
+        )
 
 
 def _stage_verified_bundles(

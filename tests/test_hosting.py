@@ -61,6 +61,70 @@ CURRENT_BUNDLE_ID = "wa-2026-primary-release"
 OLDER_BUNDLE_ID = "wa-2025-general-release"
 
 
+@pytest.mark.parametrize("historical", [False, True])
+def test_staging_rejects_retired_meter_in_current_and_historical_guides(
+    tmp_path: Path, historical: bool
+) -> None:
+    retired_meter = (
+        b'<div class="screen-meter" style="--meter-fill: 100%"><strong>100%</strong></div>'
+    )
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_html=b"<title>Current</title>" if historical else retired_meter,
+        older_html=retired_meter if historical else b"<title>Historical</title>",
+    )
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+    output.mkdir()
+    sentinel = output / "previous-site.txt"
+    sentinel.write_text("keep the existing deployment", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="retired endorsement meter"):
+        stage_pages_site(
+            manifest,
+            {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+            output,
+            expected_current_git_commit=COMMIT,
+        )
+
+    assert sentinel.read_text(encoding="utf-8") == "keep the existing deployment"
+
+
+@pytest.mark.parametrize("race_page", [False, True])
+def test_independent_site_verification_rejects_hash_valid_retired_meter(
+    tmp_path: Path, race_page: bool
+) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+        expected_current_git_commit=COMMIT,
+    )
+    # An internally consistent deployment is still unacceptable if any served
+    # page carries the retired chrome. Cover a race page as well as the guide.
+    retired_meter = b'<div class="race-detail-meter" style="--meter-fill: 75%"></div>'
+    deployment_path = output / "deployment-manifest.json"
+    deployment = json.loads(deployment_path.read_text(encoding="utf-8"))
+    guide_path = (
+        next(
+            path
+            for path in sorted(deployment["assets"])
+            if path.startswith(f"e/{OLDER_ID}/races/") and path.endswith(".html")
+        )
+        if race_page
+        else f"e/{OLDER_ID}/index.html"
+    )
+    (output / guide_path).write_bytes(retired_meter)
+    deployment["assets"][guide_path] = hashlib.sha256(retired_meter).hexdigest()
+    deployment_path.write_bytes(canonical_json_bytes(deployment))
+
+    with pytest.raises(ValueError, match="retired endorsement meter"):
+        verify_staged_pages_site(output, manifest, expected_current_git_commit=COMMIT)
+
+
 def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> None:
     current, older = _write_archive_bundles(
         tmp_path,
@@ -1612,14 +1676,16 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         "source_registry_hash": "0ffeccf149259a0c1c93a551e1d4d1a2e255e25dd3f279e787efdc4877543327",
     }
     historical = site_manifest["elections"][1]
-    assert historical["bundle_id"] == "wa-2026-primary-2026-primary.2"
-    assert "source_registry_hash" not in historical
-    assert historical["git_commit"] == "cf4f67fa336050fbaf6606aadcfea65f936a7007"
+    assert historical["bundle_id"] == "wa-2026-primary-2026-primary.3"
+    assert historical["source_registry_hash"] == (
+        "76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8"
+    )
+    assert historical["git_commit"] == "6e93dafe45ac45f343c5ea3d123f53e24725d15e"
     assert historical["release_manifest_sha256"] == (
-        "97d1a768de962338135115d7622da944982c171b1ed886beee72879da9c2d8b3"
+        "7989827c95c11fc68dbaaa32f632eaeb3d2c1495dfa2728c644faecf2441a516"
     )
     assert historical["bundle_sha256"] == (
-        "3e63164b88e198b5f2c25d5d280b61d99694a010a8063206fef552bcff61b7da"
+        "5418b15370a6ed0f8eb0f4e02d9c9a02faf9f6f5043f9c3e39f3abe120b5ad9d"
     )
     assert workflow["env"]["CANDIDATE_BUNDLE_ID"] == GENERAL_BUNDLE_ID
     deploy = workflow["jobs"]["deploy"]
