@@ -2,7 +2,7 @@ name: Production availability
 
 # #512: one availability probe per hourly tick. Every dispatched run probes
 # even when GitHub starts it late; execution time must never decide whether
-# the site gets checked. Release identity is verified after an approved
+# the site gets checked. Release identity is verified after a production
 # deployment in ci.yml, because unpublished main changes are expected.
 on:
   schedule:

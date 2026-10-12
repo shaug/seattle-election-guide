@@ -343,11 +343,12 @@ do not replace a full SHA with a branch name or a dashboard's abbreviated displa
 - the release URL, peeled tag SHA, asset identity/size, and release asset digest;
 - the lineage report and the verified two-election deployment manifest;
 - the exact CI run and artifact for `production_candidate_sha`;
-- the waiting production deployment ID and its full SHA; and
-- the read-only `production-probe.json` output after an authorized deployment.
+- the production deployment ID and its full SHA; and
+- the read-only `production-probe.json` output after deployment.
 
 A production artifact expires after seven days. If it expires or is missing, rerun CI for that exact
 `production_candidate_sha`, repeat lineage and staged-site verification against the new run, and
-record the replacement run/artifact. Never substitute the newer `main` head. Production
-approval remains a separate exact-candidate action described in [HOSTING.md](HOSTING.md); none of
-the release, changelog, lineage, or staging commands approves it.
+record the replacement run/artifact. Never substitute the newer `main` head. Production deploys
+automatically after CI passes on `main` when `CLOUDFLARE_PAGES_ENABLED` is `true`, as described in
+[HOSTING.md](HOSTING.md). There is no separate approval step. The deployment job still requires
+every declared release to be published before upload and verifies the served commit afterward.
