@@ -47,7 +47,12 @@ def test_six_general_sources_match_reviewed_facts_and_cover_all_eligible_sources
             d["race_id"]: set(d["candidate_ids"]) for d in ledger["decisions"]
         }
     coverage = report["coverage"]["elections"][0]["coverage"]
-    assert len(coverage) == 43
+    assert len(coverage) == 46
+    assert {
+        "young-democrats-of-washington",
+        "nondriver-action",
+        "citizens-against-aipac-corruption",
+    } <= {s["source_id"] for s in coverage if s["lane"] == "manual"}
     assert {s["source_id"] for s in coverage if s["lane"] == "manual"} == {
         s["source_id"] for s in report["manual"]
     }

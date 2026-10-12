@@ -1,0 +1,156 @@
+{
+  "captured_at": "2026-10-11T15:41:56.877970Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-07. Original capture: capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb; verified manual entry: manual-young-democrats-of-washington-20261011T154356Z-25f45611d959.",
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-09. Original capture: capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb; verified manual entry: manual-young-democrats-of-washington-20261011T154356Z-25f45611d959.",
+      "race_id": "us-house-9",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, Washington State Supreme Court, Pos. 3. Original capture: capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb; verified manual entry: manual-young-democrats-of-washington-20261011T154356Z-25f45611d959. Jaime Hawk resolves to the existing Jaime Michelle Hawk choice in Supreme Court position 3.",
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, Senate; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "race_id": "ld-32-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble",
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 1; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "race_id": "ld-32-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 2; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "race_id": "ld-32-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--sharon-tomiko-santos"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 37th LD, House Pos. 1; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 37th LD, House Pos. 2; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen",
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 43rd LD, Senate; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 46th LD, House Pos. 1; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "race_id": "ld-46-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 46th LD, Senate; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "race_id": "ld-46-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--toshiko-grace-hasegawa",
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, King County Council, District 2; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884. Toshiko Hasegawa maps to Toshiko Grace Hasegawa for King County Council district 2.",
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, King County Council, District 8; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.",
+      "race_id": "king-county-council-8",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, Seattle City Council, District 5; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.",
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Ballot Measure Campaigns, No Hate in WA State Campaign for Vote NO on Initiative 001 and Initiative 638; Initiative 001. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.",
+      "race_id": "initiative-26-001",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Ballot Measure Campaigns, No Hate in WA State Campaign for Vote NO on Initiative 001 and Initiative 638; Initiative 638. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.",
+      "race_id": "initiative-26-638",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official general-election publication and original immutable verified records in data/review/source-assessments/wa-2026-general-20261011; admission and attribution treatment in docs/GENERAL_ADDITIONS_2026-10-12.md.",
+  "review_note": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+  "reviewer": "shaug",
+  "source_id": "young-democrats-of-washington"
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 9478,
+  "canonical_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "capture_method": "manual_upload",
+  "content_sha256": "0ca560b8247d520f40ee8e5bef15d0328e767fd0d69cbdd5a2f05dcc200a3847",
+  "http_status": null,
+  "id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "retrieved_at": "2026-10-11T15:41:56.877970Z",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "storage_reference": "sha256/0c/0ca560b8247d520f40ee8e5bef15d0328e767fd0d69cbdd5a2f05dcc200a3847",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Young Democrats of Washington",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1424,
+  "canonical_url": "https://www.trackaipac.com/endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "ce0dd9b0a1871bb31ac8e21b7ba0f5785da8c329d3e504d9611e449c5f42caa6",
+  "http_status": null,
+  "id": "capture-citizens-against-aipac-corruption-20261011T154111Z-a2787731c952",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.trackaipac.com/endorsements",
+  "retrieved_at": "2026-10-11T15:41:11.594444Z",
+  "schema_version": "1.0",
+  "source_id": "citizens-against-aipac-corruption",
+  "storage_reference": "sha256/ce/ce0dd9b0a1871bb31ac8e21b7ba0f5785da8c329d3e504d9611e449c5f42caa6",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Citizens Against AIPAC Corruption (Track AIPAC)",
+  "updated_at": null
+}

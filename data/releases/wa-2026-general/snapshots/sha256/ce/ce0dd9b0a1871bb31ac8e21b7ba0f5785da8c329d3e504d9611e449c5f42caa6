@@ -1,0 +1,18 @@
+{
+  "captured_at": "2026-10-11T15:41:11.594444Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Candidates Endorsed By Citizens Against AIPAC Corruption > Our Endorsed Incumbents > PRAMILA JAYAPAL, U.S. Representative, WA-07, General Election November 3, 2026. Original capture: capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8; verified manual entry: manual-citizens-against-aipac-corruption-20261011T154358Z-976994c8e85f.",
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official general-election publication and original immutable verified records in data/review/source-assessments/wa-2026-general-20261011; admission and attribution treatment in docs/GENERAL_ADDITIONS_2026-10-12.md.",
+  "review_note": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+  "reviewer": "shaug",
+  "source_id": "citizens-against-aipac-corruption"
+}

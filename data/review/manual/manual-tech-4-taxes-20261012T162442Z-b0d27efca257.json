@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-tech-4-taxes-20261012T161332Z-5071f70bc523",
+  "entered_at": "2026-10-12T16:24:42Z",
+  "entry_method": "manual",
+  "evidence_locator": "2025–2026 Legislative Agenda, I. 2026 Legislative Session Priorities, Millionaire’s Income Tax (SB6346), PRO heading. No on IP26-645 is the maintainer-approved interpretation documented in docs/GENERAL_ADDITIONS_2026-10-12.md; the official measure mapping is retained in capture-wa-secretary-of-state-20261012T161332Z-6e8325ed61ef.",
+  "evidence_type": "web_page",
+  "id": "manual-tech-4-taxes-20261012T162442Z-b0d27efca257",
+  "review_note": "The maintainer supplied the legislative-agenda link, identified the No-on-645 position, then directed: let's add that tech4taxes gap, and update the guide with the new decisions. This records explicit approval of the documented interpretation after disclosure that the page does not name Initiative 645 or say Vote No. The transcription preserves the original PRO wording; the official voters’ guide supplies the repeal mapping. Only the added measure decision is approved here; existing candidate reviews remain as previously recorded.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-12T16:24:42Z",
+  "reviewed_by": "shaug",
+  "reviewer": "codex-agent-transcription",
+  "schema_version": "1.0",
+  "source_id": "tech-4-taxes",
+  "transcription": "Millionaire's Income Tax (SB6346)\nPRO\nType: Active Bill"
+}
