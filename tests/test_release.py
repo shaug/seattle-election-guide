@@ -493,7 +493,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         snapshots,
         tmp_path,
         tmp_path / "primary-release",
-        release_version="2026-primary.2",
+        release_version="2026-primary.3",
     )
     general_release = build_release(
         ledger_path=PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml",
@@ -533,7 +533,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         site_manifest_path,
         {
             "wa-2026-general-2026-general.5": general_release.bundle_dir,
-            "wa-2026-primary-2026-primary.2": primary_release.bundle_dir,
+            "wa-2026-primary-2026-primary.3": primary_release.bundle_dir,
         },
         output,
         expected_current_git_commit="a" * 40,
