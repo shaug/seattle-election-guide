@@ -1,16 +1,14 @@
 """Behavior tests for archiving zone analytics before Cloudflare drops them.
 
-Driven through the CLI, because the command is the surface the scheduled
-workflow and the operator both use; asserting against the internals would pass
-while the thing anyone actually runs was broken (issue #381).
+Driven through the manual-export CLI; asserting against the internals would
+pass while the command an operator actually runs was broken (issue #381).
+The committed historical archive keeps its privacy and no-gaps checks (#512).
 """
 
 from __future__ import annotations
 
 import json
-import os
 import re
-import subprocess
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from datetime import date, timedelta
 from itertools import pairwise
@@ -18,7 +16,6 @@ from pathlib import Path
 from typing import Any, cast
 
 import pytest
-import yaml
 from typer.testing import CliRunner
 
 from election_guide.analytics import (
@@ -730,240 +727,6 @@ def test_missing_dates_excludes_what_is_archived(tmp_path: Path) -> None:
     assert min(planned) == date(2026, 7, 17)
 
 
-def _workflow() -> Any:
-    """The archive workflow, loaded the way every other workflow test here loads one.
-
-    `BaseLoader` leaves every scalar a string, which is what the assertions
-    below compare against — and it also leaves the `on:` key as `"on"` rather
-    than resolving it to the boolean `True`, which is what unquoted `on` means
-    to a standard YAML loader.
-    """
-    path = PROJECT_ROOT / ".github" / "workflows" / "analytics.yml"
-    return yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
-
-
-def test_workflow_runs_on_a_schedule_and_can_commit() -> None:
-    """The archive has to advance with nobody watching, so the schedule is the feature."""
-    workflow = _workflow()
-    triggers = workflow["on"]
-
-    assert triggers["schedule"], "an unscheduled archive cannot outrun the retention window"
-    assert all(entry["cron"] for entry in triggers["schedule"])
-    assert "workflow_dispatch" in triggers, "a missed day needs a manual catch-up"
-    assert workflow["permissions"]["contents"] == "read", (
-        "the automatic GITHUB_TOKEN must not retain the archive's write authority"
-    )
-    assert workflow["concurrency"]["cancel-in-progress"] == "false", (
-        "two runs archiving the same day would race on one commit"
-    )
-
-
-def test_workflow_passes_the_credential_by_secret() -> None:
-    """Both credentials reach the run through the environment, never through interpolation.
-
-    A token interpolated into the `run:` script itself would be expanded by the
-    runner before the shell ever saw it, which is how a secret ends up in a
-    build log.
-    """
-    steps = [step for job in _workflow()["jobs"].values() for step in job["steps"]]
-    environments = [step.get("env", {}) for step in steps]
-
-    assert [
-        env["CLOUDFLARE_ANALYTICS_TOKEN"]
-        for env in environments
-        if "CLOUDFLARE_ANALYTICS_TOKEN" in env
-    ] == ["${{ secrets.CLOUDFLARE_ANALYTICS_TOKEN }}"]
-    assert [env["CLOUDFLARE_ZONE_ID"] for env in environments if "CLOUDFLARE_ZONE_ID" in env] == [
-        "${{ secrets.CLOUDFLARE_ZONE_ID }}"
-    ]
-    for step in steps:
-        assert "secrets." not in step.get("run", ""), (
-            f"{step.get('name')!r} interpolates a secret into its script"
-        )
-
-
-def test_archive_branch_and_pull_request_use_the_github_app_token() -> None:
-    """App-authored PR events run CI without the GITHUB_TOKEN approval prompt."""
-    steps = [step for job in _workflow()["jobs"].values() for step in job["steps"]]
-    app_token = next(step for step in steps if step.get("id") == "app-token")
-    checkout = next(step for step in steps if step.get("uses", "").startswith("actions/checkout@"))
-    pull_request = next(step for step in steps if "gh pr create" in step.get("run", ""))
-
-    assert app_token["uses"] == "actions/create-github-app-token@v3"
-    assert app_token["with"] == {
-        "client-id": "${{ vars.ANALYTICS_ARCHIVE_APP_CLIENT_ID }}",
-        "private-key": "${{ secrets.ANALYTICS_ARCHIVE_APP_PRIVATE_KEY }}",
-        "permission-contents": "write",
-        "permission-pull-requests": "write",
-        "permission-workflows": "write",
-    }
-    assert checkout["with"]["token"] == "${{ steps.app-token.outputs.token }}"
-    assert checkout["with"]["persist-credentials"] == "true"
-    assert pull_request["env"]["GH_TOKEN"] == "${{ steps.app-token.outputs.token }}"
-    assert "${{ github.token }}" not in str(pull_request)
-
-
-def test_archive_pull_request_queues_squash_auto_merge_without_bypassing_check() -> None:
-    """The required check, not the archive job, remains the merge authority."""
-    steps = [step for job in _workflow()["jobs"].values() for step in job["steps"]]
-    pull_request = next(step for step in steps if "gh pr create" in step.get("run", ""))
-    script = pull_request["run"]
-
-    assert "gh pr merge" in script
-    assert "--auto" in script
-    assert "--squash" in script
-    assert "--admin" not in script
-    assert "--base main" in script
-    assert "--json number,isCrossRepository" in script
-    assert "select(.isCrossRepository == false)" in script, (
-        "a same-named fork pull request must not receive the App-authorized auto-merge request"
-    )
-
-
-def _commit_step_script() -> str:
-    """The committed shell the workflow actually runs to commit an archived day."""
-    steps = [step for job in _workflow()["jobs"].values() for step in job["steps"]]
-    script = next(step["run"] for step in steps if "git commit" in step.get("run", ""))
-    assert isinstance(script, str)
-    return script
-
-
-def _archive_repository(tmp_path: Path) -> Path:
-    """A clone with an origin to push to, standing in for the runner's checkout."""
-    origin = tmp_path / "origin.git"
-    working = tmp_path / "checkout"
-    subprocess.run(
-        ["git", "init", "--bare", "-q", "--initial-branch=main", str(origin)], check=True
-    )
-    subprocess.run(["git", "clone", "-q", str(origin), str(working)], check=True)
-    for name, value in (("user.email", "t@example.test"), ("user.name", "Test")):
-        subprocess.run(["git", "-C", str(working), "config", name, value], check=True)
-    (working / "data" / "analytics").mkdir(parents=True)
-    (working / "data" / "analytics" / "2026-08-15.json").write_text("{}", encoding="utf-8")
-    subprocess.run(["git", "-C", str(working), "add", "-A"], check=True)
-    subprocess.run(["git", "-C", str(working), "commit", "-qm", "base"], check=True)
-    subprocess.run(["git", "-C", str(working), "push", "-q", "origin", "HEAD"], check=True)
-    return working
-
-
-def _run_commit_step(working: Path) -> subprocess.CompletedProcess[str]:
-    """Run the committed script with the workflow's own environment.
-
-    The branch name comes from the workflow's `env:` block rather than a
-    literal here, so renaming it there cannot leave this test proving something
-    about a branch the workflow no longer uses.
-    """
-    workflow = _workflow()
-    environment = {key: str(value) for key, value in workflow["env"].items()}
-    return subprocess.run(
-        ["bash", "-euo", "pipefail", "-c", _commit_step_script()],
-        cwd=working,
-        capture_output=True,
-        text=True,
-        env={**os.environ, **environment},
-    )
-
-
-def test_the_commit_step_commits_a_newly_archived_day(tmp_path: Path) -> None:
-    """Run the committed script for real against a day the export just wrote.
-
-    Every archived day is a new file and never a modification, so a change
-    check that only compares tracked paths — `git diff --quiet` — reports
-    "nothing to commit" on precisely the runs that archived something, and
-    exits 0. The schedule would then go green every day while the archive
-    stayed frozen, which is the whole failure this workflow exists to prevent.
-    """
-    working = _archive_repository(tmp_path)
-    (working / "data" / "analytics" / "2026-08-16.json").write_text(
-        '{"date": "2026-08-16"}', encoding="utf-8"
-    )
-
-    result = _run_commit_step(working)
-
-    assert result.returncode == 0, result.stderr
-    committed = subprocess.run(
-        ["git", "-C", str(working), "show", "--name-only", "--format=", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout
-    assert "data/analytics/2026-08-16.json" in committed
-    branch = _workflow()["env"]["ARCHIVE_BRANCH"]
-    local = subprocess.run(
-        ["git", "-C", str(working), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
-    origin = working.parent / "origin.git"
-    pushed = subprocess.run(
-        ["git", "-C", str(origin), "rev-parse", f"refs/heads/{branch}"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
-    assert local == pushed, "the archived day was committed but never pushed"
-
-    # `main` is protected and requires review (CONTRIBUTING.md), so a direct
-    # push there fails every single day — silently freezing the archive while
-    # the job goes red for nobody.
-    default = subprocess.run(
-        ["git", "-C", str(origin), "rev-parse", "refs/heads/main"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
-    assert default != local, "the archive pushed straight to the protected default branch"
-
-
-def test_the_commit_step_makes_no_empty_commit(tmp_path: Path) -> None:
-    """The other half: a run that archived nothing must not commit.
-
-    The schedule fires daily forever, and an empty commit per day would be
-    noise in a repository whose history is its audit trail.
-    """
-    working = _archive_repository(tmp_path)
-    before = subprocess.run(
-        ["git", "-C", str(working), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout
-
-    result = _run_commit_step(working)
-
-    assert result.returncode == 0, result.stderr
-    after = subprocess.run(
-        ["git", "-C", str(working), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout
-    assert before == after
-    assert "nothing new to commit" in result.stdout
-
-
-def test_the_archived_days_are_checked_before_they_are_pushed() -> None:
-    """The gate runs in the producing run, because it cannot run afterwards.
-
-    The archive's pull request is opened by `GITHUB_TOKEN`, and GitHub starts
-    no workflow run for an event that token triggered — so `ci.yml` never sees
-    the archive branch. Without a check here, the committed-tree assertions
-    would first execute after the merge, against a file already on `main`, and
-    would then fail on every later pull request that inherited it.
-    """
-    steps = [step for job in _workflow()["jobs"].values() for step in job["steps"]]
-    scripts = [step.get("run", "") for step in steps]
-    export = next(index for index, script in enumerate(scripts) if "analytics export" in script)
-    checked = next(index for index, script in enumerate(scripts) if "pytest" in script)
-    committed = next(index for index, script in enumerate(scripts) if "git commit" in script)
-
-    assert export < checked < committed, (
-        "the archived days must be checked after they are written and before they are pushed"
-    )
-    assert "tests/test_analytics.py" in scripts[checked]
-
-
 def test_hosting_doc_inventories_the_new_credential() -> None:
     """A credential nobody documented is one nobody can rotate (issue #381)."""
     hosting = (PROJECT_ROOT / "docs" / "HOSTING.md").read_text(encoding="utf-8")
@@ -990,17 +753,6 @@ def test_hosting_doc_inventories_the_archive_github_app() -> None:
     )
     assert "maintainer" in row.lower(), "the row does not state the credential owner"
     assert "rotat" in row.lower(), "the row does not state a rotation expectation"
-
-
-def test_monitoring_doc_describes_the_unattended_archive_merge_path() -> None:
-    """The standing runbook must not prescribe the retired manual nudge."""
-    monitoring = (PROJECT_ROOT / "docs" / "MONITORING.md").read_text(encoding="utf-8")
-    heading = "### How an archived day reaches `main`"
-    section = monitoring.split(heading, 1)[1].split("\n### ", 1)[0]
-
-    assert "GitHub App" in section
-    assert "auto-merge" in section
-    assert "close and reopen" not in section.lower()
 
 
 def test_monitoring_doc_records_the_no_data_recheck() -> None:

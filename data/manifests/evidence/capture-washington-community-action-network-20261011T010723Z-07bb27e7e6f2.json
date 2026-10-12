@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1038558,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/96031cac-155f-4c00-b312-347cf37d7c8c/2026+General+Endorsements++-+1.PNG",
+  "capture_method": "image",
+  "content_sha256": "3a74acc81caf256b276491ae868020d09d0e164188b6e0107867fe2dbfa774cc",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261011T010723Z-07bb27e7e6f2",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official third-party artifact retained in the primary checkout durable local store for review only.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/96031cac-155f-4c00-b312-347cf37d7c8c/2026+General+Endorsements++-+1.PNG",
+  "retrieved_at": "2026-10-11T01:07:23.909422Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/3a/3a74acc81caf256b276491ae868020d09d0e164188b6e0107867fe2dbfa774cc",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network 2026 general endorsement evidence (wa_can-21)",
+  "updated_at": null
+}

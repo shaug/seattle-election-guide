@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8",
+  "entered_at": "2026-10-11T15:43:58.810849Z",
+  "entry_method": "manual",
+  "evidence_locator": "Candidates Endorsed By Citizens Against AIPAC Corruption > Our Endorsed Incumbents > PRAMILA JAYAPAL, U.S. Representative, WA-07, General Election November 3, 2026.",
+  "evidence_type": "web_page",
+  "id": "manual-citizens-against-aipac-corruption-20261011T154358Z-a7da1fe8e732",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "codex-agent-transcription",
+  "schema_version": "1.0",
+  "source_id": "citizens-against-aipac-corruption",
+  "transcription": "U.S. Representative — Congressional District 7: Pramila Jayapal [Endorsed incumbent]"
+}
