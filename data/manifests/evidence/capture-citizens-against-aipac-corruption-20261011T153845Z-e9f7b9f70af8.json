@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 6516,
+  "canonical_url": "https://www.trackaipac.com/endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "6ef1bd976fd882d185e9edf2eeae9fba989591d0f55fab5527a26845628fed4e",
+  "http_status": null,
+  "id": "capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for evidence review; only manifest metadata and brief factual transcriptions enter Git. User-supplied image or ordinary public-browser download/export; no HTTP status was observed. Browser export is an HTML wrapper of visible text, not the original response HTML. No authentication, challenge solving, or access-control bypass was used.",
+  "requested_url": "https://www.trackaipac.com/endorsements",
+  "retrieved_at": "2026-10-11T15:38:45.234000Z",
+  "schema_version": "1.0",
+  "source_id": "citizens-against-aipac-corruption",
+  "storage_reference": "sha256/6e/6ef1bd976fd882d185e9edf2eeae9fba989591d0f55fab5527a26845628fed4e",
+  "storage_scope": "local_only",
+  "title": "CAAC public browser visible-text export",
+  "updated_at": null
+}

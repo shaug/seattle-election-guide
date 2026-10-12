@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-king-county-democrats-20261011T010722Z-8db51a3344bb",
+  "entered_at": "2026-10-11T01:10:18.434680Z",
+  "entry_method": "manual",
+  "evidence_locator": "2026 Endorsements; Ballot measures (IP26-645 link) and State offices named LD32 and LD46 rows. Preserve both named LD32 choices.",
+  "evidence_type": "web_page",
+  "id": "manual-king-county-democrats-20261011T011018Z-c4b9f878ea3b",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "king-county-democrats",
+  "transcription": "Initiative IP26-645 — State and Local Taxes: No\nLegislative District 32 State Representative — Position 1: Danica Noble, Keith Scully\nLegislative District 32 State Representative — Position 2: Lauren Davis, Imraan Siddiqi\nLegislative District 46 State Representative — Position 1: Gerry Pollet\nSource label for initiative-26-645: Ballot Measure IL26-645 - OPPOSE\nSource label for ld-46-state-representative-1: Gerry Pollet, LD 46 Representative Pos. 2"
+}

@@ -6,7 +6,7 @@ pressure and least inclined to reason about it.
 
 One thing to know before anything else: **rolling back does not fix `main`.** Both paths change
 what production serves; neither changes what the repository says should be served. Until the bad
-commit is reverted on `main`, the next approved deployment republishes it. The revert step is not
+commit is reverted on `main`, the next automatic deployment republishes it. The revert step is not
 cleanup — it is the half of the procedure that keeps the rollback from silently expiring.
 
 ## Trigger
@@ -14,25 +14,26 @@ cleanup — it is the half of the procedure that keeps the rollback from silentl
 Not a calendar milestone. This runbook is due on a condition: **production is serving a build that
 is wrong, broken, or stale, and correcting forward would take longer than reverting.**
 
-The condition is normally noticed one of three ways: the scheduled production check (#222) reports
-a deployed commit that is not the expected one; a rendered guide is visibly wrong; or a merge that
-should not have shipped was approved.
+The condition may be noticed by the hourly availability alert, a strict post-deployment probe
+reporting the wrong release, a visibly wrong guide, or a merge that should not have
+shipped. The scheduled availability probe does not compare deployed commits with `main` (#512).
 
 Reach for this runbook only when the wrong build is *already live*. If it is merely merged and
-waiting, the cheaper control is rejecting the queued deployment — see `docs/HOSTING.md`,
-"Approval". Rejecting costs one click and leaves the live site untouched.
+has not deployed yet, cancel its CI run and disable publication before another run can upload it
+— see `docs/HOSTING.md`, "Kill switch". There is no manual approval pause.
 
 ## Autonomy
 
 Level 0 — declared. Human-launched and human-executed, permanently.
 
-Every step here mutates production, and the deploy approval gate is never automated at any autonomy
-level (`docs/RUNBOOKS.md`, "Autonomy levels"). An agent session may prepare a rollback — identify
-the target deployment, verify what it carries, draft the revert pull request — but a human performs
-the promotion itself. This runbook is not a level-3 candidate and is not expected to become one.
+Rollback remains a human-initiated recovery decision. An agent session may prepare a rollback —
+identify the target deployment, verify what it carries, draft the revert pull request — but a human
+initiates the dashboard rollback or exact-commit CI rerun. Once initiated, path B deploys
+automatically after CI passes. This runbook is not a level-3 candidate and is not expected to become
+one.
 
-**Ownership.** The maintainer is the only Cloudflare account holder and the only `production`
-environment reviewer, so both paths are single-person operations today. That concentration is the
+**Ownership.** The maintainer is the only Cloudflare account holder and repository administrator,
+so both paths are single-person operations today. That concentration is the
 continuity risk #227 exists to record; it is not resolved here.
 
 ## Preconditions
@@ -52,19 +53,20 @@ continuity risk #227 exists to record; it is not resolved here.
 
 - **Cloudflare dashboard access** to the `seattle-elections` Pages project, for path A.
 
-- **`gh` authenticated, and the ability to approve the `production` environment**, for path B only.
+- **`gh` authenticated, and permission to rerun CI**, for path B only.
 
 - **`CLOUDFLARE_PAGES_ENABLED` set to exactly `true`**, for path B only. The `deploy` job is
   guarded on `vars.CLOUDFLARE_PAGES_ENABLED == 'true'`, so with the switch off a re-run completes
-  green with `deploy` skipped outright and no approval is ever queued. Check it before you start:
+  green with `deploy` skipped outright and nothing published. Check it before you start:
 
   ```bash
   gh variable list | grep CLOUDFLARE_PAGES_ENABLED
   ```
 
-- **Nothing else in flight.** A production deployment waiting for approval will publish whatever it
-  carries the moment someone approves it, which may undo the rollback you are about to perform.
-  Check the repository's Actions page and reject anything queued before you start.
+- **Nothing else in flight.** A queued or running production job can undo the rollback you are
+  about to perform. Disable publication to keep new runs from deploying, and cancel other queued
+  or running production CI runs before you start. Path B re-enables publication for its exact-commit
+  rerun; keep other deployments stopped until `main` is repaired.
 
 ## Procedure
 
@@ -92,7 +94,7 @@ first step, not a detail.
 | Path | Promotion itself | Realistic end to end                                       |
 | ---- | ---------------- | ---------------------------------------------------------- |
 | A    | seconds          | a couple of minutes, nearly all of it human decision time   |
-| B    | a full CI run    | that run, plus however long approval takes to arrive        |
+| B    | a full CI run    | that run, automatic upload, and verification                |
 
 Path A's promotion was measured as effectively instantaneous — see
 [Postmortem notes](#postmortem-notes). Treat propagation as free and spend your attention on
@@ -141,7 +143,7 @@ is bounded by CI, and do not choose it when minutes matter and path A can reach 
 
 ### Path B — Rebuild at a ref and publish through the gate
 
-This path publishes a chosen commit through the normal CI-and-approval route, which is the
+This path publishes a chosen commit through the normal CI-and-deployment route, which is the
 mechanism `docs/HOSTING.md` already names: "Re-running CI on the exact commit you want is the
 dependable way to produce a deployment for it."
 
@@ -168,12 +170,9 @@ dependable way to produce a deployment for it."
    gh run rerun <run-id>
    ```
 
-4. When `check` completes, the `deploy` job queues in a waiting state. Approve it from the workflow
-   run page. Approving is deliberately a human moment; do it from the run page rather than
-   scripting it.
-
-   If no approval prompt appears and the run simply goes green, `deploy` was skipped rather than
-   queued. Return to step 1 — the guard is the only thing that skips it.
+4. When `check` passes, `deploy` uploads automatically and runs the strict production probe against
+   that run's SHA. Wait for the deployment job to finish and inspect its result. If `deploy` was
+   skipped, check the publication switch and confirm the selected run targets `main`.
 
 5. Verify, using [Verification](#verification) below.
 
@@ -190,11 +189,13 @@ keeping both.
 Production and `main` now disagree. Open a pull request reverting the bad commit, and land it
 through the normal gate.
 
-Until that lands, treat `main` as loaded: the next approved deployment publishes it, and if the bad
+Until that lands, treat `main` as loaded: the next automatic deployment publishes it, and if the bad
 commit is still there, the outage returns without anyone deciding to bring it back. If the revert
 cannot land immediately — the fix is genuinely hard, or it is the middle of the night — set
 `CLOUDFLARE_PAGES_ENABLED` to something other than `true` so no deployment can publish while the
-divergence stands (`docs/HOSTING.md`, "Kill switch"). Restore it when the revert lands.
+divergence stands (`docs/HOSTING.md`, "Kill switch"). When the revert lands, restore the switch and
+run CI on that repaired `main` commit to resume publication. Restoring the switch alone does not
+rerun a deployment that was skipped while publication was disabled.
 
 ## Verification
 
@@ -223,8 +224,8 @@ The rollback is not done until all three of these hold:
    disagreement between the panel and check 1 means the custom domain is not following the
    production alias, which is an escalation, not a retry.
 
-Check 1 is the same comparison #222 automates on a schedule; once that lands, it is what will tell
-you a rollback drifted back.
+Check 1 is the explicit identity comparison the strict post-deployment probe performs. The hourly
+availability monitor checks served routes only; it cannot tell whether a rollback drifted back.
 
 ## Escalation
 

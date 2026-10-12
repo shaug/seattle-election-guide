@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 43824,
+  "canonical_url": "https://citizensagainstaipac.com/about",
+  "capture_method": "static_html",
+  "content_sha256": "70b51fe61591e785d26d04e389ee39ab21f272fed7a4e56bb4d201ab822cc7c4",
+  "http_status": 200,
+  "id": "capture-citizens-against-aipac-corruption-20261011T153802Z-6fd2af0e7ff1",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for evidence review; only manifest metadata and brief factual transcriptions enter Git.",
+  "requested_url": "https://citizensagainstaipac.com/about",
+  "retrieved_at": "2026-10-11T15:38:02.764118Z",
+  "schema_version": "1.0",
+  "source_id": "citizens-against-aipac-corruption",
+  "storage_reference": "sha256/70/70b51fe61591e785d26d04e389ee39ab21f272fed7a4e56bb4d201ab822cc7c4",
+  "storage_scope": "local_only",
+  "title": "caac identity",
+  "updated_at": null
+}

@@ -191,42 +191,22 @@ rather than growing this ticket.
 
 # Epic B — Publication control
 
-Separates "merged" from "published." Today every green merge to `main` publishes to production
-immediately. The valuable capability is not a preview hostname — Epic A covers pre-merge review —
-it is the ability to keep merging work during the week before an election without changing what
-voters see.
+Originally intended to separate "merged" from "published" with a manual approval. The October 11,
+2026 policy update (#521) restores automatic publication after successful CI: a detached approval
+prompt adds friction without a preview to assess. Pre-merge review belongs to Epic A's previews;
+publication freezes use the existing kill switch.
 
-## O3 — Require approval on the production environment
+## O3 — Production environment policy (approval retired)
 
-**Outcome.** A production deploy waits for an explicit human approval, using GitHub's native
-deployment-protection mechanism rather than anything repository-owned.
+**Policy update, October 11, 2026 (#521).** The required-reviewer portion of #211 is superseded.
+Keep the `production` environment and its `main`-only deployment branch policy; disable required
+reviewers and the wait timer. A merge to `main` deploys after the complete CI gate when
+`CLOUDFLARE_PAGES_ENABLED` is `true`.
 
-**Scope.** Repository settings only, no code. The `production` environment already exists — the
-`deploy` job declares it — and currently carries an empty `protection_rules` list. Add:
-
-- a **required reviewer**, so `deploy` queues rather than publishing on merge; and
-- a **deployment branch policy** restricting the environment to `main`, so no workflow can ever
-  target the production environment from a pull-request or preview job. This is defense in depth
-  for Epic A.
-
-Consider a short **wait timer** as a cheap accidental-merge cushion. Document the approval step
-and how it composes with the existing `CLOUDFLARE_PAGES_ENABLED` kill switch in `docs/HOSTING.md`:
-the variable is the durable off switch, approval is the per-deploy pause.
-
-**Availability confirmed (2026-08-01).** Environment protection rules are free for public
-repositories, and this repository is public. No plan change or paid tier is required.
-
-**Acceptance.**
-- [ ] A merge to `main` runs `check`, then queues `deploy` pending approval.
-- [ ] Approving publishes; rejecting leaves production untouched.
-- [ ] A job on a non-`main` ref cannot deploy to the `production` environment.
-- [ ] `docs/HOSTING.md` documents approval, the branch policy, the kill switch, and when to use
-      which.
-
-**Note.** With a single maintainer this is self-approval, and `can_admins_bypass` is currently
-`true`. That is fine — the value is the deliberate pause and the audit trail in the deployment
-log, not enforcement against oneself. It may be the entire deploy-freeze capability the project
-ever needs; exercise it for a cycle before building O4 (see D3).
+Artifact verification, published-release checks, upload serialization, and strict post-deployment
+verification continue to enforce the production boundary. Use the publication switch for a freeze
+and cancel already queued or running deployment jobs separately. `docs/HOSTING.md` owns the current
+procedure; do not restore the retired approval rule when recreating the environment.
 
 ## O4 — Promote an explicit commit to production on demand
 
@@ -251,8 +231,9 @@ from O2. Excludes automatic promotion triggers.
 **Depends on.** O2 (branch parameterization). Shares the smoke-check logic with O14 — build it
 once and call it from both.
 
-**Deferred (resolved, D3).** Not built until O3's approval gate proves insufficient. If O3 covers
-the need, this ticket may never be filed.
+**Deferred (D3, updated #521).** #212 remains open for an explicit-ref promotion need. Removing
+manual approval does not require a new promotion workflow; the existing automatic deploy and
+exact-commit CI rerun remain the supported paths.
 
 ---
 
@@ -506,26 +487,26 @@ at roughly T+30. Documentation only.
 The worst outcome for this project is the guide being down, stale, or wrong during the week voters
 use it. This epic makes those states detectable and recoverable.
 
-## O14 — Verify production is up and serving the expected commit
+## O14 — Check availability and verify production deployments
 
-**Outcome.** A scheduled check confirms the live site responds correctly and is serving the commit
-currently on `main`, and raises a visible alert when it is not.
+**Policy update, October 11, 2026 (#512).** The original scheduled comparison against `main`
+and pre-election cadence are superseded. A merge can deliberately remain unpublished.
 
-**Scope.** A scheduled workflow requesting `/`, the current election's guide, its PDF, and
-`/deployment-manifest.json`, asserting expected status codes and redirect behavior against the
-documented route contract, and comparing the manifest's recorded commit against `main`. Alerts by
-opening or updating an issue. Raise the cadence inside an election window. No new infrastructure —
-`deployment-manifest.json` already publishes everything required.
+**Outcome.** One hourly availability probe raises an alert when the served manifest or core
+routes fail. Every dispatched run executes the probe, including a delayed scheduled run.
+
+**Scope.** Request `/deployment-manifest.json`, `/`, the current guide declared by the served
+manifest, and its legacy PDF redirect. Preserve the single alert issue and close it on recovery.
+Do not compare against unpublished `main` commits or pending release declarations. After a
+production deployment, run strict release verification against the uploaded job's explicit SHA
+and preserve its evidence; a mismatch fails that deployment job without an automatic rollback.
 
 **Acceptance.**
 - [ ] A healthy site produces a passing run and no issue.
-- [ ] A simulated commit mismatch and a simulated 404 each raise an alert.
-- [ ] The alert issue is updated rather than duplicated on repeated failures, and closes on
-      recovery.
-- [ ] Cadence increases within the pre-election window.
-
-**Note.** The commit comparison also catches a silently failed deploy, which a plain uptime check
-would miss entirely.
+- [ ] A missing guide or unreachable manifest raises an alert.
+- [ ] The alert issue is updated rather than duplicated and closes on recovery.
+- [ ] Delayed scheduled runs still execute the availability probe.
+- [ ] Strict post-deploy verification uses the deployed SHA rather than a newer `main` head.
 
 ## O15 — Write and rehearse the rollback procedure
 
@@ -543,22 +524,24 @@ observed timings. The rehearsal is part of the ticket, not a follow-up.
 
 **Depends on.** O4 for the second path; the dashboard path can be documented and rehearsed first.
 
-## O16 — Alert on stale published data
+## O16 — Check published data freshness during release verification
 
-**Outcome.** Published data going stale during an active election window is detected rather than
-noticed.
+**Policy update, October 11, 2026 (#512).** Data age is checked by the strict release probe,
+including after a production upload, rather than by the scheduled availability monitor.
 
-**Scope.** Extend O14's scheduled check to read the published data timestamp already exposed in the
-release manifest and audit footer, and alert when it exceeds a threshold during an active window.
-Outside a window, no alert.
+**Outcome.** Strict verification detects stale published data inside an active election window.
+
+**Scope.** Read the published release timestamp and apply the documented seven-day threshold
+inside the calendar-derived pre-election window. Availability checks do not enforce data age.
+Recurring endorsement maintenance is a separate responsibility (#497).
 
 **Acceptance.**
-- [ ] A simulated stale timestamp inside a window alerts.
+- [ ] A simulated stale timestamp inside a window fails strict verification.
 - [ ] The same timestamp outside a window does not.
-- [ ] The threshold and its rationale are documented.
+- [ ] The threshold and its rationale are documented in `docs/HOSTING.md`.
 
-**Depends on.** O14 and O11. Per D5 the active window is read from the calendar rather than a
-separately configured date range, so that election timing has exactly one source of truth.
+**Depends on.** O14 and O11. Per D5 the window is read from the calendar, so election timing
+still has exactly one source of truth.
 
 ## O17 — Detect link rot in cited sources
 
@@ -661,18 +644,16 @@ persist across the archive.
 **Decided: scope alongside the post-election results work (D4).** Both concern what the archive
 says about itself after publication, and deciding them together keeps that voice consistent.
 
-## D3 — What a deploy freeze actually is — RESOLVED into O3
+## D3 — What a deploy freeze actually is — UPDATED October 11, 2026 (#521)
 
 Whether the project wants a declared window in which only data corrections and priority fixes
 publish, and whether that is machine-enforced or observed by convention.
 
-**Decided: use GitHub's native environment protection, and defer O4 until O3 is no longer
-sufficient.** O3 adds a required reviewer and a `main`-only deployment branch policy to the
-existing `production` environment. Confirmed available at no cost for public repositories, which
-this is. A single approver may make mechanized enforcement unnecessary, and a gate that blocks a
-genuine correction during ballot week is worse than no gate. O4 is not filed on a schedule; it is
-filed if and when the approval gate demonstrably fails to cover a real need. `eldritchdark`'s
-`deploy-production.yml` is the template when that day comes.
+**Decided: deploy automatically after CI; use `CLOUDFLARE_PAGES_ENABLED` for a publication freeze.**
+The original required-reviewer decision is superseded because an approval detached from a preview
+does not help the maintainer assess the changes. Keep the `main`-only environment branch policy and
+all build, artifact, release-publication, and post-deployment checks. O4 stays deferred until an
+explicit-ref promotion workflow is independently needed; removing approval does not introduce it.
 
 ## D4 — Post-election results design — DEFERRED to its own ticket and conversation
 
@@ -710,7 +691,7 @@ semantics — so #192 can consume it later without that being a commitment now.
 Nothing blocks filing. Two questions resolve inside their own tickets rather than ahead of them:
 O8's specific generator (`git-cliff` recommended, and the constraint that rules out its
 competitors is recorded) and O10's beacon spike, including the contingent worker-injection call
-if auto-injection proves unavailable. O4 stays deferred until O3 proves insufficient.
+if auto-injection proves unavailable. O4 stays deferred until explicit-ref promotion is needed.
 
 ---
 
@@ -719,14 +700,14 @@ if auto-injection proves unavailable. O4 stays deferred until O3 proves insuffic
 **First — the calendar, plus what is cheap and unblocking.** O11 and O12 lead, per D5: the
 calendar drives everything downstream and is the only item whose value strictly decreases with
 delay. Alongside it, create the three labels, then O5 (release backfill), O1 then O2 (PR previews —
-the highest daily-value item here), and O3 (approval gate, settings only).
+the highest daily-value item here), and O3 (environment settings; approval retired in #521).
 
 **Second, before the next election is added.** O6 and O7 — F4 and F5 make these urgent the moment
 a second election is declared — and O14 (production verification), which O16 then extends.
 
 **Third, steady-state hardening.** O15, O17, O18, O19, O16, O9 then O10, O8, O13.
 
-**Deferred by decision.** O4 until O3 is demonstrably no longer sufficient — not on a schedule;
+**Deferred by decision.** O4 until explicit-ref promotion is needed — not on a schedule;
 D1; D2 and Epic G together in their own conversation.
 
 ---

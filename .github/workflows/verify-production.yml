@@ -1,26 +1,12 @@
-name: Verify production
+name: Production availability
 
-# O14 (docs/SITE_OPERATIONS_PLAN.md, Epic F): confirm the live site responds
-# correctly and is serving the commit currently on `main`, and raise a
-# visible alert when it is not. The commit comparison catches a silently
-# failed deploy that a plain uptime check would miss.
-#
-# GitHub Actions cron cannot vary by calendar data, so this fires every 15
-# minutes unconditionally and a first step decides whether the run is
-# actually due: always, inside the pre-election window (`calendar
-# in-window`, D5 — election timing has exactly one source of truth), and
-# otherwise once an hour, at :15 rather than :00 — calendar.yml's own comment
-# names the top of the hour as GitHub's most congested slot, where a run once
-# fired 45 minutes late; a delayed :00 tick would then read past its own
-# minute and skip that hour's baseline check entirely. That keeps one
-# workflow at one file rather than a second, differently-scheduled copy,
-# mirroring calendar.yml's off-the-hour self-throttling in effect if not in
-# exact minute. As with that workflow, GitHub's schedules are best effort and
-# can be delayed or dropped under load; re-running is free, because a
-# scheduled check is idempotent by nature.
+# #512: one availability probe per hourly tick. Every dispatched run probes
+# even when GitHub starts it late; execution time must never decide whether
+# the site gets checked. Release identity is verified after a production
+# deployment in ci.yml, because unpublished main changes are expected.
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "15 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -45,32 +31,19 @@ env:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - name: Install the pipeline
         run: uv sync --frozen
-      - name: Decide whether this run is due
-        id: cadence
-        if: github.event_name == 'schedule'
-        run: |
-          if uv run election-guide calendar in-window config/calendar/elections.yaml \
-              --before-days 7; then
-            echo "due=true" >> "$GITHUB_OUTPUT"
-          elif [ "$(date -u +%M)" = "15" ]; then
-            echo "due=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "due=false" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Verify production is up and serving the expected commit
-        if: github.event_name != 'schedule' || steps.cadence.outputs.due == 'true'
+      - name: Check production availability
         # Inputs reach the shell through the environment, never through
         # expression interpolation into the script itself.
         run: >-
           uv run election-guide hosting check-production
           "$PRODUCTION_ORIGIN"
-          --expected-git-commit "$(git rev-parse HEAD)"
-          --calendar config/calendar/elections.yaml
+          --availability-only
           --repository "$GITHUB_REPOSITORY"
           ${DRY_RUN:+--dry-run}
         env:

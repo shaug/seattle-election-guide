@@ -82,7 +82,7 @@ Use a stable version, the commit timestamp, and the full Git revision:
 ```bash
 uv run election-guide release build \
   data/releases/wa-2026-general/source-decisions.yaml \
-  --release-version 2026-general.4 \
+  --release-version 2026-general.5 \
   --generated-at "$(git show -s --format=%cI HEAD)" \
   --git-commit "$(git rev-parse HEAD)" \
   --output-dir dist/general-release \
@@ -120,7 +120,7 @@ commands are protected against documentation drift:
 ```bash
 make release-verify
 make check-release-reproducible
-unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.4.zip
+unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.5.zip
 test -f dist/reproducibility-a/bundle/RELEASE_NOTES.md
 test -f dist/reproducibility-a/bundle/validation/rendering/rendering_validation_report.json
 test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/desktop.png
@@ -129,9 +129,9 @@ test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/mobile.pn
 
 Read the notes and rendering report and inspect both screenshots before publication. Record the
 full `release_candidate_sha`, the ZIP SHA-256 and size, and the source-registry, canonical-dataset,
-and source-decision-ledger SHA-256 values. For `2026-general.4`, compare the last three with the
-human-reviewed #474 input hashes recorded in
-[the October 3 refresh audit](GENERAL_REFRESH_2026-10-03.md#publication-handoff); a mismatch stops
+and source-decision-ledger SHA-256 values. For `2026-general.5`, compare the last three with the
+human-reviewed #508 input hashes recorded in
+[the October 10 reconciliation packet](GENERAL_RECONCILIATION_2026-10-10.md#publication-handoff); a mismatch stops
 publication rather than creating a new interpretation here. Later releases must bind this
 comparison to their own reviewed refresh evidence before publication.
 
@@ -168,7 +168,7 @@ macOS equivalence for a release pipeline that is deployed only from Linux.
 
 ## Post-tag release lineage
 
-Publishing `2026-general.4` and then committing the generated changelog creates two intentional
+Publishing `2026-general.5` and then committing the generated changelog creates two intentional
 commit identities. The published archive remains bound to `release_candidate_sha`; the general
 bundle staged for production is rebuilt from the later `production_candidate_sha`. Verify that
 narrow boundary before handing the production bundle to `hosting stage`:
@@ -176,7 +176,7 @@ narrow boundary before handing the production bundle to `hosting stage`:
 <!-- runbook-command:verify-lineage -->
 ```bash
 uv run election-guide release verify-lineage \
-  dist/downloaded/seattle-election-guide-2026-general.4.zip \
+  dist/downloaded/seattle-election-guide-2026-general.5.zip \
   dist/reproducibility-a/bundle \
   "$release_candidate_sha" \
   "$production_candidate_sha" \
@@ -186,6 +186,9 @@ uv run election-guide release verify-lineage \
 Both identities must be full Git commit IDs in the current repository, and the release candidate
 must be an ancestor of the distinct production candidate. The command independently verifies each
 bundle, including its exact declared file set and every manifest hash, before comparing anything.
+Within each bundle, timestamp identities must agree as timezone-aware instants. The builder emits
+both `Z` and `+00:00` for UTC; these spellings are equivalent. Different instants, missing timezones,
+and malformed timestamps are rejected, including in consensus rows and the release notes.
 It then requires the same election, release, source panel and registry, canonical dataset,
 source-decision snapshots, scoring input, and deterministic release content.
 
@@ -210,8 +213,8 @@ Before changing GitHub, inspect the tag, release record, and full asset list sep
 
 <!-- runbook-command:release-preflight -->
 ```bash
-git ls-remote --tags origin refs/tags/2026-general.4 refs/tags/2026-general.4^{}
-gh release view 2026-general.4 \
+git ls-remote --tags origin refs/tags/2026-general.5 refs/tags/2026-general.5^{}
+gh release view 2026-general.5 \
   --json url,tagName,targetCommitish,isDraft,isPrerelease,name,body,assets
 ```
 
@@ -230,9 +233,9 @@ For a permitted create, use the bundled notes and attach the one versioned ZIP:
 
 <!-- runbook-command:release-create -->
 ```bash
-gh release create 2026-general.4 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.4.zip \
-  --title "Seattle 2026 general election endorsement guide — 2026-general.4" \
+gh release create 2026-general.5 \
+  dist/reproducibility-a/seattle-election-guide-2026-general.5.zip \
+  --title "Seattle 2026 general election endorsement guide — 2026-general.5" \
   --notes-file dist/reproducibility-a/bundle/RELEASE_NOTES.md \
   --target "$release_candidate_sha"
 ```
@@ -242,8 +245,8 @@ list is empty, upload the canonical ZIP without `--clobber`:
 
 <!-- runbook-command:release-upload -->
 ```bash
-gh release upload 2026-general.4 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.4.zip
+gh release upload 2026-general.5 \
+  dist/reproducibility-a/seattle-election-guide-2026-general.5.zip
 ```
 
 The omitted `--clobber` is deliberate. If another operator creates an asset after the preflight,
@@ -252,25 +255,25 @@ state.
 
 After upload, use `gh release view` again to prove the release is published, non-draft,
 non-prerelease, and has exactly one asset named
-`seattle-election-guide-2026-general.4.zip`. Record the release URL and the asset ID, name, and size.
+`seattle-election-guide-2026-general.5.zip`. Record the release URL and the asset ID, name, and size.
 Download that exact asset through the Release API, rather than accepting a similarly named local
 file, then verify the bytes and tag with the protected command below:
 
 <!-- runbook-command:verify-published-asset -->
 ```bash
 mkdir -p dist/downloaded
-test ! -e dist/downloaded/seattle-election-guide-2026-general.4.zip
-gh release download 2026-general.4 \
-  --pattern seattle-election-guide-2026-general.4.zip \
+test ! -e dist/downloaded/seattle-election-guide-2026-general.5.zip
+gh release download 2026-general.5 \
+  --pattern seattle-election-guide-2026-general.5.zip \
   --dir dist/downloaded
 local_release_digest="$(shasum -a 256 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.4.zip | awk '{print $1}')"
+  dist/reproducibility-a/seattle-election-guide-2026-general.5.zip | awk '{print $1}')"
 downloaded_release_digest="$(shasum -a 256 \
-  dist/downloaded/seattle-election-guide-2026-general.4.zip | awk '{print $1}')"
+  dist/downloaded/seattle-election-guide-2026-general.5.zip | awk '{print $1}')"
 test "$local_release_digest" = "$downloaded_release_digest"
-unzip -t dist/downloaded/seattle-election-guide-2026-general.4.zip
-git fetch origin tag 2026-general.4
-test "$(git rev-parse '2026-general.4^{commit}')" = "$release_candidate_sha"
+unzip -t dist/downloaded/seattle-election-guide-2026-general.5.zip
+git fetch origin tag 2026-general.5
+test "$(git rev-parse '2026-general.5^{commit}')" = "$release_candidate_sha"
 ```
 
 The digest comparison proves the downloaded archive is byte-for-byte the inspected local archive;
@@ -340,11 +343,12 @@ do not replace a full SHA with a branch name or a dashboard's abbreviated displa
 - the release URL, peeled tag SHA, asset identity/size, and release asset digest;
 - the lineage report and the verified two-election deployment manifest;
 - the exact CI run and artifact for `production_candidate_sha`;
-- the waiting production deployment ID and its full SHA; and
-- the read-only `production-probe.json` output after an authorized deployment.
+- the production deployment ID and its full SHA; and
+- the read-only `production-probe.json` output after deployment.
 
 A production artifact expires after seven days. If it expires or is missing, rerun CI for that exact
 `production_candidate_sha`, repeat lineage and staged-site verification against the new run, and
-record the replacement run/artifact. Never substitute the newer `main` head. Production
-approval remains a separate exact-candidate action described in [HOSTING.md](HOSTING.md); none of
-the release, changelog, lineage, or staging commands approves it.
+record the replacement run/artifact. Never substitute the newer `main` head. Production deploys
+automatically after CI passes on `main` when `CLOUDFLARE_PAGES_ENABLED` is `true`, as described in
+[HOSTING.md](HOSTING.md). There is no separate approval step. The deployment job still requires
+every declared release to be published before upload and verifies the served commit afterward.

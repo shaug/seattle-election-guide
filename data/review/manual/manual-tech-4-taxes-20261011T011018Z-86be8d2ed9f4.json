@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f",
+  "entered_at": "2026-10-11T01:10:18.434680Z",
+  "entry_method": "manual",
+  "evidence_locator": "2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle index, not an election-specific general slate.",
+  "evidence_type": "web_page",
+  "id": "manual-tech-4-taxes-20261011T011018Z-86be8d2ed9f4",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "tech-4-taxes",
+  "transcription": "Legislative District 46 State Representative — Position 1: Gerry Pollet\nLegislative District 37 State Senator: Tatiana Brown\nLegislative District 32 State Representative — Position 2: Imraan Siddiqi\nLegislative District 37 State Representative — Position 1: Kelabe Tewolde"
+}

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+  "entered_at": "2026-10-11T15:43:59.354369Z",
+  "entry_method": "manual",
+  "evidence_locator": "King County Voters Guide, named Seattle-ballot rows listed in decisions.json; includes KCGOP ENDORSED, BEST CHOICE, VOTE YES/NO, and explicit No Recommendation.",
+  "evidence_type": "web_page",
+  "id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "codex-agent-transcription",
+  "schema_version": "1.0",
+  "source_id": "king-county-republican-party",
+  "transcription": "U.S. Representative — Congressional District 7: Nirav Sheth [KCGOP ENDORSED]\nU.S. Representative — Congressional District 9: Doug Basler [KCGOP ENDORSED]\nLegislative District 46 State Senator: Sandra Stephens [KCGOP ENDORSED]\nLegislative District 36 State Senator: Jillian England [BEST CHOICE]\nKing County Assessor: Dominique Scarimbolo [BEST CHOICE]\nSeattle City Council — District 5: Julie Kang [BEST CHOICE]\nWashington Supreme Court Justice — Position 1: Scott Edwards [BEST CHOICE]\nWashington Supreme Court Justice — Position 3: David Stevens [BEST CHOICE]\nWashington Supreme Court Justice — Position 4: Sean O'Donnell [BEST CHOICE]\nWashington Supreme Court Justice — Position 5: Dave Larson [BEST CHOICE]\nWashington Supreme Court Justice — Position 7: Todd A. Bloom [BEST CHOICE]\nInitiative IL26-001 — Parental Rights in Public Schools: Yes [VOTE YES]\nInitiative IL26-638 — Participation in K-12 School Athletics: Yes [VOTE YES]\nInitiative IP26-645 — State and Local Taxes: Yes [VOTE YES]\nSeattle Proposition 1 — Seattle Transit Measure: No [VOTE NO]\nLegislative District 11 State Representative — Position 1: No Recommendation [No Recommendation]\nLegislative District 32 State Representative — Position 1: No Recommendation [No Recommendation]\nLegislative District 32 State Representative — Position 2: No Recommendation [No Recommendation]\nLegislative District 32 State Senator: No Recommendation [No Recommendation]\nLegislative District 34 State Representative — Position 2: No Recommendation [No Recommendation]\nLegislative District 37 State Representative — Position 1: No Recommendation [No Recommendation]\nLegislative District 37 State Representative — Position 2: No Recommendation [No Recommendation]\nLegislative District 37 State Senator: No Recommendation [No Recommendation]\nLegislative District 43 State Representative — Position 1: No Recommendation [No Recommendation]\nLegislative District 43 State Senator: No Recommendation [No Recommendation]\nLegislative District 46 State Representative — Position 1: No Recommendation [No Recommendation]\nLegislative District 46 State Representative — Position 2: No Recommendation [No Recommendation]\nMetropolitan King County Council — District 2: No Recommendation [No Recommendation]\nMetropolitan King County Council — District 4: No Recommendation [No Recommendation]\nMetropolitan King County Council — District 8: No Recommendation [No Recommendation]\nSeattle Municipal Court Judge — Position 5: No Recommendation [No Recommendation]\nKing County District Court West Electoral District — Judge Position 1: No Recommendation [No Recommendation]"
+}

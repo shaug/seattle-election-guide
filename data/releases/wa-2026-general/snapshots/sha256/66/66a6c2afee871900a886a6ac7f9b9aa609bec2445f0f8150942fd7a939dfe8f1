@@ -1,0 +1,72 @@
+{
+  "captured_at": "2026-10-11T01:07:23.755424Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 43 State Senator; Hannah Sabio-Howell. Captures: capture-washington-bus-20261011T010723Z-f28d04da4bcb; verified manual records: manual-washington-bus-20261011T011018Z-c2c115831bca.",
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Seattle City Council — District 5; Nilu Jenks. Captures: capture-washington-bus-20261011T010723Z-35b46c8a38b3; verified manual records: manual-washington-bus-20261011T011018Z-99ed31e6dfad.",
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 37 State Senator; Tatiana Brown. Captures: capture-washington-bus-20261011T010723Z-ab1a1678a561; verified manual records: manual-washington-bus-20261011T011018Z-1b00b353eaaa.",
+      "race_id": "ld-37-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Metropolitan King County Council — District 2; Rebecca Saldaña. Captures: capture-washington-bus-20261011T010723Z-6c1740663489; verified manual records: manual-washington-bus-20261011T011018Z-bedca16a0cc3.",
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 32 State Representative — Position 1; Danica Noble. Captures: capture-washington-bus-20261011T010723Z-969c0dda7736; verified manual records: manual-washington-bus-20261011T011018Z-922fd66d4045.",
+      "race_id": "ld-32-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 37 State Representative — Position 1; Kelabe Tewolde. Captures: capture-washington-bus-20261011T010723Z-d46c9e5bbbfd; verified manual records: manual-washington-bus-20261011T011018Z-8ea3b76133c9. Explicit label mapping approved; see #508 approval record.",
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable. Target: Legislative District 37 State Representative — Position 2; Jaelynn Scott. Captures: capture-washington-bus-20261011T010723Z-f55404f17b9c; verified manual records: manual-washington-bus-20261011T011018Z-05ceadea452a. Explicit label mapping approved; see #508 approval record.",
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Approved October 10 packet, issue #508; data/review/approvals/wa-2026-general-2026-10-10.json.",
+  "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+  "reviewer": "shaug",
+  "source_id": "washington-bus"
+}

@@ -505,13 +505,13 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-general/snapshots",
         manifest_dir=PROJECT_ROOT / "data/releases/wa-2026-general/manifests",
         output_dir=tmp_path / "general-release",
-        release_version="2026-general.4",
+        release_version="2026-general.5",
         generated_at=read_release_ledger(
             PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml"
         ).data_as_of,
         git_commit="a" * 40,
     )
-    expected_registry_hash = "2da80c88fc1a913e32aeb7ddfd5d66ffb18f9820e41579da575120e6de4c5d16"
+    expected_registry_hash = "0ffeccf149259a0c1c93a551e1d4d1a2e255e25dd3f279e787efdc4877543327"
 
     assert general_release.status.schema_version == "1.3"
     assert general_release.status.source_registry_hash == expected_registry_hash
@@ -532,7 +532,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
     stage_pages_site(
         site_manifest_path,
         {
-            "wa-2026-general-2026-general.4": general_release.bundle_dir,
+            "wa-2026-general-2026-general.5": general_release.bundle_dir,
             "wa-2026-primary-2026-primary.2": primary_release.bundle_dir,
         },
         output,

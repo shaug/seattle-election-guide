@@ -9,6 +9,34 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-general.5 — 2026-10-11
+
+### Added
+
+- Declare and watch results ingest milestones (#498)
+
+### Documentation
+
+- Add 2026-general.4 changelog (#495)
+
+### Fixed
+
+- Check source links for the current general election (#496)
+- Reconcile general election endorsement coverage (#510)
+- Simplify production checks and retire daily analytics PRs (#513)
+
+### Tests
+
+- Wait for meter animations and preserve Chrome diagnostics (#516)
+
+### Tooling
+
+- Archive zone rollups (#503)
+- Archive zone rollups through 2026-10-05 (#499)
+- Archive zone rollups through 2026-10-08 (#504)
+- Archive zone rollups through 2026-10-09 (#506)
+- Archive zone rollups through 2026-10-10 (#507)
+- Archive zone rollups through 2026-10-11 (#511)
 ## 2026-general.4 — 2026-10-04
 
 ### Documentation

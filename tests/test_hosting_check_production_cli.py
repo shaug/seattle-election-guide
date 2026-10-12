@@ -177,6 +177,59 @@ def test_a_reconciliation_failure_is_reported_without_a_traceback(
     assert "gh: not authenticated" in result.output
 
 
+def test_availability_mode_probes_without_unpublished_release_expectations(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    recorded: dict[str, Any] = {}
+
+    def _check(base_url: str, **kwargs: Any) -> ProductionCheckReport:
+        recorded.update(kwargs)
+        return _healthy_report().model_copy(update={"commit": None})
+
+    def _never_calendar(*args: Any, **kwargs: Any) -> None:
+        raise AssertionError("availability must not read the publication calendar")
+
+    monkeypatch.setattr(cli, "run_production_check", _check)
+    monkeypatch.setattr(cli, "read_election_calendar", _never_calendar)
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "check-production",
+            "https://seattleelections.guide",
+            "--availability-only",
+            "--dry-run",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert recorded["expected_git_commit"] is None
+    assert recorded["site_manifest"] is None
+    assert recorded["active_window"] is False
+    assert "PASS" in result.output
+    assert "commit:" not in result.output
+
+
+@pytest.mark.parametrize(
+    "arguments", [[], ["--availability-only", "--expected-git-commit", COMMIT]]
+)
+def test_production_mode_requires_an_unambiguous_release_expectation(
+    monkeypatch: pytest.MonkeyPatch,
+    arguments: list[str],
+) -> None:
+    def _never(*args: Any, **kwargs: Any) -> ProductionCheckReport:
+        raise AssertionError("an ambiguous check must fail before probing")
+
+    monkeypatch.setattr(cli, "run_production_check", _never)
+    result = CliRunner().invoke(
+        cli.app,
+        ["hosting", "check-production", "https://seattleelections.guide", *arguments],
+    )
+
+    assert result.exit_code == 1
+    assert "expected" in result.output.lower()
+
+
 def _write_calendar(path: Path, *, election_date: date) -> Path:
     calendar_path = path / "elections.yaml"
     calendar_path.write_text(

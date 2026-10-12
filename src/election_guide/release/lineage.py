@@ -11,6 +11,7 @@ import tempfile
 import zlib
 from contextlib import ExitStack
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path, PurePosixPath
 from typing import Any, cast
 from zipfile import BadZipFile, ZipFile, is_zipfile
@@ -270,6 +271,7 @@ def _verify_internal_identities(
     build = parsed["data/build_manifest.json"]
     metadata = _require_mapping(publication, "metadata")
     election_id = _require_string(status, "election_id")
+    expected_time = _aware_timestamp(generated_at)
     for relative, value in (
         ("data/consensus.json", consensus),
         ("data/provenance_manifest.json", provenance),
@@ -291,9 +293,9 @@ def _verify_internal_identities(
         ("data/build_manifest.json", build),
     ):
         timestamp_key = "generated_at" if relative != "data/consensus.json" else "computed_at"
-        if _require_string(value, timestamp_key) != generated_at:
+        if _aware_timestamp(_require_string(value, timestamp_key)) != expected_time:
             raise ValueError(f"{relative} timestamp differs from release status")
-    if _require_string(metadata, "generated_at") != generated_at:
+    if _aware_timestamp(_require_string(metadata, "generated_at")) != expected_time:
         raise ValueError("publication view model timestamp differs from release status")
     if (
         _require_string(build, "git_commit") != expected_sha
@@ -359,6 +361,7 @@ def _normalized_artifacts(
     normalized = dict(bundle.raw)
     fields: dict[str, tuple[str, ...]] = {}
     timestamp = bundle.generated_at
+    expected_time = _aware_timestamp(timestamp)
 
     consensus = copy.deepcopy(bundle.json["data/consensus.json"])
     consensus_paths = ["/computed_at"]
@@ -370,7 +373,7 @@ def _normalized_artifacts(
         if not isinstance(race, dict):
             raise ValueError("consensus races must contain objects")
         typed_race = cast(dict[str, Any], race)
-        if typed_race.get("computed_at") != timestamp:
+        if _aware_timestamp(_require_string(typed_race, "computed_at")) != expected_time:
             raise ValueError("consensus race timestamp differs from release status")
         typed_race["computed_at"] = _NORMALIZED_TIMESTAMP
         consensus_paths.append(f"/races/{index}/computed_at")
@@ -403,11 +406,17 @@ def _normalized_artifacts(
     )
 
     notes = bundle.raw["RELEASE_NOTES.md"].decode("utf-8")
-    built_line = f"- Built at: {timestamp}"
+    built_matches = list(re.finditer(r"^- Built at: (.+)$", notes, re.MULTILINE))
     commit_line = f"- Code revision: `{candidate_sha}`"
-    if notes.count(built_line) != 1 or notes.count(commit_line) != 1:
+    if len(built_matches) != 1 or notes.count(commit_line) != 1:
         raise ValueError("release notes do not contain the documented commit-bound provenance")
-    notes = notes.replace(built_line, f"- Built at: {_NORMALIZED_TIMESTAMP}")
+    built_match = built_matches[0]
+    if _aware_timestamp(built_match.group(1)) != expected_time:
+        raise ValueError("release notes timestamp differs from release status")
+    notes = (
+        f"{notes[: built_match.start()]}- Built at: {_NORMALIZED_TIMESTAMP}"
+        f"{notes[built_match.end() :]}"
+    )
     notes = notes.replace(commit_line, f"- Code revision: `{_NORMALIZED_COMMIT}`")
     normalized["RELEASE_NOTES.md"] = notes.encode()
     fields["RELEASE_NOTES.md"] = ("line:Built at", "line:Code revision")
@@ -488,6 +497,13 @@ def _canonical_dataset_election(dataset: dict[str, Any]) -> str:
         return election
     inventory = _require_mapping(dataset, "inventory")
     return _require_string(_require_mapping(inventory, "election"), "id")
+
+
+def _aware_timestamp(value: str) -> datetime:
+    timestamp = datetime.fromisoformat(value)
+    if timestamp.utcoffset() is None:
+        raise ValueError("release metadata timestamps must include a timezone")
+    return timestamp
 
 
 def _require_mapping(value: dict[str, Any], key: str) -> dict[str, Any]:

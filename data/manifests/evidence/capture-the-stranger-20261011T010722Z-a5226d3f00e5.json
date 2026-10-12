@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 312512,
+  "canonical_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+  "capture_method": "static_html",
+  "content_sha256": "c5f3a7a6e361c5415a074270f1218eba302bcd6949e3ad29614315b61ddf284f",
+  "http_status": 200,
+  "id": "capture-the-stranger-20261011T010722Z-a5226d3f00e5",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official third-party artifact retained in the primary checkout durable local store for review only.",
+  "requested_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+  "retrieved_at": "2026-10-11T01:07:22.845378Z",
+  "schema_version": "1.0",
+  "source_id": "the-stranger",
+  "storage_reference": "sha256/c5/c5f3a7a6e361c5415a074270f1218eba302bcd6949e3ad29614315b61ddf284f",
+  "storage_scope": "local_only",
+  "title": "the-stranger 2026 general endorsement evidence (the-stranger)",
+  "updated_at": null
+}
