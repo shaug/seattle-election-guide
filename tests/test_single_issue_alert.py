@@ -3,8 +3,7 @@
 Direct coverage for `single_issue_alert`'s own logic -- the four-branch
 decision table, marker matching, the tracker base class's four `gh`-calling
 methods, and the generic reconcile branching -- independent of
-`test_production_alert.py` and `test_link_rot_alert.py`, which cover the
-same shape only indirectly through the two domain wrappers built on top of
+`test_link_rot_alert.py`, which covers the domain wrapper built on top of
 it.
 """
 

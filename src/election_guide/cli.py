@@ -51,6 +51,7 @@ from election_guide.calendar.github_tracker import GitHubIssueTracker
 from election_guide.collection import read_adapter_spec, refresh_source, validate_adapter
 from election_guide.collection.http import fetch_http
 from election_guide.collection.refresh import RefreshOrderError, record_refresh_failure
+from election_guide.collection.verification_cli import app as verification_app
 from election_guide.evidence.manual import (
     import_manual_draft,
     read_manual_draft,
@@ -73,7 +74,6 @@ from election_guide.hosting import (
     verify_declared_releases_published,
     verify_staged_pages_site,
 )
-from election_guide.hosting.production_alert import ProductionAlertTracker, reconcile_alert
 from election_guide.hosting.production_check import render_summary_lines
 from election_guide.hosting.production_probe import run_production_check
 from election_guide.initialization import initialize_election, read_election_configuration
@@ -194,6 +194,7 @@ app.add_typer(export_app, name="export")
 app.add_typer(render_app, name="render")
 app.add_typer(release_app, name="release")
 app.add_typer(collect_app, name="collect")
+app.add_typer(verification_app, name="verification")
 app.add_typer(hosting_app, name="hosting")
 app.add_typer(results_app, name="results")
 app.add_typer(analytics_app, name="analytics")
@@ -336,15 +337,12 @@ def hosting_check_production(
         str, typer.Argument(help="Canonical production origin, e.g. https://seattleelections.guide")
     ],
     expected_git_commit: Annotated[
-        str | None, typer.Option(help="The full approved commit production must match.")
+        str | None, typer.Option(help="The full deployed commit production must match.")
     ] = None,
     availability_only: Annotated[
         bool,
         typer.Option(help="Check the served manifest and routes without release expectations."),
     ] = False,
-    repository: Annotated[
-        str, typer.Option(help="GitHub repository as OWNER/NAME, for the alert issue.")
-    ] = "shaug/seattle-election-guide",
     timeout: Annotated[float, typer.Option(help="Per-request timeout, in seconds.")] = 15.0,
     site_manifest_path: Annotated[
         Path,
@@ -374,14 +372,8 @@ def hosting_check_production(
             help="Write deterministic JSON evidence suitable for the release issue.",
         ),
     ] = None,
-    dry_run: Annotated[
-        bool,
-        typer.Option(
-            help="Report the result without opening, updating, or closing an alert issue."
-        ),
-    ] = False,
 ) -> None:
-    """Check availability, or verify an explicit release and in-window data freshness."""
+    """Read-only availability or explicit-release verification with optional JSON evidence."""
     checked_at = datetime.now(UTC)
     active_window = False
     try:
@@ -421,20 +413,6 @@ def hosting_check_production(
             raise typer.Exit(code=1) from error
     for line in render_summary_lines(report):
         typer.echo(line)
-    if dry_run:
-        typer.echo("hosting check-production: dry run, no alert issue changes")
-    else:
-        try:
-            outcome = reconcile_alert(
-                ProductionAlertTracker(repository),
-                report,
-                base_url=base_url,
-                checked_at=checked_at.isoformat(),
-            )
-        except ValueError as error:
-            typer.echo(f"hosting check-production failed: {error}", err=True)
-            raise typer.Exit(code=1) from error
-        typer.echo(f"hosting check-production: {outcome}")
     if not report.ok:
         raise typer.Exit(code=1)
 
@@ -634,10 +612,8 @@ def calendar_in_window(
 ) -> None:
     """Exit 0 when a KIND milestone falls within BEFORE_DAYS of AS_OF, else 1.
 
-    O14 raises its check cadence inside the pre-election window; this is the
-    deterministic decision a scheduled workflow gates that cadence on, reusing
-    the same due-milestone window calendar tracking already defines (D5:
-    election timing has exactly one source of truth).
+    Reuses the due-milestone window calendar tracking already defines, so
+    election timing has exactly one source of truth (D5).
     """
     try:
         calendar = read_election_calendar(calendar_path)

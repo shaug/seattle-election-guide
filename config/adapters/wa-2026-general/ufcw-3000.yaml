@@ -1,0 +1,184 @@
+# Reviewed facts only. Every changed byte set routes to human review.
+schema_version: '1.0'
+source_id: ufcw-3000
+adapter_kind: static_html
+extractor_version: 1.0.0
+complete: true
+decision_pattern: (?:^Rob\s+Foxcurran,\s+County\s+Assessor$|^Leesa\s+Manion,\s+County\s+Prosecuting\s+Attorney$|^Rebecca\s+Saldana,\s+County\s+Council\s+District\s+2$|^Jorge\s+Baron,\s+County\s+Council\s+District\s+4$|^Teresa\s+Mosqueda,\s+County\s+Council\s+District\s+8$|^Nilu\s+Jenks,\s+District\s+5$|^Colleen\s+Melody,\s+Position\s+1$|^Jamie\s+Hawk,\s+Position\s+3$|^David\s+Hackney,\s+State\s+Representative\s+Pos\s+1$|^Danica\s+Noble,\s+State\s+Representative\s+Pos\s+1$|^Lauren\s+Davis,\s+State\s+Representative\s+Pos\s+2\s+\(Dual\)\s+Imraan\s+Siddiqi,\s+State\s+Representative\s+Pos\s+2\s+\(Dual\)$|^Jesse\s+Salomon,\s+State\s+Senate$|^Emily\s+Alvarado,\s+State\s+Senate$|^Brianna\s+Thomas,\s+State\s+Representative\s+Pos\s+1$|^Joe\s+Fitzgibbon,\s+State\s+Representative\s+Pos\s+2$|^Noel\s+Frame,\s+State\s+Senate$|^Julia\s+Reed,\s+State\s+Representative\s+Pos\s+1$|^Liz\s+Berry,\s+State\s+Representative\s+Pos\s+2$|^Chipalo\s+Street,\s+State\s+Senate$|^Jaelynn\s+Scott,\s+State\s+Representative\s+Pos\s+2$|^Jamie\s+Pederson,\s+State\s+Senate$|^Nicole\s+Macri,\s+State\s+Representative\s+Pos\s+1$|^Javier\s+Valdez,\s+State\s+Senate$|^Gerry\s+Pollet,\s+State\s+Representative\s+Pos\s+1$|^Darya\s+Farivar,\s+State\s+Representative\s+Pos\s+2$)
+rules:
+- race_id: king-county-assessor
+  pattern: ^Rob\s+Foxcurran,\s+County\s+Assessor$
+  status: endorsed
+  candidate_ids:
+  - king-county-assessor--rob-foxcurran
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: king-county-prosecuting-attorney
+  pattern: ^Leesa\s+Manion,\s+County\s+Prosecuting\s+Attorney$
+  status: endorsed
+  candidate_ids:
+  - king-county-prosecuting-attorney--leesa-manion
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: king-county-council-2
+  pattern: ^Rebecca\s+Saldana,\s+County\s+Council\s+District\s+2$
+  status: endorsed
+  candidate_ids:
+  - king-county-council-2--rebecca-saldana
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: king-county-council-4
+  pattern: ^Jorge\s+Baron,\s+County\s+Council\s+District\s+4$
+  status: endorsed
+  candidate_ids:
+  - king-county-council-4--jorge-l-baron
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: king-county-council-8
+  pattern: ^Teresa\s+Mosqueda,\s+County\s+Council\s+District\s+8$
+  status: endorsed
+  candidate_ids:
+  - king-county-council-8--teresa-mosqueda
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: seattle-city-council-5
+  pattern: ^Nilu\s+Jenks,\s+District\s+5$
+  status: endorsed
+  candidate_ids:
+  - seattle-city-council-5--nilu-jenks
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: supreme-court-justice-1
+  pattern: ^Colleen\s+Melody,\s+Position\s+1$
+  status: endorsed
+  candidate_ids:
+  - supreme-court-justice-1--colleen-melody
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: supreme-court-justice-3
+  pattern: ^Jamie\s+Hawk,\s+Position\s+3$
+  status: endorsed
+  candidate_ids:
+  - supreme-court-justice-3--jaime-michelle-hawk
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-11-state-representative-1
+  pattern: ^David\s+Hackney,\s+State\s+Representative\s+Pos\s+1$
+  status: endorsed
+  candidate_ids:
+  - ld-11-state-representative-1--david-hackney
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-32-state-representative-1
+  pattern: ^Danica\s+Noble,\s+State\s+Representative\s+Pos\s+1$
+  status: endorsed
+  candidate_ids:
+  - ld-32-state-representative-1--danica-noble
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-32-state-representative-2
+  pattern: ^Lauren\s+Davis,\s+State\s+Representative\s+Pos\s+2\s+\(Dual\)\s+Imraan\s+Siddiqi,\s+State\s+Representative\s+Pos\s+2\s+\(Dual\)$
+  status: dual_endorsement
+  candidate_ids:
+  - ld-32-state-representative-2--lauren-davis
+  - ld-32-state-representative-2--imraan-siddiqi
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-32-state-senator
+  pattern: ^Jesse\s+Salomon,\s+State\s+Senate$
+  status: endorsed
+  candidate_ids:
+  - ld-32-state-senator--jesse-salomon
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-34-state-senator
+  pattern: ^Emily\s+Alvarado,\s+State\s+Senate$
+  status: endorsed
+  candidate_ids:
+  - ld-34-state-senator--emily-alvarado
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-34-state-representative-1
+  pattern: ^Brianna\s+Thomas,\s+State\s+Representative\s+Pos\s+1$
+  status: endorsed
+  candidate_ids:
+  - ld-34-state-representative-1--brianna-k-thomas
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-34-state-representative-2
+  pattern: ^Joe\s+Fitzgibbon,\s+State\s+Representative\s+Pos\s+2$
+  status: endorsed
+  candidate_ids:
+  - ld-34-state-representative-2--joe-fitzgibbon
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-36-state-senator
+  pattern: ^Noel\s+Frame,\s+State\s+Senate$
+  status: endorsed
+  candidate_ids:
+  - ld-36-state-senator--noel-c-frame
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-36-state-representative-1
+  pattern: ^Julia\s+Reed,\s+State\s+Representative\s+Pos\s+1$
+  status: endorsed
+  candidate_ids:
+  - ld-36-state-representative-1--julia-grant-reed
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-36-state-representative-2
+  pattern: ^Liz\s+Berry,\s+State\s+Representative\s+Pos\s+2$
+  status: endorsed
+  candidate_ids:
+  - ld-36-state-representative-2--liz-berry
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-37-state-senator
+  pattern: ^Chipalo\s+Street,\s+State\s+Senate$
+  status: endorsed
+  candidate_ids:
+  - ld-37-state-senator--chipalo-street
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-37-state-representative-2
+  pattern: ^Jaelynn\s+Scott,\s+State\s+Representative\s+Pos\s+2$
+  status: endorsed
+  candidate_ids:
+  - ld-37-state-representative-2--jaelynn-scott
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-43-state-senator
+  pattern: ^Jamie\s+Pederson,\s+State\s+Senate$
+  status: endorsed
+  candidate_ids:
+  - ld-43-state-senator--jamie-pedersen
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-43-state-representative-1
+  pattern: ^Nicole\s+Macri,\s+State\s+Representative\s+Pos\s+1$
+  status: endorsed
+  candidate_ids:
+  - ld-43-state-representative-1--nicole-macri
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-46-state-senator
+  pattern: ^Javier\s+Valdez,\s+State\s+Senate$
+  status: endorsed
+  candidate_ids:
+  - ld-46-state-senator--javier-valdez
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-46-state-representative-1
+  pattern: ^Gerry\s+Pollet,\s+State\s+Representative\s+Pos\s+1$
+  status: endorsed
+  candidate_ids:
+  - ld-46-state-representative-1--gerry-pollet
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-46-state-representative-2
+  pattern: ^Darya\s+Farivar,\s+State\s+Representative\s+Pos\s+2$
+  status: endorsed
+  candidate_ids:
+  - ld-46-state-representative-2--darya-farivar
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'

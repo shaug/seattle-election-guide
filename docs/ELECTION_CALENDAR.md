@@ -432,3 +432,20 @@ the rendering side, not here.
 The retrospective milestone therefore declares a date and a reference to
 `docs/POST_ELECTION_RETROSPECTIVE.md`, and no wording of its own. A reference
 names where the work is written down; it is not copy about the milestone.
+
+## Recurring endorsement verification (#497)
+
+`config/verification.yaml` references this calendar rather than declaring dates.
+The scheduler expands planned `collection_opens`, `overseas_service_ballots_mail`,
+and `election_day` anchors into weekly then daily obligations. An earlier daily
+source override is separate from frozen source-panel membership. First activation
+creates current work only. The six-hour source workflow executes due checks;
+the independent Calendar watcher reads committed verification state and reports
+missing scheduled events, including after the final election-day slot. Both
+workflows share a concurrency group for idempotent daily task reconciliation.
+
+This recurring capability creates neither one calendar milestone per day nor a
+public calendar feed entry for each check. Existing comprehensive refresh
+milestones retain their own work and authority. See
+[the runbook](runbooks/endorsement-source-daily-verification.md) for coverage,
+encrypted Git persistence, and pending adoption evidence.

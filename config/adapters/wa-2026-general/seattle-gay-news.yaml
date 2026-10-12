@@ -1,0 +1,57 @@
+# Reviewed facts only. Every changed byte set routes to human review.
+schema_version: '1.0'
+source_id: seattle-gay-news
+adapter_kind: static_html
+extractor_version: 1.0.0
+complete: true
+decision_pattern: (?:^SGN\s+Endorsements\s+Pramila\s+Jayapal\s+\(US\s+House\s+of\s+Representatives\s+7th\s+District\)$|^SGN\s+Endorsements\s+Tatiana\s+Brown\s+\(Washington\s+State\s+Senate\s+37th\s+District\)$|^SGN\s+Endorsements\s+Kelabe\s+Tewolde\s+\(Washington\s+State\s+Legislative\s+District\s+37\s+Position\s+1\)$|^SGN\s+Endorsements\s+Jaelynn\s+Scott\s+\(Washington\s+State\s+House\s+of\s+Representatives\s+37th\s+District\s+Position\s+2\)$|^SGN\s+Endorsements\s+Hannah\s+Sabio\-Howell\s+\(Washington\s+State\s+Senate\s+43rd\s+District\)$|^SGN\s+Endorsements\s+Rebecca\s+Saldaña\s+\(King\s+County\s+Council\s+District\s+2\)$|^SGN\s+Endorsements\s+Nilu\s+Jenks\s+\(Seattle\s+City\s+Council\s+District\s+5\)$)
+rules:
+- race_id: us-house-7
+  pattern: ^SGN\s+Endorsements\s+Pramila\s+Jayapal\s+\(US\s+House\s+of\s+Representatives\s+7th\s+District\)$
+  status: endorsed
+  candidate_ids:
+  - us-house-7--pramila-jayapal
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-37-state-senator
+  pattern: ^SGN\s+Endorsements\s+Tatiana\s+Brown\s+\(Washington\s+State\s+Senate\s+37th\s+District\)$
+  status: endorsed
+  candidate_ids:
+  - ld-37-state-senator--tatiana-brown
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-37-state-representative-1
+  pattern: ^SGN\s+Endorsements\s+Kelabe\s+Tewolde\s+\(Washington\s+State\s+Legislative\s+District\s+37\s+Position\s+1\)$
+  status: endorsed
+  candidate_ids:
+  - ld-37-state-representative-1--kelabe-tewolde
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-37-state-representative-2
+  pattern: ^SGN\s+Endorsements\s+Jaelynn\s+Scott\s+\(Washington\s+State\s+House\s+of\s+Representatives\s+37th\s+District\s+Position\s+2\)$
+  status: endorsed
+  candidate_ids:
+  - ld-37-state-representative-2--jaelynn-scott
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: ld-43-state-senator
+  pattern: ^SGN\s+Endorsements\s+Hannah\s+Sabio\-Howell\s+\(Washington\s+State\s+Senate\s+43rd\s+District\)$
+  status: endorsed
+  candidate_ids:
+  - ld-43-state-senator--hannah-sabio-howell
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: king-county-council-2
+  pattern: ^SGN\s+Endorsements\s+Rebecca\s+Saldaña\s+\(King\s+County\s+Council\s+District\s+2\)$
+  status: endorsed
+  candidate_ids:
+  - king-county-council-2--rebecca-saldana
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'
+- race_id: seattle-city-council-5
+  pattern: ^SGN\s+Endorsements\s+Nilu\s+Jenks\s+\(Seattle\s+City\s+Council\s+District\s+5\)$
+  status: endorsed
+  candidate_ids:
+  - seattle-city-council-5--nilu-jenks
+  evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
+    renewed review.'

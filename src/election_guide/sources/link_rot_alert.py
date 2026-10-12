@@ -1,6 +1,6 @@
 """Reconcile the single link-rot alert issue against GitHub (O17).
 
-Mirrors `election_guide.hosting.production_alert`'s update-in-place shape: a
+Uses `election_guide.single_issue_alert`'s update-in-place shape: a
 confirmed failure must not open a second issue while the first is still
 open, and full recovery closes it. Confirmation itself -- comparing this
 run's failing URLs against the previous run's, so a single transient error

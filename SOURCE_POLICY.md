@@ -23,7 +23,7 @@ page, screenshot reference, or short excerpt.
 ## Public repository boundaries
 
 The repository may contain official URLs, metadata, hashes, normalized facts, original review
-notes, and short excerpts needed for verification. Do not commit complete third-party pages,
+notes, and short excerpts needed for verification. Do not commit plaintext complete third-party pages,
 paywalled articles, browser profiles, credentials, personal data, or captures whose
 redistribution rights are unclear.
 
@@ -33,6 +33,15 @@ tokens. Record a clean official URL and keep credential-bearing retrieval detail
 Restricted captures may be stored locally or in a separately controlled evidence store. Their
 manifests must still permit authorized reviewers to verify integrity.
 
+Recurring verification (#497) uses Git-backed encrypted custody instead of an external evidence
+service: full publicly accessible source responses may be committed only as authenticated
+AES-256-GCM ciphertext under `data/verification/<election>/vault/`. The random encryption key is
+kept outside Git in an Actions secret and private maintainer custody. Plaintext stays in private
+temporary storage; credentials, private personal data, browser profiles, and access-controlled
+material remain excluded even from this vault. This exception does not authorize redistribution,
+access-control bypass, public raw-content logs, or uploaded decrypted artifacts. Public manifests
+and extracted facts remain separate. See the daily-verification runbook for recovery and review.
+
 The default implementation stores artifact bytes by SHA-256 beneath the Git-ignored
 `data/snapshots/` directory and writes metadata-only manifests beneath
 `data/manifests/evidence/`. Manifests use relative content addresses rather than machine-specific
@@ -40,7 +49,7 @@ absolute paths. Manual transcriptions are stored separately under `data/review/m
 reference a verified capture.
 
 Official-authority artifacts — election results published by a counting authority — are the one
-class whose bytes are committed, beneath the tracked `data/evidence/official/` directory. They are
+class whose plaintext bytes are committed, beneath `data/evidence/official/`. They are
 public records, so the paragraph above's prohibitions do not reach them, and committing them is
 what keeps them from dying with the session that captured them. `docs/COLLECTION.md` records the
 decision and its rationale.
