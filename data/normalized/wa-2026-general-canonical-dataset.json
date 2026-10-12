@@ -398,22 +398,22 @@
     {
       "availability": "captured",
       "browser_required": false,
-      "byte_length": 6642,
+      "byte_length": 7705,
       "canonical_url": "https://tech4taxes.org/endorsements",
       "capture_method": "manual_upload",
-      "content_sha256": "bb0eb2b961b7fb7c8b7589e1b14e0cdf03325e65d76684d1cc69a17d09a0ae87",
+      "content_sha256": "b8f83eaf1689337b823d8d762fceaa8229deaa834ded3790d239ab575d8aff21",
       "http_status": null,
-      "id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "media_type": "application/json",
       "published_at": null,
       "redirect_chain": [],
       "redistribution": "permitted",
       "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
       "requested_url": "https://tech4taxes.org/endorsements",
-      "retrieved_at": "2026-10-11T01:07:22.975031Z",
+      "retrieved_at": "2026-10-12T16:13:32Z",
       "schema_version": "1.0",
       "source_id": "tech-4-taxes",
-      "storage_reference": "sha256/bb/bb0eb2b961b7fb7c8b7589e1b14e0cdf03325e65d76684d1cc69a17d09a0ae87",
+      "storage_reference": "sha256/b8/b8f83eaf1689337b823d8d762fceaa8229deaa834ded3790d239ab575d8aff21",
       "storage_scope": "local_only",
       "title": "Permitted 2026 endorsement decision extract: Tech 4 Taxes",
       "updated_at": null
@@ -830,6 +830,75 @@
       "storage_reference": "sha256/66/66a6c2afee871900a886a6ac7f9b9aa609bec2445f0f8150942fd7a939dfe8f1",
       "storage_scope": "local_only",
       "title": "Permitted 2026 endorsement decision extract: The Washington Bus",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
+      "byte_length": 9478,
+      "canonical_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+      "capture_method": "manual_upload",
+      "content_sha256": "0ca560b8247d520f40ee8e5bef15d0328e767fd0d69cbdd5a2f05dcc200a3847",
+      "http_status": null,
+      "id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+      "retrieved_at": "2026-10-11T15:41:56.877970Z",
+      "schema_version": "1.0",
+      "source_id": "young-democrats-of-washington",
+      "storage_reference": "sha256/0c/0ca560b8247d520f40ee8e5bef15d0328e767fd0d69cbdd5a2f05dcc200a3847",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Young Democrats of Washington",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
+      "byte_length": 3127,
+      "canonical_url": "https://ndaction.org/2026-endorsements/",
+      "capture_method": "manual_upload",
+      "content_sha256": "56f6df0be528d4df47dd08c9e1b99c564b1e3b5a56a38864b733440811fdcd6f",
+      "http_status": null,
+      "id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://ndaction.org/2026-endorsements/",
+      "retrieved_at": "2026-10-11T15:41:11.594444Z",
+      "schema_version": "1.0",
+      "source_id": "nondriver-action",
+      "storage_reference": "sha256/56/56f6df0be528d4df47dd08c9e1b99c564b1e3b5a56a38864b733440811fdcd6f",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Nondriver Action",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
+      "byte_length": 1424,
+      "canonical_url": "https://www.trackaipac.com/endorsements",
+      "capture_method": "manual_upload",
+      "content_sha256": "ce0dd9b0a1871bb31ac8e21b7ba0f5785da8c329d3e504d9611e449c5f42caa6",
+      "http_status": null,
+      "id": "capture-citizens-against-aipac-corruption-20261011T154111Z-a2787731c952",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://www.trackaipac.com/endorsements",
+      "retrieved_at": "2026-10-11T15:41:11.594444Z",
+      "schema_version": "1.0",
+      "source_id": "citizens-against-aipac-corruption",
+      "storage_reference": "sha256/ce/ce0dd9b0a1871bb31ac8e21b7ba0f5785da8c329d3e504d9611e449c5f42caa6",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Citizens Against AIPAC Corruption (Track AIPAC)",
       "updated_at": null
     }
   ],
@@ -4705,151 +4774,166 @@
       "source_id": "seattle-gay-news"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa. Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z; not retranscribed in #508.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-1182da3b587ec268",
+      "id": "claim-4bdeb75dfd620d91",
       "raw_candidate_text": "Hannah Sabio-Howell",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Legislative District 43 State Senator",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-taxes"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa. Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z; not retranscribed in #508.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-0342cb91afaaaaec",
+      "id": "claim-bc1103747cadb06b",
       "raw_candidate_text": "Noel C. Frame",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Legislative District 36 State Senator",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-taxes"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa. Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z; not retranscribed in #508.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-ce7540a955294a63",
+      "id": "claim-466515d0c279dc09",
       "raw_candidate_text": "Toshiko Grace Hasegawa and Rebecca Saldaña",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Metropolitan King County Council — District 2",
       "raw_status_text": "dual endorsement",
       "requires_review": true,
       "source_id": "tech-4-taxes"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa. Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z; not retranscribed in #508.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-4e6e443397b1f48e",
+      "id": "claim-c9ad6313ac6d8580",
       "raw_candidate_text": "Nilu Jenks",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Seattle City Council — District 5",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-taxes"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa. Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z; not retranscribed in #508.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-a3080761607a59c1",
+      "id": "claim-26c01b0345948abd",
       "raw_candidate_text": "Danica Noble",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Legislative District 32 State Representative — Position 1",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-taxes"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa. Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z; not retranscribed in #508.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-4b712ae4e26d6b80",
+      "id": "claim-341f0c36285ed05e",
       "raw_candidate_text": "Jaelynn Scott",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Legislative District 37 State Representative — Position 2",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-taxes"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle index, not an election-specific general slate. Target: Legislative District 46 State Representative — Position 1; Gerry Pollet. Captures: capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f; verified manual records: manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-6ce611b41724dc9a",
+      "id": "claim-46053a1fcf0729e5",
       "raw_candidate_text": "Gerry Pollet",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Legislative District 46 State Representative — Position 1",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-taxes"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle index, not an election-specific general slate. Target: Legislative District 37 State Senator; Tatiana Brown. Captures: capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f; verified manual records: manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-d29b75f4cc23e548",
+      "id": "claim-26ba59c1d9efc295",
       "raw_candidate_text": "Tatiana Brown",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Legislative District 37 State Senator",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-taxes"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle index, not an election-specific general slate. Target: Legislative District 32 State Representative — Position 2; Imraan Siddiqi. Captures: capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f; verified manual records: manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-7e3cb59a319b464c",
+      "id": "claim-c3413e0c788f3b04",
       "raw_candidate_text": "Imraan Siddiqi",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Legislative District 32 State Representative — Position 2",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-taxes"
     },
     {
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "evidence_excerpt": null,
       "evidence_locator": "2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle index, not an election-specific general slate. Target: Legislative District 37 State Representative — Position 1; Kelabe Tewolde. Captures: capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f; verified manual records: manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef.",
       "extraction_confidence": "1",
       "extractor": "manual-release-ledger",
       "extractor_version": "1.0",
-      "id": "claim-4ef54e8b702d2f45",
+      "id": "claim-99a3075801e1f00b",
       "raw_candidate_text": "Kelabe Tewolde",
-      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "raw_race_text": "Legislative District 37 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
+      "evidence_excerpt": "Millionaire's Income Tax (SB6346)\nPRO\nType: Active Bill",
+      "evidence_locator": "Human-approved No-on-645 mapping from https://tech4taxes.org/legagenda, Millionaire’s Income Tax (SB6346), PRO. Source does not explicitly state a ballot vote. Official repeal mapping: https://voter.votewa.gov/genericvoterguide.aspx?c=99&e=899&language=en#/measure/7325. Captures: capture-tech-4-taxes-20261012T161332Z-5071f70bc523; capture-wa-secretary-of-state-20261012T161332Z-6e8325ed61ef. Verified manual entry: manual-tech-4-taxes-20261012T162442Z-b0d27efca257.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-e64d5452f5297317",
+      "raw_candidate_text": "No",
+      "raw_notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
+      "raw_race_text": "Initiative IP26-645 — State and Local Taxes",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-taxes"
@@ -11048,6 +11132,321 @@
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "washington-bus"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-07. Original capture: capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb; verified manual entry: manual-young-democrats-of-washington-20261011T154356Z-25f45611d959.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-b7432be32a09d154",
+      "raw_candidate_text": "Pramila Jayapal",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "U.S. Representative — Congressional District 7",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-09. Original capture: capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb; verified manual entry: manual-young-democrats-of-washington-20261011T154356Z-25f45611d959.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-9f7a50e6d0c2a55b",
+      "raw_candidate_text": "Adam Smith",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "U.S. Representative — Congressional District 9",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, Washington State Supreme Court, Pos. 3. Original capture: capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb; verified manual entry: manual-young-democrats-of-washington-20261011T154356Z-25f45611d959. Jaime Hawk resolves to the existing Jaime Michelle Hawk choice in Supreme Court position 3.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-195da03c684c9dc8",
+      "raw_candidate_text": "Jaime Michelle Hawk",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Washington Supreme Court Justice — Position 3",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, Senate; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-6f434227e8066ae3",
+      "raw_candidate_text": "Cindy Ryu",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Legislative District 32 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 1; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-60ceb6d8171e5726",
+      "raw_candidate_text": "Danica Noble and Keith Scully",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Legislative District 32 State Representative — Position 1",
+      "raw_status_text": "dual endorsement",
+      "requires_review": true,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 2; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-376d7677c86300e1",
+      "raw_candidate_text": "Imraan Siddiqi",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Legislative District 32 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 37th LD, House Pos. 1; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-a2e41697f015d255",
+      "raw_candidate_text": "Sharon Tomiko Santos",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 37th LD, House Pos. 2; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-ef9d54036d8d8834",
+      "raw_candidate_text": "Jaelynn Scott",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 43rd LD, Senate; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-2618282d83b95579",
+      "raw_candidate_text": "Jamie Pedersen and Hannah Sabio-Howell",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Legislative District 43 State Senator",
+      "raw_status_text": "dual endorsement",
+      "requires_review": true,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 46th LD, House Pos. 1; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-6198457c316fb398",
+      "raw_candidate_text": "Gerry Pollet",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Legislative District 46 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 46th LD, Senate; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-6cd883bfffb59590",
+      "raw_candidate_text": "Javier Valdez",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Legislative District 46 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, King County Council, District 2; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884. Toshiko Hasegawa maps to Toshiko Grace Hasegawa for King County Council district 2.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-0b975caf4b42bf1d",
+      "raw_candidate_text": "Toshiko Grace Hasegawa and Rebecca Saldaña",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "dual endorsement",
+      "requires_review": true,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, King County Council, District 8; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-72226ef1f0d66bd5",
+      "raw_candidate_text": "Teresa Mosqueda",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Metropolitan King County Council — District 8",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, Seattle City Council, District 5; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-aded284853d251a6",
+      "raw_candidate_text": "Nilu Jenks",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Seattle City Council — District 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Ballot Measure Campaigns, No Hate in WA State Campaign for Vote NO on Initiative 001 and Initiative 638; Initiative 001. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-98878fd6f98de251",
+      "raw_candidate_text": "No",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Initiative IL26-001 — Parental Rights in Public Schools",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Ballot Measure Campaigns, No Hate in WA State Campaign for Vote NO on Initiative 001 and Initiative 638; Initiative 638. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-d482e8e8d3bf01df",
+      "raw_candidate_text": "No",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Initiative IL26-638 — Participation in K-12 School Athletics",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "capture_id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+      "evidence_excerpt": null,
+      "evidence_locator": "2026 Endorsements > November Election > King County > Seattle Transit Measure. Vote Yes; endorsement section above the candidate questionnaires. Original capture: capture-nondriver-action-20261011T153802Z-a003f33059a9; verified manual entry: manual-nondriver-action-20261011T154358Z-2497e1547cad.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-fafa993c0d945042",
+      "raw_candidate_text": "Yes",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Seattle Proposition 1 — Seattle Transit Measure",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "nondriver-action"
+    },
+    {
+      "capture_id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+      "evidence_excerpt": null,
+      "evidence_locator": "2026 Endorsements > November Election > King County > Seattle City Council District 5; endorsement section above the candidate questionnaires. Original capture: capture-nondriver-action-20261011T153802Z-a003f33059a9; verified manual entry: manual-nondriver-action-20261011T154358Z-2497e1547cad.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-27b4a07293e4f230",
+      "raw_candidate_text": "Nilu Jenks",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Seattle City Council — District 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "nondriver-action"
+    },
+    {
+      "capture_id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+      "evidence_excerpt": null,
+      "evidence_locator": "2026 Endorsements > November Election > King County > King County Council District Rebecca Saldana; endorsement section above the candidate questionnaires. Original capture: capture-nondriver-action-20261011T153802Z-a003f33059a9; verified manual entry: manual-nondriver-action-20261011T154358Z-2497e1547cad. Rebecca Saldana maps to Rebecca Saldaña. The publisher omits the district numeral; the named county-council candidate uniquely resolves to district 2 in the frozen inventory.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-06cb715affa99102",
+      "raw_candidate_text": "Rebecca Saldaña",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "nondriver-action"
+    },
+    {
+      "capture_id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+      "evidence_excerpt": null,
+      "evidence_locator": "2026 Endorsements > November Election > King County > King County Council District 8; endorsement section above the candidate questionnaires. Original capture: capture-nondriver-action-20261011T153802Z-a003f33059a9; verified manual entry: manual-nondriver-action-20261011T154358Z-2497e1547cad.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-b2b74a212476ba9d",
+      "raw_candidate_text": "Teresa Mosqueda",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "Metropolitan King County Council — District 8",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "nondriver-action"
+    },
+    {
+      "capture_id": "capture-citizens-against-aipac-corruption-20261011T154111Z-a2787731c952",
+      "evidence_excerpt": null,
+      "evidence_locator": "Candidates Endorsed By Citizens Against AIPAC Corruption > Our Endorsed Incumbents > PRAMILA JAYAPAL, U.S. Representative, WA-07, General Election November 3, 2026. Original capture: capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8; verified manual entry: manual-citizens-against-aipac-corruption-20261011T154358Z-976994c8e85f.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-3d0c10f3d283acb6",
+      "raw_candidate_text": "Pramila Jayapal",
+      "raw_notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "raw_race_text": "U.S. Representative — Congressional District 7",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "citizens-against-aipac-corruption"
     }
   ],
   "endorsements": [
@@ -16737,17 +17136,17 @@
         "ld-43-state-senator--hannah-sabio-howell"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-1182da3b587ec268",
-      "id": "endorsement-e6abee1561d0d99c",
+      "extracted_claim_id": "claim-4bdeb75dfd620d91",
+      "id": "endorsement-7e36fcf892657ca3",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "ld-43-state-senator",
       "review_item_id": null,
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
@@ -16759,17 +17158,17 @@
         "ld-36-state-senator--noel-c-frame"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-0342cb91afaaaaec",
-      "id": "endorsement-e2b7b622e82ee03b",
+      "extracted_claim_id": "claim-bc1103747cadb06b",
+      "id": "endorsement-f51c84524e2fe94c",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "ld-36-state-senator",
       "review_item_id": null,
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
@@ -16783,17 +17182,17 @@
         "king-county-council-2--rebecca-saldana"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-ce7540a955294a63",
-      "id": "endorsement-e293c60e4a0a0713",
+      "extracted_claim_id": "claim-466515d0c279dc09",
+      "id": "endorsement-9a667ce3aaf6993f",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "king-county-council-2",
-      "review_item_id": "review-4a5e7d1fc87c9de0",
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "review_item_id": "review-e62368cfbc8c2f7f",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "dual_endorsement"
     },
@@ -16805,17 +17204,17 @@
         "seattle-city-council-5--nilu-jenks"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-4e6e443397b1f48e",
-      "id": "endorsement-245fc6505a94aa31",
+      "extracted_claim_id": "claim-c9ad6313ac6d8580",
+      "id": "endorsement-461fc5d995bf0ce7",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "seattle-city-council-5",
       "review_item_id": null,
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
@@ -16827,17 +17226,17 @@
         "ld-32-state-representative-1--danica-noble"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-a3080761607a59c1",
-      "id": "endorsement-a9a28f954f0b4238",
+      "extracted_claim_id": "claim-26c01b0345948abd",
+      "id": "endorsement-ea9dcc0638b70da9",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "ld-32-state-representative-1",
       "review_item_id": null,
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
@@ -16849,17 +17248,17 @@
         "ld-37-state-representative-2--jaelynn-scott"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-4b712ae4e26d6b80",
-      "id": "endorsement-3f5f8122952e71f8",
+      "extracted_claim_id": "claim-341f0c36285ed05e",
+      "id": "endorsement-b0b202e480ea7035",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "ld-37-state-representative-2",
       "review_item_id": null,
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
@@ -16871,17 +17270,17 @@
         "ld-46-state-representative-1--gerry-pollet"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-6ce611b41724dc9a",
-      "id": "endorsement-053fbe25e39d55ad",
+      "extracted_claim_id": "claim-46053a1fcf0729e5",
+      "id": "endorsement-423819f5211ff642",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "ld-46-state-representative-1",
       "review_item_id": null,
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
@@ -16893,17 +17292,17 @@
         "ld-37-state-senator--tatiana-brown"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-d29b75f4cc23e548",
-      "id": "endorsement-8fda576f42088041",
+      "extracted_claim_id": "claim-26ba59c1d9efc295",
+      "id": "endorsement-2eae08b6edd206dd",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "ld-37-state-senator",
       "review_item_id": null,
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
@@ -16915,17 +17314,17 @@
         "ld-32-state-representative-2--imraan-siddiqi"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-7e3cb59a319b464c",
-      "id": "endorsement-e3515986f29ae7c1",
+      "extracted_claim_id": "claim-c3413e0c788f3b04",
+      "id": "endorsement-582ec8bdd5b57499",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "ld-32-state-representative-2",
       "review_item_id": null,
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
@@ -16937,17 +17336,39 @@
         "ld-37-state-representative-1--kelabe-tewolde"
       ],
       "election_id": "wa-2026-general",
-      "extracted_claim_id": "claim-4ef54e8b702d2f45",
-      "id": "endorsement-fd0c7f3fc3c39d75",
+      "extracted_claim_id": "claim-99a3075801e1f00b",
+      "id": "endorsement-4cdd5f9bca22aca1",
       "manually_verified": true,
       "normalization_confidence": "1",
-      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "published_at": null,
       "race_id": "ld-37-state-representative-1",
       "review_item_id": null,
-      "reviewed_at": "2026-10-11T01:24:53Z",
+      "reviewed_at": "2026-10-12T16:24:42Z",
       "reviewer": "shaug",
-      "source_capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-645--no": "1"
+      },
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-e64d5452f5297317",
+      "id": "endorsement-95c8faf3db3c3d40",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
+      "published_at": null,
+      "race_id": "initiative-26-645",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
       "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
@@ -26068,6 +26489,474 @@
       "source_capture_id": "capture-washington-bus-20261011T010723Z-e63173be7ea3",
       "source_id": "washington-bus",
       "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "us-house-7--pramila-jayapal": "1"
+      },
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-b7432be32a09d154",
+      "id": "endorsement-8e2a2b63b9a12fce",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "us-house-7",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "us-house-9--adam-smith": "1"
+      },
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-9f7a50e6d0c2a55b",
+      "id": "endorsement-745d228e18f06317",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "us-house-9",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-3--jaime-michelle-hawk": "1"
+      },
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-195da03c684c9dc8",
+      "id": "endorsement-72b37da7c3a85c3e",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "supreme-court-justice-3",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-senator--cindy-ryu": "1"
+      },
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-6f434227e8066ae3",
+      "id": "endorsement-f1c11c4cbf74eae5",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "ld-32-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-representative-1--danica-noble": "1/2",
+        "ld-32-state-representative-1--keith-scully": "1/2"
+      },
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble",
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-60ceb6d8171e5726",
+      "id": "endorsement-c8b6f0e16c81f7cf",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "ld-32-state-representative-1",
+      "review_item_id": "review-35197c9530bac146",
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "dual_endorsement"
+    },
+    {
+      "allocation": {
+        "ld-32-state-representative-2--imraan-siddiqi": "1"
+      },
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-376d7677c86300e1",
+      "id": "endorsement-15effaec60da5003",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "ld-32-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-1--sharon-tomiko-santos": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-1--sharon-tomiko-santos"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-a2e41697f015d255",
+      "id": "endorsement-28202d563496e995",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "ld-37-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-ef9d54036d8d8834",
+      "id": "endorsement-c2036668da25cb73",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "ld-37-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-senator--hannah-sabio-howell": "1/2",
+        "ld-43-state-senator--jamie-pedersen": "1/2"
+      },
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen",
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-2618282d83b95579",
+      "id": "endorsement-6add73d4e2021cd3",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "ld-43-state-senator",
+      "review_item_id": "review-a8527aaf261791a4",
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "dual_endorsement"
+    },
+    {
+      "allocation": {
+        "ld-46-state-representative-1--gerry-pollet": "1"
+      },
+      "candidate_ids": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-6198457c316fb398",
+      "id": "endorsement-1f27209b12abd64d",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "ld-46-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-46-state-senator--javier-valdez": "1"
+      },
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-6cd883bfffb59590",
+      "id": "endorsement-c788bde4a3119a12",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "ld-46-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-2--rebecca-saldana": "1/2",
+        "king-county-council-2--toshiko-grace-hasegawa": "1/2"
+      },
+      "candidate_ids": [
+        "king-county-council-2--toshiko-grace-hasegawa",
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-0b975caf4b42bf1d",
+      "id": "endorsement-ba5e11a7e2dc6862",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "king-county-council-2",
+      "review_item_id": "review-dbebbc3d8107cbba",
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "dual_endorsement"
+    },
+    {
+      "allocation": {
+        "king-county-council-8--teresa-mosqueda": "1"
+      },
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-72226ef1f0d66bd5",
+      "id": "endorsement-a24e39cd9130156e",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "king-county-council-8",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-aded284853d251a6",
+      "id": "endorsement-ac16d3f92baed9a5",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "seattle-city-council-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-001--no": "1"
+      },
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-98878fd6f98de251",
+      "id": "endorsement-7db05a85b20e7e52",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "initiative-26-001",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-638--no": "1"
+      },
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-d482e8e8d3bf01df",
+      "id": "endorsement-2d1b02db1d250e17",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "initiative-26-638",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "source_id": "young-democrats-of-washington",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-proposition-1-transit--yes": "1"
+      },
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-fafa993c0d945042",
+      "id": "endorsement-30607d1f7e5c22e8",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "seattle-proposition-1-transit",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+      "source_id": "nondriver-action",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-27b4a07293e4f230",
+      "id": "endorsement-75bea0c3ac9d353f",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "seattle-city-council-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+      "source_id": "nondriver-action",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-2--rebecca-saldana": "1"
+      },
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-06cb715affa99102",
+      "id": "endorsement-c476c65093eb4e12",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "king-county-council-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+      "source_id": "nondriver-action",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-8--teresa-mosqueda": "1"
+      },
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-b2b74a212476ba9d",
+      "id": "endorsement-5403a04a798a810c",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "king-county-council-8",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+      "source_id": "nondriver-action",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "us-house-7--pramila-jayapal": "1"
+      },
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-3d0c10f3d283acb6",
+      "id": "endorsement-4edd460871cfb427",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "published_at": null,
+      "race_id": "us-house-7",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-12T16:24:42Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-citizens-against-aipac-corruption-20261011T154111Z-a2787731c952",
+      "source_id": "citizens-against-aipac-corruption",
+      "status": "endorsed"
     }
   ],
   "inventory": {
@@ -28737,10 +29626,10 @@
     {
       "action": "approve",
       "author": "shaug",
-      "created_at": "2026-10-11T01:24:53Z",
+      "created_at": "2026-10-12T16:24:42Z",
       "evidence": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa. Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z; not retranscribed in #508.",
-      "id": "decision-21a865e37b1bb025",
-      "reason": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged.",
+      "id": "decision-72ffbc4ba7e26fb9",
+      "reason": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.",
       "resolution": {
         "allocation": {
           "king-county-council-2--rebecca-saldana": "1/2",
@@ -28753,7 +29642,7 @@
         "race_id": "king-county-council-2",
         "status": "dual_endorsement"
       },
-      "review_item_id": "review-4a5e7d1fc87c9de0"
+      "review_item_id": "review-e62368cfbc8c2f7f"
     },
     {
       "action": "approve",
@@ -29090,6 +29979,69 @@
         "status": "dual_endorsement"
       },
       "review_item_id": "review-9ddd23401817e225"
+    },
+    {
+      "action": "approve",
+      "author": "shaug",
+      "created_at": "2026-10-12T16:24:42Z",
+      "evidence": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 1; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "id": "decision-3a572c84fbe60296",
+      "reason": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "resolution": {
+        "allocation": {
+          "ld-32-state-representative-1--danica-noble": "1/2",
+          "ld-32-state-representative-1--keith-scully": "1/2"
+        },
+        "candidate_ids": [
+          "ld-32-state-representative-1--danica-noble",
+          "ld-32-state-representative-1--keith-scully"
+        ],
+        "race_id": "ld-32-state-representative-1",
+        "status": "dual_endorsement"
+      },
+      "review_item_id": "review-35197c9530bac146"
+    },
+    {
+      "action": "approve",
+      "author": "shaug",
+      "created_at": "2026-10-12T16:24:42Z",
+      "evidence": "Carousel slide 2 of 3: State Legislative Offices continuation, 43rd LD, Senate; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "id": "decision-57d84f8ae462e18b",
+      "reason": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "resolution": {
+        "allocation": {
+          "ld-43-state-senator--hannah-sabio-howell": "1/2",
+          "ld-43-state-senator--jamie-pedersen": "1/2"
+        },
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen",
+          "ld-43-state-senator--hannah-sabio-howell"
+        ],
+        "race_id": "ld-43-state-senator",
+        "status": "dual_endorsement"
+      },
+      "review_item_id": "review-a8527aaf261791a4"
+    },
+    {
+      "action": "approve",
+      "author": "shaug",
+      "created_at": "2026-10-12T16:24:42Z",
+      "evidence": "Carousel slide 3 of 3: Local & County Offices, King County Council, District 2; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884. Toshiko Hasegawa maps to Toshiko Grace Hasegawa for King County Council district 2.",
+      "id": "decision-e9b70ca9c3a26fa4",
+      "reason": "The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.",
+      "resolution": {
+        "allocation": {
+          "king-county-council-2--rebecca-saldana": "1/2",
+          "king-county-council-2--toshiko-grace-hasegawa": "1/2"
+        },
+        "candidate_ids": [
+          "king-county-council-2--toshiko-grace-hasegawa",
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "race_id": "king-county-council-2",
+        "status": "dual_endorsement"
+      },
+      "review_item_id": "review-dbebbc3d8107cbba"
     }
   ],
   "review_items": [
@@ -29284,12 +30236,12 @@
     },
     {
       "candidate_match": null,
-      "capture_id": "capture-tech-4-taxes-20261011T010722Z-e672c0ea3df8",
-      "claim_id": "claim-ce7540a955294a63",
-      "created_at": "2026-10-11T01:07:22.975031Z",
+      "capture_id": "capture-tech-4-taxes-20261012T161332Z-97cf6b83f7be",
+      "claim_id": "claim-466515d0c279dc09",
+      "created_at": "2026-10-12T16:13:32Z",
       "evidence_excerpt": null,
       "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa. Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z; not retranscribed in #508.",
-      "id": "review-4a5e7d1fc87c9de0",
+      "id": "review-e62368cfbc8c2f7f",
       "race_match": {
         "candidates": [
           {
@@ -29740,6 +30692,87 @@
       "reason": "extraction_requires_review",
       "severity": "high",
       "summary": "Verified multi-candidate decision from the permitted extract."
+    },
+    {
+      "candidate_match": null,
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "claim_id": "claim-60ceb6d8171e5726",
+      "created_at": "2026-10-11T15:41:56.877970Z",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 1; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "id": "review-35197c9530bac146",
+      "race_match": {
+        "candidates": [
+          {
+            "label": "Legislative District 32 State Representative — Position 1",
+            "match_kind": "exact",
+            "record_id": "ld-32-state-representative-1",
+            "score": "1"
+          }
+        ],
+        "selected_id": "ld-32-state-representative-1",
+        "status": "matched"
+      },
+      "raw_candidate_text": "Danica Noble and Keith Scully",
+      "raw_race_text": "Legislative District 32 State Representative — Position 1",
+      "raw_status_text": "dual endorsement",
+      "reason": "extraction_requires_review",
+      "severity": "high",
+      "summary": "Verified multi-candidate decision from the permitted extract."
+    },
+    {
+      "candidate_match": null,
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "claim_id": "claim-2618282d83b95579",
+      "created_at": "2026-10-11T15:41:56.877970Z",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 2 of 3: State Legislative Offices continuation, 43rd LD, Senate; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.",
+      "id": "review-a8527aaf261791a4",
+      "race_match": {
+        "candidates": [
+          {
+            "label": "Legislative District 43 State Senator",
+            "match_kind": "exact",
+            "record_id": "ld-43-state-senator",
+            "score": "1"
+          }
+        ],
+        "selected_id": "ld-43-state-senator",
+        "status": "matched"
+      },
+      "raw_candidate_text": "Jamie Pedersen and Hannah Sabio-Howell",
+      "raw_race_text": "Legislative District 43 State Senator",
+      "raw_status_text": "dual endorsement",
+      "reason": "extraction_requires_review",
+      "severity": "high",
+      "summary": "Verified multi-candidate decision from the permitted extract."
+    },
+    {
+      "candidate_match": null,
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-22915f1c7cf4",
+      "claim_id": "claim-0b975caf4b42bf1d",
+      "created_at": "2026-10-11T15:41:56.877970Z",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3 of 3: Local & County Offices, King County Council, District 2; every name listed for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884. Toshiko Hasegawa maps to Toshiko Grace Hasegawa for King County Council district 2.",
+      "id": "review-dbebbc3d8107cbba",
+      "race_match": {
+        "candidates": [
+          {
+            "label": "Metropolitan King County Council — District 2",
+            "match_kind": "exact",
+            "record_id": "king-county-council-2",
+            "score": "1"
+          }
+        ],
+        "selected_id": "king-county-council-2",
+        "status": "matched"
+      },
+      "raw_candidate_text": "Toshiko Grace Hasegawa and Rebecca Saldaña",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "dual endorsement",
+      "reason": "extraction_requires_review",
+      "severity": "high",
+      "summary": "Verified multi-candidate decision from the permitted extract."
     }
   ],
   "schema_version": "1.0",
@@ -29804,8 +30837,9 @@
     ],
     "election_id": "wa-2026-general",
     "frozen_at": "2026-09-14T12:23:04Z",
-    "id": "wa-2026-general-default-sources-v1",
+    "id": "wa-2026-general-default-sources-v2",
     "notes": [
+      "Version 2 admits Young Democrats of Washington, Nondriver Action, and CAAC under the October 12 maintainer request after the documented issue 509 assessment, without reference to changed consensus outcomes. Historical v1 freeze timestamps and compatibility remain intact.",
       "Version 1 freezes the primary panel as a constrained carry-forward for the 2026 general election; no source or category membership, panel role, eligibility, transport code, reporting placement, selection category, publisher relationship, or overlap metadata changed.",
       "The repository records the actual late freeze time rather than backdating the missed planning milestone.",
       "Every consensus and comparison source was rechecked through 2026-10-04T04:59:26Z; published records require an official current-cycle or general-election publication, while primary-only or absent material is recorded as not found and inaccessible material is explicit.",
@@ -29814,6 +30848,15 @@
       "The primary registry remains frozen separately as wa-2026-primary-default-sources-v4."
     ],
     "overlap_groups": [
+      {
+        "description": "Nondriver Action and the excluded Disability Mobility Initiative share documented organizational history through Disability Rights Washington and Nondrivers Alliance. This records affiliation and history, not independently audited legal or endorsement-voting governance. Only Nondriver Action is an active endorsement publisher; no duplicate program vote or statistical correction is introduced.",
+        "id": "nondriver-affiliation",
+        "label": "Nondriver organizational affiliation and DMI history",
+        "member_ids": [
+          "disability-mobility-initiative",
+          "nondriver-action"
+        ]
+      },
       {
         "description": "The Progressive Voters Guide is produced by Fuse Washington and compiles partner endorsements, so it is not an independent consensus vote.",
         "id": "fuse-publications",
@@ -30845,7 +31888,9 @@
         "id": "disability-mobility-initiative",
         "name": "Disability Mobility Initiative at Disability Rights Washington",
         "organization_url": "https://disabilityrightswa.org/",
-        "overlap_group_ids": [],
+        "overlap_group_ids": [
+          "nondriver-affiliation"
+        ],
         "panel_reason": "The proposed disability-mobility source is an advocacy program, but no official election endorsement publication was found.",
         "panel_role": "excluded",
         "publisher_id": null,
@@ -31481,6 +32526,105 @@
         "reporting_category_id": "comparison",
         "selection_category_ids": [
           "comparison"
+        ]
+      },
+      {
+        "code": "ydwa",
+        "discovery": {
+          "canonical_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "checked_at": "2026-10-11T15:41:11.594444Z",
+          "evidence_locator": "Official organizational publication; see assessment.md for the specific locator.",
+          "media_type": "image/jpeg",
+          "notes": "Production admission authorized by the maintainer on October 12 after the issue #509 evidence assessment and six-transcription verification. Original capture and verified manual-entry references are in data/review/source-assessments/wa-2026-general-20261011. Publication and identity criteria were assessed before changed-panel consensus results.",
+          "published_at": null,
+          "redirect_chain": [],
+          "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "status": "published",
+          "updated_at": null
+        },
+        "eligibility": {
+          "jurisdiction_ids": [],
+          "kind": "all_seattle_ballot_races",
+          "rationale": "Use only explicit, reviewed organizational decisions for races on the Seattle ballot."
+        },
+        "geographic_kind": "general",
+        "id": "young-democrats-of-washington",
+        "name": "Young Democrats of Washington",
+        "organization_url": "https://www.instagram.com/youngdemswa/",
+        "overlap_group_ids": [],
+        "panel_reason": "Admitted under issue #509 after official October 8 general-election publication and human verification. One statewide Democratic Party youth organization; shared party affiliation with district and caucus organizations is disclosed and does not establish duplicate decision-making.",
+        "panel_role": "consensus",
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
+      },
+      {
+        "code": "nact",
+        "discovery": {
+          "canonical_url": "https://ndaction.org/2026-endorsements/",
+          "checked_at": "2026-10-11T15:41:11.594444Z",
+          "evidence_locator": "Official organizational publication; see assessment.md for the specific locator.",
+          "media_type": "text/html",
+          "notes": "Production admission authorized by the maintainer on October 12 after the issue #509 evidence assessment and six-transcription verification. Original capture and verified manual-entry references are in data/review/source-assessments/wa-2026-general-20261011. Publication and identity criteria were assessed before changed-panel consensus results.",
+          "published_at": null,
+          "redirect_chain": [],
+          "requested_url": "https://ndaction.org/2026-endorsements/",
+          "status": "published",
+          "updated_at": null
+        },
+        "eligibility": {
+          "jurisdiction_ids": [],
+          "kind": "all_seattle_ballot_races",
+          "rationale": "Use only explicit, reviewed organizational decisions for races on the Seattle ballot."
+        },
+        "geographic_kind": "general",
+        "id": "nondriver-action",
+        "name": "Nondriver Action",
+        "organization_url": "https://ndaction.org/",
+        "overlap_group_ids": [
+          "nondriver-affiliation"
+        ],
+        "panel_reason": "Admitted under issue #509 as Nondriver Action, the organization publishing its own November slate. Its transportation and disability-justice missions support these categories. Affiliation with Nondrivers Alliance and historical roots in DRW’s DMI program are disclosed; DMI remains excluded and contributes no duplicate vote.",
+        "panel_role": "consensus",
+        "publisher_id": null,
+        "reporting_category_id": "transportation_urbanism",
+        "selection_category_ids": [
+          "rights_representation",
+          "transportation_urbanism"
+        ]
+      },
+      {
+        "code": "caac",
+        "discovery": {
+          "canonical_url": "https://www.trackaipac.com/endorsements",
+          "checked_at": "2026-10-11T15:41:11.594444Z",
+          "evidence_locator": "Official organizational publication; see assessment.md for the specific locator.",
+          "media_type": "text/html",
+          "notes": "Production admission authorized by the maintainer on October 12 after the issue #509 evidence assessment and six-transcription verification. Original capture and verified manual-entry references are in data/review/source-assessments/wa-2026-general-20261011. Publication and identity criteria were assessed before changed-panel consensus results.",
+          "published_at": null,
+          "redirect_chain": [],
+          "requested_url": "https://www.trackaipac.com/endorsements",
+          "status": "published",
+          "updated_at": null
+        },
+        "eligibility": {
+          "jurisdiction_ids": [],
+          "kind": "all_seattle_ballot_races",
+          "rationale": "A national organization with general geographic scope. Its current program is federal: admit only directly published, reviewed Seattle-intersecting congressional decisions; do not infer state/local choices or import recommendations from separate publishers."
+        },
+        "geographic_kind": "general",
+        "id": "citizens-against-aipac-corruption",
+        "name": "Citizens Against AIPAC Corruption (Track AIPAC)",
+        "organization_url": "https://citizensagainstaipac.com/",
+        "overlap_group_ids": [],
+        "panel_reason": "Admitted under issue #509 as one organizational publisher, Citizens Against AIPAC Corruption. Track AIPAC is its project, not another vote. Classification rests on the explicit Palestinian-rights endorsement criteria and organizational program, not on the observed choice or its effect on consensus.",
+        "panel_role": "consensus",
+        "publisher_id": null,
+        "reporting_category_id": "rights_representation",
+        "selection_category_ids": [
+          "rights_representation"
         ]
       }
     ]

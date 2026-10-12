@@ -1,0 +1,396 @@
+{
+  "schema_version": "1.0",
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/509",
+  "election_id": "wa-2026-general",
+  "approval_text": "let's add that tech4taxes gap, and update the guide with the new decisions",
+  "approved_by": "shaug",
+  "approved_at": "2026-10-12T16:24:42Z",
+  "prior_verification_record": "data/review/source-assessments/wa-2026-general-20261011/verification.json",
+  "panel_id": "wa-2026-general-default-sources-v2",
+  "source_admissions": [
+    {
+      "id": "young-democrats-of-washington",
+      "code": "ydwa",
+      "reporting_category_id": "democratic_party",
+      "selection_category_ids": [
+        "democratic_party"
+      ],
+      "panel_role": "consensus",
+      "eligibility": {
+        "kind": "all_seattle_ballot_races",
+        "rationale": "Use only explicit, reviewed organizational decisions for races on the Seattle ballot."
+      },
+      "panel_reason": "Admitted under issue #509 after official October 8 general-election publication and human verification. One statewide Democratic Party youth organization; shared party affiliation with district and caucus organizations is disclosed and does not establish duplicate decision-making."
+    },
+    {
+      "id": "nondriver-action",
+      "code": "nact",
+      "reporting_category_id": "transportation_urbanism",
+      "selection_category_ids": [
+        "transportation_urbanism",
+        "rights_representation"
+      ],
+      "panel_role": "consensus",
+      "eligibility": {
+        "kind": "all_seattle_ballot_races",
+        "rationale": "Use only explicit, reviewed organizational decisions for races on the Seattle ballot."
+      },
+      "panel_reason": "Admitted under issue #509 as Nondriver Action, the organization publishing its own November slate. Its transportation and disability-justice missions support these categories. Affiliation with Nondrivers Alliance and historical roots in DRW’s DMI program are disclosed; DMI remains excluded and contributes no duplicate vote."
+    },
+    {
+      "id": "citizens-against-aipac-corruption",
+      "code": "caac",
+      "reporting_category_id": "rights_representation",
+      "selection_category_ids": [
+        "rights_representation"
+      ],
+      "panel_role": "consensus",
+      "eligibility": {
+        "kind": "all_seattle_ballot_races",
+        "rationale": "A national organization with general geographic scope. Its current program is federal: admit only directly published, reviewed Seattle-intersecting congressional decisions; do not infer state/local choices or import recommendations from separate publishers."
+      },
+      "panel_reason": "Admitted under issue #509 as one organizational publisher, Citizens Against AIPAC Corruption. Track AIPAC is its project, not another vote. Classification rests on the explicit Palestinian-rights endorsement criteria and organizational program, not on the observed choice or its effect on consensus."
+    }
+  ],
+  "approved_decisions": [
+    {
+      "source_id": "tech-4-taxes",
+      "race_id": "initiative-26-645",
+      "prior_value": null,
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "reason": "Explicit maintainer-approved interpretation of official policy support paired with the official repeal text; not a quoted ballot recommendation.",
+      "capture_ids": [
+        "capture-tech-4-taxes-20261012T161332Z-5071f70bc523",
+        "capture-wa-secretary-of-state-20261012T161332Z-6e8325ed61ef"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-tech-4-taxes-20261012T162442Z-b0d27efca257"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "us-house-7",
+      "prior_value": null,
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154356Z-25f45611d959"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "us-house-9",
+      "prior_value": null,
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154356Z-25f45611d959"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "supreme-court-justice-3",
+      "prior_value": null,
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154356Z-25f45611d959"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "ld-32-state-senator",
+      "prior_value": null,
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "ld-32-state-representative-1",
+      "prior_value": null,
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble",
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "ld-32-state-representative-2",
+      "prior_value": null,
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "ld-37-state-representative-1",
+      "prior_value": null,
+      "candidate_ids": [
+        "ld-37-state-representative-1--sharon-tomiko-santos"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "ld-37-state-representative-2",
+      "prior_value": null,
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "ld-43-state-senator",
+      "prior_value": null,
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen",
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "ld-46-state-representative-1",
+      "prior_value": null,
+      "candidate_ids": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "ld-46-state-senator",
+      "prior_value": null,
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "king-county-council-2",
+      "prior_value": null,
+      "candidate_ids": [
+        "king-county-council-2--toshiko-grace-hasegawa",
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "king-county-council-8",
+      "prior_value": null,
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "seattle-city-council-5",
+      "prior_value": null,
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "initiative-26-001",
+      "prior_value": null,
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884"
+      ]
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "race_id": "initiative-26-638",
+      "prior_value": null,
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884"
+      ]
+    },
+    {
+      "source_id": "nondriver-action",
+      "race_id": "seattle-proposition-1-transit",
+      "prior_value": null,
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-nondriver-action-20261011T153802Z-a003f33059a9"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-nondriver-action-20261011T154358Z-2497e1547cad"
+      ]
+    },
+    {
+      "source_id": "nondriver-action",
+      "race_id": "seattle-city-council-5",
+      "prior_value": null,
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-nondriver-action-20261011T153802Z-a003f33059a9"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-nondriver-action-20261011T154358Z-2497e1547cad"
+      ]
+    },
+    {
+      "source_id": "nondriver-action",
+      "race_id": "king-county-council-2",
+      "prior_value": null,
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-nondriver-action-20261011T153802Z-a003f33059a9"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-nondriver-action-20261011T154358Z-2497e1547cad"
+      ]
+    },
+    {
+      "source_id": "nondriver-action",
+      "race_id": "king-county-council-8",
+      "prior_value": null,
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-nondriver-action-20261011T153802Z-a003f33059a9"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-nondriver-action-20261011T154358Z-2497e1547cad"
+      ]
+    },
+    {
+      "source_id": "citizens-against-aipac-corruption",
+      "race_id": "us-house-7",
+      "prior_value": null,
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "reason": "Production admission of the exact previously human-verified choice set, preserving co-endorsement order and equal split.",
+      "capture_ids": [
+        "capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8"
+      ],
+      "verified_manual_entry_ids": [
+        "manual-citizens-against-aipac-corruption-20261011T154358Z-976994c8e85f"
+      ]
+    }
+  ],
+  "not_included": [
+    "king-county-republican-party",
+    "progressive-voters-guide",
+    "unverified Urbanist, WA4PJ, Stonewall, DSA initiative and additional Times claims"
+  ]
+}

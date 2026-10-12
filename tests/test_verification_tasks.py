@@ -98,10 +98,10 @@ def test_same_day_batch_retry_missing_events_and_escalation(
     assert any("three observed days" in comment["body"] for comment in comments["3"])
     run_fixture(policy, state, fixtures, "2026-10-08")
     reconcile("2026-10-08")
-    assert len(issues) == 4 and len(comments["4"]) == 43
+    assert len(issues) == 4 and len(comments["4"]) == 46
     assert any("Human baseline spot-check" in comment["body"] for comment in comments["4"])
     assert json.loads(reconcile("2026-10-08")) == []
-    assert len(issues) == 4 and len(comments["4"]) == 43
+    assert len(issues) == 4 and len(comments["4"]) == 46
     reconcile("2026-10-12")
     assert len(issues) == 7
     counts = {number: len(entries) for number, entries in comments.items()}
