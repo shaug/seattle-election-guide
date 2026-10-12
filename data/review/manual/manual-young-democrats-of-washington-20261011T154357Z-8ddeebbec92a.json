@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+  "entered_at": "2026-10-11T15:43:57.310213Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 8, 2026 announcement, carousel slide 2 of 3, State Legislative Offices continuation, LD32/37/43/46 rows; both names for LD32 House1 and LD43 Senate.",
+  "evidence_type": "image",
+  "id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "codex-agent-transcription",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "transcription": "Legislative District 32 State Senator: Cindy Ryu [Endorsement]\nLegislative District 32 State Representative — Position 1: Danica Noble, Keith Scully [Endorsement]\nLegislative District 32 State Representative — Position 2: Imraan Siddiqi [Endorsement]\nLegislative District 37 State Representative — Position 1: Sharon Tomiko Santos [Endorsement]\nLegislative District 37 State Representative — Position 2: Jaelynn Scott [Endorsement]\nLegislative District 43 State Senator: Jamie Pedersen, Hannah Sabio-Howell [Endorsement]\nLegislative District 46 State Representative — Position 1: Gerry Pollet [Endorsement]\nLegislative District 46 State Senator: Javier Valdez [Endorsement]"
+}

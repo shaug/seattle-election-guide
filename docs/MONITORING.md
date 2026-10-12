@@ -1,5 +1,21 @@
 # Traffic monitoring
 
+## Operating policy — October 11, 2026 (#512)
+
+Use Cloudflare's existing HTTP Traffic and Web Analytics dashboards when a traffic question
+arises. The daily archive workflow and its automatic pull requests are retired. No report in this
+repository consumes the archive, and retaining it indefinitely did not justify a daily full CI
+and publication build.
+
+The committed `data/analytics/` history is preserved through October 10, 2026. Its privacy and
+no-gaps checks remain in `make check`. Future traffic is not exported automatically; after
+Cloudflare's retention windows expire, that detail cannot be recovered. Cross-election comparison
+is therefore limited to the history already held unless a specific question justifies new exports.
+
+The manual exporter remains available. Use a separate output directory for new investigations,
+as described below. Earlier measurements and the reasons for the original archive are retained
+in this document as historical evidence; this policy supersedes their scheduled-export guidance.
+
 Investigation for #217 (O9), part of epic #205. Explicitly rejects Google Analytics: cookie-based
 tracking would obligate a consent banner on a nonpartisan voter guide, and it would hand
 voter-interest data to an advertising company. Cloudflare's zone analytics is cookieless, requires
@@ -217,38 +233,26 @@ it runs 31% to 96%. 2026-08-18 is 21%, the only day below that band, and it is t
 burst. A day whose domestic share falls out of the band is a day whose `requests` total is
 describing something other than readers.
 
-### How an archived day reaches `main`
+### Manual exports after retirement
 
-`main` is protected and requires review, so the scheduled run cannot push to it
-(`CONTRIBUTING.md`, "Do not commit directly to `main`"). It commits to an `analytics-archive`
-branch, pushes there, and opens one pull request that later runs reuse — so a week of daily runs
-accumulates into one reviewable pull request rather than seven.
+There is no archive workflow, archive branch update, or automatic pull request. The optional
+`CLOUDFLARE_ANALYTICS_TOKEN` remains scoped to **Zone / Analytics / Read**, with
+`CLOUDFLARE_ZONE_ID` naming the zone; their custody is recorded in `docs/HOSTING.md`.
+Provide these through the local environment when investigating a specific question:
 
-The workflow mints a short-lived token from the repository's analytics-archive GitHub App and uses
-it for both the branch push and the pull request. App-authored `opened` and `synchronize` events
-start `ci.yml` without an approval prompt. The same step enables squash auto-merge on that pull
-request; GitHub lands it only after the protected branch's required `check` context passes. A
-failed check leaves the pull request open and unmerged for diagnosis, while the next successful
-archive run continues the same branch and pull request.
+```bash
+uv run election-guide analytics export --archive-dir /tmp/election-guide-analytics
+```
 
-This is a required-status-check formality rather than unreviewed content: the archive workflow
-runs `tests/test_analytics.py` against the new days *before* it commits them, so the
-committed-tree guards — no identifying value, no gaps — have already passed in the run that wrote
-them. Doing it the other way round is what would hurt. If detection waited for CI, a value that
-tripped a guard would already be on `main`, and every later pull request would inherit the failure.
+An optional `--date YYYY-MM-DD` limits the export to one complete UTC day. The exporter still
+excludes visitor-identifying dimensions and refuses to rewrite a stored day with different bytes.
+Use a new directory for an investigation rather than appending to the retired history. A later
+block of days would create an unexplained hole in the committed archive once the intervening
+history ages out. Any proposal to resume committing exports needs its own issue and an explicit
+way to record irrecoverable gaps; the existing no-gaps check must not be weakened.
 
-The App is installed only on this repository with `Contents: write`, `Pull requests: write`, and
-`Workflows: write`. The last permission lets the continuation merge reach the archive branch when
-`main` changed a file under `.github/workflows`; it does not let the job publish its own check.
-Its client ID, private-key custody, and rotation procedure are inventoried in `docs/HOSTING.md`.
-Repository auto-merge must remain enabled, and `main` must continue to require `check`. Disabling
-either setting fails closed: the archive pull request remains open rather than bypassing CI or
-pushing directly to `main`.
-
-The credential is `CLOUDFLARE_ANALYTICS_TOKEN`, scoped to **Zone / Analytics / Read**, with
-`CLOUDFLARE_ZONE_ID` naming the zone — both inventoried in `docs/HOSTING.md`. A missing or
-unauthorized token fails the run non-zero and writes nothing, rather than committing an empty
-archive that would look like a day of no traffic.
+The retired GitHub App is no longer used by a workflow. Its credential inventory is preserved
+until the maintainer revokes any remaining credentials; no new App installation is needed.
 
 ### What is deliberately not archived
 
@@ -269,20 +273,13 @@ positive would have skipped the day, left a hole, and tripped the no-gaps check 
 workflow's own pre-commit gate — stopping the archive from advancing at all. Structure, not
 pattern-matching, is what keeps visitor data out.
 
-### One condition that needs a human
+### Known manual-export limitations
 
-The export can only archive days inside the retention window, so a schedule outage longer than
-thirty days leaves the missed days permanently unarchivable. The next successful run then writes
-a block of recent days that is not contiguous with the committed tail, and
-`test_committed_archive_has_no_gaps` fails — first in the workflow's pre-commit step, which stops
-the archive committing, and then in `make check` for the repository as a whole.
-
-This is deliberate rather than papered over: a gap in a public audit trail should be explained by
-a person, not silently tolerated by a check. Resolving it means deciding what the archive should
-say about days nobody can recover, and recording that decision — which is a change to this
-document and to the test, not something the exporter can invent on its own. Thirty consecutive
-failed runs is the trigger, and the workflow's own guidance ("treat a week of red runs as urgent")
-is meant to make it unreachable.
+The saved historical archive remains contiguous. New exports belong in a separate directory.
+Resuming the old archive after more than thirty days would create irrecoverable gaps that its
+no-gaps check correctly rejects (#397). An empty answer for the newest complete day can also be
+recorded as a permanent zero before Cloudflare has settled that aggregation (#398). Both issues
+remain open; retirement of the schedule does not claim to fix the exporter.
 
 ## Client-side beacon (O10)
 

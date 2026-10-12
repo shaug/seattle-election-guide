@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 10922,
+  "canonical_url": "https://kcgop.org/votersguide/",
+  "capture_method": "manual_upload",
+  "content_sha256": "fb32021a0e979788935822aa0fbd7561e2e25f2516a4e805fee15b1d1f818090",
+  "http_status": null,
+  "id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for evidence review; only manifest metadata and brief factual transcriptions enter Git. User-supplied image or ordinary public-browser download/export; no HTTP status was observed. Browser export is an HTML wrapper of visible text, not the original response HTML. No authentication, challenge solving, or access-control bypass was used.",
+  "requested_url": "https://kcgop.org/votersguide/",
+  "retrieved_at": "2026-10-11T15:38:58.414000Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-republican-party",
+  "storage_reference": "sha256/fb/fb32021a0e979788935822aa0fbd7561e2e25f2516a4e805fee15b1d1f818090",
+  "storage_scope": "local_only",
+  "title": "GOP public browser visible-text export",
+  "updated_at": null
+}

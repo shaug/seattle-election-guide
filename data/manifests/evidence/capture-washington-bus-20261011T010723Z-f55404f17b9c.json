@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 585291,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/01954ef8-74b1-403b-9a83-9368740e1695/5.png",
+  "capture_method": "image",
+  "content_sha256": "6cfa0f963b744f1ad33ed7931de0d8a445672509579d3a61d9eca6628604ea8e",
+  "http_status": 200,
+  "id": "capture-washington-bus-20261011T010723Z-f55404f17b9c",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official third-party artifact retained in the primary checkout durable local store for review only.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/01954ef8-74b1-403b-9a83-9368740e1695/5.png",
+  "retrieved_at": "2026-10-11T01:07:23.755424Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/6c/6cfa0f963b744f1ad33ed7931de0d8a445672509579d3a61d9eca6628604ea8e",
+  "storage_scope": "local_only",
+  "title": "washington-bus 2026 general endorsement evidence (wa_bus-19)",
+  "updated_at": null
+}

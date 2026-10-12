@@ -31,8 +31,9 @@ The repository formalizes the agentic runtime's **contract**, never its implemen
   the repo alone: evidence manifests, refresh events, and normalized data record what has
   happened; a runbook's postmortem notes record what was learned.
 - **Gates** are non-negotiable and already exist: agent work enters bedrock data only through a
-  deterministic CLI checkpoint; every mutation lands as a reviewable pull request; the
-  production deploy approval is never automated.
+  deterministic CLI checkpoint; repository mutations land as reviewable pull requests; production
+  deploys automatically after the complete CI gate, artifact verification, and published-release
+  check pass (`docs/HOSTING.md`).
 
 Because the gates do the enforcing, the agentic layer never has to be trusted — which is
 precisely what makes it replaceable.
@@ -40,7 +41,8 @@ precisely what makes it replaceable.
 ## Autonomy levels
 
 Formalization is a dial, not a switch. Each level removes a piece of human attention while the
-human's *judgment* — PR review and deploy approval — is never automated at any level:
+human's *judgment* — source-data decisions and PR review — remains part of the process at every
+level. Production deployment has no separate manual approval (#521):
 
 | Level | Name       | What it removes                                                        |
 | ----- | ---------- | ---------------------------------------------------------------------- |

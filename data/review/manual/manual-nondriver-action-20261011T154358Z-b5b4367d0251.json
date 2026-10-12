@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-nondriver-action-20261011T153802Z-a003f33059a9",
+  "entered_at": "2026-10-11T15:43:58.302347Z",
+  "entry_method": "manual",
+  "evidence_locator": "2026 Endorsements > November Election > King County > King County Council District 8; 2026 Endorsements > November Election > King County > King County Council District Rebecca Saldana; 2026 Endorsements > November Election > King County > Seattle City Council District 5; 2026 Endorsements > November Election > King County > Seattle Transit Measure. Vote Yes",
+  "evidence_type": "web_page",
+  "id": "manual-nondriver-action-20261011T154358Z-b5b4367d0251",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "codex-agent-transcription",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "transcription": "Seattle Proposition 1 — Seattle Transit Measure: Yes [Endorsement]\nSeattle City Council — District 5: Nilu Jenks [Endorsement]\nMetropolitan King County Council — District 2: Rebecca Saldana [Endorsement]\nMetropolitan King County Council — District 8: Teresa Mosqueda [Endorsement]"
+}

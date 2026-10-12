@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-bus-20261011T010723Z-f55404f17b9c",
+  "entered_at": "2026-10-11T01:10:18.434680Z",
+  "entry_method": "manual",
+  "evidence_locator": "Image linked beneath 2026 GENERAL ELECTION ENDORSEMENTS; visible PROUDLY ENDORSES name and office. See attached position-label correction when applicable.",
+  "evidence_type": "image",
+  "id": "manual-washington-bus-20261011T011018Z-05ceadea452a",
+  "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-11T01:24:53Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "transcription": "Legislative District 37 State Representative — Position 2: Jaelynn Scott\nSource label for ld-37-state-representative-2: Jaelynn Scott, Legislative District No. 37, State Representative, Pos. 1"
+}

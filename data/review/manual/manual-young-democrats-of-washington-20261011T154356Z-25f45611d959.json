@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb",
+  "entered_at": "2026-10-11T15:43:56.793707Z",
+  "entry_method": "manual",
+  "evidence_locator": "Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-07.; Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-09.; Carousel slide 1 of 3: Congressional Offices / Judicial Offices, Washington State Supreme Court, Pos. 3.",
+  "evidence_type": "image",
+  "id": "manual-young-democrats-of-washington-20261011T154356Z-25f45611d959",
+  "review_note": "Issue #509: shaug replied \"verified\" in this Codex session after presentation of PR #515's six transcriptions covering 53 decisions: 36 affirmative and 17 explicit no-recommendation entries, including three co-endorsements. OpenAI Codex prepared the transcription; shaug is the human verifier. This records transcription verification, not production source or panel admission. Supersedes pending record manual-young-democrats-of-washington-20261011T154356Z-cd0525889b37.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-11T23:35:51Z",
+  "reviewed_by": "shaug",
+  "reviewer": "codex-agent-transcription",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "transcription": "U.S. Representative — Congressional District 7: Pramila Jayapal [Endorsement]\nU.S. Representative — Congressional District 9: Adam Smith [Endorsement]\nWashington Supreme Court Justice — Position 3: Jaime Hawk [Endorsement]"
+}

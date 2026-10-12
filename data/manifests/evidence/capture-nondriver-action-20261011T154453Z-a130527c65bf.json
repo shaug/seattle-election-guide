@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 172333,
+  "canonical_url": "https://nondrivers.org/",
+  "capture_method": "static_html",
+  "content_sha256": "dc26f7e290d399bb7991ebafecfc64c3fca521d283f2a80fb4cf29f6887e5cb4",
+  "http_status": 200,
+  "id": "capture-nondriver-action-20261011T154453Z-a130527c65bf",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Related organizational identity evidence for Nondriver Action; published by Nondrivers Alliance. Full HTML retained locally only. This is not a candidate endorsement by the Alliance or Disability Rights Washington.",
+  "requested_url": "https://nondrivers.org/",
+  "retrieved_at": "2026-10-11T15:44:53.689637Z",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "storage_reference": "sha256/dc/dc26f7e290d399bb7991ebafecfc64c3fca521d283f2a80fb4cf29f6887e5cb4",
+  "storage_scope": "local_only",
+  "title": "Nondrivers Alliance: Nondriver Action affiliation and organizational history",
+  "updated_at": null
+}

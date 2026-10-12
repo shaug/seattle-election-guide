@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-tech-4-housing-20261011T010723Z-5922ff5e6774",
+  "entered_at": "2026-10-11T01:10:18.434680Z",
+  "entry_method": "manual",
+  "evidence_locator": "2026 General heading; Washington State / City of Seattle / King County sections. Do not read the separate 2026 Primary section as general evidence.",
+  "evidence_type": "web_page",
+  "id": "manual-tech-4-housing-20261011T011018Z-23212114ba7a",
+  "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-11T01:24:53Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "tech-4-housing",
+  "transcription": "Initiative IP26-645 — State and Local Taxes: No\nInitiative IL26-001 — Parental Rights in Public Schools: No\nInitiative IL26-638 — Participation in K-12 School Athletics: No\nLegislative District 32 State Representative — Position 1: Danica Noble\nLegislative District 43 State Senator: Hannah Sabio-Howell\nKing County Assessor: Rob Foxcurran\nMetropolitan King County Council — District 8: Teresa Mosqueda\nSeattle City Council — District 5: Nilu Jenks\nSeattle Municipal Court Judge — Position 5: Gabe Rothstein\nSeattle Proposition 1 — Seattle Transit Measure: Yes"
+}

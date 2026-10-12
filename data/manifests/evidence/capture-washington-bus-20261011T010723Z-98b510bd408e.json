@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 698349,
+  "canonical_url": "https://www.washingtonbus.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "4c7077f1e2a007f117c774ebcf846a27f359ff53e035632963c5d953ea9cfa85",
+  "http_status": 200,
+  "id": "capture-washington-bus-20261011T010723Z-98b510bd408e",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official third-party artifact retained in the primary checkout durable local store for review only.",
+  "requested_url": "https://www.washingtonbus.org/endorsements",
+  "retrieved_at": "2026-10-11T01:07:23.219655Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/4c/4c7077f1e2a007f117c774ebcf846a27f359ff53e035632963c5d953ea9cfa85",
+  "storage_scope": "local_only",
+  "title": "washington-bus 2026 general endorsement evidence (washington-bus)",
+  "updated_at": null
+}

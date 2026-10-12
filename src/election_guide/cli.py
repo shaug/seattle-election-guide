@@ -338,8 +338,12 @@ def hosting_check_production(
         str, typer.Argument(help="Canonical production origin, e.g. https://seattleelections.guide")
     ],
     expected_git_commit: Annotated[
-        str, typer.Option(help="The commit production's current-election build must match.")
-    ],
+        str | None, typer.Option(help="The full approved commit production must match.")
+    ] = None,
+    availability_only: Annotated[
+        bool,
+        typer.Option(help="Check the served manifest and routes without release expectations."),
+    ] = False,
     repository: Annotated[
         str, typer.Option(help="GitHub repository as OWNER/NAME, for the alert issue.")
     ] = "shaug/seattle-election-guide",
@@ -379,8 +383,9 @@ def hosting_check_production(
         ),
     ] = False,
 ) -> None:
-    """Verify production routes, commit, and in-window data freshness (O14/O16)."""
+    """Check availability, or verify an explicit release and in-window data freshness."""
     checked_at = datetime.now(UTC)
+    active_window = False
     try:
         site_manifest = read_site_manifest(site_manifest_path)
         if base_url.rstrip("/") != site_manifest.canonical_origin:
@@ -388,21 +393,27 @@ def hosting_check_production(
                 "base URL must equal site manifest canonical origin: "
                 f"expected {site_manifest.canonical_origin}, found {base_url}"
             )
-        if re.fullmatch(r"[0-9a-f]{40}", expected_git_commit) is None:
-            raise ValueError("expected Git commit must be a full 40-character lowercase SHA")
-        calendar = read_election_calendar(calendar_path)
-        due = due_milestones(calendar, as_of=checked_at.date(), lead_days=7)
+        if availability_only:
+            if expected_git_commit is not None:
+                raise ValueError("--availability-only cannot accept an expected Git commit")
+        else:
+            if expected_git_commit is None:
+                raise ValueError("release verification requires --expected-git-commit")
+            if re.fullmatch(r"[0-9a-f]{40}", expected_git_commit) is None:
+                raise ValueError("expected Git commit must be a full 40-character lowercase SHA")
+            calendar = read_election_calendar(calendar_path)
+            due = due_milestones(calendar, as_of=checked_at.date(), lead_days=7)
+            active_window = any(milestone.kind == "election_day" for milestone, _ in due)
     except (OSError, UnicodeError, ValidationError, ValueError) as error:
         typer.echo(f"hosting check-production failed: {error}", err=True)
         raise typer.Exit(code=1) from error
-    active_window = any(milestone.kind == "election_day" for milestone, _ in due)
     report = run_production_check(
         base_url,
         expected_git_commit=expected_git_commit,
         timeout=timeout,
         active_window=active_window,
         checked_at=checked_at,
-        site_manifest=site_manifest,
+        site_manifest=None if availability_only else site_manifest,
     )
     if output_path is not None:
         try:

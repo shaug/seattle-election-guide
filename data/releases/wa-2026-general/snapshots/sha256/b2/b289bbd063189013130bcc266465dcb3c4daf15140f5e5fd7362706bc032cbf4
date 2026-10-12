@@ -1,0 +1,288 @@
+{
+  "captured_at": "2026-10-11T01:07:22.845378Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Initiative IP26-645 — State and Local Taxes; No. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "initiative-26-645",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Initiative IL26-001 — Parental Rights in Public Schools; No. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "initiative-26-001",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Initiative IL26-638 — Participation in K-12 School Athletics; No. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "initiative-26-638",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: U.S. Representative — Congressional District 7; Pramila Jayapal. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: U.S. Representative — Congressional District 9; Adam Smith. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "us-house-9",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 11 State Representative — Position 1; Ashley Fedan. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-11-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 32 State Senator; Cindy Ryu. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-32-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 32 State Representative — Position 1; Keith Scully. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-32-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 32 State Representative — Position 2; Imraan Siddiqi. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-32-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 34 State Representative — Position 2; Joe Fitzgibbon. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-34-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 36 State Senator; Noel C. Frame. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-36-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 37 State Senator; Chipalo Street. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-37-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 37 State Representative — Position 1; Kelabe Tewolde. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 37 State Representative — Position 2; Jaelynn Scott. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 43 State Senator; Jamie Pedersen. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 43 State Representative — Position 1; Nicole Macri. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-43-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 46 State Senator; Javier Valdez. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-46-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-1--will-dreher"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 46 State Representative — Position 1; Will Dreher. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-46-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 46 State Representative — Position 2; Darya Farivar. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "ld-46-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: King County Assessor; Rob Foxcurran. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "king-county-assessor",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Metropolitan King County Council — District 2; Rebecca Saldaña. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Metropolitan King County Council — District 8; Teresa Mosqueda. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "king-county-council-8",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 1; Colleen Melody. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 3; Jaime Michelle Hawk. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0. Explicit label mapping approved; see #508 approval record.",
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 4; Ian Birk. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "supreme-court-justice-4",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 5; Theo Angelis. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "supreme-court-justice-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 7; Debra L. Stephens. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "supreme-court-justice-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-district-court-west-judge-1--bardi-martin"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: King County District Court West Electoral District — Judge Position 1; Bardi Martin. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "king-county-district-court-west-judge-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Seattle City Council — District 5; Nilu Jenks. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Seattle Municipal Court Judge — Position 5; Gabe Rothstein. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "seattle-municipal-court-judge-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Seattle Proposition 1 — Seattle Transit Measure; Yes. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+      "race_id": "seattle-proposition-1-transit",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Approved October 10 packet, issue #508; data/review/approvals/wa-2026-general-2026-10-10.json.",
+  "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+  "reviewer": "shaug",
+  "source_id": "the-stranger"
+}

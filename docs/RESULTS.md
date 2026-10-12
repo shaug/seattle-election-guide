@@ -52,7 +52,7 @@ windows are unrecoverable:
   It is never rendered — later drops overwrite it, and archiving a misleading number as if it
   were an answer works against the site's posture. Revisit only if a real need appears.
 - **Certification** (county canvass; roughly two weeks after a primary, three after a general):
-  the published dataset. One adapter run, one review, one deploy through the normal approval
+  the published dataset. One adapter run, one review, one deploy through the normal CI
   gate. This is the finalization moment.
 
 ## Data model

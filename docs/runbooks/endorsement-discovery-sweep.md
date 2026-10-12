@@ -87,6 +87,27 @@ lead tells you where to look; the official organization page is the evidence. Ne
 a decision from an aggregator, even a good one — the primary's own drift audit used one as a
 lead and then re-verified all six sources against their live pages before touching the ledger.
 
+Check the whole official publication surface before concluding a source has no new decisions:
+
+- Follow linked current-election guides and articles from the landing page. When the organization
+  maintains both a state page and a national endorsement index, inspect both relevant sections.
+- Expand `View More`, inspect every page of a paginated index, and record the filter, displayed
+  row count, and excluded out-of-inventory choices. A first visible batch is not the full slate.
+- Inspect official linked images, galleries, PDFs, and embedded guides. Empty or unchanged alt
+  text is not evidence that the visible graphic contains no decisions. Capture each artifact
+  that supplies a transcription and identify it in the manual record.
+- Read the election heading around each section. A general and primary list on the same page
+  are separate evidence; a current-cycle candidate index needs the checks in `REVIEW_GUIDE.md`.
+- Compare every in-scope decision with the ledger, including initiative text outside the candidate
+  list. An unchanged capture hash only means unchanged bytes; it does not establish that an earlier
+  transcription covered all those bytes. Reconcile the source's current decisions, earlier
+  omissions, changed choices, and out-of-scope entries explicitly.
+
+The October 10 general audit found both endpoint gaps and omissions inside previously captured
+evidence. Its [pending review packet](../GENERAL_RECONCILIATION_2026-10-10.md) records the specific
+cases. Adapter and recurring-verification work remains owned by #497; this checklist also applies
+to manual collection.
+
 ### 2. Record a discovery state for every source, including the empty ones
 
 The four preregistration states are `published`, `not_found`, `not_an_endorsement_publisher`,

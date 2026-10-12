@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 276162,
+  "canonical_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "0ccfa89187128148f2bf58fc6ccb418147067a999b1330250799c88818db5840",
+  "http_status": 200,
+  "id": "capture-oneamerica-votes-20261011T010723Z-6badda3e27c2",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official third-party artifact retained in the primary checkout durable local store for review only.",
+  "requested_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "retrieved_at": "2026-10-11T01:07:23.361505Z",
+  "schema_version": "1.0",
+  "source_id": "oneamerica-votes",
+  "storage_reference": "sha256/0c/0ccfa89187128148f2bf58fc6ccb418147067a999b1330250799c88818db5840",
+  "storage_scope": "local_only",
+  "title": "oneamerica-votes 2026 general endorsement evidence (oneamerica-votes)",
+  "updated_at": null
+}

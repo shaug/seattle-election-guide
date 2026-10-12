@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/509",
+  "election_id": "wa-2026-general",
+  "reviewed_candidate_sha": "0685792c0b330af14944d1935808121f0e041b75",
+  "review_status": "verified",
+  "reviewed_by": "shaug",
+  "reviewed_at": "2026-10-11T23:35:51Z",
+  "confirmation_text": "verified",
+  "confirmation_context": "Human reply in this Codex session to the presentation of PR #515 and its six pending transcriptions.",
+  "scope": "Six transcriptions and their 53 ballot decisions, including three co-endorsements and 17 explicit no-recommendation entries.",
+  "production_admission": "Unchanged: source eligibility, production panel admission, scoring, and conservative-comparison policy require separate review.",
+  "records": [
+    {
+      "source_id": "citizens-against-aipac-corruption",
+      "capture_id": "capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8",
+      "pending_manual_entry_id": "manual-citizens-against-aipac-corruption-20261011T154358Z-a7da1fe8e732",
+      "verified_manual_entry_id": "manual-citizens-against-aipac-corruption-20261011T154358Z-976994c8e85f",
+      "pending_record_sha256": "42ab9f28d6d1ee4c0645aeb568903e59c2e3462c3c3779496be762900668e408"
+    },
+    {
+      "source_id": "king-county-republican-party",
+      "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+      "pending_manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-0f8e449e6fa8",
+      "verified_manual_entry_id": "manual-king-county-republican-party-20261011T154359Z-45bfaf484186",
+      "pending_record_sha256": "7714bd460e93229065acd388380940d389681f6ddd100ed3f5dfa50dc1226eeb"
+    },
+    {
+      "source_id": "nondriver-action",
+      "capture_id": "capture-nondriver-action-20261011T153802Z-a003f33059a9",
+      "pending_manual_entry_id": "manual-nondriver-action-20261011T154358Z-b5b4367d0251",
+      "verified_manual_entry_id": "manual-nondriver-action-20261011T154358Z-2497e1547cad",
+      "pending_record_sha256": "7ca0651d024e2659100dadaab41a5e05d7b936c6f454ba34636851ee6c622d28"
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb",
+      "pending_manual_entry_id": "manual-young-democrats-of-washington-20261011T154356Z-cd0525889b37",
+      "verified_manual_entry_id": "manual-young-democrats-of-washington-20261011T154356Z-25f45611d959",
+      "pending_record_sha256": "3d8a996287c3fd5fdb9b48ef351583574131802734806c5f525550e0b90fb16b"
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b",
+      "pending_manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-78da41e972fb",
+      "verified_manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884",
+      "pending_record_sha256": "9ce482b57f35c90873fde895966c12c57187ee37b92a2d8689044a910ceef713"
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+      "pending_manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-8ddeebbec92a",
+      "verified_manual_entry_id": "manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c",
+      "pending_record_sha256": "dc67ef0afc5c17d11def0c4a2ac39a0254e652d5e27f7c388019156684a82a48"
+    }
+  ]
+}

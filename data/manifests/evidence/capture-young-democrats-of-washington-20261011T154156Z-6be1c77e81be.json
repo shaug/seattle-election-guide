@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 129178,
+  "canonical_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "capture_method": "manual_upload",
+  "content_sha256": "e1a8d7b04ec50a0a945fe9209eca495883d5a24396d0b9ed0d160bec9a9026d8",
+  "http_status": null,
+  "id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+  "media_type": "image/jpeg",
+  "published_at": "2026-10-08",
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for evidence review; only manifest metadata and brief factual transcriptions enter Git. User-supplied image or ordinary public-browser download/export; no HTTP status was observed. Browser export is an HTML wrapper of visible text, not the original response HTML. No authentication, challenge solving, or access-control bypass was used.",
+  "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "retrieved_at": "2026-10-11T15:41:56.877967Z",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "storage_reference": "sha256/e1/e1a8d7b04ec50a0a945fe9209eca495883d5a24396d0b9ed0d160bec9a9026d8",
+  "storage_scope": "local_only",
+  "title": "Young Democrats of Washington October 8, 2026 endorsement announcement: yd-slide-2",
+  "updated_at": null
+}
