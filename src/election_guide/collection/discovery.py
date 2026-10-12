@@ -61,23 +61,37 @@ class PublicationParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.links: set[str] = set()
+        self.endorsement_links: set[str] = set()
+        self.link_href: str | None = None
+        self.link_text: list[str] = []
         self.heading: list[str] = []
         self.in_heading = False
         self.heading_count = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = dict(attrs)
-        if tag == "a" and attributes.get("href"):
-            self.links.add(str(attributes["href"]))
+        if tag == "a":
+            self.link_href = attributes.get("href")
+            self.link_text = []
+            if self.link_href:
+                self.links.add(self.link_href)
         if tag == "h1":
             self.in_heading = True
             self.heading_count += 1
 
     def handle_endtag(self, tag: str) -> None:
+        if tag == "a":
+            title = " ".join("".join(self.link_text).split())
+            if self.link_href and title.casefold().startswith("sgn endorsements"):
+                self.endorsement_links.add(self.link_href)
+            self.link_href = None
+            self.link_text = []
         if tag == "h1":
             self.in_heading = False
 
     def handle_data(self, data: str) -> None:
+        if self.link_href:
+            self.link_text.append(data)
         if self.in_heading:
             self.heading.append(data)
 
@@ -142,19 +156,21 @@ def discover_publication(
         if record["source_id"] == policy.source_id:
             known.update(record["articles"])
     discovered: set[str] = set()
+    index_hashes: dict[str, str] = {}
     visited: set[str] = set()
     url = policy.index_url
     for _ in range(40):
         if url in visited:
             raise ValueError("publication pagination loops")
         visited.add(url)
-        _, page = fetch(url)
+        raw, page = fetch(url)
+        index_hashes[url] = hashlib.sha256(raw).hexdigest()
         links = {urljoin(url, item) for item in page.links}
         articles = {
             item
             for item in links
             if re.search(policy.article_pattern, unquote(item), re.IGNORECASE)
-        }
+        } | {urljoin(url, item) for item in page.endorsement_links}
         for article in articles:
             if urlsplit(article).netloc != host or urlsplit(article).scheme != "https":
                 raise ValueError("article discovery leaves the official HTTPS host")
@@ -192,7 +208,11 @@ def discover_publication(
         article_hashes[article] = hashlib.sha256(raw).hexdigest()
     # This is an explicitly derived comparison artifact. Original HTTP bytes
     # and response metadata remain in the separate encrypted captures above.
-    comparison = {"articles": article_hashes, "listed": sorted(discovered)}
+    comparison = {
+        "articles": article_hashes,
+        "listed": sorted(discovered),
+        "indexes": index_hashes,
+    }
     body = (
         "<html><body>"
         + "".join(headings)

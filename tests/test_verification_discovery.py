@@ -3,6 +3,7 @@
 import base64
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
 
@@ -12,14 +13,25 @@ from typer.testing import CliRunner
 
 from election_guide.cli import app
 from election_guide.collection.http import HttpArtifact
+from election_guide.collection.verification_review import approve_baseline
 
 ROOT = Path(__file__).parents[1]
 runner = CliRunner()
 
 
+@pytest.mark.parametrize(
+    ("new_link", "expect_fetch"),
+    [
+        ('<a href="/story/199999/News/Seattle/SGN%20Endorsements">New</a>', True),
+        ('<a href="/story/199999/"><span>SGN Endorsements A New Article</span></a>', True),
+        ('<a href="/story/199999/unrecognized-link-shape">New publication</a>', False),
+    ],
+)
 def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    new_link: str,
+    expect_fetch: bool,
 ) -> None:
     monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(bytes(range(32))).decode())
     policy = cast(dict[str, Any], yaml.safe_load((ROOT / "config/verification.yaml").read_text()))
@@ -100,15 +112,20 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     assert second.exit_code == 0, second.output
     event = json.loads(second.output)["automatic"][0]
     assert event["content_changed"] is True and event["diff"] == []
+    approve_baseline(
+        state / "wa-2026-general",
+        event["snapshot_id"],
+        "Fixture reviewer",
+        datetime.fromisoformat("2026-10-06T19:00:00+00:00"),
+        "Authored fixture publication with mocked HTTP; no real baseline approval.",
+    )
     # A previously unknown endorsement article is discovered from the current
     # index. Fixed known mappings cannot interpret it; the changed-byte gate
     # must send it to human review even when known decisions are identical.
     articles["https://www.sgn.org/story/199999/"] = (
         b"<h1>SGN Endorsements A Newly Published Candidate</h1>"
     )
-    pages["https://www.sgn.org/ch/News/Seattle"] += (
-        b'<a href="/story/199999/News/Seattle/SGN%20Endorsements">New</a>'
-    )
+    pages["https://www.sgn.org/ch/News/Seattle"] += new_link.encode()
     third = runner.invoke(
         app,
         [
@@ -123,7 +140,7 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
         ],
     )
     assert third.exit_code == 0, third.output
-    assert "https://www.sgn.org/story/199999/" in calls
+    assert ("https://www.sgn.org/story/199999/" in calls) is expect_fetch
     event = json.loads(third.output)["automatic"][0]
     assert event["status"] == "updated" and event["content_changed"] is True
     tasks = runner.invoke(
@@ -144,7 +161,9 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
         ],
     )
     assert tasks.exit_code == 0, tasks.output
-    assert "unrecognized wording" in tasks.output
+    assert event["id"] in tasks.output
+    if expect_fetch:
+        assert "unrecognized wording" in tasks.output
     assert not any(
         b"Changed authored wording" in path.read_bytes() for path in state.rglob("*.json")
     )

@@ -197,6 +197,12 @@ every changed byte set, even when its known-fact semantic diff is empty. First
 live baselines require explicit human attestations, bound to their snapshots;
 fixture runs and unapproved baselines do not count as successful verification.
 
+SGN discovery recognizes endorsement link text as well as title-bearing URLs,
+so short canonical story links are fetched and revisited. Every fetched index
+page's content hash participates in the comparison. An index change that the
+link matcher cannot classify therefore remains a human-review lead, including
+after the prior baseline was approved.
+
 Full third-party plaintext retains the existing private-storage restrictions.
 The new verification vault stores authenticated ciphertext in Git, with a key
 outside Git, so independent runners can restore and verify prior raw captures.
