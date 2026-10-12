@@ -332,6 +332,9 @@ then any sticky strip, then content.
   to trade the percentage for seams, so it renders the resting
   pointer-device state permanently rather than the print row's static-both
   one (docs/METER_V2.md, Decision log #23).
+  Archived guides follow the same rule. Hosting rejects the retired `--meter-fill`
+  chrome in every served HTML page; correcting an archive means publishing a new
+  immutable release, never restoring retired UI because an old bundle's hashes agree.
 - **The meter's own caption states a count, not a percentage — and never the
   recommended choice's own name.** "21½ of 23 endorsements," using the same
   formatter the meter's split blocks make honest: a co-endorsement's half is

@@ -182,9 +182,15 @@ unpublished candidate can never cross the production boundary.
 
 ## Historical bundles
 
-Only the current election is built from source. An older election cannot be rebuilt — its pinned
-artifact hashes were produced by the rendering code of its own time, and rendering changes since
-then would make the bytes diverge — so its bundle is downloaded from the Release that published it.
+Only the current election is built during staging. An older election is downloaded from its
+declared Release, because rebuilding an existing release identity with newer rendering code
+would violate its artifact hashes. To correct an archived guide, build and publish a new immutable
+release from merged mainline code and the completed election inputs, then update its version and
+reviewed pins. Existing release artifacts remain unchanged and available for audit.
+
+Every served HTML page must exclude the retired percentage-only meter's `--meter-fill` chrome.
+Both bundle staging and independent staged-site verification reject it, even when all recorded
+hashes agree. An authentic older release is an audit record, not permission to restore retired UI.
 
 Pass `--released-bundle-dir` to resolve every declared bundle that was not supplied with
 `--bundle`:
@@ -215,9 +221,9 @@ from a local build directory: the archive is what staging downloads, and a local
 up files the archive never carried.
 
 ```bash
-gh release download 2026-primary.2 \
+gh release download 2026-primary.3 \
   --pattern 'seattle-election-guide-*.zip' --dir dist/pin
-unzip -q dist/pin/seattle-election-guide-2026-primary.2.zip -d dist/pin
+unzip -q dist/pin/seattle-election-guide-2026-primary.3.zip -d dist/pin
 uv run election-guide hosting bundle-hash dist/pin/seattle-election-guide
 ```
 
@@ -241,7 +247,8 @@ The Make target supplies the current election's bundle as
 is the only one built from source, so when another election is declared it resolves from the release
 that published it rather than from anything prepared locally — see
 [Historical bundles](#historical-bundles). The archived primary therefore comes from its published,
-hash-pinned `2026-primary.2` release. That download reads GitHub, so `gh` must be installed and
+hash-pinned `2026-primary.3` release, containing the completed primary's certified results and
+Meter v2. That download reads GitHub, so `gh` must be installed and
 authenticated.
 Staging verifies all declared identities, each release status, every release-manifest artifact hash,
 and the current bundle's exact Git revision before it changes the existing output. It then
