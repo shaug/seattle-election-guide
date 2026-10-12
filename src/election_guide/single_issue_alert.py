@@ -1,14 +1,11 @@
 """Shared open/update/close-single-tracked-issue mechanism.
 
-The production-check alert (`hosting.production_alert`, O14) and the
-link-rot alert (`sources.link_rot_alert`, O17) each reconcile one marker-
+The link-rot alert (`sources.link_rot_alert`, O17) reconciles one marker-
 identified GitHub issue against a check result: a failure opens or updates
 it, a recovery closes it, and nothing duplicates it while it is still open.
-That lifecycle is identical between the two -- only the marker, issue
-title, labels, error-message wording, and the domain payload rendered into
-the issue body differ -- so it lives here once and each domain module
-builds a thin wrapper on top, preserving its own public names and keyword
-arguments.
+Domain wrappers supply the marker, title, labels, and issue payload. The
+former production-check wrapper is retired (#523); source-link tracking
+still uses this shared mechanism.
 """
 
 from __future__ import annotations

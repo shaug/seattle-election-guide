@@ -1,7 +1,6 @@
 """Behavior tests for reconciling the single link-rot alert issue (O17).
 
-Mirrors `test_production_alert.py`'s coverage of the same open/update/close
-shape, plus the consecutive-run confirmation this check adds on top of it.
+Covers the open/update/close lifecycle and consecutive-run confirmation.
 """
 
 from __future__ import annotations
@@ -35,7 +34,7 @@ CHECKED_AT = "2026-08-15T12:00:00+00:00"
 
 @pytest.fixture(autouse=True)
 def forbid_subprocess(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Mirror `test_production_alert.py`: nothing here may reach a real `gh` by accident."""
+    """Nothing here may reach a real `gh` by accident."""
 
     def _forbidden(*args: Any, **kwargs: Any) -> CompletedProcess[str]:
         raise AssertionError(

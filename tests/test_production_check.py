@@ -402,8 +402,7 @@ def test_evaluate_manifest_reports_a_schema_violation() -> None:
 
 
 def _healthy_report() -> ProductionCheckReport:
-    """Shared across test_production_check.py, test_production_alert.py, and
-    test_hosting_check_production_cli.py — imported by the other two rather
+    """Shared with test_hosting_check_production_cli.py — imported rather
     than redefined, matching this repository's cross-file private-import
     convention (e.g. `tests/test_compare_rendering.py` importing `_bundle`
     from `tests/test_comparisons.py`)."""

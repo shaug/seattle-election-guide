@@ -1,8 +1,7 @@
 """Behavior tests for the shared `gh` CLI plumbing (issue #387).
 
-Direct coverage for `parse_issue_list`, independent of its three callers
+Direct coverage for `parse_issue_list`, independent of its callers
 (`calendar.github_tracker.issue_records`,
-`hosting.production_alert.ProductionAlertTracker.find_open_alert`,
 `sources.link_rot_alert.LinkRotAlertTracker.find_open_alert`), each of which
 keeps its own per-call-site tests for the field extraction layered on top.
 """
