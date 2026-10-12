@@ -26,17 +26,15 @@ the Cloudflare account ID. Store both values under the GitHub repository's Actio
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 
-The workflow uses the GitHub `production` environment, which carries a required-reviewer rule and a
-`main`-only deployment branch policy. Both are configured under **Settings / Environments /
-production**: add the maintainer as a required reviewer, and add a deployment branch rule naming
-`main`. Rebuilding the environment without them restores automatic publication.
-[Deployment gate](#deployment-gate) describes what each one does and when to reach for the kill
-switch instead.
+The workflow uses the GitHub `production` environment with a `main`-only deployment branch policy.
+Under **Settings / Environments / production**, add a deployment branch rule naming `main` and
+leave required reviewers and the wait timer disabled. Production deploys automatically after CI
+passes. [Deployment gate](#deployment-gate) describes the checks and publication switch.
 
 Leave publishing disabled until the project and both secrets exist. Then create the repository
 Actions variable `CLOUDFLARE_PAGES_ENABLED` with the exact value `true`. Run the **CI** workflow
 manually on `main` for the first upload. That run, and every push to `main` after it, builds,
-validates, and stages automatically, then queues a production deployment for approval. A pull
+validates, stages, and deploys automatically when all checks pass. A pull
 request deploys only when it is opted in, and only from a branch in this repository — see
 [Pull request previews](#pull-request-previews).
 
@@ -178,8 +176,8 @@ uv run election-guide hosting stage config/hosting/site.yaml \
 
 That mode changes only the remote-publication check; staging still verifies bundle identity,
 release metadata, canonical assets, hashes, and the current bundle's commit. It is legal only while
-preparing or previewing the current candidate. After the `production` environment approval and
-before upload, deployment must run `hosting verify-releases` again with no candidate option, so an
+preparing or previewing the current candidate. Before upload, deployment must run
+`hosting verify-releases` again with no candidate option, so an
 unpublished candidate can never cross the production boundary.
 
 ## Historical bundles
@@ -330,7 +328,7 @@ workflow overrides it, by setting `PAGES_BRANCH`.
 
 ## Publication-day production probe
 
-After an explicitly authorized deployment completes, use the existing production checker in its
+After a deployment completes, use the existing production checker in its
 read-only mode. Supply the full deployed `production_candidate_sha`; the checker refuses a base URL
 other than the site manifest's canonical origin and uses that manifest as the trusted expectation
 for election order, current marker, release and bundle identities, panel/registry identities, and
@@ -362,12 +360,12 @@ in the fetched schema-valid deployment manifest's asset inventory. The checker a
 - a genuine `404` from a deterministic unknown-election path; and
 - `2026-general.5` and the exact `production_candidate_sha` in the public manifest.
 
-Attach `dist/production-probe.json` to the deployment issue with the approving actor, approval time,
-CI run and artifact, and deployment ID. Run the same command a second time after deployment
-completion and preserve that output separately (for example,
+Attach `dist/production-probe.json` to the deployment issue with the CI run and artifact,
+deployment ID, full deployed SHA, and deployment time. Run the same command a second time after
+deployment completion and preserve that output separately (for example,
 `dist/production-probe-confirmation.json`); both probes must pass. A failure preserves evidence and
 routes the operator to [the production rollback runbook](runbooks/production-rollback.md). It never
-authorizes a rollback, kill-switch change, or approval of another SHA.
+authorizes a rollback, kill-switch change, or deployment of another SHA.
 
 ## Scheduled production availability
 
@@ -387,7 +385,7 @@ declarations, and does not check data age. Passing it means the served manifest 
 respond correctly. It does not attest that the intended release or all its content is published.
 
 Release identity stays with the [publication-day production probe](#publication-day-production-probe).
-The protected `deploy` job runs that strict, read-only check immediately after its approved upload,
+The protected `deploy` job runs that strict, read-only check immediately after its production upload,
 using the job's full `GITHUB_SHA`, and preserves `production-probe.json` as an Actions artifact.
 A failed probe fails the deployment job; it does not roll back or authorize another deployment.
 Strict verification requires `--expected-git-commit`; combining it with `--availability-only` is
@@ -414,35 +412,20 @@ complete site, and uploads the staged directory as a short-lived GitHub Actions 
 can the production job download and upload it with Wrangler. Concurrent production uploads are
 serialized.
 
-Passing CI makes a commit publishable; it does not publish it. Two independent controls stand
-between a green merge and the live site.
+When publication is enabled, a merge to `main` runs `check` and then deploys automatically. The
+`production` environment has no required reviewers or wait timer. Manual approval was removed in
+#521 because its prompt was detached from a preview of the changes and added no useful review.
 
-### Approval
+The job downloads the `cloudflare-site` artifact from that same CI run, verifies it against the
+run's full `GITHUB_SHA`, and requires every declared release to be published before uploading.
+After upload, the strict production probe checks the deployed SHA and preserves its report as
+the `production-probe` artifact. A mismatch fails the job; it does not trigger an automatic rollback.
 
-The `production` environment carries a required-reviewer protection rule. A merge to `main` runs
-`check` and then queues `deploy` in a waiting state until a reviewer approves it from the workflow
-run page. The repository's Deployments page lists the waiting deployment and links to that run, but
-carries no approval control of its own. Approving starts the upload; rejecting ends the run and
-leaves the live site on its previous deployment. Work can keep landing on `main` while a deployment
-waits, which is the point: merging and publishing are separate decisions, and during the week before
-an election the second one deserves its own moment.
-
-What waits is one commit, not a backlog. The `deploy` job serializes on a single concurrency group,
-so production deployments never accumulate: a run queued behind the waiting one is itself canceled
-when a newer run queues behind it. Approving therefore publishes the commit the waiting deployment
-carries — the deployments log records which — and that is not necessarily the head of `main`. To
-publish a newer commit instead, reject the waiting deployment and approve the newer one. Re-running
-CI on the exact commit you want is the dependable way to produce a deployment for it.
-
-A hold is also bounded. The job publishes by downloading the `cloudflare-site` artifact that `check`
-uploaded, and Actions keeps that artifact for seven days; approving afterward fails at the download
-step rather than publishing. GitHub fails an unapproved deployment after thirty days, but the
-artifact expires long before that, so seven days is the real limit. Past it, re-run CI on the commit
-to stage a fresh artifact.
-
-The only reviewer is the maintainer, so this is self-approval, and admins can bypass it. That is
-deliberate. What it buys is the pause and the audit trail in the deployment log, not enforcement
-against oneself.
+The deployment log records the commit each job publishes. Concurrent uploads are serialized, and
+a newer queued job can replace an older queued job. Always use the job's explicit SHA when checking
+production, even if `main` has advanced. Re-running CI on the exact commit you want is the
+dependable way to produce a deployment for it. Actions artifacts expire after seven days; if the
+`cloudflare-site` artifact is missing or expired, rebuild it by rerunning CI for that exact commit.
 
 ### Branch policy
 
@@ -460,15 +443,14 @@ created.
 
 ### Which one to use
 
-Approval is the per-deploy pause, and the normal path: hold a specific commit, or sit on a change
-overnight before putting it in front of voters. See [Approval](#approval) for which commit a waiting
-deployment carries.
+Review changes before merging, using [Pull request previews](#pull-request-previews) when useful.
+Merging starts the automatic CI-and-deployment path.
 
-The variable is the durable off switch. Use it when publication should be off rather than merely
-waiting: while Cloudflare credentials are rotated, while the Pages project is rebuilt, or for any
-freeze approaching the seven-day artifact window. While it is unset the `deploy` job never runs, so
-there is no deployment to expire or approve by mistake, and restoring publication takes a deliberate
-settings change rather than a click.
+The variable is the durable off switch. Use it while Cloudflare credentials are rotated, while the
+Pages project is rebuilt, or during a publication freeze. While it is unset, new CI runs skip
+`deploy`. Cancel any already queued or running production jobs separately. To resume publication,
+restore the variable to `true` and run CI on the intended `main` commit; restoring it does not rerun
+skipped jobs.
 
 ## Credential and hosting ownership
 
@@ -494,7 +476,7 @@ store, never in git history.
 | Apex DNS (`seattleelections.guide`) | Cloudflare nameservers | Canonical hostname's DNS and TLS termination; required before Pages can attach a custom domain to it. | Domain registrar account controls which nameservers are authoritative. If Cloudflare nameserver delegation is ever lost, the canonical hostname stops resolving until it is restored — this is the single highest-impact entry in this table. |
 | Apex DNS (`seattle-elections.guide`, legacy) | Cloudflare nameservers | DNS and TLS termination for the hyphenated legacy hostname redirected to canonical — see [Custom domains](#custom-domains). Requires Cloudflare nameservers for the same reason the canonical apex does. | Domain registrar account controls which nameservers are authoritative. Losing this delegation breaks only this hostname's redirect; the canonical hostname is unaffected. |
 | Legacy DNS (`seattle-elections.dobravoda.dev`) | Namecheap | Publishes the CNAME to `seattle-elections.pages.dev` documented in [Custom domains](#custom-domains), keeping the retired hostname's redirect alive. | Namecheap account recovery through the maintainer's registered email. Losing this record breaks the legacy redirect only; the canonical hostname is unaffected. |
-| GitHub `production` environment | Repository Settings → Environments | Carries the required-reviewer and `main`-only branch policy described in [Deployment gate](#deployment-gate). | Repository admin access recreates it from [One-time setup](#one-time-setup) if it is ever deleted. |
+| GitHub `production` environment | Repository Settings → Environments | Carries the `main`-only branch policy described in [Deployment gate](#deployment-gate), with required reviewers and the wait timer disabled. | Repository admin access recreates it from [One-time setup](#one-time-setup) if it is ever deleted. |
 
 The archive App setup is retired (#512). Its inventory above records any credentials that still
 exist; production availability uses only the automatic `GITHUB_TOKEN` for its alert issue.
