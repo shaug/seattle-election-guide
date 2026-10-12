@@ -1,10 +1,9 @@
 """Verify a deployed Pages site against its manifest and the public route contract.
 
-The plan and evaluation here are pure — no network access — so both the
-scheduled monitor (O14) and a future promote-on-demand smoke test (O4) can
-share it without duplicating the route contract (`docs/SITE_OPERATIONS_PLAN.md`,
-O4: "Shares the smoke-check logic with O14 — build it once and call it from
-both."). Fetching over the network lives in `production_probe`.
+The plan and evaluation here are pure — no network access — so deployment
+verification and manual diagnostics share the route contract. Fetching over
+the network lives in `production_probe`. Scheduled availability monitoring
+and its GitHub alert reconciliation are retired (#523).
 """
 
 from __future__ import annotations

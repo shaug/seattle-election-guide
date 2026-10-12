@@ -4,7 +4,7 @@ Every caller that lists, creates, updates, or closes GitHub issues through
 `gh` shares this same subprocess boundary, listing bound, and trailing-line
 marker convention, so a fix here reaches every consumer at once instead of
 drifting between independently duplicated copies (calendar milestone
-tracking and the production-check alert issue both maintain their own
+tracking and source-link alerts both maintain their own
 generated issue's identity this way).
 """
 
@@ -43,10 +43,10 @@ def run_gh(command: list[str], failure: str) -> str:
 def parse_issue_list(payload: str) -> list[dict[str, Any]]:
     """Validate a `gh issue list --json ...` payload: a JSON array of objects.
 
-    Every caller that lists issues (calendar milestone tracking, the
-    production-check alert, the link-rot alert) shares this same shape
+    Every caller that lists issues (calendar milestone tracking and
+    source-link alerts) shares this same shape
     requirement before it diverges into its own field extraction, so the
-    check lives here once instead of three times. Field extraction --
+    check lives here once. Field extraction --
     including which fields are required -- stays with each caller.
     """
     issues: Any = json.loads(payload)
@@ -63,8 +63,8 @@ def parse_issue_list(payload: str) -> list[dict[str, Any]]:
 def trailing_line(body: str) -> str:
     """The last non-empty, stripped line of an issue body.
 
-    The marker convention both calendar tracking and the production-check
-    alert identify their own generated issues by: an issue always ends with
+    The marker convention calendar tracking and source-link alerts use
+    to identify their generated issues: an issue always ends with
     its identity, so a marker discussed mid-body (for example, a human
     quoting one while asking about the system) cannot be mistaken for the
     real thing.

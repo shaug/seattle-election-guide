@@ -14,9 +14,9 @@ cleanup — it is the half of the procedure that keeps the rollback from silentl
 Not a calendar milestone. This runbook is due on a condition: **production is serving a build that
 is wrong, broken, or stale, and correcting forward would take longer than reverting.**
 
-The condition may be noticed by the hourly availability alert, a strict post-deployment probe
-reporting the wrong release, a visibly wrong guide, or a merge that should not have
-shipped. The scheduled availability probe does not compare deployed commits with `main` (#512).
+The condition may be noticed by a strict post-deployment probe reporting the wrong release,
+a manual production check, a visibly wrong guide, or a merge that should not have shipped.
+Hourly production availability monitoring is retired (#523).
 
 Reach for this runbook only when the wrong build is *already live*. If it is merely merged and
 has not deployed yet, cancel its CI run and disable publication before another run can upload it
@@ -224,8 +224,8 @@ The rollback is not done until all three of these hold:
    disagreement between the panel and check 1 means the custom domain is not following the
    production alias, which is an escalation, not a retry.
 
-Check 1 is the explicit identity comparison the strict post-deployment probe performs. The hourly
-availability monitor checks served routes only; it cannot tell whether a rollback drifted back.
+Check 1 is the explicit identity comparison the strict post-deployment probe performs. A manual
+`--availability-only` probe checks served routes only; it cannot tell whether a rollback drifted back.
 
 ## Escalation
 

@@ -328,8 +328,8 @@ workflow overrides it, by setting `PAGES_BRANCH`.
 
 ## Publication-day production probe
 
-After a deployment completes, use the existing production checker in its
-read-only mode. Supply the full deployed `production_candidate_sha`; the checker refuses a base URL
+After a deployment completes, use the read-only production checker. Supply the full deployed
+`production_candidate_sha`; the checker refuses a base URL
 other than the site manifest's canonical origin and uses that manifest as the trusted expectation
 for election order, current marker, release and bundle identities, panel/registry identities, and
 the historical declaration.
@@ -340,13 +340,11 @@ uv run election-guide hosting check-production \
   https://seattleelections.guide \
   --site-manifest config/hosting/site.yaml \
   --expected-git-commit "$production_candidate_sha" \
-  --dry-run \
   --output dist/production-probe.json
 ```
 
-`--dry-run` is mandatory for publication evidence. It bypasses alert reconciliation completely, so
-the probe cannot open, update, or close the scheduled monitor's issue. Scheduled monitoring omits
-that option and keeps its existing alert behavior.
+Production checking is always read-only: it never opens, updates, or closes GitHub issues and does
+not require GitHub credentials. The former `--dry-run` and `--repository` options are retired (#523).
 
 The JSON output preserves the checked URL and time, the raw HTTP status and `Location` header for
 every redirect, the complete expected and observed deployment manifests, all route results, and the
@@ -367,36 +365,38 @@ deployment completion and preserve that output separately (for example,
 routes the operator to [the production rollback runbook](runbooks/production-rollback.md). It never
 authorizes a rollback, kill-switch change, or deployment of another SHA.
 
-## Scheduled production availability
+## Production verification policy
 
-The `Production availability` workflow runs once an hour, off the top of the hour. Every
-scheduled or manually dispatched run executes the probe, even if GitHub starts it late. There is
-no execution-clock gate or election-dependent cadence (#512).
+Hourly production monitoring and its alert issues are retired (#523), superseding the availability
+schedule introduced by #512. This site serves immutable assets through a stateless Cloudflare Pages
+worker. A failure after a verified deployment usually offers little action beyond investigating
+Cloudflare or domain configuration. A failed deployment probe instead identifies a release that
+can be corrected or rolled back.
 
-It uses `hosting check-production --availability-only` to fetch and parse the served deployment
-manifest, check the home redirect, request the current guide declared by that manifest, and check
-its legacy PDF redirect. Both redirects must point to the canonical production origin, not just
-the expected path. A healthy run opens no issue. Failures open or update the single
-`production-check:monitor` issue, titled **Production availability check failed**; recovery closes
-it. The existing marker also finds an older alert created under the previous title.
-
-The availability probe does not compare the site with `main` or its unpublished release
-declarations, and does not check data age. Passing it means the served manifest and those routes
-respond correctly. It does not attest that the intended release or all its content is published.
-
-Release identity stays with the [publication-day production probe](#publication-day-production-probe).
-The protected `deploy` job runs that strict, read-only check immediately after its production upload,
+The protected `deploy` job runs strict, read-only verification immediately after its production upload,
 using the job's full `GITHUB_SHA`, and preserves `production-probe.json` as an Actions artifact.
 A failed probe fails the deployment job; it does not roll back or authorize another deployment.
 Strict verification requires `--expected-git-commit`; combining it with `--availability-only` is
 rejected rather than silently discarding the release expectation.
 
+For a manual availability diagnosis without release expectations:
+
+```bash
+uv run election-guide hosting check-production https://seattleelections.guide --availability-only
+```
+
+This fetches and parses the served deployment manifest, checks the home redirect, requests the
+current guide declared by that manifest, and checks its legacy PDF redirect. Both redirects must
+point to the canonical production origin. It does not compare the site with `main`, enforce
+unpublished release declarations, or check data age. The result is printed with a nonzero exit
+status on failure; `--output` can preserve the JSON report. It creates no alert issues.
+
 ## Production freshness check
 
 Strict release verification reads the current election's public `release-manifest.json` and treats
 its `generated_at` value as stale when it is more than seven days old during the seven-day
-pre-election window. The scheduled availability probe does not run this check (#512). Outside
-that window, age alone never fails strict verification. The window comes from the `election_day`
+pre-election window. The manual availability probe does not run this check. Outside that window,
+age alone never fails strict verification. The window comes from the `election_day`
 milestone in `config/calendar/elections.yaml`; no second election date is configured in the probe.
 
 Seven days matches the guide's planned weekly refresh rhythm: the calendar schedules refreshes
@@ -479,7 +479,7 @@ store, never in git history.
 | GitHub `production` environment | Repository Settings → Environments | Carries the `main`-only branch policy described in [Deployment gate](#deployment-gate), with required reviewers and the wait timer disabled. | Repository admin access recreates it from [One-time setup](#one-time-setup) if it is ever deleted. |
 
 The archive App setup is retired (#512). Its inventory above records any credentials that still
-exist; production availability uses only the automatic `GITHUB_TOKEN` for its alert issue.
+exist. Production probes are read-only and require no GitHub credentials (#523).
 The daily archive does not need to be recreated to operate the site.
 
 ### Rotating the Cloudflare API token

@@ -119,7 +119,6 @@ def test_read_only_production_probe_command_cannot_drift() -> None:
   https://seattleelections.guide \\
   --site-manifest config/hosting/site.yaml \\
   --expected-git-commit "$production_candidate_sha" \\
-  --dry-run \\
   --output dist/production-probe.json"""
     )
 

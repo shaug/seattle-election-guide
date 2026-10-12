@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -13,7 +14,6 @@ from typer.testing import CliRunner
 
 from election_guide import cli
 from election_guide.hosting.models import SiteManifest
-from election_guide.hosting.production_alert import ProductionAlertTracker
 from election_guide.hosting.production_check import (
     MANIFEST_CHECK,
     CommitCheck,
@@ -48,36 +48,23 @@ def _stub_failing_check(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(cli, "run_production_check", _check)
 
 
-def test_a_healthy_run_exits_zero_and_reconciles_the_alert(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.fixture(autouse=True)
+def forbid_subprocess(monkeypatch: pytest.MonkeyPatch) -> None:
+    def _never(*args: Any, **kwargs: Any) -> None:
+        raise AssertionError("production probes must not invoke GitHub or change alert issues")
+
+    monkeypatch.setattr(subprocess, "run", _never)
+
+
+def test_a_healthy_run_exits_zero_without_github(monkeypatch: pytest.MonkeyPatch) -> None:
     recorded: dict[str, Any] = {}
 
-    def _check(
-        base_url: str,
-        *,
-        expected_git_commit: str,
-        timeout: float,
-        active_window: bool,
-        checked_at: datetime,
-        site_manifest: SiteManifest,
-    ) -> ProductionCheckReport:
+    def _check(base_url: str, **kwargs: Any) -> ProductionCheckReport:
         recorded["base_url"] = base_url
-        recorded["expected_git_commit"] = expected_git_commit
-        recorded["current_election_id"] = site_manifest.current_election_id
+        recorded.update(kwargs)
         return _healthy_report()
 
-    def _reconcile(
-        tracker: ProductionAlertTracker,
-        report: ProductionCheckReport,
-        *,
-        base_url: str,
-        checked_at: str,
-    ) -> str:
-        recorded["reconciled"] = True
-        return "healthy; no open alert"
-
     monkeypatch.setattr(cli, "run_production_check", _check)
-    monkeypatch.setattr(cli, "reconcile_alert", _reconcile)
-
     result = CliRunner().invoke(
         cli.app,
         [
@@ -89,28 +76,15 @@ def test_a_healthy_run_exits_zero_and_reconciles_the_alert(monkeypatch: pytest.M
         ],
     )
 
-    assert result.exit_code == 0
+    assert result.exit_code == 0, result.output
     assert recorded["base_url"] == "https://seattleelections.guide"
     assert recorded["expected_git_commit"] == COMMIT
-    assert recorded["current_election_id"] == "wa-2026-general"
-    assert recorded["reconciled"] is True
+    assert recorded["site_manifest"].current_election_id == "wa-2026-general"
     assert "PASS" in result.output
 
 
-def test_a_failing_run_exits_nonzero_after_reconciling(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_a_failing_run_exits_nonzero_without_github(monkeypatch: pytest.MonkeyPatch) -> None:
     _stub_failing_check(monkeypatch)
-
-    def _reconcile(
-        tracker: ProductionAlertTracker,
-        report: ProductionCheckReport,
-        *,
-        base_url: str,
-        checked_at: str,
-    ) -> str:
-        return "opened alert issue: https://x/9"
-
-    monkeypatch.setattr(cli, "reconcile_alert", _reconcile)
-
     result = CliRunner().invoke(
         cli.app,
         [
@@ -124,57 +98,8 @@ def test_a_failing_run_exits_nonzero_after_reconciling(monkeypatch: pytest.Monke
 
     assert result.exit_code == 1
     assert "FAIL" in result.output
-    assert "opened alert issue" in result.output
-
-
-def test_a_dry_run_never_touches_the_alert_tracker(monkeypatch: pytest.MonkeyPatch) -> None:
-    _stub_failing_check(monkeypatch)
-
-    def _never(*args: Any, **kwargs: Any) -> str:
-        raise AssertionError("a dry run must not reconcile the alert issue")
-
-    monkeypatch.setattr(cli, "reconcile_alert", _never)
-
-    result = CliRunner().invoke(
-        cli.app,
-        [
-            "hosting",
-            "check-production",
-            "https://seattleelections.guide",
-            "--expected-git-commit",
-            COMMIT,
-            "--dry-run",
-        ],
-    )
-
-    assert result.exit_code == 1
-    assert "dry run" in result.output
-
-
-def test_a_reconciliation_failure_is_reported_without_a_traceback(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    _stub_failing_check(monkeypatch)
-
-    def _broken(*args: Any, **kwargs: Any) -> str:
-        raise ValueError("gh: not authenticated")
-
-    monkeypatch.setattr(cli, "reconcile_alert", _broken)
-
-    result = CliRunner().invoke(
-        cli.app,
-        [
-            "hosting",
-            "check-production",
-            "https://seattleelections.guide",
-            "--expected-git-commit",
-            COMMIT,
-        ],
-    )
-
-    assert result.exit_code == 1
-    assert "hosting check-production failed" in result.output
-    assert "gh: not authenticated" in result.output
+    assert result.exception is not None
+    assert isinstance(result.exception, SystemExit)
 
 
 def test_availability_mode_probes_without_unpublished_release_expectations(
@@ -198,7 +123,6 @@ def test_availability_mode_probes_without_unpublished_release_expectations(
             "check-production",
             "https://seattleelections.guide",
             "--availability-only",
-            "--dry-run",
         ],
     )
 
@@ -331,7 +255,6 @@ def test_check_production_refuses_a_base_url_outside_the_site_manifest_authority
             COMMIT,
             "--site-manifest",
             str(site_manifest_path),
-            "--dry-run",
         ],
     )
 
@@ -358,7 +281,6 @@ def test_check_production_rejects_an_abbreviated_expected_commit_before_probing(
             "deadbeef",
             "--site-manifest",
             str(site_manifest_path),
-            "--dry-run",
         ],
     )
 
@@ -405,20 +327,24 @@ def _attachment_report() -> ProductionCheckReport:
     )
 
 
-def test_dry_run_writes_attachment_ready_json_without_reconciling_alerts(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.parametrize("healthy", [True, False])
+def test_production_probe_writes_attachment_ready_json_without_github(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, healthy: bool
 ) -> None:
     site_manifest_path = _write_site_manifest(tmp_path)
     output_path = tmp_path / "production-probe.json"
 
     def _check(*args: Any, **kwargs: Any) -> ProductionCheckReport:
-        return _attachment_report()
-
-    def _never(*args: Any, **kwargs: Any) -> str:
-        raise AssertionError("dry-run evidence generation must not reconcile alert issues")
+        report = _attachment_report()
+        return (
+            report
+            if healthy
+            else report.model_copy(
+                update={"commit": CommitCheck(expected=COMMIT, observed="f" * 40)}
+            )
+        )
 
     monkeypatch.setattr(cli, "run_production_check", _check)
-    monkeypatch.setattr(cli, "reconcile_alert", _never)
     result = CliRunner().invoke(
         cli.app,
         [
@@ -431,11 +357,10 @@ def test_dry_run_writes_attachment_ready_json_without_reconciling_alerts(
             str(site_manifest_path),
             "--output",
             str(output_path),
-            "--dry-run",
         ],
     )
 
-    assert result.exit_code == 0
+    assert result.exit_code == (0 if healthy else 1), result.output
     evidence = json.loads(output_path.read_text(encoding="utf-8"))
     assert evidence["manifest"]["observed"]["status"] == 200
     assert evidence["deployment_contract"]["observed"]["current_election_id"] == ("wa-2026-general")
@@ -467,11 +392,7 @@ def test_check_production_reads_the_active_window_from_the_calendar(
         recorded["active_window"] = active_window
         return _healthy_report()
 
-    def _reconcile(*args: Any, **kwargs: Any) -> str:
-        return "healthy"
-
     monkeypatch.setattr(cli, "run_production_check", _check)
-    monkeypatch.setattr(cli, "reconcile_alert", _reconcile)
 
     result = CliRunner().invoke(
         cli.app,
