@@ -558,11 +558,12 @@ def comparison_result_outcomes(
 
 
 def _filter_options(view_model: PublicationViewModel) -> list[str]:
-    section_labels = {section.label for section in view_model.sections}
+    sections = view_model.guide_sections
+    section_labels = {section.label for section in sections}
     return sorted(
         {
             token
-            for section in view_model.sections
+            for section in sections
             for race in section.races
             for token in race.filter_tokens
             if token not in section_labels and (" " in token or token.endswith("wide"))
@@ -589,7 +590,7 @@ def filter_scope_groups(view_model: PublicationViewModel) -> list[FilterScopeGro
             label="Ballot sections",
             options=tuple(
                 FilterScope(value=section.id, label=section.label)
-                for section in view_model.sections
+                for section in view_model.guide_sections
             ),
         ),
         FilterScopeGroupView(

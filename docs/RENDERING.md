@@ -74,6 +74,12 @@ Races follow the ballot's section order: Federal, State, County, State Supreme C
 The grouping follows the office's governing jurisdiction, so Seattle Municipal Court appears under
 City while Washington Supreme Court positions appear under State Supreme Court.
 
+For general elections, the Endorsements overview uses the publication model's
+`guide_sections` projection: unopposed races without current affirmative endorsements are
+omitted, along with empty sections and their filter options (DECISIONS.md, issue #528).
+Contested races and unopposed races with an endorsement remain. The complete race set stays
+available in audit exports, Comparisons, individual pages, and legacy-link routing.
+
 Printing suppresses the chrome a reader cannot use on paper — the brand band, the sticky filter
 controls, the lens banner, the footer's action cluster — flattens the screen surfaces onto white,
 holds the race grid at two columns whichever on-screen density is active, and keeps each race card
@@ -149,7 +155,7 @@ already-published release has (issue 136).
 
 The generation fails unless:
 
-- responsive HTML contains every canonical race in order and every display value; each affirmative
+- responsive HTML contains every expected overview race in order and every display value; each affirmative
   endorser appears under every endorsed candidate or choice with its own evidence link;
 - every race's own page contains every canonical tallying source decision in the correct
   voter-facing outcome section, with affirmative multi-candidate decisions repeated once per selected
@@ -158,9 +164,10 @@ The generation fails unless:
 - every race page declares its own title, description, canonical URL, and social card, so a shared
   race unfurls as that race rather than as the site (issue 136);
 - desktop and mobile browser checks exercise the card's link to its race page, the filter and view
-  controls, and viewport containment;
+  controls, and viewport containment; an empty overview requires only the all-races scope and no
+  visible grid, while a filter with no matching races also requires no visible grid;
 - the configured desktop and mobile captures use their exact CSS viewport dimensions without
-  horizontal overflow, expose every race and the filter controls, and contain visible pixels; and
+  horizontal overflow, expose every overview race and the filter controls, and contain visible pixels; and
 - an approved coarse perceptual baseline catches wholesale hierarchy, palette, or layout changes
   while tolerating minor browser and font-rasterization differences.
 

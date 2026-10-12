@@ -21,7 +21,7 @@ from websocket import (
     create_connection,  # pyright: ignore[reportUnknownVariableType]
 )
 
-from election_guide.normalization.models import CanonicalDataset
+from election_guide.normalization.models import CanonicalDataset, EndorsementStatus
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.builder import (
     reprojected_comparisons,
@@ -112,8 +112,13 @@ from tests.test_publication import (
 from tests.test_results import RACE_ID as RESULTS_RACE_ID
 from tests.test_results import _valid_results  # pyright: ignore[reportPrivateUsage]
 from tests.test_scoring import (
+    COMPARISON_SOURCE_ID,
+    CONSENSUS_SOURCE_IDS,
     NOW,
+    RACE_ID,
+    _candidate_ids,  # pyright: ignore[reportPrivateUsage]
     _configuration,  # pyright: ignore[reportPrivateUsage]
+    _dataset,  # pyright: ignore[reportPrivateUsage]
 )
 
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -3201,6 +3206,124 @@ def _coarse_visual_signature(path: Path) -> list[float]:
                 pixel = cast(tuple[int, int, int], image.getpixel((x, y)))
                 signature.append(round(1 - sum(pixel) / (3 * 255), 3))
         return signature
+
+
+@pytest.mark.parametrize("with_results", [False, True])
+@pytest.mark.parametrize(
+    ("election_type", "contested", "source_id", "status", "visible"),
+    [
+        ("general", False, None, "endorsed", False),
+        ("general", False, CONSENSUS_SOURCE_IDS[0], "no_endorsement", False),
+        ("general", True, None, "endorsed", True),
+        ("general", False, CONSENSUS_SOURCE_IDS[0], "endorsed", True),
+        ("general", False, COMPARISON_SOURCE_ID, "endorsed", True),
+        ("primary", False, None, "endorsed", True),
+    ],
+)
+def test_overview_omits_only_unopposed_general_races_without_endorsements(
+    tmp_path: Path,
+    election_type: str,
+    contested: bool,
+    source_id: str | None,
+    status: EndorsementStatus,
+    visible: bool,
+    with_results: bool,
+) -> None:
+    # A single official race makes an omitted race's otherwise empty section
+    # and filter options observable, without depending on the live election.
+    candidate_ids = _candidate_ids()[:1] if status == "endorsed" else []
+    specs: list[tuple[str, EndorsementStatus, list[str]]] = (
+        [] if source_id is None else [(source_id, status, candidate_ids)]
+    )
+    dataset = _dataset(tmp_path, specs)
+    inventory = dataset.inventory.model_dump(mode="json")
+    inventory["election"]["election_type"] = election_type
+    inventory["races"] = [race for race in inventory["races"] if race["id"] == RACE_ID]
+    if not contested:
+        inventory["races"][0]["choices"] = inventory["races"][0]["choices"][:1]
+    for check in inventory["coverage_checks"]:
+        cited_races = [
+            race for race in inventory["races"] if check["source_id"] in race["source_ids"]
+        ]
+        check["matched_races"] = len(cited_races)
+        check["matched_choices"] = sum(len(race["choices"]) for race in cited_races)
+    dataset_payload = dataset.model_dump(mode="json")
+    dataset_payload["inventory"] = inventory
+    dataset = CanonicalDataset.model_validate(dataset_payload)
+    report = score_dataset(dataset, _configuration(), computed_at=NOW)
+    bundle = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="overview-fixture",
+        snapshot_root=_snapshot_store(tmp_path, dataset),
+    )
+    view_model = bundle.view_model
+    capture_url = "https://example.org/results/overview-fixture"
+    if with_results:
+        results = _valid_results(tmp_path / "results")
+        result = results.races[0].model_copy(
+            update={
+                "race_id": RACE_ID,
+                "ballots_counted": 100,
+                "outcomes": [
+                    RaceOutcome(choice_id=_candidate_ids()[0], votes=100, share=1.0, advanced=True)
+                ],
+            }
+        )
+        view_model = view_model.model_copy(
+            update={
+                "results": results.model_copy(update={"races": [result]}),
+                "metadata": view_model.metadata.model_copy(
+                    update={"results_capture_urls": {RACE_ID: capture_url}}
+                ),
+            }
+        )
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    html = render_html_document(view_model, configuration)
+    payload = _client_payload(html)
+
+    assert (f'data-publication-race-id="{RACE_ID}"' in html) is visible
+    # Retain payload identities so legacy #race-… links can still forward to
+    # the full race page even when the overview no longer has a card for it.
+    assert [race["race_id"] for race in payload["races"]] == [RACE_ID]
+    assert ('data-filter-section="county"' in html) is visible
+    assert ('<option value="county">' in html) is visible
+    assert ('<option value="Countywide">' in html) is visible
+    if not visible:
+        assert payload["filter_scopes"] == [{"value": "all", "label": "All Seattle ballot races"}]
+
+    # The overview is a projection; canonical exports and direct links retain
+    # the full race even when there is no decision for the guide to summarize.
+    exported = json.loads(bundle.artifacts["publication_view_model.json"])
+    assert exported["sections"][0]["races"][0]["id"] == RACE_ID
+    race_documents = _race_documents(view_model)
+    assert RACE_ID in race_documents
+    if with_results:
+        assert (f'href="{capture_url}"' in html) is visible
+        assert f'href="{capture_url}"' in race_documents[RACE_ID]
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(html, encoding="utf-8")
+    screenshots = [
+        _inked_screenshot(
+            tmp_path / "desktop.png", configuration.desktop_width, configuration.screenshot_height
+        ),
+        _inked_screenshot(
+            tmp_path / "mobile.png", configuration.mobile_width, configuration.screenshot_height
+        ),
+    ]
+    validation = validate_rendered_guide(
+        view_model, configuration, html_path, screenshots, race_documents
+    )
+    assert validation.passed, [check for check in validation.checks if not check.passed]
+    if election_type == "general" and not contested and not with_results and status == "endorsed":
+        render_screenshot(
+            html_path,
+            tmp_path / "overview.png",
+            find_chrome(),
+            width=configuration.mobile_width,
+            height=configuration.screenshot_height,
+            expected_race_count=int(visible),
+        )
 
 
 def _view_model(root: Path) -> PublicationViewModel:
