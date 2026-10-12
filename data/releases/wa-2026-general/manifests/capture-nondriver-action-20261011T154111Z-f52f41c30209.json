@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 3127,
+  "canonical_url": "https://ndaction.org/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "56f6df0be528d4df47dd08c9e1b99c564b1e3b5a56a38864b733440811fdcd6f",
+  "http_status": null,
+  "id": "capture-nondriver-action-20261011T154111Z-f52f41c30209",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://ndaction.org/2026-endorsements/",
+  "retrieved_at": "2026-10-11T15:41:11.594444Z",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "storage_reference": "sha256/56/56f6df0be528d4df47dd08c9e1b99c564b1e3b5a56a38864b733440811fdcd6f",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Nondriver Action",
+  "updated_at": null
+}

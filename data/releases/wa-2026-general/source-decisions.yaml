@@ -1,15 +1,16 @@
 schema_version: '1.0'
 election_id: wa-2026-general
-data_as_of: '2026-10-11T01:24:53Z'
+data_as_of: '2026-10-12T16:24:42Z'
 reviewer: shaug
-review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured
-  21 new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every
-  new or changed transcription and independently rechecked the 13 unchanged published source blocks against current
-  official evidence. The sources resolve to 34 published decision blocks, 5 not-found dispositions, or 4 access-restricted
-  dispositions. Primary-only choices that did not advance were omitted. Washington Conservation Action’s unmatched
-  IL26-368 text and the Alliance for Gun Responsibility’s mismatched Steve Bergquist district label remain untranscribed.
-  The reviewer confirmed mapping NWPC-WA’s Darya Farivar claim to LD46 from its same-card biography and the frozen
-  ballot inventory.'
+review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured 21
+  new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every new or
+  changed transcription and independently rechecked the 13 unchanged published source blocks against current official evidence.
+  The sources resolve to 34 published decision blocks, 5 not-found dispositions, or 4 access-restricted dispositions. Primary-only
+  choices that did not advance were omitted. Washington Conservation Action’s unmatched IL26-368 text and the Alliance for
+  Gun Responsibility’s mismatched Steve Bergquist district label remain untranscribed. The reviewer confirmed mapping NWPC-WA’s
+  Darya Farivar claim to LD46 from its same-card biography and the frozen ballot inventory. October 12 update: 22 maintainer-approved
+  additions, source admission under issue #509 and the Tech 4 Taxes interpretation under issue #508. Prior source reviews
+  are retained; no new whole-panel verification is asserted. See data/review/approvals/wa-2026-general-2026-10-12.json.'
 sources:
 - source_id: washington-community-action-network
   captured_at: '2026-10-11T01:07:23.909422Z'
@@ -152,8 +153,11 @@ sources:
   captured_at: '2026-10-04T04:56:53Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.'
-  evidence_locator: 'Official 2026 Endorsements list under King County and Snohomish County. Capture capture-sage-leaders-20261004T045653Z-4e2d45cd6f5e.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the
+    existing source block and confirmed it remains accurate, including all prior review treatments.'
+  evidence_locator: Official 2026 Endorsements list under King County and Snohomish County. Capture capture-sage-leaders-20261004T045653Z-4e2d45cd6f5e.
   decisions:
   - race_id: ld-34-state-senator
     candidate_ids:
@@ -408,8 +412,12 @@ sources:
   captured_at: '2026-10-04T04:56:53Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the September meeting results; shaug verified every source decision, the explicit US House 9 no-endorsement, and the unambiguous Debra Stephens Position 7 mapping despite the source Position 6 typo. Sharonda Amamilo is absent from the frozen general ballot, so the source co-endorsement resolves to Theo Angelis alone under REVIEW_GUIDE.md.'
-  evidence_locator: 'Official September 12 endorsement-meeting results distributed by the district. Capture capture-11th-district-democrats-20261004T045653Z-1c69ce0cdea5.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the September meeting results; shaug verified every source decision, the explicit US House 9 no-endorsement,
+    and the unambiguous Debra Stephens Position 7 mapping despite the source Position 6 typo. Sharonda Amamilo is absent from
+    the frozen general ballot, so the source co-endorsement resolves to Theo Angelis alone under REVIEW_GUIDE.md.'
+  evidence_locator: Official September 12 endorsement-meeting results distributed by the district. Capture capture-11th-district-democrats-20261004T045653Z-1c69ce0cdea5.
   decisions:
   - race_id: us-house-9
     status: no_endorsement
@@ -460,8 +468,11 @@ sources:
   captured_at: '2026-10-04T04:56:53Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the September 11 general-election list; shaug verified every decision and the omission of out-of-inventory library and Southwest District Court contests.'
-  evidence_locator: 'Official 2026 page updated September 11 with general-election decisions. Capture capture-34th-district-democrats-20261004T045653Z-82887823c97e.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the September 11 general-election list; shaug verified every decision and the omission of out-of-inventory
+    library and Southwest District Court contests.'
+  evidence_locator: Official 2026 page updated September 11 with general-election decisions. Capture capture-34th-district-democrats-20261004T045653Z-82887823c97e.
   decisions:
   - race_id: initiative-26-001
     candidate_ids:
@@ -536,8 +547,11 @@ sources:
   captured_at: '2026-10-04T04:56:56Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Same visible text as the October 3 official capture; comparison uses the latest capture, not the obsolete July primary page. Prior review: Issue #453: OpenAI Codex transcribed the official general-election section; shaug verified every decision, explicit US House 9 no-endorsement, and the omission of out-of-inventory Southeast District Court contests.'
-  evidence_locator: 'Official homepage 2026 general-election endorsement section. Capture capture-37th-district-democrats-20261004T045656Z-7893bd8f74c4.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Same visible text as the October 3 official capture; comparison uses the latest capture, not the obsolete
+    July primary page. Prior review: Issue #453: OpenAI Codex transcribed the official general-election section; shaug verified
+    every decision, explicit US House 9 no-endorsement, and the omission of out-of-inventory Southeast District Court contests.'
+  evidence_locator: Official homepage 2026 general-election endorsement section. Capture capture-37th-district-democrats-20261004T045656Z-7893bd8f74c4.
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -617,8 +631,11 @@ sources:
   captured_at: '2026-10-04T04:56:54Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the completed official general-election list; shaug verified every decision and the explicit US House 9 no-endorsement.'
-  evidence_locator: 'Official 2026 page updated with completed general-election decisions. Capture capture-43rd-district-democrats-20261004T045654Z-3e84f0d75d25.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the completed official general-election list; shaug verified every decision and the explicit US House
+    9 no-endorsement.'
+  evidence_locator: Official 2026 page updated with completed general-election decisions. Capture capture-43rd-district-democrats-20261004T045654Z-3e84f0d75d25.
   decisions:
   - race_id: ld-43-state-senator
     candidate_ids:
@@ -698,8 +715,11 @@ sources:
   captured_at: '2026-10-04T04:56:54Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the September 30 general-election list; shaug verified every decision, the dual Council 2 endorsement, and the unique Gabe Rothstein Position 5 mapping despite the source omitting the position.'
-  evidence_locator: 'Official September 30 general-election endorsement list. Capture capture-transit-riders-union-20261004T045654Z-a94f0424cdd3.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the September 30 general-election list; shaug verified every decision, the dual Council 2 endorsement,
+    and the unique Gabe Rothstein Position 5 mapping despite the source omitting the position.'
+  evidence_locator: Official September 30 general-election endorsement list. Capture capture-transit-riders-union-20261004T045654Z-a94f0424cdd3.
   decisions:
   - race_id: ld-32-state-representative-1
     candidate_ids:
@@ -730,8 +750,11 @@ sources:
   captured_at: '2026-10-04T04:56:54Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the official general-election list; shaug verified every decision, the dual LD32 Senate endorsement, and the unambiguous Saloman, Alvorado, Kalebe, and Nicole Marci typo mappings.'
-  evidence_locator: 'Official endorsements index carrying the 2026 general-election list. Capture capture-washington-bikes-20261004T045654Z-592872819910.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the official general-election list; shaug verified every decision, the dual LD32 Senate endorsement,
+    and the unambiguous Saloman, Alvorado, Kalebe, and Nicole Marci typo mappings.'
+  evidence_locator: Official endorsements index carrying the 2026 general-election list. Capture capture-washington-bikes-20261004T045654Z-592872819910.
   decisions:
   - race_id: ld-32-state-representative-1
     candidate_ids:
@@ -798,8 +821,12 @@ sources:
   captured_at: '2026-10-04T04:56:54Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the official carry-forward list; shaug verified every general-ballot match, the explicit carry-forward statement, and exclusion of candidates marked as not advancing.'
-  evidence_locator: 'Official 2026 endorsed-candidates page stating that primary endorsements remain endorsed for the general. Capture capture-environmental-climate-caucus-wa-democrats-20261004T045654Z-f148d9a7bf47.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the official carry-forward list; shaug verified every general-ballot match, the explicit carry-forward
+    statement, and exclusion of candidates marked as not advancing.'
+  evidence_locator: Official 2026 endorsed-candidates page stating that primary endorsements remain endorsed for the general.
+    Capture capture-environmental-climate-caucus-wa-democrats-20261004T045654Z-f148d9a7bf47.
   decisions:
   - race_id: ld-32-state-senator
     candidate_ids:
@@ -835,8 +862,13 @@ sources:
   captured_at: '2026-10-04T04:59:25Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Captured both linked official general-legislative and Supreme Court publications; both retain identical visible text to October 3 captures. Prior review: Issue #453: OpenAI Codex transcribed the official general legislative and Supreme Court pages; shaug verified every decision and the unambiguous Jaime Hawk Position 3 mapping despite the paragraph Position 2 typo.'
-  evidence_locator: 'Official 2026 general legislative and Supreme Court pages. Captures capture-aft-washington-20261004T045923Z-9f869878e7bb and capture-aft-washington-20261004T045925Z-a2faf78f9c19.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Captured both linked official general-legislative and Supreme Court publications; both retain identical
+    visible text to October 3 captures. Prior review: Issue #453: OpenAI Codex transcribed the official general legislative
+    and Supreme Court pages; shaug verified every decision and the unambiguous Jaime Hawk Position 3 mapping despite the paragraph
+    Position 2 typo.'
+  evidence_locator: Official 2026 general legislative and Supreme Court pages. Captures capture-aft-washington-20261004T045923Z-9f869878e7bb
+    and capture-aft-washington-20261004T045925Z-a2faf78f9c19.
   decisions:
   - race_id: ld-11-state-representative-1
     candidate_ids:
@@ -917,8 +949,11 @@ sources:
   captured_at: '2026-10-04T04:56:56Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the official general-election recommendation index; shaug verified all five clear recommendations and confirmed the Supreme Court Position 4 critique is not a recommendation. This source remains comparison-only.'
-  evidence_locator: 'Official editorial index listing the 2026 general-election recommendation series. Capture capture-seattle-times-editorial-board-20261004T045656Z-dd417300dcc7.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the official general-election recommendation index; shaug verified all five clear recommendations and
+    confirmed the Supreme Court Position 4 critique is not a recommendation. This source remains comparison-only.'
+  evidence_locator: Official editorial index listing the 2026 general-election recommendation series. Capture capture-seattle-times-editorial-board-20261004T045656Z-dd417300dcc7.
   decisions:
   - race_id: ld-43-state-representative-1
     candidate_ids:
@@ -939,8 +974,11 @@ sources:
   captured_at: '2026-10-04T04:56:52Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the official September 29 general-election list; shaug verified every decision against the captured official page.'
-  evidence_locator: 'Official 2026 general-election endorsement list. Capture capture-fuse-washington-20261004T045652Z-565aa39a551b.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the official September 29 general-election list; shaug verified every decision against the captured
+    official page.'
+  evidence_locator: Official 2026 general-election endorsement list. Capture capture-fuse-washington-20261004T045652Z-565aa39a551b.
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -988,8 +1026,11 @@ sources:
   captured_at: '2026-10-04T04:56:52Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Related-event widget changed; Jaelynn Scott endorsement text unchanged. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle official endorsement; shaug verified the wording, general-ballot match, and current-cycle treatment.'
-  evidence_locator: 'Official chapter event naming Jaelynn Scott as the chapter''s newly endorsed candidate. Capture capture-seattle-democratic-socialists-20261004T045652Z-fd260ad850f9.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Related-event widget changed; Jaelynn Scott endorsement text unchanged. Prior review: Issue #453: OpenAI
+    Codex transcribed the current-cycle official endorsement; shaug verified the wording, general-ballot match, and current-cycle
+    treatment.'
+  evidence_locator: Official chapter event naming Jaelynn Scott as the chapter's newly endorsed candidate. Capture capture-seattle-democratic-socialists-20261004T045652Z-fd260ad850f9.
   decisions:
   - race_id: ld-37-state-representative-2
     candidate_ids:
@@ -1088,8 +1129,11 @@ sources:
   captured_at: '2026-10-04T04:56:56Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle editorial endorsement index; shaug verified all seven general-ballot matches and the omissions of Kshama Sawant and the out-of-inventory library levy.'
-  evidence_locator: 'Official Seattle news index listing the editorial board''s 2026 endorsement articles. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the current-cycle editorial endorsement index; shaug verified all seven general-ballot matches and the
+    omissions of Kshama Sawant and the out-of-inventory library levy.'
+  evidence_locator: Official Seattle news index listing the editorial board's 2026 endorsement articles. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -1113,8 +1157,8 @@ sources:
     candidate_ids:
     - seattle-city-council-5--nilu-jenks
 - source_id: tech-4-taxes
-  captured_at: '2026-10-11T01:07:22.975031Z'
-  reviewed_at: '2026-10-11T01:24:53Z'
+  captured_at: '2026-10-12T16:13:32Z'
+  reviewed_at: '2026-10-12T16:24:42Z'
   reviewer: shaug
   review_note: 'Issue #508: shaug replied "approved" to the concrete October 10 reconciliation packet in this Codex session,
     confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription;
@@ -1124,7 +1168,9 @@ sources:
     capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official
     publication and found no decision changes; shaug compared the current page with the existing #465 source block and confirmed
     it remains accurate. The current-cycle treatment and exclusion of Ron Davis because he is absent from the general ballot
-    remain unchanged.'
+    remain unchanged. October 12 request approves only the added No-on-645 interpretation. Original candidate decisions retain
+    their prior human verification and current-cycle treatment; this is not a new whole-source review. Mapping evidence: https://tech4taxes.org/legagenda
+    and the official IP26-645 voters’ guide; see docs/GENERAL_ADDITIONS_2026-10-12.md.'
   evidence_locator: 'October 10 targeted refresh; data/review/approvals/wa-2026-general-2026-10-10.json. Prior locator: Official
     2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa.'
   decisions:
@@ -1183,12 +1229,28 @@ sources:
     evidence_locator: '2025-2026 Candidate Endorsements; each named candidate card with district and office. Current-cycle
       index, not an election-specific general slate. Target: Legislative District 37 State Representative — Position 1; Kelabe
       Tewolde. Captures: capture-tech-4-taxes-20261011T010722Z-1b4bd05aca1f; verified manual records: manual-tech-4-taxes-20261011T011018Z-7f3ecbfa1bef.'
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+    evidence_excerpt: 'Millionaire''s Income Tax (SB6346)
+
+      PRO
+
+      Type: Active Bill'
+    evidence_locator: 'Human-approved No-on-645 mapping from https://tech4taxes.org/legagenda, Millionaire’s Income Tax (SB6346),
+      PRO. Source does not explicitly state a ballot vote. Official repeal mapping: https://voter.votewa.gov/genericvoterguide.aspx?c=99&e=899&language=en#/measure/7325.
+      Captures: capture-tech-4-taxes-20261012T161332Z-5071f70bc523; capture-wa-secretary-of-state-20261012T161332Z-6e8325ed61ef.
+      Verified manual entry: manual-tech-4-taxes-20261012T162442Z-b0d27efca257.'
 - source_id: 32nd-district-democrats
   captured_at: '2026-10-04T04:56:53Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Formatting, full names, and initiative descriptions changed; candidate sets, dual endorsements, and three No decisions remain the same. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.'
-  evidence_locator: 'Official Endorsed Candidates for 2026 section, endorsed as of September 2. Capture capture-32nd-district-democrats-20261004T045653Z-d66cbf40a164.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Formatting, full names, and initiative descriptions changed; candidate sets, dual endorsements, and
+    three No decisions remain the same. Prior review: Issue #453: OpenAI Codex rechecked the current official publication
+    and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains
+    accurate, including all prior review treatments.'
+  evidence_locator: Official Endorsed Candidates for 2026 section, endorsed as of September 2. Capture capture-32nd-district-democrats-20261004T045653Z-d66cbf40a164.
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -1262,8 +1324,11 @@ sources:
   captured_at: '2026-10-04T04:56:54Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified every listed addition against the capture and confirmed the prior decisions remain unchanged.'
-  evidence_locator: 'Official 2026 elections page updated September 23 with general-election decisions. Capture capture-36th-district-democrats-20261004T045654Z-745b079c64ec.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the refreshed official page; shaug verified every listed addition against the capture and confirmed
+    the prior decisions remain unchanged.'
+  evidence_locator: Official 2026 elections page updated September 23 with general-election decisions. Capture capture-36th-district-democrats-20261004T045654Z-745b079c64ec.
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -1342,8 +1407,11 @@ sources:
   captured_at: '2026-10-04T04:56:54Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified every addition, confirmed the unambiguous Lessa Manion and Debra Stephans mappings, and confirmed prior decisions remain unchanged.'
-  evidence_locator: 'Official 2026 page updated after the September 15 general endorsement meeting. Capture capture-46th-district-democrats-20261004T045654Z-9105db21d8ac.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the refreshed official page; shaug verified every addition, confirmed the unambiguous Lessa Manion and
+    Debra Stephans mappings, and confirmed prior decisions remain unchanged.'
+  evidence_locator: Official 2026 page updated after the September 15 general endorsement meeting. Capture capture-46th-district-democrats-20261004T045654Z-9105db21d8ac.
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -1418,8 +1486,11 @@ sources:
   captured_at: '2026-10-04T04:56:54Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the three additions and confirmed the unmatched IL26-368 text remains untranscribed.'
-  evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the refreshed official page; shaug verified the three additions and confirmed the unmatched IL26-368
+    text remains untranscribed.'
+  evidence_locator: Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
   decisions:
   - race_id: initiative-26-001
     candidate_ids:
@@ -1500,8 +1571,11 @@ sources:
   captured_at: '2026-10-04T04:56:54Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the Rob Foxcurran addition and confirmed the prior decisions remain unchanged.'
-  evidence_locator: 'Official 2026 Endorsements page, King County and Seattle sections. Capture capture-mlk-labor-20261004T045654Z-00ed20bad11c.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the refreshed official page; shaug verified the Rob Foxcurran addition and confirmed the prior decisions
+    remain unchanged.'
+  evidence_locator: Official 2026 Endorsements page, King County and Seattle sections. Capture capture-mlk-labor-20261004T045654Z-00ed20bad11c.
   decisions:
   - race_id: king-county-council-2
     candidate_ids:
@@ -1525,8 +1599,11 @@ sources:
   captured_at: '2026-10-04T04:56:55Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.'
-  evidence_locator: 'Official 2026 election endorsements PDF, King County legislative and statewide sections. Capture capture-washington-state-labor-council-20261004T045655Z-824028c6e752.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the
+    existing source block and confirmed it remains accurate, including all prior review treatments.'
+  evidence_locator: Official 2026 election endorsements PDF, King County legislative and statewide sections. Capture capture-washington-state-labor-council-20261004T045655Z-824028c6e752.
   decisions:
   - race_id: initiative-26-001
     candidate_ids:
@@ -1622,8 +1699,11 @@ sources:
   captured_at: '2026-10-04T04:56:55Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.'
-  evidence_locator: 'Official 2026 endorsements page, Washington State and King County sections. Capture capture-seiu-775-20261004T045655Z-024b6837ef59.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the
+    existing source block and confirmed it remains accurate, including all prior review treatments.'
+  evidence_locator: Official 2026 endorsements page, Washington State and King County sections. Capture capture-seiu-775-20261004T045655Z-024b6837ef59.
   decisions:
   - race_id: initiative-26-001
     candidate_ids:
@@ -1716,8 +1796,11 @@ sources:
   captured_at: '2026-10-04T04:56:55Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the four additions and confirmed the prior decisions remain unchanged.'
-  evidence_locator: 'Official 2026 endorsements page, statewide, legislative, King County, and Seattle sections. Capture capture-seiu-925-20261004T045655Z-6e9fed87c8e6.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the refreshed official page; shaug verified the four additions and confirmed the prior decisions remain
+    unchanged.'
+  evidence_locator: Official 2026 endorsements page, statewide, legislative, King County, and Seattle sections. Capture capture-seiu-925-20261004T045655Z-6e9fed87c8e6.
   decisions:
   - race_id: supreme-court-justice-1
     candidate_ids:
@@ -1822,8 +1905,11 @@ sources:
   captured_at: '2026-10-04T04:56:55Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Member-story widget changed; endorsement list unchanged. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.'
-  evidence_locator: 'Official endorsements page, 2026 General Election section. Capture capture-ufcw-3000-20261004T045655Z-ac563a1c44fe.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Member-story widget changed; endorsement list unchanged. Prior review: Issue #453: OpenAI Codex rechecked
+    the current official publication and found no decision changes; shaug compared the current page with the existing source
+    block and confirmed it remains accurate, including all prior review treatments.'
+  evidence_locator: Official endorsements page, 2026 General Election section. Capture capture-ufcw-3000-20261004T045655Z-ac563a1c44fe.
   decisions:
   - race_id: king-county-assessor
     candidate_ids:
@@ -1905,8 +1991,11 @@ sources:
   captured_at: '2026-10-04T04:56:55Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the four added race decisions, including the dual LD32 Representative 1 endorsement, and confirmed prior decisions remain unchanged.'
-  evidence_locator: 'Official 2026 endorsements page, ballot initiatives and legislative endorsements. Capture capture-washington-education-association-20261004T045655Z-9df06a76043e.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the refreshed official page; shaug verified the four added race decisions, including the dual LD32 Representative
+    1 endorsement, and confirmed prior decisions remain unchanged.'
+  evidence_locator: Official 2026 endorsements page, ballot initiatives and legislative endorsements. Capture capture-washington-education-association-20261004T045655Z-9df06a76043e.
   decisions:
   - race_id: initiative-26-001
     candidate_ids:
@@ -1970,8 +2059,11 @@ sources:
   captured_at: '2026-10-04T04:56:55Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the Jaelynn Scott addition and confirmed the prior decisions remain unchanged.'
-  evidence_locator: 'Official candidates page, 2026 General Election section. Capture capture-washington-state-building-trades-20261004T045655Z-baaaa6209933.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the refreshed official page; shaug verified the Jaelynn Scott addition and confirmed the prior decisions
+    remain unchanged.'
+  evidence_locator: Official candidates page, 2026 General Election section. Capture capture-washington-state-building-trades-20261004T045655Z-baaaa6209933.
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -2034,8 +2126,12 @@ sources:
   captured_at: '2026-10-04T04:56:55Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Added Portland endorsements, updated page timestamp and contact widget; no frozen Seattle-inventory decision changes. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.'
-  evidence_locator: 'Official 2026 election endorsements page, Washington and Seattle/King County sections. Capture capture-protec17-20261004T045655Z-f23fa6e17be3.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Added Portland endorsements, updated page timestamp and contact widget; no frozen Seattle-inventory
+    decision changes. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision
+    changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all
+    prior review treatments.'
+  evidence_locator: Official 2026 election endorsements page, Washington and Seattle/King County sections. Capture capture-protec17-20261004T045655Z-f23fa6e17be3.
   decisions:
   - race_id: ld-32-state-senator
     candidate_ids:
@@ -2220,8 +2316,11 @@ sources:
   captured_at: '2026-10-04T04:56:56Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.'
-  evidence_locator: 'Official 2026 endorsements page, federal, state legislative, judicial, and local sections. Capture capture-alliance-for-gun-responsibility-20261004T045656Z-fc3912865542.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the
+    existing source block and confirmed it remains accurate, including all prior review treatments.'
+  evidence_locator: Official 2026 endorsements page, federal, state legislative, judicial, and local sections. Capture capture-alliance-for-gun-responsibility-20261004T045656Z-fc3912865542.
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -2298,8 +2397,11 @@ sources:
   captured_at: '2026-10-04T04:56:56Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the three initiative additions and confirmed the prior decisions remain unchanged.'
-  evidence_locator: 'Official endorsements page, 2026 Endorsements section. Capture capture-washington-housing-alliance-20261004T045656Z-a736d43c4cd9.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex transcribed the refreshed official page; shaug verified the three initiative additions and confirmed the prior decisions
+    remain unchanged.'
+  evidence_locator: Official endorsements page, 2026 Endorsements section. Capture capture-washington-housing-alliance-20261004T045656Z-a736d43c4cd9.
   decisions:
   - race_id: king-county-council-2
     candidate_ids:
@@ -2397,8 +2499,12 @@ sources:
   captured_at: '2026-10-04T04:56:56Z'
   reviewed_at: '2026-10-04T05:30:06Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.'
-  evidence_locator: 'Official 2026 endorsements page, federal, statewide, legislative, judicial, King County, and Seattle sections. Capture capture-nwpc-washington-20261004T045656Z-8b1b6ed1f79d.'
+  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
+    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
+    Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the
+    existing source block and confirmed it remains accurate, including all prior review treatments.'
+  evidence_locator: Official 2026 endorsements page, federal, statewide, legislative, judicial, King County, and Seattle sections.
+    Capture capture-nwpc-washington-20261004T045656Z-8b1b6ed1f79d.
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -2760,3 +2866,166 @@ sources:
       See attached position-label correction when applicable. Target: Legislative District 37 State Representative — Position
       2; Jaelynn Scott. Captures: capture-washington-bus-20261011T010723Z-f55404f17b9c; verified manual records: manual-washington-bus-20261011T011018Z-05ceadea452a.
       Explicit label mapping approved; see #508 approval record.'
+- source_id: young-democrats-of-washington
+  captured_at: '2026-10-11T15:41:56.877970Z'
+  reviewed_at: '2026-10-12T16:24:42Z'
+  reviewer: shaug
+  review_note: 'The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The
+    October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young
+    Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One
+    point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.'
+  evidence_locator: Official general-election publication and original immutable verified records in data/review/source-assessments/wa-2026-general-20261011;
+    admission and attribution treatment in docs/GENERAL_ADDITIONS_2026-10-12.md.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+    evidence_locator: 'Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-07. Original
+      capture: capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb; verified manual entry: manual-young-democrats-of-washington-20261011T154356Z-25f45611d959.'
+  - race_id: us-house-9
+    candidate_ids:
+    - us-house-9--adam-smith
+    evidence_locator: 'Carousel slide 1 of 3: Congressional Offices / Judicial Offices, U.S. Representative WA-09. Original
+      capture: capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb; verified manual entry: manual-young-democrats-of-washington-20261011T154356Z-25f45611d959.'
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+    evidence_locator: 'Carousel slide 1 of 3: Congressional Offices / Judicial Offices, Washington State Supreme Court, Pos.
+      3. Original capture: capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb; verified manual entry: manual-young-democrats-of-washington-20261011T154356Z-25f45611d959.
+      Jaime Hawk resolves to the existing Jaime Michelle Hawk choice in Supreme Court position 3.'
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+    evidence_locator: 'Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, Senate; every name listed for
+      this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry:
+      manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.'
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--danica-noble
+    - ld-32-state-representative-1--keith-scully
+    evidence_locator: 'Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 1; every name listed
+      for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual
+      entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.'
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--imraan-siddiqi
+    evidence_locator: 'Carousel slide 2 of 3: State Legislative Offices continuation, 32nd LD, House Pos. 2; every name listed
+      for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual
+      entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.'
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--sharon-tomiko-santos
+    evidence_locator: 'Carousel slide 2 of 3: State Legislative Offices continuation, 37th LD, House Pos. 1; every name listed
+      for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual
+      entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.'
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+    evidence_locator: 'Carousel slide 2 of 3: State Legislative Offices continuation, 37th LD, House Pos. 2; every name listed
+      for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual
+      entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.'
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+    - ld-43-state-senator--hannah-sabio-howell
+    evidence_locator: 'Carousel slide 2 of 3: State Legislative Offices continuation, 43rd LD, Senate; every name listed for
+      this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry:
+      manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.'
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+    evidence_locator: 'Carousel slide 2 of 3: State Legislative Offices continuation, 46th LD, House Pos. 1; every name listed
+      for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual
+      entry: manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.'
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+    evidence_locator: 'Carousel slide 2 of 3: State Legislative Offices continuation, 46th LD, Senate; every name listed for
+      this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be; verified manual entry:
+      manual-young-democrats-of-washington-20261011T154357Z-f3d06afe663c.'
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--toshiko-grace-hasegawa
+    - king-county-council-2--rebecca-saldana
+    evidence_locator: 'Carousel slide 3 of 3: Local & County Offices, King County Council, District 2; every name listed for
+      this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry:
+      manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884. Toshiko Hasegawa maps to Toshiko Grace Hasegawa
+      for King County Council district 2.'
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+    evidence_locator: 'Carousel slide 3 of 3: Local & County Offices, King County Council, District 8; every name listed for
+      this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual entry:
+      manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.'
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+    evidence_locator: 'Carousel slide 3 of 3: Local & County Offices, Seattle City Council, District 5; every name listed
+      for this race. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b; verified manual
+      entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.'
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+    evidence_locator: 'Carousel slide 3 of 3: Ballot Measure Campaigns, No Hate in WA State Campaign for Vote NO on Initiative
+      001 and Initiative 638; Initiative 001. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b;
+      verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.'
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+    evidence_locator: 'Carousel slide 3 of 3: Ballot Measure Campaigns, No Hate in WA State Campaign for Vote NO on Initiative
+      001 and Initiative 638; Initiative 638. Original capture: capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b;
+      verified manual entry: manual-young-democrats-of-washington-20261011T154357Z-de1c9dd80884.'
+- source_id: nondriver-action
+  captured_at: '2026-10-11T15:41:11.594444Z'
+  reviewed_at: '2026-10-12T16:24:42Z'
+  reviewer: shaug
+  review_note: 'The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The
+    October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young
+    Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One
+    point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.'
+  evidence_locator: Official general-election publication and original immutable verified records in data/review/source-assessments/wa-2026-general-20261011;
+    admission and attribution treatment in docs/GENERAL_ADDITIONS_2026-10-12.md.
+  decisions:
+  - race_id: seattle-proposition-1-transit
+    candidate_ids:
+    - seattle-proposition-1-transit--yes
+    evidence_locator: '2026 Endorsements > November Election > King County > Seattle Transit Measure. Vote Yes; endorsement
+      section above the candidate questionnaires. Original capture: capture-nondriver-action-20261011T153802Z-a003f33059a9;
+      verified manual entry: manual-nondriver-action-20261011T154358Z-2497e1547cad.'
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+    evidence_locator: '2026 Endorsements > November Election > King County > Seattle City Council District 5; endorsement
+      section above the candidate questionnaires. Original capture: capture-nondriver-action-20261011T153802Z-a003f33059a9;
+      verified manual entry: manual-nondriver-action-20261011T154358Z-2497e1547cad.'
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+    evidence_locator: '2026 Endorsements > November Election > King County > King County Council District Rebecca Saldana;
+      endorsement section above the candidate questionnaires. Original capture: capture-nondriver-action-20261011T153802Z-a003f33059a9;
+      verified manual entry: manual-nondriver-action-20261011T154358Z-2497e1547cad. Rebecca Saldana maps to Rebecca Saldaña.
+      The publisher omits the district numeral; the named county-council candidate uniquely resolves to district 2 in the
+      frozen inventory.'
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+    evidence_locator: '2026 Endorsements > November Election > King County > King County Council District 8; endorsement section
+      above the candidate questionnaires. Original capture: capture-nondriver-action-20261011T153802Z-a003f33059a9; verified
+      manual entry: manual-nondriver-action-20261011T154358Z-2497e1547cad.'
+- source_id: citizens-against-aipac-corruption
+  captured_at: '2026-10-11T15:41:11.594444Z'
+  reviewed_at: '2026-10-12T16:24:42Z'
+  reviewer: shaug
+  review_note: 'The six-transcription verification was recorded on 2026-10-11T23:35:51Z in the issue #509 assessment. The
+    October 12 maintainer request authorizes production admission of these exact choices, including the documented three Young
+    Democrats co-endorsements. This is admission of preserved evidence, not a new whole-panel or source-content sweep. One
+    point per decided race; multi-candidate sets split it equally. Capture and manual IDs remain linked per decision.'
+  evidence_locator: Official general-election publication and original immutable verified records in data/review/source-assessments/wa-2026-general-20261011;
+    admission and attribution treatment in docs/GENERAL_ADDITIONS_2026-10-12.md.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+    evidence_locator: 'Candidates Endorsed By Citizens Against AIPAC Corruption > Our Endorsed Incumbents > PRAMILA JAYAPAL,
+      U.S. Representative, WA-07, General Election November 3, 2026. Original capture: capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8;
+      verified manual entry: manual-citizens-against-aipac-corruption-20261011T154358Z-976994c8e85f.'

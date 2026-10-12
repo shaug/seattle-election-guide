@@ -34,3 +34,15 @@ Manual transcriptions must use the evidence adapter rather than ad hoc notes. A 
 record identifies the original capture, evidence type and locator, transcriber, verifier, review
 timestamp, status, and review note. Pending records may be retained for work tracking but cannot
 be treated as verified endorsement claims.
+
+## Recorded maintainer-approved measure interpretation
+
+The October 12, 2026 general update records one explicit exception: Tech 4 Taxes’
+official legislative agenda supports the millionaire income tax, and the maintainer
+approved mapping that position to No on Initiative IP26-645 after reviewing the
+distinction between policy support and explicit ballot wording. The official
+voters’ guide supplies the repeal mapping. Preserve the PRO source wording and
+identify No as a human-approved interpretation, with prior value, new value,
+reason, author, timestamp, and both evidence links in the approval record.
+This recorded case does not establish automatic policy-to-ballot inference.
+See [the reviewed treatment](docs/GENERAL_ADDITIONS_2026-10-12.md).

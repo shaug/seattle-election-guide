@@ -49,7 +49,7 @@ def test_general_source_registry_validates_through_cli() -> None:
 
     assert result.exit_code == 0, result.output
     assert result.stdout.strip() == (
-        "source registry: valid (48 proposed; 42 consensus, 1 comparison, 5 excluded)"
+        "source registry: valid (51 proposed; 45 consensus, 1 comparison, 5 excluded)"
     )
 
 
@@ -113,13 +113,25 @@ def test_general_panel_snapshot_preserves_frozen_identity_contract() -> None:
     current_projection = build_panel_snapshot(registry)
 
     assert committed_catalog.election_id == "wa-2026-general"
-    assert len(committed_catalog.snapshots) == 1
+    assert len(committed_catalog.snapshots) == 2
     published = committed_catalog.snapshots[0]
     assert published.panel_id == "wa-2026-general-default-sources-v1"
     assert published.panel_hash == (
         "b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95"
     )
-    assert current_projection == published
+    assert current_projection == committed_catalog.snapshots[-1]
+    assert current_projection.panel_id == "wa-2026-general-default-sources-v2"
+    assert current_projection.panel_hash != published.panel_hash
+    old_democrats = next(item for item in published.categories if item.code == "Gdem")
+    current_democrats = next(item for item in current_projection.categories if item.code == "Gdem")
+    assert "ydwa" not in old_democrats.member_source_codes
+    assert current_democrats.member_source_codes == sorted(
+        [*old_democrats.member_source_codes, "ydwa"]
+    )
+    assert (
+        published.sources
+        == build_panel_snapshot(read_source_registry(PRIMARY_REGISTRY_PATH)).sources
+    )
     assert appended_panel_snapshot(committed_catalog, current_projection) == committed_catalog
 
 
@@ -127,20 +139,71 @@ def test_general_panel_preserves_primary_selection_contract() -> None:
     primary = read_source_registry(PRIMARY_REGISTRY_PATH)
     general = read_source_registry(GENERAL_REGISTRY_PATH)
 
-    assert general.id == "wa-2026-general-default-sources-v1"
+    assert general.id == "wa-2026-general-default-sources-v2"
     assert general.election_id == "wa-2026-general"
     assert general.research_cutoff == general.frozen_at
     assert general.frozen_at > datetime(2026, 9, 4, tzinfo=UTC)
     assert general.categories == primary.categories
     assert general.retired_codes == primary.retired_codes
-    assert general.overlap_groups == primary.overlap_groups
-    assert [source.id for source in general.sources] == [source.id for source in primary.sources]
+    assert general.overlap_groups[1:] == primary.overlap_groups
+    affiliation = general.overlap_groups[0]
+    assert affiliation.id == "nondriver-affiliation"
+    assert set(affiliation.member_ids) == {"disability-mobility-initiative", "nondriver-action"}
+    assert [source.id for source in general.sources[:48]] == [
+        source.id for source in primary.sources
+    ]
+    assert {source.id: source.code for source in general.sources[48:]} == {
+        "young-democrats-of-washington": "ydwa",
+        "nondriver-action": "nact",
+        "citizens-against-aipac-corruption": "caac",
+    }
 
     primary_by_id = {source.id: source for source in primary.sources}
-    for general_source in general.sources:
+    for general_source in general.sources[:48]:
         primary_source = primary_by_id[general_source.id]
         for field in PRESERVED_SOURCE_FIELDS:
+            if (
+                general_source.id == "disability-mobility-initiative"
+                and field == "overlap_group_ids"
+            ):
+                assert general_source.overlap_group_ids == ["nondriver-affiliation"]
+                assert general_source.panel_role == "excluded"
+                continue
             assert getattr(general_source, field) == getattr(primary_source, field), (
                 general_source.id,
                 field,
             )
+
+
+def test_general_additions_preserve_verified_choices_and_coendorsement_allocations() -> None:
+    dataset = json.loads(GENERAL_DATASET_PATH.read_text())
+    assessment = json.loads(
+        (
+            PROJECT_ROOT / "data/review/source-assessments/wa-2026-general-20261011/decisions.json"
+        ).read_text()
+    )
+    admitted = {
+        "young-democrats-of-washington",
+        "nondriver-action",
+        "citizens-against-aipac-corruption",
+    }
+    by_key = {(row["source_id"], row["race_id"]): row for row in dataset["endorsements"]}
+    dual_count = 0
+    for source in assessment["sources"]:
+        if source["source_id"] not in admitted:
+            continue
+        for decision in source["decisions"]:
+            row = by_key[source["source_id"], decision["race_id"]]
+            assert row["candidate_ids"] == decision["candidate_ids"]
+            if len(row["candidate_ids"]) == 2:
+                assert set(row["allocation"].values()) == {"1/2"}
+                dual_count += 1
+    assert dual_count == 3
+    assert sum(row["source_id"] in admitted for row in dataset["endorsements"]) == 21
+    tech = by_key["tech-4-taxes", "initiative-26-645"]
+    assert tech["candidate_ids"] == ["initiative-26-645--no"]
+    assert tech["allocation"] == {"initiative-26-645--no": "1"}
+    assert len(dataset["endorsements"]) == 703
+    assert not {"king-county-republican-party", "progressive-voters-guide"} & {
+        row["source_id"] for row in dataset["endorsements"]
+    }

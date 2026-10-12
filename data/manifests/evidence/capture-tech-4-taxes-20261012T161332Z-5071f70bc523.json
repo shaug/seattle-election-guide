@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 10950,
+  "canonical_url": "https://tech4taxes.org/legagenda",
+  "capture_method": "static_html",
+  "content_sha256": "842b8f60fc19c12b42afa713bac52cc1db8bedc768f759a33dc6e6dbe50ecbf8",
+  "http_status": 200,
+  "id": "capture-tech-4-taxes-20261012T161332Z-5071f70bc523",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Retained locally for review. Public manifest and short verification excerpt only; HTML wrapper representation is explicit where applicable.",
+  "requested_url": "https://tech4taxes.org/legagenda",
+  "retrieved_at": "2026-10-12T16:13:32.969784Z",
+  "schema_version": "1.0",
+  "source_id": "tech-4-taxes",
+  "storage_reference": "sha256/84/842b8f60fc19c12b42afa713bac52cc1db8bedc768f759a33dc6e6dbe50ecbf8",
+  "storage_scope": "local_only",
+  "title": "Tech 4 Taxes 2025–2026 Legislative Agenda: Millionaire’s Income Tax PRO",
+  "updated_at": null
+}

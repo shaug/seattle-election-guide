@@ -1,5 +1,5 @@
 schema_version: "1.2"
-id: wa-2026-general-default-sources-v1
+id: wa-2026-general-default-sources-v2
 election_id: wa-2026-general
 frozen_at: 2026-09-14T12:23:04Z
 research_cutoff: 2026-09-14T12:23:04Z
@@ -8,6 +8,7 @@ panel_hash_compatibility:
   contract_hash: a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596
   published_hash: b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95
 notes:
+  - Version 2 admits Young Democrats of Washington, Nondriver Action, and CAAC under the October 12 maintainer request after the documented issue 509 assessment, without reference to changed consensus outcomes. Historical v1 freeze timestamps and compatibility remain intact.
   - Version 1 freezes the primary panel as a constrained carry-forward for the 2026 general election; no source or category membership, panel role, eligibility, transport code, reporting placement, selection category, publisher relationship, or overlap metadata changed.
   - The repository records the actual late freeze time rather than backdating the missed planning milestone.
   - Every consensus and comparison source was rechecked through 2026-10-04T04:59:26Z; published records require an official current-cycle or general-election publication, while primary-only or absent material is recorded as not found and inaccessible material is explicit.
@@ -732,6 +733,7 @@ sources:
     selection_category_ids: [transportation_urbanism]
     organization_url: https://disabilityrightswa.org/
     geographic_kind: general
+    overlap_group_ids: [nondriver-affiliation]
     panel_role: excluded
     panel_reason: The proposed disability-mobility source is an advocacy program, but no official election endorsement publication was found.
     eligibility:
@@ -1174,7 +1176,99 @@ sources:
       evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-seattle-times-editorial-board-20261004T045656Z-dd417300dcc7.'
       notes: 'Current official capture retains the prior publication decision text.'
 
+  - id: young-democrats-of-washington
+    name: Young Democrats of Washington
+    code: ydwa
+    reporting_category_id: democratic_party
+    selection_category_ids:
+    - democratic_party
+    organization_url: https://www.instagram.com/youngdemswa/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: 'Admitted under issue #509 after official October 8 general-election publication and human verification.
+      One statewide Democratic Party youth organization; shared party affiliation with district and caucus organizations
+      is disclosed and does not establish duplicate decision-making.'
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only explicit, reviewed organizational decisions for races on the Seattle ballot.
+    discovery:
+      status: published
+      checked_at: '2026-10-11T15:41:11.594444+00:00'
+      requested_url: https://www.instagram.com/p/DeQTz0cgTzM/
+      canonical_url: https://www.instagram.com/p/DeQTz0cgTzM/
+      media_type: image/jpeg
+      evidence_locator: Official organizational publication; see assessment.md for the specific locator.
+      notes: 'Production admission authorized by the maintainer on October 12 after the issue #509 evidence assessment
+        and six-transcription verification. Original capture and verified manual-entry references are in data/review/source-assessments/wa-2026-general-20261011.
+        Publication and identity criteria were assessed before changed-panel consensus results.'
+    publisher_id: null
+  - id: nondriver-action
+    name: Nondriver Action
+    code: nact
+    reporting_category_id: transportation_urbanism
+    selection_category_ids:
+    - transportation_urbanism
+    - rights_representation
+    organization_url: https://ndaction.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: 'Admitted under issue #509 as Nondriver Action, the organization publishing its own November slate.
+      Its transportation and disability-justice missions support these categories. Affiliation with Nondrivers Alliance
+      and historical roots in DRW’s DMI program are disclosed; DMI remains excluded and contributes no duplicate vote.'
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only explicit, reviewed organizational decisions for races on the Seattle ballot.
+    discovery:
+      status: published
+      checked_at: '2026-10-11T15:41:11.594444+00:00'
+      requested_url: https://ndaction.org/2026-endorsements/
+      canonical_url: https://ndaction.org/2026-endorsements/
+      media_type: text/html
+      evidence_locator: Official organizational publication; see assessment.md for the specific locator.
+      notes: 'Production admission authorized by the maintainer on October 12 after the issue #509 evidence assessment
+        and six-transcription verification. Original capture and verified manual-entry references are in data/review/source-assessments/wa-2026-general-20261011.
+        Publication and identity criteria were assessed before changed-panel consensus results.'
+    publisher_id: null
+    overlap_group_ids:
+    - nondriver-affiliation
+  - id: citizens-against-aipac-corruption
+    name: Citizens Against AIPAC Corruption (Track AIPAC)
+    code: caac
+    reporting_category_id: rights_representation
+    selection_category_ids:
+    - rights_representation
+    organization_url: https://citizensagainstaipac.com/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: 'Admitted under issue #509 as one organizational publisher, Citizens Against AIPAC Corruption. Track
+      AIPAC is its project, not another vote. Classification rests on the explicit Palestinian-rights endorsement
+      criteria and organizational program, not on the observed choice or its effect on consensus.'
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: 'A national organization with general geographic scope. Its current program is federal: admit only
+        directly published, reviewed Seattle-intersecting congressional decisions; do not infer state/local choices
+        or import recommendations from separate publishers.'
+    discovery:
+      status: published
+      checked_at: '2026-10-11T15:41:11.594444+00:00'
+      requested_url: https://www.trackaipac.com/endorsements
+      canonical_url: https://www.trackaipac.com/endorsements
+      media_type: text/html
+      evidence_locator: Official organizational publication; see assessment.md for the specific locator.
+      notes: 'Production admission authorized by the maintainer on October 12 after the issue #509 evidence assessment
+        and six-transcription verification. Original capture and verified manual-entry references are in data/review/source-assessments/wa-2026-general-20261011.
+        Publication and identity criteria were assessed before changed-panel consensus results.'
+    publisher_id: null
 overlap_groups:
+  - id: nondriver-affiliation
+    label: Nondriver organizational affiliation and DMI history
+    description: Nondriver Action and the excluded Disability Mobility Initiative share documented organizational
+      history through Disability Rights Washington and Nondrivers Alliance. This records affiliation and history,
+      not independently audited legal or endorsement-voting governance. Only Nondriver Action is an active endorsement
+      publisher; no duplicate program vote or statistical correction is introduced.
+    member_ids:
+    - disability-mobility-initiative
+    - nondriver-action
   - id: fuse-publications
     label: Fuse publication ownership
     description: The Progressive Voters Guide is produced by Fuse Washington and compiles partner endorsements, so it is not an independent consensus vote.
