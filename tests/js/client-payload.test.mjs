@@ -14,7 +14,7 @@ const payload = (extra = {}) =>
   JSON.stringify({ schema_version: CLIENT_PAYLOAD_SCHEMA_VERSION, data_version: '7', ...extra });
 
 /** Every template that admits a payload through this module. */
-const TEMPLATES = ['guide.html.j2', 'sources.html.j2', 'compare.html.j2'];
+const TEMPLATES = ['guide.html.j2', 'sources.html.j2', 'compare.html.j2', 'race.html.j2'];
 
 const templateSource = (name) => readFileSync(fileURLToPath(new URL(name, MODULE_DIR)), 'utf8');
 
