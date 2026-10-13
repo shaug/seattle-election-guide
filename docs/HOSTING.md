@@ -322,7 +322,11 @@ Four rules govern when a preview exists:
   Cloudflare API token in scope.
 - **Closing tears the preview down.** Closing or merging the pull request deletes its deployments.
   Teardown is not label-gated, so a preview whose label was removed before the pull request closed
-  is still cleaned up.
+  is still cleaned up. It enumerates every page of the Cloudflare deployments API with
+  `env=preview`, then deletes only entries whose raw `deployment_trigger.metadata.branch` equals
+  `pr-<number>` and whose `environment` is `preview`. Enumeration finishes before deletion so
+  removing entries cannot shift unread pages. HTTP errors, unsuccessful API responses, and
+  malformed deployment records fail the job; only a complete listing with no matches is a no-op.
 - **`CLOUDFLARE_PAGES_ENABLED` still applies.** Previews respect the same publication switch as
   production.
 
@@ -332,6 +336,26 @@ because a preview is a copy of the site rather than a separate site.
 
 Production is unaffected. The `pages:deploy` script defaults to `--branch=main`; only the preview
 workflow overrides it, by setting `PAGES_BRANCH`.
+
+### Preview retention and limits (decision for #269)
+
+Keep the `pr-<number>` GitHub environment after close. It records the preview's deployment
+history; it does not host the Pages copy or keep the branch alias alive. GitHub's
+[delete-environment API](https://docs.github.com/en/rest/deployments/environments#delete-an-environment)
+requires repository **Administration: write**, which the automatic `GITHUB_TOKEN` permissions
+cannot grant. Retaining the environment avoids adding a long-lived repository-admin credential
+to preview teardown. These environment entries accumulate intentionally; an administrator may
+remove them separately if the Settings list becomes inconvenient.
+
+Cloudflare documents [unlimited active preview deployments](https://developers.cloudflare.com/pages/platform/limits/#preview-deployments).
+The same limits page gives monthly **build** quotas (500 on Free, 5,000 on Pro, 20,000 on Business)
+for its Git-connected build system. This workflow builds on GitHub Actions and sends prebuilt
+assets through [Direct Upload](https://developers.cloudflare.com/pages/get-started/direct-upload/),
+so it does not invoke that build system. There is no documented retained-preview count limit to
+reclaim by deleting old uploads, and no count-based pruning beyond close teardown is needed.
+Direct Upload still has upload limits, including file count and a 25 MiB per-file limit; deletion
+does not change those limits. This decision uses the Cloudflare documentation checked on
+October 13, 2026; recheck it if Cloudflare introduces a deployment quota.
 
 ## Publication-day production probe
 
