@@ -181,7 +181,7 @@ jobs:
       # Pinned to the base branch on purpose. A bare checkout on a
       # `pull_request` event resolves refs/pull/<number>/merge, and GitHub
       # retires that ref when the pull request closes -- which is exactly when
-      # this job runs. All the job needs is the lockfile, so it reads it from a
+      # this job runs. The job reads its lockfile from a
       # ref that still exists.
       - uses: actions/checkout@v4
         with:
@@ -197,33 +197,47 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          npx wrangler pages deployment list \
-            --project-name seattle-elections \
-            --environment preview \
-            --json > deployments.json
-          # Wrangler does not pass the API objects through: it maps each one to
-          # {Id, Environment, Branch, Source, Deployment, Status, Build} before
-          # printing. If that projection ever changes, the selector below matches
-          # nothing, deletes nothing, and still exits 0 — previews then accumulate
-          # with no signal at all. Guard the shape rather than the match count:
-          # zero matches is ordinary (this pull request may never have had a
-          # preview, and the listing spans every branch), but a deployment that
-          # lacks .Branch or .Id means the selector is stale, not the branch.
-          if ! jq -e 'length == 0 or all(.[]; has("Branch") and has("Id"))' \
-            deployments.json > /dev/null; then
-            echo "::error::wrangler pages deployment list no longer exposes .Branch/.Id; the preview-teardown selector is stale."
-            exit 1
-          fi
-          ids="$(jq -r --arg branch "$PREVIEW_BRANCH" \
-            '.[] | select(.Branch == $branch) | .Id' \
-            deployments.json)"
-          if [ -z "$ids" ]; then
+          # Wrangler lists only one page. Read the raw API through the final
+          # short page, even when earlier pages contain no matching branch.
+          # Finish enumeration before deleting: deletion would shift later
+          # pages, and a failed listing must never look like an empty result.
+          page=1
+          per_page=100
+          : > deployment-ids.txt
+          while true; do
+            curl --fail --silent --show-error --get \
+              "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/seattle-elections/deployments" \
+              --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              --data-urlencode "env=preview" \
+              --data-urlencode "per_page=$per_page" \
+              --data-urlencode "page=$page" \
+              --output deployments.json
+            if ! jq -e '
+              .success == true and (.result | type == "array") and
+              all(.result[];
+                (.id | type == "string" and length > 0) and
+                (.environment == "preview" or .environment == "production") and
+                (.deployment_trigger.metadata.branch | type == "string"))
+              ' deployments.json > /dev/null; then
+              echo "::error::Could not enumerate preview deployments: unsuccessful or malformed Cloudflare response on page $page."
+              exit 1
+            fi
+            jq -r --arg branch "$PREVIEW_BRANCH" \
+              '.result[] | select(.environment == "preview" and .deployment_trigger.metadata.branch == $branch) | .id' \
+              deployments.json >> deployment-ids.txt
+            count="$(jq '.result | length' deployments.json)"
+            if [ "$count" -lt "$per_page" ]; then
+              break
+            fi
+            page=$((page + 1))
+          done
+          if [ ! -s deployment-ids.txt ]; then
             echo "No preview deployments found for $PREVIEW_BRANCH."
             exit 0
           fi
-          for id in $ids; do
+          while IFS= read -r id; do
             echo "Deleting deployment $id"
             npx wrangler pages deployment delete "$id" \
               --project-name seattle-elections \
               --force
-          done
+          done < deployment-ids.txt
