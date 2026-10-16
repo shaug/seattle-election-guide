@@ -105,6 +105,26 @@ def test_prepare_refreshes_same_unpublished_proposal(repository: Path) -> None:
     assert second.site.elections[1].model_dump() == archived
 
 
+def test_prepare_new_version_clears_current_release_pins(repository: Path) -> None:
+    site = read_site_manifest(repository / SITE)
+    site.elections[0].git_commit = git(repository, "rev-parse", "HEAD")
+    site.elections[0].release_manifest_sha256 = "b" * 64
+    site.elections[0].bundle_sha256 = "c" * 64
+    (repository / SITE).write_text(site.model_dump_json())
+    archived = site.elections[1].model_dump()
+
+    prepared = prepare(repository, main_manifest=site)
+
+    assert prepared.current.release_version == "2026-general.9"
+    assert prepared.current.git_commit is None
+    assert prepared.current.release_manifest_sha256 is None
+    assert prepared.current.bundle_sha256 is None
+    assert prepared.site.elections[1].model_dump() == archived
+    persisted = resolve_release(SITE, repository=repository)
+    assert persisted.current == prepared.current
+    assert persisted.site.elections[1].model_dump() == archived
+
+
 def test_prepare_skips_remote_tag_and_draft_collisions(repository: Path) -> None:
     resolved = prepare(
         repository, occupied_versions=frozenset({"2026-general.9", "2026-general.11"})

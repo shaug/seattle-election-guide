@@ -195,6 +195,10 @@ def prepare_release(
             ),
         }
     )
+    if version != current.release_version:
+        declaration = declaration.model_copy(
+            update={"git_commit": None, "release_manifest_sha256": None, "bundle_sha256": None}
+        )
     site = resolved.site.model_copy(
         update={"elections": [declaration, *resolved.site.elections[1:]]}
     )
