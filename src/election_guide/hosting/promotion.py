@@ -447,7 +447,8 @@ def promotion_allowed(
         or prior.upload is None
         or prior.upload.publication != prior.publication
         or prior.upload.source_sha != previous.source_sha
-        or prior.producer != prior.upload.producer
+        or prior.upload.producer.source_sha != previous.source_sha
+        or prior.upload.producer.repository != candidate.producer.repository
         or prior.producer.source_sha != previous.source_sha
         or prior.producer.repository != candidate.producer.repository
         or previous.producer.repository != candidate.producer.repository

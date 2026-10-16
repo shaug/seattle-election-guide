@@ -582,3 +582,135 @@ def promotion_check(
             canonical_json_bytes({"eligible": False, "state": "failed", "error": str(error)})
         )
         _failed(error)
+
+
+@app.command("retain-publication")
+def retain_publication_command(publication: Annotated[Path, typer.Option()]) -> None:
+    """Reconstruct missing durable evidence from the captured canonical publication."""
+    from election_guide.release.evidence import record_evidence_failure, retain_evidence
+
+    try:
+        result = PublicationResult.model_validate_json(publication.read_bytes())
+        request = result.published.candidate.declaration.publication_request
+        if request is None:
+            raise ValueError("publication evidence requires a reviewed request")
+        receipt = OperationReceipt(
+            phase="publication",
+            state="published",
+            producer=result.published.candidate.producer,
+            publication=result,
+            upload=None,
+            verification_sha256=None,
+            error=None,
+        )
+        ids = retain_evidence(receipt, issue_number=request.issue_number, reports={})
+        typer.echo(json.dumps({"state": "published", "comment_ids": ids}))
+    except (OSError, ValueError) as error:
+        record_evidence_failure(publication.parent, error)
+        _failed(error)
+
+
+@app.command("record-upload")
+def record_upload_command(
+    publication: Annotated[Path, typer.Option()],
+    github_deployment_id: Annotated[int, typer.Option(min=1)],
+    deployment_url: Annotated[str, typer.Option()],
+    uploaded_at: Annotated[str, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+) -> None:
+    """Record an existing upload; publication evidence must already be durable."""
+    from election_guide.release.automation_models import UploadReceipt
+    from election_guide.release.evidence import (
+        current_producer,
+        record_evidence_failure,
+        require_publication_evidence,
+    )
+
+    try:
+        result = PublicationResult.model_validate_json(publication.read_bytes())
+        require_publication_evidence(result)
+        source_sha = result.published.candidate.source_sha
+        upload = UploadReceipt.model_validate_json(
+            json.dumps(
+                {
+                    "publication": result.model_dump(mode="json"),
+                    "producer": current_producer(source_sha).model_dump(mode="json"),
+                    "github_deployment_id": github_deployment_id,
+                    "deployment_url": deployment_url,
+                    "uploaded_at": uploaded_at,
+                    "source_sha": source_sha,
+                }
+            )
+        )
+        if upload.producer.repository != result.published.candidate.producer.repository:
+            raise ValueError("upload workflow repository differs from publication")
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(canonical_json_bytes(upload.model_dump(mode="json")))
+    except (OSError, ValueError) as error:
+        record_evidence_failure(output.parent, error)
+        _failed(error)
+
+
+@app.command("finalize")
+def finalize_command(
+    upload: Annotated[Path, typer.Option()],
+    output_dir: Annotated[Path, typer.Option()],
+) -> None:
+    """Retain the captured upload and verify production without deploying again."""
+    from election_guide.release.automation_models import UploadReceipt
+    from election_guide.release.evidence import (
+        current_producer,
+        finalize_deployment,
+        record_evidence_failure,
+        trusted_site,
+    )
+
+    try:
+        receipt = UploadReceipt.model_validate_json(upload.read_bytes())
+        result = finalize_deployment(
+            receipt,
+            site_manifest=trusted_site(receipt.publication),
+            producer=current_producer(receipt.source_sha),
+            output_dir=output_dir,
+        )
+        if result.state != "verified":
+            raise ValueError(result.error or "production finalization incomplete")
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        record_evidence_failure(output_dir, error)
+        _failed(error)
+
+
+@app.command("latest-production")
+def latest_production_command(
+    repository: Annotated[str, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+) -> None:
+    """Write a verified predecessor or JSON null only after a complete successful lookup."""
+    from election_guide.release.evidence import latest_production_receipt
+
+    try:
+        result = latest_production_receipt(repository)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(canonical_json_bytes(result.model_dump(mode="json") if result else None))
+    except (OSError, ValueError) as error:
+        _failed(error)
+
+
+@app.command("retain-operation")
+def retain_operation_command(receipt: Annotated[Path, typer.Option()]) -> None:
+    """Retain a skipped/failed operation; its reviewed request supplies the owning issue."""
+    from election_guide.release.evidence import record_evidence_failure, retain_evidence
+
+    try:
+        result = OperationReceipt.model_validate_json(receipt.read_bytes())
+        request = result.publication.published.candidate.declaration.publication_request
+        if request is None:
+            raise ValueError("operation evidence requires a reviewed request")
+        reports: dict[str, bytes] = {}
+        if result.verification_sha256 is not None:
+            reports["production-wait.json"] = (receipt.parent / "production-wait.json").read_bytes()
+        ids = retain_evidence(result, issue_number=request.issue_number, reports=reports)
+        typer.echo(json.dumps({"state": result.state, "comment_ids": ids}))
+    except (OSError, ValueError) as error:
+        record_evidence_failure(receipt.parent, error)
+        _failed(error)

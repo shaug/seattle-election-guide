@@ -832,3 +832,41 @@ def test_captured_artifact_download_is_verified_without_fallback(
         with pytest.raises(ValueError):
             promotion.recover_candidate(record, repository=root, work_dir=output)
         assert not (output / "source").exists()
+
+
+def test_prior_verified_receipt_allows_new_finalizer_run(promotion_setup: tuple[Any, ...]) -> None:
+    promotion, resolved, _, _, _, _, publication = promotion_setup
+    prior = receipt(publication)
+    prior = prior.model_copy(
+        update={
+            "producer": prior.producer.model_copy(update={"run_id": 200, "workflow_sha": "f" * 40})
+        }
+    )
+    assert promotion.promotion_allowed(publication, selected=resolved.site, latest_verified=prior)
+
+
+@pytest.mark.parametrize(
+    "identity", ["finalizer_repository", "finalizer_source", "upload_repository", "upload_source"]
+)
+def test_prior_verified_receipt_rejects_foreign_identity(
+    promotion_setup: tuple[Any, ...], identity: str
+) -> None:
+    promotion, resolved, _, _, _, _, publication = promotion_setup
+    prior = receipt(publication)
+    field = "repository" if identity.endswith("repository") else "source_sha"
+    value = "other/repository" if field == "repository" else "f" * 40
+    if identity.startswith("finalizer"):
+        prior = prior.model_copy(
+            update={"producer": prior.producer.model_copy(update={field: value})}
+        )
+    else:
+        assert prior.upload is not None
+        prior = prior.model_copy(
+            update={
+                "upload": prior.upload.model_copy(
+                    update={"producer": prior.upload.producer.model_copy(update={field: value})}
+                )
+            }
+        )
+    with pytest.raises(ValueError, match="unverifiable"):
+        promotion.promotion_allowed(publication, selected=resolved.site, latest_verified=prior)
