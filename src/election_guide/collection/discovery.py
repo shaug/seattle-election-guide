@@ -75,7 +75,10 @@ class PublicationParser(HTMLParser):
             self.link_text = []
             if self.link_href:
                 self.links.add(self.link_href)
-        if tag == "h1":
+        if tag == "h1" or (
+            tag == "h2"
+            and {"mb-3", "font-weight-bold"} <= set((attributes.get("class") or "").split())
+        ):
             self.in_heading = True
             self.heading_count += 1
 
@@ -86,7 +89,7 @@ class PublicationParser(HTMLParser):
                 self.endorsement_links.add(self.link_href)
             self.link_href = None
             self.link_text = []
-        if tag == "h1":
+        if tag in {"h1", "h2"}:
             self.in_heading = False
 
     def handle_data(self, data: str) -> None:
