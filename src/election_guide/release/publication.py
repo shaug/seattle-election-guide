@@ -266,6 +266,8 @@ def publish_candidate(
         or candidate.inputs != candidate.declaration.publication_request.inputs
     ):
         raise ValueError("candidate differs from reviewed publication request")
+    if archive_path.name != resolved.archive_name:
+        raise ValueError(f"candidate must use canonical archive filename {resolved.archive_name!r}")
     if _digest(archive_path) != candidate.archive:
         raise ValueError("candidate archive bytes differ")
     if work_dir.exists():

@@ -142,7 +142,7 @@ class GitHub:
                 "prerelease": False,
             }
         )
-        self.assets = (
+        self.assets: list[dict[str, Any]] = (
             []
             if state in {"absent", "orphan", "draft-empty", "unrelated", "missing"}
             else [self.asset()]
@@ -218,7 +218,7 @@ class GitHub:
         if command[:3] == ["gh", "release", "upload"]:
             assert "--clobber" not in command
             self.events.append("upload")
-            self.assets = [self.asset()]
+            self.assets = [{**self.asset(), "name": Path(command[4]).name}]
             return ""
         raise AssertionError(command)
 
@@ -578,3 +578,21 @@ def test_finalization_compares_stable_asset_identity_after_download(
     monkeypatch.setattr(setup_publication[0], "download_gh", counted_download)
     assert publish(setup_publication).asset_id == 21
     assert remote.assets[0]["download_count"] == 1
+
+
+@pytest.mark.parametrize("state", ["absent", "draft-empty"])
+def test_renamed_candidate_archive_fails_before_remote_mutation(
+    setup_publication: tuple[Any, ...], monkeypatch: pytest.MonkeyPatch, state: str
+) -> None:
+    remote = install_remote(monkeypatch, setup_publication, state)
+    original = setup_publication[3]
+    renamed = original.with_name("candidate.zip")
+    shutil.copy2(original, renamed)
+    assert digest(renamed) == setup_publication[2].archive
+    revised = (*setup_publication[:3], renamed, *setup_publication[4:])
+
+    with pytest.raises(ValueError) as error:
+        publish(revised)
+
+    assert remote.events == []
+    assert "canonical archive filename" in str(error.value)
