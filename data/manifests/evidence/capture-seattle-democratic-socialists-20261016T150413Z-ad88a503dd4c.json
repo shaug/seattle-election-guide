@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 71754,
+  "canonical_url": "https://seattledsa.org/blog/",
+  "capture_method": "static_html",
+  "content_sha256": "9f103e1f1aa1130dd9655e930aeb612a7df7e857b8866c8d54cfeff1619beb8a",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261016T150413Z-ad88a503dd4c",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://seattledsa.org/blog/",
+  "retrieved_at": "2026-10-16T15:04:13.059303Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/9f/9f103e1f1aa1130dd9655e930aeb612a7df7e857b8866c8d54cfeff1619beb8a",
+  "storage_scope": "local_only",
+  "title": "Blog – Seattle Democratic Socialists of America",
+  "updated_at": null
+}

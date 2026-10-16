@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 56694,
+  "canonical_url": "https://wabikes.org/index.php/advocacy/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "ec4f06e5bce05417c88b75cfebfe2389357199aa9fe724b309e10f513ffe910f",
+  "http_status": 200,
+  "id": "capture-washington-bikes-20261016T145957Z-415e3b0b1a5d",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://wabikes.org/index.php/advocacy/endorsements/",
+  "retrieved_at": "2026-10-16T14:59:57.863784Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "storage_reference": "sha256/ec/ec4f06e5bce05417c88b75cfebfe2389357199aa9fe724b309e10f513ffe910f",
+  "storage_scope": "local_only",
+  "title": "Endorsements - Washington BikesWashington Bikes",
+  "updated_at": null
+}

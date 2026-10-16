@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": null,
+  "id": "capture-young-democrats-of-washington-20261016T150455Z-205258fb6925",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Underlying public post HTML and three-slide image metadata are preserved privately; image bytes not acquired.",
+  "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "retrieved_at": "2026-10-16T15:04:55.381623Z",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "title": null,
+  "unavailable_reason": "The official public HTML exposes three carousel images through credential-parameter CDN URLs. Existing validated fetch_http rejects those URLs before network retrieval. No validator bypass or alternate custom downloader was attempted. Full current image contents require legitimate manual review; prior approved choices retained but not reverified as unchanged.",
+  "updated_at": null
+}

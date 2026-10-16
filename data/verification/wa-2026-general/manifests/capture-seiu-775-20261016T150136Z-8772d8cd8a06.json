@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 92070,
+  "canonical_url": "https://seiu775.org/2026endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "83a7883864b227b5f77d3e629f28dd02095788103da57eeca8df192071ad6ffe",
+  "http_status": 200,
+  "id": "capture-seiu-775-20261016T150136Z-8772d8cd8a06",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original bytes retained in the committed encrypted vault.",
+  "requested_url": "https://seiu775.org/2026endorsements/",
+  "retrieved_at": "2026-10-16T15:01:36.094004Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-775",
+  "storage_reference": "sha256/83/83a7883864b227b5f77d3e629f28dd02095788103da57eeca8df192071ad6ffe",
+  "storage_scope": "local_only",
+  "title": "Official wa-2026-general endorsement publication",
+  "updated_at": null
+}

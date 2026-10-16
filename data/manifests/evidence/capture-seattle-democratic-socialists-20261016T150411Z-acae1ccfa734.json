@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 60473,
+  "canonical_url": "https://seattledsa.org/2026/07/trans-athletes-supreme-court/",
+  "capture_method": "static_html",
+  "content_sha256": "49c116d8e3384630c62f41b1cb0520838d63dd18de7584309a41ca88764eb9d5",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261016T150411Z-acae1ccfa734",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://seattledsa.org/2026/07/trans-athletes-supreme-court/",
+  "retrieved_at": "2026-10-16T15:04:11.581148Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/49/49c116d8e3384630c62f41b1cb0520838d63dd18de7584309a41ca88764eb9d5",
+  "storage_scope": "local_only",
+  "title": "Trans Athletes & Supreme Court – Seattle Democratic Socialists of America",
+  "updated_at": null
+}

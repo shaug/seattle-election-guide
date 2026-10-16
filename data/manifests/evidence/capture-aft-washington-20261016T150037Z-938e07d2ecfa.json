@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 37760,
+  "canonical_url": "https://www.aftwa.org/endorsements-and-elections/vote-no-statewide-initiatives",
+  "capture_method": "static_html",
+  "content_sha256": "ddb95e72469f2a1eee1dcc1d99940764dd5ec861257e121d7e03a287ec97e4ba",
+  "http_status": 200,
+  "id": "capture-aft-washington-20261016T150037Z-938e07d2ecfa",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.aftwa.org/endorsements-and-elections/vote-no-statewide-initiatives",
+  "retrieved_at": "2026-10-16T15:00:37.107052Z",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "storage_reference": "sha256/dd/ddb95e72469f2a1eee1dcc1d99940764dd5ec861257e121d7e03a287ec97e4ba",
+  "storage_scope": "local_only",
+  "title": "AFT Washington Vote NO on Statewide Initiatives",
+  "updated_at": null
+}

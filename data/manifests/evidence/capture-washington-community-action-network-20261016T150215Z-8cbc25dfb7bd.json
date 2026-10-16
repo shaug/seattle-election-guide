@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 252085,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316469018-N1U8CFVOU5Z3HKPMWSB7/WA+30+Claire+Wilson+2.png",
+  "capture_method": "image",
+  "content_sha256": "481873c3ab6e39fcf865ba0f74725c545e9fc98e5a0d1ef5fc468decc4e08032",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261016T150215Z-8cbc25dfb7bd",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316469018-N1U8CFVOU5Z3HKPMWSB7/WA+30+Claire+Wilson+2.png",
+  "retrieved_at": "2026-10-16T15:02:15.400764Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/48/481873c3ab6e39fcf865ba0f74725c545e9fc98e5a0d1ef5fc468decc4e08032",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network official image publication",
+  "updated_at": null
+}

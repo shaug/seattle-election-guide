@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 176640,
+  "canonical_url": "https://www.wa4pj.com/",
+  "capture_method": "static_html",
+  "content_sha256": "a5d9486398fbf34c012c005fbca750bec4eb89dff289a078d32ce96ce4de623e",
+  "http_status": 200,
+  "id": "capture-washington-for-peace-and-justice-20261016T150201Z-4f787e5d6d55",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private full publication; public provenance metadata only.",
+  "requested_url": "https://www.wa4pj.com/",
+  "retrieved_at": "2026-10-16T15:02:01.230115Z",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "storage_reference": "sha256/a5/a5d9486398fbf34c012c005fbca750bec4eb89dff289a078d32ce96ce4de623e",
+  "storage_scope": "local_only",
+  "title": "Official current publication, October 16 verification",
+  "updated_at": null
+}

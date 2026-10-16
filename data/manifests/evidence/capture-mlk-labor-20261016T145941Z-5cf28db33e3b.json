@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 88032,
+  "canonical_url": "https://www.mlklabor.org/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "58d2f2fa108376b73a9a0b140c003a4c9ed2e1e84726b392c17c2e94d58880c6",
+  "http_status": 200,
+  "id": "capture-mlk-labor-20261016T145941Z-5cf28db33e3b",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.mlklabor.org/endorsements/",
+  "retrieved_at": "2026-10-16T14:59:41.834201Z",
+  "schema_version": "1.0",
+  "source_id": "mlk-labor",
+  "storage_reference": "sha256/58/58d2f2fa108376b73a9a0b140c003a4c9ed2e1e84726b392c17c2e94d58880c6",
+  "storage_scope": "local_only",
+  "title": "MLK Labor current official endorsement publication",
+  "updated_at": null
+}

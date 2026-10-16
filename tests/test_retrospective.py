@@ -191,9 +191,14 @@ def test_every_unledgered_source_fits_one_of_the_three_branches() -> None:
     """The classification must be exhaustive over the evidence actually committed."""
     by_id = {source.id: source for source in _panel()}
     ledger_ids = _ledger_source_ids()
+    data_as_of = read_release_ledger(LEDGER_PATH).data_as_of
 
     availability: dict[str, set[str]] = {}
     for manifest in _evidence_manifests():
+        # The shared store also holds later elections; the checklist scopes
+        # this classification to what the shipped election could know.
+        if manifest.retrieved_at > data_as_of:
+            continue
         availability.setdefault(manifest.source_id, set()).add(manifest.availability)
 
     unclassified: list[str] = []
@@ -210,6 +215,7 @@ def test_every_unledgered_source_fits_one_of_the_three_branches() -> None:
     assert not unclassified, f"the checklist's three branches do not cover {unclassified}"
 
     checklist = _checklist()
+    assert "Bound observations for the shipped election by its ledger's `data_as_of`" in checklist
     for branch in ("Unreachable.", "Reached and silent.", "Never attempted."):
         assert branch in checklist
 

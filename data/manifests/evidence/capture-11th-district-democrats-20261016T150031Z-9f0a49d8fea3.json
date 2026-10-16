@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 26882,
+  "canonical_url": "https://gallery.mailchimp.com/c75f17fe2b6e715cad36922d4/images/698d47d1-0702-4aff-afde-efb37c30d84f.jpg",
+  "capture_method": "image",
+  "content_sha256": "1bf6ec957b49415fa2ae5c651e3ea4b3f558469f9b6d02841d3f5384d048e141",
+  "http_status": 200,
+  "id": "capture-11th-district-democrats-20261016T150031Z-9f0a49d8fea3",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://gallery.mailchimp.com/c75f17fe2b6e715cad36922d4/images/698d47d1-0702-4aff-afde-efb37c30d84f.jpg",
+  "retrieved_at": "2026-10-16T15:00:31.778239Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/1b/1bf6ec957b49415fa2ae5c651e3ea4b3f558469f9b6d02841d3f5384d048e141",
+  "storage_scope": "local_only",
+  "title": "11th-district-democrats official publication",
+  "updated_at": null
+}

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-aft-washington-20261016T150037Z-938e07d2ecfa",
+  "entered_at": "2026-10-16T15:15:15.515715Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; Vote NO On The Statewide Initiatives article; paragraph on IL26-001 child/parent rights ends with explicit vote NO recommendation; Vote NO On The Statewide Initiatives article; paragraph on IL26-638 school sports ends with explicit vote NO recommendation; Vote NO On The Statewide Initiatives article; paragraph on IP26-645 millionaire income tax repeal ends with explicit vote NO recommendation",
+  "evidence_type": "web_page",
+  "id": "manual-aft-washington-20261016T151515Z-c42d7e9fd655",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "transcription": "Initiative IL26-001 — Parental Rights in Public Schools: No\nInitiative IL26-638 — Participation in K-12 School Athletics: No\nInitiative IP26-645 — State and Local Taxes: No"
+}

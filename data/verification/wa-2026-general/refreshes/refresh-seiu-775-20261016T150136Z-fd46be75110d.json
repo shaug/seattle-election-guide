@@ -1,0 +1,478 @@
+{
+  "capture_id": "capture-seiu-775-20261016T150136Z-8772d8cd8a06",
+  "checked_at": "2026-10-16T15:01:36.094004Z",
+  "content_changed": true,
+  "diff": [
+    {
+      "after": {
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "evidence_excerpt": "Vote NO on No I-001 – Prevent the disclosure of students’ private information by voting NO.",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "initiative-26-001",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "initiative-26-001"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "evidence_excerpt": "Vote NO on I-638 – Stop new invasive verification requirements for girls to play youth sports by voting NO.",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "initiative-26-638",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "initiative-26-638"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_excerpt": "Vote NO on I-645 – When the wealthy pay their fair share, life will be more affordable for the rest of us. Defend the Millionaires Tax from repeal by voting NO.",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "initiative-26-645",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "initiative-26-645"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "evidence_excerpt": "County Council Pos. 2: Rebecca Saldaña",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "king-county-council-2",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "king-county-council-2"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "evidence_excerpt": "County Council Pos. 8: Teresa Mosqueda",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "king-county-council-8",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "king-county-council-8"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-11-state-representative-1--david-hackney"
+        ],
+        "evidence_excerpt": "State Representative Pos. 1: David Hackney",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-11-state-representative-1",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-11-state-representative-1"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
+        "evidence_excerpt": "State Representative Pos. 2: Steve Bergquist",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-11-state-representative-2",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-11-state-representative-2"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-32-state-representative-2--lauren-davis"
+        ],
+        "evidence_excerpt": "State Representative Pos. 2: Lauren Davis",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-32-state-representative-2",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-32-state-representative-2"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
+        "evidence_excerpt": "State Representative Pos. 1: Brianna Thomas",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-34-state-representative-1",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-34-state-representative-1"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "evidence_excerpt": "State Representative Pos. 2: Joe Fitzgibbon",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-34-state-representative-2",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-34-state-representative-2"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
+        "evidence_excerpt": "State Senator: Emily Alvarado",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-34-state-senator",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-34-state-senator"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
+        "evidence_excerpt": "State Representative Pos. 1: Julia G. Reed",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-36-state-representative-1",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-36-state-representative-1"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
+        "evidence_excerpt": "State Representative Pos. 2: Liz Berry",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-36-state-representative-2",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-36-state-representative-2"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "evidence_excerpt": "State Senator: Noel Frame",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-36-state-senator",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-36-state-senator"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "evidence_excerpt": "State Representative Pos. 2: Jaelynn Scott",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-37-state-representative-2",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-37-state-representative-2"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "evidence_excerpt": "State Senator: Chipalo Street",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-37-state-senator",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-37-state-senator"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "evidence_excerpt": "State Representative Pos. 1: Nicole Macri",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-43-state-representative-1",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-43-state-representative-1"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-43-state-representative-2--shaun-scott"
+        ],
+        "evidence_excerpt": "State Representative Pos. 2: Shaun Scott",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-43-state-representative-2",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-43-state-representative-2"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "evidence_excerpt": "State Senator: Jamie Pedersen",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-43-state-senator",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-43-state-senator"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "evidence_excerpt": "State Representative Pos. 1: Gerry Pollet",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-46-state-representative-1",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-46-state-representative-1"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "evidence_excerpt": "State Representative Pos. 2: Darya Farivar",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-46-state-representative-2",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-46-state-representative-2"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "evidence_excerpt": "State Senator: Javier Valdez",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-46-state-senator",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-46-state-senator"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "evidence_excerpt": "Seattle City Council Pos. 5: Nilu Jenks",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "seattle-city-council-5",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "seattle-city-council-5"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "evidence_excerpt": "Colleen Melody",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-1",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-1"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "evidence_excerpt": "Jaime Michelle Hawk",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-3",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-3"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "evidence_excerpt": "Ian Birk",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-4",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-4"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "evidence_excerpt": "Theo Angelis",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-5",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-5"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "evidence_excerpt": "U.S. Representative: Pramila Jayapal",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "us-house-7",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "us-house-7"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "evidence_excerpt": "U.S. Representative: Adam Smith",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "us-house-9",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "us-house-9"
+    }
+  ],
+  "error": null,
+  "id": "refresh-seiu-775-20261016T150136Z-fd46be75110d",
+  "previous_snapshot_id": null,
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+  "source_id": "seiu-775",
+  "status": "created"
+}

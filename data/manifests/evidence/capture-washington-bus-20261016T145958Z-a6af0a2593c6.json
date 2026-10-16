@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 710321,
+  "canonical_url": "https://www.washingtonbus.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "f3345a5b9d5b79a682514218ce8963b9c4efea154874b1a8eac560a0946ae718",
+  "http_status": 200,
+  "id": "capture-washington-bus-20261016T145958Z-a6af0a2593c6",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://www.washingtonbus.org/endorsements",
+  "retrieved_at": "2026-10-16T14:59:58.066974Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/f3/f3345a5b9d5b79a682514218ce8963b9c4efea154874b1a8eac560a0946ae718",
+  "storage_scope": "local_only",
+  "title": "Endorsements | The Washington Bus | The Washington Bus",
+  "updated_at": null
+}

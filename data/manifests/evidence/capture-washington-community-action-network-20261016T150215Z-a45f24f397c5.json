@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1288368,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316473276-28F74S18PNO6O7YHE3GX/WA+47+Claudia+Kauffman.png",
+  "capture_method": "image",
+  "content_sha256": "337cc4721c410cfc7642e18ab9d158c60b3d30e7626ff7df642fe753dcf0794e",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261016T150215Z-a45f24f397c5",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316473276-28F74S18PNO6O7YHE3GX/WA+47+Claudia+Kauffman.png",
+  "retrieved_at": "2026-10-16T15:02:15.908378Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/33/337cc4721c410cfc7642e18ab9d158c60b3d30e7626ff7df642fe753dcf0794e",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network official image publication",
+  "updated_at": null
+}

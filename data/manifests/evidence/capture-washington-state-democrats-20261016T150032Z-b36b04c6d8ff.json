@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 165385,
+  "canonical_url": "https://wadems.org/2026-campaign-resources/",
+  "capture_method": "static_html",
+  "content_sha256": "13427e1dfbd8a59e22ddf5f6695b9680fb6cca5ceded4f7f6b6d304d9ea94ab2",
+  "http_status": 200,
+  "id": "capture-washington-state-democrats-20261016T150032Z-b36b04c6d8ff",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://wadems.org/2026-campaign-resources/",
+  "retrieved_at": "2026-10-16T15:00:32.412390Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-democrats",
+  "storage_reference": "sha256/13/13427e1dfbd8a59e22ddf5f6695b9680fb6cca5ceded4f7f6b6d304d9ea94ab2",
+  "storage_scope": "local_only",
+  "title": "2026 Campaign Resources - Washington State Democratic Party",
+  "updated_at": null
+}

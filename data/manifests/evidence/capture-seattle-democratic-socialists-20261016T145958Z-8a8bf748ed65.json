@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 77499,
+  "canonical_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+  "capture_method": "static_html",
+  "content_sha256": "722551f19763e6c8b0d738f604a9bd70a8511e27b15236f929267fa79cfd814f",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261016T145958Z-8a8bf748ed65",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+  "retrieved_at": "2026-10-16T14:59:58.155154Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/72/722551f19763e6c8b0d738f604a9bd70a8511e27b15236f929267fa79cfd814f",
+  "storage_scope": "local_only",
+  "title": "Events for October 2026 – Seattle Democratic Socialists of America",
+  "updated_at": null
+}
