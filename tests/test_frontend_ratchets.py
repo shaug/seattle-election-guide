@@ -38,11 +38,12 @@ DOCUMENT = "docs/FRONTEND.md"
 # they are excluded from the inline-script line count and registered by name
 # instead.
 #
-# The expression form is as wide as Jinja's, because a form this does not match
-# inside a payload element is an injection point neither half of the metric
-# records (#245, closing a gap #250 left): `{{-` / `-}}` whitespace control is
-# ordinary Jinja, and a dotted or subscripted name is how a value arrives out of
-# a context object. The registered name is the whole expression, so
+# This recognizes bare and dotted names, with Jinja whitespace control; it is
+# not a Jinja expression parser. Subscripts, calls, and other expressions do
+# not match. In an executable script they count toward the ceiling; inside a
+# payload element neither half records them. That accepted limitation and its
+# risk argument live in docs/FRONTEND.md, Modules (issue #297).
+# The registered name is the whole matched expression, so
 # `guide.entry_script` and `guide_entry_script` are different registry entries
 # rather than the same one.
 PLACEHOLDER_LINE = re.compile(
@@ -107,13 +108,12 @@ def measure_inline_script(source: str) -> InlineScript:
 
     The two halves have different scopes on purpose. The *count* skips payload
     elements; the *placeholder registry* does not. `| safe` writes its value
-    with no escaping, so a placeholder inside a payload element can close that
+    with no escaping, so a matched placeholder inside a payload element can close that
     element and open an executable one — which is the injection the registry
     exists to make a checked change. Reporting names from everywhere a
-    `<script>` element reaches is also the only version of this scan that cannot
-    be under-inclusive: a skip in the counter is a decision about lines, and
-    letting it silently become a decision about injection points is how a check
-    grows a blind spot it cannot see.
+    `<script>` element reaches avoids confusing a line-count exemption with a
+    placeholder exemption. It does not make the registry exhaustive: only
+    whole-line bare or dotted names match, as PLACEHOLDER_LINE states above.
     """
 
     counted = 0
