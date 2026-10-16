@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 312172,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316470015-ZUKYFTSZDIVAKMF8KKRT/WA+45+Roger+Goodman.png",
+  "capture_method": "image",
+  "content_sha256": "cb5b51b4a72cc8687bc6d5bb97115d6aab3755bd1ec3d419d150e918726ffb03",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261016T150215Z-6bb3c7fa18f0",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316470015-ZUKYFTSZDIVAKMF8KKRT/WA+45+Roger+Goodman.png",
+  "retrieved_at": "2026-10-16T15:02:15.820123Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/cb/cb5b51b4a72cc8687bc6d5bb97115d6aab3755bd1ec3d419d150e918726ffb03",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network official image publication",
+  "updated_at": null
+}

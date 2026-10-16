@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-aft-washington-20261016T150037Z-938e07d2ecfa",
+  "entered_at": "2026-10-16T15:48:50.280092Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; Vote NO On The Statewide Initiatives article; paragraph on IL26-001 child/parent rights ends with explicit vote NO recommendation; Vote NO On The Statewide Initiatives article; paragraph on IL26-638 school sports ends with explicit vote NO recommendation; Vote NO On The Statewide Initiatives article; paragraph on IP26-645 millionaire income tax repeal ends with explicit vote NO recommendation",
+  "evidence_type": "web_page",
+  "id": "manual-aft-washington-20261016T154850Z-e4264c687ff7",
+  "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Immutable pending predecessor: manual-aft-washington-20261016T151515Z-c42d7e9fd655.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T15:48:50.280092Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "transcription": "Initiative IL26-001 — Parental Rights in Public Schools: No\nInitiative IL26-638 — Participation in K-12 School Athletics: No\nInitiative IP26-645 — State and Local Taxes: No"
+}

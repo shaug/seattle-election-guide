@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 327596,
+  "canonical_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+  "capture_method": "static_html",
+  "content_sha256": "621c011b536884941401930b9d5e920588b63a8a1825d5d3ac6df94965904d37",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20261016T150038Z-072bf2c5e1ec",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+  "retrieved_at": "2026-10-16T15:00:38.073052Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "storage_reference": "sha256/62/621c011b536884941401930b9d5e920588b63a8a1825d5d3ac6df94965904d37",
+  "storage_scope": "local_only",
+  "title": "UFCW3000 Oct15 opposes 638 and 001",
+  "updated_at": null
+}

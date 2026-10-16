@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+  "entered_at": "2026-10-16T16:05:10.192531Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official general voters guide, slide 3; color semantics from slide 2. Grey ratings held; candidate red blank/write-in differs from explicit measure No.",
+  "evidence_type": "image",
+  "id": "manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650",
+  "review_note": "Issue #545: shaug explicitly approved the concrete browser-retry packet with \"Apply all 54 decisions and all three explicit corrections\". This targeted approval covers Sierra Club 24 decisions, WA4PJ 30 decisions (including two declined-to-endorse instructions), WA4PJ Supreme Court District-to-Position terminology, and three separately enumerated office corrections: WA4PJ Bergquist Rep 12 to LD11 House Position 2; Alliance for Gun Responsibility Bergquist District 21 to LD11 House Position 2; PPAA Mosqueda District 6 to King County Council District 8. OpenAI Codex is the transcriber; shaug is the human verifier. The original source labels remain recorded. WA4PJ grey ratings for Colleen Melody and Ian Birk remain unresolved and are not normalized. The separate original 120-change approval remains intact. No daily, whole-panel or verification-adapter baseline human attestation is asserted. See data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json. Pending predecessor: manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b. Any grey rows in this factual transcription remain unresolved and excluded from approved endorsement claims.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T16:05:10.192531Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "transcription": "CD-7 - Pramila Jayapal — green_candidate\nDistrict 3 - Jaime Hawk — green_candidate\nDistrict 5 - Theo Angelis — green_candidate\nCD-9 - Leave Blank or Write in Paula Stein — red_leave_blank_or_non_inventory_write_in\nDistrict 7 - Leave Blank or Write in Paula Stein — red_leave_blank_or_non_inventory_write_in\nDistrict 1 - Colleen Melody — grey_ambiguous_rating\nDistrict 4 - Ian Birk — grey_ambiguous_rating"
+}

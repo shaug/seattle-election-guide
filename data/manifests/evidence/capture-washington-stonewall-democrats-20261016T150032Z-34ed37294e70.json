@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 995785,
+  "canonical_url": "https://www.facebook.com/stonewallwa/",
+  "capture_method": "static_html",
+  "content_sha256": "cc7ead12f890d4779a408c3936a8a493f0c9f91249c5b141e3db41bc148c61f4",
+  "http_status": 200,
+  "id": "capture-washington-stonewall-democrats-20261016T150032Z-34ed37294e70",
+  "media_type": "text/html; charset=\"utf-8\"",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://www.facebook.com/stonewallwa/",
+  "retrieved_at": "2026-10-16T15:00:32.899082Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/cc/cc7ead12f890d4779a408c3936a8a493f0c9f91249c5b141e3db41bc148c61f4",
+  "storage_scope": "local_only",
+  "title": "Washington Stonewall Democrats",
+  "updated_at": null
+}

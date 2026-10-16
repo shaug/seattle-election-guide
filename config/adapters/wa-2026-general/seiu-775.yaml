@@ -2,26 +2,26 @@
 schema_version: '1.0'
 source_id: seiu-775
 adapter_kind: static_html
-extractor_version: 1.0.0
+extractor_version: 1.0.1
 complete: true
-decision_pattern: (?:^Vote\s+NO\s+on\s+No\s+IL\-001[^\n]*$|^Vote\s+NO\s+on\s+IL\-638[^\n]*$|^Vote\s+NO\s+on\s+IP\-645[^\n]*$|^Colleen\s+Melody$|^Jaime\s+Michelle\s+Hawk$|^Ian\s+Birk$|^Theo\s+Angelis$|^U\.S\.\s+Representative:\s+Pramila\s+Jayapal$|^U\.S\.\s+Representative:\s+Adam\s+Smith$|^State\s+Representative\s+Pos\.\s+1:\s+David\s+Hackney$|^State\s+Representative\s+Pos\.\s+2:\s+Steve\s+Bergquist$|^State\s+Representative\s+Pos\.\s+2:\s+Lauren\s+Davis$|^State\s+Senator:\s+Emily\s+Alvarado$|^State\s+Representative\s+Pos\.\s+1:\s+Brianna\s+Thomas$|^State\s+Representative\s+Pos\.\s+2:\s+Joe\s+Fitzgibbon$|^State\s+Senator:\s+Noel\s+Frame$|^State\s+Representative\s+Pos\.\s+1:\s+Julia\s+G\.\s+Reed$|^State\s+Representative\s+Pos\.\s+2:\s+Liz\s+Berry$|^State\s+Senator:\s+Chipalo\s+Street$|^State\s+Representative\s+Pos\.\s+2:\s+Jaelynn\s+Scott$|^State\s+Senator:\s+Jamie\s+Pedersen$|^State\s+Representative\s+Pos\.\s+1:\s+Nicole\s+Macri$|^State\s+Representative\s+Pos\.\s+2:\s+Shaun\s+Scott$|^State\s+Senator:\s+Javier\s+Valdez$|^State\s+Representative\s+Pos\.\s+1:\s+Gerry\s+Pollet$|^State\s+Representative\s+Pos\.\s+2:\s+Darya\s+Farivar$|^County\s+Council\s+District\s+2:\s+Rebecca\s+Saldaña$|^County\s+Council\s+District\s+8:\s+Teresa\s+Mosqueda$|^Seattle\s+City\s+Council\s+Position\s+5:\s+Nilu\s+Jenks$)
+decision_pattern: (?:^Vote\s+NO\s+on\s+No\s+I(?:L)?\-001[^\n]*$|^Vote\s+NO\s+on\s+I(?:L)?\-638[^\n]*$|^Vote\s+NO\s+on\s+I(?:P)?\-645[^\n]*$|^Colleen\s+Melody$|^Jaime\s+Michelle\s+Hawk$|^Ian\s+Birk$|^Theo\s+Angelis$|^U\.S\.\s+Representative:\s+Pramila\s+Jayapal$|^U\.S\.\s+Representative:\s+Adam\s+Smith$|^State\s+Representative\s+Pos\.\s+1:\s+David\s+Hackney$|^State\s+Representative\s+Pos\.\s+2:\s+Steve\s+Bergquist$|^State\s+Representative\s+Pos\.\s+2:\s+Lauren\s+Davis$|^State\s+Senator:\s+Emily\s+Alvarado$|^State\s+Representative\s+Pos\.\s+1:\s+Brianna\s+Thomas$|^State\s+Representative\s+Pos\.\s+2:\s+Joe\s+Fitzgibbon$|^State\s+Senator:\s+Noel\s+Frame$|^State\s+Representative\s+Pos\.\s+1:\s+Julia\s+G\.\s+Reed$|^State\s+Representative\s+Pos\.\s+2:\s+Liz\s+Berry$|^State\s+Senator:\s+Chipalo\s+Street$|^State\s+Representative\s+Pos\.\s+2:\s+Jaelynn\s+Scott$|^State\s+Senator:\s+Jamie\s+Pedersen$|^State\s+Representative\s+Pos\.\s+1:\s+Nicole\s+Macri$|^State\s+Representative\s+Pos\.\s+2:\s+Shaun\s+Scott$|^State\s+Senator:\s+Javier\s+Valdez$|^State\s+Representative\s+Pos\.\s+1:\s+Gerry\s+Pollet$|^State\s+Representative\s+Pos\.\s+2:\s+Darya\s+Farivar$|^County\s+Council\s+(?:District|Pos\.)\s+2:\s+Rebecca\s+Saldaña$|^County\s+Council\s+(?:District|Pos\.)\s+8:\s+Teresa\s+Mosqueda$|^Seattle\s+City\s+Council\s+(?:Position|Pos\.)\s+5:\s+Nilu\s+Jenks$)
 rules:
 - race_id: initiative-26-001
-  pattern: ^Vote\s+NO\s+on\s+No\s+IL\-001[^\n]*$
+  pattern: ^Vote\s+NO\s+on\s+No\s+I(?:L)?\-001[^\n]*$
   status: endorsed
   candidate_ids:
   - initiative-26-001--no
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
 - race_id: initiative-26-638
-  pattern: ^Vote\s+NO\s+on\s+IL\-638[^\n]*$
+  pattern: ^Vote\s+NO\s+on\s+I(?:L)?\-638[^\n]*$
   status: endorsed
   candidate_ids:
   - initiative-26-638--no
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
 - race_id: initiative-26-645
-  pattern: ^Vote\s+NO\s+on\s+IP\-645[^\n]*$
+  pattern: ^Vote\s+NO\s+on\s+I(?:P)?\-645[^\n]*$
   status: endorsed
   candidate_ids:
   - initiative-26-645--no
@@ -189,21 +189,21 @@ rules:
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
 - race_id: king-county-council-2
-  pattern: ^County\s+Council\s+District\s+2:\s+Rebecca\s+Saldaña$
+  pattern: ^County\s+Council\s+(?:District|Pos\.)\s+2:\s+Rebecca\s+Saldaña$
   status: endorsed
   candidate_ids:
   - king-county-council-2--rebecca-saldana
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
 - race_id: king-county-council-8
-  pattern: ^County\s+Council\s+District\s+8:\s+Teresa\s+Mosqueda$
+  pattern: ^County\s+Council\s+(?:District|Pos\.)\s+8:\s+Teresa\s+Mosqueda$
   status: endorsed
   candidate_ids:
   - king-county-council-8--teresa-mosqueda
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
 - race_id: seattle-city-council-5
-  pattern: ^Seattle\s+City\s+Council\s+Position\s+5:\s+Nilu\s+Jenks$
+  pattern: ^Seattle\s+City\s+Council\s+(?:Position|Pos\.)\s+5:\s+Nilu\s+Jenks$
   status: endorsed
   candidate_ids:
   - seattle-city-council-5--nilu-jenks

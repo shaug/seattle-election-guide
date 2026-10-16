@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 6891,
+  "canonical_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+  "capture_method": "manual_upload",
+  "content_sha256": "80599b8d5733fae1f7ebb2120ff5c147b9e03887c3dda0bc186087a982646999",
+  "http_status": null,
+  "id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+  "retrieved_at": "2026-10-16T15:44:40.034601Z",
+  "schema_version": "1.0",
+  "source_id": "environmental-climate-caucus-wa-democrats",
+  "storage_reference": "sha256/80/80599b8d5733fae1f7ebb2120ff5c147b9e03887c3dda0bc186087a982646999",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Environment and Climate Caucus of the Washington State Democratic Party",
+  "updated_at": null
+}

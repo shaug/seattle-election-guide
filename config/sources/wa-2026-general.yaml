@@ -91,14 +91,16 @@ sources:
       kind: all_seattle_ballot_races
       rationale: Use only for Seattle-ballot races for which the organization publishes a decision.
     discovery:
-      status: not_found
-      checked_at: 2026-10-04T04:56:52Z
-      requested_url: https://www.theurbanist.org/2026-primary-election-endorsements/
-      canonical_url: https://www.theurbanist.org/2026-primary-election-endorsements/
-      media_type: text/html
-      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-the-urbanist-20261004T045652Z-992c9743995c. Supplemental captures capture-the-urbanist-20261004T045926Z-5f0b91c9cccc.'
-      notes: 'Primary-only guide; supplemental official elections-committee page also links only the 2026 primary.'
-
+      status: published
+      checked_at: '2026-10-16T15:03:29.871950Z'
+      requested_url: https://www.theurbanist.org/2026-general-election-endorsements/
+      canonical_url: https://www.theurbanist.org/2026-general-election-endorsements/
+      redirect_chain: []
+      media_type: text/html; charset=utf-8
+      evidence_locator: 'Issue #545 user-approved October 16 targeted update. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc;
+        approval data/review/approvals/wa-2026-general-2026-10-16.json.'
+      notes: Official current general-election publication; only the concrete approved decisions are admitted. Other unresolved
+        labels and attributions remain excluded.
   - id: progressive-voters-guide
     name: Progressive Voters Guide
     code: pvot
@@ -230,14 +232,16 @@ sources:
       kind: all_seattle_ballot_races
       rationale: Include green check-mark recommendations from the official 2026 guide; gray and leave-blank entries do not contribute.
     discovery:
-      status: not_found
-      checked_at: 2026-10-04T04:56:52Z
-      requested_url: https://www.wa4pj.com/
-      canonical_url: https://www.wa4pj.com/
-      media_type: text/html
-      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-for-peace-and-justice-20261004T045652Z-5b8b4ae92d99.'
-      notes: 'Official site has no current endorsement publication located.'
-
+      status: published
+      checked_at: '2026-10-16T15:58:56.853359Z'
+      requested_url: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/
+      canonical_url: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/
+      redirect_chain: []
+      media_type: image/jpeg
+      evidence_locator: 'Issue #545 approved browser retry. Capture capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20;
+        data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json.'
+      notes: Current official publication recovered in browser and explicitly approved. Capture time records custody import; no
+        HTTP status or exact browser network retrieval time asserted. Only approved decisions are normalized.
   - id: washington-community-action-network
     name: Washington Community Action Network
     code: wcan
@@ -368,12 +372,16 @@ sources:
       kind: all_seattle_ballot_races
       rationale: A future claim must be an explicit party endorsement, not party preference or platform alignment.
     discovery:
-      status: access_restricted
-      checked_at: 2026-10-04T04:56:53Z
-      requested_url: https://wadems.org/
-      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-state-democrats-20261004T045653Z-5b254f723baf.'
-      notes: 'HTTP 403; access-restricted disposition preserved.'
-
+      status: published
+      checked_at: '2026-10-16T15:00:32.412390Z'
+      requested_url: https://wadems.org/2026-campaign-resources/
+      canonical_url: https://wadems.org/2026-campaign-resources/
+      redirect_chain: []
+      media_type: text/html; charset=UTF-8
+      evidence_locator: 'Issue #545 user-approved October 16 targeted update. Capture capture-washington-state-democrats-20261016T150032Z-b36b04c6d8ff;
+        approval data/review/approvals/wa-2026-general-2026-10-16.json.'
+      notes: Official current general-election publication; only the concrete approved decisions are admitted. Other unresolved
+        labels and attributions remain excluded.
     overlap_group_ids:
       - democratic-party-network
 
@@ -694,17 +702,16 @@ sources:
       kind: all_seattle_ballot_races
       rationale: Count only roster decisions matched to Seattle-ballot races.
     discovery:
-      status: not_found
-      checked_at: 2026-10-04T04:56:54Z
-      requested_url: https://www.seattlesubway.org/election-endorsements/
+      status: published
+      checked_at: '2026-10-16T14:59:58.287999Z'
+      requested_url: https://seattlesubway.org/election-endorsements/
       canonical_url: https://seattlesubway.org/election-endorsements/
-      redirect_chain:
-        - https://www.seattlesubway.org/election-endorsements/
-        - https://seattlesubway.org/election-endorsements/
-      media_type: text/html
-      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-seattle-subway-20261004T045654Z-b4b43955e3de.'
-      notes: 'Official publication still explicitly describes the August 2026 primary; not reused.'
-
+      redirect_chain: []
+      media_type: text/html; charset=UTF-8
+      evidence_locator: 'Issue #545 user-approved October 16 targeted update. Capture capture-seattle-subway-20261016T145958Z-674af516ce07;
+        approval data/review/approvals/wa-2026-general-2026-10-16.json.'
+      notes: Official current general-election publication; only the concrete approved decisions are admitted. Other unresolved
+        labels and attributions remain excluded.
   - id: transportation-choices-coalition
     name: Transportation Choices Coalition
     code: tcco
@@ -782,12 +789,16 @@ sources:
       kind: all_seattle_ballot_races
       rationale: Any claim requires a manually verifiable official chapter publication.
     discovery:
-      status: access_restricted
-      checked_at: 2026-10-04T04:56:54Z
-      requested_url: https://www.sierraclub.org/washington
-      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-sierra-club-washington-20261004T045654Z-bb852d680797.'
-      notes: 'HTTP 200 contains an Incapsula access challenge; access-restricted disposition preserved.'
-
+      status: published
+      checked_at: '2026-10-16T15:58:56.853359Z'
+      requested_url: https://www.sierraclub.org/washington/2026-endorsements
+      canonical_url: https://www.sierraclub.org/washington/2026-endorsements
+      redirect_chain: []
+      media_type: text/html
+      evidence_locator: 'Issue #545 approved browser retry. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df;
+        data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json.'
+      notes: Current official publication recovered in browser and explicitly approved. Capture time records custody import; no
+        HTTP status or exact browser network retrieval time asserted. Only approved decisions are normalized.
   - id: climate-solutions
     name: Climate Solutions
     code: clsl
@@ -1062,12 +1073,16 @@ sources:
       kind: all_seattle_ballot_races
       rationale: Count only the regional advocacy organization's decisions; national Action Fund decisions are a different source.
     discovery:
-      status: access_restricted
-      checked_at: 2026-10-04T04:56:56Z
-      requested_url: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates
-      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-planned-parenthood-alliance-advocates-20261004T045656Z-1b36e7fabf51.'
-      notes: 'HTTP 403; access-restricted disposition preserved.'
-
+      status: published
+      checked_at: '2026-10-16T15:00:40.636215Z'
+      requested_url: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements
+      canonical_url: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements
+      redirect_chain: []
+      media_type: text/html; charset=utf-8
+      evidence_locator: 'Issue #545 user-approved October 16 targeted update. Capture capture-planned-parenthood-alliance-advocates-20261016T150040Z-decd0fdb6b0a;
+        approval data/review/approvals/wa-2026-general-2026-10-16.json.'
+      notes: Official current general-election publication; only the concrete approved decisions are admitted. Other unresolved
+        labels and attributions remain excluded.
   - id: oneamerica-votes
     name: OneAmerica Votes
     code: oamv

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 309766,
+  "canonical_url": "https://wadems.org/",
+  "capture_method": "static_html",
+  "content_sha256": "12e5d66a8fc6a8c9ab231af88df09c182e9afb9cb3fde2d2f9809525353b78e9",
+  "http_status": 200,
+  "id": "capture-washington-state-democrats-20261016T145925Z-07951c5e78a7",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://wadems.org/",
+  "retrieved_at": "2026-10-16T14:59:25.856436Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-democrats",
+  "storage_reference": "sha256/12/12e5d66a8fc6a8c9ab231af88df09c182e9afb9cb3fde2d2f9809525353b78e9",
+  "storage_scope": "local_only",
+  "title": "Washington State Democratic Party",
+  "updated_at": null
+}

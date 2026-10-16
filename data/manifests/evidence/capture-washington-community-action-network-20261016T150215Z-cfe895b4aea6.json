@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 381896,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316470406-AS7UWT1PXUY23OICJOPC/WA+33+Mia+Su-Ling+Gregerson.png",
+  "capture_method": "image",
+  "content_sha256": "3d1d13728a9ab051dcebf529cd0e49253c5bcf87ed32cde888ee48d9841b42c0",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261016T150215Z-cfe895b4aea6",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316470406-AS7UWT1PXUY23OICJOPC/WA+33+Mia+Su-Ling+Gregerson.png",
+  "retrieved_at": "2026-10-16T15:02:15.732041Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/3d/3d1d13728a9ab051dcebf529cd0e49253c5bcf87ed32cde888ee48d9841b42c0",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network official image publication",
+  "updated_at": null
+}

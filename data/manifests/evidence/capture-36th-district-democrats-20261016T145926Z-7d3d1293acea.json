@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 88633,
+  "canonical_url": "https://36th.org/",
+  "capture_method": "static_html",
+  "content_sha256": "f4ab8141e4edac685b72ba6ad46d366c35b716e2507b92d76fb3ecef98506ae1",
+  "http_status": 200,
+  "id": "capture-36th-district-democrats-20261016T145926Z-7d3d1293acea",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://36th.org/",
+  "retrieved_at": "2026-10-16T14:59:26.891488Z",
+  "schema_version": "1.0",
+  "source_id": "36th-district-democrats",
+  "storage_reference": "sha256/f4/f4ab8141e4edac685b72ba6ad46d366c35b716e2507b92d76fb3ecef98506ae1",
+  "storage_scope": "local_only",
+  "title": "36th District Democrats",
+  "updated_at": null
+}

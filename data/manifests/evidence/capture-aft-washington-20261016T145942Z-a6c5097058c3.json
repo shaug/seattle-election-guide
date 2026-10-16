@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 34715,
+  "canonical_url": "https://www.aftwa.org/endorsements-and-elections",
+  "capture_method": "static_html",
+  "content_sha256": "1e2efc84d46cdae396b6f27599e7be661b1b87d87b8d4b656ebb5e17b2822fbc",
+  "http_status": 200,
+  "id": "capture-aft-washington-20261016T145942Z-a6c5097058c3",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.aftwa.org/endorsements-and-elections",
+  "retrieved_at": "2026-10-16T14:59:42.391732Z",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "storage_reference": "sha256/1e/1e2efc84d46cdae396b6f27599e7be661b1b87d87b8d4b656ebb5e17b2822fbc",
+  "storage_scope": "local_only",
+  "title": "AFT Washington current official endorsement publication",
+  "updated_at": null
+}

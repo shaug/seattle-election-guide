@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 19708,
+  "canonical_url": "https://32democrats.org/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "93ba379bf7d99ba0ddefba3c656d9980394aaa6be6dba662b54661f983a7a80d",
+  "http_status": null,
+  "id": "capture-32nd-district-democrats-20261016T150455Z-0d2c43faf284",
+  "media_type": "text/plain",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Privately preserved textual rendering returned by standard web open of the official URL on 2026-10-16; not original HTTP bytes. Direct fetch retained separately as 10-redirect failure. No HTTP status or redirect history is asserted for this rendering; canonical URL is the official reference supplied by the tool. Retrieval timestamp records preservation, after tool receipt; provider original fetch time unavailable.",
+  "requested_url": "https://32democrats.org/2026-endorsements/",
+  "retrieved_at": "2026-10-16T15:04:55.241848Z",
+  "schema_version": "1.0",
+  "source_id": "32nd-district-democrats",
+  "storage_reference": "sha256/93/93ba379bf7d99ba0ddefba3c656d9980394aaa6be6dba662b54661f983a7a80d",
+  "storage_scope": "local_only",
+  "title": "32nd-district-democrats official page textual rendering from standard web open",
+  "updated_at": null
+}

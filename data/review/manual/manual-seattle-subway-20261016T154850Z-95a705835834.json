@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-subway-20261016T145958Z-674af516ce07",
+  "entered_at": "2026-10-16T15:48:50.280092Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; November 2026 General Election Endorsements → Summary; exact race row. No Endorsement is an explicit source decision.",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-subway-20261016T154850Z-95a705835834",
+  "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Immutable pending predecessor: manual-seattle-subway-20261016T151515Z-b23e77832f0d.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T15:48:50.280092Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seattle-subway",
+  "transcription": "Seattle Proposition 1 — Seattle Transit Measure: Yes\nSeattle City Council — District 5: Nilu Jenks\nKing County Assessor: Rob Foxcurran\nMetropolitan King County Council — District 2: Rebecca Saldaña\nMetropolitan King County Council — District 4: Jorge L. Barón\nMetropolitan King County Council — District 8: Teresa Mosqueda\nU.S. Representative — Congressional District 7: Pramila Jayapal\nLegislative District 32 State Representative — Position 1: Keith Scully\nLegislative District 32 State Representative — Position 2: Imraan Siddiqi\nLegislative District 34 State Representative — Position 2: Joe Fitzgibbon\nLegislative District 36 State Representative — Position 1: Julia Grant Reed\nLegislative District 36 State Representative — Position 2: Liz Berry\nLegislative District 36 State Senator: Noel C. Frame\nLegislative District 43 State Representative — Position 1: Nicole Macri\nLegislative District 43 State Representative — Position 2: Shaun Scott\nLegislative District 43 State Senator: Jamie Pedersen\nLegislative District 46 State Representative — Position 1: Will Dreher\nLegislative District 46 State Representative — Position 2: Darya Farivar\nU.S. Representative — Congressional District 9: Explicit no endorsement\nLegislative District 32 State Senator: Explicit no endorsement"
+}

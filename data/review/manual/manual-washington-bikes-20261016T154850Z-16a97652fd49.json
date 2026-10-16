@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-bikes-20261016T145957Z-415e3b0b1a5d",
+  "entered_at": "2026-10-16T15:48:50.280092Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; 2026 General Election Endorsements → Congress table; Pramila Jayapal D7 US Representative.; 2026 General Election Endorsements → Congress table; Adam Smith D9 US Representative.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-bikes-20261016T154850Z-16a97652fd49",
+  "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Immutable pending predecessor: manual-washington-bikes-20261016T151515Z-09a12a165d38.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T15:48:50.280092Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "transcription": "U.S. Representative — Congressional District 7: Pramila Jayapal\nU.S. Representative — Congressional District 9: Adam Smith"
+}

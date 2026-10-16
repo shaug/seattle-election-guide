@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1565164,
+  "canonical_url": "https://www.protec17.org/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "64b6c915ac93478d63c15cadf6885bf1fd3b11d7b01bfbcb3d969bbf7c28aa8b",
+  "http_status": 200,
+  "id": "capture-protec17-20261016T145942Z-42e57c8e21d1",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.protec17.org/endorsements/",
+  "retrieved_at": "2026-10-16T14:59:42.814677Z",
+  "schema_version": "1.0",
+  "source_id": "protec17",
+  "storage_reference": "sha256/64/64b6c915ac93478d63c15cadf6885bf1fd3b11d7b01bfbcb3d969bbf7c28aa8b",
+  "storage_scope": "local_only",
+  "title": "PROTEC17 current official endorsement publication",
+  "updated_at": null
+}
