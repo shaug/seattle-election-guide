@@ -196,7 +196,10 @@ class AdmissionAPI:
             "status": "in_progress",
             "conclusion": None,
             "repository": {"full_name": "owner/repository"},
+            "run_started_at": "2026-10-16T12:00:00Z",
         }
+        self.latest_run: dict[str, Any] | None = None
+        self.attempt_runs: dict[int, dict[str, Any]] = {}
         self.jobs: list[dict[str, Any]] = [
             {"name": name, "head_sha": sha, "status": "completed", "conclusion": "success"}
             for name in (
@@ -220,7 +223,10 @@ class AdmissionAPI:
         if endpoint.endswith("/jobs?per_page=100"):
             return json.dumps([{"jobs": self.jobs}])
         if "/attempts/" in endpoint:
-            return json.dumps(self.run)
+            attempt = int(endpoint.rsplit("/", 1)[1])
+            return json.dumps(self.attempt_runs.get(attempt, self.run))
+        if endpoint.endswith("/actions/runs/100"):
+            return json.dumps(self.latest_run if self.latest_run is not None else self.run)
         if "actions/workflows/ci.yml/runs?" in endpoint:
             return json.dumps([{"workflow_runs": [self.run]}])
         raise AssertionError(endpoint)
@@ -293,6 +299,7 @@ def artifact_metadata(record: Any, artifact: Any) -> dict[str, Any]:
         "size_in_bytes": artifact.digest.size,
         "digest": "sha256:" + artifact.digest.sha256,
         "expired": True,
+        "created_at": "2026-10-16T12:30:00Z",
         "workflow_run": {
             "id": record.producer.run_id,
             "head_sha": record.producer.workflow_sha,
@@ -649,7 +656,26 @@ def test_no_historical_success_substitutes_for_captured_current_run(
 
 
 @pytest.mark.parametrize(
-    "condition", ["healthy", "wrong-download", "wrong-attempt", "service-failure"]
+    "condition",
+    [
+        "healthy",
+        "wrong-download",
+        "wrong-attempt",
+        "service-failure",
+        "earlier-attempt-artifact",
+        "later-attempt-artifact",
+        "lower-bound",
+        "upper-inside",
+        "created-missing",
+        "created-naive",
+        "created-malformed",
+        "started-missing",
+        "started-naive",
+        "next-started-missing",
+        "next-before-current",
+        "latest-before-claimed",
+        "latest-start-conflict",
+    ],
 )
 def test_captured_artifact_download_is_verified_without_fallback(
     promotion_setup: tuple[Any, ...], monkeypatch: pytest.MonkeyPatch, condition: str
@@ -694,6 +720,46 @@ def test_captured_artifact_download_is_verified_without_fallback(
     admission_api = AdmissionAPI(record.source_sha)
     if condition == "wrong-attempt":
         admission_api.run["run_attempt"] = 1
+    admission_api.attempt_runs[1] = {
+        **admission_api.run,
+        "run_attempt": 1,
+        "run_started_at": "2026-10-16T11:00:00Z",
+    }
+    if condition in {
+        "later-attempt-artifact",
+        "upper-inside",
+        "next-started-missing",
+        "next-before-current",
+    }:
+        third = {**admission_api.run, "run_attempt": 3, "run_started_at": "2026-10-16T13:00:00Z"}
+        admission_api.latest_run = third.copy()
+        admission_api.attempt_runs[3] = third
+        if condition == "next-started-missing":
+            third.pop("run_started_at")
+        elif condition == "next-before-current":
+            third["run_started_at"] = "2026-10-16T11:00:00Z"
+    elif condition == "latest-before-claimed":
+        admission_api.latest_run = admission_api.attempt_runs[1]
+    elif condition == "latest-start-conflict":
+        admission_api.latest_run = {**admission_api.run, "run_started_at": "2026-10-16T11:59:00Z"}
+    if condition == "started-missing":
+        admission_api.run.pop("run_started_at")
+    elif condition == "started-naive":
+        admission_api.run["run_started_at"] = "2026-10-16T12:00:00"
+    allowed = {"healthy", "lower-bound", "upper-inside"}
+    time_failures = {
+        "earlier-attempt-artifact",
+        "later-attempt-artifact",
+        "created-missing",
+        "created-naive",
+        "created-malformed",
+        "started-missing",
+        "started-naive",
+        "next-started-missing",
+        "next-before-current",
+        "latest-before-claimed",
+        "latest-start-conflict",
+    }
 
     def api(command: list[str], failure: str) -> str:
         if "/actions/artifacts/" in command[2]:
@@ -701,10 +767,26 @@ def test_captured_artifact_download_is_verified_without_fallback(
                 raise ValueError("could not read release admission: unavailable (HTTP 503)")
             metadata = artifact_metadata(record, refs[int(command[2].rsplit("/", 1)[1])])
             metadata["expired"] = False
+            if condition == "earlier-attempt-artifact":
+                metadata["created_at"] = "2026-10-16T11:30:00Z"
+            elif condition == "later-attempt-artifact":
+                metadata["created_at"] = "2026-10-16T13:00:00Z"
+            elif condition == "lower-bound":
+                metadata["created_at"] = "2026-10-16T12:00:00Z"
+            elif condition == "upper-inside":
+                metadata["created_at"] = "2026-10-16T12:59:59Z"
+            elif condition == "created-missing":
+                metadata.pop("created_at")
+            elif condition == "created-naive":
+                metadata["created_at"] = "2026-10-16T12:30:00"
+            elif condition == "created-malformed":
+                metadata["created_at"] = "not a timestamp"
             return json.dumps(metadata)
         return admission_api(command, failure)
 
     def download(command: list[str], destination: Path, failure: str) -> None:
+        if condition in time_failures:
+            pytest.fail("attempt-conflicting artifacts must be rejected before downloads")
         artifact_id = int(command[2].split("/")[-2])
         destination.write_bytes(
             b"wrong bytes" if condition == "wrong-download" else wrappers[artifact_id]
@@ -739,7 +821,7 @@ def test_captured_artifact_download_is_verified_without_fallback(
     monkeypatch.setattr(candidate, "resolve_release", resolve)
     monkeypatch.setattr(promotion, "_run", no_build)
     output = root / "dist/recovery"
-    if condition == "healthy":
+    if condition in allowed:
         recovered = promotion.recover_candidate(record, repository=root, work_dir=output)
         assert recovered.read_bytes() == archive.read_bytes()
         assert (output / "cloudflare-site/deployment-manifest.json").read_bytes() == (

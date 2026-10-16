@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import zipfile
+from datetime import datetime
 from pathlib import Path, PurePosixPath
 from typing import Any, cast
 
@@ -137,10 +138,7 @@ def verify_merged_release_relation(repository: Path, *, source_sha: str) -> int:
     return _merged_pr(repository, source_sha)[1]
 
 
-def _producer_run(producer: Producer) -> dict[str, Any]:
-    run = _read(
-        f"repos/{producer.repository}/actions/runs/{producer.run_id}/attempts/{producer.run_attempt}"
-    )
+def _require_producer_run(producer: Producer, run: dict[str, Any]) -> None:
     if (
         run.get("id") != producer.run_id
         or run.get("run_attempt") != producer.run_attempt
@@ -152,7 +150,56 @@ def _producer_run(producer: Producer) -> dict[str, Any]:
         != producer.repository
     ):
         raise ValueError("artifact producer or exact-source CI run identity differs")
+
+
+def _producer_run(producer: Producer) -> dict[str, Any]:
+    run = _read(
+        f"repos/{producer.repository}/actions/runs/{producer.run_id}/attempts/{producer.run_attempt}"
+    )
+    _require_producer_run(producer, run)
     return run
+
+
+def _timestamp(value: Any) -> datetime:
+    if not isinstance(value, str):
+        raise ValueError("artifact attempt evidence requires timezone-aware timestamps")
+    try:
+        timestamp = datetime.fromisoformat(value)
+    except ValueError as error:
+        raise ValueError("artifact attempt evidence contains a malformed timestamp") from error
+    if timestamp.tzinfo is None or timestamp.utcoffset() is None:
+        raise ValueError("artifact attempt evidence requires timezone-aware timestamps")
+    return timestamp
+
+
+def _require_artifact_attempt(metadata: dict[str, Any], producer: Producer) -> None:
+    started = _timestamp(_producer_run(producer).get("run_started_at"))
+    created = _timestamp(metadata.get("created_at"))
+    # The current attempt supplies interval boundaries only. Artifact selection
+    # always uses the captured ID, including when later attempts now exist.
+    latest = _read(f"repos/{producer.repository}/actions/runs/{producer.run_id}")
+    latest_attempt = latest.get("run_attempt")
+    if type(latest_attempt) is not int or latest_attempt < producer.run_attempt:
+        raise ValueError("artifact attempt boundaries are unverifiable")
+    _require_producer_run(producer.model_copy(update={"run_attempt": latest_attempt}), latest)
+    latest_started = _timestamp(latest.get("run_started_at"))
+    if (
+        created < started
+        or (latest_attempt == producer.run_attempt and latest_started != started)
+        or (latest_attempt > producer.run_attempt and latest_started <= started)
+    ):
+        raise ValueError("artifact creation differs from captured producing attempt")
+    if latest_attempt > producer.run_attempt:
+        next_attempt = producer.run_attempt + 1
+        next_run = _producer_run(producer.model_copy(update={"run_attempt": next_attempt}))
+        next_started = _timestamp(next_run.get("run_started_at"))
+        if (
+            next_started <= started
+            or next_started > latest_started
+            or (next_attempt == latest_attempt and next_started != latest_started)
+            or created >= next_started
+        ):
+            raise ValueError("artifact creation differs from captured producing attempt")
 
 
 def verify_source_ci(producer: Producer) -> None:
@@ -227,7 +274,7 @@ def _artifact_available(reference: ArtifactRef) -> bool:
         or workflow.get("head_branch") != "main"
     ):
         raise ValueError("artifact metadata differs from captured identity")
-    _producer_run(reference.producer)
+    _require_artifact_attempt(metadata, reference.producer)
     observed = ArtifactRef(
         id=metadata["id"],
         name=metadata["name"],
