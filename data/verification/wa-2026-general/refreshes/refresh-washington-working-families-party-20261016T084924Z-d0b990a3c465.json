@@ -1,0 +1,13 @@
+{
+  "capture_id": "capture-washington-working-families-party-20261016T051130Z-b0352434eded",
+  "checked_at": "2026-10-16T08:49:24Z",
+  "content_changed": true,
+  "diff": [],
+  "error": "adapter requires exactly one publication section and capture group",
+  "id": "refresh-washington-working-families-party-20261016T084924Z-d0b990a3c465",
+  "previous_snapshot_id": null,
+  "schema_version": "1.0",
+  "snapshot_id": null,
+  "source_id": "washington-working-families-party",
+  "status": "failed"
+}
