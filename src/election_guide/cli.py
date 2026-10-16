@@ -123,6 +123,7 @@ from election_guide.release import (
     verify_release_compilation,
     verify_release_lineage,
 )
+from election_guide.release.automation_cli import app as release_automation_app
 from election_guide.rendering import build_rendered_guide
 from election_guide.results.ingest import (
     ResultsIngestError,
@@ -193,6 +194,7 @@ app.add_typer(review_app, name="review")
 app.add_typer(export_app, name="export")
 app.add_typer(render_app, name="render")
 app.add_typer(release_app, name="release")
+release_app.add_typer(release_automation_app, name="automation")
 app.add_typer(collect_app, name="collect")
 app.add_typer(verification_app, name="verification")
 app.add_typer(hosting_app, name="hosting")

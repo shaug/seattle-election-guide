@@ -357,3 +357,42 @@ record the replacement run/artifact. Never substitute the newer `main` head. Pro
 automatically after CI passes on `main` when `CLOUDFLARE_PAGES_ENABLED` is `true`, as described in
 [HOSTING.md](HOSTING.md). There is no separate approval step. The deployment job still requires
 every declared release to be published before upload and verifies the served commit afterward.
+
+## Prepare a reviewed publication request
+
+Issue #550 adds declaration preparation and admission before the automatic publisher is
+activated. The manual upload sequence above remains the publication path during this transition;
+the existing `.8` declaration remains readable without a request.
+
+After compiling reviewed inputs, prepare the local current declaration:
+
+```bash
+uv run election-guide release automation prepare --issue 550
+uv run election-guide release automation resolve
+```
+
+Preparation captures remote main's full SHA once, reads the declaration at that revision, and
+reads all remote tag and release names, including draft release reservations. It selects the next
+numeric election-scoped version above main and every occupied version. Repeating preparation
+retains a higher unpublished proposal only for the same issue and previous published revision. It refreshes the derived panel and complete-registry
+identities and binds the exact ledger, canonical-dataset, and registry file bytes with SHA-256.
+Formatting-only changes to those files therefore require preparation again. It changes only the
+current election declaration; archived declarations and their release pins remain intact.
+The previous published tag is resolved from remote state to a full commit and must be an
+ancestor of the checkout. Preparation fetches that exact object if it is missing locally.
+Preparation does not imply editorial or baseline approval.
+
+Commit the reviewed declaration and its inputs together. Admission checks exact Git objects:
+
+```bash
+uv run election-guide release automation validate-request --base-sha FULL_BASE_SHA
+```
+
+Use a clean tracked checkout and the full comparison-base SHA. Admission rejects stale input
+bindings and requires a fresh request with a version increment for changes under `src/`, `data/`,
+`config/`, `scripts/`, or `.github/workflows/`, or to `Makefile`, `cliff.toml`, `pyproject.toml`,
+`uv.lock`, `package.json`, `package-lock.json`, `wrangler.jsonc`, or `wrangler.toml`. This is a
+conservative release policy: even a change in one of those paths that appears unrelated to the
+rendered guide needs a declaration. A documentation/test-only change with an unchanged declaration
+does not request a release. An absent request supports historical reading and never authorizes
+automatic publication.
