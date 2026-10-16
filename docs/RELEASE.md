@@ -101,7 +101,7 @@ Use a stable version, the commit timestamp, and the full Git revision:
 ```bash
 uv run election-guide release build \
   data/releases/wa-2026-general/source-decisions.yaml \
-  --release-version 2026-general.8 \
+  --release-version 2026-general.9 \
   --generated-at "$(git show -s --format=%cI HEAD)" \
   --git-commit "$(git rev-parse HEAD)" \
   --output-dir dist/general-release \
@@ -139,7 +139,7 @@ commands are protected against documentation drift:
 ```bash
 make release-verify
 make check-release-reproducible
-unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.8.zip
+unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.9.zip
 test -f dist/reproducibility-a/bundle/RELEASE_NOTES.md
 test -f dist/reproducibility-a/bundle/validation/rendering/rendering_validation_report.json
 test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/desktop.png
@@ -148,9 +148,12 @@ test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/mobile.pn
 
 Read the notes and rendering report and inspect both screenshots before publication. Record the
 full `release_candidate_sha`, the ZIP SHA-256 and size, and the source-registry, canonical-dataset,
-and source-decision-ledger SHA-256 values. For `2026-general.8`, compare the last three with the reviewed input hashes in
-[the October 16 verification follow-up](GENERAL_VERIFICATION_REMAINING_2026-10-16.md#reviewed-input-bindings);
-a mismatch stops publication rather than creating a new interpretation here. The immutable
+and source-decision-ledger SHA-256 values. For `2026-general.9`, compare the last three with the reviewed input hashes in
+[the Updates publication record](UPDATES_RELEASE_2026-10-16.md#reviewed-input-bindings);
+a mismatch stops publication rather than creating a new interpretation here. The published
+`2026-general.8` archive remains bound to `a1a83b5f1c09d7297a6100e3ac321b0e5034bf52`,
+with ZIP SHA-256 `d1e7d9edc9b98f4ecfe1adaacaa963cced1a85f185b4c8705543c7d2444f1f56`.
+The immutable
 `2026-general.7` archive contains the prior 878-decision application at
 `20e80b74dc5b2e85807f88c2327bfe74aac7207d`. Its ZIP SHA-256 remains
 `1bf48677dfc0a1f7b1cfffc5dc2d224e291f87227fbfadf4b39a73a26f9db042`; do not replace
@@ -192,7 +195,7 @@ macOS equivalence for a release pipeline that is deployed only from Linux.
 
 ## Post-tag release lineage
 
-Publishing `2026-general.8` and then committing the generated changelog creates two intentional
+Publishing `2026-general.9` and then committing the generated changelog creates two intentional
 commit identities. The published archive remains bound to `release_candidate_sha`; the general
 bundle staged for production is rebuilt from the later `production_candidate_sha`. Verify that
 narrow boundary before handing the production bundle to `hosting stage`:
@@ -200,7 +203,7 @@ narrow boundary before handing the production bundle to `hosting stage`:
 <!-- runbook-command:verify-lineage -->
 ```bash
 uv run election-guide release verify-lineage \
-  dist/downloaded/seattle-election-guide-2026-general.8.zip \
+  dist/downloaded/seattle-election-guide-2026-general.9.zip \
   dist/reproducibility-a/bundle \
   "$release_candidate_sha" \
   "$production_candidate_sha" \
@@ -237,8 +240,8 @@ Before changing GitHub, inspect the tag, release record, and full asset list sep
 
 <!-- runbook-command:release-preflight -->
 ```bash
-git ls-remote --tags origin refs/tags/2026-general.8 refs/tags/2026-general.8^{}
-gh release view 2026-general.8 \
+git ls-remote --tags origin refs/tags/2026-general.9 refs/tags/2026-general.9^{}
+gh release view 2026-general.9 \
   --json url,tagName,targetCommitish,isDraft,isPrerelease,name,body,assets
 ```
 
@@ -257,9 +260,9 @@ For a permitted create, use the bundled notes and attach the one versioned ZIP:
 
 <!-- runbook-command:release-create -->
 ```bash
-gh release create 2026-general.8 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.8.zip \
-  --title "Seattle 2026 general election endorsement guide — 2026-general.8" \
+gh release create 2026-general.9 \
+  dist/reproducibility-a/seattle-election-guide-2026-general.9.zip \
+  --title "Seattle 2026 general election endorsement guide — 2026-general.9" \
   --notes-file dist/reproducibility-a/bundle/RELEASE_NOTES.md \
   --target "$release_candidate_sha"
 ```
@@ -269,8 +272,8 @@ list is empty, upload the canonical ZIP without `--clobber`:
 
 <!-- runbook-command:release-upload -->
 ```bash
-gh release upload 2026-general.8 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.8.zip
+gh release upload 2026-general.9 \
+  dist/reproducibility-a/seattle-election-guide-2026-general.9.zip
 ```
 
 The omitted `--clobber` is deliberate. If another operator creates an asset after the preflight,
@@ -279,25 +282,25 @@ state.
 
 After upload, use `gh release view` again to prove the release is published, non-draft,
 non-prerelease, and has exactly one asset named
-`seattle-election-guide-2026-general.8.zip`. Record the release URL and the asset ID, name, and size.
+`seattle-election-guide-2026-general.9.zip`. Record the release URL and the asset ID, name, and size.
 Download that exact asset through the Release API, rather than accepting a similarly named local
 file, then verify the bytes and tag with the protected command below:
 
 <!-- runbook-command:verify-published-asset -->
 ```bash
 mkdir -p dist/downloaded
-test ! -e dist/downloaded/seattle-election-guide-2026-general.8.zip
-gh release download 2026-general.8 \
-  --pattern seattle-election-guide-2026-general.8.zip \
+test ! -e dist/downloaded/seattle-election-guide-2026-general.9.zip
+gh release download 2026-general.9 \
+  --pattern seattle-election-guide-2026-general.9.zip \
   --dir dist/downloaded
 local_release_digest="$(shasum -a 256 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.8.zip | awk '{print $1}')"
+  dist/reproducibility-a/seattle-election-guide-2026-general.9.zip | awk '{print $1}')"
 downloaded_release_digest="$(shasum -a 256 \
-  dist/downloaded/seattle-election-guide-2026-general.8.zip | awk '{print $1}')"
+  dist/downloaded/seattle-election-guide-2026-general.9.zip | awk '{print $1}')"
 test "$local_release_digest" = "$downloaded_release_digest"
-unzip -t dist/downloaded/seattle-election-guide-2026-general.8.zip
-git fetch origin tag 2026-general.8
-test "$(git rev-parse '2026-general.8^{commit}')" = "$release_candidate_sha"
+unzip -t dist/downloaded/seattle-election-guide-2026-general.9.zip
+git fetch origin tag 2026-general.9
+test "$(git rev-parse '2026-general.9^{commit}')" = "$release_candidate_sha"
 ```
 
 The digest comparison proves the downloaded archive is byte-for-byte the inspected local archive;
