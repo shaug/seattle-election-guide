@@ -101,14 +101,20 @@ purpose and watch the check fail.
   scripted page now sits at the floor of 1. The scan reads a `<script>` element
   in any case and closed with any trailing whitespace, and registers a
   placeholder written with Jinja whitespace control or a dotted name; each of
-  those forms has a case that fails when its pattern is reverted. One limit is
-  accepted rather than closed: the registry's unit is the whole line, so a
-  `| safe` sharing its line with other content is counted by the ceiling in an
-  ordinary `<script>` — the safe direction — but inside a `type="application/json"`
-  payload, whose lines the ceiling skips, it is read by neither half. Closing it
-  would move the registry's unit from the line to the occurrence; no template
-  writes that form, and `tests/frontend_ratchets.json` says so where a reviewer
-  adding one would look.*
+  those forms has a case that fails when its pattern is reverted. Two limits
+  are accepted in #297: the registry's unit is the whole line, and its
+  expression grammar covers only bare and dotted names, not subscripts, calls,
+  or arbitrary Jinja expressions. A `| safe` sharing a line with other content,
+  or `{{ obj["x"] | safe }}`, counts toward the ceiling in an ordinary
+  `<script>`, but inside a `type="application/json"` payload it is read by
+  neither half. The risk is an unregistered escape from the payload into
+  executable markup. It is acceptable for the current tree because no payload
+  template uses `| safe`: payloads use Jinja's `tojson`, and module injection
+  uses registered whole-line bare names. General Jinja-expression coverage
+  would require parsing occurrences instead of matching lines. A reviewer must
+  reject new `| safe` expressions inside payloads or extend the metric in the
+  same change; the registry does not certify those forms. The same limits are
+  recorded in `tests/frontend_ratchets.json` where an author adding one looks.*
 
 ## Rendering
 
@@ -128,29 +134,56 @@ purpose and watch the check fail.
     unconverted, #248 excluded it, and #136 deleted it with the dialog: race
     detail is a page now, and `race-client.mjs` renders it lit-native from the
     same view models the card uses. Nothing was ported.*
-  - *The Sources link's `href`, written imperatively in `guide-client.mjs`'s
-    `renderChrome` and again in `sources-client.mjs`. #248's convert list
+  - *The Sources links' `href`, written imperatively in `guide-client.mjs`'s
+    `renderChrome`, and the sources editor's Save, Cancel, and Reset hrefs in
+    `sources-client.mjs`. #248's convert list
     promised a lit binding and could not deliver one: a second
     `[data-sources-link]` is rendered by the shared shell band on every page, so
     binding it through lit would give lit shell markup. Behavior is correct and
     tested — both links carry the same live href on every selection and fragment
     change. The same shape covers `lensNotice.hidden` and the other booleans
     projected onto a **region root**, which the takeover idiom keeps as the
-    server's element and so puts out of lit's reach. **Unowned:** the resolution
-    is to convert the strip link and the band together when the shell band moves
-    onto lit, and no ticket says that yet.*
+    server's element and so puts out of lit's reach. **Accepted limitation
+    (#297):** these assignments project one resolved state onto existing
+    elements; they neither duplicate content templates nor replace controls or
+    announcing roots. `guide-client.test.mjs` and `sources-client.test.mjs`
+    exercise link destinations and notices. The residual risk is a new handler
+    updating only one projection, which remains reviewer-applied. Converting
+    the strip link and band together requires changing shell ownership; this
+    exception permits the existing projections, not another independent state.*
   - *`election-day.mjs` writes `innerHTML` from a string built by concatenation
     in `electionDayStatement` — a direct violation of this bullet's last
-    sentence, and the only one in the shipped client. The banner is in-flight
-    from the site-operations epic rather than this one. **Unowned.***
+    sentence, and the only one in the shipped client. **Accepted limitation
+    (#297):** this boot-time write changes one date statement and never replaces
+    a live control or announcing root. Its inputs are publisher-controlled
+    calendar labels and the results URL, plus the reader's clock; no fragment,
+    user text, or network response reaches the markup. `election-day.test.mjs`
+    covers the date branches and the counting/past/certified DOM behavior. The
+    residual risk is treating future external text as trusted markup; a reviewer
+    must require escaped lit bindings before adding such an input. The current
+    bounded inputs make retaining this renderer acceptable.*
   - *Text written straight onto a server-rendered status or notice element:
     `share-link.mjs`'s copy-status line, `race-client.mjs`'s accessible summary,
     `sources-client.mjs`'s `showNotice`, `client-payload.mjs`'s payload notice,
     and `compare-client.mjs`'s scroll hint, status, and notice. These are named
     as a shape rather than a closed list — a `textContent` sweep of the shipped
-    modules is the inventory, and it moves. **Unowned.***
+    modules is the inventory, and it moves. **Accepted limitation (#297):**
+    `textContent` treats messages as text rather than executable markup and
+    preserves the server's announcing element. The page-wiring and share tests
+    cover their reader-visible outcomes; `payload-degradation.test.mjs` now
+    covers the payload notice too. No general sweep enforces lit ownership.
+    The remaining risk is duplicating message selection across handlers, so a
+    reviewer must keep each message derived from its module's resolved state.
+    Retaining these small projections preserves accessibility without a shell
+    ownership change.*
   - *The `createElement` loop in `guide-filters.mjs`'s `apply`, which is a lit
-    template written by hand. **Unowned.***
+    template written by hand. **Accepted limitation (#297):** it replaces only
+    the filter status's child spans, never a focused control or the announcing
+    root. `guide-filters.test.mjs` checks the status text after real control and
+    URL changes. The residual risk is markup drift from its server counterpart;
+    there is no parity assertion for those spans. The loop is bounded to text
+    and two fixed classes, so retaining it is acceptable while a reviewer holds
+    that markup steady. This does not permit another imperative control tree.*
 - **The server renders the complete audited baseline.** Every page stands
   alone for crawlers and readers without JavaScript. Client rendering takes a
   region over only when personalization or interaction requires it; the
@@ -296,23 +329,29 @@ purpose and watch the check fail.
   map between two of our own identifier spaces is a defect in the contract.
   The panel's transport `code` is that identifier: the markup addresses a
   source by code, and no client module translates between code and id.
-  *Reviewer-applied, and deferred beyond this epic — #245's disposition, so the
-  bullet does not read as done. The rule holds for the surface the client
-  actually addresses: `tests/test_shared_names.py` catches an identifier that
-  gains or loses a surface, and `tsc --checkJs` catches a client module reading
-  a payload field that is gone. What no check states is the negative — that no
-  translation map exists — and one place still needs one. The personalization
+  *Reviewer-applied, with an accepted limitation (#297). The rule holds for
+  the surface the client actually addresses: `tests/test_shared_names.py`
+  catches an identifier that gains or loses a surface, and `tsc --checkJs`
+  catches a client module reading a payload field that is gone. What no check
+  states is the negative — that no translation map exists. The personalization
   contract the payload inlines carries its internal ids, including
   `retired_codes[].former_id`, which the migration resolvers read, and its
   `sources` overlap the payload's own code-only list. Narrowing that inlined
-  contract to codes is real work on the publication models, not a rename, and
-  **no ticket owns it.** A reviewer's job here is to refuse a *new* translation
-  map; the existing one is recorded, not blessed.*
+  contract to codes is real work on the publication models, not a rename.
+  Retaining it is acceptable because those ids are published metadata, not a
+  second address space for DOM targets or current source selections; migration
+  resolvers retain former ids to explain retired codes in old links. The
+  generated payload types and the lens/compare migration tests hold the current
+  consumers to that contract. Residual risk is a new consumer using an internal
+  id to address a source or adding a code/id translation map. Reviewers must
+  reject that use; narrowing the shared publication model requires its own
+  contract and migration change. This exception covers the existing metadata
+  fields, not a new client identifier space.*
 - **The payload is typed from the Pydantic models.** The publication view
   model emits JSON Schema; the build generates TypeScript declarations from
   it; client modules are checked against them (`tsc --checkJs`). A Python
   model change that breaks a client consumer fails `make check`.
-  *Check: partial — `rendering/payload.py` models the three page payloads and
+  *Check: partial — `rendering/payload.py` models the four page payloads and
   renders `templates/types/client-payload.d.ts` from their schema (`make
   types`); `tests/test_client_payload_types.py` fails when the committed
   declarations are not what the models generate, and `tsc --checkJs` holds
@@ -333,14 +372,15 @@ purpose and watch the check fail.
   reveal can be dropped silently.
   `tests/test_client_payload_types.py` requires every page payload to declare
   `schema_version` and holds the client's own literal to the Python constant,
-  so a version bump cannot ship a build that refuses its own payload. What
-  runs unexercised is the reveal itself — `readClientPayload` writing the
-  notice, and the entry throwing. The lightweight DOM this was waiting on has
-  landed (#238, Testing below), so what remains is an unwritten test rather
-  than a missing capability. #236 closed without filing that follow-up, and
-  #245 records the deferral rather than smuggling the test in: **unowned**, one
-  test away, and the gap is precisely that a payload the client refuses is
-  proven refused but not proven to say so.*
+  so a version bump cannot ship a build that refuses its own payload.
+  `payload-degradation.test.mjs` exercises the reveal for absent, malformed,
+  unversioned, and future-versioned payloads and the throwing admission helper.
+  It boots all four real audited page fixtures with a future schema, asserts
+  that the same notice becomes visible, and holds each page's audited content
+  region to its original child identities and markup. Guide, Sources, and Race
+  stop by throwing; Comparisons returns before enhancing its table. That covers
+  the previously unexercised reveal and page admission boundary (#297). This is
+  DOM behavior coverage, not an assertion about the notice's visual layout.*
 
 ## State and URLs
 
@@ -648,12 +688,18 @@ purpose and watch the check fail.
   logic. `tests/js/support/dom.mjs` installs the DOM; a test that needs one
   calls it rather than building its own, so there is one answer to what a
   client module may assume exists.
-  *Check: exists for the single-installer clause — `module-guards.test.mjs`
-  sweeps every Node test and support file for an import of the DOM package,
-  static or dynamic, and fails on any but `support/dom.mjs`. It reads import
-  specifiers rather than text, because a textual scan for the package name
-  matched the scanner, and the fix for that is not to exempt the scanner. Which
-  render functions have fixtures is not counted; the parity harnesses above are
+  *Check: partial for the single-installer clause — Biome's
+  `style.noRestrictedImports` in `biome.json` forbids `happy-dom` and its
+  subpaths in `tests/js/**/*.mjs`, with only the exact `support/dom.mjs`
+  installer exempt. It reads the JavaScript AST rather than a hand-written
+  scanner (#297), and runs first in `make check-js`.
+  `dom-import-policy.test.mjs` runs the installed Biome CLI with this policy
+  against static, literal dynamic, side-effect, and re-export imports in a
+  deeply nested test, and proves a nested `support/nested/dom.mjs` is not exempt.
+  Mentions in prose and calls through the installer remain allowed. Computed dynamic
+  specifiers are outside this rule; reviewers must refuse a computed import
+  that bypasses the installer. Which render functions have fixtures is not
+  counted; the parity harnesses above are
   what make the rendered ones checkable.*
 - **Every discipline in this document that can be checked, is checked, in
   `make check`.** A rule without a check carries a `Reviewer-applied:`
