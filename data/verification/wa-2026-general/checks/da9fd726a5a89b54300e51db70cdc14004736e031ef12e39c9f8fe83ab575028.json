@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-16T18:21:36.240131Z",
+  "event_id": null,
+  "evidence": "shaug: data/review/approvals/wa-2026-general-2026-10-16-stranger-verification.json; capture capture-the-stranger-20261016T171638Z-5350ac91acac; verified manual manual-the-stranger-20261016T182136Z-cad341536652; 31 unchanged Seattle decisions from the user-supplied PDF.",
+  "mode": "human",
+  "scheduled_for": "2026-10-16",
+  "source_id": "the-stranger",
+  "status": "manual"
+}

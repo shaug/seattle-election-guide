@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 356,
+  "canonical_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "6dbb5c526c901f3850f92dad0adccdd588f46e3e52fab61cc24fba9bcd1337f3",
+  "http_status": null,
+  "id": "capture-washington-conservation-action-20261016T182136Z-759c19d97476",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Browser-visible short factual excerpt manually preserved after inspection of the official page. Not original response HTML. Import time records custody; no HTTP status, redirects, publication or update date asserted.",
+  "requested_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "retrieved_at": "2026-10-16T18:21:36.240131Z",
+  "schema_version": "1.0",
+  "source_id": "washington-conservation-action",
+  "storage_reference": "sha256/6d/6dbb5c526c901f3850f92dad0adccdd588f46e3e52fab61cc24fba9bcd1337f3",
+  "storage_scope": "local_only",
+  "title": "2026 Endorsements — corrected WCA measure heading, manually preserved browser excerpt",
+  "updated_at": null
+}

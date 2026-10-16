@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-education-association-20261016T182408Z-d84b192582e3",
+  "entered_at": "2026-10-16T18:26:39.551180Z",
+  "entry_method": "manual",
+  "evidence_locator": "Supplied PDF page 1; WEA initiative, Supreme Court and legislative lists; separately labeled NEA-PAC congressional list. All Seattle rows compared with the prior ledger.",
+  "evidence_type": "pdf",
+  "id": "manual-washington-education-association-20261016T182639Z-695ef44a83b4",
+  "review_note": "Issue #545: shaug approved \"Approve WEA addition and PDF verification\": Ashley Fedan, LD11 House Position 1, plus verification of the 19 unchanged source/race decisions in the supplied PDF. The LD32 House Position 1 dual remains 1/2 each. The two congressional rows remain explicitly attributed to NEA-PAC and keep their existing approved WEA ledger treatment; no new attribution interpretation is made. The user confirmed \"that was from a live browser view. i just needed to click past the modal\". The agent reviewed the supplied saved PDF and did not make a WEA membership certification. OpenAI Codex is the transcriber; shaug is the human verifier. See data/review/approvals/wa-2026-general-2026-10-16-wea-pdf.json. No automatic baseline or whole-panel attestation is asserted.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T18:26:39.551180Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-education-association",
+  "transcription": "WEA Position on Ballot Initiatives | IL26-001: No\nWEA Position on Ballot Initiatives | IL26-638: No\nWEA Position on Ballot Initiatives | IL26-645: No\nWEA-PAC Endorsed Supreme Court Candidates | Pos. 1: Colleen Melody\nWEA-PAC Endorsed Supreme Court Candidates | Pos. 3: Jaime Michelle Hawk\nWEA-PAC Endorsed Supreme Court Candidates | Pos. 4: Ian Birk\nWEA-PAC Endorsed Supreme Court Candidates | Pos. 5: Theo Angelis\nWEA-PAC Endorsed Supreme Court Candidates | Pos. 7: Debra Stephens\nNEA-PAC Endorsed Congressional Candidates | U.S. House, District 7: Pramila Jayapal\nNEA-PAC Endorsed Congressional Candidates | U.S. House, District 9: Adam Smith\nWEA-PAC Endorsed Legislative Candidates | LD 11 State Rep. Pos. 1: Ashley Fedan\nWEA-PAC Endorsed Legislative Candidates | LD 32 State Rep. Pos. 1: Danica Noble (dual)\nWEA-PAC Endorsed Legislative Candidates | LD 32 State Rep. Pos 1: Keith Scully (dual)\nWEA-PAC Endorsed Legislative Candidates | LD 32 State Rep Pos. 2: Lauren Davis\nWEA-PAC Endorsed Legislative Candidates | LD 32 State Senate: Cindy Ryu\nWEA-PAC Endorsed Legislative Candidates | LD 34 State Rep. Pos. 2: Joe Fitzgibbon\nWEA-PAC Endorsed Legislative Candidates | LD 37 State Rep. Pos. 1: Kelabe Tewolde\nWEA-PAC Endorsed Legislative Candidates | LD 37 State Rep. Pos. 2: Jaelynn Scott\nWEA-PAC Endorsed Legislative Candidates | LD 37 State Senate: Chipalo Street\nWEA-PAC Endorsed Legislative Candidates | LD 43 State Senator: Jamie Pedersen\nWEA-PAC Endorsed Legislative Candidates | LD 46 State Rep Pos. 1: Gerry Pollet"
+}

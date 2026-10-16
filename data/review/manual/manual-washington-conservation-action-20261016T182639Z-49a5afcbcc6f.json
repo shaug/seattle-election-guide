@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-conservation-action-20261016T182136Z-759c19d97476",
+  "entered_at": "2026-10-16T18:26:39.551180Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official page; 2026 Endorsements > Statewide Races > Initiatives > NO on IL26-638 heading.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-conservation-action-20261016T182639Z-49a5afcbcc6f",
+  "review_note": "Issue #545: shaug approved the exact one-decision proposal with \"Approve the WCA addition\". The current official browser-visible 2026 page now explicitly prints NO on IL26-638; the earlier IL26-368 text remains historical and no typo override is needed. Only initiative-26-638 is newly verified by this approval. The 25 retained decisions keep their prior review provenance. OpenAI Codex is the transcriber; shaug is the human verifier. See data/review/approvals/wa-2026-general-2026-10-16-wca-corrected-measure.json. No automatic baseline or whole-panel attestation is asserted.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T18:26:39.551180Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-conservation-action",
+  "transcription": "2026 Endorsements > Statewide Races > Initiatives: NO on IL26-638."
+}

@@ -1,0 +1,1222 @@
+{
+  "approval_text": "let's mark the Stranger as verified and go through the remaining unknowns",
+  "approved_decisions": [
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: United States Representative | Congressional District 7",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: U.S. Representative — Congressional District 7; Pramila Jayapal. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "us-house-7"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "us-house-7",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "United States Representative | Congressional District 7",
+      "source_name": "Pramila Jayapal",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: United States Representative | Congressional District 9",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: U.S. Representative — Congressional District 9; Adam Smith. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "us-house-9"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "us-house-9",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "United States Representative | Congressional District 9",
+      "source_name": "Adam Smith",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 11 | State Representative Position No. 1",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-11-state-representative-1--ashley-fedan"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-11-state-representative-1--ashley-fedan"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 11 State Representative — Position 1; Ashley Fedan. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-11-state-representative-1"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-11-state-representative-1--ashley-fedan"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-11-state-representative-1",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 11 | State Representative Position No. 1",
+      "source_name": "Ashley Fedan",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 32 | State Representative Position No. 1",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-1--keith-scully"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-representative-1--keith-scully"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 32 State Representative — Position 1; Keith Scully. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-32-state-representative-1"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-1--keith-scully"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-32-state-representative-1",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 32 | State Representative Position No. 1",
+      "source_name": "Keith Scully",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 32 | State Senator",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 32 State Senator; Cindy Ryu. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-32-state-senator"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-32-state-senator",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 32 | State Senator",
+      "source_name": "Cindy Ryu",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 32 | State Representative Position No. 2",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 32 State Representative — Position 2; Imraan Siddiqi. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-32-state-representative-2"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-32-state-representative-2",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 32 | State Representative Position No. 2",
+      "source_name": "Imraan Siddiqi",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 34 | State Representative Position No. 2",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 34 State Representative — Position 2; Joe Fitzgibbon. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-34-state-representative-2"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-34-state-representative-2",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 34 | State Representative Position No. 2",
+      "source_name": "Joe Fitzgibbon",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 36 | State Senator",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 36 State Senator; Noel C. Frame. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-36-state-senator"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-36-state-senator",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 36 | State Senator",
+      "source_name": "Noel Frame",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 37 | State Senator",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 37 State Senator; Chipalo Street. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-37-state-senator"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-37-state-senator",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 37 | State Senator",
+      "source_name": "Chipalo Street",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 37 | State Representative Position No. 1",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 37 State Representative — Position 1; Kelabe Tewolde. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-37-state-representative-1"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-37-state-representative-1",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 37 | State Representative Position No. 1",
+      "source_name": "Kelabe Tewolde",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 37 | State Representative Position No. 2",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 37 State Representative — Position 2; Jaelynn Scott. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-37-state-representative-2"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-37-state-representative-2",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 37 | State Representative Position No. 2",
+      "source_name": "Jaelynn Scott",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 43 | State Senator",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 43 State Senator; Jamie Pedersen. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-43-state-senator"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-43-state-senator",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 43 | State Senator",
+      "source_name": "Jamie Pedersen",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 43 | State Representative Position No. 1",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 43 State Representative — Position 1; Nicole Macri. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-43-state-representative-1"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-43-state-representative-1",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 43 | State Representative Position No. 1",
+      "source_name": "Nicole Macri",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 46 | State Senator",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 46 State Senator; Javier Valdez. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-46-state-senator"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-46-state-senator",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 46 | State Senator",
+      "source_name": "Javier Valdez",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 46, | State Representative Position No. 1",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-1--will-dreher"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-representative-1--will-dreher"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 46 State Representative — Position 1; Will Dreher. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-46-state-representative-1"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-1--will-dreher"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-46-state-representative-1",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 46, | State Representative Position No. 1",
+      "source_name": "Will Dreher",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Legislative District No. 46 | State Representative Position No. 2",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Legislative District 46 State Representative — Position 2; Darya Farivar. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "ld-46-state-representative-2"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-46-state-representative-2",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Legislative District No. 46 | State Representative Position No. 2",
+      "source_name": "Darya Farivar",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Assessor",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-assessor--rob-foxcurran"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "king-county-assessor--rob-foxcurran"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: King County Assessor; Rob Foxcurran. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "king-county-assessor"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-assessor--rob-foxcurran"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "king-county-assessor",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Assessor",
+      "source_name": "Rob Foxcurran",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Metropolitan King County | Council District No. 2",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Metropolitan King County Council — District 2; Rebecca Saldaña. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "king-county-council-2"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "king-county-council-2",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Metropolitan King County | Council District No. 2",
+      "source_name": "Rebecca Saldaña",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Metropolitan King County | Council District No. 8",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Metropolitan King County Council — District 8; Teresa Mosqueda. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "king-county-council-8"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "king-county-council-8",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Metropolitan King County | Council District No. 8",
+      "source_name": "Teresa Mosqueda",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: State Supreme Court | Supreme Court, Justice Position No. 1",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 1; Colleen Melody. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "supreme-court-justice-1"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-1",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "State Supreme Court | Supreme Court, Justice Position No. 1",
+      "source_name": "Colleen Melody",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Supreme Court | Justice Position No. 3",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 3; Jaime Michelle Hawk. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0. Explicit label mapping approved; see #508 approval record.",
+        "race_id": "supreme-court-justice-3"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-3",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Supreme Court | Justice Position No. 3",
+      "source_name": "Jamie Michelle Hawk",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Supreme Court | Justice Position No. 4",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 4; Ian Birk. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "supreme-court-justice-4"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-4",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Supreme Court | Justice Position No. 4",
+      "source_name": "Ian Birk",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Supreme Court | Justice Position No. 5",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 5; Theo Angelis. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "supreme-court-justice-5"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-5",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Supreme Court | Justice Position No. 5",
+      "source_name": "Theo Angelis",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Supreme Court | Justice Position No. 7",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Washington Supreme Court Justice — Position 7; Debra L. Stephens. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "supreme-court-justice-7"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-7",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Supreme Court | Justice Position No. 7",
+      "source_name": "Debra L. Stephens",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: West Electoral District Judge Position No. 1",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-district-court-west-judge-1--bardi-martin"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "king-county-district-court-west-judge-1--bardi-martin"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: King County District Court West Electoral District — Judge Position 1; Bardi Martin. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "king-county-district-court-west-judge-1"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-district-court-west-judge-1--bardi-martin"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "king-county-district-court-west-judge-1",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "West Electoral District Judge Position No. 1",
+      "source_name": "Bardi Martin",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: City of Seattle, Council District No. 5",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Seattle City Council — District 5; Nilu Jenks. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "seattle-city-council-5"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "seattle-city-council-5",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "City of Seattle, Council District No. 5",
+      "source_name": "Nilu Jenks",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: City of Seattle, Municipal Court Judge Position No. 5",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Seattle Municipal Court Judge — Position 5; Gabe Rothstein. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "seattle-municipal-court-judge-5"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "seattle-municipal-court-judge-5",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "City of Seattle, Municipal Court Judge Position No. 5",
+      "source_name": "Gabe Rothstein",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Initiative-001 | Resurrecting the Parent’s Bill of Rights",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Initiative IL26-001 — Parental Rights in Public Schools; No. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "initiative-26-001"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "initiative-26-001",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Initiative-001 | Resurrecting the Parent’s Bill of Rights",
+      "source_name": "No",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Initiative-638 | Banning trans girls from sports",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Initiative IL26-638 — Participation in K-12 School Athletics; No. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "initiative-26-638"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "initiative-26-638",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Initiative-638 | Banning trans girls from sports",
+      "source_name": "No",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Initiative-645 | Repealing the Millionaires Tax",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Initiative IP26-645 — State and Local Taxes; No. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "initiative-26-645"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "initiative-26-645",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Initiative-645 | Repealing the Millionaires Tax",
+      "source_name": "No",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    },
+    {
+      "action": "verify_unchanged",
+      "author": "shaug",
+      "capture_content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+      "capture_id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+      "capture_manifest_sha256": "99c0e66c1d4e16ddf4e3b82c8953271a9218152646de854db2330e5f5618b5c2",
+      "evidence_locator": "PDF page 1; complete cheat-sheet graphic and repeated accessible-text section: Seattle Prop. 1 | Seattle Transit Measure",
+      "evidence_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-proposition-1-transit--yes"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+      "prior_ledger_value": {
+        "candidate_ids": [
+          "seattle-proposition-1-transit--yes"
+        ],
+        "evidence_locator": "October 9 general-election cheat sheet; Federal / State / County / State Supreme Court / District Court / City / Initiatives headings, named race and office position. Target: Seattle Proposition 1 — Seattle Transit Measure; Yes. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac; verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.",
+        "race_id": "seattle-proposition-1-transit"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-proposition-1-transit--yes"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "seattle-proposition-1-transit",
+      "reason": "The source PDF decision exactly matches the current approved ledger; no scoring change.",
+      "source_id": "the-stranger",
+      "source_label": "Seattle Prop. 1 | Seattle Transit Measure",
+      "source_name": "Yes",
+      "timestamp": "2026-10-16T18:21:36.240131Z",
+      "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652"
+    }
+  ],
+  "baseline_commit": "100ef8c9343f8705f7a873427f24323d8b36fc92",
+  "counts": {
+    "additions": 0,
+    "allocation_changes": 0,
+    "outside_seattle_inventory": 25,
+    "publication_decisions": 56,
+    "removals": 0,
+    "replacements": 0,
+    "seattle_decisions": 31,
+    "unchanged": 31
+  },
+  "custody": "Restricted original PDF retained in the maintainer local content-addressed evidence store; metadata and short factual transcription only are public.",
+  "election_id": "wa-2026-general",
+  "inventory_sha256": "46072aa86d3a63dc66c88ae8c347b813dfc3dea2b0334d87b835eb9d80640ed6",
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/545",
+  "ledger_sha256": "c9d1b5a36910bbca155bb2abc6d257873e4cfcc57888fdfe3b48e9cf8d069781",
+  "limitations": [
+    "User-supplied saved PDF snapshot, not a live browser verification.",
+    "No per-race no-endorsement inference from the publication statement about omitted races.",
+    "Existing browser acquisition denial remains historical evidence."
+  ],
+  "manual_entry_successor": {
+    "pending_manual_entry_id": "manual-the-stranger-20261016T171638Z-3537fda80d50",
+    "pending_sha256": "b75d733a1d56d8232165e6c6cb4f46719f023f9ea381d773825fa12735e5dc0e",
+    "verified_manual_entry_id": "manual-the-stranger-20261016T182136Z-cad341536652",
+    "verified_sha256": "fa5a42edeb7dbbf0642679b69ba2196593547e9f8ce230e7718d756e45c52eb6"
+  },
+  "no_automatic_baseline_or_whole_panel_attestation": true,
+  "no_ledger_changes": true,
+  "pdf_byte_length": 2824025,
+  "pdf_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+  "publication_date_as_printed": "October 9, 2026 10:57 am; timezone not printed",
+  "record_type": "endorsement_verification_approval",
+  "review_note": "Issue #545: shaug instructed \"let's mark the Stranger as verified and go through the remaining unknowns\" after the supplied PDF comparison found all 31 Seattle decisions unchanged. OpenAI Codex is the transcriber; shaug is the human verifier. This targeted verification covers the supplied two-page PDF snapshot, not a live website read. The 25 other publication decisions are outside the frozen Seattle inventory. Existing approved Noel Frame and Jamie Michelle Hawk identity mappings are retained. All ledger choices, statuses, allocations and prior review records remain unchanged. See data/review/approvals/wa-2026-general-2026-10-16-stranger-verification.json. No automatic baseline or whole-panel attestation is asserted.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T18:21:36.240131Z",
+  "reviewed_by": "shaug",
+  "schema_version": "1.0",
+  "transcriber": "OpenAI Codex"
+}
