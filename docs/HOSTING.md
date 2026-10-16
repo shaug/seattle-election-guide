@@ -380,6 +380,21 @@ declaration, full expected SHA, and release identity. Attempt starts are at leas
 apart, and all attempts share one 120-second monotonic deadline. Every request uses a timeout
 no greater than 15 seconds, the requested `--timeout`, or the remaining deadline. A terminable
 worker also bounds DNS resolution, slowly streamed bodies, and structured result transfer.
+Worker-result evidence has a 4 MiB byte budget. An oversized result is rejected with an explicit
+failed observation; it is never truncated into a successful probe. Parent reconstruction uses
+the same absolute POSIX interval deadline, including joining chunks and JSON/Pydantic decoding,
+and rejects any result completed after the deadline. Bounded native decoding, process reaping,
+and operating-system scheduling can add cleanup overhead; this is a practical deadline rather
+than an unrestricted hard-return guarantee for native code.
+
+Wait mode supports the main thread of the Linux CI and macOS CLI runtimes. It fails closed
+before starting a worker if POSIX deadline enforcement is unavailable, the caller is outside
+the main thread, `SIGALRM` is blocked or already pending, or an existing interval timer/alarm
+handler cannot be safely preserved.
+The previous idle alarm handler, timer, and signal mask are restored after decoding succeeds or
+fails, and pending probe alarms are consumed before the caller's handler is restored.
+A legitimate report exceeding the byte budget, or a different caller runtime, requires a
+deliberate policy/runtime change. Single-check modes have no new runtime or result-size limit.
 The calendar-derived active freshness window is selected once and retained for every attempt.
 
 With `--wait --output`, the JSON contains all complete attempt reports, the zero-based indices

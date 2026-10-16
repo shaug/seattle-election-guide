@@ -7,10 +7,14 @@ import math
 import multiprocessing
 import re
 import select
+import signal
 import socket
+import sys
+import threading
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from time import monotonic, sleep
+from types import FrameType
 from typing import Literal
 
 from election_guide.hosting.models import SiteManifest
@@ -25,6 +29,7 @@ from election_guide.hosting.production_probe import run_production_check
 
 WAIT_SECONDS = 120.0
 ATTEMPT_INTERVAL = 5.0
+MAX_RESULT_BYTES = 4 * 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -88,6 +93,96 @@ def _probe_worker(
         channel.sendall(report.model_dump_json().encode("utf-8"))
 
 
+class _DeadlineExceeded(BaseException):
+    """Escape validators without being converted into a validation failure."""
+
+
+def _deadline_runtime_error() -> str | None:
+    if sys.platform not in {"linux", "darwin"}:
+        return "wait requires a Linux or macOS POSIX interval timer"
+    if threading.current_thread() is not threading.main_thread():
+        return "wait requires the main thread"
+    if not all(
+        hasattr(signal, name) for name in ("SIGALRM", "ITIMER_REAL", "SIG_BLOCK", "SIG_SETMASK")
+    ) or not all(
+        callable(getattr(signal, name, None))
+        for name in ("setitimer", "getitimer", "pthread_sigmask", "sigpending", "sigwait")
+    ):
+        return "POSIX interval deadline enforcement is unavailable"
+    try:
+        if signal.SIGALRM in signal.pthread_sigmask(signal.SIG_BLOCK, []):
+            return "SIGALRM is blocked in the caller's signal mask"
+        if signal.SIGALRM in signal.sigpending():
+            return "an existing pending alarm cannot be safely preserved"
+        if signal.getitimer(signal.ITIMER_REAL) != (0.0, 0.0):
+            return "an existing interval timer cannot be safely preserved"
+        handler = signal.getsignal(signal.SIGALRM)
+        if handler not in (signal.SIG_DFL, signal.SIG_IGN) and not callable(handler):
+            return "the existing alarm handler cannot be safely preserved"
+    except (OSError, ValueError) as error:
+        return f"POSIX interval deadline enforcement is unavailable: {error}"
+    return None
+
+
+def _decode_result(chunks: list[bytes], base_url: str, deadline: float) -> ProductionCheckReport:
+    """Bound input size and interrupt Python work during parent reconstruction.
+
+    Native work on the finite result and OS scheduling/reaping add practical
+    cleanup overhead; an unrestricted native-parser hard-return guarantee is
+    not possible in this process. Never accept a result after its deadline.
+    """
+    runtime_error = _deadline_runtime_error()
+    if runtime_error is not None:
+        return _failed_probe(
+            base_url, f"production confirmation deadline enforcement: {runtime_error}"
+        )
+    remaining = deadline - monotonic()
+    if remaining <= 0:
+        return _failed_probe(base_url, "production confirmation deadline exceeded")
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    previous_timer = signal.getitimer(signal.ITIMER_REAL)
+    previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, [])
+    decoding = True
+
+    def expired(signum: int, frame: FrameType | None) -> None:
+        if decoding:
+            raise _DeadlineExceeded
+
+    try:
+        signal.signal(signal.SIGALRM, expired)
+        remaining = deadline - monotonic()
+        if remaining <= 0:
+            raise _DeadlineExceeded
+        signal.setitimer(signal.ITIMER_REAL, remaining)
+        try:
+            report = ProductionCheckReport.model_validate_json(b"".join(chunks))
+        except ValueError as error:
+            report = _failed_probe(base_url, f"invalid production probe worker result: {error}")
+        decoding = False
+        if monotonic() >= deadline:
+            raise _DeadlineExceeded
+        return report
+    except _DeadlineExceeded:
+        decoding = False
+        return _failed_probe(base_url, "production confirmation deadline exceeded")
+    except (OSError, ValueError) as error:
+        decoding = False
+        return _failed_probe(base_url, f"production confirmation deadline enforcement: {error}")
+    finally:
+        decoding = False
+        # Block delivery before disarming, then consume our pending alarm so
+        # restoring the old handler cannot deliver it to unrelated caller code.
+        signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGALRM})
+        try:
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            if signal.SIGALRM in signal.sigpending():
+                signal.sigwait({signal.SIGALRM})
+            signal.signal(signal.SIGALRM, previous_handler)
+            signal.setitimer(signal.ITIMER_REAL, *previous_timer)
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
+
+
 def run_deadline_probe(
     base_url: str,
     *,
@@ -104,6 +199,11 @@ def run_deadline_probe(
     """
     if monotonic() >= deadline:
         return _failed_probe(base_url, "production confirmation deadline exceeded")
+    runtime_error = _deadline_runtime_error()
+    if runtime_error is not None:
+        return _failed_probe(
+            base_url, f"production confirmation deadline enforcement: {runtime_error}"
+        )
     receiver, sender = socket.socketpair()
     worker = multiprocessing.get_context("spawn").Process(
         target=_probe_worker,
@@ -119,6 +219,7 @@ def run_deadline_probe(
         daemon=True,
     )
     chunks: list[bytes] = []
+    received_size = 0
     try:
         worker.start()
         sender.close()
@@ -131,12 +232,13 @@ def run_deadline_probe(
             if not chunk:
                 if monotonic() >= deadline:
                     break
-                try:
-                    return ProductionCheckReport.model_validate_json(b"".join(chunks))
-                except ValueError as error:
-                    return _failed_probe(
-                        base_url, f"invalid production probe worker result: {error}"
-                    )
+                return _decode_result(chunks, base_url, deadline)
+            received_size += len(chunk)
+            if received_size > MAX_RESULT_BYTES:
+                return _failed_probe(
+                    base_url,
+                    f"production probe worker result exceeds {MAX_RESULT_BYTES}-byte limit",
+                )
             chunks.append(chunk)
         return _failed_probe(base_url, "production confirmation deadline exceeded")
     finally:

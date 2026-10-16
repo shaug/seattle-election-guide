@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import multiprocessing
+import signal
 import socket
 import subprocess
 import time
@@ -327,3 +328,205 @@ def test_clock_reaching_deadline_between_loop_check_and_start_does_not_start_wor
     )
     assert report.timed_out
     assert len(report.attempts) == 1
+
+
+def test_expensive_result_decoding_is_terminated_at_the_shared_deadline(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_decode = ProductionCheckReport.model_validate_json
+
+    def expensive_decode(document: str | bytes | bytearray) -> ProductionCheckReport:
+        time.sleep(2)
+        return real_decode(document)
+
+    monkeypatch.setattr(wait, "_probe_worker", _large_result_worker)
+    monkeypatch.setattr(ProductionCheckReport, "model_validate_json", expensive_decode)
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    previous_timer = signal.getitimer(signal.ITIMER_REAL)
+    started = time.monotonic()
+    report = wait.run_deadline_probe(
+        ORIGIN,
+        site_manifest=_site_manifest(),
+        expected_git_commit=COMMIT,
+        active_window=False,
+        timeout=15,
+        deadline=started + 0.7,
+    )
+    assert time.monotonic() - started < 1.7
+    assert not report.ok
+    assert "deadline" in (report.manifest.observed.error or "")
+    assert signal.getsignal(signal.SIGALRM) == previous_handler
+    assert signal.getitimer(signal.ITIMER_REAL) == previous_timer
+
+
+def _oversized_result_worker(channel: socket.socket, *args: object) -> None:
+    report = _report().model_copy(update={"manifest_parse_error": "x" * wait.MAX_RESULT_BYTES})
+    with channel:
+        channel.sendall(report.model_dump_json().encode())
+
+
+def test_oversized_worker_result_is_rejected_without_truncation_or_a_surviving_worker(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    before = {child.pid for child in multiprocessing.active_children()}
+    monkeypatch.setattr(wait, "_probe_worker", _oversized_result_worker)
+    report = wait.run_deadline_probe(
+        ORIGIN,
+        site_manifest=_site_manifest(),
+        expected_git_commit=COMMIT,
+        active_window=False,
+        timeout=15,
+        deadline=time.monotonic() + 5,
+    )
+    assert not report.ok
+    assert "4194304-byte limit" in (report.manifest.observed.error or "")
+    assert {child.pid for child in multiprocessing.active_children()} == before
+
+
+@pytest.mark.parametrize("valid", [True, False])
+def test_result_decoding_restores_idle_alarm_handler_and_timer(valid: bool) -> None:
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    previous_timer = signal.getitimer(signal.ITIMER_REAL)
+    assert previous_timer == (0.0, 0.0)
+
+    def handler(signum: int, frame: object) -> None:
+        raise AssertionError("restored alarm should not fire during this test")
+
+    signal.signal(signal.SIGALRM, handler)
+    try:
+        body = _report().model_dump_json().encode() if valid else b"{"
+        report = wait._decode_result(  # pyright: ignore[reportPrivateUsage]
+            [body], ORIGIN, time.monotonic() + 3
+        )
+        assert report.ok is valid
+        assert signal.getsignal(signal.SIGALRM) is handler
+        assert signal.getitimer(signal.ITIMER_REAL) == previous_timer
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous_handler)
+        signal.setitimer(signal.ITIMER_REAL, *previous_timer)
+
+
+def test_late_decoded_result_is_never_accepted(monkeypatch: pytest.MonkeyPatch) -> None:
+    clock = Clock()
+    monkeypatch.setattr(wait, "monotonic", clock.monotonic)
+
+    def late_decode(document: str | bytes | bytearray) -> ProductionCheckReport:
+        clock.now = 2
+        return _report()
+
+    monkeypatch.setattr(ProductionCheckReport, "model_validate_json", late_decode)
+    report = wait._decode_result([b"{}"], ORIGIN, 1)  # pyright: ignore[reportPrivateUsage]
+    assert not report.ok
+    assert "deadline" in (report.manifest.observed.error or "")
+
+
+@pytest.mark.parametrize(
+    "unsupported", ["platform", "timer_api", "thread", "active_timer", "blocked_mask"]
+)
+def test_unavailable_deadline_enforcement_fails_closed_without_changing_signal_state(
+    monkeypatch: pytest.MonkeyPatch,
+    unsupported: str,
+) -> None:
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    previous_timer = signal.getitimer(signal.ITIMER_REAL)
+    assert previous_timer == (0.0, 0.0)
+    previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, [])
+    if unsupported == "platform":
+        monkeypatch.setattr(wait.sys, "platform", "win32")
+    elif unsupported == "timer_api":
+        monkeypatch.delattr(signal, "setitimer")
+    elif unsupported == "thread":
+        monkeypatch.setattr(wait.threading, "current_thread", lambda: object())
+    elif unsupported == "blocked_mask":
+        signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGALRM})
+    else:
+        signal.setitimer(signal.ITIMER_REAL, 10, 10)
+
+    def never(*args: Any, **kwargs: Any) -> None:
+        raise AssertionError("unsupported enforcement must fail before worker creation")
+
+    monkeypatch.setattr(wait.socket, "socketpair", never)
+    try:
+        report = wait.run_deadline_probe(
+            ORIGIN,
+            site_manifest=_site_manifest(),
+            expected_git_commit=COMMIT,
+            active_window=False,
+            timeout=15,
+            deadline=time.monotonic() + 5,
+        )
+        assert not report.ok
+        assert "deadline enforcement" in (report.manifest.observed.error or "")
+        assert signal.getsignal(signal.SIGALRM) == previous_handler
+        assert signal.pthread_sigmask(signal.SIG_BLOCK, []) == (
+            previous_mask | {signal.SIGALRM} if unsupported == "blocked_mask" else previous_mask
+        )
+        timer = signal.getitimer(signal.ITIMER_REAL)
+        if unsupported == "active_timer":
+            assert 9 < timer[0] <= 10
+            assert timer[1] == 10
+        else:
+            assert timer == previous_timer
+    finally:
+        if unsupported == "active_timer":
+            signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
+
+
+def test_pending_own_alarm_is_consumed_before_restoring_the_caller_handler(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, [])
+    previous_timer = signal.getitimer(signal.ITIMER_REAL)
+
+    def handler(signum: int, frame: object) -> None:
+        raise AssertionError("a pending probe alarm escaped into caller code")
+
+    def pending_decode(document: str | bytes | bytearray) -> ProductionCheckReport:
+        signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGALRM})
+        signal.raise_signal(signal.SIGALRM)
+        assert signal.SIGALRM in signal.sigpending()
+        return _report()
+
+    signal.signal(signal.SIGALRM, handler)
+    monkeypatch.setattr(ProductionCheckReport, "model_validate_json", pending_decode)
+    try:
+        report = wait._decode_result(  # pyright: ignore[reportPrivateUsage]
+            [b"{}"], ORIGIN, time.monotonic() + 3
+        )
+        assert report.ok
+        assert signal.SIGALRM not in signal.sigpending()
+        assert signal.getsignal(signal.SIGALRM) is handler
+        assert signal.pthread_sigmask(signal.SIG_BLOCK, []) == previous_mask
+        assert signal.getitimer(signal.ITIMER_REAL) == previous_timer
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous_handler)
+        signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
+
+
+def test_expensive_asset_validation_is_interrupted_within_finite_result_budget() -> None:
+    report = _report()
+    assert report.deployment_contract is not None
+    contract = report.deployment_contract
+    assets = {
+        f"e/wa-2026-general/races/fixture-{index}/index.html": "d" * 64 for index in range(20_000)
+    }
+    large = report.model_copy(
+        update={
+            "deployment_contract": contract.model_copy(
+                update={"observed": contract.observed.model_copy(update={"assets": assets})}
+            )
+        }
+    )
+    body = large.model_dump_json().encode()
+    assert 2_000_000 < len(body) < wait.MAX_RESULT_BYTES
+    started = time.monotonic()
+    result = wait._decode_result(  # pyright: ignore[reportPrivateUsage]
+        [body], ORIGIN, started + 0.01
+    )
+    assert not result.ok
+    assert "deadline" in (result.manifest.observed.error or "")
+    assert time.monotonic() - started < 0.5
