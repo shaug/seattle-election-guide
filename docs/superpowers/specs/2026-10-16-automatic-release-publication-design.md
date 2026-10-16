@@ -1,6 +1,7 @@
 # Automatic publication of verified releases
 
-Status: proposed for written review; no workflow or production policy has changed.
+Status: approved by the maintainer on October 16, 2026; implementation awaits
+review of the implementation plan. No workflow or production policy has changed.
 
 Scope: [#550](https://github.com/shaug/seattle-election-guide/issues/550).
 Baseline: merged main `165b21bffa5bbdce0e1f05226b2dee20ba554a8e`.
