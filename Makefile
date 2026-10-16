@@ -7,7 +7,6 @@ INTEGRATION_TESTS := $(INTEGRATION_COMPARISONS_TESTS) $(INTEGRATION_RENDERING_TE
 UNIT_TEST_IGNORES := $(addprefix --ignore=,$(INTEGRATION_TESTS))
 GENERAL_RELEASE_LEDGER := data/releases/wa-2026-general/source-decisions.yaml
 GENERAL_RELEASE_INPUTS := --inventory-path data/normalized/wa-2026-general-inventory.json --registry-path config/sources/wa-2026-general.yaml --dataset-path data/normalized/wa-2026-general-canonical-dataset.json --snapshot-root data/releases/wa-2026-general/snapshots --manifest-dir data/releases/wa-2026-general/manifests
-CURRENT_CANDIDATE_BUNDLE_ID := wa-2026-general-2026-general.8
 
 sync:
 	uv sync --frozen
@@ -140,16 +139,7 @@ check-election-contracts:
 # the bundle, so two reads straddling a concurrent commit would report a
 # reproducibility failure that is not one.
 check-release-reproducible:
-	rm -rf dist/reproducibility-a dist/reproducibility-b
-	generated_at="$$(git show -s --format=%cI HEAD)"; \
-	for build in a b; do \
-		uv run election-guide release build $(GENERAL_RELEASE_LEDGER) \
-			--release-version 2026-general.8 \
-			--generated-at "$$generated_at" \
-			--output-dir "dist/reproducibility-$$build" \
-			$(GENERAL_RELEASE_INPUTS) || exit 1; \
-	done
-	uv run election-guide release compare dist/reproducibility-a/bundle dist/reproducibility-b/bundle
+	uv run election-guide release automation build --source-sha "$$(git rev-parse HEAD)" --output-dir dist
 
 check-release-reproducible-general: check-release-reproducible
 
@@ -157,12 +147,8 @@ check-release-reproducible-general: check-release-reproducible
 # resolves from the release that published it, exactly as CI stages (issue 271,
 # docs/HOSTING.md, Historical bundles).
 hosting-stage:
-	uv run election-guide hosting verify-releases config/hosting/site.yaml \
-		--candidate-bundle-id $(CURRENT_CANDIDATE_BUNDLE_ID)
-	uv run election-guide hosting stage config/hosting/site.yaml \
-		--bundle $(CURRENT_CANDIDATE_BUNDLE_ID)=dist/reproducibility-a/bundle \
-		--released-bundle-dir dist/released-bundles \
-		--expected-git-commit "$$(git rev-parse HEAD)"
+	uv run election-guide release automation stage --bundle-dir dist/reproducibility-a/bundle \
+		--output-dir dist/cloudflare-site --source-sha "$$(git rev-parse HEAD)"
 
 hosting-serve: hosting-stage
 	npm run pages:dev

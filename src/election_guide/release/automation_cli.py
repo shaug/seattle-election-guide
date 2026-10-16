@@ -17,6 +17,17 @@ import yaml
 
 from election_guide.github_cli import run_gh
 from election_guide.hosting.models import SiteManifest
+from election_guide.hosting.releases import (
+    published_release_tags,
+    verify_declared_releases_published,
+)
+from election_guide.release.automation_models import ArtifactRef, CandidateRecord, Producer
+from election_guide.release.candidate import (
+    build_current_candidate,
+    record_candidate,
+    stage_current_candidate,
+    verify_candidate,
+)
 from election_guide.release.declaration import (
     ResolvedRelease,
     prepare_release,
@@ -25,7 +36,7 @@ from election_guide.release.declaration import (
     validate_release_request,
 )
 from election_guide.release.history import generate_changelog_index
-from election_guide.serialization import UniqueKeyLoader
+from election_guide.serialization import UniqueKeyLoader, canonical_json_bytes
 
 app = typer.Typer(help="Prepare and validate reviewed release declarations.")
 DEFAULT_SITE = Path("config/hosting/site.yaml")
@@ -277,4 +288,89 @@ def changelog_index(output: Annotated[Path, typer.Option()]) -> None:
     try:
         output.write_text(generate_changelog_index(_repository()), encoding="utf-8")
     except (OSError, ValueError) as error:
+        _failed(error)
+
+
+@app.command("build")
+def build(
+    source_sha: Annotated[str, typer.Option()],
+    output_dir: Annotated[Path, typer.Option()],
+) -> None:
+    """Build twice, compare, and stage the exact selected source revision."""
+    try:
+        repository = _repository()
+        typer.echo(
+            build_current_candidate(
+                resolve_release(DEFAULT_SITE, repository=repository),
+                repository=repository,
+                output_dir=output_dir,
+                source_sha=source_sha,
+            )
+        )
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        _failed(error)
+
+
+@app.command("stage")
+def stage(
+    bundle_dir: Annotated[Path, typer.Option()],
+    output_dir: Annotated[Path, typer.Option()],
+    source_sha: Annotated[str, typer.Option()],
+) -> None:
+    """Stage and independently verify the complete declared archive."""
+    try:
+        repository = _repository()
+        resolved = resolve_release(DEFAULT_SITE, repository=repository)
+        verify_declared_releases_published(
+            resolved.site, published_release_tags(), candidate_bundle_id=resolved.current.bundle_id
+        )
+        stage_current_candidate(
+            resolved,
+            repository=repository,
+            bundle_dir=bundle_dir,
+            output_dir=output_dir,
+            source_sha=source_sha,
+        )
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        _failed(error)
+
+
+@app.command("record")
+def record(
+    producer_file: Annotated[Path, typer.Option()],
+    release_artifact_file: Annotated[Path, typer.Option()],
+    site_artifact_file: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+) -> None:
+    """Bind the two already-uploaded artifact identities into canonical JSON."""
+    try:
+        repository = _repository()
+        result = record_candidate(
+            resolve_release(DEFAULT_SITE, repository=repository),
+            repository=repository,
+            output_dir=output.parent,
+            producer=Producer.model_validate_json(producer_file.read_bytes()),
+            release_artifact=ArtifactRef.model_validate_json(release_artifact_file.read_bytes()),
+            site_artifact=ArtifactRef.model_validate_json(site_artifact_file.read_bytes()),
+        )
+        output.write_bytes(canonical_json_bytes(result.model_dump(mode="json")))
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        _failed(error)
+
+
+@app.command("verify-candidate")
+def verify_candidate_command(
+    record: Annotated[Path, typer.Option()],
+    archive: Annotated[Path, typer.Option()],
+    site_dir: Annotated[Path, typer.Option()],
+) -> None:
+    """Verify downloaded release and site bytes against the captured candidate."""
+    try:
+        verify_candidate(
+            CandidateRecord.model_validate_json(record.read_bytes()),
+            repository=_repository(),
+            archive_path=archive,
+            site_dir=site_dir,
+        )
+    except (OSError, ValueError, yaml.YAMLError) as error:
         _failed(error)
