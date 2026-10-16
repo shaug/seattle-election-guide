@@ -1,0 +1,73 @@
+{
+  "approval_text": "Approve the WCA addition",
+  "approved_decisions": [
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "6dbb5c526c901f3850f92dad0adccdd588f46e3e52fab61cc24fba9bcd1337f3",
+      "capture_id": "capture-washington-conservation-action-20261016T182136Z-759c19d97476",
+      "capture_manifest_sha256": "e8e1e133600f87b5ad2c9c6374490ddf0c135fe800eda12a44a886efd1324a72",
+      "evidence_locator": "2026 Endorsements > Statewide Races > Initiatives > NO on IL26-638 heading.",
+      "evidence_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "evidence_excerpt": "NO on IL26-638",
+        "evidence_locator": "2026 Endorsements > Statewide Races > Initiatives > NO on IL26-638 heading. Capture capture-washington-conservation-action-20261016T182136Z-759c19d97476; verified manual manual-washington-conservation-action-20261016T182639Z-49a5afcbcc6f; data/review/approvals/wa-2026-general-2026-10-16-wca-corrected-measure.json.",
+        "race_id": "initiative-26-638"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-conservation-action-20261016T182136Z-a5bc4d2e004a",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "initiative-26-638",
+      "reason": "Apply the concrete user-approved PDF or official-page decision; preserve all prior choices, statuses, allocations and explicit attribution.",
+      "source_id": "washington-conservation-action",
+      "source_label": "NO on IL26-638",
+      "timestamp": "2026-10-16T18:26:39.551180Z",
+      "verified_manual_entry_id": "manual-washington-conservation-action-20261016T182639Z-49a5afcbcc6f"
+    }
+  ],
+  "election_id": "wa-2026-general",
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/545",
+  "manual_entry_successor": {
+    "pending_manual_entry_id": "manual-washington-conservation-action-20261016T182136Z-a5bc4d2e004a",
+    "pending_sha256": "e51178f79a15a1337a302e57925ac729dead4d88b6f0d6a49d29bf372c9fea49",
+    "verified_manual_entry_id": "manual-washington-conservation-action-20261016T182639Z-49a5afcbcc6f",
+    "verified_sha256": "ea8a384122907a66b6bf1a07014657a2a0aa13f320a45331a7a6d80feb8a7692"
+  },
+  "no_automatic_baseline_or_whole_panel_attestation": true,
+  "prior_source_review": {
+    "captured_at": "2026-10-04T04:56:54Z",
+    "evidence_locator": "Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.",
+    "review_note": "Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the three additions and confirmed the unmatched IL26-368 text remains untranscribed.",
+    "reviewed_at": "2026-10-04T05:30:06Z",
+    "reviewer": "shaug",
+    "source_id": "washington-conservation-action"
+  },
+  "proposal_path": "data/review/proposals/wa-2026-general-2026-10-16-wca-corrected-measure.json",
+  "proposal_sha256": "955d3f90973b6c6c3da571f8cc95f1cb87c212dae67b02ad0772f802d5965b95",
+  "record_type": "endorsement_refresh_approval",
+  "result": {
+    "additions": 1,
+    "new_decisions": 879,
+    "prior_decisions": 878,
+    "removals": 0,
+    "replacements": 0,
+    "source_blocks": 45,
+    "verified_unchanged": 0
+  },
+  "review_note": "Issue #545: shaug approved the exact one-decision proposal with \"Approve the WCA addition\". The current official browser-visible 2026 page now explicitly prints NO on IL26-638; the earlier IL26-368 text remains historical and no typo override is needed. Only initiative-26-638 is newly verified by this approval. The 25 retained decisions keep their prior review provenance. OpenAI Codex is the transcriber; shaug is the human verifier. See data/review/approvals/wa-2026-general-2026-10-16-wca-corrected-measure.json. No automatic baseline or whole-panel attestation is asserted.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T18:26:39.551180Z",
+  "reviewed_by": "shaug",
+  "schema_version": "1.0",
+  "transcriber": "OpenAI Codex"
+}

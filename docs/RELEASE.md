@@ -130,7 +130,7 @@ test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/mobile.pn
 Read the notes and rendering report and inspect both screenshots before publication. Record the
 full `release_candidate_sha`, the ZIP SHA-256 and size, and the source-registry, canonical-dataset,
 and source-decision-ledger SHA-256 values. For `2026-general.7`, compare the last three with the reviewed input hashes in
-[the October 16 verification packet](GENERAL_VERIFICATION_APPLICATION_2026-10-16.md#reviewed-input-bindings);
+[the October 16 verification follow-up](GENERAL_VERIFICATION_REMAINING_2026-10-16.md#reviewed-input-bindings);
 a mismatch stops publication rather than creating a new interpretation here. The immutable
 `2026-general.6` archive remains bound to the October 12 additions packet, and `2026-general.5` remains bound
 to the October 10 #508 packet; neither archive is replaced.

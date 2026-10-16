@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-16T18:26:39.551180Z",
+  "event_id": null,
+  "evidence": "shaug: data/review/approvals/wa-2026-general-2026-10-16-wea-pdf.json; capture capture-washington-education-association-20261016T182408Z-d84b192582e3; verified manual manual-washington-education-association-20261016T182639Z-695ef44a83b4; 20 Seattle decisions including 19 unchanged, from the user-supplied PDF saved from the live browser view.",
+  "mode": "human",
+  "scheduled_for": "2026-10-16",
+  "source_id": "washington-education-association",
+  "status": "manual"
+}

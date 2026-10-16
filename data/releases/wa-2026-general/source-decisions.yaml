@@ -1,6 +1,6 @@
 schema_version: '1.0'
 election_id: wa-2026-general
-data_as_of: '2026-10-16T16:05:10.192531Z'
+data_as_of: '2026-10-16T18:26:39.551180Z'
 reviewer: shaug
 review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured 21
   new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every new or
@@ -14,7 +14,10 @@ review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex reche
   16 targeted update: 118 additions and two replacements approved by shaug; prior decisions, statuses, allocations and source
   reviews retained. No new whole-panel or baseline attestation. See data/review/approvals/wa-2026-general-2026-10-16.json.
   Further October 16 browser-retry update: 57 additions explicitly approved by shaug, including three office-label corrections;
-  cumulative 175 additions and two replacements. Grey WA4PJ court ratings remain unresolved. See data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json.'
+  cumulative 175 additions and two replacements. Grey WA4PJ court ratings remain unresolved. See data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json.
+  Further October 16 follow-up: shaug approved WCA No on IL26-638 after its corrected page label and WEA Ashley Fedan LD11
+  House Position 1 from the supplied PDF; 880 decisions. Stranger 31 and WEA 19 prior decisions received targeted unchanged
+  PDF verification. See the separate stranger-verification, wca-corrected-measure and wea-pdf approval records.'
 sources:
 - source_id: washington-community-action-network
   captured_at: '2026-10-11T01:07:23.909422Z'
@@ -1701,90 +1704,151 @@ sources:
     candidate_ids:
     - supreme-court-justice-7--debra-l-stephens
 - source_id: washington-conservation-action
-  captured_at: '2026-10-04T04:56:54Z'
-  reviewed_at: '2026-10-04T05:30:06Z'
+  captured_at: '2026-10-16T18:21:36.240131Z'
+  reviewed_at: '2026-10-16T18:26:39.551180Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
-    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
-    Codex transcribed the refreshed official page; shaug verified the three additions and confirmed the unmatched IL26-368
-    text remains untranscribed.'
-  evidence_locator: Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+  review_note: 'Issue #545: shaug approved the exact one-decision proposal with "Approve the WCA addition". The current official
+    browser-visible 2026 page now explicitly prints NO on IL26-638; the earlier IL26-368 text remains historical and no typo
+    override is needed. Only initiative-26-638 is newly verified by this approval. The 25 retained decisions keep their prior
+    review provenance. OpenAI Codex is the transcriber; shaug is the human verifier. See data/review/approvals/wa-2026-general-2026-10-16-wca-corrected-measure.json.
+    No automatic baseline or whole-panel attestation is asserted. Prior review note: Issue #474: shaug verified the complete
+    source-by-source review packet, including this source and all prior review treatments. Current official capture retains
+    the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug
+    verified the three additions and confirmed the unmatched IL26-368 text remains untranscribed.'
+  evidence_locator: October 16 targeted follow-up; data/review/approvals/wa-2026-general-2026-10-16-wca-corrected-measure.json.
+    Capture capture-washington-conservation-action-20261016T182136Z-759c19d97476; verified manual manual-washington-conservation-action-20261016T182639Z-49a5afcbcc6f.
   decisions:
   - race_id: initiative-26-001
     candidate_ids:
     - initiative-26-001--no
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: initiative-26-645
     candidate_ids:
     - initiative-26-645--no
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: supreme-court-justice-1
     candidate_ids:
     - supreme-court-justice-1--colleen-melody
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: supreme-court-justice-3
     candidate_ids:
     - supreme-court-justice-3--jaime-michelle-hawk
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: supreme-court-justice-4
     candidate_ids:
     - supreme-court-justice-4--ian-birk
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: supreme-court-justice-5
     candidate_ids:
     - supreme-court-justice-5--theo-angelis
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: king-county-council-2
     candidate_ids:
     - king-county-council-2--rebecca-saldana
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: king-county-council-4
     candidate_ids:
     - king-county-council-4--jorge-l-baron
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: king-county-council-8
     candidate_ids:
     - king-county-council-8--teresa-mosqueda
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: seattle-city-council-5
     candidate_ids:
     - seattle-city-council-5--nilu-jenks
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-34-state-senator
     candidate_ids:
     - ld-34-state-senator--emily-alvarado
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-34-state-representative-2
     candidate_ids:
     - ld-34-state-representative-2--joe-fitzgibbon
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-36-state-senator
     candidate_ids:
     - ld-36-state-senator--noel-c-frame
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-36-state-representative-1
     candidate_ids:
     - ld-36-state-representative-1--julia-grant-reed
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-36-state-representative-2
     candidate_ids:
     - ld-36-state-representative-2--liz-berry
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-37-state-senator
     candidate_ids:
     - ld-37-state-senator--chipalo-street
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-37-state-representative-2
     candidate_ids:
     - ld-37-state-representative-2--jaelynn-scott
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-43-state-senator
     candidate_ids:
     - ld-43-state-senator--jamie-pedersen
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-43-state-representative-1
     candidate_ids:
     - ld-43-state-representative-1--nicole-macri
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-46-state-senator
     candidate_ids:
     - ld-46-state-senator--javier-valdez
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-46-state-representative-1
     candidate_ids:
     - ld-46-state-representative-1--gerry-pollet
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-46-state-representative-2
     candidate_ids:
     - ld-46-state-representative-2--darya-farivar
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: supreme-court-justice-7
     candidate_ids:
     - supreme-court-justice-7--debra-l-stephens
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-32-state-representative-1
     candidate_ids:
     - ld-32-state-representative-1--keith-scully
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
   - race_id: ld-32-state-senator
     candidate_ids:
     - ld-32-state-senator--jesse-salomon
+    evidence_locator: 'Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.
+      Retained prior decision; original review: shaug, 2026-10-04T05:30:06Z. Not retranscribed in this one-decision approval.'
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+    evidence_excerpt: NO on IL26-638
+    evidence_locator: 2026 Endorsements > Statewide Races > Initiatives > NO on IL26-638 heading. Capture capture-washington-conservation-action-20261016T182136Z-759c19d97476;
+      verified manual manual-washington-conservation-action-20261016T182639Z-49a5afcbcc6f; data/review/approvals/wa-2026-general-2026-10-16-wca-corrected-measure.json.
 - source_id: mlk-labor
   captured_at: '2026-10-04T04:56:54Z'
   reviewed_at: '2026-10-04T05:30:06Z'
@@ -2263,14 +2327,22 @@ sources:
       NO vote; next paragraph identifies Millionaires Tax repeal Official source: https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote.
       Capture capture-ufcw-3000-20261016T150038Z-3a20e73a371a; verified manual manual-ufcw-3000-20261016T154850Z-6cbbb72fb435.'
 - source_id: washington-education-association
-  captured_at: '2026-10-04T04:56:55Z'
-  reviewed_at: '2026-10-04T05:30:06Z'
+  captured_at: '2026-10-16T18:24:08.172096Z'
+  reviewed_at: '2026-10-16T18:26:39.551180Z'
   reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
-    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
-    Codex transcribed the refreshed official page; shaug verified the four added race decisions, including the dual LD32 Representative
-    1 endorsement, and confirmed prior decisions remain unchanged.'
-  evidence_locator: Official 2026 endorsements page, ballot initiatives and legislative endorsements. Capture capture-washington-education-association-20261004T045655Z-9df06a76043e.
+  review_note: 'Issue #545: shaug approved "Approve WEA addition and PDF verification": Ashley Fedan, LD11 House Position
+    1, plus verification of the 19 unchanged source/race decisions in the supplied PDF. The LD32 House Position 1 dual remains
+    1/2 each. The two congressional rows remain explicitly attributed to NEA-PAC and keep their existing approved WEA ledger
+    treatment; no new attribution interpretation is made. The user confirmed "that was from a live browser view. i just needed
+    to click past the modal". The agent reviewed the supplied saved PDF and did not make a WEA membership certification. OpenAI
+    Codex is the transcriber; shaug is the human verifier. See data/review/approvals/wa-2026-general-2026-10-16-wea-pdf.json.
+    No automatic baseline or whole-panel attestation is asserted. Prior review note: Issue #474: shaug verified the complete
+    source-by-source review packet, including this source and all prior review treatments. Current official capture retains
+    the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug
+    verified the four added race decisions, including the dual LD32 Representative 1 endorsement, and confirmed prior decisions
+    remain unchanged.'
+  evidence_locator: October 16 targeted follow-up; data/review/approvals/wa-2026-general-2026-10-16-wea-pdf.json. Capture
+    capture-washington-education-association-20261016T182408Z-d84b192582e3; verified manual manual-washington-education-association-20261016T182639Z-695ef44a83b4.
   decisions:
   - race_id: initiative-26-001
     candidate_ids:
@@ -2330,6 +2402,13 @@ sources:
   - race_id: ld-37-state-representative-2
     candidate_ids:
     - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--ashley-fedan
+    evidence_excerpt: Ashley Fedan
+    evidence_locator: 'Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 11 State Rep. Pos. 1: Ashley Fedan.
+      Capture capture-washington-education-association-20261016T182408Z-d84b192582e3; verified manual manual-washington-education-association-20261016T182639Z-695ef44a83b4;
+      data/review/approvals/wa-2026-general-2026-10-16-wea-pdf.json.'
 - source_id: washington-state-building-trades
   captured_at: '2026-10-16T14:59:42.739843Z'
   reviewed_at: '2026-10-16T15:48:50.280092Z'
