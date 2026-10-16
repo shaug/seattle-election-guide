@@ -530,3 +530,14 @@ def test_expensive_asset_validation_is_interrupted_within_finite_result_budget()
     assert not result.ok
     assert "deadline" in (result.manifest.observed.error or "")
     assert time.monotonic() - started < 0.5
+
+
+def test_public_strict_report_predicate_accepts_complete_and_rejects_partial_evidence() -> None:
+    predicate = getattr(wait, "complete_strict_report", None)
+    assert callable(predicate), "shared strict-report validation must be a public API"
+    report = _report()
+    assert predicate(report, _site_manifest(), COMMIT, False)
+    partial = report.model_copy(update={"route_results": report.route_results[:1]})
+    assert not predicate(partial, _site_manifest(), COMMIT, False)
+    assert not predicate(report, _site_manifest(), "f" * 40, False)
+    assert not predicate(report, _site_manifest(), COMMIT, True)

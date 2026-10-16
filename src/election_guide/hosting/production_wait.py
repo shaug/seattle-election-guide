@@ -253,9 +253,10 @@ def run_deadline_probe(
             worker.close()
 
 
-def _complete_strict_report(
+def complete_strict_report(
     report: ProductionCheckReport, site: SiteManifest, expected_git_commit: str, active_window: bool
 ) -> bool:
+    """Validate complete strict probe evidence for live waits and retained receipts."""
     contract = report.deployment_contract
     if (
         not report.ok
@@ -313,7 +314,7 @@ def wait_for_production(
         attempts.append(report)
         if monotonic() >= deadline:
             break
-        if _complete_strict_report(report, site_manifest, expected_git_commit, active_window):
+        if complete_strict_report(report, site_manifest, expected_git_commit, active_window):
             if successful and (
                 attempts[successful[-1]].deployment_contract != report.deployment_contract
             ):

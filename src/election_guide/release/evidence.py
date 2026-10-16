@@ -27,7 +27,7 @@ from election_guide.hosting.models import SiteManifest
 from election_guide.hosting.production_check import ProductionCheckReport
 from election_guide.hosting.production_wait import (
     ProductionWaitReport,
-    _complete_strict_report,  # pyright: ignore[reportPrivateUsage]
+    complete_strict_report,
     wait_for_production,
 )
 from election_guide.release.automation_models import (
@@ -305,7 +305,7 @@ def _validate_receipt(receipt: OperationReceipt, reports: dict[str, bytes]) -> N
                 or not probe.route_results
             ):
                 raise ValueError("verified probes do not bind the publication source/site")
-            if not _complete_strict_report(
+            if not complete_strict_report(
                 probe,
                 contract.expected_site,
                 candidate.source_sha,
