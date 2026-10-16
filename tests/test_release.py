@@ -505,7 +505,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-general/snapshots",
         manifest_dir=PROJECT_ROOT / "data/releases/wa-2026-general/manifests",
         output_dir=tmp_path / "general-release",
-        release_version="2026-general.8",
+        release_version="2026-general.9",
         generated_at=read_release_ledger(
             PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml"
         ).data_as_of,
@@ -532,7 +532,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
     stage_pages_site(
         site_manifest_path,
         {
-            "wa-2026-general-2026-general.8": general_release.bundle_dir,
+            "wa-2026-general-2026-general.9": general_release.bundle_dir,
             "wa-2026-primary-2026-primary.3": primary_release.bundle_dir,
         },
         output,
