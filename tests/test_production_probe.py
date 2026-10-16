@@ -14,6 +14,7 @@ from collections.abc import Generator, Iterator
 from contextlib import contextmanager, suppress
 from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from typing import ClassVar
 
 import pytest
 
@@ -556,3 +557,80 @@ def test_publication_check_rejects_broken_public_route_contracts(
 
     assert not report.ok
     assert any(failing_check in line for line in render_summary_lines(report))
+
+
+@pytest.fixture
+def blocked_body_server() -> Iterator[str]:
+    release = threading.Event()
+
+    class _BlockedBodyHandler(BaseHTTPRequestHandler):
+        def log_message(self, format: str, *args: object) -> None:
+            pass
+
+        def do_GET(self) -> None:
+            self.send_response(200)
+            self.send_header("Content-Length", "100000")
+            self.end_headers()
+            self.wfile.write(b"{")
+            self.wfile.flush()
+            # Bytes keep arriving inside the per-operation socket timeout,
+            # so only the parent's complete-probe deadline can stop this read.
+            while not release.wait(0.02):
+                try:
+                    self.wfile.write(b" ")
+                    self.wfile.flush()
+                except (BrokenPipeError, ConnectionResetError):
+                    break
+
+    server = _start(_BlockedBodyHandler)
+    base_url = next(server)
+    try:
+        yield base_url
+    finally:
+        release.set()
+        with suppress(StopIteration):
+            next(server)
+
+
+def test_shared_deadline_bounds_every_http_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    from election_guide.hosting import production_probe
+
+    now = 0.0
+    calls: list[tuple[float, float]] = []
+
+    class Response:
+        status = 200
+        headers: ClassVar[dict[str, str]] = {}
+
+        def __enter__(self) -> Response:
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            pass
+
+        def read(self) -> bytes:
+            return _PublicationHandler.manifest_body
+
+    class Opener:
+        def open(self, request: object, *, timeout: float) -> Response:
+            nonlocal now
+            assert now < 120
+            assert timeout <= min(15, 120 - now)
+            calls.append((now, timeout))
+            now += 14
+            return Response()
+
+    monkeypatch.setattr(production_probe, "monotonic", lambda: now)
+    monkeypatch.setattr(production_probe, "_OPENER", Opener())
+    report = run_production_check(
+        "https://seattleelections.guide",
+        site_manifest=_site_manifest(),
+        expected_git_commit=COMMIT,
+        active_window=True,
+        timeout=50,
+        deadline=120,
+    )
+    assert not report.ok
+    assert len(calls) == 9
+    assert calls[-1] == (112, 8)
+    assert any(result.observed.error for result in report.route_results)

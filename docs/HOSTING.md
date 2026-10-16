@@ -374,6 +374,21 @@ uv run election-guide hosting check-production \
   --output dist/production-probe.json
 ```
 
+For bounded confirmation after an upload, add `--wait` to this command. It requires two
+consecutive successful complete strict probes against the same canonical origin, trusted site
+declaration, full expected SHA, and release identity. Attempt starts are at least five seconds
+apart, and all attempts share one 120-second monotonic deadline. Every request uses a timeout
+no greater than 15 seconds, the requested `--timeout`, or the remaining deadline. A terminable
+worker also bounds DNS resolution, slowly streamed bodies, and structured result transfer.
+The calendar-derived active freshness window is selected once and retained for every attempt.
+
+With `--wait --output`, the JSON contains all complete attempt reports, the zero-based indices
+of the successful consecutive pair, and `timed_out`. A deadline failure appends a timeout
+observation, writes the entire report, and exits nonzero. Failed observations remain present
+even if subsequent attempts succeed. Retrying verification performs no upload. `--wait`
+requires strict release verification and cannot be combined with `--availability-only`.
+Without `--wait`, the existing single-check behavior is unchanged.
+
 Production checking is always read-only: it never opens, updates, or closes GitHub issues and does
 not require GitHub credentials. The former `--dry-run` and `--repository` options are retired (#523).
 

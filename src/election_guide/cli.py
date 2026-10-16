@@ -76,6 +76,7 @@ from election_guide.hosting import (
 )
 from election_guide.hosting.production_check import render_summary_lines
 from election_guide.hosting.production_probe import run_production_check
+from election_guide.hosting.production_wait import wait_for_production
 from election_guide.initialization import initialize_election, read_election_configuration
 from election_guide.inventory.importer import (
     extract_public_inputs,
@@ -345,6 +346,9 @@ def hosting_check_production(
         bool,
         typer.Option(help="Check the served manifest and routes without release expectations."),
     ] = False,
+    wait: Annotated[
+        bool, typer.Option("--wait", help="Require two strict passes within 120 seconds.")
+    ] = False,
     timeout: Annotated[float, typer.Option(help="Per-request timeout, in seconds.")] = 15.0,
     site_manifest_path: Annotated[
         Path,
@@ -386,6 +390,8 @@ def hosting_check_production(
                 f"expected {site_manifest.canonical_origin}, found {base_url}"
             )
         if availability_only:
+            if wait:
+                raise ValueError("--wait requires strict release verification")
             if expected_git_commit is not None:
                 raise ValueError("--availability-only cannot accept an expected Git commit")
         else:
@@ -399,22 +405,37 @@ def hosting_check_production(
     except (OSError, UnicodeError, ValidationError, ValueError) as error:
         typer.echo(f"hosting check-production failed: {error}", err=True)
         raise typer.Exit(code=1) from error
-    report = run_production_check(
-        base_url,
-        expected_git_commit=expected_git_commit,
-        timeout=timeout,
-        active_window=active_window,
-        checked_at=checked_at,
-        site_manifest=None if availability_only else site_manifest,
-    )
+    if wait:
+        assert expected_git_commit is not None
+        report = wait_for_production(
+            base_url,
+            expected_git_commit=expected_git_commit,
+            site_manifest=site_manifest,
+            active_window=active_window,
+            timeout=timeout,
+        )
+        reports = report.attempts
+    else:
+        report = run_production_check(
+            base_url,
+            expected_git_commit=expected_git_commit,
+            timeout=timeout,
+            active_window=active_window,
+            checked_at=checked_at,
+            site_manifest=None if availability_only else site_manifest,
+        )
+        reports = (report,)
     if output_path is not None:
         try:
             _write_generated_json(output_path, report.model_dump(mode="json"))
         except OSError as error:
             typer.echo(f"hosting check-production failed: {error}", err=True)
             raise typer.Exit(code=1) from error
-    for line in render_summary_lines(report):
-        typer.echo(line)
+    for attempt in reports:
+        for line in render_summary_lines(attempt):
+            typer.echo(line)
+    if wait and not report.ok:
+        typer.echo("FAIL production confirmation deadline exceeded")
     if not report.ok:
         raise typer.Exit(code=1)
 

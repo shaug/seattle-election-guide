@@ -14,6 +14,7 @@ import http.client
 import urllib.error
 import urllib.request
 from datetime import UTC, datetime
+from time import monotonic
 from urllib.parse import urljoin, urlsplit
 
 from election_guide.hosting.models import SiteManifest
@@ -76,11 +77,22 @@ def _location_path(location: str | None) -> str | None:
     return urlsplit(location).path
 
 
-def probe(base_url: str, check: RouteCheck, *, timeout: float) -> Observation:
+def _request_timeout(timeout: float, deadline: float | None) -> float:
+    if deadline is None:
+        return timeout
+    remaining = deadline - monotonic()
+    if remaining <= 0:
+        raise TimeoutError("production confirmation deadline exceeded")
+    return min(timeout, 15.0, remaining)
+
+
+def probe(
+    base_url: str, check: RouteCheck, *, timeout: float, deadline: float | None = None
+) -> Observation:
     """Make one unfollowed request and report exactly what came back."""
     url = urljoin(base_url, check.path)
     try:
-        with _OPENER.open(_request(url), timeout=timeout) as response:
+        with _OPENER.open(_request(url), timeout=_request_timeout(timeout, deadline)) as response:
             raw_location = response.headers.get("Location")
             return Observation(
                 status=response.status,
@@ -98,15 +110,19 @@ def probe(base_url: str, check: RouteCheck, *, timeout: float) -> Observation:
         return Observation(error=str(error))
 
 
-def fetch_manifest_body(base_url: str, *, timeout: float) -> tuple[Observation, bytes | None]:
+def fetch_manifest_body(
+    base_url: str, *, timeout: float, deadline: float | None = None
+) -> tuple[Observation, bytes | None]:
     """Fetch `/deployment-manifest.json`, returning its body only on a 200."""
-    return _fetch_body(base_url, MANIFEST_PATH, timeout=timeout)
+    return _fetch_body(base_url, MANIFEST_PATH, timeout=timeout, deadline=deadline)
 
 
-def _fetch_body(base_url: str, path: str, *, timeout: float) -> tuple[Observation, bytes | None]:
+def _fetch_body(
+    base_url: str, path: str, *, timeout: float, deadline: float | None = None
+) -> tuple[Observation, bytes | None]:
     url = urljoin(base_url, path)
     try:
-        with _OPENER.open(_request(url), timeout=timeout) as response:
+        with _OPENER.open(_request(url), timeout=_request_timeout(timeout, deadline)) as response:
             body = response.read()
             raw_location = response.headers.get("Location")
             observation = Observation(
@@ -134,6 +150,7 @@ def run_production_check(
     active_window: bool = False,
     checked_at: datetime | None = None,
     site_manifest: SiteManifest | None = None,
+    deadline: float | None = None,
 ) -> ProductionCheckReport:
     """Check served routes, optionally against an explicitly expected release.
 
@@ -145,7 +162,9 @@ def run_production_check(
     if site_manifest is not None and expected_git_commit is None:
         raise ValueError("a publication contract requires an expected Git commit")
     observed_at = checked_at or datetime.now(UTC)
-    manifest_observation, manifest_body = fetch_manifest_body(base_url, timeout=timeout)
+    manifest_observation, manifest_body = fetch_manifest_body(
+        base_url, timeout=timeout, deadline=deadline
+    )
     manifest_result, manifest, manifest_parse_error = evaluate_manifest(
         manifest_observation, manifest_body
     )
@@ -178,7 +197,7 @@ def run_production_check(
     if active_window:
         release_check = release_manifest_check(manifest.current_election_id)
         release_observation, release_body = _fetch_body(
-            base_url, release_check.path, timeout=timeout
+            base_url, release_check.path, timeout=timeout, deadline=deadline
         )
         release_result, release_manifest, release_parse_error = evaluate_release_manifest(
             release_check, release_observation, release_body
@@ -189,7 +208,9 @@ def run_production_check(
             manifest.current_election_id, canonical_origin=base_url.rstrip("/")
         )
         route_results = tuple(
-            RouteCheckResult(check=check, observed=probe(base_url, check, timeout=timeout))
+            RouteCheckResult(
+                check=check, observed=probe(base_url, check, timeout=timeout, deadline=deadline)
+            )
             for check in route_checks
         )
     elif (
@@ -199,14 +220,16 @@ def run_production_check(
             site_manifest,
             representative_race_path=deployment_contract.representative_race_path,
         )
-        archive_observation, archive_body = _fetch_body(base_url, "/e/", timeout=timeout)
+        archive_observation, archive_body = _fetch_body(
+            base_url, "/e/", timeout=timeout, deadline=deadline
+        )
         archive_index = evaluate_archive_index(site_manifest, archive_observation, archive_body)
         route_results = tuple(
             archive_index.route
             if check.path == "/e/"
             else RouteCheckResult(
                 check=check,
-                observed=probe(base_url, check, timeout=timeout),
+                observed=probe(base_url, check, timeout=timeout, deadline=deadline),
             )
             for check in route_checks
         )
