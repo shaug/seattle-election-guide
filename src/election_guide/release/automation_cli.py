@@ -17,6 +17,12 @@ import yaml
 
 from election_guide.github_cli import run_gh
 from election_guide.hosting.models import SiteManifest
+from election_guide.hosting.promotion import (
+    promotion_allowed,
+    recover_candidate,
+    verify_merged_release_relation,
+    verify_merged_release_source,
+)
 from election_guide.hosting.releases import (
     published_release_tags,
     verify_declared_releases_published,
@@ -24,6 +30,7 @@ from election_guide.hosting.releases import (
 from election_guide.release.automation_models import (
     ArtifactRef,
     CandidateRecord,
+    OperationReceipt,
     Producer,
     PublicationResult,
     PublishedArchive,
@@ -348,6 +355,7 @@ def record(
     release_artifact_file: Annotated[Path, typer.Option()],
     site_artifact_file: Annotated[Path, typer.Option()],
     output: Annotated[Path, typer.Option()],
+    recovered_from_file: Annotated[Path | None, typer.Option()] = None,
 ) -> None:
     """Bind the two already-uploaded artifact identities into canonical JSON."""
     try:
@@ -359,6 +367,11 @@ def record(
             producer=Producer.model_validate_json(producer_file.read_bytes()),
             release_artifact=ArtifactRef.model_validate_json(release_artifact_file.read_bytes()),
             site_artifact=ArtifactRef.model_validate_json(site_artifact_file.read_bytes()),
+            recovered_from=(
+                Producer.model_validate_json(recovered_from_file.read_bytes())
+                if recovered_from_file
+                else None
+            ),
         )
         output.write_bytes(canonical_json_bytes(result.model_dump(mode="json")))
     except (OSError, ValueError, yaml.YAMLError) as error:
@@ -425,4 +438,147 @@ def bind_publication_command(
         )
         output.write_bytes(canonical_json_bytes(result.model_dump(mode="json")))
     except (OSError, ValueError) as error:
+        _failed(error)
+
+
+def _selected_main(repository: Path) -> SiteManifest:
+    """Capture main once, then read that exact selection immediately before upload."""
+    sha = _remote_commit("git/ref/heads/main")
+    return SiteManifest.model_validate(
+        yaml.load(
+            run_gh(
+                [
+                    "gh",
+                    "api",
+                    f"repos/{{owner}}/{{repo}}/contents/{DEFAULT_SITE.as_posix()}?ref={sha}",
+                    "-H",
+                    "Accept: application/vnd.github.raw+json",
+                ],
+                "could not read final main selection",
+            ),
+            Loader=UniqueKeyLoader,
+        )
+    )
+
+
+@app.command("admit")
+def admit(
+    source_sha: Annotated[str, typer.Option()],
+    base_sha: Annotated[str, typer.Option()],
+    preflight: Annotated[bool, typer.Option()] = False,
+) -> None:
+    """Admit after five current CI lanes pass; --preflight only checks request readiness.
+
+    Recovery dispatches export RELEASE_SOURCE_SHA for the captured source while
+    GITHUB_SHA identifies the trusted main workflow revision.
+    """
+    try:
+        repository = _repository()
+        number = (
+            verify_merged_release_relation(repository, source_sha=source_sha)
+            if preflight
+            else verify_merged_release_source(repository, source_sha=source_sha)
+        )
+        if re.fullmatch(r"[0-9a-f]{40}", base_sha) is None:
+            raise ValueError("base SHA must be a full lowercase Git commit ID")
+        if _git(repository, "merge-base", base_sha, source_sha) != base_sha:
+            raise ValueError("admission base must be an ancestor of source")
+        base = _manifest_at(repository, base_sha, DEFAULT_SITE)
+        paths = tuple(
+            _git(repository, "diff", "--no-renames", "--name-only", "-z", base_sha, source_sha)
+            .rstrip("\0")
+            .split("\0")
+        )
+        archive = subprocess.run(
+            ["git", "archive", source_sha], cwd=repository, check=True, capture_output=True
+        ).stdout
+        with tempfile.TemporaryDirectory(prefix="merged-release-admission-") as temporary:
+            with tarfile.open(fileobj=io.BytesIO(archive)) as tree:
+                tree.extractall(temporary, filter="data")
+            current = resolve_release(DEFAULT_SITE, repository=Path(temporary))
+            requested = validate_release_request(current, base=base, changed_paths=paths)
+            if requested:
+                request = current.current.publication_request
+                assert request is not None
+                if request.previous_release_sha != _published_sha(repository, base):
+                    raise ValueError("publication request previous release boundary is stale")
+        typer.echo(
+            json.dumps(
+                {
+                    "eligible": requested and not preflight,
+                    "requests_release": requested,
+                    "ci_verified": not preflight,
+                    "state": ("pending_ci" if preflight else "eligible")
+                    if requested
+                    else "not_requested",
+                    "source_sha": source_sha,
+                    "pull_request": number,
+                },
+                sort_keys=True,
+            )
+        )
+    except (
+        OSError,
+        ValueError,
+        yaml.YAMLError,
+        subprocess.CalledProcessError,
+        tarfile.TarError,
+    ) as error:
+        typer.echo(
+            json.dumps({"eligible": False, "state": "failed", "error": str(error)}, sort_keys=True)
+        )
+        _failed(error)
+
+
+@app.command("recover")
+def recover(
+    record: Annotated[Path, typer.Option()],
+    output_dir: Annotated[Path, typer.Option()],
+) -> None:
+    """Recover captured files; fresh artifact uploads and recording follow in Actions."""
+    try:
+        archive = recover_candidate(
+            CandidateRecord.model_validate_json(record.read_bytes()),
+            repository=_repository(),
+            work_dir=output_dir,
+        )
+        typer.echo(
+            json.dumps(
+                {
+                    "archive": str(archive),
+                    "original_candidate": str(output_dir / "original-candidate.json"),
+                },
+                sort_keys=True,
+            )
+        )
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        _failed(error)
+
+
+@app.command("promotion-check")
+def promotion_check(
+    publication: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+    latest_verified: Annotated[Path | None, typer.Option()] = None,
+) -> None:
+    """Under the workflow lock, check the captured main selection before the sole upload."""
+    try:
+        allowed = promotion_allowed(
+            PublicationResult.model_validate_json(publication.read_bytes()),
+            selected=_selected_main(_repository()),
+            latest_verified=(
+                OperationReceipt.model_validate_json(latest_verified.read_bytes())
+                if latest_verified
+                else None
+            ),
+        )
+        output.write_bytes(
+            canonical_json_bytes(
+                {"eligible": allowed, "state": "eligible" if allowed else "superseded"}
+            )
+        )
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        output.write_bytes(
+            canonical_json_bytes({"eligible": False, "state": "failed", "error": str(error)})
+        )
         _failed(error)
