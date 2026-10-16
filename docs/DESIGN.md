@@ -92,6 +92,13 @@ the differ/amber family rather than adding a yellow.
   `.page` frame on the shared backdrop; prose that wants a book measure
   constrains an inner ~46rem column. The frame is the site; the measure is
   the content.
+- **Long prose gets room between topics.** How this works uses the same measured
+  page head and column as Updates. Short paragraphs sit under serif section
+  headings, with a larger gap between sections than between paragraphs.
+  Counting, source eligibility, and comparisons are separate topics; a heading
+  must not become a catchall for paragraphs that need their own heading.
+  *(2026-10-16, issue #551: the Corrections page's restraint is the reference.
+  Its public name is now Updates; its tagline remains "We get it right, eventually.")*
 
 ## Page vs. modal
 

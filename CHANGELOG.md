@@ -6,6 +6,19 @@ Software changes for current releases are published with their bundled
 The historical sections below are retained through `2026-general.8`.
 Do not edit by hand: CI regenerates this index and compares committed bytes.
 
+## 2026-general.9 — 2026-10-16
+
+### Added
+
+- Broaden Updates and simplify How this works (#552)
+
+### Documentation
+
+- Record 2026-general.8 release changelog (#549)
+
+### Tooling
+
+- Prepare 2026-general.9 publication (#554)
 ## 2026-general.8 — 2026-10-16
 
 ### Documentation

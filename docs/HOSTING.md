@@ -165,7 +165,7 @@ have a published, non-draft Release. A historical, undeclared, mismatched, or re
 rejected. Use one value for both the exception and the local bundle supplied to staging:
 
 ```bash
-CANDIDATE_BUNDLE_ID=wa-2026-general-2026-general.8
+CANDIDATE_BUNDLE_ID=wa-2026-general-2026-general.9
 uv run election-guide hosting verify-releases config/hosting/site.yaml \
   --candidate-bundle-id "$CANDIDATE_BUNDLE_ID"
 uv run election-guide hosting stage config/hosting/site.yaml \
@@ -197,7 +197,7 @@ Pass `--released-bundle-dir` to resolve every declared bundle that was not suppl
 
 ```bash
 uv run election-guide hosting stage config/hosting/site.yaml \
-  --bundle wa-2026-general-2026-general.8=dist/general-release/bundle \
+  --bundle wa-2026-general-2026-general.9=dist/general-release/bundle \
   --released-bundle-dir dist/released-bundles \
   --output-dir dist/cloudflare-site
 ```
@@ -242,7 +242,7 @@ make hosting-stage
 ```
 
 The Make target supplies the current election's bundle as
-`wa-2026-general-2026-general.8=dist/reproducibility-a/bundle` and passes
+`wa-2026-general-2026-general.9=dist/reproducibility-a/bundle` and passes
 `--released-bundle-dir dist/released-bundles`, which is the pair CI stages with. The current election
 is the only one built from source, so when another election is declared it resolves from the release
 that published it rather than from anything prepared locally — see
@@ -417,7 +417,7 @@ in the fetched schema-valid deployment manifest's asset inventory. The checker a
 - successful general and historical-primary guides;
 - successful representative race and comparisons pages;
 - a genuine `404` from a deterministic unknown-election path; and
-- `2026-general.8` and the exact `production_candidate_sha` in the public manifest.
+- `2026-general.9` and the exact `production_candidate_sha` in the public manifest.
 
 Attach `dist/production-probe.json` to the deployment issue with the CI run and artifact,
 deployment ID, full deployed SHA, and deployment time. Run the same command a second time after

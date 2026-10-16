@@ -62,8 +62,8 @@ def _election_day_banner(view_model: PublicationViewModel) -> str:
 
 
 def _corrections_href(view_model: PublicationViewModel, guide_path: str) -> str | None:
-    """The election's corrections page address, or `None` while it carries no
-    corrections (docs/RESULTS.md, "The corrections page"; issue #290) -- the
+    """The election's Updates address, or `None` while it carries no entries
+    (docs/RESULTS.md, "The updates page"; #551). The legacy field supplies the
     same "state, not option" gate `compare_href` follows for Comparisons
     (`view_model.comparisons.policy.enabled`) below. Every full document's
     nav renders this exactly like `compare_href`, and `hosting.pages` stages
@@ -71,7 +71,7 @@ def _corrections_href(view_model: PublicationViewModel, guide_path: str) -> str 
     corrections = view_model.corrections
     if corrections is None or not corrections.entries:
         return None
-    return f"{guide_path}corrections/"
+    return f"{guide_path}updates/"
 
 
 def template_environment() -> Environment:
@@ -485,8 +485,8 @@ def render_corrections_document(
     public_site_url: str,
     project_url: str | None = None,
 ) -> str:
-    """Render the per-election corrections page (docs/RESULTS.md, "The
-    corrections page"; issue #290).
+    """Render the per-election Updates page from the legacy corrections field
+    (docs/RESULTS.md, "The updates page"; issues #290 and #551).
 
     A caller must gate on this election actually having corrections before
     calling this -- `hosting.pages` (the one production caller) stages it,
@@ -502,7 +502,7 @@ def render_corrections_document(
     entries = context.corrections_entries_view(view_model.corrections)
     for entry in entries:
         for link in entry.provenance:
-            _require_web_url(link.url)
+            _require_web_url(link.url, allow_root_relative=True)
 
     environment = template_environment()
     template = environment.get_template("corrections.html.j2")
@@ -515,7 +515,7 @@ def render_corrections_document(
         legacy_name=view_model.metadata.election_name,
         election_id=view_model.metadata.election_id,
     )
-    document_title = page_title(page="Corrections", election=election_display_name)
+    document_title = page_title(page="Updates", election=election_display_name)
     compare_href = f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
     return template.render(
         guide=view_model,
@@ -526,7 +526,7 @@ def render_corrections_document(
         shell_entry_script=bundle_entry("shell-entry.mjs", global_name="ShellPage"),
         corrections_entries=entries,
         compare_href=compare_href,
-        corrections_href=f"{guide_path}corrections/",
+        corrections_href=f"{guide_path}updates/",
         guide_path=guide_path,
         election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
@@ -535,9 +535,16 @@ def render_corrections_document(
     )
 
 
-def _require_web_url(value: str) -> None:
+def _require_web_url(value: str, *, allow_root_relative: bool = False) -> None:
     if any(character.isspace() or ord(character) < 32 for character in value):
         raise ValueError(f"rendered link is not a safe HTTP(S) URL: {value!r}")
+    if (
+        allow_root_relative
+        and value.startswith("/")
+        and not value.startswith("//")
+        and "\\" not in value
+    ):
+        return
     try:
         parsed = urlsplit(value)
         port = parsed.port
