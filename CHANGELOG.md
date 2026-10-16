@@ -9,6 +9,19 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-general.8 — 2026-10-16
+
+### Documentation
+
+- Record 2026-general.7 release changelog (#547)
+
+### Other
+
+- Verify Stranger and WEA; add two missed endorsements (#546)
+
+### Tooling
+
+- Prepare 2026-general.8 publication (#548)
 ## 2026-general.7 — 2026-10-16
 
 ### Documentation
