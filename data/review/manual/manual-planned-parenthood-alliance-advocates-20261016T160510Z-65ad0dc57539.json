@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-planned-parenthood-alliance-advocates-20261016T150040Z-decd0fdb6b0a",
+  "entered_at": "2026-10-16T16:05:10.192531Z",
+  "entry_method": "manual",
+  "evidence_locator": "Current browser retry confirms the same printed office conflict in the retained October 16 original official-source capture; candidate identity correction requires explicit approval.",
+  "evidence_type": "web_page",
+  "id": "manual-planned-parenthood-alliance-advocates-20261016T160510Z-65ad0dc57539",
+  "review_note": "Issue #545: shaug explicitly approved the concrete browser-retry packet with \"Apply all 54 decisions and all three explicit corrections\". This targeted approval covers Sierra Club 24 decisions, WA4PJ 30 decisions (including two declined-to-endorse instructions), WA4PJ Supreme Court District-to-Position terminology, and three separately enumerated office corrections: WA4PJ Bergquist Rep 12 to LD11 House Position 2; Alliance for Gun Responsibility Bergquist District 21 to LD11 House Position 2; PPAA Mosqueda District 6 to King County Council District 8. OpenAI Codex is the transcriber; shaug is the human verifier. The original source labels remain recorded. WA4PJ grey ratings for Colleen Melody and Ian Birk remain unresolved and are not normalized. The separate original 120-change approval remains intact. No daily, whole-panel or verification-adapter baseline human attestation is asserted. See data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json. Pending predecessor: manual-planned-parenthood-alliance-advocates-20261016T160510Z-6b6aa39e77d8. Any grey rows in this factual transcription remain unresolved and excluded from approved endorsement claims.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T16:05:10.192531Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "transcription": "King County Council Teresa Mosqueda, District 6"
+}

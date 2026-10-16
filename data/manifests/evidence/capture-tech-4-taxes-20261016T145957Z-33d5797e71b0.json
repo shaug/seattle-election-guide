@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 6555,
+  "canonical_url": "https://tech4taxes.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "527c535032153d03784b96f8d5fe0283ff1d16aa1909ded33a55a86d2b9cbff8",
+  "http_status": 200,
+  "id": "capture-tech-4-taxes-20261016T145957Z-33d5797e71b0",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://tech4taxes.org/endorsements",
+  "retrieved_at": "2026-10-16T14:59:57.450622Z",
+  "schema_version": "1.0",
+  "source_id": "tech-4-taxes",
+  "storage_reference": "sha256/52/527c535032153d03784b96f8d5fe0283ff1d16aa1909ded33a55a86d2b9cbff8",
+  "storage_scope": "local_only",
+  "title": "Tech4Taxes",
+  "updated_at": null
+}

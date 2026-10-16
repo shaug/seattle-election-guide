@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 222383,
+  "canonical_url": "https://ufcw3000.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "c99439dea91f14cb130c492c2a0e13bfcb806b9d934ed909fe33ca55c347a95d",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20261016T051130Z-adfc059ee712",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original bytes retained in the committed encrypted vault.",
+  "requested_url": "https://ufcw3000.org/endorsements",
+  "retrieved_at": "2026-10-16T05:11:30Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "storage_reference": "sha256/c9/c99439dea91f14cb130c492c2a0e13bfcb806b9d934ed909fe33ca55c347a95d",
+  "storage_scope": "local_only",
+  "title": "Official wa-2026-general endorsement publication",
+  "updated_at": null
+}

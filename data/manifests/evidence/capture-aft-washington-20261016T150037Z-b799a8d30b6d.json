@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 39749,
+  "canonical_url": "https://www.aftwa.org/endorsements-and-elections/our-2026-general-legislative-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "ab2fb99c78270b2b8361cefbd3e7a6baac2cf46a2472b395a6ae968894162bd3",
+  "http_status": 200,
+  "id": "capture-aft-washington-20261016T150037Z-b799a8d30b6d",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.aftwa.org/endorsements-and-elections/our-2026-general-legislative-endorsements",
+  "retrieved_at": "2026-10-16T15:00:37.106644Z",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "storage_reference": "sha256/ab/ab2fb99c78270b2b8361cefbd3e7a6baac2cf46a2472b395a6ae968894162bd3",
+  "storage_scope": "local_only",
+  "title": "AFT Washington 2026 general legislative endorsements",
+  "updated_at": null
+}

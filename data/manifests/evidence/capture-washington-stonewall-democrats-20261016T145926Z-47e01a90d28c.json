@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 819353,
+  "canonical_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+  "capture_method": "static_html",
+  "content_sha256": "4d9610c38f457add238a6b64b4af8c51d25996c7091ac7c5651f108dd10da728",
+  "http_status": 200,
+  "id": "capture-washington-stonewall-democrats-20261016T145926Z-47e01a90d28c",
+  "media_type": "text/html; charset=\"utf-8\"",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+  "retrieved_at": "2026-10-16T14:59:26.111393Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/4d/4d9610c38f457add238a6b64b4af8c51d25996c7091ac7c5651f108dd10da728",
+  "storage_scope": "local_only",
+  "title": "ENDORSEMENT ANNOUNCEMENT... - Washington Stonewall Democrats",
+  "updated_at": null
+}

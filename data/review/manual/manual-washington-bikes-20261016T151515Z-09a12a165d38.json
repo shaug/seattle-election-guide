@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-bikes-20261016T145957Z-415e3b0b1a5d",
+  "entered_at": "2026-10-16T15:15:15.515715Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; 2026 General Election Endorsements → Congress table; Pramila Jayapal D7 US Representative.; 2026 General Election Endorsements → Congress table; Adam Smith D9 US Representative.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-bikes-20261016T151515Z-09a12a165d38",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "transcription": "U.S. Representative — Congressional District 7: Pramila Jayapal\nU.S. Representative — Congressional District 9: Adam Smith"
+}

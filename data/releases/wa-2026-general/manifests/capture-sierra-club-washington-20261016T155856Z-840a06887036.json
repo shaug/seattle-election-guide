@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 15484,
+  "canonical_url": "https://www.sierraclub.org/washington/2026-endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "c77475f55fa187db04aa1bcacc966879aa0efd16add50417e83d7df205d3b020",
+  "http_status": null,
+  "id": "capture-sierra-club-washington-20261016T155856Z-840a06887036",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.sierraclub.org/washington/2026-endorsements",
+  "retrieved_at": "2026-10-16T15:58:56.853359Z",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "storage_reference": "sha256/c7/c77475f55fa187db04aa1bcacc966879aa0efd16add50417e83d7df205d3b020",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Sierra Club Washington State Chapter",
+  "updated_at": null
+}

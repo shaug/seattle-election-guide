@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 130385,
+  "canonical_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "capture_method": "manual_upload",
+  "content_sha256": "b85c16518687fd67458199f5057853f0e96aa9de2b27a4bf974bb36dc2c09002",
+  "http_status": null,
+  "id": "capture-young-democrats-of-washington-20261016T155856Z-7692e9b448db",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original image bytes exported through native browser pageAssets after displaying every carousel slide; no sign-in. Import timestamp records custody, not exact browser retrieval. Canonical post URL retained; no CDN query URLs, HTTP status or redirect claims.",
+  "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "retrieved_at": "2026-10-16T15:58:56.853359Z",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "storage_reference": "sha256/b8/b85c16518687fd67458199f5057853f0e96aa9de2b27a4bf974bb36dc2c09002",
+  "storage_scope": "local_only",
+  "title": "2026 general endorsement carousel — slide 1 of 3",
+  "updated_at": null
+}

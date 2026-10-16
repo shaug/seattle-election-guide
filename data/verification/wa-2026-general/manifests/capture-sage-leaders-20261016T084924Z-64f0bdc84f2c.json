@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 148203,
+  "canonical_url": "https://www.sageleaders.org/2026-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "2a77bb5a02903f70cb8374e698553f59c42b89f183eb38c8d6de4246032ff052",
+  "http_status": 200,
+  "id": "capture-sage-leaders-20261016T084924Z-64f0bdc84f2c",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original bytes retained in the committed encrypted vault.",
+  "requested_url": "https://www.sageleaders.org/2026-endorsements",
+  "retrieved_at": "2026-10-16T08:49:24Z",
+  "schema_version": "1.0",
+  "source_id": "sage-leaders",
+  "storage_reference": "sha256/2a/2a77bb5a02903f70cb8374e698553f59c42b89f183eb38c8d6de4246032ff052",
+  "storage_scope": "local_only",
+  "title": "Official wa-2026-general endorsement publication",
+  "updated_at": null
+}

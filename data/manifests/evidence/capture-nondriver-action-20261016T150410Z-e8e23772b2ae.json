@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": 403,
+  "id": "capture-nondriver-action-20261016T150410Z-e8e23772b2ae",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://ndaction.org/",
+  "retrieved_at": "2026-10-16T15:04:10.994183Z",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "title": null,
+  "unavailable_reason": "live collection failed: live collection returned HTTP 403",
+  "updated_at": null
+}

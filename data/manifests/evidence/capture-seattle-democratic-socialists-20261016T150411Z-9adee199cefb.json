@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 83074,
+  "canonical_url": "https://seattledsa.org/committees/electoral/",
+  "capture_method": "static_html",
+  "content_sha256": "410f3be5274ffefe8189a7f50950afd9e24de1ce26844885ebc0687fc6f6b90a",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261016T150411Z-9adee199cefb",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://seattledsa.org/committees/electoral/",
+  "retrieved_at": "2026-10-16T15:04:11.501483Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/41/410f3be5274ffefe8189a7f50950afd9e24de1ce26844885ebc0687fc6f6b90a",
+  "storage_scope": "local_only",
+  "title": "Electoral Working Group – Seattle Democratic Socialists of America",
+  "updated_at": null
+}

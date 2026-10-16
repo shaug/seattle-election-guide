@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 231762,
+  "canonical_url": "https://gunresponsibility.org/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "f5fe254dd8e0765ea012fc28c5f2f23cb0a7ecf468ec79b949cad3ca6c67f448",
+  "http_status": 200,
+  "id": "capture-alliance-for-gun-responsibility-20261016T145959Z-85a3928d61ce",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://gunresponsibility.org/2026-endorsements/",
+  "retrieved_at": "2026-10-16T14:59:59.843027Z",
+  "schema_version": "1.0",
+  "source_id": "alliance-for-gun-responsibility",
+  "storage_reference": "sha256/f5/f5fe254dd8e0765ea012fc28c5f2f23cb0a7ecf468ec79b949cad3ca6c67f448",
+  "storage_scope": "local_only",
+  "title": "2026 Endorsements | Alliance for Gun Responsibility",
+  "updated_at": null
+}

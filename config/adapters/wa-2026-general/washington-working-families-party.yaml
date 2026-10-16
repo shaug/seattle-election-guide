@@ -2,7 +2,7 @@
 schema_version: '1.0'
 source_id: washington-working-families-party
 adapter_kind: static_html
-extractor_version: 1.0.0
+extractor_version: 1.0.1
 complete: true
 decision_pattern: (?:^Pramila\s+Jayapal\s+U\.S\.\s+House\s+of\s+Representatives,\s+District\s+7$|^Jorge\s+Baron\s+King\s+County\s+Council,\s+District\s+4$|^Teresa\s+Mosqueda\s+King\s+County\s+Council,\s+District\s+8$|^Nilu\s+Jenks\s+Seattle\s+City\s+Council,\s+District\s+5$|^Kelabe\s+Tewolde\s+State\s+House,\s+District\s+37,\s+Position\s+1$)
 rules:
@@ -41,4 +41,4 @@ rules:
   - ld-37-state-representative-1--kelabe-tewolde
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
-section_pattern: (?s)Our Candidates\n(.*?)\nView More
+section_pattern: (?s)^(?:Our Candidates|Washington\nWFP Washington)\n(.*?)\nView More(?:\n|$)

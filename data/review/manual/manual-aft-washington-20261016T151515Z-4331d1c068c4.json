@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-aft-washington-20261016T150037Z-b799a8d30b6d",
+  "entered_at": "2026-10-16T15:15:15.515715Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; General legislative table final left-side district block: LD32 Cindy Ryu; LD32 Senate",
+  "evidence_type": "web_page",
+  "id": "manual-aft-washington-20261016T151515Z-4331d1c068c4",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "transcription": "Legislative District 32 State Senator: Cindy Ryu"
+}

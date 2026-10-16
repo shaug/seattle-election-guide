@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 147271,
+  "canonical_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates",
+  "capture_method": "static_html",
+  "content_sha256": "c4e081ea8372b6d5b3f3677d16e621515b34da983e9e04568fec6f0147cc6030",
+  "http_status": 200,
+  "id": "capture-planned-parenthood-alliance-advocates-20261016T145957Z-8176a7edd0a5",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates",
+  "retrieved_at": "2026-10-16T14:59:57.911070Z",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "storage_reference": "sha256/c4/c4e081ea8372b6d5b3f3677d16e621515b34da983e9e04568fec6f0147cc6030",
+  "storage_scope": "local_only",
+  "title": "Planned Parenthood Alliance Advocates\n    \n  Planned Parenthood ActionOpen SearchFindFundraiserMega phoneFollow us onFollow us onFollow us onFollow us onPlanned Parenthood Alliance Advocates Footer LogoFollow us onFollow us onFollow us onFollow us onFollow us onFollow us on",
+  "updated_at": null
+}

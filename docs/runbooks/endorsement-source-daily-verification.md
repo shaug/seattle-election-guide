@@ -212,6 +212,16 @@ proposed sections without GitHub writes and permits an uncommitted local exercis
 
 ## Adoption evidence and postmortem notes
 
+The first live run on October 15 exposed publication-layout gaps (#542): SGN's
+article headline is an `h2.mb-3.font-weight-bold`, and WFP's national index now
+groups candidates under a Washington section. The adapters also recognize
+SEIU 775's current `I-` initiative labels and `Pos.` council labels alongside
+the previously reviewed wording. These are the same existing ballot mappings;
+new or changed choices still require human review. Authored offline layout
+fixtures cover these differences without committing complete source pages.
+SEIU 775's initial fetch failure did not reproduce during local diagnosis;
+its page was reachable, so the HTTP timeout and access safeguards stay intact.
+
 Required before marking adopted: exact deployed workflow revision and run URL;
 current due/coverage output; all six live source outcomes and approved initial
 baselines; a second independent run proving reuse; immutable evidence/task links;

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 2646,
+  "canonical_url": "https://wadems.org/2026-campaign-resources/",
+  "capture_method": "manual_upload",
+  "content_sha256": "8ba266526fda469e1552e15b8f4d04f2697e6244d4a4c6d66e9093bb2e0f286f",
+  "http_status": null,
+  "id": "capture-washington-state-democrats-20261016T150032Z-48a630365f2e",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://wadems.org/2026-campaign-resources/",
+  "retrieved_at": "2026-10-16T15:00:32.412390Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-democrats",
+  "storage_reference": "sha256/8b/8ba266526fda469e1552e15b8f4d04f2697e6244d4a4c6d66e9093bb2e0f286f",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington State Democratic Party",
+  "updated_at": null
+}

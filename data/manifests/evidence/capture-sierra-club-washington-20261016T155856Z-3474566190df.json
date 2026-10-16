@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 2079,
+  "canonical_url": "https://www.sierraclub.org/washington/2026-endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+  "http_status": null,
+  "id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Manually preserved browser-visible excerpt, not original response HTML. Import timestamp records custody, not exact browser retrieval; no HTTP status or redirect claim. Source labels preserved; race IDs are annotations.",
+  "requested_url": "https://www.sierraclub.org/washington/2026-endorsements",
+  "retrieved_at": "2026-10-16T15:58:56.853359Z",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "storage_reference": "sha256/3d/3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+  "storage_scope": "local_only",
+  "title": "2026 Endorsements — manually preserved browser excerpt",
+  "updated_at": null
+}

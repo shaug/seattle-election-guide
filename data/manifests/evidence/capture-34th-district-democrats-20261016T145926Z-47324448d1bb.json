@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": null,
+  "id": "capture-34th-district-democrats-20261016T145926Z-47324448d1bb",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "No captured endorsement artifact; unsuccessful bounded official-source retrieval.",
+  "requested_url": "https://34dems.org/",
+  "retrieved_at": "2026-10-16T14:59:26.769715Z",
+  "schema_version": "1.0",
+  "source_id": "34th-district-democrats",
+  "title": null,
+  "unavailable_reason": "live collection failed: live collection exceeded 10 redirects",
+  "updated_at": null
+}

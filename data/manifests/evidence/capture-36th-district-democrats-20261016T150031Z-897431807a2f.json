@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 93987,
+  "canonical_url": "https://36th.org/wp-content/uploads/Endorsements-2026.png",
+  "capture_method": "image",
+  "content_sha256": "01b771d4bb069a40c8dde7656e42cb15096a9cc30d08776c0845d7cb2438aab5",
+  "http_status": 200,
+  "id": "capture-36th-district-democrats-20261016T150031Z-897431807a2f",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://36th.org/wp-content/uploads/Endorsements-2026.png",
+  "retrieved_at": "2026-10-16T15:00:31.779913Z",
+  "schema_version": "1.0",
+  "source_id": "36th-district-democrats",
+  "storage_reference": "sha256/01/01b771d4bb069a40c8dde7656e42cb15096a9cc30d08776c0845d7cb2438aab5",
+  "storage_scope": "local_only",
+  "title": "36th-district-democrats official publication",
+  "updated_at": null
+}
