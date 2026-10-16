@@ -1,13 +1,10 @@
 # Changelog
 
-Site and code changes, generated from commit history by
-[git-cliff](https://git-cliff.org). Do not edit by hand: CI regenerates this
-file and fails when the result differs from what is committed.
+Software changes for current releases are published with their bundled
+`RELEASE_NOTES.md` on [GitHub Releases](https://github.com/shaug/seattle-election-guide/releases).
 
-This is not the record of what the guide *said*. Endorsement data, source
-coverage, and the audit trail for one published election live in that release's
-own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
-This file covers the software that renders and ships those bundles.
+The historical sections below are retained through `2026-general.8`.
+Do not edit by hand: CI regenerates this index and compares committed bytes.
 
 ## 2026-general.8 — 2026-10-16
 

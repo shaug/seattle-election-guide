@@ -35,7 +35,9 @@ def test_the_generator_is_pinned_to_an_exact_version() -> None:
     pinned = package["devDependencies"]["git-cliff"]
     assert re.fullmatch(r"\d+\.\d+\.\d+", pinned), pinned
     assert package["scripts"]["changelog:version"] == "git-cliff --version"
-    assert "--config cliff.toml" in package["scripts"]["changelog"]
+    assert package["scripts"]["changelog"] == (
+        "uv run election-guide release automation changelog-index --output CHANGELOG.md"
+    )
 
 
 def test_the_full_gate_regenerates_and_compares_the_changelog() -> None:
@@ -66,6 +68,7 @@ def test_ci_checks_the_changelog_against_complete_history() -> None:
     assert changelog_step["run"].strip() == "make check-changelog"
     # Reading history needs no credential; the check job must stay secret-free.
     assert "env" not in changelog_step
+    assert any(step.get("run") == "uv sync --frozen" for step in client_steps)
 
 
 def test_the_changelog_records_only_tagged_releases() -> None:

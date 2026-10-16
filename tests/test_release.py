@@ -435,6 +435,53 @@ def test_release_compiler_continues_rollback_after_middle_restore_fails(
     assert _tree_bytes(manifest_backup) == expected_manifests
 
 
+def test_release_software_history_is_hashed_without_adding_artifacts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
+    legacy = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "legacy")
+    first = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        tmp_path / "first",
+        software_history="## 2026-primary.1 — 2026-08-05\n\n### Added\n\n- First change\n",
+    )
+    second = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        tmp_path / "second",
+        software_history="## 2026-primary.1 — 2026-08-05\n\n### Added\n\n- Second change\n",
+    )
+    legacy_notes = (legacy.bundle_dir / "RELEASE_NOTES.md").read_text()
+    first_notes = (first.bundle_dir / "RELEASE_NOTES.md").read_text()
+    assert "## Software changes" not in legacy_notes
+    assert first_notes.startswith(legacy_notes)
+    assert "## Software changes\n\n## 2026-primary.1" in first_notes
+    assert "- First change" in first_notes
+    first_manifest = read_json(first.bundle_dir / "release-manifest.json")
+    second_manifest = read_json(second.bundle_dir / "release-manifest.json")
+    assert (
+        first_manifest["artifact_hashes"]["RELEASE_NOTES.md"]
+        == hashlib.sha256((first.bundle_dir / "RELEASE_NOTES.md").read_bytes()).hexdigest()
+    )
+    assert (
+        first_manifest["artifact_hashes"]["RELEASE_NOTES.md"]
+        != second_manifest["artifact_hashes"]["RELEASE_NOTES.md"]
+    )
+    assert (
+        first.status.included_artifacts
+        == second.status.included_artifacts
+        == legacy.status.included_artifacts
+    )
+    with ZipFile(first.archive_path) as archive:
+        assert archive.read("seattle-election-guide/RELEASE_NOTES.md").decode() == first_notes
+
+
 def test_release_build_packages_complete_deterministic_public_bundle(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

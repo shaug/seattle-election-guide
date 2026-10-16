@@ -40,13 +40,20 @@ jobs:
       - uses: actions/checkout@v4
         with:
           # CHANGELOG.md is rendered from the complete commit history and its
-          # release tags, so the default shallow, tagless checkout would
+          # retained release tags, so the default shallow, tagless checkout would
           # regenerate a different file (issue 216).
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install locked Python dependencies
+        run: uv sync --frozen
       - name: Install locked Node dependencies
         run: npm ci
       - name: Lint, type-check, and test the client modules

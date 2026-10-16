@@ -12,25 +12,15 @@
 header = """
 # Changelog
 
-Site and code changes, generated from commit history by
-[git-cliff](https://git-cliff.org). Do not edit by hand: CI regenerates this
-file and fails when the result differs from what is committed.
+Software changes for current releases are published with their bundled
+`RELEASE_NOTES.md` on [GitHub Releases](https://github.com/shaug/seattle-election-guide/releases).
 
-This is not the record of what the guide *said*. Endorsement data, source
-coverage, and the audit trail for one published election live in that release's
-own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
-This file covers the software that renders and ships those bundles.
+The historical sections below are retained through `2026-general.8`.
+Do not edit by hand: CI regenerates this index and compares committed bytes.
 """
 
-# Only tagged releases are rendered. An "unreleased" section would make the byte
-# comparison below unsatisfiable: it would contain the very commit that carries
-# the regenerated file, so committing it would change what the next regeneration
-# produces. It would also break on every pull request, because CI checks out an
-# ephemeral `refs/pull/N/merge` commit that no author can predict, and again at
-# squash-merge, which appends a `(#N)` suffix the branch never saw.
-#
-# Rendering only tagged history makes the file a pure function of releases: the
-# commit that regenerates it sits after the newest tag and contributes nothing.
+# Historical tagged sections retain their original format. New software history
+# supplies an explicit version and timestamp through a tag-independent context.
 body = """
 {% if version %}\
 ## {{ version }} — {{ timestamp | date(format="%Y-%m-%d") }}
@@ -83,3 +73,7 @@ commit_parsers = [
 # timestamps cannot reorder the rendered history.
 topo_order = true
 sort_commits = "oldest"
+
+[release_history]
+# The root index never grows when later release tags appear.
+legacy_history_end_sha = "a1a83b5f1c09d7297a6100e3ac321b0e5034bf52"

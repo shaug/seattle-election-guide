@@ -171,12 +171,15 @@ the command a contributor runs locally cannot drift from the one CI runs.
 The guarantee is intentionally Linux-only. The project does not spend CI compute establishing
 macOS equivalence for a release pipeline that is deployed only from Linux.
 
-## Post-tag release lineage
+## Historical post-tag release lineage
 
-Publishing `2026-general.8` and then committing the generated changelog creates two intentional
-commit identities. The published archive remains bound to `release_candidate_sha`; the general
-bundle staged for production is rebuilt from the later `production_candidate_sha`. Verify that
-narrow boundary before handing the production bundle to `hosting stage`:
+The historical publication sequence through `2026-general.8` created two intentional commit
+identities: the published archive is bound to `release_candidate_sha`, and a production handoff
+rebuilds from a later `production_candidate_sha` after a changelog commit. The following verifier preserves
+that existing two-revision contract and remains available when inspecting those archives. New
+request-driven publication uses one merged source revision for the tag, archive, staged bundle,
+and deployment; it requires no post-tag changelog commit. For a historical two-revision handoff,
+verify the narrow boundary before handing the production bundle to `hosting stage`:
 
 <!-- runbook-command:verify-lineage -->
 ```bash
@@ -286,25 +289,33 @@ the release asset size recorded above must also equal the local file size. Retai
 for the lineage command above. The recorded SHA-256 is the release asset digest handed to #450 and
 #440.
 
-## Changelog
+## Software history and changelog index
 
-`CHANGELOG.md` records tagged releases, so it changes once per release rather than once per pull
-request. The new tag has to exist first — that is what moves its commits out of untagged history and
-into a section. Once the release above is published, regenerate and commit the result:
+New current-candidate builds include `## Software changes` in the existing `RELEASE_NOTES.md`
+before its manifest hash and ZIP are computed. The pinned local git-cliff runs offline over the
+explicit `previous_release_sha..source_sha` range with discovered tags ignored. It renders the
+sole release with the declared election-scoped version and source commit timestamp, through the
+existing conventional-commit parsers. Nonconventional commits remain included. Both endpoints
+must exist and the previous boundary must be an ancestor of the source. Creating the candidate
+tag therefore leaves release-note bytes unchanged.
+
+`CHANGELOG.md` links to [published releases](https://github.com/shaug/seattle-election-guide/releases)
+and retains historical section bytes through `2026-general.8`. The fixed history endpoint
+is `release_history.legacy_history_end_sha` in `cliff.toml`, currently
+`a1a83b5f1c09d7297a6100e3ac321b0e5034bf52`. Later tags never append sections to this index.
+Regenerate it with:
 
 ```bash
 npm run changelog
 ```
 
-`make check` regenerates the file and compares bytes, so a stale copy fails the build. Never edit it
-by hand. It covers the software that renders and ships bundles; what the guide *said* for one
-election is in that bundle's own `RELEASE_NOTES.md`.
+`make check-changelog` regenerates and compares committed bytes and runs deterministic-history
+tests. `make check` includes this gate. No post-tag changelog PR, second build revision, or tag
+movement is required for new publication. Existing explicit legacy build callers may omit
+software history and keep their existing bundle content and artifact schemas.
 
-The changelog belongs in one focused, non-closing PR created after the tag exists. After that PR is
-merged, fetch `main` and record its full head as `production_candidate_sha`; do not move or amend
-the published tag. Require `release_candidate_sha` to be an ancestor of the production candidate,
-then rebuild at the latter SHA and run the lineage check. If `main` advances before the production
-handoff is complete, select and verify the new exact candidate again.
+During the #550 transition, the current-candidate orchestration will supply this history before
+automatic publication is activated; the `.8` site declaration remains unchanged.
 
 ## Website publication
 
@@ -321,8 +332,8 @@ staged release status before recomputing asset hashes. Historical declarations a
 without `source_registry_hash` remain valid only for the legacy release schemas that omitted it;
 do not add a reconstructed value to their immutable artifacts.
 
-After lineage passes at `production_candidate_sha`, stage and independently verify the complete
-two-election site:
+For a historical two-revision handoff, after lineage passes at `production_candidate_sha`, stage
+and independently verify the complete two-election site:
 
 <!-- runbook-command:stage-candidate -->
 ```bash
@@ -344,7 +355,8 @@ The three publication tickets use one evidence vocabulary. Record all of these e
 do not replace a full SHA with a branch name or a dashboard's abbreviated display:
 
 - `release_candidate_sha`, the merged commit bound to the published archive;
-- `production_candidate_sha`, the later merged commit bound to the staged site;
+- `production_candidate_sha`, the commit bound to the staged site (equal to the release candidate
+  for new request-driven publication; historically a later merged commit);
 - the release URL, peeled tag SHA, asset identity/size, and release asset digest;
 - the lineage report and the verified two-election deployment manifest;
 - the exact CI run and artifact for `production_candidate_sha`;

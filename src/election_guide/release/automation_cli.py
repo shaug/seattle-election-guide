@@ -24,6 +24,7 @@ from election_guide.release.declaration import (
     resolve_release,
     validate_release_request,
 )
+from election_guide.release.history import generate_changelog_index
 from election_guide.serialization import UniqueKeyLoader
 
 app = typer.Typer(help="Prepare and validate reviewed release declarations.")
@@ -267,4 +268,13 @@ def validate_request(
         subprocess.CalledProcessError,
         tarfile.TarError,
     ) as error:
+        _failed(error)
+
+
+@app.command("changelog-index")
+def changelog_index(output: Annotated[Path, typer.Option()]) -> None:
+    """Write the stable published-release index and retained historical sections."""
+    try:
+        output.write_text(generate_changelog_index(_repository()), encoding="utf-8")
+    except (OSError, ValueError) as error:
         _failed(error)

@@ -58,12 +58,13 @@ changelog:
 	npm run changelog
 
 # CHANGELOG.md is generated, so the committed copy has to be the one the current
-# history produces. Regenerate into a scratch file and compare (issue 216).
+# fixed legacy boundary produces. Future releases live in bundled notes (#550).
 check-changelog:
 	npm run changelog:version
 	mkdir -p dist
-	npx git-cliff --config cliff.toml --output dist/CHANGELOG.check.md
+	uv run election-guide release automation changelog-index --output dist/CHANGELOG.check.md
 	cmp CHANGELOG.md dist/CHANGELOG.check.md
+	uv run pytest tests/test_release_history.py -q
 
 # Lint and format first, then types, then behavior: a formatting or typing
 # failure is cheaper to read than a test failure caused by the same mistake
