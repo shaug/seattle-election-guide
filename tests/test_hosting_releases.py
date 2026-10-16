@@ -709,3 +709,32 @@ def test_a_mismatched_pin_names_both_the_declared_and_the_computed_digest(
     assert "bundle hash differs" in message
     assert declared in message
     assert computed in message
+
+
+@pytest.mark.parametrize(
+    "unsafe", ["duplicate", "alias", "symlink", "backslash", "directory-traversal"]
+)
+def test_public_extraction_rejects_ambiguous_members(tmp_path: Path, unsafe: str) -> None:
+    import warnings
+
+    archive_path = tmp_path / "unsafe.zip"
+    root = f"{ARCHIVE_ROOT_DIR}/"
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UserWarning)
+        with zipfile.ZipFile(archive_path, "w") as archive:
+            archive.writestr(root + "release-status.json", "{}")
+            name = {
+                "duplicate": root + "release-status.json",
+                "alias": root + "./release-status.json",
+                "symlink": root + "linked",
+                "backslash": root + "a\\b",
+                "directory-traversal": root + "../evil/",
+            }[unsafe]
+            info = zipfile.ZipInfo(name)
+            if unsafe == "symlink":
+                info.create_system = 3
+                info.external_attr = 0o120777 << 16
+            archive.writestr(info, b"target")
+    with pytest.raises(ValueError):
+        releases.extract_release_bundle(archive_path, tmp_path / "out", _older_declaration())
+    assert not (tmp_path / "out").exists()

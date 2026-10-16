@@ -1,4 +1,4 @@
-"""Read-only remote discovery and local preparation/admission commands."""
+"""Reviewed declarations, exact-source candidates, and immutable archive publication."""
 
 from __future__ import annotations
 
@@ -21,7 +21,13 @@ from election_guide.hosting.releases import (
     published_release_tags,
     verify_declared_releases_published,
 )
-from election_guide.release.automation_models import ArtifactRef, CandidateRecord, Producer
+from election_guide.release.automation_models import (
+    ArtifactRef,
+    CandidateRecord,
+    Producer,
+    PublicationResult,
+    PublishedArchive,
+)
 from election_guide.release.candidate import (
     build_current_candidate,
     record_candidate,
@@ -36,6 +42,7 @@ from election_guide.release.declaration import (
     validate_release_request,
 )
 from election_guide.release.history import generate_changelog_index
+from election_guide.release.publication import bind_publication, publish_candidate
 from election_guide.serialization import UniqueKeyLoader, canonical_json_bytes
 
 app = typer.Typer(help="Prepare and validate reviewed release declarations.")
@@ -373,4 +380,49 @@ def verify_candidate_command(
             site_dir=site_dir,
         )
     except (OSError, ValueError, yaml.YAMLError) as error:
+        _failed(error)
+
+
+@app.command("publish")
+def publish(
+    record: Annotated[Path, typer.Option()],
+    candidate_artifact_file: Annotated[Path, typer.Option()],
+    archive: Annotated[Path, typer.Option()],
+    output_dir: Annotated[Path, typer.Option()],
+    existing_receipt: Annotated[Path | None, typer.Option()] = None,
+) -> None:
+    """Publish or recover a canonical archive and independently verified promotion site."""
+    try:
+        publish_candidate(
+            CandidateRecord.model_validate_json(record.read_bytes()),
+            candidate_artifact=ArtifactRef.model_validate_json(
+                candidate_artifact_file.read_bytes()
+            ),
+            repository=_repository(),
+            archive_path=archive,
+            work_dir=output_dir,
+            existing_receipt=(
+                PublicationResult.model_validate_json(existing_receipt.read_bytes())
+                if existing_receipt
+                else None
+            ),
+        )
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        _failed(error)
+
+
+@app.command("bind-publication")
+def bind_publication_command(
+    published: Annotated[Path, typer.Option()],
+    promotion_artifact_file: Annotated[Path, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+) -> None:
+    """Capture the promotion artifact identity after its Actions upload completes."""
+    try:
+        result = bind_publication(
+            PublishedArchive.model_validate_json(published.read_bytes()),
+            ArtifactRef.model_validate_json(promotion_artifact_file.read_bytes()),
+        )
+        output.write_bytes(canonical_json_bytes(result.model_dump(mode="json")))
+    except (OSError, ValueError) as error:
         _failed(error)

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import stat
 import subprocess
 import zipfile
 import zlib
@@ -164,7 +165,9 @@ def materialize_released_bundle(declaration: PublishedElection, work_dir: Path) 
     return bundle_dir
 
 
-def _extract_bundle(archive_path: Path, bundle_dir: Path, declaration: PublishedElection) -> None:
+def extract_release_bundle(
+    archive_path: Path, bundle_dir: Path, declaration: PublishedElection
+) -> None:
     """Extract the archive's single bundle root, rejecting unsafe member paths."""
     prefix = f"{ARCHIVE_ROOT_DIR}/"
     # A damaged download fails in several ways, none of them a ValueError, so any
@@ -175,21 +178,37 @@ def _extract_bundle(archive_path: Path, bundle_dir: Path, declaration: Published
     # raises NotImplementedError. Every archive-level rejection reads the same way.
     try:
         with zipfile.ZipFile(archive_path) as archive:
-            members = [name for name in archive.namelist() if not name.endswith("/")]
+            infos = archive.infolist()
+            members = [info.filename for info in infos if not info.is_dir()]
             if not members:
                 raise ValueError(f"release archive {archive_path.name!r} contains no files")
-            outside = sorted(name for name in members if not name.startswith(prefix))
-            if outside:
-                raise ValueError(
-                    f"release archive {archive_path.name!r} contains entries outside "
-                    f"{ARCHIVE_ROOT_DIR!r}: {outside[:5]}"
+            seen: set[str] = set()
+            for info in infos:
+                name = info.filename
+                if not name.startswith(prefix):
+                    raise ValueError("release archive contains entries outside its bundle root")
+                raw = (
+                    name[len(prefix) :].removesuffix("/") if info.is_dir() else name[len(prefix) :]
                 )
+                relative = PurePosixPath(raw)
+                if (
+                    not raw
+                    or relative.is_absolute()
+                    or ".." in relative.parts
+                    or relative.as_posix() != raw
+                    or "\\" in name
+                    or info.orig_filename != name
+                    or stat.S_ISLNK(info.external_attr >> 16)
+                    or raw in seen
+                ):
+                    raise ValueError(
+                        f"release archive contains an unsafe or duplicate entry: {name!r}"
+                    )
+                seen.add(raw)
+            if bundle_dir.is_symlink() or (bundle_dir.exists() and any(bundle_dir.iterdir())):
+                raise ValueError("release extraction requires an empty destination")
             for name in members:
                 relative = PurePosixPath(name[len(prefix) :])
-                if not relative.parts or relative.is_absolute() or ".." in relative.parts:
-                    raise ValueError(
-                        f"release archive {archive_path.name!r} contains an unsafe entry: {name!r}"
-                    )
                 target = bundle_dir / Path(*relative.parts)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 with archive.open(name) as source, target.open("wb") as sink:
@@ -204,3 +223,8 @@ def _extract_bundle(archive_path: Path, bundle_dir: Path, declaration: Published
             f"bundle {declaration.bundle_id!r} archive has no release-status.json; "
             "it does not look like a release bundle"
         )
+
+
+def _extract_bundle(archive_path: Path, bundle_dir: Path, declaration: PublishedElection) -> None:
+    """Compatibility entry point for existing historical archive callers."""
+    extract_release_bundle(archive_path, bundle_dir, declaration)
