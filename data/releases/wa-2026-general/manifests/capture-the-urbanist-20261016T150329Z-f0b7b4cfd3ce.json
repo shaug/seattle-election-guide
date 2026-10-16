@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 15111,
+  "canonical_url": "https://www.theurbanist.org/2026-general-election-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "ca8c1df199370863a438abbcf7a19cd86f9ae8e8bf072ec49dd84b632a8c3503",
+  "http_status": null,
+  "id": "capture-the-urbanist-20261016T150329Z-f0b7b4cfd3ce",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.theurbanist.org/2026-general-election-endorsements/",
+  "retrieved_at": "2026-10-16T15:03:29.871950Z",
+  "schema_version": "1.0",
+  "source_id": "the-urbanist",
+  "storage_reference": "sha256/ca/ca8c1df199370863a438abbcf7a19cd86f9ae8e8bf072ec49dd84b632a8c3503",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: The Urbanist Elections Committee",
+  "updated_at": null
+}

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-2f8304a7abcd",
+  "entered_at": "2026-10-16T15:48:50.280092Z",
+  "entry_method": "manual",
+  "evidence_locator": "Our 2026 Endorsements; explicit September 8–15 general vote and primary-to-general carry-forward statement; five approved Seattle-intersecting candidate-card changes. Manually preserved visible excerpt.",
+  "evidence_type": "web_page",
+  "id": "manual-environmental-climate-caucus-wa-democrats-20261016T154850Z-3602eca73dbd",
+  "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Immutable pending predecessor: manual-environmental-climate-caucus-wa-democrats-20261016T154850Z-b380460b39fa.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T15:48:50.280092Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "environmental-climate-caucus-wa-democrats",
+  "transcription": "The vote for general election endorsements was conducted from September 8-15, 2026. Any candidate endorsed by the ECC for the primary election remains endorsed for the general election. Candidates noted with an asterix (*) did not advance to the 2026 general election.\nU.S. Representative — Congressional District 7: Pramila Jayapal\nU.S. Representative — Congressional District 9: Adam Smith\nLegislative District 43 State Senator: Jamie Pedersen; Hannah Sabio-Howell\nLegislative District 34 State Representative — Position 2: Mary Anito\nLegislative District 36 State Representative — Position 1: Julia Grant Reed"
+}

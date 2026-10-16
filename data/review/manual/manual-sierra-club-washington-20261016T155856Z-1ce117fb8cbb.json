@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+  "entered_at": "2026-10-16T15:58:56.853359Z",
+  "entry_method": "manual",
+  "evidence_locator": "2026 Endorsements; official Political Action index distinguishes this current list from the previous primary list; preserved visible Seattle excerpt.",
+  "evidence_type": "web_page",
+  "id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "transcription": "us-house-7: Pramila Jayapal\nus-house-9: Adam Smith\ninitiative-26-645: No\nseattle-proposition-1-transit: Yes\nld-11-state-representative-2: Steve Bergquist\nld-32-state-representative-1: Keith Scully\nld-34-state-representative-2: Joe Fitzgibbon\nld-34-state-senator: Emily Alvarado\nld-36-state-representative-1: Julia Reed\nld-36-state-representative-2: Liz Berry\nld-36-state-senator: Noel Frame\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nld-37-state-senator: Chiaplo Street\nld-43-state-representative-1: Nicole Macri\nld-43-state-senator: Jamie Pedersen\nld-46-state-representative-1: Gerry Pollet\nld-46-state-representative-2: Darya Farivar\nld-46-state-senator: Javier Valdez\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens"
+}

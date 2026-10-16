@@ -1,5 +1,7 @@
 # October 16 2026 endorsement verification
 
+> Prepared research snapshot: the pending statuses below describe the original packet before human approval. See the [approved October 16 application](GENERAL_VERIFICATION_APPLICATION_2026-10-16.md) for the later 120 approved changes, verified successors, current candidate counts and reviewed input hashes.
+
 Scope: [today’s verification task #545](https://github.com/shaug/seattle-election-guide/issues/545). This review attempted all 46 eligible frozen-panel sources against their current official publications. The four missed October 12–15 reminders are superseded by this review; their historical gaps remain recorded.
 
 **Human approval pending.** The review proposes 114 additions and one changed choice across 11 sources. The published ledger and canonical dataset remain at their approved inputs. No new baseline approval or manual human attestation has been recorded.
