@@ -1,0 +1,110 @@
+{
+  "approval_context": "The user approved these concrete five changes in chat before this adapter transcription was created. This supplement binds that approval to the preserved browser facts; no baseline or daily attestation is asserted.",
+  "approval_record": "data/review/approvals/wa-2026-general-2026-10-16.json",
+  "approval_text": "Include the ECC changes",
+  "browser_facts_sha256": "5de11fe458e40cac0a4015ef593708856e1d5aa666a8d1f7fa352b53346808d4",
+  "capture_content_sha256": "6d1cb8c92579c5bf47855372d1b7e78a0fa96f96c9629fc6709996c6dd348eea",
+  "capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-2f8304a7abcd",
+  "capture_limitations": "Browser-visible public page read in Codex in-app browser. The saved text below is a manually preserved excerpt of the displayed heading, election framing and Seattle-intersecting candidate cards, not original response HTML. No HTTP status or exact network retrieval time asserted.",
+  "capture_manifest_sha256": "fce647bc6b2b6b83c82028ec21c8b1047de61fb37c15be4995e79d3f75639a03",
+  "changes": [
+    {
+      "allocation_each": "1/1",
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-2f8304a7abcd",
+      "content_sha256": "6d1cb8c92579c5bf47855372d1b7e78a0fa96f96c9629fc6709996c6dd348eea",
+      "decision_type": "endorse",
+      "evidence_locator": "Our 2026 Endorsements; general-election framing and candidate cards. Browser-visible names: Pramila Jayapal. Race ID is a transcription annotation.",
+      "evidence_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+      "kind": "addition",
+      "manual_entry_id": "manual-environmental-climate-caucus-wa-democrats-20261016T154850Z-b380460b39fa",
+      "prior_candidate_ids": [],
+      "race_id": "us-house-7",
+      "review_status": "pending",
+      "source_id": "environmental-climate-caucus-wa-democrats"
+    },
+    {
+      "allocation_each": "1/1",
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-2f8304a7abcd",
+      "content_sha256": "6d1cb8c92579c5bf47855372d1b7e78a0fa96f96c9629fc6709996c6dd348eea",
+      "decision_type": "endorse",
+      "evidence_locator": "Our 2026 Endorsements; general-election framing and candidate cards. Browser-visible names: Adam Smith. Race ID is a transcription annotation.",
+      "evidence_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+      "kind": "addition",
+      "manual_entry_id": "manual-environmental-climate-caucus-wa-democrats-20261016T154850Z-b380460b39fa",
+      "prior_candidate_ids": [],
+      "race_id": "us-house-9",
+      "review_status": "pending",
+      "source_id": "environmental-climate-caucus-wa-democrats"
+    },
+    {
+      "allocation_each": "1/2",
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen",
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-2f8304a7abcd",
+      "content_sha256": "6d1cb8c92579c5bf47855372d1b7e78a0fa96f96c9629fc6709996c6dd348eea",
+      "decision_type": "endorse",
+      "evidence_locator": "Our 2026 Endorsements; general-election framing and candidate cards. Browser-visible names: Jamie Pedersen; Hannah Sabio-Howell. Race ID is a transcription annotation.",
+      "evidence_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+      "kind": "replacement",
+      "manual_entry_id": "manual-environmental-climate-caucus-wa-democrats-20261016T154850Z-b380460b39fa",
+      "prior_candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen"
+      ],
+      "race_id": "ld-43-state-senator",
+      "review_status": "pending",
+      "source_id": "environmental-climate-caucus-wa-democrats"
+    },
+    {
+      "allocation_each": "1/1",
+      "candidate_ids": [
+        "ld-34-state-representative-2--mary-anito"
+      ],
+      "capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-2f8304a7abcd",
+      "content_sha256": "6d1cb8c92579c5bf47855372d1b7e78a0fa96f96c9629fc6709996c6dd348eea",
+      "decision_type": "endorse",
+      "evidence_locator": "Our 2026 Endorsements; general-election framing and candidate cards. Browser-visible names: Mary Anito. Race ID is a transcription annotation.",
+      "evidence_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+      "kind": "addition",
+      "manual_entry_id": "manual-environmental-climate-caucus-wa-democrats-20261016T154850Z-b380460b39fa",
+      "prior_candidate_ids": [],
+      "race_id": "ld-34-state-representative-2",
+      "review_status": "pending",
+      "source_id": "environmental-climate-caucus-wa-democrats"
+    },
+    {
+      "allocation_each": "1/1",
+      "candidate_ids": [
+        "ld-36-state-representative-1--julia-grant-reed"
+      ],
+      "capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-2f8304a7abcd",
+      "content_sha256": "6d1cb8c92579c5bf47855372d1b7e78a0fa96f96c9629fc6709996c6dd348eea",
+      "decision_type": "endorse",
+      "evidence_locator": "Our 2026 Endorsements; general-election framing and candidate cards. Browser-visible names: Julia Grant Reed. Race ID is a transcription annotation.",
+      "evidence_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+      "kind": "addition",
+      "manual_entry_id": "manual-environmental-climate-caucus-wa-democrats-20261016T154850Z-b380460b39fa",
+      "prior_candidate_ids": [],
+      "race_id": "ld-36-state-representative-1",
+      "review_status": "pending",
+      "source_id": "environmental-climate-caucus-wa-democrats"
+    }
+  ],
+  "election_id": "wa-2026-general",
+  "human_approval": "recorded_separately",
+  "prepared_at": "2026-10-16T15:48:50.280092Z",
+  "prepared_by": "OpenAI Codex",
+  "prior_candidate_approval_preserved": true,
+  "prior_decision_count": 10,
+  "record_type": "endorsement_browser_recovery_supplement",
+  "resulting_decision_count": 14,
+  "schema_version": "1.0",
+  "scope_issue": 545
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 256140,
+  "canonical_url": "https://www.seattletimes.com/opinion/editorials/",
+  "capture_method": "static_html",
+  "content_sha256": "c6415b836ab58163b6707203f6e01328fad164078adb87e8a52e90833c9d45dd",
+  "http_status": 200,
+  "id": "capture-seattle-times-editorial-board-20261016T150201Z-6610015d2491",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private full publication; public provenance metadata only.",
+  "requested_url": "https://www.seattletimes.com/opinion/editorials/",
+  "retrieved_at": "2026-10-16T15:02:01.535083Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "storage_reference": "sha256/c6/c6415b836ab58163b6707203f6e01328fad164078adb87e8a52e90833c9d45dd",
+  "storage_scope": "local_only",
+  "title": "Official current publication, October 16 verification",
+  "updated_at": null
+}

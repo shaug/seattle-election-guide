@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 588616,
+  "canonical_url": "https://www.trackaipac.com/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "817d7d6f92bc555e9f49bd9300a9efc359afb4f5d802c285f5f5c1c4b8b930e3",
+  "http_status": 200,
+  "id": "capture-citizens-against-aipac-corruption-20261016T145958Z-f7e37862c018",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://www.trackaipac.com/endorsements",
+  "retrieved_at": "2026-10-16T14:59:58.910946Z",
+  "schema_version": "1.0",
+  "source_id": "citizens-against-aipac-corruption",
+  "storage_reference": "sha256/81/817d7d6f92bc555e9f49bd9300a9efc359afb4f5d802c285f5f5c1c4b8b930e3",
+  "storage_scope": "local_only",
+  "title": "Our Endorsements — Track AIPAC",
+  "updated_at": null
+}

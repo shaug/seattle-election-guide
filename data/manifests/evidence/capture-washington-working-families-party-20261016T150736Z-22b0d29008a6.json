@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 1470,
+  "canonical_url": "https://workingfamilies.org/candidates/",
+  "capture_method": "manual_upload",
+  "content_sha256": "4c5e2474ed1c692c6b2ea0c9df0fe28bd1f8f403f84946bb6fd76fbe3a170a3e",
+  "http_status": null,
+  "id": "capture-washington-working-families-party-20261016T150736Z-22b0d29008a6",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private factual DOM table excerpt from observed browser after selecting Washington and expanding View More; normalized whitespace; no HTTP status asserted.",
+  "requested_url": "https://workingfamilies.org/candidates/",
+  "retrieved_at": "2026-10-16T15:07:36.904980Z",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "storage_reference": "sha256/4c/4c5e2474ed1c692c6b2ea0c9df0fe28bd1f8f403f84946bb6fd76fbe3a170a3e",
+  "storage_scope": "local_only",
+  "title": "Washington filter, View More expanded: all 17 current rows; browser visible text normalized as an HTML table",
+  "updated_at": null
+}

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-times-editorial-board-20261016T150329Z-613d7078d947",
+  "entered_at": "2026-10-16T15:48:50.280092Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; exact race headings/rows in the official publication. Per-race locators are retained in data/review/proposals/wa-2026-general-2026-10-16-verification.json.",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-times-editorial-board-20261016T154850Z-e3cae443a2e2",
+  "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Immutable pending predecessor: manual-seattle-times-editorial-board-20261016T151515Z-428af424155d.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T15:48:50.280092Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "transcription": "U.S. Representative — Congressional District 7: Pramila Jayapal\nLegislative District 32 State Senator: Jesse Salomon\nLegislative District 43 State Senator: Jamie Pedersen\nLegislative District 11 State Representative — Position 1: David Hackney\nLegislative District 32 State Representative — Position 1: Keith Scully\nLegislative District 32 State Representative — Position 2: Lauren Davis\nLegislative District 37 State Representative — Position 1: Kelabe Tewolde\nLegislative District 37 State Representative — Position 2: Explicit no endorsement\nLegislative District 46 State Representative — Position 1: Gerry Pollet\nLegislative District 46 State Representative — Position 2: Darya Farivar\nWashington Supreme Court Justice — Position 1: Colleen Melody\nWashington Supreme Court Justice — Position 4: Sean O'Donnell\nWashington Supreme Court Justice — Position 7: Debra L. Stephens\nInitiative IL26-001 — Parental Rights in Public Schools: No\nInitiative IL26-638 — Participation in K-12 School Athletics: No\nInitiative IP26-645 — State and Local Taxes: No\nSeattle City Council — District 5: Julie Kang\nSeattle Municipal Court Judge — Position 5: Garmon Newsom\nKing County Assessor: Rob Foxcurran\nMetropolitan King County Council — District 2: Toshiko Grace Hasegawa\nMetropolitan King County Council — District 8: Nick Duda"
+}

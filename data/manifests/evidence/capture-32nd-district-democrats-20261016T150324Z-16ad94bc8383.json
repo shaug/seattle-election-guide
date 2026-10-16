@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 181580,
+  "canonical_url": "https://32democrats.org/wp/wp-content/uploads/endorsed-stamp-outline-blue2-copy.jpg",
+  "capture_method": "image",
+  "content_sha256": "61c5db3920658214b14ce9329e4b3f5a1af37f81edce469fbf89554e797edad7",
+  "http_status": 200,
+  "id": "capture-32nd-district-democrats-20261016T150324Z-16ad94bc8383",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://32democrats.org/wp/wp-content/uploads/endorsed-stamp-outline-blue2-copy.jpg",
+  "retrieved_at": "2026-10-16T15:03:24.455928Z",
+  "schema_version": "1.0",
+  "source_id": "32nd-district-democrats",
+  "storage_reference": "sha256/61/61c5db3920658214b14ce9329e4b3f5a1af37f81edce469fbf89554e797edad7",
+  "storage_scope": "local_only",
+  "title": "32nd-district-democrats official publication",
+  "updated_at": null
+}

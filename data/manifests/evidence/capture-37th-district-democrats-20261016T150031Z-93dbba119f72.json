@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 241263,
+  "canonical_url": "https://37dems.org/wp-content/uploads/2026/09/09-16-26-CD9-Endorsement-Results.jpg",
+  "capture_method": "image",
+  "content_sha256": "d9689d96cdbac62896603d01157350930f90031bee7d81330cd48cc3f5b07003",
+  "http_status": 200,
+  "id": "capture-37th-district-democrats-20261016T150031Z-93dbba119f72",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://37dems.org/wp-content/uploads/2026/09/09-16-26-CD9-Endorsement-Results.jpg",
+  "retrieved_at": "2026-10-16T15:00:31.996708Z",
+  "schema_version": "1.0",
+  "source_id": "37th-district-democrats",
+  "storage_reference": "sha256/d9/d9689d96cdbac62896603d01157350930f90031bee7d81330cd48cc3f5b07003",
+  "storage_scope": "local_only",
+  "title": "37th-district-democrats official publication",
+  "updated_at": null
+}

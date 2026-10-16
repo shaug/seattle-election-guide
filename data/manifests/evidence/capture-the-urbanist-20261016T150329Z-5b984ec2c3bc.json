@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 347193,
+  "canonical_url": "https://www.theurbanist.org/2026-general-election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "edfd9ee5a30f8a0ef54075fe080031944a2dedb9ff884c171d20b86857e55aee",
+  "http_status": 200,
+  "id": "capture-the-urbanist-20261016T150329Z-5b984ec2c3bc",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private original; public metadata and short factual locators only.",
+  "requested_url": "https://www.theurbanist.org/2026-general-election-endorsements/",
+  "retrieved_at": "2026-10-16T15:03:29.871950Z",
+  "schema_version": "1.0",
+  "source_id": "the-urbanist",
+  "storage_reference": "sha256/ed/edfd9ee5a30f8a0ef54075fe080031944a2dedb9ff884c171d20b86857e55aee",
+  "storage_scope": "local_only",
+  "title": "Official current source verification supplement",
+  "updated_at": null
+}

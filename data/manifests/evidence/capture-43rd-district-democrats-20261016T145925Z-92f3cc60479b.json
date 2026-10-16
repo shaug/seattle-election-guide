@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 202338,
+  "canonical_url": "https://43rddemocrats.org/endorsements/2026",
+  "capture_method": "static_html",
+  "content_sha256": "7b36a9998169e57193bc0a415cae926447f835f100c068e90c1c0169431f107d",
+  "http_status": 200,
+  "id": "capture-43rd-district-democrats-20261016T145925Z-92f3cc60479b",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://43rddemocrats.org/endorsements/2026",
+  "retrieved_at": "2026-10-16T14:59:25.857955Z",
+  "schema_version": "1.0",
+  "source_id": "43rd-district-democrats",
+  "storage_reference": "sha256/7b/7b36a9998169e57193bc0a415cae926447f835f100c068e90c1c0169431f107d",
+  "storage_scope": "local_only",
+  "title": "2026 Endorsements — 43rd District Democrats",
+  "updated_at": null
+}

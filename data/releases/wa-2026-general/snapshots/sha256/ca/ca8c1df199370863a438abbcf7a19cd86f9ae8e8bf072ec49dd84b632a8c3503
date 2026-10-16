@@ -1,0 +1,272 @@
+{
+  "captured_at": "2026-10-16T15:03:29.871950Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "No on IL26-001 Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "initiative-26-001",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "No on IL26-638 Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "initiative-26-638",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "No on IP26-645 Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "initiative-26-645",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Yes on Seattle Transit Proposition 1 Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "seattle-proposition-1-transit",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "King County Council, District 2: Rebecca Saldaña Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-4--jorge-l-baron"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "King County Council, District 4: Jorge Barón Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "king-county-council-4",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "King County Council, District 8: Teresa Mosqueda Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "king-county-council-8",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "King County Assessor: Rob Foxcurran Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "king-county-assessor",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": null,
+      "evidence_locator": "7th Congressional District: No Endorsement Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "us-house-7",
+      "status": "no_endorsement"
+    },
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": null,
+      "evidence_locator": "9th Congressional District: No Endorsement Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "us-house-9",
+      "status": "no_endorsement"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Seattle City Council, District 5: Nilu Jenks Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "State Supreme Court, Position 1: Colleen Melody Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "State Supreme Court, Position 3: Jaime Hawk Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "State Supreme Court, Position 4: Ian Birk Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "supreme-court-justice-4",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "State Supreme Court, Position 5: Theo Angelis Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "supreme-court-justice-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": null,
+      "evidence_locator": "State Supreme Court, Position 7: No endorsement Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "supreme-court-justice-7",
+      "status": "no_endorsement"
+    },
+    {
+      "candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 11, Position 1: Ashley Fedan Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-11-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-senator--jesse-salomon"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 32, Senate: Jesse Salomon Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-32-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 32, Position 1: Danica Noble Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-32-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 32, Position 2: Imraan Siddiqi Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-32-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 34, Position 2: Joe Fitzgibbon Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-34-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-36-state-representative-1--julia-grant-reed"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 36, Position 1: Julia Reed Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-36-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street",
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 37, Senate: Dual Endorsement; paragraph explicitly names Chipalo Street and Tatiana Brown Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-37-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 37, Position 1: Kelabe Tewolde Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 37, Position 2: Jaelynn Scott Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 43, Senate: Hannah Sabio-Howell Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 43, Position 1: Nicole Macri Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-43-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 46, Senate: Javier Valdez Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-46-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 46, Position 1: No Endorsement Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-46-state-representative-1",
+      "status": "no_endorsement"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "LD 46, Position 2: Darya Farivar Official source: https://www.theurbanist.org/2026-general-election-endorsements/. Capture capture-the-urbanist-20261016T150329Z-5b984ec2c3bc; verified manual manual-the-urbanist-20261016T154850Z-f931eb41abf2.",
+      "race_id": "ld-46-state-representative-2",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
+  "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. No prior published source block.",
+  "reviewer": "shaug",
+  "source_id": "the-urbanist"
+}

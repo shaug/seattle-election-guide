@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b",
+  "entered_at": "2026-10-16T15:58:56.853359Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official general voters guide, slide 8; color semantics from slide 2. Grey ratings held; candidate red blank/write-in differs from explicit measure No.",
+  "evidence_type": "image",
+  "id": "manual-washington-for-peace-and-justice-20261016T155856Z-c73536c52f75",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "transcription": "LD-43 Senator: Hannah Sabio-Howell — green_candidate\nLD-43 Rep Pos 2: Shaun Scott — green_candidate\nLD-43 Rep Pos 1: Nicole Macri — green_candidate\nLD-46 Senator: Javier Valdez — green_candidate\nLD-46 Rep Pos 2: Darya Farivar — green_candidate"
+}

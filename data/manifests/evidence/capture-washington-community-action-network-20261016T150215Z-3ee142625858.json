@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1137833,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316472599-H2O2LHYFK7R37XHJ9LYV/US+7+Pramila+Jayapal.png",
+  "capture_method": "image",
+  "content_sha256": "f5ad8fcd000883b6fa25ddd504116396b4ae0a7120709574cb230fa1cc69d93a",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261016T150215Z-3ee142625858",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316472599-H2O2LHYFK7R37XHJ9LYV/US+7+Pramila+Jayapal.png",
+  "retrieved_at": "2026-10-16T15:02:15.355126Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/f5/f5ad8fcd000883b6fa25ddd504116396b4ae0a7120709574cb230fa1cc69d93a",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network official image publication",
+  "updated_at": null
+}

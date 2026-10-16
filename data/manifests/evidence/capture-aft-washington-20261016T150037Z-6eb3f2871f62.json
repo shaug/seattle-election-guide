@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 48081,
+  "canonical_url": "https://www.aftwa.org/endorsements-and-elections/selected-legislative-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "9bb4efb3531e88f199e9e93bbc75fa8000be4f10bb10df2032e6c0787c5c4f8a",
+  "http_status": 200,
+  "id": "capture-aft-washington-20261016T150037Z-6eb3f2871f62",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.aftwa.org/endorsements-and-elections/selected-legislative-endorsements",
+  "retrieved_at": "2026-10-16T15:00:37.107176Z",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "storage_reference": "sha256/9b/9bb4efb3531e88f199e9e93bbc75fa8000be4f10bb10df2032e6c0787c5c4f8a",
+  "storage_scope": "local_only",
+  "title": "AFT Washington selected legislative endorsements",
+  "updated_at": null
+}

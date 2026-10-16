@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 220468,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1789505191999-20HFECETIFPIKHRHT3V7/No+on+648+for+website.png",
+  "capture_method": "image",
+  "content_sha256": "acb1259df0b99b45cb040c9102e6886f664d2b4710beb662ce388dc979ef3c77",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261016T150215Z-b6e6a30f75f7",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1789505191999-20HFECETIFPIKHRHT3V7/No+on+648+for+website.png",
+  "retrieved_at": "2026-10-16T15:02:15.254573Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/ac/acb1259df0b99b45cb040c9102e6886f664d2b4710beb662ce388dc979ef3c77",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network official image publication",
+  "updated_at": null
+}

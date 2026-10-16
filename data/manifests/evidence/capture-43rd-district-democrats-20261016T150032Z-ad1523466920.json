@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 37662,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/5a3993300abd04ae23f41290/4e114444-4d40-4035-8617-d2f76dd2069f/43rd_Banner_endorsed.jpg",
+  "capture_method": "image",
+  "content_sha256": "0efbe4db9c966d5943fb5f321ee65d46f5b2010d9e4dbc1132347a6694a5db29",
+  "http_status": 200,
+  "id": "capture-43rd-district-democrats-20261016T150032Z-ad1523466920",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/5a3993300abd04ae23f41290/4e114444-4d40-4035-8617-d2f76dd2069f/43rd_Banner_endorsed.jpg",
+  "retrieved_at": "2026-10-16T15:00:32.005646Z",
+  "schema_version": "1.0",
+  "source_id": "43rd-district-democrats",
+  "storage_reference": "sha256/0e/0efbe4db9c966d5943fb5f321ee65d46f5b2010d9e4dbc1132347a6694a5db29",
+  "storage_scope": "local_only",
+  "title": "43rd-district-democrats official publication",
+  "updated_at": null
+}

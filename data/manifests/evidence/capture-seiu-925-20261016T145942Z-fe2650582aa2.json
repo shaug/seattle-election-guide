@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 95472,
+  "canonical_url": "https://www.seiu925.org/2026endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "1c7f983023466430dbd1deffb88dafa95c2b026f1116c61d13da5fcc422ad764",
+  "http_status": 200,
+  "id": "capture-seiu-925-20261016T145942Z-fe2650582aa2",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.seiu925.org/2026endorsements/",
+  "retrieved_at": "2026-10-16T14:59:42.104925Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-925",
+  "storage_reference": "sha256/1c/1c7f983023466430dbd1deffb88dafa95c2b026f1116c61d13da5fcc422ad764",
+  "storage_scope": "local_only",
+  "title": "SEIU 925 current official endorsement publication",
+  "updated_at": null
+}

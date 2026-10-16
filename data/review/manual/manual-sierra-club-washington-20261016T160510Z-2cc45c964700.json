@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+  "entered_at": "2026-10-16T16:05:10.192531Z",
+  "entry_method": "manual",
+  "evidence_locator": "2026 Endorsements; official Political Action index distinguishes this current list from the previous primary list; preserved visible Seattle excerpt.",
+  "evidence_type": "web_page",
+  "id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700",
+  "review_note": "Issue #545: shaug explicitly approved the concrete browser-retry packet with \"Apply all 54 decisions and all three explicit corrections\". This targeted approval covers Sierra Club 24 decisions, WA4PJ 30 decisions (including two declined-to-endorse instructions), WA4PJ Supreme Court District-to-Position terminology, and three separately enumerated office corrections: WA4PJ Bergquist Rep 12 to LD11 House Position 2; Alliance for Gun Responsibility Bergquist District 21 to LD11 House Position 2; PPAA Mosqueda District 6 to King County Council District 8. OpenAI Codex is the transcriber; shaug is the human verifier. The original source labels remain recorded. WA4PJ grey ratings for Colleen Melody and Ian Birk remain unresolved and are not normalized. The separate original 120-change approval remains intact. No daily, whole-panel or verification-adapter baseline human attestation is asserted. See data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json. Pending predecessor: manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb. Any grey rows in this factual transcription remain unresolved and excluded from approved endorsement claims.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T16:05:10.192531Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "transcription": "us-house-7: Pramila Jayapal\nus-house-9: Adam Smith\ninitiative-26-645: No\nseattle-proposition-1-transit: Yes\nld-11-state-representative-2: Steve Bergquist\nld-32-state-representative-1: Keith Scully\nld-34-state-representative-2: Joe Fitzgibbon\nld-34-state-senator: Emily Alvarado\nld-36-state-representative-1: Julia Reed\nld-36-state-representative-2: Liz Berry\nld-36-state-senator: Noel Frame\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nld-37-state-senator: Chiaplo Street\nld-43-state-representative-1: Nicole Macri\nld-43-state-senator: Jamie Pedersen\nld-46-state-representative-1: Gerry Pollet\nld-46-state-representative-2: Darya Farivar\nld-46-state-senator: Javier Valdez\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens"
+}

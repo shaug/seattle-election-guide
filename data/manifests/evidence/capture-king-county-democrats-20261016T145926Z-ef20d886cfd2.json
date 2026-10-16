@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 148205,
+  "canonical_url": "https://www.kcdems.org/",
+  "capture_method": "static_html",
+  "content_sha256": "fdfdecdbd6bd1ad28795967eb4bd4c4e09cfff804c1397b355fc496ca2ae2559",
+  "http_status": 200,
+  "id": "capture-king-county-democrats-20261016T145926Z-ef20d886cfd2",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://www.kcdems.org/",
+  "retrieved_at": "2026-10-16T14:59:26.528165Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-democrats",
+  "storage_reference": "sha256/fd/fdfdecdbd6bd1ad28795967eb4bd4c4e09cfff804c1397b355fc496ca2ae2559",
+  "storage_scope": "local_only",
+  "title": "King County Democrats | Elect Democrats Across King CountyExpandExpandExpandExpandToggle MenuExpandExpandExpandExpand",
+  "updated_at": null
+}

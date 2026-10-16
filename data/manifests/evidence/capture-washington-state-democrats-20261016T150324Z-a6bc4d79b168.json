@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 85312,
+  "canonical_url": "https://platform.winnable.app/organizations/wadems",
+  "capture_method": "static_html",
+  "content_sha256": "98a2a704c4337840d871627492215d559cd3918a7654c15ca7f1e82b5da9f13b",
+  "http_status": 200,
+  "id": "capture-washington-state-democrats-20261016T150324Z-a6bc4d79b168",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://platform.winnable.app/organizations/wadems",
+  "retrieved_at": "2026-10-16T15:03:24.455589Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-democrats",
+  "storage_reference": "sha256/98/98a2a704c4337840d871627492215d559cd3918a7654c15ca7f1e82b5da9f13b",
+  "storage_scope": "local_only",
+  "title": "Washington State Democrats - WinnableWinnable",
+  "updated_at": null
+}

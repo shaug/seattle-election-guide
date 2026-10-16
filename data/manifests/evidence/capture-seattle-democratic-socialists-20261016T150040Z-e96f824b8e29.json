@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 60661,
+  "canonical_url": "https://seattledsa.org/",
+  "capture_method": "static_html",
+  "content_sha256": "43ebb2c2b75e6b7c11e9919cce16fb74f4c2f78a2dd6ad93b0b6d498c34779fe",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261016T150040Z-e96f824b8e29",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://seattledsa.org/",
+  "retrieved_at": "2026-10-16T15:00:40.776446Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/43/43ebb2c2b75e6b7c11e9919cce16fb74f4c2f78a2dd6ad93b0b6d498c34779fe",
+  "storage_scope": "local_only",
+  "title": "Seattle Democratic Socialists of America – The official website of the Seattle chapter of DSA",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 297604,
+  "canonical_url": "https://www.wahousingalliance.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "ce475813d3564261490f3afbf16c647c5b35b45384272d9c66e473bb1e6f3bd6",
+  "http_status": 200,
+  "id": "capture-washington-housing-alliance-20261016T145958Z-96b630f54981",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://www.wahousingalliance.org/endorsements",
+  "retrieved_at": "2026-10-16T14:59:58.977912Z",
+  "schema_version": "1.0",
+  "source_id": "washington-housing-alliance",
+  "storage_reference": "sha256/ce/ce475813d3564261490f3afbf16c647c5b35b45384272d9c66e473bb1e6f3bd6",
+  "storage_scope": "local_only",
+  "title": "Endorsements— Washington Housing Alliance",
+  "updated_at": null
+}

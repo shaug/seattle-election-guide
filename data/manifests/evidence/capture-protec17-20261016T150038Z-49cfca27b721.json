@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 93387,
+  "canonical_url": "https://www.protec17.org/wp-content/uploads/2024/10/WA-Endorsement-Graphic-1024x806.png",
+  "capture_method": "image",
+  "content_sha256": "974e4e3128a439c12029bfe46a993691a108ddfa67c964965de729306439643e",
+  "http_status": 200,
+  "id": "capture-protec17-20261016T150038Z-49cfca27b721",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.protec17.org/wp-content/uploads/2024/10/WA-Endorsement-Graphic-1024x806.png",
+  "retrieved_at": "2026-10-16T15:00:38.998755Z",
+  "schema_version": "1.0",
+  "source_id": "protec17",
+  "storage_reference": "sha256/97/974e4e3128a439c12029bfe46a993691a108ddfa67c964965de729306439643e",
+  "storage_scope": "local_only",
+  "title": "PROTEC17 Washington endorsement graphic",
+  "updated_at": null
+}

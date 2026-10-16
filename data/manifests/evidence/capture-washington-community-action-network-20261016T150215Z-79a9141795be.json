@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 399572,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1789506320122-9AW0DKTSI0ZPP4BYRWI3/No+hate+in+wa+state+for+website.png",
+  "capture_method": "image",
+  "content_sha256": "34950b87c0dcb7e6a2ab52c25dc661f193f51f29fefe9412210900ea63a75d7e",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261016T150215Z-79a9141795be",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1789506320122-9AW0DKTSI0ZPP4BYRWI3/No+hate+in+wa+state+for+website.png",
+  "retrieved_at": "2026-10-16T15:02:15.333031Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/34/34950b87c0dcb7e6a2ab52c25dc661f193f51f29fefe9412210900ea63a75d7e",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network official image publication",
+  "updated_at": null
+}
