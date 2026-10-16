@@ -180,7 +180,7 @@ def stage_pages_site(
             else None
         )
         current_corrections_href = (
-            f"/e/{current.declaration.election_id}/corrections/"
+            f"/e/{current.declaration.election_id}/updates/"
             if current.view_model.corrections is not None and current.view_model.corrections.entries
             else None
         )
@@ -394,7 +394,7 @@ def _verify_staged_pages_site(
         compare_asset = f"e/{declared.election_id}/comparisons/index.html"
         if declared.comparison_route_preview or compare_asset in deployment.assets:
             required_assets.add(compare_asset)
-        corrections_asset = f"e/{declared.election_id}/corrections/index.html"
+        corrections_asset = f"e/{declared.election_id}/updates/index.html"
         if corrections_asset in deployment.assets:
             required_assets.add(corrections_asset)
         required_assets.update(_required_race_assets(declared.election_id, deployment.assets))
@@ -606,13 +606,13 @@ def _stage_verified_bundles(
             )
             public_paths.update({f"{root_path}comparisons/", f"{root_path}comparisons/index.html"})
         if bundle.view_model.corrections is not None and bundle.view_model.corrections.entries:
-            corrections_dir = election_root / "corrections"
+            corrections_dir = election_root / "updates"
             corrections_dir.mkdir()
             (corrections_dir / "index.html").write_text(
                 _corrections_html(bundle.view_model, canonical_origin),
                 encoding="utf-8",
             )
-            public_paths.update({f"{root_path}corrections/", f"{root_path}corrections/index.html"})
+            public_paths.update({f"{root_path}updates/", f"{root_path}updates/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
     return public_paths
 
@@ -772,10 +772,7 @@ def _archive_html(
     )
 
 
-ABOUT_DESCRIPTION = (
-    "How this guide aggregates organizational endorsements, why the source panel is "
-    "versioned, how to verify a result, and how to report a correction."
-)
+ABOUT_DESCRIPTION = "How endorsements are counted, and where to check the evidence."
 
 
 def _about_html(
@@ -933,6 +930,16 @@ export default {{
     for (const root of ELECTION_ROOTS) {{
       if (url.pathname === root.slice(0, -1)) {{
         return redirectPath(url, root, 308);
+      }}
+      // Updates replaced Corrections in #551. Only redirect when this
+      // election has an update log; an empty election still has no page.
+      const updates = `${{root}}updates/`;
+      if (PUBLIC_PATHS.has(updates) && (
+        url.pathname === `${{root}}corrections` ||
+        url.pathname === `${{root}}corrections/` ||
+        url.pathname === `${{root}}corrections/index.html`
+      )) {{
+        return redirectPath(url, updates, 301);
       }}
       // The generated PDF edition was retired (issue 193). Every PDF this
       // election ever published lived directly under its root, so anything

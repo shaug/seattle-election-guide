@@ -108,8 +108,8 @@
 <details class="site-band-menu"><summary>Pages</summary><nav aria-label="Site">
 {#- Reading order follows dependency: the guide is the destination, Sources is
     what feeds it, Comparisons is a view derived from those sources,
-    Corrections is the archive talking about itself after publication
-    (docs/RESULTS.md, "The corrections page"; issue #290), and How this
+    Updates records changes after publication (docs/RESULTS.md, "The updates
+    page"; issue #551), and How this
     works explains all four. -#}
 {{- nav_link('Endorsements', guide_href, 'endorsements', current) -}}
 {{- nav_link('Sources', sources_href, 'sources', current, sources_link_data_attribute) -}}
@@ -117,7 +117,7 @@
 {{- nav_link('Comparisons', compare_href, 'comparisons', current) -}}
 {%- endif -%}
 {%- if corrections_href is not none -%}
-{{- nav_link('Corrections', corrections_href, 'corrections', current) -}}
+{{- nav_link('Updates', corrections_href, 'corrections', current) -}}
 {%- endif -%}
 {{- nav_link('How this works', about_href, 'about', current) -}}
 </nav></details></div></div>
