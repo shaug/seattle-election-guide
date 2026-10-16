@@ -20,6 +20,13 @@ runner = CliRunner()
 
 
 @pytest.mark.parametrize(
+    "headline",
+    [
+        "<h1>{}</h1>",
+        '<h2 class="mb-3 font-weight-bold">{}</h2><h2>Newsletter signup</h2>',
+    ],
+)
+@pytest.mark.parametrize(
     ("new_link", "expect_fetch"),
     [
         ('<a href="/story/199999/News/Seattle/SGN%20Endorsements">New</a>', True),
@@ -32,6 +39,7 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     monkeypatch: pytest.MonkeyPatch,
     new_link: str,
     expect_fetch: bool,
+    headline: str,
 ) -> None:
     monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(bytes(range(32))).decode())
     policy = cast(dict[str, Any], yaml.safe_load((ROOT / "config/verification.yaml").read_text()))
@@ -46,7 +54,7 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     )
     articles = {
         f"https://www.sgn.org/story/{168513 + i}/": (
-            f"<h1>{title}</h1><p>Authored fixture article.</p>".encode()
+            (headline.format(title) + "<p>Authored fixture article.</p>").encode()
         )
         for i, title in enumerate(titles)
     }
@@ -122,9 +130,9 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     # A previously unknown endorsement article is discovered from the current
     # index. Fixed known mappings cannot interpret it; the changed-byte gate
     # must send it to human review even when known decisions are identical.
-    articles["https://www.sgn.org/story/199999/"] = (
-        b"<h1>SGN Endorsements A Newly Published Candidate</h1>"
-    )
+    articles["https://www.sgn.org/story/199999/"] = headline.format(
+        "SGN Endorsements A Newly Published Candidate"
+    ).encode()
     pages["https://www.sgn.org/ch/News/Seattle"] += new_link.encode()
     third = runner.invoke(
         app,
