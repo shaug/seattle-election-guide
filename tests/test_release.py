@@ -917,7 +917,7 @@ def test_release_build_succeeds_with_a_real_results_capture_and_corrections_link
         encoding="utf-8"
     )
     assert f'href="{capture_url}"' in guide_html
-    assert 'href="/e/wa-2026-primary/corrections/">Corrections</a>' in guide_html
+    assert 'href="/e/wa-2026-primary/updates/">Updates</a>' in guide_html
 
 
 @pytest.mark.parametrize(

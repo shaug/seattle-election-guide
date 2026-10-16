@@ -4,6 +4,25 @@ The release workflow turns the reviewed source-decision ledger into a reproducib
 It does not imply comprehensive source coverage. Gaps remain visible in the guide and in
 `release-status.json`; missing coverage is never counted as opposition.
 
+## Public update log
+
+Compare the candidate with the currently published guide before publication. Every change to
+the published aggregate or a position page requires an entry in
+`data/corrections/<election-id>.yaml`, which renders as **Updates** at the election's
+`/updates/` address. Include the entry in the same change as the publication inputs or rendering
+behavior it describes. The stored `corrections` names remain compatible with existing releases.
+
+Newly published or previously missed endorsements count, even if the leading choice stays
+the same. Record changed counts, shares, source coverage, evidence, displayed races, and results
+as well as corrected or withdrawn endorsements. Explain what changed and why; link the evidence
+and affected pages. A batch entry must link a complete account of its changes. A refresh that
+leaves published content unchanged needs no entry. The editorial rule is in
+[RESULTS.md, The updates page](RESULTS.md#the-updates-page).
+
+The update log ships with the release that publishes the changes. Keep historical entries and
+immutable release bundles intact. An update's date does not assert when a source announced its
+endorsement.
+
 ## Audited inputs
 
 `data/releases/wa-2026-general/source-decisions.yaml` contains reviewed structured transcriptions,

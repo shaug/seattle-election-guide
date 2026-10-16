@@ -10,12 +10,11 @@ corrections page renders -- and is linked in the nav -- only while this file
 exists and carries at least one entry (docs/RESULTS.md, Rendering: "results
 render as a state, not an option"; the same posture governs Corrections).
 
-The editorial line (docs/RESULTS.md, "The corrections page"): a correction is
-*anything that changes what a published page asserts* -- routine pre-election
-data refreshes don't qualify; changed recommendations, retracted
-endorsements, and amended results do. Cross-election fixes are a site matter
-and belong to the changelog (O8, `docs/SITE_OPERATIONS_PLAN.md`), never to
-this file.
+The public page is Updates (issue #551; docs/RESULTS.md, "The updates page").
+Every change to the published aggregate or a position page belongs here,
+including additions from routine refreshes even when the leading choice is
+unchanged. Existing storage and field names remain compatible with immutable
+publication view models; `corrected_on` is also the date of an addition.
 
 Entries here are hand-authored (an editor writes a headline and body prose
 directly), which is why nothing here cross-validates against the ballot
@@ -47,8 +46,8 @@ class CorrectionProvenanceLink(CorrectionsModel):
     the mockup's "supersedes capture 9f3c…e2 → capture 41ab…77"
     (`docs/design/RESULTS_FINALIZATION_2026-08-02.html`, "The corrections
     log"). `label` is the rendered link text; `url` is checked as a safe
-    HTTP(S) address before it is written into markup, exactly like every
-    other rendered link in the codebase (`rendering.documents._require_web_url`)."""
+    HTTP(S) address or a root-relative affected-page link before it is written
+    into markup (`rendering.documents._require_web_url`)."""
 
     label: str = Field(min_length=1)
     url: str = Field(min_length=1)
