@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+  "entered_at": "2026-10-16T15:58:56.853359Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official general voters guide, slide 7; color semantics from slide 2. Grey ratings held; candidate red blank/write-in differs from explicit measure No.",
+  "evidence_type": "image",
+  "id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "transcription": "LD-32 Senator: Cindy Ryu — green_candidate\nLD-32 Rep Pos 1: Danica Noble — green_candidate\nLD-32 Rep Pos 2: Imraan Siddiqi — green_candidate\nLD-34 Rep Pos 1: Brianna Thomas — green_candidate\nLD-34 Rep Pos 2: Joe Fitzgibbon — green_candidate\nLD-34 Senator: Emily Alvarado — green_candidate\nLD-36 Senator: Noel Frame — green_candidate\nLD-36 Rep Pos 1: Julia Reed — green_candidate\nLD-36 Rep Pos 2: Liz Berry — green_candidate\nLD-37 Senator: Chipalo Street — green_candidate\nLD-37 Rep Pos 1: Kelabe Tewolde — green_candidate\nLD-37 Rep Pos 2: Jaelynn Scott — green_candidate"
+}

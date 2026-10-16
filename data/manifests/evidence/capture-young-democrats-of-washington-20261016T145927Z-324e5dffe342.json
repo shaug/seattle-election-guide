@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 775207,
+  "canonical_url": "https://www.instagram.com/youngdemswa/",
+  "capture_method": "static_html",
+  "content_sha256": "e3ed4e06d900a77185464db79fad448db086071c4e5f508d5283d9e078b0992d",
+  "http_status": 200,
+  "id": "capture-young-democrats-of-washington-20261016T145927Z-324e5dffe342",
+  "media_type": "text/html; charset=\"utf-8\"",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://www.instagram.com/youngdemswa/",
+  "retrieved_at": "2026-10-16T14:59:27.370987Z",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "storage_reference": "sha256/e3/e3ed4e06d900a77185464db79fad448db086071c4e5f508d5283d9e078b0992d",
+  "storage_scope": "local_only",
+  "title": "Young Democrats of Washington (@youngdemswa) • Instagram photos and videosInstagramOptionsLink iconPostsReelsTaggedCarouselCarouselClipCarouselCarouselCarouselCarouselCarouselCarouselCarouselDown chevron icon",
+  "updated_at": null
+}

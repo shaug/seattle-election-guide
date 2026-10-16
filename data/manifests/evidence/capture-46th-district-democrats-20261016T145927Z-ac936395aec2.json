@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 56685,
+  "canonical_url": "https://www.46dems.org/",
+  "capture_method": "static_html",
+  "content_sha256": "a1fba8535b96cd17dc70217aa10592f0467905a7c0f8e316f688ff8f12751617",
+  "http_status": 200,
+  "id": "capture-46th-district-democrats-20261016T145927Z-ac936395aec2",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://www.46dems.org/",
+  "retrieved_at": "2026-10-16T14:59:27.071829Z",
+  "schema_version": "1.0",
+  "source_id": "46th-district-democrats",
+  "storage_reference": "sha256/a1/a1fba8535b96cd17dc70217aa10592f0467905a7c0f8e316f688ff8f12751617",
+  "storage_scope": "local_only",
+  "title": "WA46Dems",
+  "updated_at": null
+}

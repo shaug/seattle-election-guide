@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 807628,
+  "canonical_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "capture_method": "static_html",
+  "content_sha256": "31b073376ea830a4d11425fcb2d4289a8c372272ede555bc85693f424a6955f2",
+  "http_status": 200,
+  "id": "capture-young-democrats-of-washington-20261016T145926Z-471fa60dee1b",
+  "media_type": "text/html; charset=\"utf-8\"",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "retrieved_at": "2026-10-16T14:59:26.148884Z",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "storage_reference": "sha256/31/31b073376ea830a4d11425fcb2d4289a8c372272ede555bc85693f424a6955f2",
+  "storage_scope": "local_only",
+  "title": "InstagramInstagramCloseMore optionsLoad more commentsLikeCommentShareSaveCarouselClipCarouselCarouselCarouselCarouselCarouselDown chevron icon",
+  "updated_at": null
+}

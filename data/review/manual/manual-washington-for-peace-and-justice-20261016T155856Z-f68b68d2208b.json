@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+  "entered_at": "2026-10-16T15:58:56.853359Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official general voters guide, slide 3; color semantics from slide 2. Grey ratings held; candidate red blank/write-in differs from explicit measure No.",
+  "evidence_type": "image",
+  "id": "manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "transcription": "CD-7 - Pramila Jayapal — green_candidate\nDistrict 3 - Jaime Hawk — green_candidate\nDistrict 5 - Theo Angelis — green_candidate\nCD-9 - Leave Blank or Write in Paula Stein — red_leave_blank_or_non_inventory_write_in\nDistrict 7 - Leave Blank or Write in Paula Stein — red_leave_blank_or_non_inventory_write_in\nDistrict 1 - Colleen Melody — grey_ambiguous_rating\nDistrict 4 - Ian Birk — grey_ambiguous_rating"
+}

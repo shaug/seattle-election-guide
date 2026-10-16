@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": null,
+  "id": "capture-sierra-club-washington-20261016T145941Z-29a49066ad94",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.sierraclub.org/washington",
+  "retrieved_at": "2026-10-16T14:59:41.833684Z",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "title": null,
+  "unavailable_reason": "live collection failed: [Errno 9] Bad file descriptor",
+  "updated_at": null
+}

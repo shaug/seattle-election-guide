@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 174868,
+  "canonical_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "8b3a25de21fc4c702632d090d723cc215e25cfba326eb75a221dc1357c5804e9",
+  "http_status": 200,
+  "id": "capture-planned-parenthood-alliance-advocates-20261016T150040Z-decd0fdb6b0a",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+  "retrieved_at": "2026-10-16T15:00:40.636215Z",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "storage_reference": "sha256/8b/8b3a25de21fc4c702632d090d723cc215e25cfba326eb75a221dc1357c5804e9",
+  "storage_scope": "local_only",
+  "title": "Washington Candidate Endorsements\n    | Planned Parenthood Alliance Advocates\n  Planned Parenthood ActionOpen SearchFindFollow us onFollow us onFollow us onFollow us onFollow us onPlanned Parenthood Alliance Advocates Footer LogoFollow us onFollow us onFollow us onFollow us onFollow us onFollow us on",
+  "updated_at": null
+}

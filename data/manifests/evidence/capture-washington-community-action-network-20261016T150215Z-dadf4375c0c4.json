@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 252304,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316469031-DAD1BHUNS0BX5T8MMGVO/WA+11+David+Hackney.png",
+  "capture_method": "image",
+  "content_sha256": "76660335e5c009ab53183bf60db5db80bba77bb3e9273d9779a9611927a362ed",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261016T150215Z-dadf4375c0c4",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316469031-DAD1BHUNS0BX5T8MMGVO/WA+11+David+Hackney.png",
+  "retrieved_at": "2026-10-16T15:02:15.318882Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/76/76660335e5c009ab53183bf60db5db80bba77bb3e9273d9779a9611927a362ed",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network official image publication",
+  "updated_at": null
+}

@@ -1,0 +1,2554 @@
+{
+  "approval_text": "Apply all 54 decisions and all three explicit corrections",
+  "approved_court_terminology_mappings": [
+    {
+      "apply_automatically": false,
+      "author": "shaug",
+      "prior_source_label": "District 3 - Jaime Hawk",
+      "proposed_ballot_office": "Washington Supreme Court Justice Position 3",
+      "race_id": "supreme-court-justice-3",
+      "reason": "Under the explicit WA State Supreme Court heading, the source uses District for its five seat numbers. The frozen court is statewide and labels these seats Position; each corresponding named candidate (or declined race) uniquely resolves. This concrete terminology mapping must be included in human approval.",
+      "review_status": "verified",
+      "source_id": "washington-for-peace-and-justice",
+      "timestamp": "2026-10-16T16:05:10.192531Z"
+    },
+    {
+      "apply_automatically": false,
+      "author": "shaug",
+      "prior_source_label": "District 5 - Theo Angelis",
+      "proposed_ballot_office": "Washington Supreme Court Justice Position 5",
+      "race_id": "supreme-court-justice-5",
+      "reason": "Under the explicit WA State Supreme Court heading, the source uses District for its five seat numbers. The frozen court is statewide and labels these seats Position; each corresponding named candidate (or declined race) uniquely resolves. This concrete terminology mapping must be included in human approval.",
+      "review_status": "verified",
+      "source_id": "washington-for-peace-and-justice",
+      "timestamp": "2026-10-16T16:05:10.192531Z"
+    },
+    {
+      "apply_automatically": false,
+      "author": "shaug",
+      "prior_source_label": "District 7 - Leave Blank or Write in Paula Stein",
+      "proposed_ballot_office": "Washington Supreme Court Justice Position 7",
+      "race_id": "supreme-court-justice-7",
+      "reason": "Under the explicit WA State Supreme Court heading, the source uses District for its five seat numbers. The frozen court is statewide and labels these seats Position; each corresponding named candidate (or declined race) uniquely resolves. This concrete terminology mapping must be included in human approval.",
+      "review_status": "verified",
+      "source_id": "washington-for-peace-and-justice",
+      "timestamp": "2026-10-16T16:05:10.192531Z"
+    }
+  ],
+  "approved_decisions": [
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[0], us-house-7: Pramila Jayapal.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "evidence_excerpt": "Pramila Jayapal",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[0], us-house-7: Pramila Jayapal. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "us-house-7"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "us-house-7",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Pramila Jayapal",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[1], us-house-9: Adam Smith.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "evidence_excerpt": "Adam Smith",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[1], us-house-9: Adam Smith. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "us-house-9"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "us-house-9",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Adam Smith",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[2], initiative-26-645: No.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_excerpt": "No",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[2], initiative-26-645: No. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "initiative-26-645"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "initiative-26-645",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "No",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[3], seattle-proposition-1-transit: Yes.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "seattle-proposition-1-transit--yes"
+        ],
+        "evidence_excerpt": "Yes",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[3], seattle-proposition-1-transit: Yes. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "seattle-proposition-1-transit"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-proposition-1-transit--yes"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "seattle-proposition-1-transit",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Yes",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[4], ld-11-state-representative-2: Steve Bergquist.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
+        "evidence_excerpt": "Steve Bergquist",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[4], ld-11-state-representative-2: Steve Bergquist. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-11-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-11-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Steve Bergquist",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[5], ld-32-state-representative-1: Keith Scully.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-representative-1--keith-scully"
+        ],
+        "evidence_excerpt": "Keith Scully",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[5], ld-32-state-representative-1: Keith Scully. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-32-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-1--keith-scully"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-32-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Keith Scully",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[6], ld-34-state-representative-2: Joe Fitzgibbon.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "evidence_excerpt": "Joe Fitzgibbon",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[6], ld-34-state-representative-2: Joe Fitzgibbon. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-34-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-34-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Joe Fitzgibbon",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[7], ld-34-state-senator: Emily Alvarado.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
+        "evidence_excerpt": "Emily Alvarado",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[7], ld-34-state-senator: Emily Alvarado. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-34-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-34-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Emily Alvarado",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[8], ld-36-state-representative-1: Julia Reed.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
+        "evidence_excerpt": "Julia Reed",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[8], ld-36-state-representative-1: Julia Reed. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-36-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-36-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Julia Reed",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[9], ld-36-state-representative-2: Liz Berry.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
+        "evidence_excerpt": "Liz Berry",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[9], ld-36-state-representative-2: Liz Berry. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-36-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-36-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Liz Berry",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[10], ld-36-state-senator: Noel Frame.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "evidence_excerpt": "Noel Frame",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[10], ld-36-state-senator: Noel Frame. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-36-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-36-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Noel Frame",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[11], ld-37-state-representative-1: Kelabe Tewolde.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "evidence_excerpt": "Kelabe Tewolde",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[11], ld-37-state-representative-1: Kelabe Tewolde. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-37-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Kelabe Tewolde",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[12], ld-37-state-representative-2: Jaelynn Scott.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "evidence_excerpt": "Jaelynn Scott",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[12], ld-37-state-representative-2: Jaelynn Scott. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-37-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Jaelynn Scott",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[13], ld-37-state-senator: Chiaplo Street.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "evidence_excerpt": "Chiaplo Street",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[13], ld-37-state-senator: Chiaplo Street. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-37-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Chiaplo Street",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[14], ld-43-state-representative-1: Nicole Macri.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "evidence_excerpt": "Nicole Macri",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[14], ld-43-state-representative-1: Nicole Macri. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-43-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-43-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Nicole Macri",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[15], ld-43-state-senator: Jamie Pedersen.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "evidence_excerpt": "Jamie Pedersen",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[15], ld-43-state-senator: Jamie Pedersen. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-43-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-43-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Jamie Pedersen",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[16], ld-46-state-representative-1: Gerry Pollet.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "evidence_excerpt": "Gerry Pollet",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[16], ld-46-state-representative-1: Gerry Pollet. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-46-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-46-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Gerry Pollet",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[17], ld-46-state-representative-2: Darya Farivar.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "evidence_excerpt": "Darya Farivar",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[17], ld-46-state-representative-2: Darya Farivar. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-46-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-46-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Darya Farivar",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[18], ld-46-state-senator: Javier Valdez.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "evidence_excerpt": "Javier Valdez",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[18], ld-46-state-senator: Javier Valdez. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "ld-46-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-46-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Javier Valdez",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[19], supreme-court-justice-1: Colleen Melody.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "evidence_excerpt": "Colleen Melody",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[19], supreme-court-justice-1: Colleen Melody. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "supreme-court-justice-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Colleen Melody",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[20], supreme-court-justice-3: Jaime Hawk.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "evidence_excerpt": "Jaime Hawk",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[20], supreme-court-justice-3: Jaime Hawk. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "supreme-court-justice-3"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-3",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Jaime Hawk",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[21], supreme-court-justice-4: Ian Birk.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "evidence_excerpt": "Ian Birk",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[21], supreme-court-justice-4: Ian Birk. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "supreme-court-justice-4"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-4",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Ian Birk",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[22], supreme-court-justice-5: Theo Angelis.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "evidence_excerpt": "Theo Angelis",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[22], supreme-court-justice-5: Theo Angelis. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "supreme-court-justice-5"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-5",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Theo Angelis",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3d15d8ad29bda811c7444201df4cf6c80c714c4b198b742a9eeeb1d4a7658fa5",
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "capture_manifest_sha256": "12d04d95160704b1bbc7c9438a147d0e50628c76cdbeb7524d659de882407b20",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[23], supreme-court-justice-7: Debra L. Stephens.",
+      "evidence_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "evidence_excerpt": "Debra L. Stephens",
+        "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[23], supreme-court-justice-7: Debra L. Stephens. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+        "race_id": "supreme-court-justice-7"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-7",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "sierra-club-washington",
+      "source_label": "Debra L. Stephens",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "156502f7a93edef83cb544ed3d048e9b5b6caf61c68d4dc2ff333b2e75710398",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+      "capture_manifest_sha256": "b9c6e37858ef9440dc0bbdc0571d83eb2eb1727a6f8872c7ba2da26003f431bb",
+      "evidence_locator": "Official 12-slide general voters guide, slide 03, Congressional, row 7; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "evidence_excerpt": "CD-7 - Pramila Jayapal",
+        "evidence_locator": "Official 12-slide general voters guide, slide 03, Congressional, row 7; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "us-house-7"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "us-house-7",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "CD-7 - Pramila Jayapal",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "156502f7a93edef83cb544ed3d048e9b5b6caf61c68d4dc2ff333b2e75710398",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+      "capture_manifest_sha256": "b9c6e37858ef9440dc0bbdc0571d83eb2eb1727a6f8872c7ba2da26003f431bb",
+      "evidence_locator": "Official 12-slide general voters guide, slide 03, WA State Supreme Court, row 2; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": {
+        "apply_automatically": false,
+        "prior_source_label": "District 3 - Jaime Hawk",
+        "proposed_ballot_office": "Washington Supreme Court Justice Position 3",
+        "reason": "Under the explicit WA State Supreme Court heading, the source uses District for its five seat numbers. The frozen court is statewide and labels these seats Position; each corresponding named candidate (or declined race) uniquely resolves. This concrete terminology mapping must be included in human approval.",
+        "review_status": "pending_human_review"
+      },
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "evidence_excerpt": "District 3 - Jaime Hawk",
+        "evidence_locator": "Official 12-slide general voters guide, slide 03, WA State Supreme Court, row 2; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "supreme-court-justice-3"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-3",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "District 3 - Jaime Hawk",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "156502f7a93edef83cb544ed3d048e9b5b6caf61c68d4dc2ff333b2e75710398",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+      "capture_manifest_sha256": "b9c6e37858ef9440dc0bbdc0571d83eb2eb1727a6f8872c7ba2da26003f431bb",
+      "evidence_locator": "Official 12-slide general voters guide, slide 03, WA State Supreme Court, row 4; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": {
+        "apply_automatically": false,
+        "prior_source_label": "District 5 - Theo Angelis",
+        "proposed_ballot_office": "Washington Supreme Court Justice Position 5",
+        "reason": "Under the explicit WA State Supreme Court heading, the source uses District for its five seat numbers. The frozen court is statewide and labels these seats Position; each corresponding named candidate (or declined race) uniquely resolves. This concrete terminology mapping must be included in human approval.",
+        "review_status": "pending_human_review"
+      },
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "evidence_excerpt": "District 5 - Theo Angelis",
+        "evidence_locator": "Official 12-slide general voters guide, slide 03, WA State Supreme Court, row 4; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "supreme-court-justice-5"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-5",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "District 5 - Theo Angelis",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "424e748f5581310b7e46004bd19855661fb6bcd0ea9bc166711dd7d4430814c9",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-e844ac5eba58",
+      "capture_manifest_sha256": "c8b042b2193123bc219094756c3ddf108e9f4784081bc0cef9a3b5d689218379",
+      "evidence_locator": "Official 12-slide general voters guide, slide 04, County, row 1; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "evidence_excerpt": "King County - District 2 - Rebecca Saldaña",
+        "evidence_locator": "Official 12-slide general voters guide, slide 04, County, row 1; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-e844ac5eba58; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-32308048fe07. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "king-county-council-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-0e6f22029bf7",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "king-county-council-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "King County - District 2 - Rebecca Saldaña",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-32308048fe07"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "424e748f5581310b7e46004bd19855661fb6bcd0ea9bc166711dd7d4430814c9",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-e844ac5eba58",
+      "capture_manifest_sha256": "c8b042b2193123bc219094756c3ddf108e9f4784081bc0cef9a3b5d689218379",
+      "evidence_locator": "Official 12-slide general voters guide, slide 04, County, row 2; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "king-county-council-4--jorge-l-baron"
+        ],
+        "evidence_excerpt": "King County - District 4 - Jorge Barón",
+        "evidence_locator": "Official 12-slide general voters guide, slide 04, County, row 2; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-e844ac5eba58; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-32308048fe07. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "king-county-council-4"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-council-4--jorge-l-baron"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-0e6f22029bf7",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "king-county-council-4",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "King County - District 4 - Jorge Barón",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-32308048fe07"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "424e748f5581310b7e46004bd19855661fb6bcd0ea9bc166711dd7d4430814c9",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-e844ac5eba58",
+      "capture_manifest_sha256": "c8b042b2193123bc219094756c3ddf108e9f4784081bc0cef9a3b5d689218379",
+      "evidence_locator": "Official 12-slide general voters guide, slide 04, County, row 3; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "evidence_excerpt": "King County - District 8 - Teresa Mosqueda",
+        "evidence_locator": "Official 12-slide general voters guide, slide 04, County, row 3; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-e844ac5eba58; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-32308048fe07. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "king-county-council-8"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-0e6f22029bf7",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "king-county-council-8",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "King County - District 8 - Teresa Mosqueda",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-32308048fe07"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "424e748f5581310b7e46004bd19855661fb6bcd0ea9bc166711dd7d4430814c9",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-e844ac5eba58",
+      "capture_manifest_sha256": "c8b042b2193123bc219094756c3ddf108e9f4784081bc0cef9a3b5d689218379",
+      "evidence_locator": "Official 12-slide general voters guide, slide 04, Seattle City Council, row 1; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "evidence_excerpt": "District 5 - Nilu Jenks",
+        "evidence_locator": "Official 12-slide general voters guide, slide 04, Seattle City Council, row 1; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-e844ac5eba58; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-32308048fe07. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "seattle-city-council-5"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-0e6f22029bf7",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "seattle-city-council-5",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "District 5 - Nilu Jenks",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-32308048fe07"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "f91da7e98bc8166f78986cda02cb29913617aa04732451f253e2d64c8b8eb7cc",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-25670e89d37f",
+      "capture_manifest_sha256": "1b4d61b1dc7d07b9f303689174912b5e37dff6ae9dad0835925feacd23555fea",
+      "evidence_locator": "Official 12-slide general voters guide, slide 05, State Legislative, row 13; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-11-state-representative-1--ashley-fedan"
+        ],
+        "evidence_excerpt": "LD-11 Rep Pos 1: Ashley Fedan",
+        "evidence_locator": "Official 12-slide general voters guide, slide 05, State Legislative, row 13; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-25670e89d37f; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-1967ac614194. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-11-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-11-state-representative-1--ashley-fedan"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-fb26db6f33de",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-11-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-11 Rep Pos 1: Ashley Fedan",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-1967ac614194"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 1; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "evidence_excerpt": "LD-32 Senator: Cindy Ryu",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 1; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-32-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-32-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-32 Senator: Cindy Ryu",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 2; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-representative-1--danica-noble"
+        ],
+        "evidence_excerpt": "LD-32 Rep Pos 1: Danica Noble",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 2; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-32-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-1--danica-noble"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-32-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-32 Rep Pos 1: Danica Noble",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 3; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "evidence_excerpt": "LD-32 Rep Pos 2: Imraan Siddiqi",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 3; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-32-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-32-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-32 Rep Pos 2: Imraan Siddiqi",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 7; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
+        "evidence_excerpt": "LD-34 Rep Pos 1: Brianna Thomas",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 7; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-34-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-34-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-34 Rep Pos 1: Brianna Thomas",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 8; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "evidence_excerpt": "LD-34 Rep Pos 2: Joe Fitzgibbon",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 8; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-34-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-34-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-34 Rep Pos 2: Joe Fitzgibbon",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 9; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
+        "evidence_excerpt": "LD-34 Senator: Emily Alvarado",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 9; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-34-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-34-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-34 Senator: Emily Alvarado",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 13; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "evidence_excerpt": "LD-36 Senator: Noel Frame",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 13; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-36-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-36-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-36 Senator: Noel Frame",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 14; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
+        "evidence_excerpt": "LD-36 Rep Pos 1: Julia Reed",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 14; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-36-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-36-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-36 Rep Pos 1: Julia Reed",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 15; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
+        "evidence_excerpt": "LD-36 Rep Pos 2: Liz Berry",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 15; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-36-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-36-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-36 Rep Pos 2: Liz Berry",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 16; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "evidence_excerpt": "LD-37 Senator: Chipalo Street",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 16; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-37-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-37 Senator: Chipalo Street",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 17; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "evidence_excerpt": "LD-37 Rep Pos 1: Kelabe Tewolde",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 17; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-37-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-37 Rep Pos 1: Kelabe Tewolde",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "838c51985ecafa3e4347938320c1fe72480cc30ddf7f5e65fd4553f2886bfe78",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "capture_manifest_sha256": "4869f89d414ef2cdfb90c2603ff4a9ee8880349c6fb1a2c72fb00a360143dee3",
+      "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 18; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "evidence_excerpt": "LD-37 Rep Pos 2: Jaelynn Scott",
+        "evidence_locator": "Official 12-slide general voters guide, slide 07, State Legislative, row 18; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-37-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-37 Rep Pos 2: Jaelynn Scott",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3465515243c2ca5ae3b53f6c4d396a87d2ec7ebf45217b186abcc9b525b5da76",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b",
+      "capture_manifest_sha256": "8c700f1a594197429053da798895417f6cf3108a2525f27e0913c16440ace7d2",
+      "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 4; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-43-state-senator--hannah-sabio-howell"
+        ],
+        "evidence_excerpt": "LD-43 Senator: Hannah Sabio-Howell",
+        "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 4; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-43-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-senator--hannah-sabio-howell"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-c73536c52f75",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-43-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-43 Senator: Hannah Sabio-Howell",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3465515243c2ca5ae3b53f6c4d396a87d2ec7ebf45217b186abcc9b525b5da76",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b",
+      "capture_manifest_sha256": "8c700f1a594197429053da798895417f6cf3108a2525f27e0913c16440ace7d2",
+      "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 5; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-43-state-representative-2--shaun-scott"
+        ],
+        "evidence_excerpt": "LD-43 Rep Pos 2: Shaun Scott",
+        "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 5; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-43-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-representative-2--shaun-scott"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-c73536c52f75",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-43-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-43 Rep Pos 2: Shaun Scott",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3465515243c2ca5ae3b53f6c4d396a87d2ec7ebf45217b186abcc9b525b5da76",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b",
+      "capture_manifest_sha256": "8c700f1a594197429053da798895417f6cf3108a2525f27e0913c16440ace7d2",
+      "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 6; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "evidence_excerpt": "LD-43 Rep Pos 1: Nicole Macri",
+        "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 6; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-43-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-c73536c52f75",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-43-state-representative-1",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-43 Rep Pos 1: Nicole Macri",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3465515243c2ca5ae3b53f6c4d396a87d2ec7ebf45217b186abcc9b525b5da76",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b",
+      "capture_manifest_sha256": "8c700f1a594197429053da798895417f6cf3108a2525f27e0913c16440ace7d2",
+      "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 13; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "evidence_excerpt": "LD-46 Senator: Javier Valdez",
+        "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 13; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-46-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-c73536c52f75",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-46-state-senator",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-46 Senator: Javier Valdez",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "3465515243c2ca5ae3b53f6c4d396a87d2ec7ebf45217b186abcc9b525b5da76",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b",
+      "capture_manifest_sha256": "8c700f1a594197429053da798895417f6cf3108a2525f27e0913c16440ace7d2",
+      "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 14; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "evidence_excerpt": "LD-46 Rep Pos 2: Darya Farivar",
+        "evidence_locator": "Official 12-slide general voters guide, slide 08, State Legislative, row 14; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "ld-46-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-c73536c52f75",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-46-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-46 Rep Pos 2: Darya Farivar",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "82b332c9efee6a9ac950de2623c537febff2ec478d06aa66405a2e4d991ec909",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-ee7217f46ddb",
+      "capture_manifest_sha256": "29b2a8063b820dd4ef6d6ab53236f40bde78a689b54635538e9cc14f7417d73e",
+      "evidence_locator": "Official 12-slide general voters guide, slide 09 Initiatives, row 1; explicit NO wording determines the ballot choice. Candidate red/blank legend does not override explicit measure wording.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_excerpt": "NO on I-645",
+        "evidence_locator": "Official 12-slide general voters guide, slide 09 Initiatives, row 1; explicit NO wording determines the ballot choice. Candidate red/blank legend does not override explicit measure wording. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-ee7217f46ddb; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-d27ed1849e93. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "initiative-26-645"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-55edb684853d",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "initiative-26-645",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "NO on I-645",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d27ed1849e93"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "82b332c9efee6a9ac950de2623c537febff2ec478d06aa66405a2e4d991ec909",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-ee7217f46ddb",
+      "capture_manifest_sha256": "29b2a8063b820dd4ef6d6ab53236f40bde78a689b54635538e9cc14f7417d73e",
+      "evidence_locator": "Official 12-slide general voters guide, slide 09 Initiatives, row 2; explicit NO wording determines the ballot choice. Candidate red/blank legend does not override explicit measure wording.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "evidence_excerpt": "NO on I-001",
+        "evidence_locator": "Official 12-slide general voters guide, slide 09 Initiatives, row 2; explicit NO wording determines the ballot choice. Candidate red/blank legend does not override explicit measure wording. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-ee7217f46ddb; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-d27ed1849e93. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "initiative-26-001"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-55edb684853d",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "initiative-26-001",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "NO on I-001",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d27ed1849e93"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "82b332c9efee6a9ac950de2623c537febff2ec478d06aa66405a2e4d991ec909",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-ee7217f46ddb",
+      "capture_manifest_sha256": "29b2a8063b820dd4ef6d6ab53236f40bde78a689b54635538e9cc14f7417d73e",
+      "evidence_locator": "Official 12-slide general voters guide, slide 09 Initiatives, row 3; explicit NO wording determines the ballot choice. Candidate red/blank legend does not override explicit measure wording.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "evidence_excerpt": "NO on I-638",
+        "evidence_locator": "Official 12-slide general voters guide, slide 09 Initiatives, row 3; explicit NO wording determines the ballot choice. Candidate red/blank legend does not override explicit measure wording. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-ee7217f46ddb; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-d27ed1849e93. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "initiative-26-638"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-55edb684853d",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "initiative-26-638",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "NO on I-638",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d27ed1849e93"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "156502f7a93edef83cb544ed3d048e9b5b6caf61c68d4dc2ff333b2e75710398",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+      "capture_manifest_sha256": "b9c6e37858ef9440dc0bbdc0571d83eb2eb1727a6f8872c7ba2da26003f431bb",
+      "evidence_locator": "Official 12-slide general voters guide, slide 03, Congressional, row 9; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [],
+        "evidence_excerpt": "CD-9 - Leave Blank or Write in Paula Stein",
+        "evidence_locator": "Official 12-slide general voters guide, slide 03, Congressional, row 9; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "us-house-9",
+        "status": "declined_to_endorse"
+      },
+      "new_value": {
+        "allocation_each": null,
+        "candidate_ids": [],
+        "status": "declined_to_endorse"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "us-house-9",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "CD-9 - Leave Blank or Write in Paula Stein",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "156502f7a93edef83cb544ed3d048e9b5b6caf61c68d4dc2ff333b2e75710398",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+      "capture_manifest_sha256": "b9c6e37858ef9440dc0bbdc0571d83eb2eb1727a6f8872c7ba2da26003f431bb",
+      "evidence_locator": "Official 12-slide general voters guide, slide 03, WA State Supreme Court, row 5; interpret candidate colors using slide 02 legend.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": {
+        "apply_automatically": false,
+        "prior_source_label": "District 7 - Leave Blank or Write in Paula Stein",
+        "proposed_ballot_office": "Washington Supreme Court Justice Position 7",
+        "reason": "Under the explicit WA State Supreme Court heading, the source uses District for its five seat numbers. The frozen court is statewide and labels these seats Position; each corresponding named candidate (or declined race) uniquely resolves. This concrete terminology mapping must be included in human approval.",
+        "review_status": "pending_human_review"
+      },
+      "legend_capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252",
+      "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+      "new_ledger_value": {
+        "candidate_ids": [],
+        "evidence_excerpt": "District 7 - Leave Blank or Write in Paula Stein",
+        "evidence_locator": "Official 12-slide general voters guide, slide 03, WA State Supreme Court, row 5; interpret candidate colors using slide 02 legend. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650. Legend capture capture-washington-for-peace-and-justice-20261016T155856Z-47ebd6c26252.",
+        "race_id": "supreme-court-justice-7",
+        "status": "declined_to_endorse"
+      },
+      "new_value": {
+        "allocation_each": null,
+        "candidate_ids": [],
+        "status": "declined_to_endorse"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-7",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "District 7 - Leave Blank or Write in Paula Stein",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "f91da7e98bc8166f78986cda02cb29913617aa04732451f253e2d64c8b8eb7cc",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-25670e89d37f",
+      "capture_manifest_sha256": "1b4d61b1dc7d07b9f303689174912b5e37dff6ae9dad0835925feacd23555fea",
+      "evidence_locator": "Official WA4PJ general voters guide, slide 05: green row prints LD-11 Rep 12: Steve Bergquist. Human-approved mapping to LD11 House Position 2; legend on slide 02.",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
+        "evidence_excerpt": "LD-11 Rep 12: Steve Bergquist",
+        "evidence_locator": "Official WA4PJ general voters guide, slide 05: green row prints LD-11 Rep 12: Steve Bergquist. Human-approved mapping to LD11 House Position 2; legend on slide 02. Official source: https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/. Capture capture-washington-for-peace-and-justice-20261016T155856Z-25670e89d37f; verified manual manual-washington-for-peace-and-justice-20261016T160510Z-1967ac614194.",
+        "race_id": "ld-11-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-fb26db6f33de",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-11-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_label": "LD-11 Rep 12: Steve Bergquist",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-1967ac614194"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "f5fe254dd8e0765ea012fc28c5f2f23cb0a7ecf468ec79b949cad3ca6c67f448",
+      "capture_id": "capture-alliance-for-gun-responsibility-20261016T145959Z-85a3928d61ce",
+      "capture_manifest_sha256": "74a60e561ba9c72b7ca83d856738edf8919cdc9845c54039cde51942100d3ad9",
+      "evidence_locator": "Current browser retry confirms the same printed office conflict in the retained October 16 original official-source capture; candidate identity correction requires explicit approval.",
+      "evidence_url": "https://gunresponsibility.org/2026-endorsements/",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
+        "evidence_excerpt": "State House of Representatives | District 21 | Position 2: steve bergquist",
+        "evidence_locator": "Current browser retry confirms the same printed office conflict in the retained October 16 original official-source capture; candidate identity correction requires explicit approval. Official source: https://gunresponsibility.org/2026-endorsements/. Capture capture-alliance-for-gun-responsibility-20261016T145959Z-85a3928d61ce; verified manual manual-alliance-for-gun-responsibility-20261016T160510Z-f57c4cd5c4ca.",
+        "race_id": "ld-11-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-alliance-for-gun-responsibility-20261016T160510Z-6b2a7cc7416e",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-11-state-representative-2",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "alliance-for-gun-responsibility",
+      "source_label": "State House of Representatives | District 21 | Position 2: steve bergquist",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-alliance-for-gun-responsibility-20261016T160510Z-f57c4cd5c4ca"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "8b3a25de21fc4c702632d090d723cc215e25cfba326eb75a221dc1357c5804e9",
+      "capture_id": "capture-planned-parenthood-alliance-advocates-20261016T150040Z-decd0fdb6b0a",
+      "capture_manifest_sha256": "d9c10460d671066955910bd0a8af902079ec9819ac0cfad6e8bb7f3dae9e3087",
+      "evidence_locator": "Current browser retry confirms the same printed office conflict in the retained October 16 original official-source capture; candidate identity correction requires explicit approval.",
+      "evidence_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+      "label_mapping": null,
+      "legend_capture_id": null,
+      "legend_sha256": null,
+      "new_ledger_value": {
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "evidence_excerpt": "King County Council Teresa Mosqueda, District 6",
+        "evidence_locator": "Current browser retry confirms the same printed office conflict in the retained October 16 original official-source capture; candidate identity correction requires explicit approval. Official source: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements. Capture capture-planned-parenthood-alliance-advocates-20261016T150040Z-decd0fdb6b0a; verified manual manual-planned-parenthood-alliance-advocates-20261016T160510Z-65ad0dc57539.",
+        "race_id": "king-county-council-8"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261016T160510Z-6b6aa39e77d8",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "king-county-council-8",
+      "reason": "Apply the exact user-approved current official-source decision; preserve source spelling and any explicitly approved office correction.",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "source_label": "King County Council Teresa Mosqueda, District 6",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261016T160510Z-65ad0dc57539"
+    }
+  ],
+  "approved_discovery_changes": [
+    {
+      "author": "shaug",
+      "new_value": {
+        "canonical_url": "https://www.sierraclub.org/washington/2026-endorsements",
+        "checked_at": "2026-10-16T15:58:56.853359Z",
+        "evidence_locator": "Issue #545 approved browser retry. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json.",
+        "media_type": "text/html",
+        "notes": "Current official publication recovered in browser and explicitly approved. Capture time records custody import; no HTTP status or exact browser network retrieval time asserted. Only approved decisions are normalized.",
+        "redirect_chain": [],
+        "requested_url": "https://www.sierraclub.org/washington/2026-endorsements",
+        "status": "published"
+      },
+      "prior_value": {
+        "canonical_url": null,
+        "checked_at": "2026-10-04T04:56:54Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-sierra-club-washington-20261004T045654Z-bb852d680797.",
+        "media_type": null,
+        "notes": "HTTP 200 contains an Incapsula access challenge; access-restricted disposition preserved.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.sierraclub.org/washington",
+        "status": "access_restricted",
+        "updated_at": null
+      },
+      "source_id": "sierra-club-washington",
+      "timestamp": "2026-10-16T16:05:10.192531Z"
+    },
+    {
+      "author": "shaug",
+      "new_value": {
+        "canonical_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+        "checked_at": "2026-10-16T15:58:56.853359Z",
+        "evidence_locator": "Issue #545 approved browser retry. Capture capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20; data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json.",
+        "media_type": "image/jpeg",
+        "notes": "Current official publication recovered in browser and explicitly approved. Capture time records custody import; no HTTP status or exact browser network retrieval time asserted. Only approved decisions are normalized.",
+        "redirect_chain": [],
+        "requested_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+        "status": "published"
+      },
+      "prior_value": {
+        "canonical_url": "https://www.wa4pj.com/",
+        "checked_at": "2026-10-04T04:56:52Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-washington-for-peace-and-justice-20261004T045652Z-5b8b4ae92d99.",
+        "media_type": "text/html",
+        "notes": "Official site has no current endorsement publication located.",
+        "published_at": null,
+        "redirect_chain": [],
+        "requested_url": "https://www.wa4pj.com/",
+        "status": "not_found",
+        "updated_at": null
+      },
+      "source_id": "washington-for-peace-and-justice",
+      "timestamp": "2026-10-16T16:05:10.192531Z"
+    }
+  ],
+  "approved_name_mappings": [
+    {
+      "author": "shaug",
+      "district": "Legislative District 36",
+      "match_count_in_specified_race": 1,
+      "office": "State Representative",
+      "position": "Position 1",
+      "proposed_candidate_id": "ld-36-state-representative-1--julia-grant-reed",
+      "proposed_canonical_name": "Julia Grant Reed",
+      "race_id": "ld-36-state-representative-1",
+      "reason": "Same LD36 House Position1 office and unique frozenballot identity.",
+      "review_status": "verified",
+      "source_id": "sierra-club-washington",
+      "source_text": "Julia Reed",
+      "status": "pending_human_approval",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "treatment": "Preserve source spelling verbatim. This fact check confirms a unique proposed frozen-ballot identity within the supplied race; it does not create an approved alias or authorize publication."
+    },
+    {
+      "author": "shaug",
+      "district": "Legislative District 36",
+      "match_count_in_specified_race": 1,
+      "office": "State Senator",
+      "position": null,
+      "proposed_candidate_id": "ld-36-state-senator--noel-c-frame",
+      "proposed_canonical_name": "Noel C. Frame",
+      "race_id": "ld-36-state-senator",
+      "reason": "LD36Senate unique frozenballot identity.",
+      "review_status": "verified",
+      "source_id": "sierra-club-washington",
+      "source_text": "Noel Frame",
+      "status": "pending_human_approval",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "treatment": "Preserve source spelling verbatim. This fact check confirms a unique proposed frozen-ballot identity within the supplied race; it does not create an approved alias or authorize publication."
+    },
+    {
+      "author": "shaug",
+      "district": "Legislative District 37",
+      "match_count_in_specified_race": 1,
+      "office": "State Senator",
+      "position": null,
+      "proposed_candidate_id": "ld-37-state-senator--chipalo-street",
+      "proposed_canonical_name": "Chipalo Street",
+      "race_id": "ld-37-state-senator",
+      "reason": "Source explicitly labels LD37 Senate, unique near-spelling frozen choice.",
+      "review_status": "verified",
+      "source_id": "sierra-club-washington",
+      "source_text": "Chiaplo Street",
+      "status": "pending_human_approval",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "treatment": "Preserve source spelling verbatim. This fact check confirms a unique proposed frozen-ballot identity within the supplied race; it does not create an approved alias or authorize publication."
+    },
+    {
+      "author": "shaug",
+      "district": "Statewide",
+      "match_count_in_specified_race": 1,
+      "office": "Supreme Court Justice",
+      "position": "Position 3",
+      "proposed_candidate_id": "supreme-court-justice-3--jaime-michelle-hawk",
+      "proposed_canonical_name": "Jaime Michelle Hawk",
+      "race_id": "supreme-court-justice-3",
+      "reason": "SupremeCourtPosition3 unique frozenballot identity.",
+      "review_status": "verified",
+      "source_id": "sierra-club-washington",
+      "source_text": "Jaime Hawk",
+      "status": "pending_human_approval",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "treatment": "Preserve source spelling verbatim. This fact check confirms a unique proposed frozen-ballot identity within the supplied race; it does not create an approved alias or authorize publication."
+    }
+  ],
+  "baseline_input_sha256": {
+    "config/hosting/site.yaml": "f682bed19a05cbf4478da84f32908bbf585d94e7ff6de5ab4b2197e2b538e61c",
+    "config/sources/wa-2026-general.yaml": "b876a55161f59b94112164b59888abb0572f14d7139efad60fd8158b279f791c",
+    "data/normalized/wa-2026-general-canonical-dataset.json": "082bac49e4b26f0e327a01a24d3deb9a7c408f3c40f5f78d85ffd87a98d3e9ea",
+    "data/releases/wa-2026-general/source-decisions.yaml": "e4382f12df31a3e9bbf50c96f9ba4d5f49774722c3364204b8d4b64265a3324b"
+  },
+  "election_id": "wa-2026-general",
+  "explicit_office_overrides": [
+    {
+      "author": "shaug",
+      "capture_content_sha256": "f91da7e98bc8166f78986cda02cb29913617aa04732451f253e2d64c8b8eb7cc",
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-25670e89d37f",
+      "evidence_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "kind": "explicit_office_label_override",
+      "new_value": {
+        "ballot_office": "Legislative District 11 State Representative — Position 2",
+        "candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ]
+      },
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-fb26db6f33de",
+      "prior_value": {
+        "published_decision": null,
+        "source_label": "LD-11 Rep 12: Steve Bergquist"
+      },
+      "race_id": "ld-11-state-representative-2",
+      "reason": "The user explicitly approved this individually enumerated office-label correction to the unique frozen-ballot candidate after the source/ballot mismatch was disclosed.",
+      "source_id": "washington-for-peace-and-justice",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-1967ac614194"
+    },
+    {
+      "author": "shaug",
+      "capture_content_sha256": "f5fe254dd8e0765ea012fc28c5f2f23cb0a7ecf468ec79b949cad3ca6c67f448",
+      "capture_id": "capture-alliance-for-gun-responsibility-20261016T145959Z-85a3928d61ce",
+      "evidence_url": "https://gunresponsibility.org/2026-endorsements/",
+      "kind": "explicit_office_label_override",
+      "new_value": {
+        "ballot_office": "Legislative District 11 State Representative — Position 2",
+        "candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ]
+      },
+      "pending_manual_entry_id": "manual-alliance-for-gun-responsibility-20261016T160510Z-6b2a7cc7416e",
+      "prior_value": {
+        "published_decision": null,
+        "source_label": "State House of Representatives | District 21 | Position 2: steve bergquist"
+      },
+      "race_id": "ld-11-state-representative-2",
+      "reason": "The user explicitly approved this individually enumerated office-label correction to the unique frozen-ballot candidate after the source/ballot mismatch was disclosed.",
+      "source_id": "alliance-for-gun-responsibility",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "verified_manual_entry_id": "manual-alliance-for-gun-responsibility-20261016T160510Z-f57c4cd5c4ca"
+    },
+    {
+      "author": "shaug",
+      "capture_content_sha256": "8b3a25de21fc4c702632d090d723cc215e25cfba326eb75a221dc1357c5804e9",
+      "capture_id": "capture-planned-parenthood-alliance-advocates-20261016T150040Z-decd0fdb6b0a",
+      "evidence_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+      "kind": "explicit_office_label_override",
+      "new_value": {
+        "ballot_office": "Metropolitan King County Council — District 8",
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ]
+      },
+      "pending_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261016T160510Z-6b6aa39e77d8",
+      "prior_value": {
+        "published_decision": null,
+        "source_label": "King County Council Teresa Mosqueda, District 6"
+      },
+      "race_id": "king-county-council-8",
+      "reason": "The user explicitly approved this individually enumerated office-label correction to the unique frozen-ballot candidate after the source/ballot mismatch was disclosed.",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "timestamp": "2026-10-16T16:05:10.192531Z",
+      "verified_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261016T160510Z-65ad0dc57539"
+    }
+  ],
+  "held_unresolved": [
+    {
+      "apply_automatically": false,
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+      "election_id": "wa-2026-general",
+      "evidence": {
+        "evidence_locator": "Official 12-slide general voters guide, slide 03, WA State Supreme Court, row 1; interpret candidate colors using slide 02 legend.",
+        "image_sha256": "156502f7a93edef83cb544ed3d048e9b5b6caf61c68d4dc2ff333b2e75710398",
+        "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+        "legend_slide": 2,
+        "official_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+        "row": 1,
+        "section": "WA State Supreme Court",
+        "slide": 3
+      },
+      "manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b",
+      "observed_candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "prior_value": null,
+      "proposed_label_mapping": {
+        "possible_ballot_office": "Washington Supreme Court Justice Position 1",
+        "review_status": "pending_human_review",
+        "source_office_label": "District 1"
+      },
+      "proposed_value": null,
+      "race_id": "supreme-court-justice-1",
+      "reason": "The legend gives two alternative meanings for grey: likely supportive OR opposition to another candidate. Neither is an instruction to vote for the grey candidate. Do not normalize as endorsement, no-endorsement, dual choice, or skip.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_row_label": "District 1 - Colleen Melody",
+      "source_semantics": "grey_ambiguous_rating",
+      "status": "unresolved_not_publishable"
+    },
+    {
+      "apply_automatically": false,
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+      "election_id": "wa-2026-general",
+      "evidence": {
+        "evidence_locator": "Official 12-slide general voters guide, slide 03, WA State Supreme Court, row 3; interpret candidate colors using slide 02 legend.",
+        "image_sha256": "156502f7a93edef83cb544ed3d048e9b5b6caf61c68d4dc2ff333b2e75710398",
+        "legend_sha256": "393c49f100af02aebe9ad242be403cd0b7638ea81e7b886f09d1a99ba49fb078",
+        "legend_slide": 2,
+        "official_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+        "row": 3,
+        "section": "WA State Supreme Court",
+        "slide": 3
+      },
+      "manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b",
+      "observed_candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "prior_value": null,
+      "proposed_label_mapping": {
+        "possible_ballot_office": "Washington Supreme Court Justice Position 4",
+        "review_status": "pending_human_review",
+        "source_office_label": "District 4"
+      },
+      "proposed_value": null,
+      "race_id": "supreme-court-justice-4",
+      "reason": "The legend gives two alternative meanings for grey: likely supportive OR opposition to another candidate. Neither is an instruction to vote for the grey candidate. Do not normalize as endorsement, no-endorsement, dual choice, or skip.",
+      "source_id": "washington-for-peace-and-justice",
+      "source_row_label": "District 4 - Ian Birk",
+      "source_semantics": "grey_ambiguous_rating",
+      "status": "unresolved_not_publishable"
+    }
+  ],
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/545",
+  "manual_entry_successors": [
+    {
+      "capture_id": "capture-alliance-for-gun-responsibility-20261016T145959Z-85a3928d61ce",
+      "pending_manual_entry_id": "manual-alliance-for-gun-responsibility-20261016T160510Z-6b2a7cc7416e",
+      "pending_sha256": "6711ce183895b9a6dbd21aaf117f46446a694f7f3a2d9b7d53e00950b2d82314",
+      "verified_manual_entry_id": "manual-alliance-for-gun-responsibility-20261016T160510Z-f57c4cd5c4ca",
+      "verified_sha256": "e8e5b9aef4ce1e960bf0eaa4c5f55f717c40725f1539f8dd15e97d098f50003e"
+    },
+    {
+      "capture_id": "capture-planned-parenthood-alliance-advocates-20261016T150040Z-decd0fdb6b0a",
+      "pending_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261016T160510Z-6b6aa39e77d8",
+      "pending_sha256": "f5aaf1b6369f49d2f4ba06d8b25ed29332fabd808b50e57d60a749a66a3ac835",
+      "verified_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261016T160510Z-65ad0dc57539",
+      "verified_sha256": "05316f4cd69651691cd5cb7f3046d81634761c8244cf6e7b674e105163751888"
+    },
+    {
+      "capture_id": "capture-sierra-club-washington-20261016T155856Z-3474566190df",
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261016T155856Z-1ce117fb8cbb",
+      "pending_sha256": "b361f132f11458e628e26e75bc186191766592409c705ef329f30333d617a57b",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261016T160510Z-2cc45c964700",
+      "verified_sha256": "0bf727b51061a2aaac7aff5514e6562881c3edb8484c2d07869c8c0b574a6afd"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-e844ac5eba58",
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-0e6f22029bf7",
+      "pending_sha256": "a5a55376db8735aaa10d92bef67e398cd22d9fe955a60bd41851bf5fa4eb3270",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-32308048fe07",
+      "verified_sha256": "8c2621f1a3dd69fe18ab7c1cdbc90e4cfe1259fc42b6814a81930e784a997b40"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-ee7217f46ddb",
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-55edb684853d",
+      "pending_sha256": "66e1e1e035329034c114be2047a21eaeeecc7fddf4d6a5dd926c29cdc7a7105b",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d27ed1849e93",
+      "verified_sha256": "b2aea745af30cf98571dda8be0c0c9b52a9fe7b621144a53d0492da6d1b211a9"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-81e38708991b",
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-c73536c52f75",
+      "pending_sha256": "9076514d5c37b9a7e1a54430886ff942f7b59dd81fdd10b2dbc831a9a861c57a",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-d39547864bd4",
+      "verified_sha256": "400c8f2d02215eb2e127977fc27836462740a49bdd09b742fb7702a8164b01c3"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-995eaff1b4b0",
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-d532f8fe654e",
+      "pending_sha256": "bb514b10499d616303dd71344f3d79daf77084d533284d79f5df511909db446e",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-25fa4a3e969b",
+      "verified_sha256": "5dd3d4292aa8b78df4cb45e0ab4f95b818c634eb33ffa3c6ef5deef399be5793"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-d26e411c2a20",
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-f68b68d2208b",
+      "pending_sha256": "1af322d73efd5ac52bfc1b36629f50b0c802d7fbb0244804221e0b0435c805e0",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-97fee8674650",
+      "verified_sha256": "0bb9d768f5cbe3183e45823675f3af130e898ef18f29e42a026ae10445efb412"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20261016T155856Z-25670e89d37f",
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T155856Z-fb26db6f33de",
+      "pending_sha256": "74f4fcfaa904cbbb7a13059ae938b5416ee5367f61bff9a47683ba68d304cf80",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261016T160510Z-1967ac614194",
+      "verified_sha256": "86120a83808460b89fbca08d4d96e5139ad0cbb3ce7c33c0ed44d5983ae87958"
+    }
+  ],
+  "no_new_baseline_or_daily_or_whole_panel_attestation": true,
+  "original_html_printed_label_checks": [
+    {
+      "capture_id": "capture-alliance-for-gun-responsibility-20261016T145959Z-85a3928d61ce",
+      "content_sha256": "f5fe254dd8e0765ea012fc28c5f2f23cb0a7ecf468ec79b949cad3ca6c67f448",
+      "printed_label": "State House of Representatives | District 21 | Position 2: steve bergquist",
+      "result": "confirmed_in_original_bytes",
+      "source_id": "alliance-for-gun-responsibility"
+    },
+    {
+      "capture_id": "capture-planned-parenthood-alliance-advocates-20261016T150040Z-decd0fdb6b0a",
+      "content_sha256": "8b3a25de21fc4c702632d090d723cc215e25cfba326eb75a221dc1357c5804e9",
+      "printed_label": "King County Council Teresa Mosqueda, District 6",
+      "result": "confirmed_in_original_bytes",
+      "source_id": "planned-parenthood-alliance-advocates"
+    }
+  ],
+  "prior_approval_path": "data/review/approvals/wa-2026-general-2026-10-16.json",
+  "prior_approval_sha256": "2e630bdcc0203951fac4f8fe14f7d4061cd756ae36640cb98527f1914f813b00",
+  "prior_source_reviews": {
+    "alliance-for-gun-responsibility": {
+      "captured_at": "2026-10-04T04:56:56Z",
+      "evidence_locator": "Official 2026 endorsements page, federal, state legislative, judicial, and local sections. Capture capture-alliance-for-gun-responsibility-20261004T045656Z-fc3912865542.",
+      "review_note": "Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.",
+      "reviewed_at": "2026-10-04T05:30:06Z",
+      "reviewer": "shaug",
+      "source_id": "alliance-for-gun-responsibility"
+    },
+    "planned-parenthood-alliance-advocates": {
+      "captured_at": "2026-10-16T15:00:40.636215Z",
+      "evidence_locator": "October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
+      "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. No prior published source block.",
+      "reviewed_at": "2026-10-16T15:48:50.280092Z",
+      "reviewer": "shaug",
+      "source_id": "planned-parenthood-alliance-advocates"
+    }
+  },
+  "proposal_path": "data/review/proposals/wa-2026-general-2026-10-16-browser-retry.json",
+  "proposal_sha256": "f6279dab60267bd00b09b162d677a7863334762232cbe0afa3904a88feb2578c",
+  "record_type": "endorsement_refresh_approval",
+  "result": {
+    "additions": 57,
+    "cumulative_additions_from_703": 175,
+    "cumulative_replacements_from_703": 2,
+    "new_decisions": 878,
+    "new_source_blocks": 45,
+    "prior_decisions": 821,
+    "prior_source_blocks": 43,
+    "replacements": 0
+  },
+  "review_note": "Issue #545: shaug explicitly approved the concrete browser-retry packet with \"Apply all 54 decisions and all three explicit corrections\". This targeted approval covers Sierra Club 24 decisions, WA4PJ 30 decisions (including two declined-to-endorse instructions), WA4PJ Supreme Court District-to-Position terminology, and three separately enumerated office corrections: WA4PJ Bergquist Rep 12 to LD11 House Position 2; Alliance for Gun Responsibility Bergquist District 21 to LD11 House Position 2; PPAA Mosqueda District 6 to King County Council District 8. OpenAI Codex is the transcriber; shaug is the human verifier. The original source labels remain recorded. WA4PJ grey ratings for Colleen Melody and Ian Birk remain unresolved and are not normalized. The separate original 120-change approval remains intact. No daily, whole-panel or verification-adapter baseline human attestation is asserted. See data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T16:05:10.192531Z",
+  "reviewed_by": "shaug",
+  "schema_version": "1.0",
+  "stable_panel_hash": "5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569",
+  "transcriber": "OpenAI Codex"
+}

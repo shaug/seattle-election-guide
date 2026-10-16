@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 176343,
+  "canonical_url": "https://www.11thlddems.org/",
+  "capture_method": "static_html",
+  "content_sha256": "74fa6524e40398701d60fc27b00a5f94090283322fd9f28acbd27c1b682b2c2f",
+  "http_status": 200,
+  "id": "capture-11th-district-democrats-20261016T145926Z-839b7b0830d3",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://www.11thlddems.org/",
+  "retrieved_at": "2026-10-16T14:59:26.658645Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/74/74fa6524e40398701d60fc27b00a5f94090283322fd9f28acbd27c1b682b2c2f",
+  "storage_scope": "local_only",
+  "title": "11th LD Dems - Washington State (South King County - Kent, Renton, Tukwila)",
+  "updated_at": null
+}

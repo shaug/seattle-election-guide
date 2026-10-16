@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 50902,
+  "canonical_url": "https://wabikes.org/",
+  "capture_method": "static_html",
+  "content_sha256": "1be1796138d361f94d34d229e84d6ae693f1f2bf375350c2a50a6d100e412cf2",
+  "http_status": 200,
+  "id": "capture-washington-bikes-20261016T150411Z-adb7d5cc27ec",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://wabikes.org/",
+  "retrieved_at": "2026-10-16T15:04:11.911119Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "storage_reference": "sha256/1b/1be1796138d361f94d34d229e84d6ae693f1f2bf375350c2a50a6d100e412cf2",
+  "storage_scope": "local_only",
+  "title": "Bike Advocacy in Washington StateWashington Bikes",
+  "updated_at": null
+}

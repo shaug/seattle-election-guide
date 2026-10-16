@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-ufcw-3000-20261016T145942Z-bc8de541bd79",
+  "entered_at": "2026-10-16T15:15:15.515715Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; Current candidate slate > 43rd Legislative District > Shaun Scott, State Representative Pos2",
+  "evidence_type": "web_page",
+  "id": "manual-ufcw-3000-20261016T151515Z-c5729b29e8cd",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "transcription": "Legislative District 43 State Representative — Position 2: Shaun Scott"
+}

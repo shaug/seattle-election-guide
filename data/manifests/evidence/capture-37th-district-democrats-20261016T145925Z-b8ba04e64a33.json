@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 103735,
+  "canonical_url": "https://37dems.org/",
+  "capture_method": "static_html",
+  "content_sha256": "27ed4c63045fb85de462549168a4dd7d4df9b9c052fe01a227ef916e34068ade",
+  "http_status": 200,
+  "id": "capture-37th-district-democrats-20261016T145925Z-b8ba04e64a33",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://37dems.org/",
+  "retrieved_at": "2026-10-16T14:59:25.857896Z",
+  "schema_version": "1.0",
+  "source_id": "37th-district-democrats",
+  "storage_reference": "sha256/27/27ed4c63045fb85de462549168a4dd7d4df9b9c052fe01a227ef916e34068ade",
+  "storage_scope": "local_only",
+  "title": "37th District Democrats",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 99713,
+  "canonical_url": "https://washingtonsupremecourt.org/",
+  "capture_method": "static_html",
+  "content_sha256": "5f92495254723f49ab6d307aa23ac923b3a6a615a48524b5244224a729d18302",
+  "http_status": 200,
+  "id": "capture-washington-state-democrats-20261016T150324Z-9e68e4efa8c3",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official third-party response retained in private ignored review storage; no redistribution rights asserted.",
+  "requested_url": "https://washingtonsupremecourt.org/",
+  "retrieved_at": "2026-10-16T15:03:24.454801Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-democrats",
+  "storage_reference": "sha256/5f/5f92495254723f49ab6d307aa23ac923b3a6a615a48524b5244224a729d18302",
+  "storage_scope": "local_only",
+  "title": "Washington State Supreme Court Elections Visualizer",
+  "updated_at": null
+}

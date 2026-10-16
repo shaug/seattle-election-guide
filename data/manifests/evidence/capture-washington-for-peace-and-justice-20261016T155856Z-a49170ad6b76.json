@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 90984,
+  "canonical_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+  "capture_method": "manual_upload",
+  "content_sha256": "f3b57e11c5c72160099f664f0b5bd0e7d3ab65730e5e3dac6525895768cbe8d3",
+  "http_status": null,
+  "id": "capture-washington-for-peace-and-justice-20261016T155856Z-a49170ad6b76",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original image bytes exported through native browser pageAssets after displaying every carousel slide; no sign-in. Import timestamp records custody, not exact browser retrieval. Canonical post URL retained; no CDN query URLs, HTTP status or redirect claims.",
+  "requested_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+  "retrieved_at": "2026-10-16T15:58:56.853359Z",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "storage_reference": "sha256/f3/f3b57e11c5c72160099f664f0b5bd0e7d3ab65730e5e3dac6525895768cbe8d3",
+  "storage_scope": "local_only",
+  "title": "2026 general endorsement carousel — slide 1 of 12",
+  "updated_at": null
+}

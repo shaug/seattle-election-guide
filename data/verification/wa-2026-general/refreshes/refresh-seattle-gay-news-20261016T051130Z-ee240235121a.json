@@ -1,0 +1,13 @@
+{
+  "capture_id": null,
+  "checked_at": "2026-10-16T05:11:30Z",
+  "content_changed": null,
+  "diff": [],
+  "error": "Source check failed (ValueError); inspect official access and adapter.",
+  "id": "refresh-seattle-gay-news-20261016T051130Z-ee240235121a",
+  "previous_snapshot_id": null,
+  "schema_version": "1.0",
+  "snapshot_id": null,
+  "source_id": "seattle-gay-news",
+  "status": "failed"
+}

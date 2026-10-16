@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 61167,
+  "canonical_url": "https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "c0dfe92ce9e182887dfceb1667516614b305e3365b88856c8708abdc545dcb47",
+  "http_status": 200,
+  "id": "capture-fuse-washington-20261016T145957Z-157e32be3f5d",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements",
+  "retrieved_at": "2026-10-16T14:59:57.035356Z",
+  "schema_version": "1.0",
+  "source_id": "fuse-washington",
+  "storage_reference": "sha256/c0/c0dfe92ce9e182887dfceb1667516614b305e3365b88856c8708abdc545dcb47",
+  "storage_scope": "local_only",
+  "title": "Fuse’s 2026 General Election Endorsements | Fuse Washington",
+  "updated_at": null
+}

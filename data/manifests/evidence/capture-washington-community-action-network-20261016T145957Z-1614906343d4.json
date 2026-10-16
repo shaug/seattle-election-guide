@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 172108,
+  "canonical_url": "https://www.washingtoncan.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "a9bc7e398afb2e084b2e7854ec7c86c66936b78b4560a3cbb04e8c03833988f7",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261016T145957Z-1614906343d4",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://www.washingtoncan.org/endorsements",
+  "retrieved_at": "2026-10-16T14:59:57.741934Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/a9/a9bc7e398afb2e084b2e7854ec7c86c66936b78b4560a3cbb04e8c03833988f7",
+  "storage_scope": "local_only",
+  "title": "Endorsements — Washington Community Action Network",
+  "updated_at": null
+}

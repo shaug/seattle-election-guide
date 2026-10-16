@@ -1,0 +1,1522 @@
+{
+  "automatic": [
+    {
+      "baseline_reviewed": false,
+      "capture_id": null,
+      "checked_at": "2026-10-16T05:11:30Z",
+      "consecutive_failures": 1,
+      "content_changed": null,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": "Source check failed (ValueError); inspect official access and adapter.",
+      "escalated": false,
+      "id": "refresh-seattle-gay-news-20261016T051130Z-ee240235121a",
+      "previous_snapshot_id": null,
+      "schema_version": "1.0",
+      "snapshot_id": null,
+      "source_id": "seattle-gay-news",
+      "status": "failed"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-washington-working-families-party-20261016T051130Z-b0352434eded",
+      "checked_at": "2026-10-16T05:11:30Z",
+      "consecutive_failures": 1,
+      "content_changed": true,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": "adapter requires exactly one publication section and capture group",
+      "escalated": false,
+      "id": "refresh-washington-working-families-party-20261016T051130Z-f2257edae9ed",
+      "previous_snapshot_id": null,
+      "schema_version": "1.0",
+      "snapshot_id": null,
+      "source_id": "washington-working-families-party",
+      "status": "failed"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-sage-leaders-20261016T051130Z-9839005ef9fd",
+      "checked_at": "2026-10-16T05:11:30Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [
+        {
+          "after": {
+            "candidate_ids": [
+              "king-county-council-2--rebecca-saldana"
+            ],
+            "evidence_excerpt": "✅ Rebecca Saldaña, King County Council District 2",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "king-county-council-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "king-county-council-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "king-county-council-4--jorge-l-baron"
+            ],
+            "evidence_excerpt": "✅ Jorge Baron, King County Council, District 4",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "king-county-council-4",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "king-county-council-4"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "king-county-council-8--teresa-mosqueda"
+            ],
+            "evidence_excerpt": "✅ Teresa Mosqueda, King County Council, District 8",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "king-county-council-8",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "king-county-council-8"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-32-state-representative-2--imraan-siddiqi"
+            ],
+            "evidence_excerpt": "✅ Imraan Sidiqqi, State Rep. 32nd LD Position 2",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-32-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-32-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-32-state-senator--cindy-ryu"
+            ],
+            "evidence_excerpt": "✅ Cindy Ryu, State Senate 32nd LD",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-32-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-32-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-34-state-senator--emily-alvarado"
+            ],
+            "evidence_excerpt": "✅ Emily Alvarado, State Senate 34th LD",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-34-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-34-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-36-state-representative-1--julia-grant-reed"
+            ],
+            "evidence_excerpt": "✅ Julia Reed, State Rep. 36th LD Position 1",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-36-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-36-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-37-state-representative-1--kelabe-tewolde"
+            ],
+            "evidence_excerpt": "✅ Kelabe Tewolde, State Rep. 37th LD Position 1",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-37-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-37-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-37-state-representative-2--jaelynn-scott"
+            ],
+            "evidence_excerpt": "✅ Jaelynn Scott, State Rep. 37th LD Position 2",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-37-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-37-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street",
+              "ld-37-state-senator--tatiana-brown"
+            ],
+            "evidence_excerpt": "✅ Chipalo Street, State Senate 37th LD ✅ Tatiana Brown, State Senate 37th LD",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-37-state-senator",
+            "requires_review": true,
+            "status": "dual_endorsement"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-37-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-43-state-senator--hannah-sabio-howell"
+            ],
+            "evidence_excerpt": "✅ Hannah Sabio-Howell, State Senate 43rd LD",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-43-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-46-state-representative-2--darya-farivar"
+            ],
+            "evidence_excerpt": "✅ Darya Farivar, State Rep. 46th LD Position 2",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-46-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-46-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "seattle-city-council-5--nilu-jenks"
+            ],
+            "evidence_excerpt": "✅ Nilu Jenks, Seattle City Council, District 5",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "seattle-city-council-5",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "seattle-city-council-5"
+        }
+      ],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-sage-leaders-20261016T051130Z-b08de2347f89",
+      "previous_snapshot_id": null,
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-sage-leaders-20261016T051130Z-5298baa4dcf4",
+      "source_id": "sage-leaders",
+      "status": "created"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-transit-riders-union-20261016T051130Z-1e49b9d96924",
+      "checked_at": "2026-10-16T05:11:30Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [
+        {
+          "after": {
+            "candidate_ids": [
+              "king-county-council-2--toshiko-grace-hasegawa",
+              "king-county-council-2--rebecca-saldana"
+            ],
+            "evidence_excerpt": "King County Council District 2: Toshiko Grace Hasegawa and Rebecca Saldaña",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "king-county-council-2",
+            "requires_review": true,
+            "status": "dual_endorsement"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "king-county-council-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "evidence_excerpt": "32nd Legislative District, Washington State House Position 1: Danica Noble",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-32-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-32-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-32-state-representative-2--imraan-siddiqi"
+            ],
+            "evidence_excerpt": "32nd Legislative District, Washington State House Position 2: Imraan Siddiqi",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-32-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-32-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-37-state-representative-1--kelabe-tewolde"
+            ],
+            "evidence_excerpt": "37th Legislative District, Washington State House Position 1: Kelabe Tewolde",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-37-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-37-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-37-state-senator--tatiana-brown"
+            ],
+            "evidence_excerpt": "37th Legislative District, Washington State Senate: Tatiana Brown",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-37-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-37-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-43-state-senator--hannah-sabio-howell"
+            ],
+            "evidence_excerpt": "43rd Legislative District, Washington State Senate: Hannah Sabio-Howell",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-43-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "seattle-city-council-5--nilu-jenks"
+            ],
+            "evidence_excerpt": "Seattle City Council District 5: Nilu Jenks",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "seattle-city-council-5",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "seattle-city-council-5"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "seattle-municipal-court-judge-5--gabe-rothstein"
+            ],
+            "evidence_excerpt": "Seattle Municipal Court Judge: Gabe Rothstein",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "seattle-municipal-court-judge-5",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "seattle-municipal-court-judge-5"
+        }
+      ],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-transit-riders-union-20261016T051130Z-c8c51259c671",
+      "previous_snapshot_id": null,
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-transit-riders-union-20261016T051130Z-e413e90feae3",
+      "source_id": "transit-riders-union",
+      "status": "created"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": null,
+      "checked_at": "2026-10-16T05:11:30Z",
+      "consecutive_failures": 1,
+      "content_changed": null,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": "Source check failed (ValueError); inspect official access and adapter.",
+      "escalated": false,
+      "id": "refresh-seiu-775-20261016T051130Z-1fa7d5a7ecb4",
+      "previous_snapshot_id": null,
+      "schema_version": "1.0",
+      "snapshot_id": null,
+      "source_id": "seiu-775",
+      "status": "failed"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-ufcw-3000-20261016T051130Z-adfc059ee712",
+      "checked_at": "2026-10-16T05:11:30Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [
+        {
+          "after": {
+            "candidate_ids": [
+              "king-county-assessor--rob-foxcurran"
+            ],
+            "evidence_excerpt": "Rob Foxcurran, County Assessor",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "king-county-assessor",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "king-county-assessor"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "king-county-council-2--rebecca-saldana"
+            ],
+            "evidence_excerpt": "Rebecca Saldana, County Council District 2",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "king-county-council-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "king-county-council-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "king-county-council-4--jorge-l-baron"
+            ],
+            "evidence_excerpt": "Jorge Baron, County Council District 4",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "king-county-council-4",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "king-county-council-4"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "king-county-council-8--teresa-mosqueda"
+            ],
+            "evidence_excerpt": "Teresa Mosqueda, County Council District 8",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "king-county-council-8",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "king-county-council-8"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "king-county-prosecuting-attorney--leesa-manion"
+            ],
+            "evidence_excerpt": "Leesa Manion, County Prosecuting Attorney",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "king-county-prosecuting-attorney",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "king-county-prosecuting-attorney"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-11-state-representative-1--david-hackney"
+            ],
+            "evidence_excerpt": "David Hackney, State Representative Pos 1",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-11-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-11-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "evidence_excerpt": "Danica Noble, State Representative Pos 1",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-32-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-32-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-32-state-representative-2--lauren-davis",
+              "ld-32-state-representative-2--imraan-siddiqi"
+            ],
+            "evidence_excerpt": "Lauren Davis, State Representative Pos 2 (Dual) Imraan Siddiqi, State Representative Pos 2 (Dual)",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-32-state-representative-2",
+            "requires_review": true,
+            "status": "dual_endorsement"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-32-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-32-state-senator--jesse-salomon"
+            ],
+            "evidence_excerpt": "Jesse Salomon, State Senate",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-32-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-32-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-34-state-representative-1--brianna-k-thomas"
+            ],
+            "evidence_excerpt": "Brianna Thomas, State Representative Pos 1",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-34-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-34-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-34-state-representative-2--joe-fitzgibbon"
+            ],
+            "evidence_excerpt": "Joe Fitzgibbon, State Representative Pos 2",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-34-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-34-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-34-state-senator--emily-alvarado"
+            ],
+            "evidence_excerpt": "Emily Alvarado, State Senate",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-34-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-34-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-36-state-representative-1--julia-grant-reed"
+            ],
+            "evidence_excerpt": "Julia Reed, State Representative Pos 1",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-36-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-36-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-36-state-representative-2--liz-berry"
+            ],
+            "evidence_excerpt": "Liz Berry, State Representative Pos 2",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-36-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-36-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-36-state-senator--noel-c-frame"
+            ],
+            "evidence_excerpt": "Noel Frame, State Senate",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-36-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-36-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-37-state-representative-2--jaelynn-scott"
+            ],
+            "evidence_excerpt": "Jaelynn Scott, State Representative Pos 2",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-37-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-37-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "evidence_excerpt": "Chipalo Street, State Senate",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-37-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-37-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-43-state-representative-1--nicole-macri"
+            ],
+            "evidence_excerpt": "Nicole Macri, State Representative Pos 1",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-43-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-43-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-43-state-senator--jamie-pedersen"
+            ],
+            "evidence_excerpt": "Jamie Pederson, State Senate",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-43-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-46-state-representative-1--gerry-pollet"
+            ],
+            "evidence_excerpt": "Gerry Pollet, State Representative Pos 1",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-46-state-representative-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-46-state-representative-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-46-state-representative-2--darya-farivar"
+            ],
+            "evidence_excerpt": "Darya Farivar, State Representative Pos 2",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-46-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-46-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-46-state-senator--javier-valdez"
+            ],
+            "evidence_excerpt": "Javier Valdez, State Senate",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-46-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-46-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "seattle-city-council-5--nilu-jenks"
+            ],
+            "evidence_excerpt": "Nilu Jenks, District 5",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "seattle-city-council-5",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "seattle-city-council-5"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "supreme-court-justice-1--colleen-melody"
+            ],
+            "evidence_excerpt": "Colleen Melody, Position 1",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "supreme-court-justice-1",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "supreme-court-justice-1"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "supreme-court-justice-3--jaime-michelle-hawk"
+            ],
+            "evidence_excerpt": "Jamie Hawk, Position 3",
+            "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "supreme-court-justice-3",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "supreme-court-justice-3"
+        }
+      ],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-ufcw-3000-20261016T051130Z-5a0ea765dce4",
+      "previous_snapshot_id": null,
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-ufcw-3000-20261016T051130Z-614529add646",
+      "source_id": "ufcw-3000",
+      "status": "created"
+    }
+  ],
+  "checked_at": "2026-10-16T05:11:30+00:00",
+  "coverage": {
+    "as_of": "2026-10-15",
+    "elections": [
+      {
+        "cadence": "daily",
+        "coverage": [
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "the-stranger"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "the-urbanist"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "fuse-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "seattle-democratic-socialists"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "tech-4-housing"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "tech-4-taxes"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-for-peace-and-justice"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-community-action-network"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": null,
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. First live baseline approval pending.",
+            "next_due": "2026-10-16",
+            "source_id": "seattle-gay-news"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": null,
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. First live baseline approval pending.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-working-families-party"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-bus"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": null,
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. First live baseline approval pending.",
+            "next_due": "2026-10-16",
+            "source_id": "sage-leaders"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-state-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "king-county-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "11th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "32nd-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "34th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "36th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "37th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "43rd-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "46th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-stonewall-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": null,
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. First live baseline approval pending. Current bounded HTTP fetch exceeds the redirect limit; failed checks require official-source access diagnosis, with no bypass.",
+            "next_due": "2026-10-16",
+            "source_id": "transit-riders-union"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-bikes"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "seattle-subway"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-conservation-action"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "sierra-club-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "environmental-climate-caucus-wa-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "mlk-labor"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-state-labor-council"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": null,
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. First live baseline approval pending.",
+            "next_due": "2026-10-16",
+            "source_id": "seiu-775"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "seiu-925"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": null,
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. First live baseline approval pending.",
+            "next_due": "2026-10-16",
+            "source_id": "ufcw-3000"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "aft-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-education-association"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-state-building-trades"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "protec17"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "planned-parenthood-alliance-advocates"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "oneamerica-votes"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "alliance-for-gun-responsibility"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "washington-housing-alliance"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "nwpc-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "seattle-times-editorial-board"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "young-democrats-of-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "nondriver-action"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": null,
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-16",
+            "source_id": "citizens-against-aipac-corruption"
+          }
+        ],
+        "election_id": "wa-2026-general"
+      }
+    ],
+    "missed": []
+  },
+  "manual": [
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "the-stranger"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "the-urbanist"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "fuse-washington"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seattle-democratic-socialists"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-community-action-network"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-bus"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-state-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "king-county-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "11th-district-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "32nd-district-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "34th-district-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "36th-district-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "37th-district-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "43rd-district-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "46th-district-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-bikes"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seattle-subway"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-conservation-action"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "sierra-club-washington"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "environmental-climate-caucus-wa-democrats"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "mlk-labor"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-state-labor-council"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seiu-925"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "aft-washington"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-education-association"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-state-building-trades"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "protec17"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "planned-parenthood-alliance-advocates"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "oneamerica-votes"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "alliance-for-gun-responsibility"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-housing-alliance"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "nwpc-washington"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seattle-times-editorial-board"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "nondriver-action"
+    },
+    {
+      "due": "2026-10-15",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "citizens-against-aipac-corruption"
+    }
+  ],
+  "missed": [],
+  "mode": "live",
+  "policy_fingerprint": "8ffca4a7ea8a3e03794a86f6de0d6773736d73ca168bf5175a11eb4b14b932db",
+  "revision": "dc647c0b3e2bf3626c61cb332be92d0784bd80f9",
+  "source_tree_dirty": false
+}

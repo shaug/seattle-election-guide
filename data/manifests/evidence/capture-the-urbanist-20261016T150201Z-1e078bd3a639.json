@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 345524,
+  "canonical_url": "https://www.theurbanist.org/2026-primary-election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "5181fd4316118f24e6fb33cd5fec4ebd78bc99e71d89364a9aa862e4c2820ebc",
+  "http_status": 200,
+  "id": "capture-the-urbanist-20261016T150201Z-1e078bd3a639",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private full publication; public provenance metadata only.",
+  "requested_url": "https://www.theurbanist.org/2026-primary-election-endorsements/",
+  "retrieved_at": "2026-10-16T15:02:01.229792Z",
+  "schema_version": "1.0",
+  "source_id": "the-urbanist",
+  "storage_reference": "sha256/51/5181fd4316118f24e6fb33cd5fec4ebd78bc99e71d89364a9aa862e4c2820ebc",
+  "storage_scope": "local_only",
+  "title": "Official current publication, October 16 verification",
+  "updated_at": null
+}

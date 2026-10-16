@@ -1,0 +1,225 @@
+{
+  "captured_at": "2026-10-16T15:58:56.853359Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": "Pramila Jayapal",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[0], us-house-7: Pramila Jayapal. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "evidence_excerpt": "Adam Smith",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[1], us-house-9: Adam Smith. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "us-house-9",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": "No",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[2], initiative-26-645: No. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "initiative-26-645",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "evidence_excerpt": "Yes",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[3], seattle-proposition-1-transit: Yes. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "seattle-proposition-1-transit",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-11-state-representative-2--steve-bergquist"
+      ],
+      "evidence_excerpt": "Steve Bergquist",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[4], ld-11-state-representative-2: Steve Bergquist. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-11-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "evidence_excerpt": "Keith Scully",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[5], ld-32-state-representative-1: Keith Scully. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-32-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "evidence_excerpt": "Joe Fitzgibbon",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[6], ld-34-state-representative-2: Joe Fitzgibbon. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-34-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-senator--emily-alvarado"
+      ],
+      "evidence_excerpt": "Emily Alvarado",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[7], ld-34-state-senator: Emily Alvarado. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-34-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-36-state-representative-1--julia-grant-reed"
+      ],
+      "evidence_excerpt": "Julia Reed",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[8], ld-36-state-representative-1: Julia Reed. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-36-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-36-state-representative-2--liz-berry"
+      ],
+      "evidence_excerpt": "Liz Berry",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[9], ld-36-state-representative-2: Liz Berry. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-36-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "evidence_excerpt": "Noel Frame",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[10], ld-36-state-senator: Noel Frame. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-36-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": "Kelabe Tewolde",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[11], ld-37-state-representative-1: Kelabe Tewolde. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": "Jaelynn Scott",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[12], ld-37-state-representative-2: Jaelynn Scott. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "evidence_excerpt": "Chiaplo Street",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[13], ld-37-state-senator: Chiaplo Street. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-37-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "evidence_excerpt": "Nicole Macri",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[14], ld-43-state-representative-1: Nicole Macri. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-43-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen"
+      ],
+      "evidence_excerpt": "Jamie Pedersen",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[15], ld-43-state-senator: Jamie Pedersen. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "evidence_excerpt": "Gerry Pollet",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[16], ld-46-state-representative-1: Gerry Pollet. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-46-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "evidence_excerpt": "Darya Farivar",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[17], ld-46-state-representative-2: Darya Farivar. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-46-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "evidence_excerpt": "Javier Valdez",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[18], ld-46-state-senator: Javier Valdez. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "ld-46-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": "Colleen Melody",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[19], supreme-court-justice-1: Colleen Melody. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_excerpt": "Jaime Hawk",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[20], supreme-court-justice-3: Jaime Hawk. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "evidence_excerpt": "Ian Birk",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[21], supreme-court-justice-4: Ian Birk. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "supreme-court-justice-4",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "evidence_excerpt": "Theo Angelis",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[22], supreme-court-justice-5: Theo Angelis. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "supreme-court-justice-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "evidence_excerpt": "Debra L. Stephens",
+      "evidence_locator": "Official 2026 Endorsements page; supplied browser-visible Seattle excerpt decisions[23], supreme-court-justice-7: Debra L. Stephens. Official source: https://www.sierraclub.org/washington/2026-endorsements. Capture capture-sierra-club-washington-20261016T155856Z-3474566190df; verified manual manual-sierra-club-washington-20261016T160510Z-2cc45c964700.",
+      "race_id": "supreme-court-justice-7",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "October 16 browser-retry targeted approval: data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json; exact per-decision printed labels, evidence locators and manual successors follow.",
+  "review_note": "Issue #545: shaug explicitly approved the concrete browser-retry packet with \"Apply all 54 decisions and all three explicit corrections\". This targeted approval covers Sierra Club 24 decisions, WA4PJ 30 decisions (including two declined-to-endorse instructions), WA4PJ Supreme Court District-to-Position terminology, and three separately enumerated office corrections: WA4PJ Bergquist Rep 12 to LD11 House Position 2; Alliance for Gun Responsibility Bergquist District 21 to LD11 House Position 2; PPAA Mosqueda District 6 to King County Council District 8. OpenAI Codex is the transcriber; shaug is the human verifier. The original source labels remain recorded. WA4PJ grey ratings for Colleen Melody and Ian Birk remain unresolved and are not normalized. The separate original 120-change approval remains intact. No daily, whole-panel or verification-adapter baseline human attestation is asserted. See data/review/approvals/wa-2026-general-2026-10-16-browser-retry.json. No prior source block; only this approved Seattle subset is represented.",
+  "reviewer": "shaug",
+  "source_id": "sierra-club-washington"
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 108645,
+  "canonical_url": "https://www.mlklabor.org/wp-content/uploads/2026/01/Endorsements-Web-2048x1200.jpg",
+  "capture_method": "image",
+  "content_sha256": "84851cf5121830dfdd377e04e24bcbfb5ea78f5e3ba0232721aad586c501f88d",
+  "http_status": 200,
+  "id": "capture-mlk-labor-20261016T150038Z-3af774a6774d",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private temporary evidence for October 16, 2026 verification; redistribution rights unclear. Do not commit raw bytes.",
+  "requested_url": "https://www.mlklabor.org/wp-content/uploads/2026/01/Endorsements-Web-2048x1200.jpg",
+  "retrieved_at": "2026-10-16T15:00:38.571004Z",
+  "schema_version": "1.0",
+  "source_id": "mlk-labor",
+  "storage_reference": "sha256/84/84851cf5121830dfdd377e04e24bcbfb5ea78f5e3ba0232721aad586c501f88d",
+  "storage_scope": "local_only",
+  "title": "MLK Labor official endorsement page lead image",
+  "updated_at": null
+}

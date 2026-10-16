@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-state-building-trades-20261016T145942Z-afba2d61baf1",
+  "entered_at": "2026-10-16T15:15:15.515715Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; 2026 Endorsements > State cont'd > LD43 Pos1 - Nicole Macri",
+  "evidence_type": "web_page",
+  "id": "manual-washington-state-building-trades-20261016T151515Z-e09f71f5406a",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-state-building-trades",
+  "transcription": "Legislative District 43 State Representative — Position 1: Nicole Macri"
+}

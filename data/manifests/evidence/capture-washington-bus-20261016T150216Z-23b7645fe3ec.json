@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 477488,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/aeb1c339-40ba-4121-b042-52a101e7b5c8/6.png",
+  "capture_method": "image",
+  "content_sha256": "4025a641d9ef2aa63f0cdf19e8d81b880306f39a8e649a5276a30a6d79e51627",
+  "http_status": 200,
+  "id": "capture-washington-bus-20261016T150216Z-23b7645fe3ec",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/aeb1c339-40ba-4121-b042-52a101e7b5c8/6.png",
+  "retrieved_at": "2026-10-16T15:02:16.657821Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/40/4025a641d9ef2aa63f0cdf19e8d81b880306f39a8e649a5276a30a6d79e51627",
+  "storage_scope": "local_only",
+  "title": "washington-bus official image publication",
+  "updated_at": null
+}

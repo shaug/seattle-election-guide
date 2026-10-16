@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-democratic-socialists-20261016T150411Z-acae1ccfa734",
+  "entered_at": "2026-10-16T15:48:50.280092Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 16 current-source verification; July 1, 2026 official Trans Athletes & Supreme Court statement; paragraphs naming both November measures and expressly opposing their passage. Source semantics: opposition to passage; not a verbatim Vote No quotation.",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-democratic-socialists-20261016T154850Z-1e2d0dd7af18",
+  "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Immutable pending predecessor: manual-seattle-democratic-socialists-20261016T151515Z-52808b09df2b.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-16T15:48:50.280092Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "transcription": "Initiative IL26-001 — Parental Rights in Public Schools: No\nInitiative IL26-638 — Participation in K-12 School Athletics: No"
+}

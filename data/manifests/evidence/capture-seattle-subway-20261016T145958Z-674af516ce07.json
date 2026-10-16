@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 68095,
+  "canonical_url": "https://seattlesubway.org/election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "a0d923870f8e3fc012586e1af619dd8263d8d8b1363eba9dcbdd0149ac59462e",
+  "http_status": 200,
+  "id": "capture-seattle-subway-20261016T145958Z-674af516ce07",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private local evidence for October 16 verification; redistribution rights unestablished. Do not publish raw bytes.",
+  "requested_url": "https://seattlesubway.org/election-endorsements/",
+  "retrieved_at": "2026-10-16T14:59:58.287999Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-subway",
+  "storage_reference": "sha256/a0/a0d923870f8e3fc012586e1af619dd8263d8d8b1363eba9dcbdd0149ac59462e",
+  "storage_scope": "local_only",
+  "title": "Election Endorsements",
+  "updated_at": null
+}

@@ -1,0 +1,94 @@
+{
+  "capture_id": "capture-washington-working-families-party-20261016T051130Z-b0352434eded",
+  "checked_at": "2026-10-16T15:01:36.094004Z",
+  "content_changed": true,
+  "diff": [
+    {
+      "after": {
+        "candidate_ids": [
+          "king-county-council-4--jorge-l-baron"
+        ],
+        "evidence_excerpt": "Jorge Baron King County Council, District 4",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "king-county-council-4",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "king-county-council-4"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "evidence_excerpt": "Teresa Mosqueda King County Council, District 8",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "king-county-council-8",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "king-county-council-8"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "evidence_excerpt": "Kelabe Tewolde State House, District 37, Position 1",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-37-state-representative-1",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-37-state-representative-1"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "evidence_excerpt": "Nilu Jenks Seattle City Council, District 5",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "seattle-city-council-5",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "seattle-city-council-5"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "evidence_excerpt": "Pramila Jayapal U.S. House of Representatives, District 7",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "us-house-7",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "us-house-7"
+    }
+  ],
+  "error": null,
+  "id": "refresh-washington-working-families-party-20261016T150136Z-7987ba45f8f3",
+  "previous_snapshot_id": null,
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-washington-working-families-party-20261016T150136Z-32cdc68ac7cc",
+  "source_id": "washington-working-families-party",
+  "status": "created"
+}
