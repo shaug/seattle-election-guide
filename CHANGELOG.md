@@ -9,6 +9,30 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-general.7 — 2026-10-16
+
+### Documentation
+
+- Record 2026-general.6 release changelog (#531)
+
+### Fixed
+
+- Enumerate all preview deployments before teardown (#537)
+- Repair three live endorsement source checks (#544)
+- Show sparse endorsement leaders on guide cards (#533)
+
+### Other
+
+- Hide unopposed general-election races with no endorsements (#529)
+
+### Tests
+
+- Enforce frontend residue contracts (#538)
+
+### Tooling
+
+- Apply approved October 16 endorsements (#543)
+- Bump the npm-dependencies group with 2 updates (#539)
 ## 2026-general.6 — 2026-10-12
 
 ### Added
