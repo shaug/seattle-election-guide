@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-10-04T04:56:55Z",
+  "captured_at": "2026-10-16T18:24:08.172096Z",
   "decisions": [
     {
       "candidate_ids": [
@@ -172,10 +172,19 @@
       "evidence_locator": null,
       "race_id": "ld-37-state-representative-2",
       "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "evidence_excerpt": "Ashley Fedan",
+      "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 11 State Rep. Pos. 1: Ashley Fedan. Capture capture-washington-education-association-20261016T182408Z-d84b192582e3; verified manual manual-washington-education-association-20261016T182639Z-695ef44a83b4; data/review/approvals/wa-2026-general-2026-10-16-wea-pdf.json.",
+      "race_id": "ld-11-state-representative-1",
+      "status": "endorsed"
     }
   ],
-  "evidence_locator": "Official 2026 endorsements page, ballot initiatives and legislative endorsements. Capture capture-washington-education-association-20261004T045655Z-9df06a76043e.",
-  "review_note": "Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the four added race decisions, including the dual LD32 Representative 1 endorsement, and confirmed prior decisions remain unchanged.",
+  "evidence_locator": "October 16 targeted follow-up; data/review/approvals/wa-2026-general-2026-10-16-wea-pdf.json. Capture capture-washington-education-association-20261016T182408Z-d84b192582e3; verified manual manual-washington-education-association-20261016T182639Z-695ef44a83b4.",
+  "review_note": "Issue #545: shaug approved \"Approve WEA addition and PDF verification\": Ashley Fedan, LD11 House Position 1, plus verification of the 19 unchanged source/race decisions in the supplied PDF. The LD32 House Position 1 dual remains 1/2 each. The two congressional rows remain explicitly attributed to NEA-PAC and keep their existing approved WEA ledger treatment; no new attribution interpretation is made. The user confirmed \"that was from a live browser view. i just needed to click past the modal\". The agent reviewed the supplied saved PDF and did not make a WEA membership certification. OpenAI Codex is the transcriber; shaug is the human verifier. See data/review/approvals/wa-2026-general-2026-10-16-wea-pdf.json. No automatic baseline or whole-panel attestation is asserted. Prior review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the four added race decisions, including the dual LD32 Representative 1 endorsement, and confirmed prior decisions remain unchanged.",
   "reviewer": "shaug",
   "source_id": "washington-education-association"
 }

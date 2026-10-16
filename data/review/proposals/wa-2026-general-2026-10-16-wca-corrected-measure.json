@@ -1,0 +1,43 @@
+{
+  "acquisition_note": "Browser-visible short factual excerpt manually preserved after inspection of the official page. Not original response HTML. Import time records custody; no HTTP status, redirects, publication or update date asserted.",
+  "baseline_commit": "100ef8c9343f8705f7a873427f24323d8b36fc92",
+  "capture_content_sha256": "6dbb5c526c901f3850f92dad0adccdd588f46e3e52fab61cc24fba9bcd1337f3",
+  "capture_id": "capture-washington-conservation-action-20261016T182136Z-759c19d97476",
+  "capture_manifest_sha256": "e8e1e133600f87b5ad2c9c6374490ddf0c135fe800eda12a44a886efd1324a72",
+  "election_id": "wa-2026-general",
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/545",
+  "ledger_sha256": "c9d1b5a36910bbca155bb2abc6d257873e4cfcc57888fdfe3b48e9cf8d069781",
+  "no_ledger_changes_until_human_approval": true,
+  "pending_manual_entry_id": "manual-washington-conservation-action-20261016T182136Z-a5bc4d2e004a",
+  "prepared_at": "2026-10-16T18:21:36.240131Z",
+  "prepared_by": "OpenAI Codex",
+  "proposed_decisions": [
+    {
+      "action": "addition",
+      "evidence_locator": "2026 Endorsements > Statewide Races > Initiatives > NO on IL26-638 heading.",
+      "evidence_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": null,
+      "race_id": "initiative-26-638",
+      "reason": "The current first-party page explicitly prints the frozen ballot measure number. Earlier IL26-368 was held; no source-label override is now needed.",
+      "source_id": "washington-conservation-action",
+      "source_label": "NO on IL26-638"
+    }
+  ],
+  "record_type": "endorsement_refresh_proposal",
+  "result_if_approved": {
+    "additions": 1,
+    "new_decisions": 879,
+    "prior_decisions": 878,
+    "removals": 0,
+    "replacements": 0
+  },
+  "review_status": "pending_human_review",
+  "schema_version": "1.0"
+}

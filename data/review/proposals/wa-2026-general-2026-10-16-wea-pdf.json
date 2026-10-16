@@ -1,0 +1,618 @@
+{
+  "capture_content_sha256": "059df3b74c68406fda10cbfb856c16ce57f911bb3cfa9a8a0ac6cf93f3b38a4b",
+  "capture_id": "capture-washington-education-association-20261016T182408Z-d84b192582e3",
+  "capture_manifest_sha256": "a23be7c236812da25648f2482d6bc5223633b3319ec42b0472bd638a1303fc6c",
+  "counts": {
+    "additions": 1,
+    "choices": 21,
+    "removals": 0,
+    "replacements": 0,
+    "source_race_decisions": 20,
+    "unchanged": 19
+  },
+  "election_id": "wa-2026-general",
+  "issue_url": "https://github.com/shaug/seattle-election-guide/issues/545",
+  "ledger_sha256_before_wca_addition": "c9d1b5a36910bbca155bb2abc6d257873e4cfcc57888fdfe3b48e9cf8d069781",
+  "limitations": [
+    "Verification is of the user-supplied PDF; browser membership restriction remains.",
+    "Two congressional rows are explicitly attributed to NEA-PAC; existing approved WEA treatment is retained without a new attribution decision.",
+    "Source title describes the 2026 endorsement cycle; initiative wording explicitly names the general election. No primary-only label appears.",
+    "No choices, allocations, source eligibility or whole-panel attestations change until human approval."
+  ],
+  "pending_manual_entry_id": "manual-washington-education-association-20261016T182408Z-f43a4a1d45e7",
+  "prepared_at": "2026-10-16T18:24:08.172096Z",
+  "prepared_by": "OpenAI Codex",
+  "proposed_decisions": [
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "initiative-26-001",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "initiative-26-001--no",
+          "evidence_locator": "Supplied PDF page 1; WEA Position on Ballot Initiatives; IL26-001: No.",
+          "race_id": "initiative-26-001",
+          "section": "WEA Position on Ballot Initiatives",
+          "source_name": "No",
+          "source_office": "IL26-001"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "initiative-26-638",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "initiative-26-638--no",
+          "evidence_locator": "Supplied PDF page 1; WEA Position on Ballot Initiatives; IL26-638: No.",
+          "race_id": "initiative-26-638",
+          "section": "WEA Position on Ballot Initiatives",
+          "source_name": "No",
+          "source_office": "IL26-638"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "initiative-26-645",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "initiative-26-645--no",
+          "evidence_locator": "Supplied PDF page 1; WEA Position on Ballot Initiatives; IL26-645: No.",
+          "race_id": "initiative-26-645",
+          "section": "WEA Position on Ballot Initiatives",
+          "source_name": "No",
+          "source_office": "IL26-645"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-1",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "supreme-court-justice-1--colleen-melody",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Supreme Court Candidates; Pos. 1: Colleen Melody.",
+          "race_id": "supreme-court-justice-1",
+          "section": "WEA-PAC Endorsed Supreme Court Candidates",
+          "source_name": "Colleen Melody",
+          "source_office": "Pos. 1"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-3",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "supreme-court-justice-3--jaime-michelle-hawk",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Supreme Court Candidates; Pos. 3: Jaime Michelle Hawk.",
+          "race_id": "supreme-court-justice-3",
+          "section": "WEA-PAC Endorsed Supreme Court Candidates",
+          "source_name": "Jaime Michelle Hawk",
+          "source_office": "Pos. 3"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-4",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "supreme-court-justice-4--ian-birk",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Supreme Court Candidates; Pos. 4: Ian Birk.",
+          "race_id": "supreme-court-justice-4",
+          "section": "WEA-PAC Endorsed Supreme Court Candidates",
+          "source_name": "Ian Birk",
+          "source_office": "Pos. 4"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-5",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "supreme-court-justice-5--theo-angelis",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Supreme Court Candidates; Pos. 5: Theo Angelis.",
+          "race_id": "supreme-court-justice-5",
+          "section": "WEA-PAC Endorsed Supreme Court Candidates",
+          "source_name": "Theo Angelis",
+          "source_office": "Pos. 5"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "supreme-court-justice-7",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "supreme-court-justice-7--debra-l-stephens",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Supreme Court Candidates; Pos. 7: Debra Stephens.",
+          "mapping_note": "Retains the existing approved office-specific Debra Stephens identity mapping.",
+          "race_id": "supreme-court-justice-7",
+          "section": "WEA-PAC Endorsed Supreme Court Candidates",
+          "source_name": "Debra Stephens",
+          "source_office": "Pos. 7"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "us-house-7",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "attribution_note": "The source expressly attributes this section to NEA-PAC. Existing approved WEA ledger treatment is preserved; no new federal addition or attribution correction is proposed.",
+          "candidate_id": "us-house-7--pramila-jayapal",
+          "evidence_locator": "Supplied PDF page 1; NEA-PAC Endorsed Congressional Candidates; U.S. House, District 7: Pramila Jayapal.",
+          "race_id": "us-house-7",
+          "section": "NEA-PAC Endorsed Congressional Candidates",
+          "source_name": "Pramila Jayapal",
+          "source_office": "U.S. House, District 7"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "us-house-9",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "attribution_note": "The source expressly attributes this section to NEA-PAC. Existing approved WEA ledger treatment is preserved; no new federal addition or attribution correction is proposed.",
+          "candidate_id": "us-house-9--adam-smith",
+          "evidence_locator": "Supplied PDF page 1; NEA-PAC Endorsed Congressional Candidates; U.S. House, District 9: Adam Smith.",
+          "race_id": "us-house-9",
+          "section": "NEA-PAC Endorsed Congressional Candidates",
+          "source_name": "Adam Smith",
+          "source_office": "U.S. House, District 9"
+        }
+      ]
+    },
+    {
+      "action": "addition",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-11-state-representative-1--ashley-fedan"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": null,
+      "race_id": "ld-11-state-representative-1",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-11-state-representative-1--ashley-fedan",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 11 State Rep. Pos. 1: Ashley Fedan.",
+          "race_id": "ld-11-state-representative-1",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Ashley Fedan",
+          "source_office": "LD 11 State Rep. Pos. 1"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/2",
+        "candidate_ids": [
+          "ld-32-state-representative-1--danica-noble",
+          "ld-32-state-representative-1--keith-scully"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/2",
+        "candidate_ids": [
+          "ld-32-state-representative-1--danica-noble",
+          "ld-32-state-representative-1--keith-scully"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-32-state-representative-1",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-32-state-representative-1--danica-noble",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 32 State Rep. Pos. 1: Danica Noble (dual).",
+          "race_id": "ld-32-state-representative-1",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Danica Noble (dual)",
+          "source_office": "LD 32 State Rep. Pos. 1"
+        },
+        {
+          "candidate_id": "ld-32-state-representative-1--keith-scully",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 32 State Rep. Pos 1: Keith Scully (dual).",
+          "race_id": "ld-32-state-representative-1",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Keith Scully (dual)",
+          "source_office": "LD 32 State Rep. Pos 1"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-2--lauren-davis"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-2--lauren-davis"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-32-state-representative-2",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-32-state-representative-2--lauren-davis",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 32 State Rep Pos. 2: Lauren Davis.",
+          "race_id": "ld-32-state-representative-2",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Lauren Davis",
+          "source_office": "LD 32 State Rep Pos. 2"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-32-state-senator",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-32-state-senator--cindy-ryu",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 32 State Senate: Cindy Ryu.",
+          "race_id": "ld-32-state-senator",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Cindy Ryu",
+          "source_office": "LD 32 State Senate"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-34-state-representative-2",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-34-state-representative-2--joe-fitzgibbon",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 34 State Rep. Pos. 2: Joe Fitzgibbon.",
+          "race_id": "ld-34-state-representative-2",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Joe Fitzgibbon",
+          "source_office": "LD 34 State Rep. Pos. 2"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-37-state-representative-1",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-37-state-representative-1--kelabe-tewolde",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 37 State Rep. Pos. 1: Kelabe Tewolde.",
+          "race_id": "ld-37-state-representative-1",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Kelabe Tewolde",
+          "source_office": "LD 37 State Rep. Pos. 1"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-37-state-representative-2",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-37-state-representative-2--jaelynn-scott",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 37 State Rep. Pos. 2: Jaelynn Scott.",
+          "race_id": "ld-37-state-representative-2",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Jaelynn Scott",
+          "source_office": "LD 37 State Rep. Pos. 2"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-37-state-senator",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-37-state-senator--chipalo-street",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 37 State Senate: Chipalo Street.",
+          "race_id": "ld-37-state-senator",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Chipalo Street",
+          "source_office": "LD 37 State Senate"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-43-state-senator",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-43-state-senator--jamie-pedersen",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 43 State Senator: Jamie Pedersen.",
+          "race_id": "ld-43-state-senator",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Jamie Pedersen",
+          "source_office": "LD 43 State Senator"
+        }
+      ]
+    },
+    {
+      "action": "verify_unchanged",
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "status": "endorsed"
+      },
+      "prior_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "status": "endorsed"
+      },
+      "race_id": "ld-46-state-representative-1",
+      "source_id": "washington-education-association",
+      "source_rows": [
+        {
+          "candidate_id": "ld-46-state-representative-1--gerry-pollet",
+          "evidence_locator": "Supplied PDF page 1; WEA-PAC Endorsed Legislative Candidates; LD 46 State Rep Pos. 1: Gerry Pollet.",
+          "race_id": "ld-46-state-representative-1",
+          "section": "WEA-PAC Endorsed Legislative Candidates",
+          "source_name": "Gerry Pollet",
+          "source_office": "LD 46 State Rep Pos. 1"
+        }
+      ]
+    }
+  ],
+  "record_type": "endorsement_refresh_proposal",
+  "review_status": "pending_human_review",
+  "schema_version": "1.0",
+  "source_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/"
+}

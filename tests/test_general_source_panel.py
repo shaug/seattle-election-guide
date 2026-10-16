@@ -203,7 +203,7 @@ def test_general_additions_preserve_verified_choices_and_coendorsement_allocatio
     tech = by_key["tech-4-taxes", "initiative-26-645"]
     assert tech["candidate_ids"] == ["initiative-26-645--no"]
     assert tech["allocation"] == {"initiative-26-645--no": "1"}
-    assert len(dataset["endorsements"]) == 878
+    assert len(dataset["endorsements"]) == 880
     assert not {"king-county-republican-party", "progressive-voters-guide"} & {
         row["source_id"] for row in dataset["endorsements"]
     }

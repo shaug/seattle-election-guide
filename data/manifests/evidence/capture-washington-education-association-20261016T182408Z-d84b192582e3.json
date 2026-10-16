@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 206018,
+  "canonical_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "059df3b74c68406fda10cbfb856c16ce57f911bb3cfa9a8a0ac6cf93f3b38a4b",
+  "http_status": null,
+  "id": "capture-washington-education-association-20261016T182408Z-d84b192582e3",
+  "media_type": "application/pdf",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "User-supplied saved PDF read locally. Full original privately retained. Import time records custody, not network retrieval. Live browser access still requires WEA membership certification, which was not made. No live access or membership qualification asserted.",
+  "requested_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+  "retrieved_at": "2026-10-16T18:24:08.172096Z",
+  "schema_version": "1.0",
+  "source_id": "washington-education-association",
+  "storage_reference": "sha256/05/059df3b74c68406fda10cbfb856c16ce57f911bb3cfa9a8a0ac6cf93f3b38a4b",
+  "storage_scope": "local_only",
+  "title": "2026 Endorsements | Washington Education Association — user-supplied PDF snapshot",
+  "updated_at": null
+}

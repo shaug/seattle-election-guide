@@ -1,5 +1,7 @@
 # October 16 approved endorsement application
 
+> Subsequent follow-up: the [remaining verification review](GENERAL_VERIFICATION_REMAINING_2026-10-16.md) records the Stranger and WEA PDF verifications and two further approved additions, bringing the unpublished candidate to 880 decisions. The 878-decision application and input bindings below remain historical.
+
 Scope: [verification task #545](https://github.com/shaug/seattle-election-guide/issues/545). This follows the [original prepared research packet](GENERAL_VERIFICATION_2026-10-16.md), which remains a historical preparation snapshot.
 
 shaug approved the original concrete packet with “approved. let's apply the 114 additions and the replacement to the guide”, then approved five enumerated ECC changes with “Include the ECC changes”. The [immutable approval record](../data/review/approvals/wa-2026-general-2026-10-16.json) records the actual approval transcription time, `2026-10-16T15:48:50.280092Z`, the exact proposal and browser-facts hashes, original captures, every prior/new value and 15 verified manual successors. The original proposals and pending entries remain immutable. OpenAI Codex is the transcriber; shaug is the verifier.

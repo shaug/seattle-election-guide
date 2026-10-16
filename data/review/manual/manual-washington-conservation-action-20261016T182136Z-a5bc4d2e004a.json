@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-conservation-action-20261016T182136Z-759c19d97476",
+  "entered_at": "2026-10-16T18:21:36.240131Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official page; 2026 Endorsements > Statewide Races > Initiatives > NO on IL26-638 heading.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-conservation-action-20261016T182136Z-a5bc4d2e004a",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-conservation-action",
+  "transcription": "2026 Endorsements > Statewide Races > Initiatives: NO on IL26-638."
+}

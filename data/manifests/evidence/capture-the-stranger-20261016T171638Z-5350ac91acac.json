@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 2824025,
+  "canonical_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+  "capture_method": "manual_upload",
+  "content_sha256": "82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+  "http_status": null,
+  "id": "capture-the-stranger-20261016T171638Z-5350ac91acac",
+  "media_type": "application/pdf",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "User-supplied saved PDF, read locally after browser site-safety denial. Full original privately retained. Import timestamp records custody, not network retrieval; no live website, HTTP status, redirect or page currency beyond the supplied snapshot is asserted.",
+  "requested_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+  "retrieved_at": "2026-10-16T17:16:38.717164Z",
+  "schema_version": "1.0",
+  "source_id": "the-stranger",
+  "storage_reference": "sha256/82/82126f5fc5fb0dcce1524f622e646599f41364256ebc427d3f3001326263af38",
+  "storage_scope": "local_only",
+  "title": "The Stranger Election Control Board 2026 General Election Cheat Sheet",
+  "updated_at": null
+}
