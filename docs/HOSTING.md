@@ -33,7 +33,7 @@ passes. [Deployment gate](#deployment-gate) describes the checks and publication
 
 Leave publishing disabled until the project and both secrets exist. Then create the repository
 Actions variable `CLOUDFLARE_PAGES_ENABLED` with the exact value `true`. Run the **CI** workflow
-manually on `main` for the first upload. That run, and every push to `main` after it, builds,
+manually with the captured reviewed `source_sha` on `main` for the first upload. That run, and every push to `main` after it, builds,
 validates, stages, and deploys automatically when all checks pass. A pull
 request deploys only when it is opted in, and only from a branch in this repository — see
 [Pull request previews](#pull-request-previews).
@@ -165,7 +165,8 @@ have a published, non-draft Release. A historical, undeclared, mismatched, or re
 rejected. Use one value for both the exception and the local bundle supplied to staging:
 
 ```bash
-CANDIDATE_BUNDLE_ID=wa-2026-general-2026-general.9
+uv run election-guide release automation resolve > dist/resolved.json
+CANDIDATE_BUNDLE_ID="$(jq -r .current.bundle_id dist/resolved.json)"
 uv run election-guide hosting verify-releases config/hosting/site.yaml \
   --candidate-bundle-id "$CANDIDATE_BUNDLE_ID"
 uv run election-guide hosting stage config/hosting/site.yaml \
@@ -197,7 +198,7 @@ Pass `--released-bundle-dir` to resolve every declared bundle that was not suppl
 
 ```bash
 uv run election-guide hosting stage config/hosting/site.yaml \
-  --bundle wa-2026-general-2026-general.9=dist/general-release/bundle \
+  --bundle "$(uv run election-guide release automation resolve | jq -r .current.bundle_id)=dist/general-release/bundle" \
   --released-bundle-dir dist/released-bundles \
   --output-dir dist/cloudflare-site
 ```
@@ -241,15 +242,10 @@ Build the audited release as described in [RELEASE.md](RELEASE.md), then stage i
 make hosting-stage
 ```
 
-The Make target supplies the current election's bundle as
-`wa-2026-general-2026-general.9=dist/reproducibility-a/bundle` and passes
-`--released-bundle-dir dist/released-bundles`, which is the pair CI stages with. The current election
-is the only one built from source, so when another election is declared it resolves from the release
-that published it rather than from anything prepared locally — see
-[Historical bundles](#historical-bundles). The archived primary therefore comes from its published,
-hash-pinned `2026-primary.3` release, containing the completed primary's certified results and
-Meter v2. That download reads GitHub, so `gh` must be installed and
-authenticated.
+The Make target resolves the current bundle from `config/hosting/site.yaml` and supplies
+`dist/reproducibility-a/bundle`; the shared staging implementation resolves all other declared
+bundles from their hash-pinned published archives. The archived primary pins remain unchanged.
+Historical downloads require authenticated read-only GitHub access.
 Staging verifies all declared identities, each release status, every release-manifest artifact hash,
 and the current bundle's exact Git revision before it changes the existing output. It then
 atomically replaces `dist/cloudflare-site/` with:
@@ -284,11 +280,8 @@ Preview the staged directory with Wrangler:
 make hosting-serve
 ```
 
-For an exceptional local production upload, run `make hosting-deploy` after authenticating
-Wrangler. The target stages with the narrow current-candidate exception, then requires every
-declared release to be published with no exception before it invokes the upload. Normal publication
-should go through GitHub Actions so the deployed artifact is the one that passed the full mainline
-release checks.
+Production publication follows [the automatic release and recovery runbook](RELEASE.md).
+`make hosting-deploy` is retired and fails with recovery instructions.
 
 ## Pull request previews
 
@@ -360,7 +353,7 @@ October 13, 2026; recheck it if Cloudflare introduces a deployment quota.
 ## Publication-day production probe
 
 After a deployment completes, use the read-only production checker. Supply the full deployed
-`production_candidate_sha`; the checker refuses a base URL
+`source_sha`; the checker refuses a base URL
 other than the site manifest's canonical origin and uses that manifest as the trusted expectation
 for election order, current marker, release and bundle identities, panel/registry identities, and
 the historical declaration.
@@ -370,11 +363,12 @@ the historical declaration.
 uv run election-guide hosting check-production \
   https://seattleelections.guide \
   --site-manifest config/hosting/site.yaml \
-  --expected-git-commit "$production_candidate_sha" \
+  --expected-git-commit "$source_sha" \
+  --wait \
   --output dist/production-probe.json
 ```
 
-For bounded confirmation after an upload, add `--wait` to this command. It requires two
+The command uses bounded confirmation after an upload. It requires two
 consecutive successful complete strict probes against the same canonical origin, trusted site
 declaration, full expected SHA, and release identity. Attempt starts are at least five seconds
 apart, and all attempts share one 120-second monotonic deadline. Every request uses a timeout
@@ -417,14 +411,12 @@ in the fetched schema-valid deployment manifest's asset inventory. The checker a
 - successful general and historical-primary guides;
 - successful representative race and comparisons pages;
 - a genuine `404` from a deterministic unknown-election path; and
-- `2026-general.9` and the exact `production_candidate_sha` in the public manifest.
+- the declared release version and the exact `source_sha` in the public manifest.
 
-Attach `dist/production-probe.json` to the deployment issue with the CI run and artifact,
-deployment ID, full deployed SHA, and deployment time. Run the same command a second time after
-deployment completion and preserve that output separately (for example,
-`dist/production-probe-confirmation.json`); both probes must pass. A failure preserves evidence and
-routes the operator to [the production rollback runbook](runbooks/production-rollback.md). It never
-authorizes a rollback, kill-switch change, or deployment of another SHA.
+The automatic finalizer retains both complete passes and all failed observations on the owning
+release issue. A failure leaves finalization incomplete. Use `verify-release.yml` with the original
+source/run/attempt to retry evidence without another upload; see [RELEASE.md](RELEASE.md).
+Manual diagnosis can retain this read-only report separately.
 
 ## Production verification policy
 
@@ -434,11 +426,10 @@ worker. A failure after a verified deployment usually offers little action beyon
 Cloudflare or domain configuration. A failed deployment probe instead identifies a release that
 can be corrected or rolled back.
 
-The protected `deploy` job runs strict, read-only verification immediately after its production upload,
-using the job's full `GITHUB_SHA`, and preserves `production-probe.json` as an Actions artifact.
-A failed probe fails the deployment job; it does not roll back or authorize another deployment.
-Strict verification requires `--expected-git-commit`; combining it with `--availability-only` is
-rejected rather than silently discarding the release expectation.
+The `finalize` job follows the one production upload and confirms its exact original full SHA.
+It preserves production-wait.json and durable issue evidence. Only then may the owned GitHub
+deployment receive success. A failed probe never authorizes rollback or another upload.
+Strict verification requires `--expected-git-commit`; `--availability-only` cannot replace it.
 
 For a manual availability diagnosis without release expectations:
 
@@ -466,52 +457,35 @@ still passes. Recurring endorsement verification remains separate from availabil
 
 ## Deployment gate
 
-The `deploy` job depends on the complete CI `check` job. CI builds the deterministic current release
-twice, compares the manifest-declared deterministic artifacts, separately validates an archive's
-structure, contents, and rendered output, resolves all manifest-declared bundles, stages the
-complete site, and uploads the staged directory as a short-lived GitHub Actions artifact. Only then
-can the production job download and upload it with Wrangler. Concurrent production uploads are
-serialized.
-
-When publication is enabled, a merge to `main` runs `check` and then deploys automatically. The
-`production` environment has no required reviewers or wait timer. Manual approval was removed in
-#521 because its prompt was detached from a preview of the changes and added no useful review.
-
-The job downloads the `cloudflare-site` artifact from that same CI run, verifies it against the
-run's full `GITHUB_SHA`, and requires every declared release to be published before uploading.
-After upload, the strict production probe checks the deployed SHA and preserves its report as
-the `production-probe` artifact. A mismatch fails the job; it does not trigger an automatic rollback.
-
-The deployment log records the commit each job publishes. Concurrent uploads are serialized, and
-a newer queued job can replace an older queued job. Always use the job's explicit SHA when checking
-production, even if `main` has advanced. Re-running CI on the exact commit you want is the
-dependable way to produce a deployment for it. Actions artifacts expire after seven days; if the
-`cloudflare-site` artifact is missing or expired, rebuild it by rerunning CI for that exact commit.
+The complete mainline workflow is serialized with `verified-release-mainline`, `queue: max`,
+and `cancel-in-progress: false`; PR checks remain parallel. Five independent lanes feed `check`,
+then `publish` verifies the canonical release, `publication-evidence` durably records it, `deploy`
+checks the selected declaration and production predecessor before its one upload, and `finalize`
+confirms and retains two complete strict probes. All identities use the captured merged SHA.
+A full queue is a delivery failure. A documentation/test-only commit makes no deployment request.
 
 ### Branch policy
 
-The same environment restricts deployments to one branch, `main`. A workflow running on any other
-ref cannot target `production` at all, so a pull-request or preview job cannot reach the production
-Pages project even if it names the environment. The `deploy` job already tests
-`github.ref == 'refs/heads/main'`; the branch policy enforces that same rule from repository
-settings, where editing the workflow cannot reach it.
+The `production` environment allows only main and has no required reviewers or wait timer.
+Review candidate screenshots and notes before merge. A merged release needs no final Publish
+approval. Publication uses contents write; evidence jobs use issues write; Cloudflare credentials
+are restricted to the admitted upload step. Downloads verify exact captured artifact IDs, wrapper
+digests, source and producing run/attempt rather than selecting a latest artifact by name.
 
 ### Kill switch
 
-To stop automatic publication without changing code, set `CLOUDFLARE_PAGES_ENABLED` to any value
-other than `true` or delete the variable. The `deploy` job is skipped outright and no deployment is
-created.
+`CLOUDFLARE_PAGES_ENABLED` controls Pages uploads only. A value other than `true` yields
+`deployment_paused`; archive publication and durable publication evidence still complete. A
+newer selected release yields `superseded`. Neither skip exposes Cloudflare credentials.
 
 ### Which one to use
 
-Review changes before merging, using [Pull request previews](#pull-request-previews) when useful.
-Merging starts the automatic CI-and-deployment path.
-
-The variable is the durable off switch. Use it while Cloudflare credentials are rotated, while the
-Pages project is rebuilt, or during a publication freeze. While it is unset, new CI runs skip
-`deploy`. Cancel any already queued or running production jobs separately. To resume publication,
-restore the variable to `true` and run CI on the intended `main` commit; restoring it does not rerun
-skipped jobs.
+Normal reviewed releases publish after merge without toggling the switch. Use it for an explicit
+upload freeze or credential maintenance. After repair, resume the captured reviewed candidate
+through CI; do not select newer main implicitly. Seven-day Actions artifacts may expire, but the
+canonical archive and issue receipts remain durable. After any upload, including an uncertain
+outcome, use verification-only recovery before another upload. [RELEASE.md](RELEASE.md) gives
+exact-source recovery and evidence-retry commands. No direct local upload route is supported.
 
 ## Credential and hosting ownership
 

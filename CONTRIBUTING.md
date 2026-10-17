@@ -78,7 +78,7 @@ reviewed previous-release SHA through the exact source SHA, using the declared v
 source commit timestamp. Creating a tag does not change those notes.
 
 `CHANGELOG.md` is a generated index linking to published releases and retaining historical
-sections through `2026-general.8` at the fixed `release_history.legacy_history_end_sha` in
+sections through `2026-general.9` at the fixed `release_history.legacy_history_end_sha` in
 `cliff.toml`. `npm run changelog` regenerates it; `make check` compares committed bytes and tests
 tag independence. Do not edit it by hand or append later release sections. Publishing a new
 release requires no post-tag changelog PR or second production commit. The automatic publication
@@ -100,3 +100,12 @@ evidence-linked claims, and include stable local fixtures.
 
 Create a new election configuration and authoritative race inventory. Do not copy candidates or
 races forward from a prior election without current official evidence.
+
+Before merging a release PR, inspect its `candidate-review-<run>-<attempt>` notes,
+validation reports, and desktop/mobile screenshots. Prepare its reviewed request with
+`election-guide release automation prepare --issue <owning-issue>`, commit it with the
+change, and let CI validate the exact PR base. A merge requests automatic archive
+publication and production promotion at that same merged SHA. There is no post-merge
+screenshot attestation or Publish approval. Documentation/test-only changes run CI
+without publishing or deploying another release. See the executable recovery commands
+in [RELEASE.md](docs/RELEASE.md); never use a direct local production upload.

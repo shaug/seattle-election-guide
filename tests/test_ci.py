@@ -124,7 +124,7 @@ def test_ci_runs_independent_lanes_in_parallel_behind_one_required_check() -> No
                 != 0
             )
 
-    assert jobs["deploy"]["needs"] == "check"
+    assert set(jobs["deploy"]["needs"]) == {"check", "publication-evidence", "publish"}
 
 
 def test_ci_contracts_lane_uses_the_shared_election_contract_target() -> None:
@@ -225,16 +225,9 @@ def test_primary_release_verification_remains_an_explicit_repository_contract() 
     assert "release verify data/releases/wa-2026-general/source-decisions.yaml" in contracts.stdout
 
 
-def test_local_production_upload_requires_every_release_to_be_published() -> None:
-    """The local deploy escape hatch must end the candidate exception before upload."""
+def test_local_production_upload_route_is_retired() -> None:
     deploy = _make_dry_run("hosting-deploy")
-
     assert deploy.returncode == 0, deploy.stderr
-    strict_check = "hosting verify-releases config/hosting/site.yaml"
-    upload = "npm run pages:deploy"
-    assert deploy.stdout.count(strict_check) == 1
-    strict_offset = deploy.stdout.rindex(strict_check)
-    candidate_offset = deploy.stdout.index("release automation stage")
-    upload_offset = deploy.stdout.index(upload)
-    assert candidate_offset < strict_offset < upload_offset
-    assert "--candidate-bundle-id" not in deploy.stdout[strict_offset:upload_offset]
+    assert "verify-release.yml" in deploy.stdout
+    assert "exit 1" in deploy.stdout
+    assert "pages:deploy" not in deploy.stdout

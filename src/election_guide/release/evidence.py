@@ -39,7 +39,7 @@ from election_guide.release.automation_models import (
     Sha256,
     UploadReceipt,
 )
-from election_guide.release.publication import bind_publication
+from election_guide.release.publication import bind_publication, verify_canonical_publication
 from election_guide.serialization import UniqueKeyLoader, canonical_json_bytes
 
 BOT = {"login": "github-actions[bot]", "type": "Bot", "id": 41898282}
@@ -101,7 +101,7 @@ def _id(value: dict[str, Any]) -> int:
     return result
 
 
-def _owned(value: Any) -> bool:
+def workflow_owned(value: Any) -> bool:
     return isinstance(value, dict) and all(
         cast(dict[str, Any], value).get(key) == item for key, item in BOT.items()
     )
@@ -177,7 +177,7 @@ def _comments(repository: str, issue_number: int) -> dict[int, tuple[PartMarker,
     result: dict[int, tuple[PartMarker, bytes]] = {}
     keys: set[tuple[str, str, str, int]] = set()
     for comment in _pages(f"repos/{repository}/issues/{issue_number}/comments"):
-        if not _owned(comment.get("user")):
+        if not workflow_owned(comment.get("user")):
             continue
         body = comment.get("body")
         if not isinstance(body, str) or MARKER not in body:
@@ -359,20 +359,18 @@ def _check_canonical_receipts(
             raise ValueError("conflicting operation receipt digest")
         receipts.append(OperationReceipt.model_validate_json(data))
     # Different observations/runs may coexist; canonical publication and upload may not.
-    identities: dict[tuple[str, str, str], tuple[PublicationResult, UploadReceipt | None]] = {}
+    identities: dict[tuple[str, str], tuple[PublicationResult, UploadReceipt | None]] = {}
     for receipt in receipts:
         candidate = receipt.publication.published.candidate
         key = (
             candidate.producer.repository,
             candidate.declaration.release_version,
-            candidate.source_sha,
         )
         previous = identities.get(key)
-        if previous and (
-            previous[0] != receipt.publication
-            or (previous[1] and receipt.upload and previous[1] != receipt.upload)
-        ):
-            raise ValueError("conflicting canonical publication/upload receipts")
+        if previous:
+            verify_canonical_publication(previous[0], receipt.publication.published)
+            if previous[1] and receipt.upload and previous[1] != receipt.upload:
+                raise ValueError("conflicting canonical publication/upload receipts")
         identities[key] = (
             receipt.publication,
             receipt.upload or (previous[1] if previous else None),
@@ -487,7 +485,9 @@ def retain_evidence(
                             )
                         )
                     )
-                if not _owned(result.get("user")) or result.get("body") != _body(marker, chunk):
+                if not workflow_owned(result.get("user")) or result.get("body") != _body(
+                    marker, chunk
+                ):
                     raise ValueError("posted evidence ownership/body differs")
                 comment_id = _id(result)
                 comments[comment_id] = marker, chunk
@@ -525,10 +525,13 @@ def require_publication_evidence(publication: PublicationResult) -> None:
         release_version=candidate.declaration.release_version,
         source_sha=candidate.source_sha,
     )
-    if any(receipt.publication != publication for receipt in records):
-        raise ValueError("conflicting durable publication evidence")
+    for receipt in records:
+        verify_canonical_publication(receipt.publication, publication.published)
     if not any(
-        receipt.phase == "publication" and receipt.state == "published" for receipt in records
+        receipt.phase == "publication"
+        and receipt.state == "published"
+        and receipt.publication == publication
+        for receipt in records
     ):
         raise ValueError("durable publication evidence is required before upload")
 
@@ -555,7 +558,7 @@ def validate_deployment(deployment: dict[str, Any], publication: PublicationResu
     if isinstance(payload, str):
         payload = json.loads(payload)
     if (
-        not _owned(deployment.get("creator"))
+        not workflow_owned(deployment.get("creator"))
         or deployment.get("environment") != "production"
         or deployment.get("sha") != publication.published.candidate.source_sha
         or payload != deployment_payload(publication)
@@ -564,14 +567,14 @@ def validate_deployment(deployment: dict[str, Any], publication: PublicationResu
 
 
 def latest_production_receipt(repository: str) -> OperationReceipt | None:
-    verified: list[tuple[int, OperationReceipt]] = []
+    verified: list[tuple[datetime, int, OperationReceipt]] = []
     for deployment in _pages(f"repos/{repository}/deployments"):
         payload = deployment.get("payload")
         if isinstance(payload, str):
             try:
                 payload = json.loads(payload)
             except ValueError:
-                if _owned(deployment.get("creator")):
+                if workflow_owned(deployment.get("creator")):
                     raise ValueError("invalid owned deployment payload") from None
         if (
             not isinstance(payload, dict)
@@ -579,7 +582,7 @@ def latest_production_receipt(repository: str) -> OperationReceipt | None:
             != "seattle-election-guide/release-automation"
         ):
             continue
-        if not _owned(deployment.get("creator")):
+        if not workflow_owned(deployment.get("creator")):
             raise ValueError("managed deployment is not owned by workflow bot")
         identity = DeploymentPayload.model_validate_json(json.dumps(payload))
         if (
@@ -591,7 +594,7 @@ def latest_production_receipt(repository: str) -> OperationReceipt | None:
         statuses = _pages(f"repos/{repository}/deployments/{_id(deployment)}/statuses")
         if not statuses:
             continue
-        if any(not _owned(status.get("creator")) for status in statuses):
+        if any(not workflow_owned(status.get("creator")) for status in statuses):
             raise ValueError("managed deployment status is not owned by workflow bot")
         latest = max(statuses, key=_id)
         if latest.get("state") not in {
@@ -624,9 +627,15 @@ def latest_production_receipt(repository: str) -> OperationReceipt | None:
         ]
         if not matches:
             raise ValueError("managed successful deployment lacks matching durable final evidence")
+        upload = matches[0].upload
+        assert upload is not None
+        if any(match.upload != upload for match in matches):
+            raise ValueError("conflicting upload identity/time in production evidence")
         if latest.get("state") in {"success", "inactive"}:
-            verified.append((max(_id(status) for status in successful), matches[-1]))
-    return max(verified, key=lambda item: item[0])[1] if verified else None
+            # Evidence retries may post their first success after a newer upload.
+            # Order by immutable upload capture, never by status-write time.
+            verified.append((upload.uploaded_at, _id(deployment), matches[-1]))
+    return max(verified, key=lambda item: (item[0], item[1]))[2] if verified else None
 
 
 def trusted_site(publication: PublicationResult) -> SiteManifest:

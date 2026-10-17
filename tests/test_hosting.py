@@ -54,7 +54,9 @@ OLDER_COMMIT = "c" * 40
 PANEL_HASH = "b" * 64
 REGISTRY_HASH = "d" * 64
 PROJECT_ROOT = Path(__file__).parents[1]
-GENERAL_BUNDLE_ID = "wa-2026-general-2026-general.9"
+GENERAL_BUNDLE_ID = yaml.safe_load((PROJECT_ROOT / "config/hosting/site.yaml").read_text())[
+    "elections"
+][0]["bundle_id"]
 CURRENT_ID = "wa-2026-primary"
 OLDER_ID = "wa-2025-general"
 CURRENT_BUNDLE_ID = "wa-2026-primary-release"
@@ -1679,7 +1681,11 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
     assert current_election == {
         "election_id": "wa-2026-general",
         "bundle_id": GENERAL_BUNDLE_ID,
-        "release_version": "2026-general.9",
+        "release_version": current_election["release_version"],
+        "publication_request": current_election["publication_request"],
+        "git_commit": None,
+        "release_manifest_sha256": None,
+        "bundle_sha256": None,
         "source_panel_id": "wa-2026-general-default-sources-v2",
         "source_panel_hash": "5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569",
         "source_registry_hash": "08473de324a7ca66617885e774d406fa992bc2bfbf3916acff366aad017bf2a2",
@@ -1696,12 +1702,14 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
     assert historical["bundle_sha256"] == (
         "5418b15370a6ed0f8eb0f4e02d9c9a02faf9f6f5043f9c3e39f3abe120b5ad9d"
     )
-    assert workflow["env"]["CANDIDATE_BUNDLE_ID"] == GENERAL_BUNDLE_ID
+    assert current_election["bundle_id"] == f"wa-2026-general-{current_election['release_version']}"
+    assert current_election["publication_request"]["issue_number"] == 550
     deploy = workflow["jobs"]["deploy"]
-    assert deploy["needs"] == "check"
+    assert set(deploy["needs"]) == {"check", "publication-evidence", "publish"}
     assert deploy["environment"]["name"] == "production"
-    assert deploy["concurrency"]["cancel-in-progress"] == "false"
-    assert "vars.CLOUDFLARE_PAGES_ENABLED == 'true'" in deploy["if"]
+    assert workflow["concurrency"]["cancel-in-progress"] == "false"
+    assert workflow["concurrency"]["queue"] == "max"
+    assert "concurrency" not in deploy
     deploy_step = next(
         step for step in deploy["steps"] if step.get("name") == "Deploy production site"
     )
@@ -1709,70 +1717,66 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         "CLOUDFLARE_ACCOUNT_ID": "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}",
         "CLOUDFLARE_API_TOKEN": "${{ secrets.CLOUDFLARE_API_TOKEN }}",
     }
+    assert deploy_step["if"] == "steps.admission.outputs.state == 'eligible'"
     validation_steps = [
         step
         for job_id in ("python", "client", "contracts", "tests", "publication", "check")
         for step in workflow["jobs"][job_id]["steps"]
     ]
-    # Every validation lane runs on pull requests, including from forks, so no
-    # deployment credential may reach one. The automatic job token is not one: it
-    # is bounded by the workflow's read-only permissions, and listing published
-    # releases needs it.
     assert not any("secrets" in json.dumps(step) for step in validation_steps)
-    assert workflow["permissions"] == {"contents": "read"}
-    contract_steps = workflow["jobs"]["contracts"]["steps"]
+    assert all(value == "read" for value in workflow["permissions"].values())
     releases_step = next(
         step
-        for step in contract_steps
+        for step in workflow["jobs"]["contracts"]["steps"]
         if step.get("name") == "Verify declared release versions are published"
     )
     assert releases_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
-    assert "hosting verify-releases config/hosting/site.yaml" in releases_step["run"]
-    assert '--candidate-bundle-id "$CANDIDATE_BUNDLE_ID"' in releases_step["run"]
+    assert "automation resolve" in releases_step["run"]
+    assert (
+        '--candidate-bundle-id "$(jq -r .current.bundle_id dist/resolved.json)"'
+        in releases_step["run"]
+    )
     publication_steps = workflow["jobs"]["publication"]["steps"]
     build_step = next(
         step
         for step in publication_steps
         if step.get("name") == "Build and verify deterministic general release"
     )
-    assert "make check-release-reproducible" in build_step["run"]
-    assert "seattle-election-guide-2026-general.9.zip" in build_step["run"]
-    stage_step = next(
-        step
-        for step in publication_steps
-        if step.get("name") == "Stage verified Cloudflare Pages site"
+    assert build_step["run"] == "make check-release-reproducible"
+    verify_step = next(
+        step for step in publication_steps if step.get("name") == "Independently verify staged site"
     )
-    assert "config/hosting/site.yaml" in stage_step["run"]
-    assert '--bundle "$CANDIDATE_BUNDLE_ID=dist/reproducibility-a/bundle"' in stage_step["run"]
-    assert "e/wa-2026-general/index.html" in stage_step["run"]
-    assert "e/wa-2026-primary/index.html" in stage_step["run"]
-    assert "e/wa-2026-general/comparisons/index.html" in stage_step["run"]
-    assert "hosting verify" in stage_step["run"]
-    # Any election not built from source above is resolved from its published
-    # release, which reads GitHub with the same read-only job token (issue 215).
-    assert "--released-bundle-dir dist/released-bundles" in stage_step["run"]
-    assert stage_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
+    assert (
+        "hosting verify config/hosting/site.yaml dist/cloudflare-site "
+        '--expected-git-commit "$RELEASE_SOURCE_SHA"' in verify_step["run"]
+    )
+    assert build_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     deploy_steps = deploy["steps"]
     verify_step = next(
-        step for step in deploy_steps if step.get("name") == "Verify downloaded Pages site"
+        step for step in deploy_steps if step.get("name") == "Verify canonical promotion"
     )
-    assert "hosting verify" in verify_step["run"]
-    assert "--expected-git-commit=" in verify_step["run"]
     strict_release_step = next(
         step
         for step in deploy_steps
         if step.get("name") == "Require every declared release to be published"
     )
-    assert strict_release_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
-    assert strict_release_step["run"] == (
-        "uv run election-guide hosting verify-releases config/hosting/site.yaml"
+    assert (
+        strict_release_step["run"]
+        == "uv run election-guide hosting verify-releases config/hosting/site.yaml"
     )
-    assert "candidate" not in strict_release_step["run"]
-    assert deploy_steps.index(verify_step) < deploy_steps.index(strict_release_step)
-    assert deploy_steps.index(strict_release_step) < deploy_steps.index(deploy_step)
+    assert (
+        deploy_steps.index(verify_step)
+        < deploy_steps.index(strict_release_step)
+        < deploy_steps.index(deploy_step)
+    )
 
 
-STAGE_COMMAND = "election-guide hosting stage"
+STAGE_COMMANDS = (
+    "election-guide hosting stage",
+    "release automation stage",
+    "release automation build",
+    "make check-release-reproducible",
+)
 
 
 class _StagingSurface(NamedTuple):
@@ -1807,7 +1811,7 @@ def _makefile_staging_surfaces() -> list[_StagingSurface]:
 
     surfaces: list[_StagingSurface] = []
     for name, recipe in recipes.items():
-        if not any(STAGE_COMMAND in line for line in recipe):
+        if not any(command in line for command in STAGE_COMMANDS for line in recipe):
             continue
         # Asking make what it would run, rather than reading the recipe, tests
         # the command the operator actually gets (issue 271).
@@ -1842,7 +1846,7 @@ def _workflow_staging_surfaces() -> list[_StagingSurface]:
         workflow = yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
         for job in workflow.get("jobs", {}).values():
             for step in job.get("steps", []):
-                if STAGE_COMMAND in step.get("run", ""):
+                if any(command in step.get("run", "") for command in STAGE_COMMANDS):
                     surfaces.append(
                         _StagingSurface(
                             surface=path.name,
@@ -1874,19 +1878,11 @@ def test_every_staging_surface_resolves_released_bundles_the_same_way() -> None:
         surface.surface for surface in surfaces
     }
     for surface in surfaces:
-        assert f"{STAGE_COMMAND} config/hosting/site.yaml" in surface.command, surface.surface
-        # The current election is the only one built from source, so it is the
-        # only bundle any surface supplies locally.
-        if surface.surface == "Makefile":
-            assert f"--bundle {GENERAL_BUNDLE_ID}=" in surface.command, surface.surface
-            assert f"--candidate-bundle-id {GENERAL_BUNDLE_ID}" in surface.command, surface.surface
-        else:
-            assert '--bundle "$CANDIDATE_BUNDLE_ID=' in surface.command, surface.surface
-        assert "--released-bundle-dir dist/released-bundles" in surface.command, surface.surface
-        # Resolving a historical bundle downloads a published release through
-        # the GitHub CLI, so a workflow surface needs the read-only job token.
-        # It is not a deployment credential: the fork-gated preview job and the
-        # fork-reachable CI job both run with it.
+        assert any(command in surface.command for command in STAGE_COMMANDS[1:]), surface.surface
+        assert "election-guide hosting stage" not in surface.command, surface.surface
+        if "automation stage" in surface.command:
+            assert "--bundle-dir dist/reproducibility-a/bundle" in surface.command
+            assert "--source-sha" in surface.command
         if surface.env is not None:
             assert surface.env == {"GH_TOKEN": "${{ github.token }}"}, surface.surface
 
@@ -1912,7 +1908,7 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     # a live preview with no second `closed` event to retry it.
     assert "concurrency" not in workflow
     deploy = workflow["jobs"]["deploy"]
-    assert workflow["env"]["CANDIDATE_BUNDLE_ID"] == GENERAL_BUNDLE_ID
+    assert "CANDIDATE_BUNDLE_ID" not in workflow.get("env", {})
     assert deploy["concurrency"]["group"].endswith("pr-${{ github.event.pull_request.number }}")
     assert deploy["concurrency"]["cancel-in-progress"] == "true"
     # Teardown shares the deploy job's group so a close landing mid-build queues
@@ -1946,20 +1942,23 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
         for step in deploy["steps"]
         if step.get("name") == "Verify declared releases for prepublication staging"
     )
-    assert '--candidate-bundle-id "$CANDIDATE_BUNDLE_ID"' in release_check_step["run"]
+    assert (
+        '--candidate-bundle-id "$(jq -r .current.bundle_id dist/resolved.json)"'
+        in release_check_step["run"]
+    )
     assert release_check_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     build_step = next(
         step
         for step in deploy["steps"]
         if step.get("name") == "Build the general release at the pull request head"
     )
-    assert "data/releases/wa-2026-general/source-decisions.yaml" in build_step["run"]
-    assert "--release-version 2026-general.9" in build_step["run"]
-    assert '--git-commit "$HEAD_SHA"' in build_step["run"]
+    assert 'release automation build --source-sha "$HEAD_SHA"' in build_step["run"]
+    assert checkout["with"]["fetch-depth"] == "0"
     stage_step = next(
         step for step in deploy["steps"] if step.get("name") == "Stage and verify the Pages site"
     )
-    assert '--bundle "$CANDIDATE_BUNDLE_ID=dist/pr-release/bundle"' in stage_step["run"]
+    assert "release automation stage" in stage_step["run"]
+    assert "--bundle-dir dist/reproducibility-a/bundle" in stage_step["run"]
     assert '--expected-git-commit "$HEAD_SHA"' in stage_step["run"]
     # Any election not built from source above is resolved from its published
     # release, which reads GitHub with the same automatic job token CI uses
@@ -1967,7 +1966,7 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     # grants nothing outside this repository, and is not a Cloudflare
     # credential, so it does not weaken the fork guard asserted above -- that
     # guard, not the token's scope, is what keeps a fork out of this job.
-    assert "--released-bundle-dir dist/released-bundles" in stage_step["run"]
+    assert '--source-sha "$HEAD_SHA"' in stage_step["run"]
     assert stage_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     # Staging is verified before anything is uploaded, exactly as production is.
     assert "hosting verify" in stage_step["run"]

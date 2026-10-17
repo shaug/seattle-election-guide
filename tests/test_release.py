@@ -532,6 +532,8 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    declared = yaml.safe_load((PROJECT_ROOT / "config/hosting/site.yaml").read_text())
+    current = declared["elections"][0]
     ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
     _stub_release_render(monkeypatch)
     primary_release = _build_release(
@@ -552,7 +554,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-general/snapshots",
         manifest_dir=PROJECT_ROOT / "data/releases/wa-2026-general/manifests",
         output_dir=tmp_path / "general-release",
-        release_version="2026-general.9",
+        release_version=current["release_version"],
         generated_at=read_release_ledger(
             PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml"
         ).data_as_of,
@@ -579,7 +581,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
     stage_pages_site(
         site_manifest_path,
         {
-            "wa-2026-general-2026-general.9": general_release.bundle_dir,
+            current["bundle_id"]: general_release.bundle_dir,
             "wa-2026-primary-2026-primary.3": primary_release.bundle_dir,
         },
         output,

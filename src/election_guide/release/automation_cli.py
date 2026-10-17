@@ -714,3 +714,210 @@ def retain_operation_command(receipt: Annotated[Path, typer.Option()]) -> None:
     except (OSError, ValueError) as error:
         record_evidence_failure(receipt.parent, error)
         _failed(error)
+
+
+@app.command("capture-source")
+def capture_source_command(
+    source_sha: Annotated[str, typer.Option()],
+    output_dir: Annotated[Path, typer.Option()],
+    base_sha: Annotated[str | None, typer.Option()] = None,
+) -> None:
+    """Capture one full checkout SHA and the exact admission base for every lane."""
+    import os
+
+    from election_guide.release.evidence import current_producer
+    from election_guide.release.workflow import capture_source
+
+    try:
+        repository = _repository()
+        source = capture_source(repository, source_sha)
+        base = base_sha or _git(repository, "rev-parse", f"{source}^1")
+        if re.fullmatch(r"[0-9a-f]{40}", base) is None:
+            raise ValueError("admission base must be a full SHA")
+        if os.environ.get("GITHUB_EVENT_NAME") != "pull_request":
+            if os.environ.get("GITHUB_REF") != "refs/heads/main":
+                raise ValueError("release delivery requires main")
+            verify_merged_release_relation(repository, source_sha=source)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "source.json").write_bytes(
+            canonical_json_bytes({"source_sha": source, "base_sha": base})
+        )
+        (output_dir / "producer.json").write_bytes(
+            canonical_json_bytes(current_producer(source).model_dump(mode="json"))
+        )
+        if destination := os.environ.get("GITHUB_OUTPUT"):
+            with Path(destination).open("a") as stream:
+                stream.write(f"source_sha={source}\nbase_sha={base}\n")
+    except (OSError, ValueError) as error:
+        _failed(error)
+
+
+@app.command("capture-artifact")
+def capture_artifact_command(
+    source_sha: Annotated[str, typer.Option()],
+    artifact_id: Annotated[int, typer.Option(min=1)],
+    name: Annotated[str, typer.Option()],
+    digest: Annotated[str, typer.Option()],
+    output: Annotated[Path, typer.Option()],
+) -> None:
+    """Bind action upload outputs to independently validated API metadata."""
+    from election_guide.release.evidence import current_producer
+    from election_guide.release.workflow import capture_artifact
+
+    try:
+        reference = capture_artifact(
+            producer=current_producer(source_sha), artifact_id=artifact_id, name=name, digest=digest
+        )
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(canonical_json_bytes(reference.model_dump(mode="json")))
+    except (OSError, ValueError) as error:
+        _failed(error)
+
+
+@app.command("fetch-artifact")
+def fetch_artifact_command(
+    source_sha: Annotated[str, typer.Option()],
+    artifact_id: Annotated[int, typer.Option(min=1)],
+    name: Annotated[str, typer.Option()],
+    digest: Annotated[str, typer.Option()],
+    output_dir: Annotated[Path, typer.Option()],
+    output_ref: Annotated[Path, typer.Option()],
+) -> None:
+    """Fetch an exact artifact ID, enforcing producer and wrapper byte identity."""
+    from election_guide.hosting.promotion import download_actions_artifact
+    from election_guide.release.evidence import current_producer
+    from election_guide.release.workflow import capture_artifact
+
+    try:
+        reference = capture_artifact(
+            producer=current_producer(source_sha), artifact_id=artifact_id, name=name, digest=digest
+        )
+        download_actions_artifact(reference, output_dir)
+        output_ref.parent.mkdir(parents=True, exist_ok=True)
+        output_ref.write_bytes(canonical_json_bytes(reference.model_dump(mode="json")))
+    except (OSError, ValueError) as error:
+        _failed(error)
+
+
+@app.command("delivery-check")
+def delivery_check_command(
+    publication: Annotated[Path, typer.Option()], output_dir: Annotated[Path, typer.Option()]
+) -> None:
+    """Final serialized selection/switch check; skipped states remain durable evidence."""
+    import os
+
+    from election_guide.release.workflow import admit_upload, retain_delivery_failure
+
+    try:
+        result = PublicationResult.model_validate_json(publication.read_bytes())
+        state = admit_upload(
+            result,
+            selected=_selected_main(_repository()),
+            enabled=os.environ.get("CLOUDFLARE_PAGES_ENABLED") == "true",
+            output_dir=output_dir,
+        )
+        if destination := os.environ.get("GITHUB_OUTPUT"):
+            with Path(destination).open("a") as stream:
+                stream.write(f"state={state}\n")
+        typer.echo(state)
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        retain_delivery_failure(publication, output_dir, error)
+        _failed(error)
+
+
+@app.command("create-deployment")
+def create_deployment_command(
+    publication: Annotated[Path, typer.Option()], output: Annotated[Path, typer.Option()]
+) -> None:
+    """Create one owned GitHub deployment envelope before the sole upload."""
+    from election_guide.release.workflow import create_deployment, retain_delivery_failure
+
+    try:
+        identifier = create_deployment(
+            PublicationResult.model_validate_json(publication.read_bytes())
+        )
+        output.write_bytes(canonical_json_bytes({"id": identifier}))
+    except (OSError, ValueError) as error:
+        retain_delivery_failure(publication, output.parent, error)
+        _failed(error)
+
+
+@app.command("upload")
+def upload_command(
+    publication: Annotated[Path, typer.Option()],
+    deployment: Annotated[Path, typer.Option()],
+    site_dir: Annotated[Path, typer.Option()],
+    output_dir: Annotated[Path, typer.Option()],
+) -> None:
+    """Run pinned Wrangler once, preserving its output and owned unique URL."""
+    from election_guide.release.workflow import perform_upload, retain_delivery_failure
+
+    try:
+        perform_upload(
+            PublicationResult.model_validate_json(publication.read_bytes()),
+            deployment_id=json.loads(deployment.read_bytes())["id"],
+            site_dir=site_dir,
+            output_dir=output_dir,
+        )
+    except (OSError, ValueError) as error:
+        retain_delivery_failure(publication, output_dir, error)
+        _failed(error)
+
+
+@app.command("deployment-status")
+def deployment_status_command(upload: Annotated[Path, typer.Option()]) -> None:
+    """Mark success only after exact-upload durable verified finalization."""
+    from election_guide.release.automation_models import UploadReceipt
+    from election_guide.release.evidence import load_verified_receipts
+    from election_guide.release.workflow import write_deployment_status
+
+    try:
+        receipt = UploadReceipt.model_validate_json(upload.read_bytes())
+        candidate = receipt.publication.published.candidate
+        request = candidate.declaration.publication_request
+        if request is None:
+            raise ValueError("missing reviewed request")
+        records = load_verified_receipts(
+            repository=receipt.producer.repository,
+            issue_number=request.issue_number,
+            release_version=candidate.declaration.release_version,
+            source_sha=receipt.source_sha,
+        )
+        if not any(r.state == "verified" and r.upload == receipt for r in records):
+            raise ValueError("deployment success requires durable verified finalization")
+        write_deployment_status(
+            receipt.publication,
+            receipt.github_deployment_id,
+            state="success",
+            url=receipt.deployment_url,
+        )
+    except (OSError, ValueError) as error:
+        _failed(error)
+
+
+@app.command("recover-upload")
+def recover_upload_command(
+    repository: Annotated[str, typer.Option()],
+    issue: Annotated[int, typer.Option(min=1)],
+    release_version: Annotated[str, typer.Option()],
+    source_sha: Annotated[str, typer.Option()],
+    run_id: Annotated[int, typer.Option(min=1)],
+    run_attempt: Annotated[int, typer.Option(min=1)],
+    output: Annotated[Path, typer.Option()],
+) -> None:
+    """Load original immutable upload evidence; never rebuild or upload."""
+    from election_guide.release.workflow import recover_upload
+
+    try:
+        receipt = recover_upload(
+            repository=repository,
+            issue=issue,
+            release_version=release_version,
+            source_sha=source_sha,
+            run_id=run_id,
+            run_attempt=run_attempt,
+        )
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(canonical_json_bytes(receipt.model_dump(mode="json")))
+    except (OSError, ValueError) as error:
+        _failed(error)

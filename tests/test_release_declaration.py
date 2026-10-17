@@ -48,6 +48,12 @@ def repository(tmp_path: Path) -> Path:
     for name in ("snapshots", "manifests"):
         (tmp_path / "data/releases/wa-2026-general" / name).mkdir()
         (tmp_path / "data/releases/wa-2026-general" / name / ".gitkeep").touch()
+    # Give version-policy fixtures an explicit legacy base independent of activation.
+    site = read_site_manifest(tmp_path / SITE)
+    site.elections[0].release_version = "2026-general.8"
+    site.elections[0].bundle_id = "wa-2026-general-2026-general.8"
+    site.elections[0].publication_request = None
+    (tmp_path / SITE).write_text(site.model_dump_json())
     git(tmp_path, "init", "-b", "main")
     git(tmp_path, "add", ".")
     git(

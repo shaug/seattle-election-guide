@@ -153,6 +153,6 @@ hosting-stage:
 hosting-serve: hosting-stage
 	npm run pages:dev
 
-hosting-deploy: hosting-stage
-	uv run election-guide hosting verify-releases config/hosting/site.yaml
-	npm run pages:deploy -- --commit-hash="$$(git rev-parse HEAD)" --commit-dirty=false
+hosting-deploy:
+	@echo "Direct production upload is retired. Recover the captured source through CI, or use verify-release.yml for verification-only recovery; see docs/RELEASE.md."
+	@exit 1

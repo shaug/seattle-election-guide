@@ -3,7 +3,7 @@
 Software changes for current releases are published with their bundled
 `RELEASE_NOTES.md` on [GitHub Releases](https://github.com/shaug/seattle-election-guide/releases).
 
-The historical sections below are retained through `2026-general.8`.
+The historical sections below are retained through `2026-general.9`.
 Do not edit by hand: CI regenerates this index and compares committed bytes.
 
 ## 2026-general.9 — 2026-10-16

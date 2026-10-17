@@ -1,71 +1,47 @@
-"""Contracts for read-only production verification after deployment (#523)."""
+"""Verification consumes the recorded upload and cannot repeat it (#550)."""
 
 from __future__ import annotations
 
 import os
 import subprocess
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import yaml
 
-PROJECT_ROOT = Path(__file__).parents[1]
-WORKFLOW_PATH = PROJECT_ROOT / ".github" / "workflows" / "ci.yml"
-
-
-def _workflow(path: Path = WORKFLOW_PATH) -> dict[str, Any]:
-    return cast(dict[str, Any], yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader))
-
-
-def _run_probe_step(step: dict[str, Any], tmp_path: Path) -> list[str]:
-    executable = tmp_path / "uv"
-    executable.write_text(
-        '#!/bin/sh\nprintf \'%s\\n\' "$@" > "$RECORDED_ARGUMENTS"\n', encoding="utf-8"
-    )
-    executable.chmod(0o755)
-    recorded = tmp_path / "arguments.txt"
-    subprocess.run(
-        ["bash", "-euo", "pipefail", "-c", step["run"]],
-        cwd=PROJECT_ROOT,
-        env={
-            **os.environ,
-            "PATH": f"{tmp_path}:{os.environ['PATH']}",
-            "RECORDED_ARGUMENTS": str(recorded),
-            "PRODUCTION_ORIGIN": "https://seattleelections.guide",
-            "GITHUB_REPOSITORY": "shaug/seattle-election-guide",
-            "GITHUB_SHA": "b" * 40,
-        },
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    return recorded.read_text(encoding="utf-8").splitlines()
+ROOT = Path(__file__).parents[1]
 
 
 def test_deployment_verifies_its_uploaded_sha_and_preserves_evidence(tmp_path: Path) -> None:
-    workflow = _workflow(PROJECT_ROOT / ".github" / "workflows" / "ci.yml")
-    steps = workflow["jobs"]["deploy"]["steps"]
-    probe = next((step for step in steps if "check-production" in step.get("run", "")), None)
-    assert probe is not None, "a production upload needs verification"
-    upload = next(step for step in steps if step.get("name") == "Deploy production site")
-    assert steps.index(probe) > steps.index(upload)
-    assert "if" not in probe
-    arguments = _run_probe_step(probe, tmp_path)
-    assert arguments == [
-        "run",
-        "election-guide",
-        "hosting",
-        "check-production",
-        "https://seattleelections.guide",
-        "--expected-git-commit",
-        "b" * 40,
-        "--output",
-        "dist/production-probe.json",
-    ]
-
-    evidence = next(
-        step for step in steps if step.get("name") == "Preserve production verification evidence"
+    workflow: dict[str, Any] = yaml.load(
+        (ROOT / ".github/workflows/ci.yml").read_text(), Loader=yaml.BaseLoader
     )
-    assert steps.index(evidence) > steps.index(probe)
-    assert evidence["if"] == "always()"
-    assert evidence["with"]["path"] == "dist/production-probe.json"
+    job = workflow["jobs"]["finalize"]
+    assert job["needs"] == ["deploy"]
+    assert job["permissions"]["issues"] == "write"
+    step = next(
+        s for s in job["steps"] if s.get("name") == "Finalize uploaded or skipped operation"
+    )
+    executable = tmp_path / "uv"
+    executable.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "$RECORDED_ARGUMENTS"\n')
+    executable.chmod(0o755)
+    calls = tmp_path / "calls"
+    subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", step["run"]],
+        cwd=tmp_path,
+        env={
+            **os.environ,
+            "PATH": f"{tmp_path}:{os.environ['PATH']}",
+            "RECORDED_ARGUMENTS": str(calls),
+        },
+        check=True,
+    )
+    assert calls.read_text().splitlines() == [
+        "run election-guide release automation finalize --upload dist/upload/upload.json "
+        "--output-dir dist/finalization",
+        "run election-guide release automation deployment-status --upload dist/upload/upload.json",
+    ]
+    retained = next(s for s in job["steps"] if s.get("uses") == "actions/upload-artifact@v4")
+    assert retained["if"] == "always()"
+    assert "dist/finalization" in retained["with"]["path"]
+    assert "secrets" not in str(job)

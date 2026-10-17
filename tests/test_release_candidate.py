@@ -289,6 +289,7 @@ def test_candidate_build_uses_resolved_inputs_and_one_commit_timestamp(
     path = root / "config/hosting/site.yaml"
     payload = yaml.safe_load(path.read_text())
     payload["elections"] = payload["elections"][:1]
+    payload["elections"][0].pop("publication_request", None)
     path.write_text(yaml.safe_dump(payload))
     _git(root, "init", "-q")
     _git(root, "config", "user.email", "fixture@example.com")

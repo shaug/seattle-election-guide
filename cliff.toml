@@ -15,7 +15,7 @@ header = """
 Software changes for current releases are published with their bundled
 `RELEASE_NOTES.md` on [GitHub Releases](https://github.com/shaug/seattle-election-guide/releases).
 
-The historical sections below are retained through `2026-general.8`.
+The historical sections below are retained through `2026-general.9`.
 Do not edit by hand: CI regenerates this index and compares committed bytes.
 """
 
@@ -76,4 +76,4 @@ sort_commits = "oldest"
 
 [release_history]
 # The root index never grows when later release tags appear.
-legacy_history_end_sha = "a1a83b5f1c09d7297a6100e3ac321b0e5034bf52"
+legacy_history_end_sha = "da307d6f4c695471ec5a025a4226824de5ffbbc5"

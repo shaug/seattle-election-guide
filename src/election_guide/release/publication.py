@@ -209,7 +209,7 @@ def _bundle(archive: Path, destination: Path, candidate: CandidateRecord) -> Non
         raise ValueError("release ZIP source or timestamp differs from reviewed candidate")
 
 
-def _receipt_matches(receipt: PublicationResult, published: PublishedArchive) -> None:
+def verify_canonical_publication(receipt: PublicationResult, published: PublishedArchive) -> None:
     previous = receipt.published
     identity = (
         "release_id",
@@ -235,7 +235,7 @@ def _receipt_matches(receipt: PublicationResult, published: PublishedArchive) ->
         )
         or previous.candidate.producer.repository != published.candidate.producer.repository
     ):
-        raise ValueError("existing publication receipt conflicts with canonical release")
+        raise ValueError("conflicting canonical release in existing publication receipt")
     bind_publication(previous, receipt.promotion_artifact)
 
 
@@ -392,7 +392,9 @@ def publish_candidate(
         promotion_manifest_sha256=_digest(promotion / "deployment-manifest.json").sha256,
     )
     if existing_receipt is not None:
-        _receipt_matches(PublicationResult.model_validate(existing_receipt.model_dump()), published)
+        verify_canonical_publication(
+            PublicationResult.model_validate(existing_receipt.model_dump()), published
+        )
     _checkout(repository, candidate.source_sha)
     if release["draft"]:
         final = _object(

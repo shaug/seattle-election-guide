@@ -1,4 +1,4 @@
-"""Drift checks for the general-release commands changed by issue #448."""
+"""Executable release preparation and recovery commands cannot drift (#550)."""
 
 from pathlib import Path
 
@@ -9,18 +9,16 @@ def _marked_bash(document: Path, marker: str) -> str:
     text = document.read_text(encoding="utf-8")
     opening = f"<!-- runbook-command:{marker} -->\n```bash\n"
     start = text.index(opening) + len(opening)
-    end = text.index("\n```", start)
-    return text[start:end]
+    return text[start : text.index("\n```", start)]
 
 
 def test_general_release_verification_command_cannot_drift() -> None:
-    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "verify-general")
-
     assert (
-        command
+        _marked_bash(PROJECT_ROOT / "docs/RELEASE.md", "verify-general")
         == """make release-verify
 make check-release-reproducible
-unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.9.zip
+uv run election-guide release automation resolve > dist/resolved.json
+unzip -t "dist/reproducibility-a/$(jq -r .archive_name dist/resolved.json)"
 test -f dist/reproducibility-a/bundle/RELEASE_NOTES.md
 test -f dist/reproducibility-a/bundle/validation/rendering/rendering_validation_report.json
 test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/desktop.png
@@ -29,10 +27,8 @@ test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/mobile.pn
 
 
 def test_release_lineage_command_cannot_drift() -> None:
-    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "verify-lineage")
-
     assert (
-        command
+        _marked_bash(PROJECT_ROOT / "docs/RELEASE.md", "verify-lineage")
         == """uv run election-guide release verify-lineage \\
   dist/downloaded/seattle-election-guide-2026-general.9.zip \\
   dist/reproducibility-a/bundle \\
@@ -42,101 +38,67 @@ def test_release_lineage_command_cannot_drift() -> None:
     )
 
 
-def test_github_release_preflight_command_cannot_drift() -> None:
-    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "release-preflight")
-
+def test_preparation_and_recovery_commands_cannot_drift() -> None:
+    document = PROJECT_ROOT / "docs/RELEASE.md"
     assert (
-        command
-        == """git ls-remote --tags origin refs/tags/2026-general.9 refs/tags/2026-general.9^{}
-gh release view 2026-general.9 \\
-  --json url,tagName,targetCommitish,isDraft,isPrerelease,name,body,assets"""
+        _marked_bash(document, "prepare")
+        == """uv run election-guide release automation prepare --issue "$issue_number"
+uv run election-guide release automation resolve"""
     )
-
-
-def test_github_release_create_command_cannot_drift() -> None:
-    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "release-create")
-
     assert (
-        command
-        == '''gh release create 2026-general.9 \\
-  dist/reproducibility-a/seattle-election-guide-2026-general.9.zip \\
-  --title "Seattle 2026 general election endorsement guide — 2026-general.9" \\
-  --notes-file dist/reproducibility-a/bundle/RELEASE_NOTES.md \\
-  --target "$release_candidate_sha"'''
+        _marked_bash(document, "recover-candidate")
+        == 'gh workflow run ci.yml --ref main -f source_sha="$source_sha"'
     )
-
-
-def test_existing_github_release_upload_command_cannot_drift() -> None:
-    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "release-upload")
-
     assert (
-        command
-        == """gh release upload 2026-general.9 \\
-  dist/reproducibility-a/seattle-election-guide-2026-general.9.zip"""
-    )
-
-
-def test_published_asset_verification_command_cannot_drift() -> None:
-    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "verify-published-asset")
-
-    assert (
-        command
-        == '''mkdir -p dist/downloaded
-test ! -e dist/downloaded/seattle-election-guide-2026-general.9.zip
-gh release download 2026-general.9 \\
-  --pattern seattle-election-guide-2026-general.9.zip \\
-  --dir dist/downloaded
-local_release_digest="$(shasum -a 256 \\
-  dist/reproducibility-a/seattle-election-guide-2026-general.9.zip | awk '{print $1}')"
-downloaded_release_digest="$(shasum -a 256 \\
-  dist/downloaded/seattle-election-guide-2026-general.9.zip | awk '{print $1}')"
-test "$local_release_digest" = "$downloaded_release_digest"
-unzip -t dist/downloaded/seattle-election-guide-2026-general.9.zip
-git fetch origin tag 2026-general.9
-test "$(git rev-parse '2026-general.9^{commit}')" = "$release_candidate_sha"'''
+        _marked_bash(document, "retry-evidence")
+        == '''gh workflow run verify-release.yml --ref main \\
+  -f issue="$issue_number" \\
+  -f release_version="$release_version" \\
+  -f source_sha="$source_sha" \\
+  -f run_id="$run_id" \\
+  -f run_attempt="$run_attempt"'''
     )
 
 
 def test_two_election_staging_command_cannot_drift() -> None:
-    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "stage-candidate")
-
     assert (
-        command
-        == '''make hosting-stage
+        _marked_bash(PROJECT_ROOT / "docs/RELEASE.md", "stage-candidate")
+        == '''source_sha="$(git rev-parse HEAD)"
+make hosting-stage
 uv run election-guide hosting verify \\
   config/hosting/site.yaml \\
   dist/cloudflare-site \\
-  --expected-git-commit "$production_candidate_sha"'''
+  --expected-git-commit "$source_sha"'''
     )
 
 
 def test_read_only_production_probe_command_cannot_drift() -> None:
-    command = _marked_bash(PROJECT_ROOT / "docs" / "HOSTING.md", "production-probe")
-
     assert (
-        command
+        _marked_bash(PROJECT_ROOT / "docs/HOSTING.md", "production-probe")
         == """uv run election-guide hosting check-production \\
   https://seattleelections.guide \\
   --site-manifest config/hosting/site.yaml \\
-  --expected-git-commit "$production_candidate_sha" \\
+  --expected-git-commit "$source_sha" \\
+  --wait \\
   --output dist/production-probe.json"""
     )
 
 
-def test_runbook_names_the_complete_publication_evidence_and_expiry_rule() -> None:
-    release = (PROJECT_ROOT / "docs" / "RELEASE.md").read_text(encoding="utf-8")
-    hosting = (PROJECT_ROOT / "docs" / "HOSTING.md").read_text(encoding="utf-8")
-    text = release + hosting
-    normalized_text = " ".join(text.split())
-
-    for evidence_name in (
-        "release_candidate_sha",
-        "production_candidate_sha",
+def test_runbooks_retire_direct_upload_and_preserve_evidence_contract() -> None:
+    text = (PROJECT_ROOT / "docs/RELEASE.md").read_text() + (
+        PROJECT_ROOT / "docs/HOSTING.md"
+    ).read_text()
+    for command in ["gh release create", "gh release upload", "npm run pages:deploy"]:
+        assert command not in text
+    for term in [
         "release asset digest",
         "CI run and artifact",
         "deployment ID",
-        "production-probe.json",
-    ):
-        assert evidence_name in text
-    assert "rerun CI for that exact `production_candidate_sha`" in normalized_text
-    assert "Never substitute the newer `main` head" in normalized_text
+        "source_sha",
+        "production-wait.json",
+        "verification-only",
+        "queue: max",
+        "deployment_paused",
+        "superseded",
+    ]:
+        assert term in " ".join(text.split())

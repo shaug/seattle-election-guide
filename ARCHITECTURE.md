@@ -83,3 +83,18 @@ explicitly declared desktop and mobile rasterized screenshots; the published who
 still protects those exact files. The release reproducibility guarantee applies to the Linux
 deployment environment. Browser checks use emulated CSS viewports and reject horizontal overflow
 before capturing screenshots. Tests must not depend on live websites.
+
+## Automatic release boundary
+
+A reviewed publication request binds ledger, dataset and registry file bytes to a source revision.
+Read-only PR CI builds the candidate for visual review. After merge, five independent lanes and
+the stable check gate admit that exact source; serialized publication promotes its canonical ZIP
+through durable issue evidence, one owned Pages upload, and two complete production probes.
+The source/tag/bundle/upload identity is one full SHA. GitHub artifact IDs and wrapper digests
+are temporary transport evidence, separate from immutable canonical archive identity.
+
+Release policy lives in the declaration, candidate, publication, promotion, and evidence modules.
+The workflow adapter binds Actions outputs and GitHub deployment envelopes to those policies;
+workflow shell does not reimplement them. Verification-only recovery reads the original Git
+object and upload receipt, preserving provenance without rebuilding or uploading. Failed evidence
+keeps delivery incomplete and retryable. Historical two-revision lineage checks remain unchanged.

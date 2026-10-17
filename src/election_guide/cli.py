@@ -407,13 +407,17 @@ def hosting_check_production(
         raise typer.Exit(code=1) from error
     if wait:
         assert expected_git_commit is not None
-        report = wait_for_production(
-            base_url,
-            expected_git_commit=expected_git_commit,
-            site_manifest=site_manifest,
-            active_window=active_window,
-            timeout=timeout,
-        )
+        try:
+            report = wait_for_production(
+                base_url,
+                expected_git_commit=expected_git_commit,
+                site_manifest=site_manifest,
+                active_window=active_window,
+                timeout=timeout,
+            )
+        except ValueError as error:
+            typer.echo(f"hosting check-production failed: {error}", err=True)
+            raise typer.Exit(code=1) from error
         reports = report.attempts
     else:
         report = run_production_check(

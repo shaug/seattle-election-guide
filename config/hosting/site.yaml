@@ -1,19 +1,29 @@
-schema_version: "1.0"
+schema_version: '1.0'
 canonical_origin: https://seattleelections.guide
 current_election_id: wa-2026-general
 elections:
-  - election_id: wa-2026-general
-    bundle_id: wa-2026-general-2026-general.9
-    release_version: 2026-general.9
-    source_panel_id: wa-2026-general-default-sources-v2
-    source_panel_hash: 5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569
-    source_registry_hash: 08473de324a7ca66617885e774d406fa992bc2bfbf3916acff366aad017bf2a2
-  - election_id: wa-2026-primary
-    bundle_id: wa-2026-primary-2026-primary.3
-    release_version: 2026-primary.3
-    source_panel_id: wa-2026-primary-default-sources-v4
-    source_panel_hash: 389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5
-    source_registry_hash: 76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8
-    git_commit: 6e93dafe45ac45f343c5ea3d123f53e24725d15e
-    release_manifest_sha256: 7989827c95c11fc68dbaaa32f632eaeb3d2c1495dfa2728c644faecf2441a516
-    bundle_sha256: 5418b15370a6ed0f8eb0f4e02d9c9a02faf9f6f5043f9c3e39f3abe120b5ad9d
+- election_id: wa-2026-general
+  bundle_id: wa-2026-general-2026-general.10
+  release_version: 2026-general.10
+  source_panel_id: wa-2026-general-default-sources-v2
+  source_panel_hash: 5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569
+  source_registry_hash: 08473de324a7ca66617885e774d406fa992bc2bfbf3916acff366aad017bf2a2
+  publication_request:
+    issue_number: 550
+    previous_release_sha: da307d6f4c695471ec5a025a4226824de5ffbbc5
+    inputs:
+      ledger_sha256: 1286c04ba2b8c38081f1f77d0d7789bdc95402bf52b955c7d4965625240f9b6e
+      dataset_sha256: da873f6755f0b83a82e1a5c5a00acbc3ed576dd52035aed65e76d5a6e241cd7c
+      registry_sha256: b768ab12d366d345a7886c8dc3a61438ff2cc33a52042b49cf5eb7c505e7dd0f
+  git_commit: null
+  release_manifest_sha256: null
+  bundle_sha256: null
+- election_id: wa-2026-primary
+  bundle_id: wa-2026-primary-2026-primary.3
+  release_version: 2026-primary.3
+  source_panel_id: wa-2026-primary-default-sources-v4
+  source_panel_hash: 389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5
+  source_registry_hash: 76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8
+  git_commit: 6e93dafe45ac45f343c5ea3d123f53e24725d15e
+  release_manifest_sha256: 7989827c95c11fc68dbaaa32f632eaeb3d2c1495dfa2728c644faecf2441a516
+  bundle_sha256: 5418b15370a6ed0f8eb0f4e02d9c9a02faf9f6f5043f9c3e39f3abe120b5ad9d

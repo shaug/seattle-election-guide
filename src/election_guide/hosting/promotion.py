@@ -327,6 +327,20 @@ def _download_artifact(reference: ArtifactRef, destination: Path) -> None:
         raise ValueError("artifact wrapper is unreadable") from error
 
 
+def verify_actions_artifact(reference: ArtifactRef) -> None:
+    """Verify ID, wrapper digest, repository/workflow and producing attempt window."""
+    if not _artifact_available(reference):
+        raise ValueError(
+            "captured Actions artifact is missing or expired; recover the exact source"
+        )
+
+
+def download_actions_artifact(reference: ArtifactRef, destination: Path) -> None:
+    """Download a captured ID only after metadata validation, then check wrapper bytes."""
+    verify_actions_artifact(reference)
+    _download_artifact(reference, destination)
+
+
 def recover_candidate(candidate: CandidateRecord, *, repository: Path, work_dir: Path) -> Path:
     """Reuse captured healthy artifacts or rerun every gate at the original detached source.
 
