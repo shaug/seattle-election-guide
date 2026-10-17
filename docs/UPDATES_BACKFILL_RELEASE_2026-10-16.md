@@ -27,7 +27,8 @@ The earlier general `.9` archive remains at
 `da307d6f4c695471ec5a025a4226824de5ffbbc5`, with SHA-256
 `9507d1cf10d9c43e38010e2011c934f05e181a934bceb681b28f04160fe041b0`.
 The earlier primary `.3` remains at `6e93dafe45ac45f343c5ea3d123f53e24725d15e`,
-with archive SHA-256 `5418b15370a6ed0f8eb0f4e02d9c9a02faf9f6f5043f9c3e39f3abe120b5ad9d`.
+with archive SHA-256 `decf71bffc914a231fc918dcb3fd188d61b24e37f59539935e7452eafa855516`
+and bundle-tree SHA-256 `5418b15370a6ed0f8eb0f4e02d9c9a02faf9f6f5043f9c3e39f3abe120b5ad9d`.
 
 ## Primary artifact and production handoff
 
