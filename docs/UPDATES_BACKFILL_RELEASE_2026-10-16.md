@@ -7,9 +7,16 @@ from first publication. The [history audit](UPDATES_HISTORY_AUDIT_2026-10-16.md)
 
 Publish `2026-general.10` and `2026-primary.4` from the same full merged mainline
 `release_candidate_sha`. The general release contains nine dated entries; the primary release
-contains 30. Both retain “We get it right, eventually.” A new primary artifact is necessary:
+contains 31: 30 historical entries and the newly activated sparse-race label change in customized
+overview views. Both retain “We get it right, eventually.” A new primary artifact is necessary:
 the served `.3` view model has no Updates entries. Do not modify `.3` or overlay new log content
 onto its hash-pinned artifact.
+
+The default primary overview's visible text is unchanged apart from Updates navigation and build
+provenance. Its old embedded client module predates #533, however: rebuilding activates the
+measured-leader label for sparse personalized selections. Record that activation on the new
+release's actual Pacific publication date, independently of the frozen 39-entry historical audit.
+The new primary entry is dated October 16; verify this still matches publication before upload.
 
 ## Reviewed input bindings
 

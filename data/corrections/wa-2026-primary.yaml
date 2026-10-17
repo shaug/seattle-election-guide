@@ -1,6 +1,21 @@
 schema_version: '1.0'
 election_id: wa-2026-primary
 entries:
+- corrected_on: 2026-10-16
+  headline: Named sparse-race leaders in customized primary views.
+  body: >-
+    Rebuilding the archived primary guide brings its customized overview into line with the
+    current display rule. A race with too few selected endorsements now names its measured
+    leading choice while retaining the warning that there is too little evidence to measure
+    agreement. The default all-sources overview, recorded endorsements, scores, and certified
+    results are unchanged.
+  provenance:
+  - label: Primary guide
+    url: /e/wa-2026-primary/
+  - label: Sparse-endorsement display rule
+    url: https://github.com/shaug/seattle-election-guide/pull/533
+  - label: New primary release
+    url: https://github.com/shaug/seattle-election-guide/releases/tag/2026-primary.4
 - corrected_on: 2026-10-11
   headline: Restored the completed primary guide.
   body: >-

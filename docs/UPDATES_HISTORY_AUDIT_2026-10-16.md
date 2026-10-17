@@ -20,6 +20,10 @@ headline, and successful deployment evidence. Its ordered revision list was comp
 no missing, extra, or repeated revisions.
 
 There are **30 primary entries and nine general entries**, including each first publication.
+These counts describe the frozen historical audit. The new primary release also logs activation
+of the current sparse-race label rule in its customized overview, bringing its authored total to
+31. That behavior had already reached general views, but the archived primary overview still
+embedded the older client module. It is a new publication event outside this historical cutoff.
 Eighty-eight commits map to entries, including supporting code whose public effect arrived at
 later activation. The other 195 have explicit exclusions. The inventory includes whole-history
 review, not just a renderer-path search: that caught the certification-date correction in
