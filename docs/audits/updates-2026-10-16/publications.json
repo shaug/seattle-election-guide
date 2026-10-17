@@ -1,0 +1,969 @@
+{
+  "timezone": "America/Los_Angeles",
+  "entries": [
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-10-11",
+      "headline": "Restored the completed primary guide.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-12T05:09:25Z",
+          "tag": "2026-primary.3",
+          "commit": "6e93dafe45ac45f343c5ea3d123f53e24725d15e",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-primary.3"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-12T05:49:41Z",
+          "commit": "9d193bbe344a506f5545adb011e104534f9f137b",
+          "deployment_id": 7007393580,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/38209232829/job/114680587222",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/7007393580/statuses/19627032309"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-10-03",
+      "headline": "An older primary snapshot replaced the completed guide.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-03T14:27:19Z",
+          "commit": "b40cbaab1cce84b4cf023daaf44c499512960f7c",
+          "deployment_id": 6825652706,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/37111424774/job/111170679112",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/6825652706/statuses/19216104113"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-03T18:20:36Z",
+          "commit": "af8fd96fbe895cfd3af9e1212c549b7e5cacc42a",
+          "deployment_id": 6831114378,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/37142245131/job/111259772945",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/6831114378/statuses/19221697228"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-04T00:21:57Z",
+          "commit": "64ec1a10c704f3f989aff4a14a141d2722ff3054",
+          "deployment_id": 6834776843,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/37163820797/job/111323351242",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/6834776843/statuses/19229568196"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-09-13",
+      "headline": "Completed certified results for all 32 races.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-09-14T03:50:10Z",
+          "commit": "3fa04daf3d2b47ba9e4627ff7566965fab862c15",
+          "deployment_id": 6430068183,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/32588483948/job/103851330926",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/6430068183/statuses/18307324130"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-19",
+      "headline": "Published certified results for 24 races and corrected the certification date.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-20T02:42:31Z",
+          "commit": "e006c5ca99fe8602d6843b40ffd1fae26e588658",
+          "deployment_id": 5994322312,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/32322375962/job/96288428503",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5994322312/statuses/17047843776"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-20T05:07:14Z",
+          "commit": "5f09f2c533d276b3d666b1881ab5b50e521d261b",
+          "deployment_id": 5996173277,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/32333732440/job/96320745575",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5996173277/statuses/17051638926"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-16",
+      "headline": "Kept source-selection context visible on race pages.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-16T13:53:59Z",
+          "commit": "46364fc83815417d6608f112d8b54cc0594a21dd",
+          "deployment_id": 5931628913,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/31950670588/job/95174344165",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5931628913/statuses/16879241521"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-09",
+      "headline": "Consolidated the counting notice.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-09T15:08:55Z",
+          "commit": "7e5f73ce2f1d0e689b509bdcd195f84da5f98349",
+          "deployment_id": 5819947512,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/31319932700/job/93262043968",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5819947512/statuses/16578070365"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-08",
+      "headline": "Added counting status and official results links.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-08T18:26:58Z",
+          "commit": "4c465948ecb32a122c3c55f1c244f73662ecfc22",
+          "deployment_id": 5811280648,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/31270773039/job/93136926160",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5811280648/statuses/16553780824"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-08T23:54:54Z",
+          "commit": "94fce9e6f50eac395785f64676d722905c759e23",
+          "deployment_id": 5813855133,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/31284704692/job/93172074818",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5813855133/statuses/16561101397"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-07",
+      "headline": "Added a meter for each endorsed candidate.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-07T23:30:56Z",
+          "commit": "caa2a3957be982ff16798160957c59b9fdf52bd7",
+          "deployment_id": 5803431878,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/31226841850/job/93023880140",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5803431878/statuses/16529905736"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-05",
+      "headline": "Added 17 previously missed endorsements after election day.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-05T18:04:11Z",
+          "commit": "5d9360de079727689136ce5e752c7e0cc7e2d322",
+          "deployment_id": 5766737377,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/31031877440/job/92396148498",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5766737377/statuses/16402290846"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-05",
+      "headline": "Showed the endorsement breakdown in the meter.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-05T14:07:51Z",
+          "commit": "62758cb08573c4d343c6f3d6f04910ffcac12e77",
+          "deployment_id": 5763015553,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/31012323763/job/92329562961",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5763015553/statuses/16391827203"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-05T23:37:36Z",
+          "commit": "8cbcc6f64dc61d20884cf80ee6d19cd0805901fd",
+          "deployment_id": 5771070877,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/31056384111/job/92475910082",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5771070877/statuses/16417441152"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-04",
+      "headline": "Gave every race its own page.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-04T17:04:12Z",
+          "commit": "cfaf2c15f20cafbf59d0794ff03b003f95113648",
+          "deployment_id": 5748084239,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30931625314/job/92068536915",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5748084239/statuses/16346712223"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-04T17:10:38Z",
+          "commit": "2d387345d0c200441b280d3198a16d9aa9ef4d61",
+          "deployment_id": 5748203143,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30932056362/job/92070721284",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5748203143/statuses/16346976872"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-04T21:04:30Z",
+          "commit": "461830a9541d6c5b80b650fd646986a3e34f4908",
+          "deployment_id": 5751367104,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30949222598/job/92128581816",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5751367104/statuses/16356314138"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-03",
+      "headline": "Explained invalid comparison links.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-03T14:46:29Z",
+          "commit": "9ac2db6da2163b0b52421f711772650d9e7aa935",
+          "deployment_id": 5728149095,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30823349647/job/91719677916",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5728149095/statuses/16288911922"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-02",
+      "headline": "Replaced the PDF download with printing from the guide.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-02T15:41:35Z",
+          "commit": "37449dca629cf0fbcf5c5f292b255848db1eb0e4",
+          "deployment_id": 5715181016,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30754763723/job/91515295348",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5715181016/statuses/16252579626"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-02",
+      "headline": "Corrected comparison rounding and selection-link failures.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-02T22:44:23Z",
+          "commit": "cf4f67fa336050fbaf6606aadcfea65f936a7007",
+          "deployment_id": 5718402368,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30770606450/job/91557346463",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5718402368/statuses/16261190643"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-03T01:22:22Z",
+          "commit": "4d551b1378d9af8dfd7f61c2adfd31e739b959b2",
+          "deployment_id": 5719489978,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30776514629/job/91573304156",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5719489978/statuses/16264225202"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-08-01",
+      "headline": "Moved Times comparisons to the Comparisons page.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-01T17:39:50Z",
+          "commit": "9f310ce6c6fbe3398d3e32f3db43166caf6627f3",
+          "deployment_id": 5706801469,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30710589141/job/91397770449",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5706801469/statuses/16229752545"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-01T21:48:35Z",
+          "commit": "f9986bdae4e06408964bd5c8b813fc3952f0b90c",
+          "deployment_id": 5708582785,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30719684021/job/91421812452",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5708582785/statuses/16234439823"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-02T00:45:53Z",
+          "commit": "e455434836654a1932a3c601dd951bd530fa7f02",
+          "deployment_id": 5709660911,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30725641807/job/91437122582",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5709660911/statuses/16237517729"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-08-02T06:36:48Z",
+          "commit": "d207266f94cb905987b2a6e15076e354c3ac824f",
+          "deployment_id": 5711498375,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30736049590/job/91465354818",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5711498375/statuses/16242548715"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-31",
+      "headline": "Marked races without a majority.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T08:02:34Z",
+          "commit": "4e1d0ccbefa9657cc7040114be33c57da4a6cd89",
+          "deployment_id": 5688339979,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30614591927/job/91105634008",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5688339979/statuses/16175246190"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-31",
+      "headline": "Added side-by-side endorsement comparisons.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T07:48:41Z",
+          "commit": "10c85c545b791fe329c24d3bebc1209b6489e1be",
+          "deployment_id": 5688186823,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30613823275/job/91103101643",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5688186823/statuses/16174817731"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T09:11:59Z",
+          "commit": "ba4fa1b40f47628beea5c019b07e3b9d03c57ece",
+          "deployment_id": 5689129712,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30618771964/job/91118821532",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5689129712/statuses/16177497685"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T09:59:39Z",
+          "commit": "9f2c43f503541d9f85d3f56188f13020c2ddd75b",
+          "deployment_id": 5689734351,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30621641250/job/91128216411",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5689734351/statuses/16179180124"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T10:36:11Z",
+          "commit": "ddd0b74ddd1f4c914b5886e483200e8c21ad446e",
+          "deployment_id": 5690152426,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30623821635/job/91135147144",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5690152426/statuses/16180420445"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T11:06:16Z",
+          "commit": "a1b4dbeec1b9915427740471c6a191801b8409e0",
+          "deployment_id": 5690495916,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30625549206/job/91140724277",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5690495916/statuses/16181415334"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T14:11:32Z",
+          "commit": "b9547233acdecd4ad804dcade15a50f3c603a7a2",
+          "deployment_id": 5692874950,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30637176987/job/91178743106",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5692874950/statuses/16188218255"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-31",
+      "headline": "Kept the counted-source total visible.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T21:28:19Z",
+          "commit": "fb9a519829693da74db5ae11438ca6db3ae552a7",
+          "deployment_id": 5698428341,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30666363487/job/91275133576",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5698428341/statuses/16203654511"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T21:51:17Z",
+          "commit": "675c650477af10a8f7d3feba6503ccc80cc45c38",
+          "deployment_id": 5698661474,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30667752914/job/91279338759",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5698661474/statuses/16204315662"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-30",
+      "headline": "Corrected personalized race details and shared links.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-30T19:29:20Z",
+          "commit": "f19fe06ecfcb2309206f2dcc45f230357e930dff",
+          "deployment_id": 5681011754,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30574690788/job/90980928082",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5681011754/statuses/16154323631"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-30T20:54:24Z",
+          "commit": "b9e7a81fafa3096e5dd56dfeb5282cdad67361c2",
+          "deployment_id": 5682176116,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30580821910/job/91001407923",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5682176116/statuses/16157496277"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-30T22:56:03Z",
+          "commit": "9389b2c30291167f77b847ba63658c6c35322b0b",
+          "deployment_id": 5683581495,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30588586363/job/91026323725",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5683581495/statuses/16161900826"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-30T23:53:28Z",
+          "commit": "ba14b0fd12c34062b336945a019b28cd602fbb30",
+          "deployment_id": 5684101348,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30591697763/job/91035749724",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5684101348/statuses/16163367948"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-31T03:39:01Z",
+          "commit": "451449dd958a495788e95957cde8fd39cc0bc827",
+          "deployment_id": 5685958383,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30601908907/job/91066747801",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5685958383/statuses/16168527858"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-29",
+      "headline": "Moved source selection to its own page and corrected its total.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-29T07:21:27Z",
+          "commit": "295128a8744747a1ab52c108dca511ddf2c3e6cd",
+          "deployment_id": 5653363699,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30431073216/job/90508967068",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5653363699/statuses/16075658864"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-29T13:30:03Z",
+          "commit": "380f39f3353389d7b6d541313adb0026dd070eb6",
+          "deployment_id": 5658291825,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30455913228/job/90590396735",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5658291825/statuses/16089800193"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-29T16:32:43Z",
+          "commit": "afb1fbc4df3150ba323762923bb49bc3845f7468",
+          "deployment_id": 5661231861,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30470826397/job/90641345708",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5661231861/statuses/16098140101"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-29T18:03:24Z",
+          "commit": "943d1c799da4f9a9577ffa9bfda2d5072b023ffe",
+          "deployment_id": 5662562093,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30477818632/job/90664877048",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5662562093/statuses/16101801741"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-29",
+      "headline": "Clarified the all-sources comparison.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-30T04:36:18Z",
+          "commit": "083c2152b02b15c6072e500e9e1b6d0e558ccc35",
+          "deployment_id": 5669157337,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30514098120/job/90780621554",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5669157337/statuses/16120494948"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-28",
+      "headline": "Added custom source selections.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-28T14:21:18Z",
+          "commit": "03fa3b13780106dc7ace0193d0d20bd9468d810e",
+          "deployment_id": 5641528263,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30367517601/job/90303725688",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5641528263/statuses/16042390909"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-28T19:44:30Z",
+          "commit": "c3af33b30283fa469700d79b3adcd632552931b2",
+          "deployment_id": 5646388054,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30392907184/job/90389702628",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5646388054/statuses/16055981252"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-28T21:43:38Z",
+          "commit": "449720eede324fb189280f4d42bb70f275afde9a",
+          "deployment_id": 5648027625,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30401451684/job/90418068749",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5648027625/statuses/16060461062"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-29T00:23:11Z",
+          "commit": "ba110c3724ff8b8c10194a5be0725f069af1201a",
+          "deployment_id": 5649654355,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30410753266/job/90446689264",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5649654355/statuses/16065081252"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-27",
+      "headline": "Made the Seattle Times comparison optional.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-27T22:27:36Z",
+          "commit": "7e4505afe2c3728640f68ab5d3446ddf7c6cd962",
+          "deployment_id": 5630942710,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30310515093/job/90125598591",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5630942710/statuses/16012108867"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-25",
+      "headline": "Added a compact ballot and contested-race filter.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-25T18:06:51Z",
+          "commit": "d547939178d7249b7fe135d2c1caa412fb8fbb4b",
+          "deployment_id": 5603561441,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30168857028/job/89706642467",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5603561441/statuses/15936181775"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-24",
+      "headline": "Added election links and shareable race details.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-24T23:52:27Z",
+          "commit": "3e05c5c273f5e97dfc0545c2404f8c0f1b7f92b1",
+          "deployment_id": 5596817903,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30134767699/job/89616642721",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5596817903/statuses/15917550434"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-25T01:40:34Z",
+          "commit": "97419e8f841e1554139220b16baaf8487476562f",
+          "deployment_id": 5597522656,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30138831806/job/89628339159",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5597522656/statuses/15919576877"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-23",
+      "headline": "Added six organizations and 35 recorded decisions.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-23T20:25:13Z",
+          "commit": "e6a1b635289a936ecbe807994139876a58714931",
+          "deployment_id": 5579274267,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/30041776943/job/89323836734",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5579274267/statuses/15862914617"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-22",
+      "headline": "Put races in ballot order.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-22T16:01:04Z",
+          "commit": "3fd7a85ec79a85e901f695bb299d6ea353db1da1",
+          "deployment_id": 5558680487,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/29935836049/job/88977727244",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5558680487/statuses/15804122503"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-21",
+      "headline": "Opened the website with 312 additional recorded decisions.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-21T20:24:27Z",
+          "commit": "f09a479d9ec971b2fa5c8e65be5c61edf16bdfd1",
+          "deployment_id": 5545183978,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/29864877691/job/88752843375",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5545183978/statuses/15765855046"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-21",
+      "headline": "Simplified endorsement agreement and source disclosures.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-07-21T20:24:27Z",
+          "commit": "f09a479d9ec971b2fa5c8e65be5c61edf16bdfd1",
+          "deployment_id": 5545183978,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/29864877691/job/88752843375",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/5545183978/statuses/15765855046"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-primary",
+      "date": "2026-07-19",
+      "headline": "Published the first downloadable primary guide.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-07-20T06:34:35Z",
+          "tag": "2026-primary.1",
+          "commit": "6bbebc0e23fdae9fc02ea6ca8501195ab2ed7b67",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-primary.1"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-general",
+      "date": "2026-10-16",
+      "headline": "Added two previously unrecorded endorsements.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-16T19:21:34Z",
+          "tag": "2026-general.8",
+          "commit": "a1a83b5f1c09d7297a6100e3ac321b0e5034bf52",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.8"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-general",
+      "date": "2026-10-16",
+      "headline": "Added 175 source decisions and revised two endorsements.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-16T18:41:31Z",
+          "tag": "2026-general.7",
+          "commit": "20e80b74dc5b2e85807f88c2327bfe74aac7207d",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.7"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-general",
+      "date": "2026-10-12",
+      "headline": "Changed how sparse and unopposed races appear.",
+      "publication_evidence": [
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-12T18:36:43Z",
+          "commit": "64bae9d21a9a211ea3e56e52bd33673a02d405a7",
+          "deployment_id": 7020823399,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/38291395479/job/114954018706",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/7020823399/statuses/19659303281"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-12T19:51:41Z",
+          "commit": "9192c885b2211de661169930637897b32f950585",
+          "deployment_id": 7022587451,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/38299893950/job/114981473674",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/7022587451/statuses/19662921486"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-general",
+      "date": "2026-10-12",
+      "headline": "Added three sources and 22 decisions.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-12T17:47:06Z",
+          "tag": "2026-general.6",
+          "commit": "06e5ccb2c81d6d9c1ca5876eba5997da23afaec3",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.6"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-12T18:36:43Z",
+          "commit": "64bae9d21a9a211ea3e56e52bd33673a02d405a7",
+          "deployment_id": 7020823399,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/38291395479/job/114954018706",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/7020823399/statuses/19659303281"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-general",
+      "date": "2026-10-11",
+      "headline": "Added 64 endorsements from eight organizations.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-12T00:29:23Z",
+          "tag": "2026-general.5",
+          "commit": "a091c46b4a20c16394795e89cde51cf802b4c341",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.5"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-12T01:14:10Z",
+          "commit": "9e04ec64a400af565fdf9a66da73a939ea0f1924",
+          "deployment_id": 7004360200,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/38190528105/job/114622829552",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/7004360200/statuses/19619950516"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-general",
+      "date": "2026-10-11",
+      "headline": "Updated King County Democrats’ LD32 Position 2 endorsement.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-12T00:29:23Z",
+          "tag": "2026-general.5",
+          "commit": "a091c46b4a20c16394795e89cde51cf802b4c341",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.5"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-12T01:14:10Z",
+          "commit": "9e04ec64a400af565fdf9a66da73a939ea0f1924",
+          "deployment_id": 7004360200,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/38190528105/job/114622829552",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/7004360200/statuses/19619950516"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-general",
+      "date": "2026-10-04",
+      "headline": "Added WashingtonCAN’s three initiative endorsements.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-04T15:24:56Z",
+          "tag": "2026-general.4",
+          "commit": "f5c55f9292dd0a363f19581e7626d97c2a555aae",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.4"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-04T15:58:01Z",
+          "commit": "9c2100a7fff0f391cc57b62dd9fc6c1a273f1a31",
+          "deployment_id": 6843207315,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/37214504172/job/111473107426",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/6843207315/statuses/19248446635"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-general",
+      "date": "2026-10-03",
+      "headline": "Changed how endorsement shares and co-endorsements are shown.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-03T17:23:45Z",
+          "tag": "2026-general.2",
+          "commit": "eab5867a55bf881349310a3417c9742e3c8e9da6",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.2"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-03T18:20:36Z",
+          "commit": "af8fd96fbe895cfd3af9e1212c549b7e5cacc42a",
+          "deployment_id": 6831114378,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/37142245131/job/111259772945",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/6831114378/statuses/19221697228"
+        },
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-03T23:35:38Z",
+          "tag": "2026-general.3",
+          "commit": "8726c614bb8ac2a6e9ea3eb406bb53442d44effd",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.3"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-04T00:21:57Z",
+          "commit": "64ec1a10c704f3f989aff4a14a141d2722ff3054",
+          "deployment_id": 6834776843,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/37163820797/job/111323351242",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/6834776843/statuses/19229568196"
+        }
+      ]
+    },
+    {
+      "election_id": "wa-2026-general",
+      "date": "2026-10-03",
+      "headline": "Published the first general-election guide.",
+      "publication_evidence": [
+        {
+          "kind": "published_release",
+          "published_at": "2026-10-03T08:27:20Z",
+          "tag": "2026-general.1",
+          "commit": "8f12914cff9a07a867c51c500294c1355142da1c",
+          "url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.1"
+        },
+        {
+          "kind": "successful_website_deployment",
+          "published_at": "2026-10-03T14:27:19Z",
+          "commit": "b40cbaab1cce84b4cf023daaf44c499512960f7c",
+          "deployment_id": 6825652706,
+          "url": "https://github.com/shaug/seattle-election-guide/actions/runs/37111424774/job/111170679112",
+          "status_url": "https://api.github.com/repos/shaug/seattle-election-guide/deployments/6825652706/statuses/19216104113"
+        }
+      ]
+    }
+  ],
+  "releases": [
+    {
+      "createdAt": "2026-10-16T21:53:24Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-16T21:54:22Z",
+      "tagName": "2026-general.9"
+    },
+    {
+      "createdAt": "2026-10-16T19:20:42Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-16T19:21:34Z",
+      "tagName": "2026-general.8"
+    },
+    {
+      "createdAt": "2026-10-16T18:32:23Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-16T18:41:31Z",
+      "tagName": "2026-general.7"
+    },
+    {
+      "createdAt": "2026-10-12T17:40:08Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-12T17:47:06Z",
+      "tagName": "2026-general.6"
+    },
+    {
+      "createdAt": "2026-10-12T04:55:41Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-12T05:09:25Z",
+      "tagName": "2026-primary.3"
+    },
+    {
+      "createdAt": "2026-10-11T16:24:00Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-12T00:29:23Z",
+      "tagName": "2026-general.5"
+    },
+    {
+      "createdAt": "2026-10-04T12:33:26Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-04T15:24:56Z",
+      "tagName": "2026-general.4"
+    },
+    {
+      "createdAt": "2026-10-03T21:54:57Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-03T23:35:38Z",
+      "tagName": "2026-general.3"
+    },
+    {
+      "createdAt": "2026-10-03T16:13:08Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-03T17:23:45Z",
+      "tagName": "2026-general.2"
+    },
+    {
+      "createdAt": "2026-10-03T08:21:06Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-10-03T08:27:20Z",
+      "tagName": "2026-general.1"
+    },
+    {
+      "createdAt": "2026-08-02T22:40:05Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-08-02T23:33:26Z",
+      "tagName": "2026-primary.2"
+    },
+    {
+      "createdAt": "2026-07-20T06:32:38Z",
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-07-20T06:34:35Z",
+      "tagName": "2026-primary.1"
+    }
+  ]
+}

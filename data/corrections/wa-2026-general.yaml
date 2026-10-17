@@ -1,7 +1,85 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
-  - corrected_on: 2026-10-10
+  - corrected_on: 2026-10-16
+    headline: "Added two previously unrecorded endorsements."
+    body: >-
+      Washington Conservation Action’s No on IL26-638 and the Washington Education
+      Association’s endorsement of Ashley Fedan for LD11 House Position 1 are now
+      included. Both additions were published in the October 16 release after the
+      official evidence was verified.
+    provenance:
+      - label: "IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "LD11 House Position 1"
+        url: /e/wa-2026-general/races/ld-11-state-representative-1/
+      - label: "Reviewed additions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.8/docs/GENERAL_VERIFICATION_REMAINING_2026-10-16.md
+  - corrected_on: 2026-10-16
+    headline: "Added 175 source decisions and revised two endorsements."
+    body: >-
+      The October 16 verification added previously unrecorded decisions from 15
+      organizations, including six whose general-election endorsements were newly
+      represented. AFT Washington’s LD32 Senate choice changed from Jesse Salomon
+      to Cindy Ryu. The Environment and Climate Caucus’s LD43 Senate choice changed
+      from Jamie Pedersen alone to an equal split with Hannah Sabio-Howell.
+      The linked review accounts for every addition and replacement.
+    provenance:
+      - label: "LD32 Senate"
+        url: /e/wa-2026-general/races/ld-32-state-senator/
+      - label: "LD43 Senate"
+        url: /e/wa-2026-general/races/ld-43-state-senator/
+      - label: "Complete reviewed changes and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.7/docs/GENERAL_VERIFICATION_APPLICATION_2026-10-16.md
+  - corrected_on: 2026-10-12
+    headline: "Changed how sparse and unopposed races appear."
+    body: >-
+      Races with too few endorsements now name the measured leading choice while
+      retaining the warning that there is too little evidence to measure agreement.
+      Unopposed races without verified endorsements are omitted from the Endorsements
+      overview. Their individual pages and comparison rows remain available.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Sparse-endorsement display change"
+        url: https://github.com/shaug/seattle-election-guide/pull/533
+      - label: "Unopposed-race display change"
+        url: https://github.com/shaug/seattle-election-guide/pull/529
+      - label: "First published October 12"
+        url: https://github.com/shaug/seattle-election-guide/actions/runs/38299893950
+  - corrected_on: 2026-10-12
+    headline: "Added three sources and 22 decisions."
+    body: >-
+      Young Democrats of Washington, Nondriver Action, and Citizens Against AIPAC
+      Corruption joined the source list with 21 reviewed decisions. Tech 4 Taxes’
+      support for the income tax was also recorded as No on Initiative 645 through
+      an explicit, reviewed ballot mapping. Previously recorded decisions were retained.
+      The active source list grew from 43 to 46 organizations, changing coverage
+      counts across all 52 races. The added endorsements also produced a tie in
+      LD32 House Position 2.
+    provenance:
+      - label: "Sources"
+        url: /e/wa-2026-general/sources/
+      - label: "Initiative 645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "Complete reviewed additions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.6/docs/GENERAL_ADDITIONS_2026-10-12.md
+  - corrected_on: 2026-10-11
+    headline: "Added 64 endorsements from eight organizations."
+    body: >-
+      The general-election lists from The Stranger and Washington Bus are now
+      represented, alongside additions from Tech 4 Housing, Tech 4 Taxes, King County
+      Democrats, Working Families Party, OneAmerica Votes, and WashingtonCAN.
+      The same publication included the King County Democrats co-endorsement update
+      recorded below. The linked review lists every added decision and its evidence.
+      Tech 4 Housing and Working Families Party evidence links were also updated
+      to their current official endorsement lists.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Complete reviewed additions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.5/docs/GENERAL_RECONCILIATION_2026-10-10.md
+  - corrected_on: 2026-10-11
     headline: "Updated King County Democrats’ LD32 Position 2 endorsement."
     body: >-
       The guide previously recorded King County Democrats endorsing Lauren Davis alone.
@@ -12,3 +90,55 @@ entries:
         url: https://www.kcdems.org/our-party/e/2026-endorsements/
       - label: "October 10 endorsement reconciliation"
         url: https://github.com/shaug/seattle-election-guide/issues/508
+      - label: "LD32 House Position 2"
+        url: /e/wa-2026-general/races/ld-32-state-representative-2/
+      - label: "First published October 11; reviewed October 10"
+        url: https://github.com/shaug/seattle-election-guide/actions/runs/38190528105
+  - corrected_on: 2026-10-04
+    headline: "Added WashingtonCAN’s three initiative endorsements."
+    body: >-
+      WashingtonCAN’s No recommendations on IL26-001, IL26-638, and IP26-645 were
+      added after review of its official graphics. Its previously recorded candidate
+      endorsements were retained. The dates those graphics were first published
+      were not established; October 4 is the guide’s release date.
+      The same refresh rechecked the other sources and updated evidence links
+      and availability notes without changing their recorded endorsements.
+    provenance:
+      - label: "IL26-001"
+        url: /e/wa-2026-general/races/initiative-26-001/
+      - label: "IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "IP26-645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "Reviewed additions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.4/docs/GENERAL_REFRESH_2026-10-03.md
+  - corrected_on: 2026-10-03
+    headline: "Changed how endorsement shares and co-endorsements are shown."
+    body: >-
+      The endorsement bars now expose each organization's contribution and any
+      split endorsement. An initial change kept every segment visible; the later
+      publication restored the percentage label at rest on pointer devices,
+      revealing segments on hover or keyboard focus. Touch and individual
+      candidate bars keep their segments visible. The recorded endorsements,
+      shares, and candidate order did not change.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Visible endorsement segments"
+        url: https://github.com/shaug/seattle-election-guide/pull/484
+      - label: "Restored hover, keyboard, and touch behavior"
+        url: https://github.com/shaug/seattle-election-guide/pull/487
+      - label: "October 3 publication"
+        url: https://github.com/shaug/seattle-election-guide/actions/runs/37163820797
+  - corrected_on: 2026-10-03
+    headline: "Published the first general-election guide."
+    body: >-
+      The November guide opened with 614 recorded decisions from 34 organizations
+      across 52 races and measures. This is the starting point for the changes
+      recorded above. Earlier preparation of the November data had not yet
+      replaced the published primary guide.
+    provenance:
+      - label: "First general-election release"
+        url: https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.1
+      - label: "First website publication"
+        url: https://github.com/shaug/seattle-election-guide/actions/runs/37111424774

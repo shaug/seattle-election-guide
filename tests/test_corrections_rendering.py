@@ -99,10 +99,14 @@ def test_render_corrections_document_renders_the_ratified_page(tmp_path: Path) -
         view_model, public_site_url=PUBLIC_SITE_URL, project_url=PROJECT_URL
     )
 
-    assert "<h1>Corrections</h1>" in html
+    assert "<h1>Updates</h1>" in html
     assert '<p class="page-tagline">We get it right, eventually.</p>' in html
-    assert f"<title>Corrections — {election_display_name} — " in html
-    assert f'<meta property="og:title" content="Corrections — {election_display_name}' in html
+    assert f"<title>Updates — {election_display_name} — " in html
+    assert f'<meta property="og:title" content="Updates — {election_display_name}' in html
+    assert (
+        f'<link rel="canonical" href="{PUBLIC_SITE_URL}'
+        f'/e/{view_model.metadata.election_id}/updates/">' in html
+    )
     # The eyebrow names the election, exactly like Sources and Comparisons.
     assert f'<p class="page-eyebrow">{election_display_name}</p>' in html
 
@@ -141,7 +145,31 @@ def test_render_corrections_document_orders_entries_newest_first_regardless_of_i
     assert html.index("August 27, 2026") < html.index("July 22, 2026")
 
 
-def test_render_corrections_document_rejects_an_unsafe_provenance_link(tmp_path: Path) -> None:
+def test_updates_link_to_the_affected_position_without_leaving_the_preview(tmp_path: Path) -> None:
+    view_model = _view_model(tmp_path)
+    position_path = f"/e/{view_model.metadata.election_id}/races/ld-32-state-representative-2/"
+    updates = ElectionCorrections(
+        election_id=view_model.metadata.election_id,
+        entries=[
+            CorrectionEntry(
+                corrected_on=date(2026, 10, 16),
+                headline="Added a newly published endorsement.",
+                body="The leading choice is unchanged; its share has changed.",
+                provenance=[CorrectionProvenanceLink(label="LD32 Position 2", url=position_path)],
+            )
+        ],
+    )
+    html = render_corrections_document(
+        view_model.model_copy(update={"corrections": updates}), public_site_url=PUBLIC_SITE_URL
+    )
+
+    assert f'<a href="{position_path}">LD32 Position 2</a>' in html
+
+
+@pytest.mark.parametrize("unsafe_url", ["javascript:alert(1)", "//example.org/", "/\\example.org/"])
+def test_render_corrections_document_rejects_an_unsafe_provenance_link(
+    tmp_path: Path, unsafe_url: str
+) -> None:
     view_model = _view_model(tmp_path)
     unsafe_corrections = ElectionCorrections(
         election_id=view_model.metadata.election_id,
@@ -150,7 +178,7 @@ def test_render_corrections_document_rejects_an_unsafe_provenance_link(tmp_path:
                 corrected_on=date(2026, 7, 22),
                 headline="Corrected an endorsement attribution.",
                 body="The guide's recommendation was unaffected.",
-                provenance=[CorrectionProvenanceLink(label="capture", url="javascript:alert(1)")],
+                provenance=[CorrectionProvenanceLink(label="capture", url=unsafe_url)],
             )
         ],
     )
@@ -169,7 +197,7 @@ def test_corrections_nav_link_appears_only_when_the_election_has_corrections(
     without = _view_model(tmp_path)
     config = read_rendering_configuration(RENDERING_CONFIG)
     guide_html_without = render_html_document(without, config)
-    assert "Corrections</a>" not in guide_html_without
+    assert "Updates</a>" not in guide_html_without
 
     enabled = without.model_copy(
         update={
@@ -180,12 +208,12 @@ def test_corrections_nav_link_appears_only_when_the_election_has_corrections(
     )
     with_corrections = _with_corrections(enabled)
     election_id = with_corrections.metadata.election_id
-    corrections_href = f"/e/{election_id}/corrections/"
-    nav_link = f'href="{corrections_href}">Corrections</a>'
+    corrections_href = f"/e/{election_id}/updates/"
+    nav_link = f'href="{corrections_href}">Updates</a>'
 
     guide_html = render_html_document(with_corrections, config)
     assert nav_link in guide_html
-    assert f'href="{corrections_href}" aria-current="page">Corrections</a>' not in guide_html
+    assert f'href="{corrections_href}" aria-current="page">Updates</a>' not in guide_html
 
     sources_html = render_sources_document(with_corrections, public_site_url=PUBLIC_SITE_URL)
     assert nav_link in sources_html
@@ -196,4 +224,4 @@ def test_corrections_nav_link_appears_only_when_the_election_has_corrections(
     corrections_html = render_corrections_document(
         with_corrections, public_site_url=PUBLIC_SITE_URL
     )
-    assert f'href="{corrections_href}" aria-current="page">Corrections</a>' in corrections_html
+    assert f'href="{corrections_href}" aria-current="page">Updates</a>' in corrections_html

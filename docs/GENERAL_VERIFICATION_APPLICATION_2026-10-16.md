@@ -1,6 +1,6 @@
 # October 16 approved endorsement application
 
-> Subsequent follow-up: the [remaining verification review](GENERAL_VERIFICATION_REMAINING_2026-10-16.md) records the Stranger and WEA PDF verifications and two further approved additions, bringing the unpublished candidate to 880 decisions. The 878-decision application and input bindings below remain historical.
+> Subsequent follow-up: the [remaining verification review](GENERAL_VERIFICATION_REMAINING_2026-10-16.md) records the Stranger and WEA PDF verifications and two further approved additions, bringing the `2026-general.8` candidate to 880 decisions. The 878-decision application and input bindings below belong to the immutable published `2026-general.7` archive.
 
 Scope: [verification task #545](https://github.com/shaug/seattle-election-guide/issues/545). This follows the [original prepared research packet](GENERAL_VERIFICATION_2026-10-16.md), which remains a historical preparation snapshot.
 

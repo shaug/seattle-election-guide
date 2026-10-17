@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-17T08:45:04Z",
+  "event_id": "refresh-transit-riders-union-20261017T084504Z-a190b53a2afb",
+  "evidence": null,
+  "mode": "live",
+  "scheduled_for": "2026-10-17",
+  "source_id": "transit-riders-union",
+  "status": "failed"
+}

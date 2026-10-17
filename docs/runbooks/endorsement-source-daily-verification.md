@@ -159,6 +159,13 @@ change, linking the merged PR and applicable release/publication evidence. Close
 the finite task after every source obligation is resolved; never use #497 or a
 permanent rolling issue as the future maintenance queue.
 
+When a reviewed change alters the published aggregate or a position page, include an
+[Updates entry](../RESULTS.md#the-updates-page) in the same publication change. New endorsements
+qualify even when the leading choice is unchanged. The entry explains the change and links its
+evidence and affected pages; a grouped entry links the complete reviewed packet. A successful
+check that changes no published content needs no entry. Follow the
+[release procedure](../RELEASE.md#public-update-log) when publishing it.
+
 ## Operator procedure and recovery
 
 Before enabling the schedule, configure the evidence key and confirm the archive

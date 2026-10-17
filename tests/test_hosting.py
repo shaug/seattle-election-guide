@@ -54,7 +54,7 @@ OLDER_COMMIT = "c" * 40
 PANEL_HASH = "b" * 64
 REGISTRY_HASH = "d" * 64
 PROJECT_ROOT = Path(__file__).parents[1]
-GENERAL_BUNDLE_ID = "wa-2026-general-2026-general.7"
+GENERAL_BUNDLE_ID = "wa-2026-general-2026-general.10"
 CURRENT_ID = "wa-2026-primary"
 OLDER_ID = "wa-2025-general"
 CURRENT_BUNDLE_ID = "wa-2026-primary-release"
@@ -839,25 +839,22 @@ def test_enabled_corrections_stage_verify_and_route_exact_asset(tmp_path: Path) 
     )
     verified = verify_staged_pages_site(output, manifest)
 
-    corrections_relative = f"e/{CURRENT_ID}/corrections/index.html"
+    corrections_relative = f"e/{CURRENT_ID}/updates/index.html"
     corrections_path = output / corrections_relative
     assert corrections_path.is_file()
     assert (
         verified.assets[corrections_relative]
         == hashlib.sha256(corrections_path.read_bytes()).hexdigest()
     )
-    assert not (output / "e" / OLDER_ID / "corrections").exists()
+    assert not (output / "e" / OLDER_ID / "updates").exists()
 
     corrections_html = corrections_path.read_text(encoding="utf-8")
-    assert "<h1>Corrections</h1>" in corrections_html
+    assert "<h1>Updates</h1>" in corrections_html
     assert '<p class="page-tagline">We get it right, eventually.</p>' in corrections_html
-    assert (
-        f'href="/e/{CURRENT_ID}/corrections/" aria-current="page">Corrections</a>'
-        in corrections_html
-    )
+    assert f'href="/e/{CURRENT_ID}/updates/" aria-current="page">Updates</a>' in corrections_html
     assert "Corrected an endorsement attribution." in corrections_html
 
-    nav_link = f'href="/e/{CURRENT_ID}/corrections/">Corrections</a>'
+    nav_link = f'href="/e/{CURRENT_ID}/updates/">Updates</a>'
     sources_html = (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
         encoding="utf-8"
     )
@@ -865,22 +862,34 @@ def test_enabled_corrections_stage_verify_and_route_exact_asset(tmp_path: Path) 
     assert nav_link in (output / "about" / "index.html").read_text(encoding="utf-8")
     assert nav_link in (output / "e" / "index.html").read_text(encoding="utf-8")
     # The older, un-enabled election's own pages carry no corrections link.
-    assert "Corrections</a>" not in (output / "e" / OLDER_ID / "sources" / "index.html").read_text(
+    assert "Updates</a>" not in (output / "e" / OLDER_ID / "sources" / "index.html").read_text(
         encoding="utf-8"
     )
 
     results = _run_worker(
         output / "_worker.js",
         [
-            f"https://seattleelections.guide/e/{CURRENT_ID}/corrections",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/updates",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/updates/",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/corrections?ref=old-link",
             f"https://seattleelections.guide/e/{CURRENT_ID}/corrections/",
-            "https://seattleelections.guide/e/not-an-election/corrections/",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/corrections/index.html",
+            f"https://seattleelections.guide/e/{OLDER_ID}/corrections/",
+            "https://seattleelections.guide/e/not-an-election/updates/",
         ],
     )
     assert results[0]["status"] == 308
-    assert results[0]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/corrections/"
-    assert results[1]["body"] == f"asset:/e/{CURRENT_ID}/corrections/"
-    assert results[2]["status"] == 404
+    assert results[0]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/updates/"
+    assert results[1]["body"] == f"asset:/e/{CURRENT_ID}/updates/"
+    assert results[2]["status"] == 301
+    assert results[2]["location"] == (
+        f"https://seattleelections.guide/e/{CURRENT_ID}/updates/?ref=old-link"
+    )
+    for result in results[3:5]:
+        assert result["status"] == 301
+        assert result["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/updates/"
+    assert results[5]["status"] == 404
+    assert results[6]["status"] == 404
 
 
 def test_disabled_corrections_stage_no_page_or_nav_exposure(tmp_path: Path) -> None:
@@ -897,13 +906,13 @@ def test_disabled_corrections_stage_no_page_or_nav_exposure(tmp_path: Path) -> N
         output,
     )
 
-    assert not (output / "e" / CURRENT_ID / "corrections").exists()
-    assert not (output / "e" / OLDER_ID / "corrections").exists()
-    assert "Corrections</a>" not in (
-        output / "e" / CURRENT_ID / "sources" / "index.html"
-    ).read_text(encoding="utf-8")
-    assert "Corrections</a>" not in (output / "about" / "index.html").read_text(encoding="utf-8")
-    assert "Corrections</a>" not in (output / "e" / "index.html").read_text(encoding="utf-8")
+    assert not (output / "e" / CURRENT_ID / "updates").exists()
+    assert not (output / "e" / OLDER_ID / "updates").exists()
+    assert "Updates</a>" not in (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    assert "Updates</a>" not in (output / "about" / "index.html").read_text(encoding="utf-8")
+    assert "Updates</a>" not in (output / "e" / "index.html").read_text(encoding="utf-8")
 
 
 def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
@@ -1670,22 +1679,22 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
     assert current_election == {
         "election_id": "wa-2026-general",
         "bundle_id": GENERAL_BUNDLE_ID,
-        "release_version": "2026-general.7",
+        "release_version": "2026-general.10",
         "source_panel_id": "wa-2026-general-default-sources-v2",
         "source_panel_hash": "5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569",
         "source_registry_hash": "08473de324a7ca66617885e774d406fa992bc2bfbf3916acff366aad017bf2a2",
     }
     historical = site_manifest["elections"][1]
-    assert historical["bundle_id"] == "wa-2026-primary-2026-primary.3"
+    assert historical["bundle_id"] == "wa-2026-primary-2026-primary.4"
     assert historical["source_registry_hash"] == (
         "76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8"
     )
-    assert historical["git_commit"] == "6e93dafe45ac45f343c5ea3d123f53e24725d15e"
+    assert historical["git_commit"] == "c5a5252202d0f78bcec5e54f9f6d0dfe0841d481"
     assert historical["release_manifest_sha256"] == (
-        "7989827c95c11fc68dbaaa32f632eaeb3d2c1495dfa2728c644faecf2441a516"
+        "723c6b16bd74e212850f95a4454b28253abc630b71ffd42ed0ac6a1345a02cbc"
     )
     assert historical["bundle_sha256"] == (
-        "5418b15370a6ed0f8eb0f4e02d9c9a02faf9f6f5043f9c3e39f3abe120b5ad9d"
+        "7ec162d04f795900bbd94172d0d555fd2e8a292267156bc0576882dc11ae14c6"
     )
     assert workflow["env"]["CANDIDATE_BUNDLE_ID"] == GENERAL_BUNDLE_ID
     deploy = workflow["jobs"]["deploy"]
@@ -1727,7 +1736,7 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         if step.get("name") == "Build and verify deterministic general release"
     )
     assert "make check-release-reproducible" in build_step["run"]
-    assert "seattle-election-guide-2026-general.7.zip" in build_step["run"]
+    assert "seattle-election-guide-2026-general.10.zip" in build_step["run"]
     stage_step = next(
         step
         for step in publication_steps
@@ -1945,7 +1954,7 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
         if step.get("name") == "Build the general release at the pull request head"
     )
     assert "data/releases/wa-2026-general/source-decisions.yaml" in build_step["run"]
-    assert "--release-version 2026-general.7" in build_step["run"]
+    assert "--release-version 2026-general.10" in build_step["run"]
     assert '--git-commit "$HEAD_SHA"' in build_step["run"]
     stage_step = next(
         step for step in deploy["steps"] if step.get("name") == "Stage and verify the Pages site"

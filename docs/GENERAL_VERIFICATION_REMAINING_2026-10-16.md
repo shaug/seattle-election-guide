@@ -32,7 +32,7 @@ Six automatic-adapter baseline approvals and broader daily or whole-panel attest
 
 ## Reviewed input bindings
 
-The unpublished `2026-general.7` candidate now binds the following inputs at 880 decisions. Read-only release inspection found `2026-general.6` remains the latest published release, with no `2026-general.7` tag; this follow-up neither publishes nor deploys a release. The source panel, source registry, inventory, eligibility and scoring rules are unchanged.
+The `2026-general.8` candidate binds the following approved inputs at 880 decisions. During preparation of this review, the latest published release was `2026-general.6` and no `.7` tag existed. The 878-decision `2026-general.7` archive was published concurrently from `20e80b74dc5b2e85807f88c2327bfe74aac7207d` before this follow-up merged. The maintainer then explicitly selected a new `.8` publication for these 880 decisions, preserving `.7`. This document does not itself publish or deploy a release. The source panel, source registry, inventory, eligibility and scoring rules are unchanged.
 
 | Input | SHA-256 |
 | --- | --- |

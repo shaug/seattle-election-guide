@@ -218,18 +218,38 @@ One hard rule from the framing: the result column is **excluded from agreement**
 never tint agree or differ, and it never contributes to a row's "Differs" marker. The page
 states what happened next to what sources said; it does not score one against the other.
 
-## The corrections page
+## The updates page
 
-Scoped with this epic (decision D2) because both features are the archive talking about itself
-after publication. Corrections are **per-election**: a top-line page with the same affordances
+Scoped with this epic (decision D2) because both features record what happens after
+publication. Updates are **per-election**: a top-line page with the same affordances
 and structure as any other major page, at the election's own path, rendered — and linked in the
-nav — only when that election actually has corrections. Anything that crosses elections is a site
-matter and belongs to the changelog (O8), not to Corrections.
+nav — only when that election actually has entries. It lives at
+`/e/<election-id>/updates/`; the former `/corrections/` address permanently redirects there.
 
-The editorial line: a correction is **anything that changes what a published page asserts**.
-Routine pre-election data refreshes don't qualify; changed recommendations, retracted
-endorsements, and amended results do. An amended results file cites the capture it supersedes,
-and that citation is the page's entry. Tagline: *"We get it right, eventually."*
+**Every change to the published aggregate or a position page gets an entry.** New endorsements
+qualify, including newly available publications and endorsements previously missed. So do
+corrections, withdrawals, source membership or eligibility changes, changed counts or shares,
+changed leading choices, changes to which races appear, and certified or amended results.
+The leading choice need not change. Routine pre-election refreshes qualify whenever they
+change published content. A check that changes no published content needs no entry.
+
+Each dated entry explains what changed and why, with evidence and links to affected pages.
+A reviewed batch may share an entry if its linked record accounts for every change in the batch.
+An amended result cites the capture it supersedes. Entries accompany the release that first
+publishes the change; they do not imply the organization announced it on that date.
+For a historical backfill, use the first evidenced public release or successful deployment,
+in America/Los_Angeles, rather than the merge or review date. Link that publication evidence.
+Several changes first published together may share a dated entry when the linked audit accounts
+for every change. Correct an existing date when publication evidence disproves it, retaining the
+underlying change and a citation explaining the correction. Record archive regressions and
+restorations as public changes too; an immutable old bundle is not necessarily the last live guide.
+Site changes that do not alter election content belong to the software changelog (O8).
+Tagline: *"We get it right, eventually."*
+
+*(2026-10-16, issue #551: Updates replaces Corrections. This supersedes the original exclusion
+of routine refreshes. The guide catches up with reality; the log records that progress as well
+as errors. Existing changes remain recorded; the evidenced-date rule above, added for #556,
+supersedes the earlier requirement to retain dates even when they were wrong.)*
 
 ## Decisions record (2026-08-02)
 
@@ -469,6 +489,14 @@ unchanged rather than assumed.
 guide's own identical strip (#369). A race-page date bar was raised and is undesigned.
 
 ## The corrections page's implementation (2026-08-08 addendum, #290)
+
+**2026-10-16, #551:** the public page is now Updates at `/updates/`, and its scope is the
+rule above. The implementation names below (`corrections`, `corrected_on`, and
+`data/corrections/`) remain the stored contract so existing immutable publication view models
+continue to load. `corrected_on` supplies an update's displayed date, including additions.
+Provenance links may also be root-relative links to affected pages; those keep the reader on
+the current origin, while HTTP(S) evidence links open in a new tab. No data migration is needed.
+The original implementation record follows.
 
 Storage path (decided by this ticket, per its own scope no separate ratification needed):
 **one file per election at `data/corrections/<election-id>.yaml`**, loaded by

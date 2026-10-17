@@ -1,0 +1,1208 @@
+{
+  "king-county-assessor": {
+    "before": {
+      "winners": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "share": "1",
+      "points": "4",
+      "grade": "A+",
+      "explicit": 4,
+      "covered": 4,
+      "eligible": 29,
+      "support": {
+        "king-county-assessor--rob-foxcurran": "4"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "share": "15/26",
+      "points": "15/2",
+      "grade": "C",
+      "explicit": 13,
+      "covered": 13,
+      "eligible": 36,
+      "support": {
+        "king-county-assessor--christopher-roberts": "11/2",
+        "king-county-assessor--rob-foxcurran": "15/2"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-assessor--rob-foxcurran"
+          ],
+          "allocation": {
+            "king-county-assessor--rob-foxcurran": "1"
+          }
+        }
+      ]
+    }
+  },
+  "king-county-council-2": {
+    "before": {
+      "winners": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "share": "15/16",
+      "points": "15/2",
+      "grade": "A+",
+      "explicit": 8,
+      "covered": 8,
+      "eligible": 29,
+      "support": {
+        "king-county-council-2--rebecca-salda-a": "15/2",
+        "king-county-council-2--toshiko-grace-hasegawa": "1/2"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "share": "7/8",
+      "points": "35/2",
+      "grade": "A",
+      "explicit": 20,
+      "covered": 20,
+      "eligible": 36,
+      "support": {
+        "king-county-council-2--rebecca-salda-a": "35/2",
+        "king-county-council-2--toshiko-grace-hasegawa": "5/2"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-council-2--toshiko-grace-hasegawa"
+          ],
+          "allocation": {
+            "king-county-council-2--toshiko-grace-hasegawa": "1"
+          }
+        }
+      ]
+    }
+  },
+  "king-county-council-8": {
+    "before": {
+      "winners": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "share": "1",
+      "points": "9",
+      "grade": "A+",
+      "explicit": 9,
+      "covered": 9,
+      "eligible": 29,
+      "support": {
+        "king-county-council-8--teresa-mosqueda": "9"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "share": "1",
+      "points": "21",
+      "grade": "A+",
+      "explicit": 21,
+      "covered": 21,
+      "eligible": 36,
+      "support": {
+        "king-county-council-8--teresa-mosqueda": "21"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-council-8--nick-duda"
+          ],
+          "allocation": {
+            "king-county-council-8--nick-duda": "1"
+          }
+        }
+      ]
+    }
+  },
+  "ld-11-state-representative-1": {
+    "before": {
+      "winners": [
+        "ld-11-state-representative-1--david-hackney"
+      ],
+      "share": "5/8",
+      "points": "5/2",
+      "grade": "B",
+      "explicit": 4,
+      "covered": 5,
+      "eligible": 30,
+      "support": {
+        "ld-11-state-representative-1--ashley-fedan": "3/2",
+        "ld-11-state-representative-1--david-hackney": "5/2"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-11-state-representative-1--david-hackney"
+      ],
+      "share": "7/11",
+      "points": "7",
+      "grade": "B",
+      "explicit": 11,
+      "covered": 12,
+      "eligible": 30,
+      "support": {
+        "ld-11-state-representative-1--ashley-fedan": "4",
+        "ld-11-state-representative-1--david-hackney": "7"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-11-state-representative-1--david-hackney"
+          ],
+          "allocation": {
+            "ld-11-state-representative-1--david-hackney": "1"
+          }
+        }
+      ]
+    }
+  },
+  "ld-11-state-representative-2": {
+    "before": {
+      "winners": [
+        "ld-11-state-representative-2--steve-bergquist"
+      ],
+      "share": "1",
+      "points": "3",
+      "grade": "A",
+      "explicit": 3,
+      "covered": 3,
+      "eligible": 30,
+      "support": {
+        "ld-11-state-representative-2--steve-bergquist": "3"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-11-state-representative-2--steve-bergquist"
+      ],
+      "share": "1",
+      "points": "8",
+      "grade": "A+",
+      "explicit": 8,
+      "covered": 8,
+      "eligible": 30,
+      "support": {
+        "ld-11-state-representative-2--steve-bergquist": "8"
+      },
+      "comparison": []
+    }
+  },
+  "ld-32-state-representative-1": {
+    "before": {
+      "winners": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "share": "3/4",
+      "points": "3",
+      "grade": "A",
+      "explicit": 4,
+      "covered": 5,
+      "eligible": 30,
+      "support": {
+        "ld-32-state-representative-1--danica-noble": "3",
+        "ld-32-state-representative-1--keith-scully": "1"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "share": "7/11",
+      "points": "7",
+      "grade": "B",
+      "explicit": 11,
+      "covered": 12,
+      "eligible": 30,
+      "support": {
+        "ld-32-state-representative-1--danica-noble": "7",
+        "ld-32-state-representative-1--jenna-nand": "3/2",
+        "ld-32-state-representative-1--keith-scully": "5/2"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-32-state-representative-1--keith-scully"
+          ],
+          "allocation": {
+            "ld-32-state-representative-1--keith-scully": "1"
+          }
+        }
+      ]
+    }
+  },
+  "ld-32-state-representative-2": {
+    "before": {
+      "winners": [
+        "ld-32-state-representative-2--lauren-davis"
+      ],
+      "share": "2/3",
+      "points": "4",
+      "grade": "B",
+      "explicit": 6,
+      "covered": 6,
+      "eligible": 30,
+      "support": {
+        "ld-32-state-representative-2--imraan-siddiqi": "2",
+        "ld-32-state-representative-2--lauren-davis": "4"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-32-state-representative-2--lauren-davis"
+      ],
+      "share": "21/34",
+      "points": "21/2",
+      "grade": "B",
+      "explicit": 17,
+      "covered": 17,
+      "eligible": 30,
+      "support": {
+        "ld-32-state-representative-2--imraan-siddiqi": "13/2",
+        "ld-32-state-representative-2--lauren-davis": "21/2"
+      },
+      "comparison": []
+    }
+  },
+  "ld-32-state-senator": {
+    "before": {
+      "winners": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "share": "4/5",
+      "points": "4",
+      "grade": "A",
+      "explicit": 5,
+      "covered": 5,
+      "eligible": 30,
+      "support": {
+        "ld-32-state-senator--cindy-ryu": "4",
+        "ld-32-state-senator--jesse-salomon": "1"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "share": "7/10",
+      "points": "21/2",
+      "grade": "B",
+      "explicit": 15,
+      "covered": 15,
+      "eligible": 30,
+      "support": {
+        "ld-32-state-senator--cindy-ryu": "21/2",
+        "ld-32-state-senator--jesse-salomon": "9/2"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-32-state-senator--jesse-salomon"
+          ],
+          "allocation": {
+            "ld-32-state-senator--jesse-salomon": "1"
+          }
+        }
+      ]
+    }
+  },
+  "ld-34-state-representative-1": {
+    "before": {
+      "winners": [
+        "ld-34-state-representative-1--brianna-k-thomas"
+      ],
+      "share": "1",
+      "points": "3",
+      "grade": "A",
+      "explicit": 3,
+      "covered": 3,
+      "eligible": 30,
+      "support": {
+        "ld-34-state-representative-1--brianna-k-thomas": "3"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-34-state-representative-1--brianna-k-thomas"
+      ],
+      "share": "1",
+      "points": "8",
+      "grade": "A+",
+      "explicit": 8,
+      "covered": 8,
+      "eligible": 30,
+      "support": {
+        "ld-34-state-representative-1--brianna-k-thomas": "8"
+      },
+      "comparison": []
+    }
+  },
+  "ld-34-state-representative-2": {
+    "before": {
+      "winners": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "share": "1",
+      "points": "7",
+      "grade": "A+",
+      "explicit": 7,
+      "covered": 7,
+      "eligible": 30,
+      "support": {
+        "ld-34-state-representative-2--joe-fitzgibbon": "7"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "share": "17/18",
+      "points": "17",
+      "grade": "A+",
+      "explicit": 18,
+      "covered": 18,
+      "eligible": 30,
+      "support": {
+        "ld-34-state-representative-2--joe-fitzgibbon": "17",
+        "ld-34-state-representative-2--mary-anito": "1"
+      },
+      "comparison": []
+    }
+  },
+  "ld-34-state-senator": {
+    "before": {
+      "winners": [
+        "ld-34-state-senator--emily-alvarado"
+      ],
+      "share": "1",
+      "points": "5",
+      "grade": "A+",
+      "explicit": 5,
+      "covered": 5,
+      "eligible": 30,
+      "support": {
+        "ld-34-state-senator--emily-alvarado": "5"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-34-state-senator--emily-alvarado"
+      ],
+      "share": "1",
+      "points": "15",
+      "grade": "A+",
+      "explicit": 15,
+      "covered": 15,
+      "eligible": 30,
+      "support": {
+        "ld-34-state-senator--emily-alvarado": "15"
+      },
+      "comparison": []
+    }
+  },
+  "ld-36-state-representative-1": {
+    "before": {
+      "winners": [
+        "ld-36-state-representative-1--julia-grant-reed"
+      ],
+      "share": "1",
+      "points": "6",
+      "grade": "A+",
+      "explicit": 6,
+      "covered": 6,
+      "eligible": 30,
+      "support": {
+        "ld-36-state-representative-1--julia-grant-reed": "6"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-36-state-representative-1--julia-grant-reed"
+      ],
+      "share": "1",
+      "points": "17",
+      "grade": "A+",
+      "explicit": 17,
+      "covered": 17,
+      "eligible": 30,
+      "support": {
+        "ld-36-state-representative-1--julia-grant-reed": "17"
+      },
+      "comparison": []
+    }
+  },
+  "ld-36-state-representative-2": {
+    "before": {
+      "winners": [
+        "ld-36-state-representative-2--liz-berry"
+      ],
+      "share": "1",
+      "points": "4",
+      "grade": "A+",
+      "explicit": 4,
+      "covered": 4,
+      "eligible": 30,
+      "support": {
+        "ld-36-state-representative-2--liz-berry": "4"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-36-state-representative-2--liz-berry"
+      ],
+      "share": "1",
+      "points": "13",
+      "grade": "A+",
+      "explicit": 13,
+      "covered": 13,
+      "eligible": 30,
+      "support": {
+        "ld-36-state-representative-2--liz-berry": "13"
+      },
+      "comparison": []
+    }
+  },
+  "ld-36-state-senator": {
+    "before": {
+      "winners": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "share": "1",
+      "points": "4",
+      "grade": "A+",
+      "explicit": 4,
+      "covered": 4,
+      "eligible": 30,
+      "support": {
+        "ld-36-state-senator--noel-c-frame": "4"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "share": "1",
+      "points": "10",
+      "grade": "A+",
+      "explicit": 10,
+      "covered": 10,
+      "eligible": 30,
+      "support": {
+        "ld-36-state-senator--noel-c-frame": "10"
+      },
+      "comparison": []
+    }
+  },
+  "ld-37-state-representative-1": {
+    "before": {
+      "winners": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "share": "2/3",
+      "points": "2",
+      "grade": "B",
+      "explicit": 3,
+      "covered": 3,
+      "eligible": 30,
+      "support": {
+        "ld-37-state-representative-1--kelabe-tewolde": "2",
+        "ld-37-state-representative-1--sharon-tomiko-santos": "1"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-37-state-representative-1--sharon-tomiko-santos"
+      ],
+      "share": "3/5",
+      "points": "6",
+      "grade": "B",
+      "explicit": 10,
+      "covered": 10,
+      "eligible": 30,
+      "support": {
+        "ld-37-state-representative-1--kelabe-tewolde": "4",
+        "ld-37-state-representative-1--sharon-tomiko-santos": "6"
+      },
+      "comparison": []
+    }
+  },
+  "ld-37-state-representative-2": {
+    "before": {
+      "winners": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "share": "1",
+      "points": "6",
+      "grade": "A+",
+      "explicit": 6,
+      "covered": 6,
+      "eligible": 30,
+      "support": {
+        "ld-37-state-representative-2--jaelynn-scott": "6"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "share": "1",
+      "points": "16",
+      "grade": "A+",
+      "explicit": 16,
+      "covered": 16,
+      "eligible": 30,
+      "support": {
+        "ld-37-state-representative-2--jaelynn-scott": "16"
+      },
+      "comparison": []
+    }
+  },
+  "ld-37-state-senator": {
+    "before": {
+      "winners": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "share": "1",
+      "points": "5",
+      "grade": "A+",
+      "explicit": 5,
+      "covered": 6,
+      "eligible": 30,
+      "support": {
+        "ld-37-state-senator--chipalo-street": "5"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "share": "9/10",
+      "points": "27/2",
+      "grade": "A+",
+      "explicit": 15,
+      "covered": 16,
+      "eligible": 30,
+      "support": {
+        "ld-37-state-senator--chipalo-street": "27/2",
+        "ld-37-state-senator--tatiana-brown": "3/2"
+      },
+      "comparison": []
+    }
+  },
+  "ld-43-state-representative-1": {
+    "before": {
+      "winners": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "share": "1",
+      "points": "7",
+      "grade": "A+",
+      "explicit": 7,
+      "covered": 7,
+      "eligible": 30,
+      "support": {
+        "ld-43-state-representative-1--nicole-macri": "7"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "share": "1",
+      "points": "16",
+      "grade": "A+",
+      "explicit": 16,
+      "covered": 16,
+      "eligible": 30,
+      "support": {
+        "ld-43-state-representative-1--nicole-macri": "16"
+      },
+      "comparison": []
+    }
+  },
+  "ld-43-state-representative-2": {
+    "before": {
+      "winners": [
+        "ld-43-state-representative-2--shaun-scott"
+      ],
+      "share": "1",
+      "points": "4",
+      "grade": "A+",
+      "explicit": 4,
+      "covered": 4,
+      "eligible": 30,
+      "support": {
+        "ld-43-state-representative-2--shaun-scott": "4"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-43-state-representative-2--shaun-scott"
+      ],
+      "share": "1",
+      "points": "8",
+      "grade": "A+",
+      "explicit": 8,
+      "covered": 8,
+      "eligible": 30,
+      "support": {
+        "ld-43-state-representative-2--shaun-scott": "8"
+      },
+      "comparison": []
+    }
+  },
+  "ld-43-state-senator": {
+    "before": {
+      "winners": [
+        "ld-43-state-senator--hannah-sabio-howell",
+        "ld-43-state-senator--jamie-pedersen"
+      ],
+      "share": "1/2",
+      "points": "4",
+      "grade": "TIED",
+      "explicit": 8,
+      "covered": 8,
+      "eligible": 30,
+      "support": {
+        "ld-43-state-senator--hannah-sabio-howell": "4",
+        "ld-43-state-senator--jamie-pedersen": "4"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-43-state-senator--jamie-pedersen"
+      ],
+      "share": "13/21",
+      "points": "13",
+      "grade": "B",
+      "explicit": 21,
+      "covered": 21,
+      "eligible": 30,
+      "support": {
+        "ld-43-state-senator--hannah-sabio-howell": "8",
+        "ld-43-state-senator--jamie-pedersen": "13"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen"
+          ],
+          "allocation": {
+            "ld-43-state-senator--jamie-pedersen": "1"
+          }
+        }
+      ]
+    }
+  },
+  "ld-46-state-representative-1": {
+    "before": {
+      "winners": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "share": "1/2",
+      "points": "3",
+      "grade": "C",
+      "explicit": 6,
+      "covered": 7,
+      "eligible": 30,
+      "support": {
+        "ld-46-state-representative-1--gerry-pollet": "3",
+        "ld-46-state-representative-1--ron-davis": "2",
+        "ld-46-state-representative-1--will-dreher": "1"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-46-state-representative-1--gerry-pollet"
+      ],
+      "share": "9/14",
+      "points": "9",
+      "grade": "B",
+      "explicit": 14,
+      "covered": 15,
+      "eligible": 30,
+      "support": {
+        "ld-46-state-representative-1--gerry-pollet": "9",
+        "ld-46-state-representative-1--ron-davis": "4",
+        "ld-46-state-representative-1--will-dreher": "1"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "allocation": {
+            "ld-46-state-representative-1--gerry-pollet": "1"
+          }
+        }
+      ]
+    }
+  },
+  "ld-46-state-representative-2": {
+    "before": {
+      "winners": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "share": "1",
+      "points": "7",
+      "grade": "A+",
+      "explicit": 7,
+      "covered": 7,
+      "eligible": 30,
+      "support": {
+        "ld-46-state-representative-2--darya-farivar": "7"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "share": "1",
+      "points": "17",
+      "grade": "A+",
+      "explicit": 17,
+      "covered": 17,
+      "eligible": 30,
+      "support": {
+        "ld-46-state-representative-2--darya-farivar": "17"
+      },
+      "comparison": []
+    }
+  },
+  "ld-46-state-senator": {
+    "before": {
+      "winners": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "share": "1",
+      "points": "6",
+      "grade": "A+",
+      "explicit": 6,
+      "covered": 6,
+      "eligible": 30,
+      "support": {
+        "ld-46-state-senator--javier-valdez": "6"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "share": "1",
+      "points": "15",
+      "grade": "A+",
+      "explicit": 15,
+      "covered": 15,
+      "eligible": 30,
+      "support": {
+        "ld-46-state-senator--javier-valdez": "15"
+      },
+      "comparison": []
+    }
+  },
+  "seattle-city-council-5": {
+    "before": {
+      "winners": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "share": "1",
+      "points": "8",
+      "grade": "A+",
+      "explicit": 8,
+      "covered": 8,
+      "eligible": 29,
+      "support": {
+        "seattle-city-council-5--nilu-jenks": "8"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "share": "37/40",
+      "points": "37/2",
+      "grade": "A+",
+      "explicit": 20,
+      "covered": 20,
+      "eligible": 36,
+      "support": {
+        "seattle-city-council-5--julie-kang": "1",
+        "seattle-city-council-5--nilu-jenks": "37/2",
+        "seattle-city-council-5--silas-james": "1/2"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "seattle-city-council-5--julie-kang"
+          ],
+          "allocation": {
+            "seattle-city-council-5--julie-kang": "1"
+          }
+        }
+      ]
+    }
+  },
+  "seattle-municipal-court-judge-5": {
+    "before": {
+      "winners": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "share": "1",
+      "points": "2",
+      "grade": "A",
+      "explicit": 2,
+      "covered": 2,
+      "eligible": 29,
+      "support": {
+        "seattle-municipal-court-judge-5--gabe-rothstein": "2"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "share": "17/18",
+      "points": "17/2",
+      "grade": "A+",
+      "explicit": 9,
+      "covered": 9,
+      "eligible": 36,
+      "support": {
+        "seattle-municipal-court-judge-5--gabe-rothstein": "17/2",
+        "seattle-municipal-court-judge-5--garmon-newsom": "1/2"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "seattle-municipal-court-judge-5--garmon-newsom"
+          ],
+          "allocation": {
+            "seattle-municipal-court-judge-5--garmon-newsom": "1"
+          }
+        }
+      ]
+    }
+  },
+  "seattle-proposition-1-library-levy": {
+    "before": {
+      "winners": [
+        "seattle-proposition-1-library-levy--yes"
+      ],
+      "share": "1",
+      "points": "4",
+      "grade": "A+",
+      "explicit": 4,
+      "covered": 4,
+      "eligible": 29,
+      "support": {
+        "seattle-proposition-1-library-levy--yes": "4"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "seattle-proposition-1-library-levy--yes"
+      ],
+      "share": "1",
+      "points": "9",
+      "grade": "A+",
+      "explicit": 9,
+      "covered": 9,
+      "eligible": 36,
+      "support": {
+        "seattle-proposition-1-library-levy--yes": "9"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "seattle-proposition-1-library-levy--no"
+          ],
+          "allocation": {
+            "seattle-proposition-1-library-levy--no": "1"
+          }
+        }
+      ]
+    }
+  },
+  "supreme-court-justice-1": {
+    "before": {
+      "winners": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "share": "1",
+      "points": "6",
+      "grade": "A+",
+      "explicit": 6,
+      "covered": 6,
+      "eligible": 29,
+      "support": {
+        "supreme-court-justice-1--colleen-melody": "6"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "share": "1",
+      "points": "19",
+      "grade": "A+",
+      "explicit": 19,
+      "covered": 19,
+      "eligible": 36,
+      "support": {
+        "supreme-court-justice-1--colleen-melody": "19"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-1--colleen-melody"
+          ],
+          "allocation": {
+            "supreme-court-justice-1--colleen-melody": "1"
+          }
+        }
+      ]
+    }
+  },
+  "supreme-court-justice-3": {
+    "before": {
+      "winners": [
+        "supreme-court-justice-3--mike-diaz"
+      ],
+      "share": "7/12",
+      "points": "7/2",
+      "grade": "C",
+      "explicit": 6,
+      "covered": 6,
+      "eligible": 29,
+      "support": {
+        "supreme-court-justice-3--jaime-michelle-hawk": "5/2",
+        "supreme-court-justice-3--mike-diaz": "7/2"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "supreme-court-justice-3--mike-diaz"
+      ],
+      "share": "19/36",
+      "points": "19/2",
+      "grade": "C",
+      "explicit": 18,
+      "covered": 18,
+      "eligible": 36,
+      "support": {
+        "supreme-court-justice-3--jaime-michelle-hawk": "17/2",
+        "supreme-court-justice-3--mike-diaz": "19/2"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-3--mike-diaz"
+          ],
+          "allocation": {
+            "supreme-court-justice-3--mike-diaz": "1"
+          }
+        }
+      ]
+    }
+  },
+  "supreme-court-justice-5": {
+    "before": {
+      "winners": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "share": "7/10",
+      "points": "7/2",
+      "grade": "B",
+      "explicit": 5,
+      "covered": 5,
+      "eligible": 29,
+      "support": {
+        "supreme-court-justice-5--sharonda-amamilo": "3/2",
+        "supreme-court-justice-5--theo-angelis": "7/2"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "share": "12/19",
+      "points": "12",
+      "grade": "B",
+      "explicit": 19,
+      "covered": 19,
+      "eligible": 36,
+      "support": {
+        "supreme-court-justice-5--sharonda-amamilo": "7",
+        "supreme-court-justice-5--theo-angelis": "12"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-5--sharonda-amamilo"
+          ],
+          "allocation": {
+            "supreme-court-justice-5--sharonda-amamilo": "1"
+          }
+        }
+      ]
+    }
+  },
+  "supreme-court-justice-7": {
+    "before": {
+      "winners": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "share": "1",
+      "points": "3",
+      "grade": "A",
+      "explicit": 3,
+      "covered": 4,
+      "eligible": 29,
+      "support": {
+        "supreme-court-justice-7--debra-l-stephens": "3"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "share": "1",
+      "points": "12",
+      "grade": "A+",
+      "explicit": 12,
+      "covered": 13,
+      "eligible": 36,
+      "support": {
+        "supreme-court-justice-7--debra-l-stephens": "12"
+      },
+      "comparison": [
+        {
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-7--debra-l-stephens"
+          ],
+          "allocation": {
+            "supreme-court-justice-7--debra-l-stephens": "1"
+          }
+        }
+      ]
+    }
+  },
+  "us-house-7": {
+    "before": {
+      "winners": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "share": "1",
+      "points": "5",
+      "grade": "A+",
+      "explicit": 5,
+      "covered": 6,
+      "eligible": 29,
+      "support": {
+        "us-house-7--pramila-jayapal": "5"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "share": "1",
+      "points": "18",
+      "grade": "A+",
+      "explicit": 18,
+      "covered": 19,
+      "eligible": 36,
+      "support": {
+        "us-house-7--pramila-jayapal": "18"
+      },
+      "comparison": []
+    }
+  },
+  "us-house-9": {
+    "before": {
+      "winners": [
+        "us-house-9--adam-smith"
+      ],
+      "share": "3/4",
+      "points": "3",
+      "grade": "A",
+      "explicit": 4,
+      "covered": 5,
+      "eligible": 29,
+      "support": {
+        "us-house-9--adam-smith": "3",
+        "us-house-9--kshama-sawant": "1"
+      },
+      "comparison": []
+    },
+    "after": {
+      "winners": [
+        "us-house-9--adam-smith"
+      ],
+      "share": "8/9",
+      "points": "8",
+      "grade": "A",
+      "explicit": 9,
+      "covered": 12,
+      "eligible": 36,
+      "support": {
+        "us-house-9--adam-smith": "8",
+        "us-house-9--kshama-sawant": "1"
+      },
+      "comparison": []
+    }
+  }
+}

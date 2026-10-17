@@ -9,6 +9,65 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-primary.4 — 2026-10-17
+
+### Documentation
+
+- Record 2026-general.9 release changelog (#555)
+
+### Fixed
+
+- Backfill both election Updates histories from first publication (#557)
+## 2026-general.9 — 2026-10-16
+
+### Added
+
+- Broaden Updates and simplify How this works (#552)
+
+### Documentation
+
+- Record 2026-general.8 release changelog (#549)
+
+### Tooling
+
+- Prepare 2026-general.9 publication (#554)
+## 2026-general.8 — 2026-10-16
+
+### Documentation
+
+- Record 2026-general.7 release changelog (#547)
+
+### Other
+
+- Verify Stranger and WEA; add two missed endorsements (#546)
+
+### Tooling
+
+- Prepare 2026-general.8 publication (#548)
+## 2026-general.7 — 2026-10-16
+
+### Documentation
+
+- Record 2026-general.6 release changelog (#531)
+
+### Fixed
+
+- Enumerate all preview deployments before teardown (#537)
+- Repair three live endorsement source checks (#544)
+- Show sparse endorsement leaders on guide cards (#533)
+
+### Other
+
+- Hide unopposed general-election races with no endorsements (#529)
+
+### Tests
+
+- Enforce frontend residue contracts (#538)
+
+### Tooling
+
+- Apply approved October 16 endorsements (#543)
+- Bump the npm-dependencies group with 2 updates (#539)
 ## 2026-general.6 — 2026-10-12
 
 ### Added

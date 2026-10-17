@@ -232,9 +232,9 @@ def validate_rendered_guide(
             if result is not None and result.capture_url is not None:
                 expected_html_links.add(result.capture_url)
     if view_model.corrections is not None and view_model.corrections.entries:
-        # The band's nav grows a Corrections link under the same "state, not
+        # The band's nav grows an Updates link under the same "state, not
         # option" gate `documents.py`'s `_corrections_href` follows (#290).
-        expected_html_links.add(f"/e/{view_model.metadata.election_id}/corrections/")
+        expected_html_links.add(f"/e/{view_model.metadata.election_id}/updates/")
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     required_site_metadata = {
         f'<link rel="canonical" href="{canonical_url}">',

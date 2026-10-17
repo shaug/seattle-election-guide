@@ -2919,13 +2919,13 @@ def test_release_validation_accounts_for_the_results_capture_and_corrections_lin
             "corrections": _valid_corrections(election_id=with_results.metadata.election_id),
         }
     )
-    corrections_href = f"/e/{view_model.metadata.election_id}/corrections/"
+    corrections_href = f"/e/{view_model.metadata.election_id}/updates/"
 
     html = render_html_document(view_model, configuration)
     # Both links this fix accounts for are really on the page -- otherwise
     # the assertions below would trivially pass with nothing to catch.
     assert f'href="{capture_url}"' in html
-    assert f'href="{corrections_href}">Corrections</a>' in html
+    assert f'href="{corrections_href}">Updates</a>' in html
 
     html_path = tmp_path / "guide.html"
     html_path.write_text(html, encoding="utf-8")

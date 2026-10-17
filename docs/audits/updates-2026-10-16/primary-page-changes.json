@@ -1,0 +1,526 @@
+[
+  {
+    "headline_key": "primary-initial-consensus",
+    "corrected_on": "2026-07-21",
+    "headline": "Simplified endorsement agreement and source disclosures.",
+    "body": "The website replaced letter grades with the leading choice’s share among explicitly endorsing sources, a source count, and a warning when there were too few endorsements. Candidate lists linked each endorsement to its evidence and identified split endorsements. The source directory added participation counts and separated contributing organizations from two research gaps.",
+    "provenance": [
+      {
+        "label": "Reviewed change #30",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/30"
+      },
+      {
+        "label": "Reviewed change #32",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/32"
+      },
+      {
+        "label": "Reviewed change #48",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/48"
+      },
+      {
+        "label": "Reviewed change #51",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/51"
+      },
+      {
+        "label": "Reviewed change #55",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/55"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-race-order",
+    "corrected_on": "2026-07-22",
+    "headline": "Put races in ballot order.",
+    "body": "Races were organized by ballot section and jurisdiction, with judicial offices under the jurisdiction they serve.",
+    "provenance": [
+      {
+        "label": "Reviewed change #59",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/59"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-election-race-links",
+    "corrected_on": "2026-07-24",
+    "headline": "Added election links and shareable race details.",
+    "body": "The primary received a stable election address and an archive entry. Each recommendation opened candidate-centered endorsement details with evidence links, split-endorsement labels and separate nonendorsement and missing-coverage explanations; race links could be shared and restored.",
+    "provenance": [
+      {
+        "label": "Reviewed change #70",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/70"
+      },
+      {
+        "label": "Reviewed change #73",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/73"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-compact-filter",
+    "corrected_on": "2026-07-25",
+    "headline": "Added a compact ballot and contested-race filter.",
+    "body": "Readers could switch between full and compact endorsement views and limit either view to contested races. Contested status came from the official ballot choices, and shared links retained the selected view and race filter.",
+    "provenance": [
+      {
+        "label": "Reviewed change #74",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/74"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-optional-times",
+    "corrected_on": "2026-07-27",
+    "headline": "Made the Seattle Times comparison optional.",
+    "body": "Seattle Times comparison bars, comparison evidence rows and comparison-only choices became hidden by default on the responsive guide. A Customize control could reveal them; showing the Times did not add it to the endorsement tally.",
+    "provenance": [
+      {
+        "label": "Reviewed change #88",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/88"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-source-lens",
+    "corrected_on": "2026-07-28",
+    "headline": "Added custom source selections.",
+    "body": "Readers could choose source categories or individual organizations and see the resulting choices, shares and counts, with an All sources reference when their selection differed. Source documentation and checkboxes were combined into one tree, including a separate non-tallying Times comparison. The shared-link format changed; earlier links using its previous schema returned to the default with an explanation.",
+    "provenance": [
+      {
+        "label": "Reviewed change #84",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/84"
+      },
+      {
+        "label": "Reviewed change #85",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/85"
+      },
+      {
+        "label": "Reviewed change #86",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/86"
+      },
+      {
+        "label": "Reviewed change #87",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/87"
+      },
+      {
+        "label": "Reviewed change #89",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/89"
+      },
+      {
+        "label": "Reviewed change #90",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/90"
+      },
+      {
+        "label": "Reviewed change #91",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/91"
+      },
+      {
+        "label": "Reviewed change #92",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/92"
+      },
+      {
+        "label": "Reviewed change #99",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/99"
+      },
+      {
+        "label": "Reviewed change #100",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/100"
+      },
+      {
+        "label": "Reviewed change #101",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/101"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-sources-page",
+    "corrected_on": "2026-07-29",
+    "headline": "Moved source selection to its own page and corrected its total.",
+    "body": "Source selection moved to a Sources page with Save, Cancel and Reset actions, and the guide carried the current selection to that page. The guide’s selectable-source total was corrected from 42 to 40 by excluding the two research gaps. Methodology moved from the guide into About.",
+    "provenance": [
+      {
+        "label": "Reviewed change #111",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/111"
+      },
+      {
+        "label": "Reviewed change #112",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/112"
+      },
+      {
+        "label": "Reviewed change #113",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/113"
+      },
+      {
+        "label": "Reviewed change #114",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/114"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-reference-display",
+    "corrected_on": "2026-07-29",
+    "headline": "Clarified the all-sources comparison.",
+    "body": "The audited reference was labeled “All sources” with its choice and share, and its agreement or difference from the selected sources was stated in text as well as color. Endorsement meters were made consistent across views.",
+    "provenance": [
+      {
+        "label": "Reviewed change #126",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/126"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-lens-corrections",
+    "corrected_on": "2026-07-30",
+    "headline": "Corrected personalized race details and shared links.",
+    "body": "Race-detail counts, shares, meters, candidate order and accessible summaries were corrected to follow the current source selection. Unselected endorsement evidence remained visible as “Not counted,” ties used ballot order, and split-endorsement arithmetic received an explanation. Opening, closing or sharing race details preserved the selected sources; empty candidate meters were removed.",
+    "provenance": [
+      {
+        "label": "Reviewed change #138",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/138"
+      },
+      {
+        "label": "Reviewed change #139",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/139"
+      },
+      {
+        "label": "Reviewed change #143",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/143"
+      },
+      {
+        "label": "Reviewed change #144",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/144"
+      },
+      {
+        "label": "Reviewed change #158",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/158"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-no-majority",
+    "corrected_on": "2026-07-31",
+    "headline": "Marked races without a majority.",
+    "body": "A leading share at or below 50% received an amber meter and an explicit “No majority” label. The label followed the current source selection, including when that selection created or dissolved a tie.",
+    "provenance": [
+      {
+        "label": "Reviewed change #168",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/168"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-comparisons-preview",
+    "corrected_on": "2026-07-31",
+    "headline": "Added side-by-side endorsement comparisons.",
+    "body": "A direct comparison page let readers compare all sources, organizations or categories, with the first column as the reference. Shared links retained the columns and race, section and differences-only filters. Agreement and disagreement were stated in words, while missing endorsements and out-of-scope sources stayed distinct.",
+    "provenance": [
+      {
+        "label": "Reviewed change #165",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/165"
+      },
+      {
+        "label": "Reviewed change #167",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/167"
+      },
+      {
+        "label": "Reviewed change #169",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/169"
+      },
+      {
+        "label": "Reviewed change #170",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/170"
+      },
+      {
+        "label": "Reviewed change #171",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/171"
+      },
+      {
+        "label": "Reviewed change #172",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/172"
+      },
+      {
+        "label": "Reviewed change #178",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/178"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-source-status",
+    "corrected_on": "2026-07-31",
+    "headline": "Kept the counted-source total visible.",
+    "body": "The guide’s source strip began showing the sources being counted even with the default selection, with actions to customize sources or restore all sources.",
+    "provenance": [
+      {
+        "label": "Reviewed change #187",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/187"
+      },
+      {
+        "label": "Reviewed change #188",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/188"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-comparison-launch",
+    "corrected_on": "2026-08-01",
+    "headline": "Moved Times comparisons to the Comparisons page.",
+    "body": "Comparisons joined the public navigation and became the place to compare the Times with the aggregate. Times bars and comparison-only choice sections were removed from the guide and race details; older selection links retained their tallying sources while ignoring the retired comparison toggle. The first comparison column could be removed when three columns were present, and the next column became the reference.",
+    "provenance": [
+      {
+        "label": "Reviewed change #197",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/197"
+      },
+      {
+        "label": "Reviewed change #199",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/199"
+      },
+      {
+        "label": "Reviewed change #201",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/201"
+      },
+      {
+        "label": "Reviewed change #231",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/231"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-printable-guide",
+    "corrected_on": "2026-08-02",
+    "headline": "Replaced the PDF download with printing from the guide.",
+    "body": "The generated PDF edition was retired. Existing PDF links redirected to the primary guide, and browser printing used the guide view the reader was looking at.",
+    "provenance": [
+      {
+        "label": "Reviewed change #247",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/247"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-share-and-rounding-fixes",
+    "corrected_on": "2026-08-02",
+    "headline": "Corrected comparison rounding and selection-link failures.",
+    "body": "Comparison percentages stopped changing after interaction because of different rounding rules: a 9-of-16 share now stayed 56.2%. Failed source-selection links also received visible explanations instead of silently losing the selection.",
+    "provenance": [
+      {
+        "label": "Reviewed change #254",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/254"
+      },
+      {
+        "label": "Reviewed change #260",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/260"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-invalid-comparison-links",
+    "corrected_on": "2026-08-03",
+    "headline": "Explained invalid comparison links.",
+    "body": "Unreadable or rejected comparison links began returning to the default comparison with an explanation. A column change that could not be shared was visibly reverted instead of silently doing nothing.",
+    "provenance": [
+      {
+        "label": "Reviewed change #278",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/278"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-race-pages",
+    "corrected_on": "2026-08-04",
+    "headline": "Gave every race its own page.",
+    "body": "Race pages replaced the guide’s dialogs, with individual addresses, page titles and share previews. Existing race-fragment links forwarded to the new pages with the selected sources intact. Sole leaders were named once; ties used separate candidate headings and meters instead of a sole-leader headline.",
+    "provenance": [
+      {
+        "label": "Reviewed change #305",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/305"
+      },
+      {
+        "label": "Reviewed change #306",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/306"
+      },
+      {
+        "label": "Reviewed change #307",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/307"
+      },
+      {
+        "label": "Reviewed change #308",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/308"
+      },
+      {
+        "label": "Reviewed change #309",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/309"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-meter-v2",
+    "corrected_on": "2026-08-05",
+    "headline": "Showed the endorsement breakdown in the meter.",
+    "body": "Endorsement meters gained candidate runs and source blocks, including split endorsements and source tooltips. Captions stated exact endorsement points, including fractions, and race share previews adopted the same breakdown.",
+    "provenance": [
+      {
+        "label": "Reviewed change #318",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/318"
+      },
+      {
+        "label": "Reviewed change #319",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/319"
+      },
+      {
+        "label": "Reviewed change #321",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/321"
+      },
+      {
+        "label": "Reviewed change #332",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/332"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-candidate-meters",
+    "corrected_on": "2026-08-07",
+    "headline": "Added a meter for each endorsed candidate.",
+    "body": "Each candidate’s race-page section gained its own static endorsement meter, showing that candidate’s share and split endorsements in context. This replaced the single shared race-page meter.",
+    "provenance": [
+      {
+        "label": "Reviewed change #335",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/335"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-counting-status",
+    "corrected_on": "2026-08-08",
+    "headline": "Added counting status and official results links.",
+    "body": "After election day, the guide linked readers to the official ongoing count and stated the scheduled certification date without publishing preliminary totals. Candidate cards briefly repeated that counting note. The stated August 19 certification date was later corrected to August 18.",
+    "provenance": [
+      {
+        "label": "Reviewed change #339",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/339"
+      },
+      {
+        "label": "Reviewed change #340",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/340"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-counting-notes",
+    "corrected_on": "2026-08-09",
+    "headline": "Consolidated the counting notice.",
+    "body": "The repeated counting notes were removed from individual race cards. The election banner retained the official-results link and counting status.",
+    "provenance": [
+      {
+        "label": "Reviewed change #346",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/346"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-sticky-source-strip",
+    "corrected_on": "2026-08-16",
+    "headline": "Kept source-selection context visible on race pages.",
+    "body": "The race page’s counted-source strip and Edit sources link stayed visible while readers scrolled through endorsement evidence.",
+    "provenance": [
+      {
+        "label": "Reviewed change #376",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/376"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-results-and-certification",
+    "corrected_on": "2026-08-19",
+    "headline": "Corrected certification timing and added certified results.",
+    "body": "The certification date was corrected from August 19 to August 18. Certified results were then published for the 24 races fully covered by King County, including all ballot choices in finish order, their shares and outcomes, and official evidence links. Results were separate from endorsement agreement and could be added as a comparison column without affecting its agreement labels.",
+    "provenance": [
+      {
+        "label": "Reviewed change #407",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/407"
+      },
+      {
+        "label": "Reviewed change #336",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/336"
+      },
+      {
+        "label": "Reviewed change #338",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/338"
+      },
+      {
+        "label": "Reviewed change #339",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/339"
+      },
+      {
+        "label": "Reviewed change #340",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/340"
+      },
+      {
+        "label": "Reviewed change #345",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/345"
+      },
+      {
+        "label": "Reviewed change #351",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/351"
+      },
+      {
+        "label": "Reviewed change #352",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/352"
+      },
+      {
+        "label": "Reviewed change #371",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/371"
+      },
+      {
+        "label": "Reviewed change #374",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/374"
+      },
+      {
+        "label": "Reviewed change #413",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/413"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-crosscounty-results",
+    "corrected_on": "2026-09-13",
+    "headline": "Completed certified results for all 32 races.",
+    "body": "Secretary of State totals added the eight races spanning county lines: LD32’s three legislative races, Congressional District 9 and four Supreme Court positions. Every race’s result named its own authority and evidence. The change merged August 22 and first reached the website September 13.",
+    "provenance": [
+      {
+        "label": "Reviewed change #419",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/419"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-archive-regression",
+    "corrected_on": "2026-10-03",
+    "headline": "The primary archive reverted to an older release.",
+    "body": "The general-election cutover archived the August 2 primary release rather than its final live version. The archive lost the later 17 source decisions and all certified results, and its overview returned to the retired meter and dialog navigation. Individual race URLs remained available, but used the older endorsement data. Their share-preview meter also briefly showed permanent segmentation before the earlier display was restored that day. The older primary data remained until October 11.",
+    "provenance": [
+      {
+        "label": "Reviewed change #476",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/476"
+      },
+      {
+        "label": "Reviewed change #484",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/484"
+      },
+      {
+        "label": "Reviewed change #487",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/487"
+      }
+    ]
+  },
+  {
+    "headline_key": "primary-archive-restored",
+    "corrected_on": "2026-10-11",
+    "headline": "Restored the completed primary archive.",
+    "body": "The archive was replaced with the completed primary: 538 source decisions and certified results for all 32 races. The overview regained its segmented endorsement meter and links to individual race pages, and those pages regained the completed data. The endorsement dataset and results matched the final live primary.",
+    "provenance": [
+      {
+        "label": "Reviewed change #526",
+        "url": "https://github.com/shaug/seattle-election-guide/pull/526"
+      }
+    ]
+  }
+]
