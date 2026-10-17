@@ -542,7 +542,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         snapshots,
         tmp_path,
         tmp_path / "primary-release",
-        release_version="2026-primary.3",
+        release_version="2026-primary.4",
     )
     general_release = build_release(
         ledger_path=PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml",
@@ -582,7 +582,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         site_manifest_path,
         {
             current["bundle_id"]: general_release.bundle_dir,
-            "wa-2026-primary-2026-primary.3": primary_release.bundle_dir,
+            historical["bundle_id"]: primary_release.bundle_dir,
         },
         output,
         expected_current_git_commit="a" * 40,
@@ -593,6 +593,19 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         site_manifest_path,
         expected_current_git_commit="a" * 40,
     )
+
+    # The current proposal and newly pinned primary retain the incoming Updates backfill.
+    for election_id, headline in (
+        ("wa-2026-general", "Changed how sparse and unopposed races appear."),
+        ("wa-2026-primary", "Restored the completed primary guide."),
+    ):
+        updates = output / "e" / election_id / "updates/index.html"
+        assert headline in updates.read_text(encoding="utf-8")
+        relative = updates.relative_to(output).as_posix()
+        assert deployment.assets[relative] == hashlib.sha256(updates.read_bytes()).hexdigest()
+    assert current["release_version"] in (
+        general_release.bundle_dir / "RELEASE_NOTES.md"
+    ).read_text(encoding="utf-8")
 
     assert deployment.elections[0].source_registry_hash == expected_registry_hash
     assert [election.election_id for election in deployment.elections] == [

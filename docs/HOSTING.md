@@ -223,9 +223,9 @@ from a local build directory: the archive is what staging downloads, and a local
 up files the archive never carried.
 
 ```bash
-gh release download 2026-primary.3 \
+gh release download 2026-primary.4 \
   --pattern 'seattle-election-guide-*.zip' --dir dist/pin
-unzip -q dist/pin/seattle-election-guide-2026-primary.3.zip -d dist/pin
+unzip -q dist/pin/seattle-election-guide-2026-primary.4.zip -d dist/pin
 uv run election-guide hosting bundle-hash dist/pin/seattle-election-guide
 ```
 
@@ -245,7 +245,8 @@ make hosting-stage
 
 The Make target resolves the current bundle from `config/hosting/site.yaml` and supplies
 `dist/reproducibility-a/bundle`; the shared staging implementation resolves all other declared
-bundles from their hash-pinned published archives. The archived primary pins remain unchanged.
+bundles from their hash-pinned published archives. The archived primary uses the canonical `2026-primary.4` pins from main, containing the
+completed primary’s certified results, Meter v2, and backfilled Updates history.
 Historical downloads require authenticated read-only GitHub access.
 Staging verifies all declared identities, each release status, every release-manifest artifact hash,
 and the current bundle's exact Git revision before it changes the existing output. It then

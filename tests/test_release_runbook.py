@@ -30,7 +30,7 @@ def test_release_lineage_command_cannot_drift() -> None:
     assert (
         _marked_bash(PROJECT_ROOT / "docs/RELEASE.md", "verify-lineage")
         == """uv run election-guide release verify-lineage \\
-  dist/downloaded/seattle-election-guide-2026-general.9.zip \\
+  dist/downloaded/seattle-election-guide-2026-general.10.zip \\
   dist/reproducibility-a/bundle \\
   "$release_candidate_sha" \\
   "$production_candidate_sha" \\

@@ -165,6 +165,17 @@ uv run election-guide hosting verify \
   --expected-git-commit "$source_sha"
 ```
 
+## Latest manual publication boundary
+
+The retained manual history ends at `2026-general.10`, published from
+`c5a5252202d0f78bcec5e54f9f6d0dfe0841d481` with ZIP SHA-256
+`466efd641d2f190f5030e6d7e8b29d58bd4dff0d96e521af51dd0c3b950b161e`.
+Its reviewed input hashes and Updates backfill evidence remain in
+[the backfill publication record](UPDATES_BACKFILL_RELEASE_2026-10-16.md).
+The archived primary uses the canonical `2026-primary.4` source, manifest, and whole-bundle
+pins from that publication. Preserve these archives and all earlier manual releases unchanged;
+preparation chooses the next unused general version from current remote metadata.
+
 ## Automatic delivery and evidence
 
 The five independent CI lanes feed the stable `check` status. A reviewed release request on
@@ -254,7 +265,7 @@ verify the narrow boundary before handing the production bundle to `hosting stag
 <!-- runbook-command:verify-lineage -->
 ```bash
 uv run election-guide release verify-lineage \
-  dist/downloaded/seattle-election-guide-2026-general.9.zip \
+  dist/downloaded/seattle-election-guide-2026-general.10.zip \
   dist/reproducibility-a/bundle \
   "$release_candidate_sha" \
   "$production_candidate_sha" \

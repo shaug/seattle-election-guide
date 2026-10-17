@@ -78,7 +78,7 @@ reviewed previous-release SHA through the exact source SHA, using the declared v
 source commit timestamp. Creating a tag does not change those notes.
 
 `CHANGELOG.md` is a generated index linking to published releases and retaining historical
-sections through `2026-general.9` at the fixed `release_history.legacy_history_end_sha` in
+sections through `2026-general.10` at the fixed `release_history.legacy_history_end_sha` in
 `cliff.toml`. `npm run changelog` regenerates it; `make check` compares committed bytes and tests
 tag independence. Do not edit it by hand or append later release sections. Publishing a new
 release requires no post-tag changelog PR or second production commit. The automatic publication

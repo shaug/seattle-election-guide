@@ -317,7 +317,7 @@ def test_primary_resolves_legacy_input_locations(tmp_path: Path) -> None:
     resolved = resolve_release(manifest, repository=ROOT)
     assert resolved.inputs.registry == ROOT / "config/sources/default.yaml"
     assert resolved.inputs.dataset == ROOT / "data/normalized/canonical-dataset.json"
-    assert resolved.archive_name == "seattle-election-guide-2026-primary.3.zip"
+    assert resolved.archive_name == f"seattle-election-guide-{primary.release_version}.zip"
 
 
 def test_all_release_affecting_paths_require_fresh_request(repository: Path) -> None:

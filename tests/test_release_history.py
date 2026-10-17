@@ -107,7 +107,7 @@ def test_legacy_index_ignores_future_tags(
     repository, _, source = history_repository
     config = repository / "cliff.toml"
     config.write_text(
-        config.read_text().replace("da307d6f4c695471ec5a025a4226824de5ffbbc5", source)
+        config.read_text().replace("c5a5252202d0f78bcec5e54f9f6d0dfe0841d481", source)
     )
     _git(repository, "tag", "2026-general.2", source)
     before = generate_changelog_index(repository)
@@ -121,7 +121,7 @@ def test_committed_index_preserves_historical_section_bytes() -> None:
     # The pre-policy historical section bytes are immutable. This literal digest
     # also works in shallow CI checkouts and after the implementation is squashed.
     text = (PROJECT_ROOT / "CHANGELOG.md").read_bytes()
-    sections = text[text.index(b"## 2026-general.9") :]
+    sections = text[text.index(b"## 2026-primary.4") :]
     assert hashlib.sha256(sections).hexdigest() == (
-        "b5d693b5c886cd358b7ddc236ce8f6ff1590dbee75d7e1f927459537b058a637"
+        "91e2f09864e562becc2b7b424970afea0baa1baf99e8df4e73f227363620621a"
     )
