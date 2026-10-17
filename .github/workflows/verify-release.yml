@@ -27,6 +27,10 @@ permissions:
   actions: read
   issues: write
   deployments: write
+concurrency:
+  group: verified-release-mainline
+  queue: max
+  cancel-in-progress: false
 jobs:
   verify:
     if: github.ref == 'refs/heads/main'

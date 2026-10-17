@@ -172,8 +172,9 @@ main then runs `publish`, `publication-evidence`, `deploy`, and `finalize`. The 
 staged current bundle, uploaded commit, and expected production commit all identify the same
 full merged `source_sha`. Documentation/test-only main commits run CI without another release.
 
-All non-PR mainline runs use `verified-release-mainline`, `queue: max`, and
-`cancel-in-progress: false`. PR runs stay parallel. The queue supports 100 pending runs;
+All non-PR CI runs and verification-only recovery dispatches share `verified-release-mainline`,
+`queue: max`, and `cancel-in-progress: false`, serializing their durable evidence writes.
+PR runs stay parallel. The queue supports 100 pending runs;
 queue exhaustion is a delivery failure to investigate, never a silently discarded request.
 Artifact names include producing run and attempt; consumers use captured IDs and independently
 verify wrapper digests, workflow/repository identity, and attempt time boundaries. A wrapper

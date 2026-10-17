@@ -458,8 +458,9 @@ still passes. Recurring endorsement verification remains separate from availabil
 
 ## Deployment gate
 
-The complete mainline workflow is serialized with `verified-release-mainline`, `queue: max`,
-and `cancel-in-progress: false`; PR checks remain parallel. Five independent lanes feed `check`,
+The complete mainline workflow and verification-only recovery share `verified-release-mainline`,
+`queue: max`, and `cancel-in-progress: false`, serializing durable evidence writes; PR checks
+remain parallel. Five independent lanes feed `check`,
 then `publish` verifies the canonical release, `publication-evidence` durably records it, `deploy`
 checks the selected declaration and production predecessor before its one upload, and `finalize`
 confirms and retains two complete strict probes. All identities use the captured merged SHA.

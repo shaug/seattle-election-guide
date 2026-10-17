@@ -18,13 +18,23 @@ def workflow(name: str = "ci.yml") -> dict[str, Any]:
     return yaml.load((ROOT / ".github/workflows" / name).read_text(), Loader=yaml.BaseLoader)
 
 
-def test_mainline_serialization_preserves_queued_release() -> None:
-    document = workflow()
+@pytest.mark.parametrize("name", ["ci.yml", "verify-release.yml"])
+def test_mainline_serialization_preserves_queued_release(name: str) -> None:
+    """Both evidence-writing entry points share the same non-cancelling lock."""
+    document = workflow(name)
     lock = document["concurrency"]
     assert lock["queue"] == "max"
     assert lock["cancel-in-progress"] == "false"
-    assert "verified-release-mainline" in lock["group"]
-    assert "ci-pr-" in lock["group"] and "github.run_id" in lock["group"]
+    expected_group = "verified-release-mainline"
+    if name == "ci.yml":
+        # Match the entire expression: only PRs may select another group;
+        # push and recovery dispatch must take the same literal fallback.
+        expected_group = (
+            "${{ github.event_name == 'pull_request' && "
+            "format('ci-pr-{0}-{1}', github.event.pull_request.number, github.run_id) "
+            "|| 'verified-release-mainline' }}"
+        )
+    assert " ".join(lock["group"].split()) == expected_group
     assert all("concurrency" not in job for job in document["jobs"].values())
 
 
