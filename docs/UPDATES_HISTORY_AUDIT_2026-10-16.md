@@ -40,7 +40,7 @@ require their own entries.
 
 ## Publication dates
 
-The [publication evidence](audits/updates-2026-10-16/publications.json) binds every dated entry
+The [publication evidence](audits/updates-2026-10-16/publications.json) binds every historical dated entry
 to a published release or successful website deployment. Dates use `America/Los_Angeles`.
 Merge dates, review dates, source announcement dates, and certification dates are distinct.
 Supporting code that could not render until data arrived maps to that activation, not to its

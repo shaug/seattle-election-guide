@@ -221,9 +221,9 @@ from a local build directory: the archive is what staging downloads, and a local
 up files the archive never carried.
 
 ```bash
-gh release download 2026-primary.3 \
+gh release download 2026-primary.4 \
   --pattern 'seattle-election-guide-*.zip' --dir dist/pin
-unzip -q dist/pin/seattle-election-guide-2026-primary.3.zip -d dist/pin
+unzip -q dist/pin/seattle-election-guide-2026-primary.4.zip -d dist/pin
 uv run election-guide hosting bundle-hash dist/pin/seattle-election-guide
 ```
 
@@ -247,8 +247,7 @@ The Make target supplies the current election's bundle as
 is the only one built from source, so when another election is declared it resolves from the release
 that published it rather than from anything prepared locally — see
 [Historical bundles](#historical-bundles). The archived primary therefore comes from its published,
-hash-pinned `2026-primary.3` release, containing the completed primary's certified results and
-Meter v2. That download reads GitHub, so `gh` must be installed and
+hash-pinned `2026-primary.4` release, containing the completed primary's certified results, Meter v2, and backfilled Updates history. That download reads GitHub, so `gh` must be installed and
 authenticated.
 Staging verifies all declared identities, each release status, every release-manifest artifact hash,
 and the current bundle's exact Git revision before it changes the existing output. It then
