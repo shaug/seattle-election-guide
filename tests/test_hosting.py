@@ -1650,6 +1650,29 @@ def test_sources_page_reset_redirects_with_no_fragment(tmp_path: Path) -> None:
     assert result["reset"] == f"/e/{view_model.metadata.election_id}/"
 
 
+@pytest.mark.parametrize("issue_number", [1, 551])
+def test_deployment_gate_accepts_declared_release_owner(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, issue_number: int
+) -> None:
+    """Run the actual gate with only the declaration's owning issue changed."""
+    for relative in ["config/hosting/site.yaml", "wrangler.jsonc", ".github/workflows/ci.yml"]:
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(PROJECT_ROOT / relative, target)
+    site_path = tmp_path / "config/hosting/site.yaml"
+    manifest = yaml.safe_load(site_path.read_text())
+    current = next(
+        election
+        for election in manifest["elections"]
+        if election["election_id"] == manifest["current_election_id"]
+    )
+    current["publication_request"]["issue_number"] = issue_number
+    site_path.write_text(yaml.safe_dump(manifest, sort_keys=False))
+    SiteManifest.model_validate(manifest)
+    monkeypatch.setitem(globals(), "PROJECT_ROOT", tmp_path)
+    test_wrangler_and_workflow_keep_deployment_gated()
+
+
 def test_wrangler_and_workflow_keep_deployment_gated() -> None:
     site_manifest = yaml.safe_load(
         (PROJECT_ROOT / "config/hosting/site.yaml").read_text(encoding="utf-8")
@@ -1703,7 +1726,7 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         "5418b15370a6ed0f8eb0f4e02d9c9a02faf9f6f5043f9c3e39f3abe120b5ad9d"
     )
     assert current_election["bundle_id"] == f"wa-2026-general-{current_election['release_version']}"
-    assert current_election["publication_request"]["issue_number"] == 550
+    assert SiteManifest.model_validate(site_manifest).elections[0].publication_request is not None
     deploy = workflow["jobs"]["deploy"]
     assert set(deploy["needs"]) == {"check", "publication-evidence", "publish"}
     assert deploy["environment"]["name"] == "production"
