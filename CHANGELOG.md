@@ -9,6 +9,15 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-primary.4 — 2026-10-17
+
+### Documentation
+
+- Record 2026-general.9 release changelog (#555)
+
+### Fixed
+
+- Backfill both election Updates histories from first publication (#557)
 ## 2026-general.9 — 2026-10-16
 
 ### Added

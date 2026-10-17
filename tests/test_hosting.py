@@ -1685,16 +1685,16 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         "source_registry_hash": "08473de324a7ca66617885e774d406fa992bc2bfbf3916acff366aad017bf2a2",
     }
     historical = site_manifest["elections"][1]
-    assert historical["bundle_id"] == "wa-2026-primary-2026-primary.3"
+    assert historical["bundle_id"] == "wa-2026-primary-2026-primary.4"
     assert historical["source_registry_hash"] == (
         "76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8"
     )
-    assert historical["git_commit"] == "6e93dafe45ac45f343c5ea3d123f53e24725d15e"
+    assert historical["git_commit"] == "c5a5252202d0f78bcec5e54f9f6d0dfe0841d481"
     assert historical["release_manifest_sha256"] == (
-        "7989827c95c11fc68dbaaa32f632eaeb3d2c1495dfa2728c644faecf2441a516"
+        "723c6b16bd74e212850f95a4454b28253abc630b71ffd42ed0ac6a1345a02cbc"
     )
     assert historical["bundle_sha256"] == (
-        "5418b15370a6ed0f8eb0f4e02d9c9a02faf9f6f5043f9c3e39f3abe120b5ad9d"
+        "7ec162d04f795900bbd94172d0d555fd2e8a292267156bc0576882dc11ae14c6"
     )
     assert workflow["env"]["CANDIDATE_BUNDLE_ID"] == GENERAL_BUNDLE_ID
     deploy = workflow["jobs"]["deploy"]

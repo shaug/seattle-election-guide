@@ -62,9 +62,11 @@ Publish the primary with the versioned ZIP and its bundled notes using the same 
 restart matrix as the general. Download both canonical assets again, compare exact bytes,
 record their sizes/digests, and verify both tags resolve to `release_candidate_sha`.
 
-After both tags exist, regenerate the changelog in its own focused non-closing PR. Then update
-the historical declaration to the downloaded `.4` artifact's exact commit, release-manifest
-hash and whole-bundle hash in a focused pin change. Retain the panel and registry identities.
+After both tags exist, use one focused, non-closing publication PR for the generated changelog
+and the historical declaration of the downloaded `.4` artifact's exact commit, release-manifest
+hash and whole-bundle hash. This is the post-tag release-record change described in RELEASE.md;
+keep it limited to these publication records and their corresponding tests. Retain the panel
+and registry identities.
 Do not invent pin values before the artifact exists. CI continues using the existing `.3`
 declaration until the reviewed replacement is published and pinned.
 
@@ -74,3 +76,17 @@ existing automatic deployment gate. Verify both live Updates pages, both sets of
 Corrections redirects, the exact deployed revision, and two strict production probes. Preserve
 release identities, CI artifacts, deployment evidence, lineage and probes in #556. Preparation
 of this record does not itself assert publication or production success.
+
+## Published archive identities
+
+Both immutable releases were published from `c5a5252202d0f78bcec5e54f9f6d0dfe0841d481`.
+
+| Release | ZIP SHA-256 | Bytes |
+| --- | --- | ---: |
+| `2026-general.10` | `466efd641d2f190f5030e6d7e8b29d58bd4dff0d96e521af51dd0c3b950b161e` | 684423 |
+| `2026-primary.4` | `06e65dce9343688e89f57d1320cdbeaf6852206c42ab2c41c8c69b1ed6b533e2` | 535156 |
+
+The primary `.4` pin is computed from its downloaded canonical archive, with release-manifest
+SHA-256 `723c6b16bd74e212850f95a4454b28253abc630b71ffd42ed0ac6a1345a02cbc` and bundle-tree SHA-256 `7ec162d04f795900bbd94172d0d555fd2e8a292267156bc0576882dc11ae14c6`.
+Its publication date in America/Los_Angeles is October 16, matching the new display-activation
+entry. These release identities do not themselves assert the later website deployment succeeded.
