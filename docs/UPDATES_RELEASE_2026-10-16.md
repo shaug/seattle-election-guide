@@ -8,7 +8,11 @@ The maintainer explicitly requested merging #552 and deploying it.
 and the readable How this works page. The tagline remains “We get it right, eventually.”
 The authored log includes new endorsements and every other change to a published aggregate or
 position page, including changed counts or shares with an unchanged leading choice.
-Its backfill accounts for the reviewed general-election changes since the first publication.
+Its initial backfill accounts for the reviewed general-election endorsement-data changes.
+The later [history audit](UPDATES_HISTORY_AUDIT_2026-10-16.md), requested in #556, found missing
+presentation changes and two dates based on review or later publication rather than first
+publication. That follow-up also supplies the previously absent primary history. The `.9`
+publication alone must not be described as a complete history of both guides.
 
 This is a publication change. All **880 source decisions across 45 source blocks** are preserved.
 The source registry, source-decision ledger and canonical dataset are byte-identical to the

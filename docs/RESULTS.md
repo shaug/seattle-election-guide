@@ -237,12 +237,19 @@ Each dated entry explains what changed and why, with evidence and links to affec
 A reviewed batch may share an entry if its linked record accounts for every change in the batch.
 An amended result cites the capture it supersedes. Entries accompany the release that first
 publishes the change; they do not imply the organization announced it on that date.
+For a historical backfill, use the first evidenced public release or successful deployment,
+in America/Los_Angeles, rather than the merge or review date. Link that publication evidence.
+Several changes first published together may share a dated entry when the linked audit accounts
+for every change. Correct an existing date when publication evidence disproves it, retaining the
+underlying change and a citation explaining the correction. Record archive regressions and
+restorations as public changes too; an immutable old bundle is not necessarily the last live guide.
 Site changes that do not alter election content belong to the software changelog (O8).
 Tagline: *"We get it right, eventually."*
 
 *(2026-10-16, issue #551: Updates replaces Corrections. This supersedes the original exclusion
 of routine refreshes. The guide catches up with reality; the log records that progress as well
-as errors. Existing entries retain their dates and wording.)*
+as errors. Existing changes remain recorded; the evidenced-date rule above, added for #556,
+supersedes the earlier requirement to retain dates even when they were wrong.)*
 
 ## Decisions record (2026-08-02)
 

@@ -1,0 +1,49 @@
+[
+  {
+    "change": "Eight SOS cross-county primary results",
+    "run_id": 32588483948,
+    "attempt": 1,
+    "job_id": 97069584985,
+    "job_url": "https://github.com/shaug/seattle-election-guide/actions/runs/32588483948/job/97069584985",
+    "build_at": "2026-08-22",
+    "production_job_started_at_pdt": "2026-09-13T20:36:21-07:00",
+    "failed_step": "Download verified Pages site",
+    "failure": "Artifact cloudflare-site not found (7-day retention; August22 artifact expired).",
+    "production_upload_step": "Deploy production site",
+    "production_upload_step_conclusion": "skipped",
+    "published_by_failed_attempt": false,
+    "first_actual_production_upload_completed_at_pdt": "2026-09-13T20:50:07-07:00",
+    "successful_job_url": "https://github.com/shaug/seattle-election-guide/actions/runs/32588483948/job/103851330926",
+    "successful_attempt": 2,
+    "date_assurance": "September13 supported; no production upload occurred in August22 attempt1. Attempt1 production job did not start until September13 and could not obtain its expired input."
+  },
+  {
+    "change": "Davis/Siddiqi and general.5 reconciliation",
+    "run_id": 38105089207,
+    "attempt": 1,
+    "job_id": 114369610852,
+    "job_url": "https://github.com/shaug/seattle-election-guide/actions/runs/38105089207/job/114369610852",
+    "production_job_started_at_pdt": "2026-10-10T19:33:03-07:00",
+    "failed_step": "Require every declared release to be published",
+    "failure": "2026-general.5 had no published GitHub Release tag.",
+    "production_upload_step": "Deploy production site",
+    "production_upload_step_conclusion": "skipped",
+    "published_by_failed_attempt": false,
+    "date_assurance": "Does not establish an October10 publication; existing October11 first-publication date remains supported."
+  },
+  {
+    "change": "General.6 additions",
+    "run_id": 38285743083,
+    "attempt": 1,
+    "job_id": 114935279882,
+    "job_url": "https://github.com/shaug/seattle-election-guide/actions/runs/38285743083/job/114935279882",
+    "production_job_started_at_pdt": "2026-10-12T10:45:00-07:00",
+    "failed_step": "Require every declared release to be published",
+    "failure": "2026-general.6 had no published GitHub Release tag.",
+    "production_upload_step": "Deploy production site",
+    "production_upload_step_conclusion": "skipped",
+    "production_probe_step_conclusion": "skipped",
+    "published_by_failed_attempt": false,
+    "date_assurance": "No upload in this failed attempt; later successful publication remains October12."
+  }
+]
