@@ -54,7 +54,7 @@ OLDER_COMMIT = "c" * 40
 PANEL_HASH = "b" * 64
 REGISTRY_HASH = "d" * 64
 PROJECT_ROOT = Path(__file__).parents[1]
-GENERAL_BUNDLE_ID = "wa-2026-general-2026-general.9"
+GENERAL_BUNDLE_ID = "wa-2026-general-2026-general.10"
 CURRENT_ID = "wa-2026-primary"
 OLDER_ID = "wa-2025-general"
 CURRENT_BUNDLE_ID = "wa-2026-primary-release"
@@ -1679,7 +1679,7 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
     assert current_election == {
         "election_id": "wa-2026-general",
         "bundle_id": GENERAL_BUNDLE_ID,
-        "release_version": "2026-general.9",
+        "release_version": "2026-general.10",
         "source_panel_id": "wa-2026-general-default-sources-v2",
         "source_panel_hash": "5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569",
         "source_registry_hash": "08473de324a7ca66617885e774d406fa992bc2bfbf3916acff366aad017bf2a2",
@@ -1736,7 +1736,7 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         if step.get("name") == "Build and verify deterministic general release"
     )
     assert "make check-release-reproducible" in build_step["run"]
-    assert "seattle-election-guide-2026-general.9.zip" in build_step["run"]
+    assert "seattle-election-guide-2026-general.10.zip" in build_step["run"]
     stage_step = next(
         step
         for step in publication_steps
@@ -1954,7 +1954,7 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
         if step.get("name") == "Build the general release at the pull request head"
     )
     assert "data/releases/wa-2026-general/source-decisions.yaml" in build_step["run"]
-    assert "--release-version 2026-general.9" in build_step["run"]
+    assert "--release-version 2026-general.10" in build_step["run"]
     assert '--git-commit "$HEAD_SHA"' in build_step["run"]
     stage_step = next(
         step for step in deploy["steps"] if step.get("name") == "Stage and verify the Pages site"
