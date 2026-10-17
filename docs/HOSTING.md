@@ -155,9 +155,10 @@ carries a tag name but publishes no archive. It reads release state through the 
 must be installed and authenticated — CI supplies the default `GITHUB_TOKEN`, and the check is
 read-only.
 
-Publishing a release is described in [RELEASE.md](RELEASE.md). Publish first: this check runs on
-pull requests, so a new `release_version` must already have a published Release before the pull
-request that declares it in `site.yaml` can pass CI.
+Pull request CI validates the current candidate read-only with the exception below, including
+its reviewed declaration, reproducible bundle, and staged site. After merge, CI automatically
+publishes the verified archive and retains publication evidence before production upload.
+The sequence is described in [RELEASE.md](RELEASE.md).
 
 The one exception is prepublication staging of the manifest-declared current election. Automation
 may name that exact bundle once with `--candidate-bundle-id`; every historical election must still

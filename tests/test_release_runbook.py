@@ -102,3 +102,12 @@ def test_runbooks_retire_direct_upload_and_preserve_evidence_contract() -> None:
         "superseded",
     ]:
         assert term in " ".join(text.split())
+
+
+def test_hosting_runbook_describes_candidate_before_automatic_publication() -> None:
+    text = " ".join((PROJECT_ROOT / "docs/HOSTING.md").read_text().split())
+    assert "Publish first:" not in text
+    assert "Pull request CI validates the current candidate read-only" in text
+    assert "After merge, CI automatically publishes" in text
+    assert "every historical election must still have a published, non-draft Release" in text
+    assert "hosting verify-releases` again with no candidate option" in text

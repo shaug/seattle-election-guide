@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -234,3 +235,67 @@ elif command not in ['finalize', 'deployment-status', 'retain-operation']:
         )
     else:
         assert calls[-1] == "retain-operation"
+
+
+@pytest.mark.parametrize("name", ["ci.yml", "verify-release.yml", "deploy-pr-preview.yml"])
+def test_github_cli_steps_have_effective_authentication(name: str) -> None:
+    document = workflow(name)
+    github_commands = re.compile(
+        r"\bgh\s|hosting verify-releases|make check-release-reproducible|"
+        r"release automation (capture-source|validate-request|admit|build|stage|publish|"
+        r"capture-artifact|fetch-artifact|retain-publication|delivery-check|create-deployment|"
+        r"upload|finalize|deployment-status|retain-operation|recover-upload)\b"
+    )
+    checked: list[str] = []
+    missing: list[str] = []
+    for job_name, job in document["jobs"].items():
+        for step in job.get("steps", []):
+            if not github_commands.search(step.get("run", "")):
+                continue
+            identity = f"{job_name}/{step['name']}"
+            checked.append(identity)
+            # Actions overlays step env on job env on workflow env. An earlier
+            # sibling step's token never participates in this step's environment.
+            effective = document.get("env", {}) | job.get("env", {}) | step.get("env", {})
+            if effective.get("GH_TOKEN") != "${{ github.token }}":
+                missing.append(identity)
+    assert checked, name
+    assert not missing, f"{name}: GitHub CLI steps lack effective authentication: {missing}"
+
+
+@pytest.mark.parametrize("eligible", [True, False])
+def test_publish_admission_starts_in_fresh_runner(tmp_path: Path, eligible: bool) -> None:
+    import json
+    import sys
+
+    step = next(
+        s
+        for s in workflow()["jobs"]["publish"]["steps"]
+        if s.get("name") == "Require exact merged source and every completed lane"
+    )
+    binary = tmp_path / "uv"
+    binary.write_text(
+        f"#!{sys.executable}\n"
+        + "import json, os, sys\n"
+        + "assert sys.argv[1:] == ['run', 'election-guide', 'release', 'automation', "
+        + "'admit', '--source-sha', os.environ['RELEASE_SOURCE_SHA'], "
+        + "'--base-sha', os.environ['BASE_SHA']]\n"
+        + f"print(json.dumps({{'eligible': {eligible!r}}}))\n"
+    )
+    binary.chmod(0o755)
+    assert not (tmp_path / "dist").exists()
+    result = subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", step["run"]],
+        cwd=tmp_path,
+        env=os.environ
+        | {
+            "PATH": f"{tmp_path}:{os.environ['PATH']}",
+            "RELEASE_SOURCE_SHA": "a" * 40,
+            "BASE_SHA": "b" * 40,
+        },
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == (0 if eligible else 1), result.stderr
+    assert json.loads((tmp_path / "dist/admission.json").read_text()) == {"eligible": eligible}
