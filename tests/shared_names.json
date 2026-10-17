@@ -623,6 +623,11 @@
       "python",
       "test"
     ],
+    "meter-inspecting": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "meter-low-fill": [
       "template",
       "stylesheet",
@@ -653,6 +658,11 @@
       "test"
     ],
     "meter-tooltip-source": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-touch": [
       "stylesheet",
       "client",
       "test"

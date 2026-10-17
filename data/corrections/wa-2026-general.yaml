@@ -1,6 +1,18 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
+  - corrected_on: 2026-10-17
+    headline: "Mobile meters now show percentages before inspection."
+    body: >-
+      Endorsement meters on mobile now show the same percentage summary as
+      desktop. Press and hold a meter to reveal individual endorsements, then
+      slide across it to see each source’s decision. Lifting your finger restores
+      the summary; ordinary swipes still scroll the page.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Mobile meter interaction change"
+        url: https://github.com/shaug/seattle-election-guide/issues/561
   - corrected_on: 2026-10-16
     headline: "Added two previously unrecorded endorsements."
     body: >-

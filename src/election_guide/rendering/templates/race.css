@@ -221,7 +221,7 @@
    showing this candidate's own endorsements as individually countable
    blocks (docs/METER_V2.md, Chrome geometry), so it needs a seam always
    visible where the shared meter otherwise only shows one on hover or
-   touch (guide-race.css's `@media (hover: hover)`/`(hover: none)` split) —
+   a touch hold (guide-race.css's engagement rules) —
    found live: without this, a `screen-meter-section` rendered in
    "segmented mode" carrying no visible segments at all, since the
    rest-state seam a plain `.meter-block` draws is deliberately

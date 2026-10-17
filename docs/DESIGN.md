@@ -328,11 +328,15 @@ then any sticky strip, then content.
   a meter beside each name than from one meter borrowed via clickable chips
   — which is what #315 tried first, shipped, and then had to retract when
   live testing showed the chips could highlight one candidate's share inside
-  a *different* candidate's own card. At rest on a pointer device the seams
+  a *different* candidate's own card. At rest on every device the seams
   between blocks are invisible and a left-aligned percentage overlays the
   leader's blocks; hover or keyboard focus trades that percentage for hairline
-  seams and per-block tooltips, and touch shows the seams always and the
-  percentage never. A candidate section's own meter states no resting
+  seams and per-block tooltips. On touch, a press-and-hold reveals the same
+  detail; sliding across the meter updates the source popup under the finger,
+  and release restores the percentage. Short taps and ordinary swipes keep
+  the resting view and native page scrolling. *(2026-10-17, issue #561:
+  replaces always-visible touch seams and the hidden touch percentage.)*
+  A candidate section's own meter states no resting
   percentage inside the track at all — its count and percent ride in a
   label beside the meter instead, since a percentage does not fit inside a
   half-endorsement sliver of highlighted bar. The full design — color,

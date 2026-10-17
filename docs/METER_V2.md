@@ -10,6 +10,9 @@ the companion reference for the race-detail page's own candidate sections specif
 `METER_V2_2026-08-04.html` played for #312–#314, now played for #325. Where either mockup and this
 prose disagree, the mockup is the spec.
 
+The touch discovery update of October 17, 2026 (#561), recorded below,
+supersedes the touch behavior in both historical mockups.
+
 The canonical reference contains only the final meter. It deliberately carries no executable
 copy of the retired percentage-only pill: history belongs in Git, not beside the current design
 as a reusable implementation.
@@ -32,7 +35,7 @@ edge-state rules are part of the ratified design.
 ## Contract boundary
 
 The endorsement meter always renders its block model. A populated meter is never a standalone
-gradient fill, and an overview meter on a pointer device is never permanently segmented. The
+gradient fill, and an overview meter is never permanently segmented. The
 percentage is an overlay on the blocks at rest; interaction reveals the blocks' seams and source
 tooltips. Two visual strengths remain essential:
 
@@ -58,11 +61,11 @@ The block model solves five requirements a percentage-only display cannot:
 The meter is a constant-width bar of equal-width rectangular blocks, **one block per
 endorsement**, grouped into runs by candidate in standings order — leader first. A split
 endorsement is one block divided horizontally, the two candidates' colors stacked, placed at the
-boundary between their runs. At rest on a pointer device the seams between blocks are invisible
+boundary between their runs. At rest on every device the seams between blocks are invisible
 and a left-aligned percentage rides the leader's fill. Hovering (or keyboard focus) fades the
 percentage out and fades hairline seams and
-per-block tooltips in, resolving the bar into individual voices. On touch there is no
-percentage and the seams are always visible; tapping a block shows its tooltip.
+per-block tooltips in, resolving the bar into individual voices. On touch, pressing and holding
+reveals the same detail; sliding across the meter updates the tooltip, and release restores rest.
 
 ## Anatomy and geometry
 
@@ -82,7 +85,7 @@ percentage and the seams are always visible; tapping a block shows its tooltip.
 | --- | --- | --- |
 | Pointer devices | Solid stacked fill + percentage; no seams | Hover or focus: percentage fades out; seams and per-block tooltips fade in |
 | Keyboard | Same resting state; the meter is one tab stop | Focusing the meter reveals the seams |
-| Touch | No percentage; seams always visible | Tap a block for the same tooltip |
+| Touch | Solid stacked fill + percentage; no seams | Hold to reveal seams and the source under the finger; glide to inspect other blocks; release to restore rest |
 | Print | Percentage *and* seams, both static | — |
 
 A block's tooltip contains exactly two lines: the source's display name, and the decision
@@ -93,20 +96,26 @@ plumbing.
 Reasoning: the meter is a sizzle feature — the displayed name is the steak, and what most
 readers decide on. The meter is the first confidence dive, the race page the second. The
 resting state keeps the summary quiet, and every additional layer of information is earned by
-curiosity. On touch, where
-there is no hover to discover, the voices are simply always present, and the percentage — a
-summary derivable from the count — yields entirely to the core information.
+curiosity. Touch follows the same progression: a hold expresses intent to inspect, while a
+short tap leaves the summary alone. *(2026-10-17, issue #561: replaces the original always-on
+touch segmentation.)* A hold activates after 350 ms; movement beyond 8 CSS pixels before
+activation cancels it and leaves scrolling to the browser. During inspection, movement selects
+the block at the finger's current position within the original meter. Leaving that meter hides
+the popup; re-entering it resumes inspection. Release, cancellation, Escape, scrolling, loss of
+window focus, a hidden page, or a second finger ends the hold. A browser text-selection or
+context menu must not replace inspection.
 
 Accessibility model: the meter is a single `role="img"` element carrying the full standings as
 its accessible name, and it is the meter's **one** tab stop — focusing it reveals the seams
-(`:focus-within`), same as hover. Blocks are presentational: they are not focusable and carry
+(`:focus-visible`), same as hover. Blocks are presentational: they are not focusable and carry
 no ARIA of their own (descendants of `role="img"` are pruned by assistive technology, so
 per-block labels there would be both invalid and inert). The tooltip is **not** a live region.
 Per-source evidence remains keyboard-reachable where it already lives — the race page's source
 lists — so no information is hover-only. Reveal transitions are short fades (~150 ms); under
 `prefers-reduced-motion` they become instant. Tooltips must satisfy WCAG 1.4.13 in
-implementation (dismissible via Escape, content hoverable, tap-away to close on touch);
-`hover: none` is the touch signal, which means hybrid touch-laptops get the pointer treatment.
+implementation (dismissible via Escape, content hoverable, release to close on touch).
+Touch input uses the hold gesture on hybrid devices too; keyboard focus remains distinct from
+touch focus so a tap cannot leave the overview permanently revealed.
 
 ## Color
 
@@ -283,8 +292,8 @@ All ratified with the rest of the design (added in the August 4 review pass):
   never had.
 - Sequencing: unblocked. The front-end architecture epic (#232) closed with #245; esbuild and
   lit-html are already in place.
-- The low-fill guard protects the desktop resting label (the percent must still
-  survive a short leader run); touch drops the label and hover removes it.
+- The low-fill guard protects the resting label on pointer and touch devices (the percent must
+  still survive a short leader run); engagement removes it.
 - The rendered-HTML validator, `tests/mirrors.json` entries, and page-parity fixtures that
   reference meter markup and `percentage_label` must move in the same change; the new caption
   formatter registers as a mirror pair.
@@ -362,8 +371,8 @@ Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during
 | 10 | Tie / no-majority | Amber variations / amber |
 | 11 | Trailing colors | Muted slate/taupe/plum; recessive by intent |
 | 12 | Selected candidate | Bold; everything else recedes |
-| 13 | Seams | 1px hairline, darker than fill, minimal contrast; invisible at rest on pointer devices |
-| 14 | Reveal | Hover/focus trades the percent for seams and tooltips; touch always shows seams, never the percent |
+| 13 | Seams | 1px hairline, darker than fill, minimal contrast; invisible at rest on pointer and touch devices |
+| 14 | Reveal | Hover/keyboard focus trades the percent for seams and tooltips; touch holds to reveal, glides between sources, and restores the percentage on release (revised 2026-10-17, #561) |
 | 15 | Tongue tips | `.25rem` on the single interior corner; square at every meter edge |
 | 16 | N/A state | Empty track, muted "N/A", no blocks |
 | 17 | Insufficient grade | Meter renders; the warning below the named leader explains the insufficiency (#532) |

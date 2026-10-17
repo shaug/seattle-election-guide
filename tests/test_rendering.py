@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable
 from fractions import Fraction
 from html import escape, unescape
 from pathlib import Path
@@ -3892,6 +3893,7 @@ def _evaluate_in_chrome(
     media: str | None = None,
     pointer: bool = False,
     touch: bool = False,
+    interact: Callable[[_CdpSocket, str], None] | None = None,
 ) -> dict[str, Any]:
     """Load one local file in headless Chrome and return one JSON object result.
 
@@ -3997,6 +3999,8 @@ def _evaluate_in_chrome(
                             {"media": media},
                             session_id=session_id,
                         )
+                    if interact is not None:
+                        interact(cdp, session_id)
                     evaluated = cdp.command(
                         "Runtime.evaluate",
                         {"expression": expression, "returnByValue": True, "awaitPromise": True},
@@ -4079,7 +4083,7 @@ def test_overview_meter_progressively_discloses_endorsement_segments(
     tmp_path: Path,
     slow_transition: bool,
 ) -> None:
-    """Pointer rest shows the percentage; focus, touch, and print show seams."""
+    """Pointer and touch rest show the percentage; keyboard focus reveals seams."""
     view_model = _personalization_enabled_view_model(tmp_path)
     html_path = tmp_path / "guide.html"
     html_path.write_text(
@@ -4153,9 +4157,11 @@ def test_overview_meter_progressively_discloses_endorsement_segments(
 
     touch = _evaluate_in_chrome(html_path, expression, mobile_width=390, touch=True)
     assert touch["hover"] is False
-    assert touch["rest"]["labelDisplay"] == "none"
-    assert touch["rest"]["boundaries"] == touch["revealed"]["boundaries"]
-    assert touch["rest"]["boundaries"] != pointer["rest"]["boundaries"]
+    assert touch["rest"]["labelDisplay"] == "flex"
+    assert touch["rest"]["labelOpacity"] == "1"
+    assert touch["revealed"]["labelOpacity"] == "0"
+    assert touch["rest"]["boundaries"] == pointer["rest"]["boundaries"]
+    assert touch["rest"]["boundaries"] != touch["revealed"]["boundaries"]
 
     printed = _evaluate_in_chrome(html_path, expression, viewport=(768, 1000), media="print")
     assert printed["rest"]["labelOpacity"] == "1"
@@ -4174,6 +4180,159 @@ def test_overview_meter_progressively_discloses_endorsement_segments(
     assert touch_printed["rest"]["labelDisplay"] == "flex"
     assert touch_printed["rest"]["labelOpacity"] == "1"
     assert any(boundary["image"] != "none" for boundary in touch_printed["rest"]["boundaries"])
+
+
+def test_mobile_meter_hold_glide_release_and_native_scroll(tmp_path: Path) -> None:
+    """Real touch input inspects after a hold and scrolls before one activates."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+
+    def interact(cdp: _CdpSocket, session: str) -> None:
+        def evaluate(expression: str) -> Any:
+            result = cdp.command(
+                "Runtime.evaluate",
+                {"expression": expression, "returnByValue": True, "awaitPromise": True},
+                session_id=session,
+            )
+            assert "exceptionDetails" not in result, result
+            return cast(dict[str, Any], result["result"]).get("value")
+
+        def finger(kind: str, x: float = 0, y: float = 0) -> None:
+            cdp.command(
+                "Input.dispatchTouchEvent",
+                {
+                    "type": kind,
+                    "touchPoints": [] if kind == "touchEnd" else [{"x": x, "y": y}],
+                },
+                session_id=session,
+            )
+
+        coordinates = json.loads(
+            evaluate("""
+              (async () => {
+                const meter = [...document.querySelectorAll('.screen-meter')]
+                  .find((m) => m.querySelectorAll('.meter-block').length > 1);
+                meter.scrollIntoView({ block: 'center' });
+                await new Promise(requestAnimationFrame);
+                const blocks = [...meter.querySelectorAll('.meter-block')];
+                const point = (block) => {
+                  const r = block.getBoundingClientRect();
+                  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+                };
+                window.meterProbe = {
+                  meter, first: blocks[0], last: blocks.at(-1),
+                  scroll: window.scrollY,
+                  snapshot: () => ({
+                    labelOpacity: getComputedStyle(meter.querySelector('strong')).opacity,
+                    source: document.querySelector('.meter-tooltip:not([hidden]) '
+                      + '.meter-tooltip-source')?.textContent ?? null,
+                    seams: blocks.slice(1).map((b) => ({
+                      color: getComputedStyle(b).borderLeftColor,
+                      image: getComputedStyle(b).borderImageSource,
+                    })),
+                  }),
+                  settle: async () => {
+                    getComputedStyle(meter.querySelector('strong')).opacity;
+                    await Promise.all(meter.getAnimations({ subtree: true })
+                      .map((animation) => animation.finished));
+                  },
+                };
+                window.meterProbe.rest = window.meterProbe.snapshot();
+                return JSON.stringify({ first: point(blocks[0]), last: point(blocks.at(-1)) });
+              })()
+            """)
+        )
+        first, last = coordinates["first"], coordinates["last"]
+        finger("touchStart", first["x"], first["y"])
+        evaluate("""
+          (async () => {
+            const deadline = performance.now() + 2000;
+            while (!window.meterProbe.snapshot().source) {
+              if (performance.now() > deadline) throw new Error('hold did not reveal source');
+              await new Promise(requestAnimationFrame);
+            }
+            await window.meterProbe.settle();
+            window.meterProbe.held = window.meterProbe.snapshot();
+          })()
+        """)
+        finger("touchMove", last["x"], last["y"])
+        evaluate("window.meterProbe.glided = window.meterProbe.snapshot()")
+        finger("touchEnd")
+        result = json.loads(
+            evaluate("""
+              (async () => {
+                const p = window.meterProbe;
+                await p.settle();
+                p.released = p.snapshot();
+                return JSON.stringify({
+                  rest: p.rest, held: p.held, glided: p.glided, released: p.released,
+                  first: p.first.dataset.meterSource, last: p.last.dataset.meterSource,
+                  stayedStill: window.scrollY === p.scroll,
+                });
+              })()
+            """)
+        )
+        assert result["rest"]["labelOpacity"] == "1"
+        assert result["rest"]["source"] is None
+        assert result["held"]["labelOpacity"] == "0"
+        assert result["held"]["source"] == result["first"]
+        assert result["held"]["seams"] != result["rest"]["seams"]
+        assert result["glided"]["source"] == result["last"]
+        assert result["first"] != result["last"]
+        assert result["released"] == result["rest"]
+        assert result["stayedStill"] is True
+
+        # A mouse used with a touch-primary device must reveal the same detail,
+        # even though its primary-input media query still says hover: none.
+        cdp.command(
+            "Input.dispatchMouseEvent",
+            {"type": "mouseMoved", "x": first["x"], "y": first["y"]},
+            session_id=session,
+        )
+        mouse = json.loads(
+            evaluate("""
+              (async () => {
+                await window.meterProbe.settle();
+                return JSON.stringify(window.meterProbe.snapshot());
+              })()
+            """)
+        )
+        assert mouse["source"] == result["first"]
+        assert mouse["labelOpacity"] == "0"
+        assert mouse["seams"] == result["held"]["seams"]
+        cdp.command(
+            "Input.dispatchMouseEvent",
+            {"type": "mouseMoved", "x": 0, "y": 0},
+            session_id=session,
+        )
+
+        # An ordinary vertical swipe starting on the same meter must scroll.
+        finger("touchStart", first["x"], first["y"])
+        for offset in (20, 50, 90):
+            finger("touchMove", first["x"], first["y"] - offset)
+        finger("touchEnd")
+        evaluate("""
+          (async () => {
+            const deadline = performance.now() + 2000;
+            while (window.scrollY === window.meterProbe.scroll) {
+              if (performance.now() > deadline) throw new Error('swipe did not scroll');
+              await new Promise(requestAnimationFrame);
+            }
+          })()
+        """)
+
+    result = _evaluate_in_chrome(
+        html_path,
+        "JSON.stringify({ source: window.meterProbe.snapshot().source })",
+        mobile_width=390,
+        touch=True,
+        interact=interact,
+    )
+    assert result["source"] is None
 
 
 def test_race_detail_split_meter_stays_statically_segmented(
