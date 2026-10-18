@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 129913,
+  "canonical_url": "https://workingfamilies.org/candidates/",
+  "capture_method": "static_html",
+  "content_sha256": "add4b4aa02c6deb568d9a251f513c3e97ab8a441076e7cdbaf9c35a0d33d51e6",
+  "http_status": 200,
+  "id": "capture-washington-working-families-party-20261017T084504Z-756bb2993ef5",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original bytes retained in the committed encrypted vault.",
+  "requested_url": "https://workingfamilies.org/candidates/",
+  "retrieved_at": "2026-10-17T08:45:04Z",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "storage_reference": "sha256/ad/add4b4aa02c6deb568d9a251f513c3e97ab8a441076e7cdbaf9c35a0d33d51e6",
+  "storage_scope": "local_only",
+  "title": "Official wa-2026-general endorsement publication",
+  "updated_at": null
+}

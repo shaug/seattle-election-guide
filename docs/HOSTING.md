@@ -429,8 +429,25 @@ Cloudflare or domain configuration. A failed deployment probe instead identifies
 can be corrected or rolled back.
 
 The `finalize` job follows the one production upload and confirms its exact original full SHA.
-It preserves production-wait.json and durable issue evidence. Only then may the owned GitHub
-deployment receive success. A failed probe never authorizes rollback or another upload.
+The canonical host can briefly serve the previous revision while the upload propagates, so the
+shared waiter calls the unchanged strict checker at least five seconds apart and requires two
+consecutive complete passes. Any failure resets that streak. The shared 120-second deadline
+described above bounds the entire wait; persistent wrong commits, routes, redirects, manifests,
+and transport failures still fail finalization. The expected source remains the recorded upload's
+full SHA throughout, including verification-only recovery after main advances.
+The finalization step also retains a separate three-minute Actions deadline, bounding the full
+command sequence independently of probe waiting and evidence API delays.
+
+The attempt-scoped `finalization-<run>-<attempt>` Actions artifact preserves
+`dist/finalization/production-wait.json`, including every failed observation and both final passing
+checks. The same complete report is retained durably on the owning release issue. An absent or
+invalid worker result becomes a failed observation; a probe exception or missing/conflicting
+durable evidence fails finalization. An earlier local report cannot supply confirmation. Evidence
+upload runs even when finalization fails, and the owned GitHub deployment receives success only
+after complete confirmation and durable evidence retention. A failed probe never authorizes
+rollback or another upload. One-off `hosting check-production` commands still run once.
+*(2026-10-17, issue #563: propagation confirmation is retained by the shared #550 finalizer
+rather than a separate deploy-shell polling loop.)*
 Strict verification requires `--expected-git-commit`; `--availability-only` cannot replace it.
 
 For a manual availability diagnosis without release expectations:
@@ -464,7 +481,8 @@ The complete mainline workflow and verification-only recovery share `verified-re
 remain parallel. Five independent lanes feed `check`,
 then `publish` verifies the canonical release, `publication-evidence` durably records it, `deploy`
 checks the selected declaration and production predecessor before its one upload, and `finalize`
-confirms and retains two complete strict probes. All identities use the captured merged SHA.
+confirms and retains two complete strict probes within the shared propagation deadline above.
+All identities use the captured merged SHA, even if main advances during confirmation.
 A full queue is a delivery failure. A documentation/test-only commit makes no deployment request.
 
 ### Branch policy

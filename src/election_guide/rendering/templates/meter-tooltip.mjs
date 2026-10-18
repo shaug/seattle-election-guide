@@ -19,12 +19,14 @@
 // (Escape), hoverable, and persistent, not that it be announced. The tooltip
 // is `pointer-events: none` (meter-*.css), so the pointer is never "on" it in
 // a way that could dismiss it, which is what makes it hoverable by
-// construction; Escape and a tap outside close it explicitly below.
+// construction; Escape and leaving the block close it explicitly below.
 //
 // Wiring, not a computing module: it holds one DOM element and one set of
 // document listeners.
 
 const TOOLTIP_CLASS = 'meter-tooltip';
+const HOLD_MS = 350;
+const HOLD_SLOP = 8;
 
 /** @type {HTMLElement|null} */
 let tooltipElement = null;
@@ -103,31 +105,119 @@ function meterBlock(event) {
  * because the alternative is a module-level flag a test can never reset.
  */
 export function wireMeterTooltips() {
+  /** @type {{meter: Element, block: Element|null, x: number, y: number, revealed: boolean, timer: ReturnType<typeof setTimeout>}|null} */
+  let hold = null;
+
+  function cancelHold() {
+    if (!hold) return;
+    clearTimeout(hold.timer);
+    hold.meter.classList.remove('meter-inspecting');
+    hold = null;
+    hideTooltip();
+  }
+
   document.addEventListener('pointerover', (event) => {
+    if (event.pointerType === 'touch') return;
     const block = meterBlock(event);
-    if (block) showTooltip(block);
+    if (block) {
+      const meter = block.closest('.screen-meter');
+      meter?.classList.remove('meter-touch');
+      // A secondary mouse can hover even when the primary input is touch.
+      meter?.classList.add('meter-inspecting');
+      showTooltip(block);
+    }
   });
   document.addEventListener('pointerout', (event) => {
+    if (event.pointerType === 'touch') return;
     const block = meterBlock(event);
+    block?.closest('.screen-meter')?.classList.remove('meter-inspecting');
     if (block && block === activeBlock) hideTooltip();
   });
-  // Touch has no hover: a tap opens the same tooltip a pointer's hover would,
-  // and a second tap — on the same block, or anywhere else — closes it
-  // (WCAG 1.4.13's dismissible criterion, satisfied without waiting on Escape
-  // for a device with no keyboard to raise it on).
+  // Do not let a compatibility click turn a short touch into inspection or
+  // reopen a tooltip after release. Pointer inspection is hover-driven.
   document.addEventListener('click', (event) => {
-    const block = meterBlock(event);
-    if (block === activeBlock) {
+    if (!meterBlock(event)) hideTooltip();
+  });
+
+  document.addEventListener(
+    'touchstart',
+    (event) => {
+      cancelHold();
       hideTooltip();
-      return;
-    }
-    if (block) {
-      showTooltip(block);
-      return;
-    }
-    hideTooltip();
+      if (event.touches.length !== 1) return;
+      const block = meterBlock(event);
+      const meter = block?.closest('.screen-meter');
+      if (!block || !meter) return;
+      meter.classList.add('meter-touch');
+      meter.classList.remove('meter-inspecting');
+      const finger = event.touches[0];
+      hold = {
+        meter,
+        block,
+        x: finger.clientX,
+        y: finger.clientY,
+        revealed: false,
+        timer: setTimeout(() => {
+          if (!hold || !meter.isConnected) {
+            cancelHold();
+            return;
+          }
+          hold.revealed = true;
+          meter.classList.add('meter-inspecting');
+          if (hold.block?.isConnected) showTooltip(hold.block);
+        }, HOLD_MS),
+      };
+    },
+    { passive: true },
+  );
+
+  // Touch events retain their original target while the finger moves. Hit-test
+  // the current coordinates instead. Pointer events alone cannot arbitrate a
+  // hold versus scrolling: touch-action is fixed at the start of the gesture.
+  document.addEventListener(
+    'touchmove',
+    (event) => {
+      if (!hold) return;
+      if (event.touches.length !== 1 || !event.cancelable || !hold.meter.isConnected) {
+        cancelHold();
+        return;
+      }
+      const finger = event.touches[0];
+      if (
+        !hold.revealed &&
+        Math.hypot(finger.clientX - hold.x, finger.clientY - hold.y) > HOLD_SLOP
+      ) {
+        cancelHold();
+        return;
+      }
+      if (hold.revealed) event.preventDefault();
+      const block = document
+        .elementFromPoint(finger.clientX, finger.clientY)
+        ?.closest('.meter-block');
+      hold.block = block && block.closest('.screen-meter') === hold.meter ? block : null;
+      if (!hold.revealed) return;
+      if (hold.block) {
+        if (hold.block !== activeBlock) showTooltip(hold.block);
+      } else {
+        hideTooltip();
+      }
+    },
+    { passive: false },
+  );
+  document.addEventListener('touchend', cancelHold);
+  document.addEventListener('touchcancel', cancelHold);
+  document.addEventListener('scroll', cancelHold, { capture: true, passive: true });
+  document.addEventListener('contextmenu', (event) => {
+    if (hold) event.preventDefault();
+  });
+  window.addEventListener('blur', cancelHold);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelHold();
   });
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && activeBlock) hideTooltip();
+    if (event.key === 'Escape') {
+      cancelHold();
+      hideTooltip();
+    }
   });
 }

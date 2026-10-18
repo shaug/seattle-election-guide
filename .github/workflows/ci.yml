@@ -665,7 +665,10 @@ jobs:
       env:
         ARTIFACT_ID: ${{ needs.deploy.outputs.upload_id }}
         ARTIFACT_DIGEST: ${{ needs.deploy.outputs.upload_digest }}
+    # The shared finalizer owns the bounded propagation wait (#563), strict
+    # confirmation pair and attempt evidence; this job never repeats the upload.
     - name: Finalize uploaded or skipped operation
+      timeout-minutes: 3
       run: |-
         if [ -f dist/upload/operation.json ]; then
           uv run election-guide release automation retain-operation --receipt dist/upload/operation.json
