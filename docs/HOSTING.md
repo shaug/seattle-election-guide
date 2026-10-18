@@ -276,6 +276,13 @@ release status/manifest to its declaration, requires the exact declared asset se
 every asset hash. `deployment-manifest.json` is the documented sole exclusion from its own asset
 hash map.
 
+New staged sites also contain `updates-snapshot.json`, a manifest-hashed summary of the served
+aggregate/position pages and Updates entry identities. Independent verification recomputes it
+from the actual staged pages and rejects a stale snapshot even when its file hash was updated.
+The required publication lane and serialized deployment both run `make check-updates` against
+the last successful production baseline before uploading changed election content. See
+[the Updates gate](RELEASE.md#public-update-log) for scope, normalization, and failure recovery.
+
 Preview the staged directory with Wrangler:
 
 ```bash

@@ -77,6 +77,12 @@ from election_guide.hosting import (
 from election_guide.hosting.production_check import render_summary_lines
 from election_guide.hosting.production_probe import run_production_check
 from election_guide.hosting.production_wait import wait_for_production
+from election_guide.hosting.updates import (
+    build_updates_snapshot,
+    check_updates,
+    compare_updates_snapshots,
+)
+from election_guide.hosting.updates_baseline import resolve_production_snapshot
 from election_guide.initialization import initialize_election, read_election_configuration
 from election_guide.inventory.importer import (
     extract_public_inputs,
@@ -280,6 +286,57 @@ def hosting_verify(
         f"Pages site: verified ({len(result.elections)} elections; "
         f"current {result.current_election_id}; {len(result.assets)} assets)"
     )
+
+
+@hosting_app.command("check-updates")
+def hosting_check_updates(
+    site_dir: Annotated[Path, typer.Argument(exists=True, file_okay=False, readable=True)],
+    baseline_site_dir: Annotated[
+        Path | None,
+        typer.Option(
+            help="Use a retained production artifact for an offline diagnostic comparison."
+        ),
+    ] = None,
+    output_path: Annotated[Path, typer.Option(file_okay=True, dir_okay=False)] = Path(
+        "dist/updates-check.json"
+    ),
+) -> None:
+    """Require new served Updates entries for changes since successful production."""
+    report: dict[str, Any]
+    try:
+        if baseline_site_dir is not None:
+            report = check_updates(baseline_site_dir, site_dir)
+            report["baseline"] = {"local_site_dir": str(baseline_site_dir)}
+        else:
+            with tempfile.TemporaryDirectory(prefix="updates-baseline-") as temporary:
+                baseline, receipt = resolve_production_snapshot(Path(temporary) / "site")
+                report = compare_updates_snapshots(baseline, build_updates_snapshot(site_dir))
+                report["baseline"] = receipt
+        report["candidate_manifest_sha256"] = hashlib.sha256(
+            (site_dir / "deployment-manifest.json").read_bytes()
+        ).hexdigest()
+    except (
+        OSError,
+        UnicodeError,
+        ValueError,
+        KeyError,
+        TypeError,
+        subprocess.SubprocessError,
+    ) as error:
+        report = {"schema_version": "1.0", "result": "fail", "error": str(error)}
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_bytes(canonical_json_bytes(report))
+    if report["result"] != "pass":
+        typer.echo("Updates check failed", err=True)
+        if "error" in report:
+            typer.echo(report["error"], err=True)
+        for election, result in report.get("elections", {}).items():
+            if result["result"] != "pass":
+                typer.echo(f"{election}: add a new entry to {result['updates_path']}", err=True)
+                for page in result["changed_pages"]:
+                    typer.echo(f"  {page}", err=True)
+        raise typer.Exit(code=1)
+    typer.echo(f"Updates: verified ({len(report['elections'])} elections; {output_path})")
 
 
 @hosting_app.command("bundle-hash")

@@ -522,6 +522,18 @@
       "client",
       "test"
     ],
+    "corrections-date": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "corrections-entry": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
     "election-day": [
       "stylesheet",
       "client",
