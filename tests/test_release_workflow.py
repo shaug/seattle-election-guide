@@ -89,7 +89,7 @@ def test_admission_never_reuploads_an_existing_attempt(
 
 
 @pytest.mark.parametrize("exit_code", [0, 1])
-def test_single_upload_retains_output_and_records_unique_url_before_receipt(
+def test_single_upload_retains_output_and_records_unique_url(
     evidence_setup: tuple[Any, ...],  # noqa: F811
     monkeypatch: pytest.MonkeyPatch,
     exit_code: int,
@@ -333,3 +333,276 @@ def test_latest_production_rejects_conflicting_upload_time(
     monkeypatch.setattr(evidence, "load_verified_receipts", constant((original, conflict)))
     with pytest.raises(ValueError, match="upload identity/time"):
         evidence.latest_production_receipt(upload.producer.repository)
+
+
+def retained_upload_artifact(
+    setup: tuple[Any, ...], monkeypatch: pytest.MonkeyPatch, directory: Path
+) -> dict[str, Any]:
+    """Serve real wrapper bytes through the existing artifact/attempt validators."""
+    import hashlib
+    import io
+    import zipfile
+
+    from election_guide.hosting import promotion
+    from election_guide.release.automation_models import ArtifactRef, FileDigest
+    from tests.test_release_promotion import AdmissionAPI, artifact_metadata
+
+    _, api, _, publication, _, _ = setup
+    candidate = publication.published.candidate
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as archive:
+        for path in directory.iterdir():
+            archive.writestr(path.name, path.read_bytes())
+    wrapper = buffer.getvalue()
+    reference = ArtifactRef(
+        id=14,
+        name=f"upload-{candidate.producer.run_id}-{candidate.producer.run_attempt}",
+        digest=FileDigest(sha256=hashlib.sha256(wrapper).hexdigest(), size=len(wrapper)),
+        producer=candidate.producer,
+    )
+    metadata = artifact_metadata(candidate, reference)
+    metadata["expired"] = False
+    attempts = AdmissionAPI(candidate.source_sha)
+    observed: dict[str, Any] = {"metadata": metadata, "wrapper": wrapper, "downloads": []}
+
+    def gh(command: list[str], failure: str) -> str:
+        endpoint = command[2]
+        if endpoint.endswith("/artifacts?per_page=100"):
+            return json.dumps([{"artifacts": [metadata]}])
+        if "/actions/artifacts/" in endpoint:
+            assert endpoint.endswith("/14")
+            return json.dumps(metadata)
+        if "/actions/" in endpoint:
+            return attempts(command, failure)
+        if "/statuses" in endpoint and "--method" in command:
+            payload = json.loads(Path(command[command.index("--input") + 1]).read_bytes())
+            status = {**payload, "id": len(api.statuses[50]) + 1, "creator": BOT}
+            api.statuses[50].append(status)
+            return json.dumps(status)
+        return api.run(command, failure)
+
+    def download(command: list[str], destination: Path, failure: str) -> None:
+        assert command[2].endswith("/actions/artifacts/14/zip")
+        observed["downloads"].append(reference.id)
+        destination.write_bytes(observed["wrapper"])
+
+    monkeypatch.setattr(adapter(), "run_gh", gh)
+    monkeypatch.setattr(promotion, "run_gh", gh)
+    monkeypatch.setattr(promotion, "download_gh", download)
+    return observed
+
+
+def test_successful_upload_status_failure_recovers_without_another_upload(
+    evidence_setup: tuple[Any, ...],  # noqa: F811
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from typer.testing import CliRunner
+
+    from election_guide.release import automation_cli
+    from election_guide.release.automation_models import UploadReceipt
+    from tests.test_release_evidence import successful_report
+
+    module = adapter()
+    evidence, api, _, publication, original, root = evidence_setup
+    evidence.retain_evidence(operation(publication), issue_number=550, reports={})
+    monkeypatch.setattr(module, "run_gh", api.run)
+    monkeypatch.setattr(module, "current_producer", constant(original.producer))
+    real_run: Callable[..., subprocess.CompletedProcess[Any]] = subprocess.run
+    uploads: list[list[str]] = []
+
+    def run(command: list[str], **kwargs: Any) -> Any:
+        if command[:3] == ["npm", "run", "pages:deploy"]:
+            uploads.append(command)
+            return subprocess.CompletedProcess(command, 0, original.deployment_url, "warning")
+        return real_run(command, **kwargs)
+
+    monkeypatch.setattr(module.subprocess, "run", run)
+    directory = root / "upload"
+    publication_path, deployment_path = root / "publication.json", root / "deployment.json"
+    publication_path.write_text(publication.model_dump_json())
+    deployment_path.write_text('{"id":50}')
+
+    def unavailable(*args: Any, **kwargs: Any) -> Any:
+        raise ValueError("initial status write unavailable")
+
+    runner = CliRunner()
+    with monkeypatch.context() as status_failure:
+        status_failure.setattr(module, "post_object", unavailable)
+        result = runner.invoke(
+            automation_cli.app,
+            [
+                "upload",
+                "--publication",
+                str(publication_path),
+                "--deployment",
+                str(deployment_path),
+                "--site-dir",
+                str(root / "dist/site"),
+                "--output-dir",
+                str(directory),
+            ],
+        )
+    assert result.exit_code == 1 and "initial status write unavailable" in result.output
+    assert api.statuses[50] == []
+    # The receipt must survive the failed metadata request, alongside the report.
+    saved = UploadReceipt.model_validate_json((directory / "upload.json").read_bytes())
+    assert saved.producer == original.producer and saved.source_sha == original.source_sha
+    report = json.loads((directory / "upload-report.json").read_bytes())
+    assert saved.uploaded_at.isoformat() == report["uploaded_at"]
+    # Exercise the normal failed-operation consumer before verification-only recovery.
+    retained = runner.invoke(
+        automation_cli.app, ["retain-operation", "--receipt", str(directory / "operation.json")]
+    )
+    assert retained.exit_code == 0, retained.output
+    artifact = retained_upload_artifact(evidence_setup, monkeypatch, directory)
+    recovered_path = root / "recovered.json"
+    recovered = runner.invoke(
+        automation_cli.app,
+        [
+            "recover-upload",
+            "--repository",
+            original.producer.repository,
+            "--issue",
+            "550",
+            "--release-version",
+            publication.published.candidate.declaration.release_version,
+            "--source-sha",
+            original.source_sha,
+            "--run-id",
+            str(original.producer.run_id),
+            "--run-attempt",
+            str(original.producer.run_attempt),
+            "--output",
+            str(recovered_path),
+        ],
+    )
+    assert recovered.exit_code == 0, recovered.output
+    assert artifact["downloads"] == [14]
+    assert UploadReceipt.model_validate_json(recovered_path.read_bytes()) == saved
+    verification_producer = original.producer.model_copy(
+        update={"run_id": 201, "workflow_sha": "f" * 40}
+    )
+    monkeypatch.setattr(evidence, "current_producer", constant(verification_producer))
+    probes: list[bool] = []
+
+    def probe(*args: Any, **kwargs: Any) -> Any:
+        probes.append(True)
+        return successful_report(evidence_setup)
+
+    monkeypatch.setattr(evidence, "wait_for_production", probe)
+    for _ in range(2):
+        result = runner.invoke(
+            automation_cli.app,
+            ["finalize", "--upload", str(recovered_path), "--output-dir", str(root / "finalized")],
+        )
+        assert result.exit_code == 0, result.output
+        status = runner.invoke(
+            automation_cli.app, ["deployment-status", "--upload", str(recovered_path)]
+        )
+        assert status.exit_code == 0, status.output
+    assert len(uploads) == len(probes) == len(api.statuses[50]) == 1
+    assert api.statuses[50][0]["state"] == "success"
+    assert evidence.latest_production_receipt(original.producer.repository).upload == saved
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "absent-status",
+        "report-only",
+        "matching-status",
+        "conflicting-status",
+        "wrong-host-status",
+        "path-status",
+        "alias-status",
+        "ambiguous-status",
+        "foreign-status",
+        "failed-status",
+        "failed-upload",
+        "ambiguous-output",
+        "missing-url",
+        "conflicting-receipt",
+        "foreign-producer",
+        "wrong-wrapper",
+        "wrong-attempt",
+    ],
+)
+def test_upload_recovery_authenticates_retained_evidence(
+    evidence_setup: tuple[Any, ...],  # noqa: F811
+    monkeypatch: pytest.MonkeyPatch,
+    case: str,
+) -> None:
+    module = adapter()
+    evidence, api, _, publication, upload, root = evidence_setup
+    evidence.retain_evidence(operation(publication), issue_number=550, reports={})
+    directory = root / "retained"
+    directory.mkdir()
+    report: dict[str, Any] = {
+        "producer": upload.producer.model_dump(mode="json"),
+        "github_deployment_id": 50,
+        "source_sha": upload.source_sha,
+        "uploaded_at": upload.uploaded_at.isoformat(),
+        "returncode": 0,
+        "stdout": upload.deployment_url,
+        "stderr": "",
+    }
+    other_url = "https://def456.example.pages.dev"
+    if case.endswith("status") and case != "absent-status":
+        api.statuses[50] = [
+            {
+                "id": 1,
+                "creator": BOT,
+                "state": "in_progress",
+                "environment_url": upload.deployment_url,
+            }
+        ]
+    if case == "conflicting-status":
+        api.statuses[50][0]["environment_url"] = other_url
+    elif case in {"wrong-host-status", "path-status", "alias-status"}:
+        api.statuses[50][0]["environment_url"] = {
+            "wrong-host-status": "https://abc123.other.pages.dev/",
+            "path-status": upload.deployment_url + "guide",
+            "alias-status": "https://example.pages.dev/",
+        }[case]
+    elif case == "ambiguous-status":
+        api.statuses[50].append({**api.statuses[50][0], "id": 2, "environment_url": other_url})
+    elif case == "foreign-status":
+        api.statuses[50][0]["creator"] = {**BOT, "id": 1}
+    elif case == "failed-status":
+        api.statuses[50][0]["state"] = "failure"
+    elif case == "failed-upload":
+        report["returncode"] = 1
+    elif case == "ambiguous-output":
+        report["stdout"] += " " + other_url
+    elif case == "missing-url":
+        report["stdout"] = ""
+    elif case == "foreign-producer":
+        report["producer"]["run_id"] += 1
+    if case != "report-only":
+        receipt = upload.model_dump(mode="json")
+        if case == "conflicting-receipt":
+            receipt["uploaded_at"] = "2026-10-16T01:00:00Z"
+        (directory / "upload.json").write_text(json.dumps(receipt))
+    (directory / "upload-report.json").write_text(json.dumps(report))
+    artifact = retained_upload_artifact(evidence_setup, monkeypatch, directory)
+    if case == "wrong-wrapper":
+        artifact["wrapper"] += b"different bytes"
+    elif case == "wrong-attempt":
+        artifact["metadata"]["created_at"] = "2026-10-16T11:59:59Z"
+
+    def recover() -> Any:
+        return module.recover_upload(
+            repository=upload.producer.repository,
+            issue=550,
+            release_version=publication.published.candidate.declaration.release_version,
+            source_sha=upload.source_sha,
+            run_id=upload.producer.run_id,
+            run_attempt=upload.producer.run_attempt,
+        )
+
+    if case in {"absent-status", "report-only", "matching-status"}:
+        assert recover() == upload
+        assert artifact["downloads"] == [14]
+    else:
+        with pytest.raises(ValueError):
+            recover()

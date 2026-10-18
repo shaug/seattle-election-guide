@@ -329,12 +329,12 @@ def perform_upload(
                 }
             )
         )
-        # Retain the unique upload URL before any receipt/probe can fail.
-        write_deployment_status(
-            publication, deployment_id, state="in_progress", url=upload.deployment_url
-        )
+        # Preserve the exact upload before the fallible GitHub metadata request.
         (output_dir / "upload.json").write_bytes(
             canonical_json_bytes(upload.model_dump(mode="json"))
+        )
+        write_deployment_status(
+            publication, deployment_id, state="in_progress", url=upload.deployment_url
         )
         return upload
     finally:
@@ -350,7 +350,7 @@ def recover_upload(
     run_id: int,
     run_attempt: int,
 ) -> UploadReceipt:
-    """Use immutable evidence, or one owned deployment/status plus its retained upload report."""
+    """Use immutable evidence, or one owned deployment plus authenticated upload evidence."""
     records = load_verified_receipts(
         repository=repository,
         issue_number=issue,
@@ -380,13 +380,11 @@ def recover_upload(
     deployment = deployments[0]
     statuses = read_rows(f"repos/{repository}/deployments/{deployment['id']}/statuses?per_page=100")
     urls = {
-        s.get("environment_url") for s in statuses if s.get("state") in {"in_progress", "success"}
+        UploadReceipt.validate_deployment_url(s.get("environment_url", ""))
+        for s in statuses
+        if s.get("state") in {"in_progress", "success"}
     }
-    if (
-        not statuses
-        or any(not workflow_owned(s.get("creator")) for s in statuses)
-        or len(urls) != 1
-    ):
+    if any(not workflow_owned(s.get("creator")) for s in statuses) or (statuses and len(urls) != 1):
         raise ValueError("owned upload status is missing or ambiguous")
     producer = publication.published.candidate.producer
     name = f"upload-{run_id}-{run_attempt}"
@@ -406,6 +404,12 @@ def recover_upload(
         directory = Path(temporary)
         download_actions_artifact(ref, directory)
         report = json.loads((directory / "upload-report.json").read_bytes())
+        receipt_path = directory / "upload.json"
+        retained_upload = (
+            UploadReceipt.model_validate_json(receipt_path.read_bytes())
+            if receipt_path.is_file()
+            else None
+        )
     if (
         report.get("returncode") != 0
         or report.get("producer") != producer.model_dump(mode="json")
@@ -419,20 +423,25 @@ def recover_upload(
             report["stdout"] + "\n" + report["stderr"],
         )
     )
-    if observed_urls != urls:
-        raise ValueError("retained upload output differs from owned deployment URL")
-    return UploadReceipt.model_validate_json(
+    if len(observed_urls) != 1:
+        raise ValueError("retained upload output is missing or ambiguous")
+    recovered = UploadReceipt.model_validate_json(
         json.dumps(
             {
                 "publication": publication.model_dump(mode="json"),
                 "producer": report["producer"],
                 "github_deployment_id": deployment["id"],
-                "deployment_url": next(iter(urls)),
+                "deployment_url": next(iter(observed_urls)),
                 "uploaded_at": report["uploaded_at"],
                 "source_sha": source_sha,
             }
         )
     )
+    if statuses and urls != {recovered.deployment_url}:
+        raise ValueError("retained upload output differs from owned deployment URL")
+    if retained_upload is not None and retained_upload != recovered:
+        raise ValueError("retained upload receipt conflicts with authenticated upload report")
+    return recovered
 
 
 def retain_delivery_failure(publication_path: Path, output_dir: Path, error: Exception) -> None:

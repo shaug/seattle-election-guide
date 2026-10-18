@@ -198,8 +198,9 @@ rejects stale candidates and a disabled upload switch yields `deployment_paused`
 selected declaration yields `superseded`. Neither state is a successful deployment.
 
 The production environment permits only main, with no extra Publish approval. Cloudflare
-credentials exist only on the one pinned upload step. Its owned GitHub deployment retains the
-unique Pages upload URL immediately, plus stdout/stderr and upload time. Uncertain upload
+credentials exist only on the one pinned upload step. It saves the validated upload receipt,
+stdout/stderr and upload time before recording the unique Pages URL on its owned GitHub deployment.
+A failed status write leaves that exact upload recoverable from the retained artifact. Uncertain upload
 outcomes require operator verification before another upload. Finalization waits at most
 120 seconds for two consecutive complete strict probes at least five seconds apart and retains
 all failed observations. GitHub deployment success follows durable verified evidence only.
@@ -240,8 +241,11 @@ gh workflow run verify-release.yml --ref main \
 
 Verification-only uses trusted workflow code from main and the declaration from the original
 Git object. It loads immutable upload evidence or reconstructs it only from one matching owned
-deployment/status and an authenticated retained upload report. Missing or ambiguous evidence
-fails closed. It never builds, republishes, uploads, or relabels the original upload producer.
+deployment and an authenticated retained successful upload report. The retained receipt, when
+present, must match the report exactly. An absent initial status can be recovered; existing
+in-progress or success status URLs must agree with the upload. Missing, conflicting or ambiguous
+evidence fails closed.
+It never builds, republishes, uploads, or relabels the original upload producer.
 Already successful verification is idempotent and cannot reorder an older production deployment.
 `make hosting-deploy` deliberately fails with these recovery instructions.
 
