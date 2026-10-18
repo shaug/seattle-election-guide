@@ -489,3 +489,62 @@ def test_in_window_is_false_the_day_after_election_day(tmp_path: Path) -> None:
 
     assert result.exit_code == 1
     assert result.output.strip() == "false"
+
+
+@pytest.mark.parametrize("timed_out", [False, True])
+def test_wait_writes_complete_attempt_evidence_before_exiting(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, timed_out: bool
+) -> None:
+    from election_guide.hosting.production_wait import ProductionWaitReport
+
+    recorded: dict[str, Any] = {}
+    calendar = _write_calendar(tmp_path, election_date=datetime.now(UTC).date() + timedelta(days=4))
+    output = tmp_path / "wait.json"
+
+    def waiting(base_url: str, **kwargs: Any) -> ProductionWaitReport:
+        recorded.update(kwargs)
+        assert base_url == "https://seattleelections.guide"
+        return ProductionWaitReport(
+            attempts=(_attachment_report(), _attachment_report()),
+            successful_indices=() if timed_out else (0, 1),
+            timed_out=timed_out,
+        )
+
+    monkeypatch.setattr(cli, "wait_for_production", waiting)
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "check-production",
+            "https://seattleelections.guide",
+            "--wait",
+            "--expected-git-commit",
+            COMMIT,
+            "--calendar",
+            str(calendar),
+            "--output",
+            str(output),
+        ],
+    )
+    assert result.exit_code == (1 if timed_out else 0), result.output
+    assert recorded["active_window"] is True
+    assert recorded["expected_git_commit"] == COMMIT
+    document = json.loads(output.read_text())
+    assert len(document["attempts"]) == 2
+    assert document["timed_out"] is timed_out
+    assert "deadline" in result.output if timed_out else "PASS" in result.output
+
+
+def test_wait_rejects_availability_only() -> None:
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "check-production",
+            "https://seattleelections.guide",
+            "--wait",
+            "--availability-only",
+        ],
+    )
+    assert result.exit_code == 1
+    assert "--wait requires strict release verification" in result.output

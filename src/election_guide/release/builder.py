@@ -63,6 +63,7 @@ def build_release(
     repository_root: Path = Path("."),
     calendar_path: Path = Path("config/calendar/elections.yaml"),
     corrections_dir: Path = Path("data/corrections"),
+    software_history: str | None = None,
 ) -> ReleaseResult:
     """Run the complete publication pipeline and atomically publish one release directory.
 
@@ -224,8 +225,11 @@ def build_release(
         (stage_bundle / "release-status.json").write_bytes(
             canonical_json_bytes(status.model_dump(mode="json"))
         )
+        notes = _release_notes(status, dataset.inventory.election.name)
+        if software_history is not None:
+            notes += "\n## Software changes\n\n" + software_history
         (stage_bundle / "RELEASE_NOTES.md").write_text(
-            _release_notes(status, dataset.inventory.election.name),
+            notes,
             encoding="utf-8",
         )
         manifest = ReleaseManifest(

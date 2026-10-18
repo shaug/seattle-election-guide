@@ -1,0 +1,73 @@
+name: Verify existing release
+'on':
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Owning release issue
+        required: true
+        type: string
+      release_version:
+        description: Exact published release version
+        required: true
+        type: string
+      source_sha:
+        description: Full original source SHA
+        required: true
+        type: string
+      run_id:
+        description: Original producing CI run
+        required: true
+        type: string
+      run_attempt:
+        description: Original producing CI attempt
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+  issues: write
+  deployments: write
+concurrency:
+  group: verified-release-mainline
+  queue: max
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      ISSUE: ${{ inputs.issue }}
+      VERSION: ${{ inputs.release_version }}
+      RUN_ID: ${{ inputs.run_id }}
+      RUN_ATTEMPT: ${{ inputs.run_attempt }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.sha }}
+        fetch-depth: 0
+    - uses: astral-sh/setup-uv@v6
+      with:
+        enable-cache: true
+    - name: Install Python
+      run: uv python install 3.12
+    - name: Install locked dependencies
+      run: uv sync --frozen
+    - name: Recover immutable upload evidence
+      run: uv run election-guide release automation recover-upload --repository "$GITHUB_REPOSITORY" --issue "$ISSUE"
+        --release-version "$VERSION" --source-sha "$SOURCE_SHA" --run-id "$RUN_ID" --run-attempt "$RUN_ATTEMPT"
+        --output dist/upload.json
+    - name: Retry verification and evidence only
+      run: |-
+        uv run election-guide release automation finalize --upload dist/upload.json --output-dir dist/finalization
+        uv run election-guide release automation deployment-status --upload dist/upload.json
+    - name: Preserve verification
+      uses: actions/upload-artifact@v4
+      with:
+        name: verification-${{ github.run_id }}-${{ github.run_attempt }}
+        path: dist
+        if-no-files-found: error
+        retention-days: 7
+      if: always()

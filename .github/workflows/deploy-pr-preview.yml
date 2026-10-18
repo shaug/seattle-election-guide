@@ -15,9 +15,6 @@ on:
 permissions:
   contents: read
 
-env:
-  CANDIDATE_BUNDLE_ID: wa-2026-general-2026-general.10
-
 jobs:
   deploy:
     name: Deploy PR preview
@@ -61,6 +58,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
@@ -79,37 +77,27 @@ jobs:
       - name: Verify Wrangler version
         run: npm run pages:version
       - name: Verify declared releases for prepublication staging
-        run: >-
-          uv run election-guide hosting verify-releases config/hosting/site.yaml
-          --candidate-bundle-id "$CANDIDATE_BUNDLE_ID"
+        run: |
+          mkdir -p dist
+          uv run election-guide release automation resolve > dist/resolved.json
+          uv run election-guide hosting verify-releases config/hosting/site.yaml \
+            --candidate-bundle-id "$(jq -r .current.bundle_id dist/resolved.json)"
         env:
           GH_TOKEN: ${{ github.token }}
-      # One build, not the deterministic double build the `check` job runs: CI
-      # already proves reproducibility on this commit, and a preview only needs
-      # the artifact.
+      # Use the same declared current-release builder as CI and local staging.
       - name: Build the general release at the pull request head
-        run: |
-          SITE_UPDATED_AT="$(git show -s --format=%cI "$HEAD_SHA")"
-          uv run election-guide release build data/releases/wa-2026-general/source-decisions.yaml \
-              --release-version 2026-general.10 \
-              --generated-at "$SITE_UPDATED_AT" \
-              --git-commit "$HEAD_SHA" \
-              --output-dir dist/pr-release \
-              --inventory-path data/normalized/wa-2026-general-inventory.json \
-              --registry-path config/sources/wa-2026-general.yaml \
-              --dataset-path data/normalized/wa-2026-general-canonical-dataset.json \
-              --snapshot-root data/releases/wa-2026-general/snapshots \
-              --manifest-dir data/releases/wa-2026-general/manifests
+        run: uv run election-guide release automation build --source-sha "$HEAD_SHA" --output-dir dist
+        env:
+          GH_TOKEN: ${{ github.token }}
       # Only the election built from source above is supplied locally. Any other
       # declared election is resolved from the release that published it,
       # exactly as CI stages it -- a historical bundle cannot be rebuilt
       # (docs/HOSTING.md, Historical bundles).
       - name: Stage and verify the Pages site
         run: |
-          uv run election-guide hosting stage config/hosting/site.yaml \
-            --bundle "$CANDIDATE_BUNDLE_ID=dist/pr-release/bundle" \
-            --released-bundle-dir dist/released-bundles \
-            --expected-git-commit "$HEAD_SHA" \
+          uv run election-guide release automation stage \
+            --bundle-dir dist/reproducibility-a/bundle \
+            --source-sha "$HEAD_SHA" \
             --output-dir dist/cloudflare-site
           uv run election-guide hosting verify \
             config/hosting/site.yaml \

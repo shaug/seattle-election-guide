@@ -30,6 +30,20 @@ class HostingModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class InputHashes(HostingModel):
+    """Reviewed file-byte bindings, separate from semantic panel identities."""
+
+    ledger_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    dataset_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    registry_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class PublicationRequest(HostingModel):
+    issue_number: int = Field(gt=0, strict=True)
+    previous_release_sha: str = Field(pattern=r"^[0-9a-f]{40}$")
+    inputs: InputHashes
+
+
 class PublishedElection(HostingModel):
     """One election release selected for the public archive."""
 
@@ -39,6 +53,7 @@ class PublishedElection(HostingModel):
     source_panel_id: str = Field(min_length=1)
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    publication_request: PublicationRequest | None = None
     comparison_route_preview: bool = Field(default=False, strict=True)
     git_commit: str | None = Field(default=None, pattern=r"^[0-9a-f]{40}$")
     release_manifest_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
@@ -70,6 +85,12 @@ class SiteManifest(HostingModel):
             raise ValueError("site manifest current election is not published")
         if election_ids[0] != self.current_election_id:
             raise ValueError("site manifest must list the current election first")
+        if any(
+            election.publication_request is not None
+            and election.election_id != self.current_election_id
+            for election in self.elections
+        ):
+            raise ValueError("only the current election may request publication")
         preview_elections = [
             election.election_id for election in self.elections if election.comparison_route_preview
         ]

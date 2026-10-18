@@ -94,114 +94,177 @@ predate `source_registry_hash`, must not declare it, and retain their historical
 than being rewritten. Likewise, the archived primary's publication schema 1.9 and later schema
 1.13 remain readable without the field, while new schema 1.14 publication metadata requires it.
 
-## Build and inspect
+## Prepare and review a release
 
-Use a stable version, the commit timestamp, and the full Git revision:
+Publication is automatic after merge. `config/hosting/site.yaml` selects the current release
+and records the owning issue, previous published source, and SHA-256 bindings for reviewed
+ledger, dataset, and registry bytes. Preparation supplies no editorial or baseline approval.
 
+<!-- runbook-command:prepare -->
 ```bash
-uv run election-guide release build \
-  data/releases/wa-2026-general/source-decisions.yaml \
-  --release-version 2026-general.10 \
-  --generated-at "$(git show -s --format=%cI HEAD)" \
-  --git-commit "$(git rev-parse HEAD)" \
-  --output-dir dist/general-release \
-  --inventory-path data/normalized/wa-2026-general-inventory.json \
-  --registry-path config/sources/wa-2026-general.yaml \
-  --dataset-path data/normalized/wa-2026-general-canonical-dataset.json \
-  --snapshot-root data/releases/wa-2026-general/snapshots \
-  --manifest-dir data/releases/wa-2026-general/manifests
+uv run election-guide release automation prepare --issue "$issue_number"
+uv run election-guide release automation resolve
 ```
 
-The command requires a clean Git checkout and a full revision equal to `HEAD`, then recomputes
-consensus, canonical exports, and the responsive HTML guide. It fails unless publication and
-rendered-artifact validation both pass, all relevant high-severity reviews are resolved, every
-included evidence snapshot is permitted, and every displayed decision has valid provenance.
+Preparation captures remote main's full SHA once, reads the declaration at that revision, and
+reads all remote tag and release names, including draft release reservations. It selects the next
+numeric election-scoped version above main and every occupied version. Repeating preparation
+retains a higher unpublished proposal only for the same issue and previous published revision. It refreshes the derived panel and complete-registry
+identities and binds the exact ledger, canonical-dataset, and registry file bytes with SHA-256.
+Formatting-only changes to those files therefore require preparation again. It changes only the
+current election declaration; archived declarations and their release pins remain intact.
+The previous published tag is resolved from remote state to a full commit and must be an
+ancestor of the checkout. Preparation fetches that exact object if it is missing locally.
+Preparation does not imply editorial or baseline approval.
 
-The output directory contains the release ZIP and an unpacked `bundle/` for inspection. The ZIP
-contains:
+Commit the reviewed declaration and its inputs together. Admission checks exact Git objects:
 
-- the responsive HTML guide;
-- canonical dataset, consensus, and publication-view-model JSON;
-- race, decision, source, review, and source-matrix CSV files;
-- publication, rendering, provenance, build, and release manifests;
-- desktop and mobile screenshots referenced by the rendering validation report; and
-- release notes that state source-access failures, incomplete coverage, review counts, data time,
-  and code revision.
+```bash
+uv run election-guide release automation validate-request --base-sha "$base_sha"
+```
 
-The ZIP uses stable entry ordering, timestamps, permissions, and compression settings.
+Use a clean tracked checkout and the full comparison-base SHA. Admission rejects stale input
+bindings and requires a fresh request with a version increment for changes under `src/`, `data/`,
+`config/`, `scripts/`, or `.github/workflows/`, or to `Makefile`, `cliff.toml`, `pyproject.toml`,
+`uv.lock`, `package.json`, `package-lock.json`, `wrangler.jsonc`, or `wrangler.toml`. This is a
+conservative release policy: even a change in one of those paths that appears unrelated to the
+rendered guide needs a declaration. A documentation/test-only change with an unchanged declaration
+does not request a release. An absent request supports historical reading and never authorizes
+automatic publication.
 
-Inspect the desktop and mobile screenshots, all machine validation reports, and
-`RELEASE_NOTES.md`. The supported release-candidate path builds the general twice before
-inspection. Run it from a clean checkout of the full merged `release_candidate_sha`; these exact
-commands are protected against documentation drift:
+## Build and inspect before merge
+
+Run `make check`, then commit the reviewed changes. From that clean candidate, run:
 
 <!-- runbook-command:verify-general -->
 ```bash
 make release-verify
 make check-release-reproducible
-unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.10.zip
+uv run election-guide release automation resolve > dist/resolved.json
+unzip -t "dist/reproducibility-a/$(jq -r .archive_name dist/resolved.json)"
 test -f dist/reproducibility-a/bundle/RELEASE_NOTES.md
 test -f dist/reproducibility-a/bundle/validation/rendering/rendering_validation_report.json
 test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/desktop.png
 test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/mobile.png
 ```
 
-Read the notes and rendering report and inspect both screenshots before publication. Record the
-full `release_candidate_sha`, the ZIP SHA-256 and size, and the source-registry, canonical-dataset,
-and source-decision-ledger SHA-256 values. For `2026-general.10`, compare the last three with the reviewed input hashes in
-[the backfill publication record](UPDATES_BACKFILL_RELEASE_2026-10-16.md#reviewed-input-bindings);
-a mismatch stops publication rather than creating a new interpretation here. The published `2026-general.9` archive remains bound to
-`da307d6f4c695471ec5a025a4226824de5ffbbc5`, with ZIP SHA-256
-`9507d1cf10d9c43e38010e2011c934f05e181a934bceb681b28f04160fe041b0`.
-The published
-`2026-general.8` archive remains bound to `a1a83b5f1c09d7297a6100e3ac321b0e5034bf52`,
-with ZIP SHA-256 `d1e7d9edc9b98f4ecfe1adaacaa963cced1a85f185b4c8705543c7d2444f1f56`.
-The immutable
-`2026-general.7` archive contains the prior 878-decision application at
-`20e80b74dc5b2e85807f88c2327bfe74aac7207d`. Its ZIP SHA-256 remains
-`1bf48677dfc0a1f7b1cfffc5dc2d224e291f87227fbfadf4b39a73a26f9db042`; do not replace
-its tag or asset with the later 880-decision inputs. The `2026-general.6` archive remains bound
-to the October 12 additions packet, and `2026-general.5` remains bound to the October 10 #508
-packet. These historical archives are preserved.
-Later releases must bind this comparison to their own reviewed refresh evidence before publication.
+Inspect both screenshots, release notes, and validation reports before merging. PR CI retains
+these as `candidate-review-<run>-<attempt>` for seven days. There is no mandatory screenshot
+attestation after merge. The reproducibility gate compares two complete builds using the
+commit-derived timestamp. Only the existing desktop/mobile rasterized screenshots are excluded
+from deterministic comparison; both remain inside the whole-bundle digest and canonical ZIP.
+The guarantee applies to the Linux deployment environment.
 
-## Reproducibility
-
-Repeating a build with identical inputs produces the same deterministic release artifacts on the
-Linux environment used for deployment. That is checked on every pull request and on demand locally
-by building twice with one `--generated-at` and comparing the manifest-declared contract:
-
+<!-- runbook-command:stage-candidate -->
 ```bash
-make check-release-reproducible
+source_sha="$(git rev-parse HEAD)"
+make hosting-stage
+uv run election-guide hosting verify \
+  config/hosting/site.yaml \
+  dist/cloudflare-site \
+  --expected-git-commit "$source_sha"
 ```
 
-Schema 1.2 hashes every included artifact except the two rasterized QA images,
-`validation/rendering/screenshots/desktop.png` and
-`validation/rendering/screenshots/mobile.png`. Those paths are declared explicitly in
-`unhashed_artifacts`; verification rejects any missing, overlapping, or additional unhashed path.
-`release compare` verifies both bundles and requires every hashed artifact, including
-`release-status.json`, to have identical bytes. It also requires the two release manifests to be
-byte-identical. Schema 1.1 remains supported and continues to enforce its historical contract, in
-which screenshots are hashed.
+## Latest manual publication boundary
 
-The screenshots remain inside the published GitHub Release ZIP as exact review evidence. Their
-bytes, archive metadata, and compression can vary without failing the reproducibility gate. The
-published whole-bundle SHA-256 still protects the exact bundle tree selected for release, including
-both screenshots; excluding them from schema 1.2's cross-build comparison does not remove that
-published-bundle integrity check.
+The retained manual history ends at `2026-general.10`, published from
+`c5a5252202d0f78bcec5e54f9f6d0dfe0841d481` with ZIP SHA-256
+`466efd641d2f190f5030e6d7e8b29d58bd4dff0d96e521af51dd0c3b950b161e`.
+Its reviewed input hashes and Updates backfill evidence remain in
+[the backfill publication record](UPDATES_BACKFILL_RELEASE_2026-10-16.md).
+The archived primary uses the canonical `2026-primary.4` source, manifest, and whole-bundle
+pins from that publication. Preserve these archives and all earlier manual releases unchanged;
+preparation chooses the next unused general version from current remote metadata.
 
-The gate is defined once, in the `Makefile`, and CI invokes that target rather than restating it, so
-the command a contributor runs locally cannot drift from the one CI runs.
+## Automatic delivery and evidence
 
-The guarantee is intentionally Linux-only. The project does not spend CI compute establishing
-macOS equivalence for a release pipeline that is deployed only from Linux.
+The five independent CI lanes feed the stable `check` status. A reviewed release request on
+main then runs `publish`, `publication-evidence`, `deploy`, and `finalize`. The tag, archive,
+staged current bundle, uploaded commit, and expected production commit all identify the same
+full merged `source_sha`. Documentation/test-only main commits run CI without another release.
 
-## Post-tag release lineage
+All non-PR CI runs and verification-only recovery dispatches share `verified-release-mainline`,
+`queue: max`, and `cancel-in-progress: false`, serializing their durable evidence writes.
+PR runs stay parallel. The queue supports 100 pending runs;
+queue exhaustion is a delivery failure to investigate, never a silently discarded request.
+Artifact names include producing run and attempt; consumers use captured IDs and independently
+verify wrapper digests, workflow/repository identity, and attempt time boundaries. A wrapper
+ZIP digest is distinct from the release asset digest.
 
-Publishing `2026-general.10` and then committing the generated changelog creates two intentional
-commit identities. The published archive remains bound to `release_candidate_sha`; the general
-bundle staged for production is rebuilt from the later `production_candidate_sha`. Verify that
-narrow boundary before handing the production bundle to `hosting stage`:
+The publisher creates or resumes only an owned matching draft, verifies its canonical ZIP,
+then publishes it. Existing archives and their screenshot bytes remain immutable. Durable
+publication evidence on the owning issue must complete before upload. The final selection check
+rejects stale candidates and a disabled upload switch yields `deployment_paused`; a newer
+selected declaration yields `superseded`. Neither state is a successful deployment.
+
+The production environment permits only main, with no extra Publish approval. Cloudflare
+credentials exist only on the one pinned upload step. It saves the validated upload receipt,
+stdout/stderr and upload time before recording the unique Pages URL on its owned GitHub deployment.
+A failed status write leaves that exact upload recoverable from the retained artifact. Uncertain upload
+outcomes require operator verification before another upload. Finalization waits at most
+120 seconds for two consecutive complete strict probes at least five seconds apart and retains
+all failed observations. GitHub deployment success follows durable verified evidence only.
+
+Publication receipts include the release asset digest/ID/size, source/input hashes, canonical
+bundle and manifest hashes, CI run and artifact IDs/digests. Upload/final receipts add deployment
+ID, unique URL, upload time, and complete production-wait.json evidence. Local receipt writes,
+probe failures, or durable issue-write failures fail delivery even when `check` is green.
+Failure artifacts are retained with `always()` for seven days; issue evidence is durable.
+
+## Recovery
+
+Never move a tag, overwrite an archive, replace an asset, or substitute newer main. If candidate
+artifacts expire before upload, rerun the original CI run or dispatch trusted main CI with its
+captured source fixed through every fresh lane and build:
+
+<!-- runbook-command:recover-candidate -->
+```bash
+gh workflow run ci.yml --ref main -f source_sha="$source_sha"
+```
+
+This requires the original reviewed request at an exact merged main ancestor. It rebuilds and
+verifies that source and compares an existing archive against its canonical deterministic content.
+Fresh attempt artifacts get fresh receipts; their stable archive identity must agree with earlier
+evidence. The current checkout or latest main is never substituted for the candidate.
+
+After any upload, retry only verification and evidence, using the original producing run/attempt:
+
+<!-- runbook-command:retry-evidence -->
+```bash
+gh workflow run verify-release.yml --ref main \
+  -f issue="$issue_number" \
+  -f release_version="$release_version" \
+  -f source_sha="$source_sha" \
+  -f run_id="$run_id" \
+  -f run_attempt="$run_attempt"
+```
+
+Verification-only uses trusted workflow code from main and the declaration from the original
+Git object. It loads immutable upload evidence or reconstructs it only from one matching owned
+deployment and an authenticated retained successful upload report. The retained receipt, when
+present, must match the report exactly. An absent initial status can be recovered; existing
+in-progress or success status URLs must agree with the upload. Missing, conflicting or ambiguous
+evidence fails closed.
+It never builds, republishes, uploads, or relabels the original upload producer.
+Already successful verification is idempotent and cannot reorder an older production deployment.
+`make hosting-deploy` deliberately fails with these recovery instructions.
+
+## Software history
+
+The pinned local git-cliff generates the bundled software history from the request's explicit
+previous-release SHA through the exact candidate SHA using its declared version and timestamp.
+Tags cannot change that section. `CHANGELOG.md` is a generated release index retaining manual
+history through `2026-general.9`; publication needs no second changelog commit.
+
+## Historical post-tag release lineage
+
+The historical publication sequence through `2026-general.9` created two intentional commit
+identities: the published archive is bound to `release_candidate_sha`, and a production handoff
+rebuilds from a later `production_candidate_sha` after a changelog commit. The following verifier preserves
+that existing two-revision contract and remains available when inspecting those archives. New
+request-driven publication uses one merged source revision for the tag, archive, staged bundle,
+and deployment; it requires no post-tag changelog commit. For a historical two-revision handoff,
+verify the narrow boundary before handing the production bundle to `hosting stage`:
 
 <!-- runbook-command:verify-lineage -->
 ```bash
@@ -235,150 +298,3 @@ The canonical JSON report exits with status 1 and records `result: fail` for inv
 ancestry, bundle integrity, or content drift. Preserve it for #450 and the #440 closeout evidence.
 This command verifies the general release bundle only; complete two-election route and deployment-
 manifest composition remains the separate `hosting verify` gate.
-
-## GitHub Release
-
-Create the GitHub Release only from the merged mainline revision whose hash appears in the bundle.
-Before changing GitHub, inspect the tag, release record, and full asset list separately:
-
-<!-- runbook-command:release-preflight -->
-```bash
-git ls-remote --tags origin refs/tags/2026-general.10 refs/tags/2026-general.10^{}
-gh release view 2026-general.10 \
-  --json url,tagName,targetCommitish,isDraft,isPrerelease,name,body,assets
-```
-
-Interpret that preflight with this restart matrix. Do not delete, replace, move, or overwrite
-remote state to force a match.
-
-| Observed state | Permitted action |
-| --- | --- |
-| No tag and no release | Create the release and its tag with the command below. |
-| Exact tag exists and no release exists | Create the release on that exact tag. |
-| Exact published metadata exists with no assets | Upload the one canonical ZIP. |
-| Exact tag, metadata, and one canonical ZIP already exist | Download and verify; make no mutation. |
-| Wrong tag target, draft/prerelease, metadata mismatch, partial/duplicate/wrong assets, or noncanonical bytes | Stop and request explicit recovery direction. |
-
-For a permitted create, use the bundled notes and attach the one versioned ZIP:
-
-<!-- runbook-command:release-create -->
-```bash
-gh release create 2026-general.10 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.10.zip \
-  --title "Seattle 2026 general election endorsement guide — 2026-general.10" \
-  --notes-file dist/reproducibility-a/bundle/RELEASE_NOTES.md \
-  --target "$release_candidate_sha"
-```
-
-When the preflight instead proves that the exact published metadata already exists and the asset
-list is empty, upload the canonical ZIP without `--clobber`:
-
-<!-- runbook-command:release-upload -->
-```bash
-gh release upload 2026-general.10 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.10.zip
-```
-
-The omitted `--clobber` is deliberate. If another operator creates an asset after the preflight,
-the command must fail rather than replace it; return to the restart matrix and inspect the new
-state.
-
-After upload, use `gh release view` again to prove the release is published, non-draft,
-non-prerelease, and has exactly one asset named
-`seattle-election-guide-2026-general.10.zip`. Record the release URL and the asset ID, name, and size.
-Download that exact asset through the Release API, rather than accepting a similarly named local
-file, then verify the bytes and tag with the protected command below:
-
-<!-- runbook-command:verify-published-asset -->
-```bash
-mkdir -p dist/downloaded
-test ! -e dist/downloaded/seattle-election-guide-2026-general.10.zip
-gh release download 2026-general.10 \
-  --pattern seattle-election-guide-2026-general.10.zip \
-  --dir dist/downloaded
-local_release_digest="$(shasum -a 256 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.10.zip | awk '{print $1}')"
-downloaded_release_digest="$(shasum -a 256 \
-  dist/downloaded/seattle-election-guide-2026-general.10.zip | awk '{print $1}')"
-test "$local_release_digest" = "$downloaded_release_digest"
-unzip -t dist/downloaded/seattle-election-guide-2026-general.10.zip
-git fetch origin tag 2026-general.10
-test "$(git rev-parse '2026-general.10^{commit}')" = "$release_candidate_sha"
-```
-
-The digest comparison proves the downloaded archive is byte-for-byte the inspected local archive;
-the release asset size recorded above must also equal the local file size. Retain the downloaded ZIP
-for the lineage command above. The recorded SHA-256 is the release asset digest handed to #450 and
-#440.
-
-## Changelog
-
-`CHANGELOG.md` records tagged releases, so it changes once per release rather than once per pull
-request. The new tag has to exist first — that is what moves its commits out of untagged history and
-into a section. Once the release above is published, regenerate and commit the result:
-
-```bash
-npm run changelog
-```
-
-`make check` regenerates the file and compares bytes, so a stale copy fails the build. Never edit it
-by hand. It covers the software that renders and ships bundles; what the guide *said* for one
-election is in that bundle's own `RELEASE_NOTES.md`.
-
-The changelog belongs in one focused, non-closing PR created after the tag exists. After that PR is
-merged, fetch `main` and record its full head as `production_candidate_sha`; do not move or amend
-the published tag. Require `release_candidate_sha` to be an ancestor of the production candidate,
-then rebuild at the latter SHA and run the lineage check. If `main` advances before the production
-handoff is complete, select and verify the new exact candidate again.
-
-## Website publication
-
-The validated HTML is also resolved through the repository-owned site manifest and staged
-under the election-scoped `/e/<election-id>/` path for deployment from `main`. See
-[HOSTING.md](HOSTING.md) for the archive manifest, route contract, Wrangler configuration, safety
-gates, one-time credentials, local preview, and automatic deployment workflow.
-
-For a schema 1.3 release, declare its `source_registry_hash` beside `source_panel_hash` in
-`config/hosting/site.yaml`. `hosting stage` requires both declarations to match the release status,
-requires the release status and manifest to agree, and copies the complete registry hash into the
-deployment manifest. `hosting verify` then compares the site declaration, deployment manifest, and
-staged release status before recomputing asset hashes. Historical declarations and deployments
-without `source_registry_hash` remain valid only for the legacy release schemas that omitted it;
-do not add a reconstructed value to their immutable artifacts.
-
-After lineage passes at `production_candidate_sha`, stage and independently verify the complete
-two-election site:
-
-<!-- runbook-command:stage-candidate -->
-```bash
-make hosting-stage
-uv run election-guide hosting verify \
-  config/hosting/site.yaml \
-  dist/cloudflare-site \
-  --expected-git-commit "$production_candidate_sha"
-```
-
-The first command builds the general from the current checkout and resolves the hash-pinned primary
-from its published release. The second check is intentionally separate: release lineage proves the
-general's allowed post-tag provenance differences, while hosting verification proves the whole
-current-plus-historical site and deployment manifest.
-
-## Operational evidence handoff
-
-The three publication tickets use one evidence vocabulary. Record all of these exact identities;
-do not replace a full SHA with a branch name or a dashboard's abbreviated display:
-
-- `release_candidate_sha`, the merged commit bound to the published archive;
-- `production_candidate_sha`, the later merged commit bound to the staged site;
-- the release URL, peeled tag SHA, asset identity/size, and release asset digest;
-- the lineage report and the verified two-election deployment manifest;
-- the exact CI run and artifact for `production_candidate_sha`;
-- the production deployment ID and its full SHA; and
-- the read-only `production-probe.json` output after deployment.
-
-A production artifact expires after seven days. If it expires or is missing, rerun CI for that exact
-`production_candidate_sha`, repeat lineage and staged-site verification against the new run, and
-record the replacement run/artifact. Never substitute the newer `main` head. Production deploys
-automatically after CI passes on `main` when `CLOUDFLARE_PAGES_ENABLED` is `true`, as described in
-[HOSTING.md](HOSTING.md). There is no separate approval step. The deployment job still requires
-every declared release to be published before upload and verifies the served commit afterward.
