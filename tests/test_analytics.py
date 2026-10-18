@@ -29,6 +29,7 @@ from election_guide.analytics import (
     DailyRollup,
     archived_dates,
     missing_dates,
+    unexplained_dates,
     write_rollup,
 )
 from election_guide.analytics.cloudflare import ADAPTIVE_QUERY, DAILY_QUERY
@@ -285,6 +286,134 @@ def test_backfill_resumes_over_an_existing_archive(
     assert zone.queried == [date(2026, 8, 15)]
 
 
+def test_manual_export_resumes_after_a_long_pause_with_exact_gap_evidence(
+    runner: CliRunner, archive: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Expired dates must be explained, never silently missing or fabricated zeros."""
+    today = date(2026, 9, 25)
+    last_saved = date(2026, 8, 20)
+    write_rollup(archive, _rollup(last_saved))
+    _install(monkeypatch, StubZone(_available(today, range(1, RETENTION_DAYS + 1))))
+    result = runner.invoke(
+        app, ["analytics", "export", "--as-of", "2026-09-25", "--archive-dir", str(archive)]
+    )
+    assert result.exit_code == 0, result.output
+    days = archived_dates(archive)
+    assert days == {last_saved} | {
+        date(2026, 8, 26) + timedelta(days=offset) for offset in range(30)
+    }
+    records = sorted((archive / "gaps").glob("*.json"))
+    assert len(records) == 1, "the CLI must explain the expired span separately from traffic"
+    record = json.loads(records[0].read_text())
+    assert record["dates"] == [f"2026-08-{day}" for day in range(21, 26)]
+    assert record["as_of"] == "2026-09-25"
+    assert record["window_floor"] == "2026-08-26"
+    assert "retention" in record["reason"]
+    assert "gap" in result.output.lower()
+
+    # Exercise the same check as the committed archive, against this investigation.
+    monkeypatch.setitem(globals(), "PROJECT_ROOT", archive.parent)
+    monkeypatch.setitem(globals(), "ARCHIVE_DIR", Path(archive.name))
+    test_committed_archive_has_no_gaps()
+    record["dates"].remove("2026-08-23")
+    records[0].write_text(json.dumps(record))
+    with pytest.raises(AssertionError, match="2026-08-23"):
+        test_committed_archive_has_no_gaps()
+
+
+def test_manual_export_gap_records_survive_reruns_and_another_pause(
+    runner: CliRunner, archive: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A later pause must add evidence without rewriting the first investigation."""
+    write_rollup(archive, _rollup(date(2026, 8, 20)))
+    _install(monkeypatch, StubZone(_available(date(2026, 9, 25), range(1, 31))))
+    arguments = ["analytics", "export", "--archive-dir", str(archive), "--as-of"]
+    assert runner.invoke(app, [*arguments, "2026-09-25"]).exit_code == 0
+    before = {path: path.read_bytes() for path in archive.rglob("*.json")}
+    assert any(path.parent.name == "gaps" for path in before)
+    assert runner.invoke(app, [*arguments, "2026-09-25"]).exit_code == 0
+    assert {path: path.read_bytes() for path in archive.rglob("*.json")} == before
+
+    _install(monkeypatch, StubZone(_available(date(2026, 11, 1), range(1, 31))))
+    result = runner.invoke(app, [*arguments, "2026-11-01"])
+    assert result.exit_code == 0, result.output
+    assert all(path.read_bytes() == content for path, content in before.items())
+    records = [json.loads(path.read_text()) for path in (archive / "gaps").glob("*.json")]
+    assert len(records) == 2
+    later = next(record for record in records if record["as_of"] == "2026-11-01")
+    assert later["dates"] == [f"2026-09-{day}" for day in range(25, 31)] + ["2026-10-01"]
+    monkeypatch.setitem(globals(), "PROJECT_ROOT", archive.parent)
+    monkeypatch.setitem(globals(), "ARCHIVE_DIR", Path(archive.name))
+    test_committed_archive_has_no_gaps()
+
+
+def test_unrecorded_hole_still_fails_the_archive_check(
+    archive: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The shared check cannot turn unaccounted-for traffic into an accepted archive."""
+    write_rollup(archive, _rollup(date(2026, 8, 20)))
+    write_rollup(archive, _rollup(date(2026, 8, 22)))
+    monkeypatch.setitem(globals(), "PROJECT_ROOT", archive.parent)
+    monkeypatch.setitem(globals(), "ARCHIVE_DIR", Path(archive.name))
+    with pytest.raises(AssertionError):
+        test_committed_archive_has_no_gaps()
+
+
+@pytest.mark.parametrize(
+    "corruption",
+    ["bad-json", "missing-reason", "wrong-floor", "in-window", "duplicate-dates", "extra-field"],
+)
+def test_gap_evidence_must_be_valid_before_it_can_explain_a_hole(
+    archive: Path, monkeypatch: pytest.MonkeyPatch, corruption: str
+) -> None:
+    """An invalid explanation must fail closed instead of exempting its dates."""
+    write_rollup(archive, _rollup(date(2026, 8, 20)))
+    write_rollup(archive, _rollup(date(2026, 8, 22)))
+    record: dict[str, Any] = {
+        "schema_version": "1.0",
+        "dates": ["2026-08-21"],
+        "as_of": "2026-09-25",
+        "window_floor": "2026-08-26",
+        "reason": "outside the retention window; traffic could not be recovered",
+    }
+    if corruption == "missing-reason":
+        del record["reason"]
+    elif corruption == "wrong-floor":
+        record["window_floor"] = "2026-09-01"
+    elif corruption == "in-window":
+        record.update(as_of="2026-09-20", window_floor="2026-08-21")
+    elif corruption == "duplicate-dates":
+        record["dates"] *= 2
+    elif corruption == "extra-field":
+        record["visitor_ip"] = "not allowed"
+    path = archive / "gaps" / "explanation.json"
+    path.parent.mkdir()
+    path.write_text("not JSON" if corruption == "bad-json" else json.dumps(record))
+    monkeypatch.setitem(globals(), "PROJECT_ROOT", archive.parent)
+    monkeypatch.setitem(globals(), "ARCHIVE_DIR", Path(archive.name))
+    with pytest.raises(ValueError):
+        test_committed_archive_has_no_gaps()
+
+
+def test_export_does_not_explain_an_ambiguous_in_window_hole(
+    runner: CliRunner, archive: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An empty answer at the window edge cannot authorize an expiry explanation."""
+    today = date(2026, 9, 25)
+    write_rollup(archive, _rollup(date(2026, 8, 20)))
+    _install(monkeypatch, StubZone(_available(today, range(1, RETENTION_DAYS))))
+    result = runner.invoke(
+        app, ["analytics", "export", "--as-of", "2026-09-25", "--archive-dir", str(archive)]
+    )
+    assert result.exit_code == 0, result.output
+    record = json.loads(next((archive / "gaps").glob("*.json")).read_text())
+    assert "2026-08-26" not in record["dates"]
+    monkeypatch.setitem(globals(), "PROJECT_ROOT", archive.parent)
+    monkeypatch.setitem(globals(), "ARCHIVE_DIR", Path(archive.name))
+    with pytest.raises(AssertionError, match="2026-08-26"):
+        test_committed_archive_has_no_gaps()
+
+
 def test_a_day_with_no_traffic_is_archived_as_zero_not_left_as_a_gap(
     runner: CliRunner, archive: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -500,11 +629,9 @@ def test_committed_archive_carries_no_identifying_data() -> None:
 
 
 def test_committed_archive_has_no_gaps() -> None:
-    """The archive is a contiguous run of days, which is the whole deliverable."""
-    stems = sorted(path.stem for path in (PROJECT_ROOT / ARCHIVE_DIR).glob("*.json"))
-    if len(stems) < 2:
-        pytest.skip("fewer than two archived days")
-    assert _gaps([date.fromisoformat(stem) for stem in stems]) == []
+    """Every missing interior date needs validated, explicit expiry evidence."""
+    missing = sorted(day.isoformat() for day in unexplained_dates(PROJECT_ROOT / ARCHIVE_DIR))
+    assert missing == [], f"unexplained analytics dates: {missing}"
 
 
 def _canned(by_query: dict[str, dict[str, Any]]) -> Any:
