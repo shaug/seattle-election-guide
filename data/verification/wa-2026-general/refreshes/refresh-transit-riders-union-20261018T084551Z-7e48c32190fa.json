@@ -1,0 +1,13 @@
+{
+  "capture_id": null,
+  "checked_at": "2026-10-18T08:45:51Z",
+  "content_changed": null,
+  "diff": [],
+  "error": "Source check failed (ValueError); inspect official access and adapter.",
+  "id": "refresh-transit-riders-union-20261018T084551Z-7e48c32190fa",
+  "previous_snapshot_id": "extraction-transit-riders-union-20261016T150136Z-76cb0dd8b335",
+  "schema_version": "1.0",
+  "snapshot_id": null,
+  "source_id": "transit-riders-union",
+  "status": "failed"
+}
