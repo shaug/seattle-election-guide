@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path, PurePosixPath
 from typing import Any, cast
 
-from election_guide.github_cli import download_gh, run_gh
+from election_guide.github_cli import download_gh, parse_paginated_objects, run_gh
 from election_guide.hosting.models import SiteManifest
 from election_guide.release.automation_models import (
     ArtifactRef,
@@ -71,26 +71,14 @@ def _mapping(value: Any, context: str) -> dict[str, Any]:
 
 
 def _pages(endpoint: str, key: str | None = None) -> list[dict[str, Any]]:
-    value: Any = json.loads(
+    return parse_paginated_objects(
         run_gh(
             ["gh", "api", endpoint, "--paginate", "--slurp"],
             "could not read complete release admission",
-        )
+        ),
+        context="GitHub admission",
+        key=key,
     )
-    if not isinstance(value, list) or not value:
-        raise ValueError("incomplete GitHub admission pages")
-    records: list[dict[str, Any]] = []
-    for page in cast(list[Any], value):
-        entries: Any = (
-            cast(dict[str, Any], page).get(key) if key and isinstance(page, dict) else page
-        )
-        if not isinstance(entries, list):
-            raise ValueError("invalid GitHub admission page")
-        for entry in cast(list[Any], entries):
-            if not isinstance(entry, dict):
-                raise ValueError("invalid GitHub admission record")
-            records.append(cast(dict[str, Any], entry))
-    return records
 
 
 def _repository_name(repository: Path) -> str:

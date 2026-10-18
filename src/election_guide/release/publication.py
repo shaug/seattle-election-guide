@@ -9,7 +9,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, cast
 
-from election_guide.github_cli import download_gh, run_gh, trailing_line
+from election_guide.github_cli import download_gh, parse_paginated_objects, run_gh, trailing_line
 from election_guide.hosting.pages import bundle_hash
 from election_guide.hosting.releases import extract_release_bundle
 from election_guide.release.automation_models import (
@@ -70,23 +70,13 @@ def _read(endpoint: str) -> dict[str, Any]:
 
 
 def _pages(endpoint: str) -> list[dict[str, Any]]:
-    value: Any = json.loads(
+    return parse_paginated_objects(
         run_gh(
             ["gh", "api", endpoint + "?per_page=100", "--paginate", "--slurp"],
             "could not read complete publication state",
-        )
+        ),
+        context="publication state",
     )
-    if not isinstance(value, list) or not value:
-        raise ValueError("incomplete paginated publication state")
-    records: list[dict[str, Any]] = []
-    for page in cast(list[Any], value):
-        if not isinstance(page, list):
-            raise ValueError("invalid publication state page")
-        for entry in cast(list[Any], page):
-            if not isinstance(entry, dict):
-                raise ValueError("invalid publication state entry")
-            records.append(cast(dict[str, Any], entry))
-    return records
 
 
 def _id(record: dict[str, Any]) -> int:

@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
 
-from election_guide.github_cli import run_gh
+from election_guide.github_cli import parse_paginated_objects, run_gh
 from election_guide.hosting.models import SiteManifest
 from election_guide.hosting.promotion import (
     download_actions_artifact,
@@ -67,25 +67,14 @@ def read_object(endpoint: str) -> dict[str, Any]:
 
 
 def read_rows(endpoint: str, key: str | None = None) -> list[dict[str, Any]]:
-    pages = json.loads(
+    return parse_paginated_objects(
         run_gh(
             ["gh", "api", endpoint, "--paginate", "--slurp"],
             "could not enumerate delivery metadata",
-        )
+        ),
+        context="delivery metadata",
+        key=key,
     )
-    if not isinstance(pages, list) or not pages:
-        raise ValueError("invalid delivery metadata pages")
-    rows: list[dict[str, Any]] = []
-    for page in cast(list[Any], pages):
-        entries: Any = (
-            cast(dict[str, Any], page).get(key) if key and isinstance(page, dict) else page
-        )
-        if not isinstance(entries, list) or any(
-            not isinstance(row, dict) for row in cast(list[Any], entries)
-        ):
-            raise ValueError("invalid delivery metadata page")
-        rows.extend(cast(list[dict[str, Any]], entries))
-    return rows
 
 
 def post_object(endpoint: str, payload: dict[str, Any]) -> dict[str, Any]:

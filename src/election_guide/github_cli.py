@@ -78,6 +78,28 @@ def parse_issue_list(payload: str) -> list[dict[str, Any]]:
     return records
 
 
+def parse_paginated_objects(
+    payload: str, *, context: str, key: str | None = None
+) -> list[dict[str, Any]]:
+    """Validate every `gh api --paginate --slurp` page before returning its records."""
+    pages: Any = json.loads(payload)
+    if not isinstance(pages, list) or not pages:
+        raise ValueError(f"incomplete {context} pages")
+    records: list[dict[str, Any]] = []
+    for page in cast(list[Any], pages):
+        if key is not None:
+            if not isinstance(page, dict):
+                raise ValueError(f"invalid {context} keyed page")
+            page = cast(dict[str, Any], page).get(key)
+        if not isinstance(page, list):
+            raise ValueError(f"invalid {context} page")
+        for entry in cast(list[Any], page):
+            if not isinstance(entry, dict):
+                raise ValueError(f"invalid {context} record")
+            records.append(cast(dict[str, Any], entry))
+    return records
+
+
 def trailing_line(body: str) -> str:
     """The last non-empty, stripped line of an issue body.
 

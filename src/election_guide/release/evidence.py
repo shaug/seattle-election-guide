@@ -22,7 +22,7 @@ import yaml
 from pydantic import Field
 
 from election_guide.calendar import due_milestones, read_election_calendar
-from election_guide.github_cli import run_gh
+from election_guide.github_cli import parse_paginated_objects, run_gh
 from election_guide.hosting.models import SiteManifest
 from election_guide.hosting.production_check import ProductionCheckReport
 from election_guide.hosting.production_wait import (
@@ -108,20 +108,13 @@ def workflow_owned(value: Any) -> bool:
 
 
 def _pages(endpoint: str) -> list[dict[str, Any]]:
-    value: Any = json.loads(
+    return parse_paginated_objects(
         run_gh(
             ["gh", "api", endpoint + "?per_page=100", "--paginate", "--slurp"],
             "could not read complete release evidence",
-        )
+        ),
+        context="release evidence",
     )
-    if not isinstance(value, list) or not value:
-        raise ValueError("incomplete release evidence pages")
-    rows: list[dict[str, Any]] = []
-    for page in cast(list[Any], value):
-        if not isinstance(page, list):
-            raise ValueError("invalid release evidence page")
-        rows.extend(_object(row) for row in cast(list[Any], page))
-    return rows
 
 
 def _body(marker: PartMarker, payload: bytes) -> str:
