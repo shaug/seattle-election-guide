@@ -134,8 +134,9 @@ class CloudflareZone:
         """One complete UTC day, enriched wherever the adaptive window still reaches.
 
         `None` means the daily dataset reported nothing, which is how both a
-        day past retention and a day with genuinely no traffic answer. The
-        caller decides which — see `cli.analytics_export`.
+        day past retention, a day with genuinely no traffic, and a day whose
+        aggregation has not settled can answer. The caller decides which —
+        see `cli.analytics_export`.
         """
         totals = self._daily_totals(day)
         if totals is None:

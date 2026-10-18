@@ -185,21 +185,27 @@ adds `visits`, `by_path`, and `by_device_type` for the eight days it still cover
 records which of the two answered, and the three adaptive-only fields are `null` — not empty — on
 older days: empty would claim the site served no paths that day, whereas `null` says the question
 was no longer answerable. **A day therefore gets richer only if it is archived within eight
-days**, which is the strongest argument for the schedule staying healthy.
+days**. For a manual investigation, export promptly to preserve that detail.
 
-One command serves both the one-time backfill and the daily schedule, because they are the same
-operation: ask which in-window days are missing, fetch those, write them. Three consequences worth
-knowing:
+The manual exporter asks which in-window days are missing, fetches those, and writes them. The
+retired daily schedule used the same operation. Four consequences worth knowing:
 
-- **A missed schedule repairs itself, but degrades.** The next run archives every day it lacks,
-  not just yesterday, so no day is ever skipped outright. A day recovered more than eight days
-  late is archived without its path and device-type breakdown, permanently.
+- **A later export fills missing days, but degrades.** It tries every missing in-window day,
+  not just yesterday. A day recovered more than eight days late is archived without its path and
+  device-type breakdown, permanently.
 - **Re-running is free and byte-stable.** An already-archived day is never fetched again, so
   re-running leaves its file byte-identical. That holds by construction rather than by assuming
   Cloudflare returns identical aggregates for a past day forever. It also means a thin day is
   never later enriched — the file is written once.
 - **Today is never archived.** A day still accumulating would record a partial count and then
   never be revisited, so the newest candidate is always yesterday.
+- **An empty newest day waits for retry (#398).** The exporter leaves it unwritten and reports
+  the date as awaiting retry. Re-run the manual export to the same directory; `missing_dates`
+  proposes it again, including on the same UTC day. The named boundary and rationale live in
+  `newest_complete_day(as_of)` in `src/election_guide/analytics/window.py`. Non-empty answers are
+  archived immediately. Older empty days retain the zero-traffic/aged-out classification below;
+  a genuinely quiet tail can become a zero on a later UTC day. Skipping the newest day leaves
+  a contiguous archive with a shorter tail. Naming a skipped day with `--date` exits non-zero.
 
 The first backfill ran on 2026-08-16 and archived 2026-07-22 through 2026-08-15 — 25 days, no
 gaps. The run's own window floor was 2026-07-17, so the five days below 2026-07-22 returned
@@ -275,7 +281,7 @@ pattern-matching, is what keeps visitor data out.
 
 ### Continuing an investigation after a long pause (#397)
 
-A manual export still saves every missing complete UTC day inside its configured thirty-day
+A manual export still tries every missing complete UTC day inside its configured thirty-day
 window. If an investigation resumes after a longer pause, missing dates between its first and
 last saved days that are older than `window_floor(as_of)` cannot be recovered by this exporter.
 The run records them separately under the chosen directory's `gaps/`, in immutable JSON files
@@ -288,7 +294,7 @@ traffic could not be recovered`), the observation's `as_of` date, and its `windo
 should conclude that those days were unavailable, not that the site received zero traffic. No
 placeholder daily rollup is written, and no claim is made about dates before the investigation
 began. An empty response within the configured window is ambiguous and does not earn a gap
-explanation. A genuinely quiet day with older readable data still becomes a real zero.
+explanation. An older quiet day with readable earlier data still becomes a real zero.
 
 The continuity check used by `test_committed_archive_has_no_gaps` accepts only dates covered by
 valid expiry records. Removing a date from its explanation leaves a failing hole. Invalid JSON,
@@ -299,8 +305,13 @@ new investigations continue to use separate directories.
 
 ### Known manual-export limitation
 
-An empty answer for the newest complete day can still be recorded as a permanent zero before
-Cloudflare has settled that aggregation (#398). Gap recording does not change this behavior.
+The newest-day empty-answer guard described above (#398) does not detect non-empty but
+incomplete totals.
+Cloudflare's [Analytics FAQ](https://developers.cloudflare.com/analytics/faq/about-analytics/#about-missing-metrics)
+mentions delayed metrics for recently added Free-plan domains, without establishing when this
+zone's daily dataset is final. The documented [GraphQL Settings node](https://developers.cloudflare.com/analytics/graphql-api/features/discovery/settings/)
+exposes query limits and retention, without a daily finalization watermark. No live latency
+measurement was made for #398, so the retry boundary must not be read as a finalization guarantee.
 
 ## Client-side beacon (O10)
 
