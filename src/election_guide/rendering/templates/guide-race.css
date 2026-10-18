@@ -103,7 +103,7 @@
    `.4rem` corner radius — a nod to the pill, nothing more; the bar is a bare
    flex row of blocks, each sized by its own `--meter-w` weight rather than a
    computed percentage, so nothing here needs the track's total unit count. */
-.screen-meter { position: relative; display: flex; align-items: stretch; justify-content: flex-start; width: 11rem; height: 2rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: .4rem; background: var(--meter-track); }
+.screen-meter { position: relative; display: flex; align-items: stretch; justify-content: flex-start; width: 11rem; height: 2rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: .4rem; background: var(--meter-track); -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
 .screen-meter:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 .screen-meter-na strong { color: var(--muted); }
 /* One block, one endorsement. `--meter-w`, `--meter-c` (a solid block) or
@@ -150,33 +150,30 @@
    trailing field and loses contrast; past the threshold the label renders
    after the leader's run instead, in muted ink. The threshold itself is
    decided once, in `guide-card.mjs`'s meterView. Its job shrank with meter
-   v2: hover and touch already remove the label entirely, so this guard now
-   only protects the desktop resting label the percentage rides
+   v2: engagement removes the label entirely, so this guard
+   protects the resting label on pointer and touch devices alike
    (docs/METER_V2.md, Implementation notes). */
 .screen-meter.meter-low-fill strong { padding-left: calc(var(--meter-label-offset) + .4rem); color: var(--muted); }
-/* The discovery model (docs/METER_V2.md): at rest on a pointer device the
+/* The discovery model (docs/METER_V2.md): at rest on every device the
    seams are invisible and the percent rides the fill; hover or focus trades
-   one for the other. Touch has no hover, so the seams are always visible and
-   the percent never appears at all — `hover: none` is the touch signal, which
-   deliberately gives a hybrid touch-laptop the pointer treatment. */
+   one for the other. Touch reveals only during a press-and-hold, including
+   on hybrid devices. Focus-visible preserves keyboard discovery without
+   letting a touch leave the meter in a focused, revealed state. */
 @media (hover: hover) {
-  .screen-meter:not(.screen-meter-na):hover strong,
-  .screen-meter:not(.screen-meter-na):focus-within strong { opacity: 0; }
-  .screen-meter:hover .meter-block, .screen-meter:focus-within .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
-  .screen-meter:hover .meter-half-bottom, .screen-meter:focus-within .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
+  .screen-meter:not(.screen-meter-na, .meter-touch):hover strong { opacity: 0; }
+  .screen-meter:not(.meter-touch):hover .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
+  .screen-meter:not(.meter-touch):hover .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
 }
-@media (hover: none) {
-  .screen-meter:not(.screen-meter-na) strong { display: none; }
-  .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
-  .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
-}
+.screen-meter:not(.screen-meter-na):is(:focus-visible, .meter-inspecting) strong { opacity: 0; }
+.screen-meter:is(:focus-visible, .meter-inspecting) .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
+.screen-meter:is(:focus-visible, .meter-inspecting) .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
 @media (prefers-reduced-motion: reduce) {
   .meter-block, .meter-half-bottom, .screen-meter strong { transition: none; }
 }
 /* The per-block tooltip (`meter-tooltip.mjs`): one shared, fixed-position
    element the whole page's meters use, never a live region — the meter's own
    `role="img"` name carries the full standings, and this only adds the one
-   block's evidence on hover, focus, or tap. */
+   block's evidence on hover or a touch hold. */
 .meter-tooltip { position: fixed; z-index: 60; max-width: 17rem; padding: .45rem .65rem; border-radius: .45rem; background: var(--navy); color: var(--white); font-size: .78rem; line-height: 1.35; pointer-events: none; box-shadow: 0 .25rem .9rem rgba(16,42,67,.35); }
 .meter-tooltip[hidden] { display: none; }
 .meter-tooltip-source { font-weight: 700; }
