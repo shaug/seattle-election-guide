@@ -403,9 +403,21 @@ worker. A failure after a verified deployment usually offers little action beyon
 Cloudflare or domain configuration. A failed deployment probe instead identifies a release that
 can be corrected or rolled back.
 
-The protected `deploy` job runs strict, read-only verification immediately after its production upload,
-using the job's full `GITHUB_SHA`, and preserves `production-probe.json` as an Actions artifact.
-A failed probe fails the deployment job; it does not roll back or authorize another deployment.
+The protected `deploy` job starts strict, read-only verification after its production upload,
+using the job's full `GITHUB_SHA`. The canonical host can briefly serve the previous revision
+while the upload propagates, so the job polls the unchanged strict checker every five seconds
+and requires **two consecutive passing checks**. Any failed check resets that confirmation streak.
+It stops after 24 attempts or the verification step's three-minute deadline, whichever comes first;
+persistent wrong commits, routes, redirects, and manifests still fail the deployment job.
+This wait never repeats the upload, changes the expected revision, or relaxes a check.
+
+The `production-probe` Actions artifact preserves every completed attempt under
+`production-probes/attempt-N.json`, including failed observations and both final passing checks.
+`production-probe.json` remains the most recent completed report for existing consumers. A probe
+that fails without writing its attempt evidence stops immediately. Evidence upload runs even when
+verification fails or times out. One-off `hosting check-production` commands still run once.
+A failed deployment check does not roll back or authorize another deployment.
+*(2026-10-17, issue #563: bounded propagation wait replaces the immediate single probe.)*
 Strict verification requires `--expected-git-commit`; combining it with `--availability-only` is
 rejected rather than silently discarding the release expectation.
 
@@ -448,8 +460,9 @@ When publication is enabled, a merge to `main` runs `check` and then deploys aut
 
 The job downloads the `cloudflare-site` artifact from that same CI run, verifies it against the
 run's full `GITHUB_SHA`, and requires every declared release to be published before uploading.
-After upload, the strict production probe checks the deployed SHA and preserves its report as
-the `production-probe` artifact. A mismatch fails the job; it does not trigger an automatic rollback.
+After upload, the strict production probe waits for the deployed SHA and two consecutive healthy
+checks within the bounds above, preserving all attempt reports as the `production-probe` artifact.
+A persistent mismatch fails the job; it does not trigger an automatic rollback.
 
 The deployment log records the commit each job publishes. Concurrent uploads are serialized, and
 a newer queued job can replace an older queued job. Always use the job's explicit SHA when checking
