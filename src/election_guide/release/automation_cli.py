@@ -15,7 +15,7 @@ from typing import Annotated, Any, cast
 import typer
 import yaml
 
-from election_guide.github_cli import run_gh
+from election_guide.github_cli import parse_paginated_objects, run_gh
 from election_guide.hosting.models import SiteManifest
 from election_guide.hosting.promotion import (
     promotion_allowed,
@@ -47,9 +47,14 @@ from election_guide.release.declaration import (
     require_ancestor,
     resolve_release,
     validate_release_request,
+    validate_unpublished_predecessor,
 )
 from election_guide.release.history import generate_changelog_index
-from election_guide.release.publication import bind_publication, publish_candidate
+from election_guide.release.publication import (
+    bind_publication,
+    publish_candidate,
+    verify_published_release_source,
+)
 from election_guide.serialization import UniqueKeyLoader, canonical_json_bytes
 
 app = typer.Typer(help="Prepare and validate reviewed release declarations.")
@@ -92,7 +97,7 @@ def _relative_site(repository: Path, path: Path) -> Path:
 def _remote_versions() -> frozenset[str]:
     versions: set[str] = set()
     for endpoint, key in (("tags", "name"), ("releases", "tag_name")):
-        payload: Any = json.loads(
+        entries = parse_paginated_objects(
             run_gh(
                 [
                     "gh",
@@ -102,20 +107,16 @@ def _remote_versions() -> frozenset[str]:
                     "--slurp",
                 ],
                 f"could not read complete remote {endpoint}",
-            )
+            ),
+            context=f"remote {endpoint}",
         )
-        if not isinstance(payload, list) or not payload:
-            raise ValueError(f"incomplete remote {endpoint} query")
-        for page in cast(list[Any], payload):
-            if not isinstance(page, list):
+        for entry in entries:
+            name = entry.get(key)
+            if not isinstance(name, str) or not name:
                 raise ValueError(f"incomplete remote {endpoint} query")
-            for entry in cast(list[Any], page):
-                if not isinstance(entry, dict):
-                    raise ValueError(f"incomplete remote {endpoint} query")
-                name = cast(dict[str, Any], entry).get(key)
-                if not isinstance(name, str) or not name:
-                    raise ValueError(f"incomplete remote {endpoint} query")
-                versions.add(name)
+            if name in versions and endpoint == "tags":
+                raise ValueError("duplicate remote tag name")
+            versions.add(name)
     return frozenset(versions)
 
 
@@ -158,7 +159,9 @@ def _ensure_commit(repository: Path, sha: str) -> None:
         raise ValueError("captured remote revision is not the expected commit")
 
 
-def _remote_main(repository: Path, path: Path) -> tuple[SiteManifest, str]:
+def _remote_main(
+    repository: Path, path: Path, occupied: frozenset[str]
+) -> tuple[SiteManifest, str]:
     sha = _remote_commit("git/ref/heads/main")
     main = SiteManifest.model_validate(
         yaml.load(
@@ -176,7 +179,10 @@ def _remote_main(repository: Path, path: Path) -> tuple[SiteManifest, str]:
         )
     )
     selected = main.elections[0]
+    if selected.release_version not in occupied and selected.publication_request is not None:
+        return main, _unpublished_base_sha(repository, path, main, occupied, base_sha=sha)
     previous_sha = _remote_commit(f"git/ref/tags/{selected.release_version}", allow_tag=True)
+    verify_published_release_source("repos/{owner}/{repo}", selected.release_version, previous_sha)
     if selected.git_commit is not None and previous_sha != selected.git_commit:
         raise ValueError("selected published release tag differs from its pinned commit")
     _ensure_commit(repository, previous_sha)
@@ -193,6 +199,69 @@ def _published_sha(repository: Path, site: SiteManifest) -> str:
         raise ValueError("selected published release tag differs from its pinned commit")
     require_ancestor(sha, repository=repository)
     return sha
+
+
+def _unpublished_base_sha(
+    repository: Path, path: Path, base: SiteManifest, occupied: frozenset[str], *, base_sha: str
+) -> str:
+    selected = base.elections[0]
+    request = selected.publication_request
+    if selected.release_version in occupied or request is None:
+        raise ValueError("recovery requires an unreserved unpublished base release")
+    # A failed tag lookup or local absence is never evidence of remote absence.
+    _ensure_commit(repository, base_sha)
+    _ensure_commit(repository, request.previous_release_sha)
+    previous = _manifest_at(repository, request.previous_release_sha, path)
+    validate_unpublished_predecessor(base, previous)
+    predecessor = previous.elections[0]
+    if (
+        predecessor.git_commit is not None
+        and predecessor.git_commit != request.previous_release_sha
+    ):
+        raise ValueError("previous published declaration differs from its exact source")
+    verify_published_release_source(
+        "repos/{owner}/{repo}", predecessor.release_version, request.previous_release_sha
+    )
+    require_ancestor(request.previous_release_sha, repository=repository, source_sha=base_sha)
+    return request.previous_release_sha
+
+
+def _admit_request(
+    current: ResolvedRelease,
+    *,
+    repository: Path,
+    path: Path,
+    base: SiteManifest,
+    base_sha: str,
+    changed_paths: tuple[str, ...],
+) -> bool:
+    if current.site == base:
+        return validate_release_request(current, base=base, changed_paths=changed_paths)
+    recovery_sha = None
+    if base.elections[0].publication_request is not None:
+        occupied = _remote_versions()
+        if base.elections[0].release_version not in occupied:
+            recovery_sha = _unpublished_base_sha(
+                repository, path, base, occupied, base_sha=base_sha
+            )
+    requested = validate_release_request(
+        current,
+        base=base,
+        changed_paths=changed_paths,
+        verified_unpublished_base_sha=recovery_sha,
+    )
+    if requested:
+        request = current.current.publication_request
+        assert request is not None
+        boundary = recovery_sha or _published_sha(repository, base)
+        if request.previous_release_sha != boundary:
+            raise ValueError("publication request previous release boundary is stale")
+        if recovery_sha is None and base.elections[0].publication_request is not None:
+            verify_published_release_source(
+                "repos/{owner}/{repo}", base.elections[0].release_version, boundary
+            )
+        require_ancestor(boundary, repository=repository)
+    return requested
 
 
 def _echo_resolved(resolved: ResolvedRelease) -> None:
@@ -233,7 +302,13 @@ def prepare(
         repository = _repository()
         relative = _relative_site(repository, site_manifest)
         occupied = _remote_versions()
-        main, previous_sha = _remote_main(repository, relative)
+        main, previous_sha = _remote_main(repository, relative, occupied)
+        if (
+            main.elections[0].release_version not in occupied
+            and main.elections[0].publication_request is not None
+            and main.elections[0].publication_request.issue_number != issue
+        ):
+            raise ValueError("unpublished base recovery requires the same owner")
         _echo_resolved(
             prepare_release(
                 relative,
@@ -278,13 +353,14 @@ def validate_request(
             with tarfile.open(fileobj=io.BytesIO(archive)) as tree:
                 tree.extractall(temporary, filter="data")
             current = resolve_release(relative, repository=Path(temporary))
-            requested = validate_release_request(current, base=base, changed_paths=paths)
-            if requested:
-                request = current.current.publication_request
-                assert request is not None
-                if request.previous_release_sha != _published_sha(repository, base):
-                    raise ValueError("publication request previous release boundary is stale")
-                require_ancestor(request.previous_release_sha, repository=repository)
+            requested = _admit_request(
+                current,
+                repository=repository,
+                path=relative,
+                base=base,
+                base_sha=base_sha,
+                changed_paths=paths,
+            )
         typer.echo(json.dumps({"requests_release": requested}, sort_keys=True))
     except (
         OSError,
@@ -496,12 +572,14 @@ def admit(
             with tarfile.open(fileobj=io.BytesIO(archive)) as tree:
                 tree.extractall(temporary, filter="data")
             current = resolve_release(DEFAULT_SITE, repository=Path(temporary))
-            requested = validate_release_request(current, base=base, changed_paths=paths)
-            if requested:
-                request = current.current.publication_request
-                assert request is not None
-                if request.previous_release_sha != _published_sha(repository, base):
-                    raise ValueError("publication request previous release boundary is stale")
+            requested = _admit_request(
+                current,
+                repository=repository,
+                path=DEFAULT_SITE,
+                base=base,
+                base_sha=base_sha,
+                changed_paths=paths,
+            )
         typer.echo(
             json.dumps(
                 {

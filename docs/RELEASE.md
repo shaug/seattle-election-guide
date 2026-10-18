@@ -117,6 +117,23 @@ The previous published tag is resolved from remote state to a full commit and mu
 ancestor of the checkout. Preparation fetches that exact object if it is missing locally.
 Preparation does not imply editorial or baseline approval.
 
+If the selected declaration on captured main never published, preparation and admission may
+recover its recorded `publication_request.previous_release_sha`. This requires complete,
+successful remote tag and release enumeration proving that the failed version has neither
+a tag nor any release reservation, including drafts. A missing local tag, failed API request,
+or malformed or partial enumeration does not establish absence. The recorded source's exact
+Git declaration must select the same election at a lower numeric version. That version must
+have an actual published, non-prerelease GitHub Release, and its peeled remote tag must equal
+the recorded full source SHA and any declaration source pin. The recorded source must be an
+ancestor of the exact captured main or comparison-base revision; ancestry only to a later
+corrective checkout is insufficient.
+
+Recovery retains the owning issue and verified published predecessor, selects a higher unused
+version, and refreshes exact input-byte bindings. Admission may retain an equal
+`PublicationRequest` payload only after this shared unpublished-base proof succeeds. Ordinary
+published-base admission still requires a fresh request. Recovery never relaxes version
+increments, clean-checkout or exact-source checks, reviewed input bindings, or archive pins.
+
 Commit the reviewed declaration and its inputs together. Admission checks exact Git objects:
 
 ```bash
@@ -189,7 +206,9 @@ PR runs stay parallel. The queue supports 100 pending runs;
 queue exhaustion is a delivery failure to investigate, never a silently discarded request.
 Artifact names include producing run and attempt; consumers use captured IDs and independently
 verify wrapper digests, workflow/repository identity, and attempt time boundaries. A wrapper
-ZIP digest is distinct from the release asset digest.
+ZIP digest is distinct from the release asset digest. Wrapper downloads use unique managed
+temporary storage outside the checkout and remove it on success and failure; extracted
+artifacts remain in the requested output directory.
 
 The publisher creates or resumes only an owned matching draft, verifies its canonical ZIP,
 then publishes it. Existing archives and their screenshot bytes remain immutable. Durable
