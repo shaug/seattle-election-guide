@@ -164,3 +164,57 @@ def test_site_manifest_rejects_historical_comparison_route_preview() -> None:
                 "elections": [_published_election(), historical],
             }
         )
+
+
+def _publication_request() -> dict[str, object]:
+    return {
+        "issue_number": 550,
+        "previous_release_sha": COMMIT,
+        "inputs": {
+            "ledger_sha256": "d" * 64,
+            "dataset_sha256": "e" * 64,
+            "registry_sha256": "f" * 64,
+        },
+    }
+
+
+def test_publication_request_is_current_only() -> None:
+    current = {**_published_election(), "publication_request": _publication_request()}
+    site = SiteManifest.model_validate(
+        {
+            "canonical_origin": "https://seattleelections.guide",
+            "current_election_id": CURRENT_ID,
+            "elections": [current],
+        }
+    )
+    assert site.elections[0].publication_request is not None
+    historical = {**current, "election_id": "wa-2025-general", "bundle_id": "historical"}
+    with pytest.raises(ValueError, match="only the current election"):
+        SiteManifest.model_validate(
+            {
+                "canonical_origin": "https://seattleelections.guide",
+                "current_election_id": CURRENT_ID,
+                "elections": [_published_election(), historical],
+            }
+        )
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("issue_number", 0),
+        ("issue_number", -1),
+        ("previous_release_sha", "abc"),
+        ("previous_release_sha", "A" * 40),
+    ],
+)
+def test_publication_request_rejects_invalid_review_identity(field: str, value: object) -> None:
+    request = {**_publication_request(), field: value}
+    with pytest.raises(ValueError):
+        SiteManifest.model_validate(
+            {
+                "canonical_origin": "https://seattleelections.guide",
+                "current_election_id": CURRENT_ID,
+                "elections": [{**_published_election(), "publication_request": request}],
+            }
+        )

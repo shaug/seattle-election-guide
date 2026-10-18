@@ -2,7 +2,7 @@
   "name": "seattle-election-guide-hosting",
   "private": true,
   "scripts": {
-    "changelog": "git-cliff --config cliff.toml --output CHANGELOG.md",
+    "changelog": "uv run election-guide release automation changelog-index --output CHANGELOG.md",
     "changelog:version": "git-cliff --version",
     "lint": "biome ci",
     "lint:fix": "biome check --write",

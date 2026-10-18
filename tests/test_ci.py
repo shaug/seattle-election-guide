@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import json
 import shlex
 import subprocess
 from pathlib import Path
 
 import pytest
 import yaml
+from typer.testing import CliRunner
+
+from election_guide.cli import app
 
 PROJECT_ROOT = Path(__file__).parents[1]
 INTEGRATION_PARTITIONS = (
@@ -120,7 +124,7 @@ def test_ci_runs_independent_lanes_in_parallel_behind_one_required_check() -> No
                 != 0
             )
 
-    assert jobs["deploy"]["needs"] == "check"
+    assert set(jobs["deploy"]["needs"]) == {"check", "publication-evidence", "publish"}
 
 
 def test_ci_contracts_lane_uses_the_shared_election_contract_target() -> None:
@@ -183,12 +187,28 @@ def test_default_release_targets_build_the_general_without_primary_inputs() -> N
     ):
         assert expected in verify.stdout
         assert expected in general_verify.stdout
-        assert expected in reproduce.stdout
-        assert expected in general_reproduce.stdout
 
-    assert "--release-version 2026-general.10" in reproduce.stdout
-    assert "dist/reproducibility-a" in reproduce.stdout
-    assert "dist/reproducibility-b" in reproduce.stdout
+    command = "release automation build --source-sha"
+    assert command in reproduce.stdout
+    assert command in general_reproduce.stdout
+    assert '"$(git rev-parse HEAD)" --output-dir dist' in reproduce.stdout
+    result = CliRunner().invoke(app, ["release", "automation", "resolve"])
+    assert result.exit_code == 0, result.output
+    resolved = json.loads(result.stdout)
+    assert resolved["current"]["election_id"] == "wa-2026-general"
+    assert resolved["inputs"]["ledger"].endswith(
+        "data/releases/wa-2026-general/source-decisions.yaml"
+    )
+    assert resolved["inputs"]["dataset"].endswith(
+        "data/normalized/wa-2026-general-canonical-dataset.json"
+    )
+    assert (
+        resolved["archive_name"]
+        == f"seattle-election-guide-{resolved['current']['release_version']}.zip"
+    )
+    stage = _make_dry_run("hosting-stage")
+    assert "release automation stage --bundle-dir dist/reproducibility-a/bundle" in stage.stdout
+    assert '--source-sha "$(git rev-parse HEAD)"' in stage.stdout
     assert "wa-2026-primary" not in verify.stdout
     assert "wa-2026-primary" not in reproduce.stdout
 
@@ -205,16 +225,9 @@ def test_primary_release_verification_remains_an_explicit_repository_contract() 
     assert "release verify data/releases/wa-2026-general/source-decisions.yaml" in contracts.stdout
 
 
-def test_local_production_upload_requires_every_release_to_be_published() -> None:
-    """The local deploy escape hatch must end the candidate exception before upload."""
+def test_local_production_upload_route_is_retired() -> None:
     deploy = _make_dry_run("hosting-deploy")
-
     assert deploy.returncode == 0, deploy.stderr
-    strict_check = "hosting verify-releases config/hosting/site.yaml"
-    upload = "npm run pages:deploy"
-    assert deploy.stdout.count(strict_check) == 2
-    strict_offset = deploy.stdout.rindex(strict_check)
-    candidate_offset = deploy.stdout.index("--candidate-bundle-id")
-    upload_offset = deploy.stdout.index(upload)
-    assert candidate_offset < strict_offset < upload_offset
-    assert "--candidate-bundle-id" not in deploy.stdout[strict_offset:upload_offset]
+    assert "verify-release.yml" in deploy.stdout
+    assert "exit 1" in deploy.stdout
+    assert "pages:deploy" not in deploy.stdout

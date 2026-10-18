@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from pathlib import Path
 from typing import Any, cast
 
 # Every issue in the repository has to be readable in one listing, so the
@@ -40,6 +41,23 @@ def run_gh(command: list[str], failure: str) -> str:
     return completed.stdout
 
 
+def download_gh(command: list[str], destination: Path, failure: str) -> None:
+    """Stream a binary GitHub response to disk; never decode archive bytes."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with destination.open("xb") as sink:
+            completed = subprocess.run(command, stdout=sink, stderr=subprocess.PIPE, check=False)
+    except FileExistsError as error:
+        raise ValueError(f"download destination already exists: {destination}") from error
+    except OSError as error:
+        destination.unlink(missing_ok=True)
+        raise ValueError("the GitHub CLI is required for this download") from error
+    if completed.returncode != 0:
+        destination.unlink(missing_ok=True)
+        detail = completed.stderr.decode("utf-8", errors="replace").strip()
+        raise ValueError(f"{failure}: {detail}")
+
+
 def parse_issue_list(payload: str) -> list[dict[str, Any]]:
     """Validate a `gh issue list --json ...` payload: a JSON array of objects.
 
@@ -57,6 +75,28 @@ def parse_issue_list(payload: str) -> list[dict[str, Any]]:
         if not isinstance(entry, dict):
             raise ValueError("GitHub CLI returned an issue that is not an object")
         records.append(cast(dict[str, Any], entry))
+    return records
+
+
+def parse_paginated_objects(
+    payload: str, *, context: str, key: str | None = None
+) -> list[dict[str, Any]]:
+    """Validate every `gh api --paginate --slurp` page before returning its records."""
+    pages: Any = json.loads(payload)
+    if not isinstance(pages, list) or not pages:
+        raise ValueError(f"incomplete {context} pages")
+    records: list[dict[str, Any]] = []
+    for page in cast(list[Any], pages):
+        if key is not None:
+            if not isinstance(page, dict):
+                raise ValueError(f"invalid {context} keyed page")
+            page = cast(dict[str, Any], page).get(key)
+        if not isinstance(page, list):
+            raise ValueError(f"invalid {context} page")
+        for entry in cast(list[Any], page):
+            if not isinstance(entry, dict):
+                raise ValueError(f"invalid {context} record")
+            records.append(cast(dict[str, Any], entry))
     return records
 
 

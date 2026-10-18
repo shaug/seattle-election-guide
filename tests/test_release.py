@@ -435,6 +435,53 @@ def test_release_compiler_continues_rollback_after_middle_restore_fails(
     assert _tree_bytes(manifest_backup) == expected_manifests
 
 
+def test_release_software_history_is_hashed_without_adding_artifacts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
+    legacy = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "legacy")
+    first = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        tmp_path / "first",
+        software_history="## 2026-primary.1 — 2026-08-05\n\n### Added\n\n- First change\n",
+    )
+    second = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        tmp_path / "second",
+        software_history="## 2026-primary.1 — 2026-08-05\n\n### Added\n\n- Second change\n",
+    )
+    legacy_notes = (legacy.bundle_dir / "RELEASE_NOTES.md").read_text()
+    first_notes = (first.bundle_dir / "RELEASE_NOTES.md").read_text()
+    assert "## Software changes" not in legacy_notes
+    assert first_notes.startswith(legacy_notes)
+    assert "## Software changes\n\n## 2026-primary.1" in first_notes
+    assert "- First change" in first_notes
+    first_manifest = read_json(first.bundle_dir / "release-manifest.json")
+    second_manifest = read_json(second.bundle_dir / "release-manifest.json")
+    assert (
+        first_manifest["artifact_hashes"]["RELEASE_NOTES.md"]
+        == hashlib.sha256((first.bundle_dir / "RELEASE_NOTES.md").read_bytes()).hexdigest()
+    )
+    assert (
+        first_manifest["artifact_hashes"]["RELEASE_NOTES.md"]
+        != second_manifest["artifact_hashes"]["RELEASE_NOTES.md"]
+    )
+    assert (
+        first.status.included_artifacts
+        == second.status.included_artifacts
+        == legacy.status.included_artifacts
+    )
+    with ZipFile(first.archive_path) as archive:
+        assert archive.read("seattle-election-guide/RELEASE_NOTES.md").decode() == first_notes
+
+
 def test_release_build_packages_complete_deterministic_public_bundle(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -485,6 +532,8 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    declared = yaml.safe_load((PROJECT_ROOT / "config/hosting/site.yaml").read_text())
+    current = declared["elections"][0]
     ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
     _stub_release_render(monkeypatch)
     primary_release = _build_release(
@@ -505,7 +554,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-general/snapshots",
         manifest_dir=PROJECT_ROOT / "data/releases/wa-2026-general/manifests",
         output_dir=tmp_path / "general-release",
-        release_version="2026-general.10",
+        release_version=current["release_version"],
         generated_at=read_release_ledger(
             PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml"
         ).data_as_of,
@@ -532,8 +581,8 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
     stage_pages_site(
         site_manifest_path,
         {
-            "wa-2026-general-2026-general.10": general_release.bundle_dir,
-            "wa-2026-primary-2026-primary.4": primary_release.bundle_dir,
+            current["bundle_id"]: general_release.bundle_dir,
+            historical["bundle_id"]: primary_release.bundle_dir,
         },
         output,
         expected_current_git_commit="a" * 40,
@@ -544,6 +593,19 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         site_manifest_path,
         expected_current_git_commit="a" * 40,
     )
+
+    # The current proposal and newly pinned primary retain the incoming Updates backfill.
+    for election_id, headline in (
+        ("wa-2026-general", "Changed how sparse and unopposed races appear."),
+        ("wa-2026-primary", "Restored the completed primary guide."),
+    ):
+        updates = output / "e" / election_id / "updates/index.html"
+        assert headline in updates.read_text(encoding="utf-8")
+        relative = updates.relative_to(output).as_posix()
+        assert deployment.assets[relative] == hashlib.sha256(updates.read_bytes()).hexdigest()
+    assert current["release_version"] in (
+        general_release.bundle_dir / "RELEASE_NOTES.md"
+    ).read_text(encoding="utf-8")
 
     assert deployment.elections[0].source_registry_hash == expected_registry_hash
     assert [election.election_id for election in deployment.elections] == [
