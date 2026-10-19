@@ -20,8 +20,17 @@ ENDPOINT = "https://workingfamilies.org/wp-admin/admin-ajax.php"
 FORM = {"action": "more_candidates", "state": "25", "count": "0"}
 
 
+@pytest.mark.parametrize(
+    "visible_attributes",
+    [
+        b"",
+        b' aria-hidden="false" class="externally-hidden" '
+        b'style="display: table-row; visibility: visible; content-visibility: visible"',
+    ],
+    ids=["plain", "visible-attributes"],
+)
 def test_live_wfp_collects_complete_response_and_records_truthful_request(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, visible_attributes: bytes
 ) -> None:
     key = bytes(range(32))
     monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(key).decode())
@@ -32,6 +41,9 @@ def test_live_wfp_collects_complete_response_and_records_truthful_request(
         update={"elections": [election.model_copy(update={"sources": [source]})]}
     )
     complete = (ROOT / f"tests/fixtures/verification/{SOURCE}.html").read_bytes()
+    complete = complete.replace(b"<tr>", b"<tr" + visible_attributes + b">").replace(
+        b"<td>", b"<td" + visible_attributes + b">"
+    )
     initial = (ROOT / f"tests/fixtures/verification/{SOURCE}-initial-page.html").read_bytes()
 
     def fetch(url: str, *, form: dict[str, str] | None = None) -> HttpArtifact:
@@ -48,6 +60,20 @@ def test_live_wfp_collects_complete_response_and_records_truthful_request(
     assert len(event["diff"]) == 10
     assert event["baseline_reviewed"] is False
     root = state / "wa-2026-general"
+    snapshot = json.loads((root / "extractions" / f"{event['snapshot_id']}.json").read_text())
+    assert {tuple(decision["candidate_ids"]) for decision in snapshot["decisions"]} == {
+        ("us-house-7--pramila-jayapal",),
+        ("king-county-council-4--jorge-l-baron",),
+        ("king-county-council-8--teresa-mosqueda",),
+        ("seattle-city-council-5--nilu-jenks",),
+        ("ld-37-state-representative-1--kelabe-tewolde",),
+        ("ld-37-state-representative-2--jaelynn-scott",),
+        ("ld-43-state-representative-2--shaun-scott",),
+        ("ld-46-state-representative-2--darya-farivar",),
+        ("ld-36-state-senator--noel-c-frame",),
+        ("ld-43-state-senator--hannah-sabio-howell",),
+    }
+    assert all(decision["requires_review"] for decision in snapshot["decisions"])
     manifest = json.loads((root / "manifests" / f"{event['capture_id']}.json").read_text())
     assert manifest["requested_url"] == manifest["canonical_url"] == ENDPOINT
     assert manifest["http_status"] == 200
@@ -76,6 +102,33 @@ def test_live_wfp_collects_complete_response_and_records_truthful_request(
         b"<tr><td>Hannah Sabio-Howell</td><td></td></tr>",
         b"<tr><td>Hannah Sabio-Howell</td><td>Washington State Senate, District 43",
         b"",
+        *[
+            pytest.param(template.format(attributes=attributes).encode(), id=f"{element}-{style}")
+            for element, template in [
+                (
+                    "row",
+                    "<tr {attributes}><td>Hannah Sabio-Howell</td>"
+                    "<td>Washington State Senate, District 43</td></tr>",
+                ),
+                (
+                    "name-cell",
+                    "<tr><td {attributes}>Hannah Sabio-Howell</td>"
+                    "<td>Washington State Senate, District 43</td></tr>",
+                ),
+                (
+                    "office-cell",
+                    "<tr><td>Hannah Sabio-Howell</td>"
+                    "<td {attributes}>Washington State Senate, District 43</td></tr>",
+                ),
+            ]
+            for style, attributes in [
+                ("hidden", "hidden"),
+                ("aria-hidden", 'aria-hidden="true"'),
+                ("display", 'style="display: none"'),
+                ("visibility", 'style="visibility: hidden"'),
+                ("content-visibility", 'style="content-visibility: hidden"'),
+            ]
+        ],
     ],
 )
 def test_complete_fixture_reuses_baseline_and_expanded_only_break_keeps_it(
@@ -108,19 +161,22 @@ def test_complete_fixture_reuses_baseline_and_expanded_only_break_keeps_it(
     assert first["status"] == "created"
     assert len(first["diff"]) == 10
     root = state / "wa-2026-general"
+    extractions = {p: p.read_bytes() for p in (root / "extractions").glob("*.json")}
     preserved = {p: p.read_bytes() for p in (root / "vault").rglob("*.json")}
     second = run("06")["automatic"][0]
     assert second["status"] == "unchanged"
     assert second["snapshot_id"] == first["snapshot_id"]
     assert {p: p.read_bytes() for p in (root / "vault").rglob("*.json")} == preserved
-    # The first ten original rows stay identical; only the expanded tail changes.
+    # All preceding rows stay identical; only the final mapped row changes.
     prefix, _, _ = original.rpartition(b"<tr>")
     target.write_bytes(prefix + replacement if replacement else b"")
     failed = run("07")["automatic"][0]
     assert failed["status"] == "failed", failed
     assert failed["previous_snapshot_id"] == first["snapshot_id"]
     assert failed["snapshot_id"] is None
-    assert (root / "extractions" / f"{first['snapshot_id']}.json").exists()
+    assert failed["diff"] == []
+    assert failed["error"]
+    assert {p: p.read_bytes() for p in (root / "extractions").glob("*.json")} == extractions
     assert not (root / "approvals").exists()
     assert not list(state.rglob("*.html"))
 

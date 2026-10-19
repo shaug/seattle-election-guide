@@ -33,6 +33,8 @@ class _WfpRowsParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if (tag, self.stack) not in (("tr", []), ("td", ["tr"])):
             raise ExtractionError("WFP complete response requires two-cell table rows")
+        if _html_element_is_hidden(tag, attrs):
+            raise ExtractionError("WFP complete response has an explicitly hidden row or cell")
         self.stack.append(tag)
         if tag == "td":
             self.cells.append("")

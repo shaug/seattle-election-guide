@@ -209,10 +209,11 @@ bytes follow the same encrypted capture/refresh/snapshot pipeline.
 The October 19 complete response has 17 Washington rows: ten existing approved
 in-inventory decisions and seven explicit exclusions outside the frozen inventory.
 The source-specific row check preserves adjacent cell whitespace as one row;
-unknown rows or malformed shapes fail visibly. Changed response bytes always
-require review. Historical initial-page snapshots and approvals remain immutable;
-the complete response needs its own live baseline review and independent scheduled
-reuse before adoption can be claimed. Authored fixtures prove parsing and archive
+unknown rows or malformed shapes fail visibly. Explicitly hidden rows or cells
+also fail the complete response check before decision matching. Changed response
+bytes always require review. Historical initial-page snapshots and approvals remain
+immutable; the complete response needs its own live baseline review and independent
+scheduled reuse before adoption can be claimed. Authored fixtures prove parsing and archive
 behavior, not live adoption or a new endorsement approval.
 
 SGN discovery recognizes endorsement link text as well as title-bearing URLs,
