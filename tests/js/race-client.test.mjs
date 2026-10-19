@@ -86,7 +86,7 @@ function personalizationContract() {
 function payload(personalization = personalizationContract()) {
   const contract = personalization ?? personalizationContract();
   return /** @type {any} */ ({
-    schema_version: '1.0',
+    schema_version: '1.1',
     data_version: 'v1',
     panel_id: contract.panel_id,
     panel_hash: contract.panel_hash,

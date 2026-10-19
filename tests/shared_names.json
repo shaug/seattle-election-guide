@@ -316,6 +316,10 @@
       "client",
       "test"
     ],
+    "data-sensitivity-scenario": [
+      "template",
+      "test"
+    ],
     "data-share": [
       "template",
       "client",
@@ -843,6 +847,18 @@
       "test"
     ],
     "segmented-control": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "sensitivity-warning": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "source-checks": [
       "template",
       "stylesheet",
       "python",

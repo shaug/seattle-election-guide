@@ -87,6 +87,7 @@ const METER_DEGRADE_MAX_BLOCKS = Math.floor(120 / 3);
  * @typedef {object} RaceFootView
  * @property {string|null} insufficientNote
  * @property {AllSourcesView|null} allSources
+ * @property {{text: string, href: string}|null} sensitivityWarning
  */
 
 /**
@@ -456,6 +457,11 @@ export function raceFootTemplate(view) {
       ? nothing
       : html`<div class="insufficient-note" role="note" data-display-role="insufficient-warning"
         >${view.insufficientNote}</div>`
+  }${
+    view.sensitivityWarning == null
+      ? nothing
+      : html`<p class="sensitivity-warning" role="note"><a href=${view.sensitivityWarning.href}
+        >${view.sensitivityWarning.text}</a></p>`
   }${
     view.allSources === null
       ? nothing

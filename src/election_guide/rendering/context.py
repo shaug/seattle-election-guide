@@ -34,6 +34,7 @@ from election_guide.rendering.payload import (
     RaceDetailDisplay,
     RaceDisplay,
     RaceSourceRow,
+    SensitivityWarning,
 )
 from election_guide.rendering.shell import month_day_year
 from election_guide.results.models import ElectionResults
@@ -247,6 +248,11 @@ def race_display(race: PublicationRace, race_path: str) -> RaceDisplay:
     """One race's audited presentation on the guide, published so no client
     module reads it back out of a card (docs/FRONTEND.md, The data contract)."""
     return RaceDisplay(
+        sensitivity_warning=(
+            SensitivityWarning(text=race.sensitivity.warning, href=f"{race_path}#source-checks")
+            if race.sensitivity is not None and race.sensitivity.warning is not None
+            else None
+        ),
         race_id=race.id,
         race_label=race.race_label,
         race_path=race_path,

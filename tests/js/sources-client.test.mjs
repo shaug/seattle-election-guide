@@ -18,7 +18,7 @@ const PANEL_HASH = '6cd4acaa0c5e4ed0b5ddd0134d7de2af5a54c2085e7ad463f9b575b8e6dc
 /** @param {Record<string, unknown>} [overrides] */
 function payload(overrides = {}) {
   return /** @type {any} */ ({
-    schema_version: '1.0',
+    schema_version: '1.1',
     data_version: 'd119ee3107bb',
     panel_id: 'wa-2026-primary-default-sources-v4',
     panel_hash: PANEL_HASH,

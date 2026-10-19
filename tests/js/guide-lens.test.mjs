@@ -94,7 +94,7 @@ function personalizationContract() {
 function payload(personalization = personalizationContract()) {
   const contract = personalization ?? personalizationContract();
   return /** @type {any} */ ({
-    schema_version: '1.0',
+    schema_version: '1.1',
     data_version: 'v1',
     panel_id: contract.panel_id,
     panel_hash: contract.panel_hash,
@@ -113,6 +113,10 @@ function payload(personalization = personalizationContract()) {
           { candidate_id: 'blaise', label: 'Blaise Pascal' },
         ],
         audited_accessible_summary: 'The audited summary, verbatim.',
+        sensitivity_warning: {
+          text: 'Tied without Example source.',
+          href: '/races/mayor/#source-checks',
+        },
       },
     ],
     personalization,
@@ -191,6 +195,24 @@ test('a narrowed selection renders the personalized result and counts', async ()
     '1 of 1 selected',
   );
   assert.equal(document.querySelector('[data-lens-context] .no-majority-pill').hidden, true);
+});
+
+test('customization hides the published warning and resetting All sources restores it', async () => {
+  const { document, lens } = await build();
+  lens.render(['strn']);
+  assert.equal(document.querySelector('.sensitivity-warning'), null);
+  lens.render(['strn', 'mlkl']);
+  assert.equal(
+    document.querySelector('.sensitivity-warning').textContent.trim(),
+    'Tied without Example source.',
+  );
+  lens.render(['mlkl']);
+  assert.equal(document.querySelector('.sensitivity-warning'), null);
+  lens.render(['strn', 'mlkl']);
+  assert.equal(
+    document.querySelector('.sensitivity-warning a').getAttribute('href'),
+    '/races/mayor/#source-checks',
+  );
 });
 
 test('the meter carries the fill, the tone, and the spoken label together', async () => {

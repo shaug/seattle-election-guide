@@ -303,3 +303,9 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .race-detail-source-row strong { font-size: 9pt; }
   .race-detail-category-badge, .race-detail-source-status { font-size: 8pt; }
 }
+.source-checks { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line-muted); font-size: .85rem; line-height: 1.5; }
+.source-checks h2 { margin: 0 0 .75rem; font-size: 1.2rem; }
+.source-checks summary { cursor: pointer; font-weight: 600; }
+.sensitivity-summary { color: var(--muted); }
+.source-check-results { padding-left: 1.25rem; overflow-wrap: anywhere; }
+.source-check-results li + li { margin-top: .65rem; }

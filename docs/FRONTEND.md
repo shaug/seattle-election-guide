@@ -324,6 +324,14 @@ purpose and watch the check fail.
   replaced them with equals the rendered markup it was read from: the race
   page's candidates and summary, the card's race label and its link to that
   page, and the Ballot filter's own options.*
+  The guide payload's `sensitivity_warning` is a nullable, server-authored text
+  and complete detail link (client payload schema `1.1`). A customized result
+  suppresses it; resetting All sources restores it from payload state. Race-page
+  source-check details stay static and explicitly labeled All sources. Browsers
+  neither run exclusion scenarios nor classify their outcomes.
+  *Check: exists — `tests/test_sensitivity_rendering.py` checks mobile browser
+  hide/reset and keyboard disclosure behavior; `tests/js/guide-lens.test.mjs`
+  checks the repeated hide/restore cycle, and guide markup parity includes the warning.*
 - **One identifier space.** The payload, the markup's data attributes, and the
   client modules use the same identifier for the same entity. A translation
   map between two of our own identifier spaces is a defect in the contract.

@@ -153,6 +153,10 @@ export function createGuideLens(payload) {
         supportCompact: supportSummaryCompact(leaderUnits, scored.explicitCount, selectedTotal),
       },
       foot: {
+        sensitivityWarning:
+          selectedTotal === null
+            ? (payload.races.find((race) => race.race_id === raceId)?.sensitivity_warning ?? null)
+            : null,
         insufficientNote:
           scored.grade !== 'Insufficient'
             ? null

@@ -127,6 +127,9 @@
               <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
                 Too few endorsements to measure agreement.</div>
               {% endif %}
+              {% if race.sensitivity and race.sensitivity.warning %}
+              <p class="sensitivity-warning" role="note"><a href="{{ race_page_path(race.id) }}#source-checks">{{ race.sensitivity.warning }}</a></p>
+              {% endif %}
             </div>
             {# The results strip (docs/RESULTS.md, Rendering § Race cards;
                #286, extended to measures by #348): outside every lens region

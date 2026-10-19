@@ -277,6 +277,34 @@
       </details>
       {% endif %}
       {% endfor %}
+      {% if race.sensitivity %}
+      {% set sensitivity = race.sensitivity %}
+      <section class="source-checks" id="source-checks" aria-labelledby="source-checks-heading">
+        <h2 id="source-checks-heading">Source checks · All sources</h2>
+        <p class="{% if sensitivity.warning %}sensitivity-warning{% else %}sensitivity-summary{% endif %}">{{ sensitivity.summary }}</p>
+        <p>These checks exclude one contributing source, one reporting category, or one disclosed group at a time. They describe All sources, independently of your selection.</p>
+        <details>
+          <summary>Tested exclusions ({{ sensitivity.tested_count }})</summary>
+          <p>All sources: {{ sensitivity.baseline_result }} · {{ sensitivity.baseline_share }} agreement · {{ sensitivity.baseline_source_count }} endorsing sources.</p>
+          {% if sensitivity.scenarios %}
+          <ul class="source-check-results">
+            {% for scenario in sensitivity.scenarios %}
+            <li data-sensitivity-scenario="{{ scenario.id }}"><strong>Without {{ scenario.target_label }}{% if scenario.kind == 'category' %} sources{% endif %}:</strong> {{ scenario.result_label }} · {{ scenario.leading_share }} agreement · {{ scenario.explicit_source_count }} endorsing sources.
+              {% for change in scenario.changes %}{{ change }} {% endfor %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}<p>No contributing endorsements to test.</p>{% endif %}
+          {% if sensitivity.skipped %}
+          <h3>Not tested</h3>
+          <ul class="source-check-results">
+            {% for skip in sensitivity.skipped %}<li>{{ skip.target_label }}: {{ skip.reason }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </details>
+        <p>These are overlapping checks, not a confidence percentage or a measure of candidate quality. <a href="/about/#source-checks">How the checks work</a> · <a href="{{ guide_path }}data/sensitivity.json">Full audit JSON</a> · <a href="{{ guide_path }}data/sensitivity_scenarios.csv">Scenario CSV</a></p>
+      </section>
+      {% endif %}
     </main>
 
     <footer class="site-footer">

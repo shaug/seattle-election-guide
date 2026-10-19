@@ -111,7 +111,7 @@ function personalizationContract() {
 function payload(overrides = {}) {
   const personalization = personalizationContract();
   return /** @type {any} */ ({
-    schema_version: '1.0',
+    schema_version: '1.1',
     data_version: DATA_VERSION,
     panel_id: PANEL_ID,
     panel_hash: PANEL_HASH,

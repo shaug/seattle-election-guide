@@ -81,11 +81,11 @@
 - Adds `PublicationRace.sensitivity` and the publication methodology's sensitivity policy, optional only for historical schemas. New schema `1.15` requires them; accepted earlier schema versions remain readable.
 - Adds `sensitivity.json` and `sensitivity_scenarios.csv` to new publication bundles, manifest hashes, and new-format release verification. The report's identity includes dataset, registry, panel, scope, scoring, baseline bytes, approved policy, timestamp, and publication revision.
 
-- [ ] Write failing publication tests for deterministic sidecars, complete JSON/CSV deltas and empty CSV headers, summary columns, canonical baseline equality, and consistent view-model projection.
-- [ ] Build the report once per publication and project compact, preformatted display rows/summary; preserve full audit data in sidecars rather than copying every audit snapshot into browser payloads.
-- [ ] Extend `race_summary.csv` with policy ID, classification, tested/material counts, and affected scenario kinds; add corresponding validation checks and provenance bindings.
-- [ ] Add failing new-schema completeness, old-schema readability, report/summary tampering, and missing-sidecar release tests; implement the versioned requirements without altering immutable historical artifacts.
-- [ ] Verify publication, scoring, release-artifact and hosting compatibility tests; commit.
+- [x] Write failing publication tests for deterministic sidecars, complete JSON/CSV deltas and empty CSV headers, summary columns, canonical baseline equality, and consistent view-model projection.
+- [x] Build the report once per publication and project compact, preformatted display rows/summary; preserve full audit data in sidecars rather than copying every audit snapshot into browser payloads.
+- [x] Extend `race_summary.csv` with policy ID, classification, tested/material counts, and affected scenario kinds; add corresponding validation checks and provenance bindings.
+- [x] Add failing new-schema completeness, old-schema readability, report/summary tampering, and missing-sidecar release tests; implement the versioned requirements without altering immutable historical artifacts.
+- [x] Verify publication, scoring, release-artifact and hosting compatibility tests; commit.
 
 ### Task 4: Present source checks on existing voter pages
 
@@ -97,11 +97,11 @@
 - Adds a nullable, server-authored warning to the guide's race display payload and foot view. Customized mode yields no warning; audited mode/reset uses the original published value.
 - Renders an All sources audit section on the existing race page, including a compact summary, one material warning when applicable, and accessible disclosure of every tested scenario and skip reason. Details link to methodology and machine-readable exports.
 
-- [ ] Write failing tests for material-only overview warnings, quiet stable/narrow labels on race pages, complete/tied/insufficient disclosures, and no sensitivity claim for legacy publications.
-- [ ] Implement the shared server/client foot markup with preformatted copy, and static race-page audit details that stay explicitly All sources while the live selection changes.
-- [ ] Add and observe a failing customized/reset test and markup-parity coverage, then implement warning hide/restore from payload state. Use the existing differ/neutral design families and the current shared templates.
-- [ ] Regenerate payload declarations, update any client schema version required by new required payload fields, and register genuine new mirrors/shared names without raising any ratchet.
-- [ ] Verify focused Python rendering, Node parity/lens behavior, and narrow-width/keyboard browser checks; commit.
+- [x] Write failing tests for material-only overview warnings, quiet stable/narrow labels on race pages, complete/tied/insufficient disclosures, and no sensitivity claim for legacy publications.
+- [x] Implement the shared server/client foot markup with preformatted copy, and static race-page audit details that stay explicitly All sources while the live selection changes.
+- [x] Add and observe a failing customized/reset test and markup-parity coverage, then implement warning hide/restore from payload state. Use the existing differ/neutral design families and the current shared templates.
+- [x] Regenerate payload declarations, update any client schema version required by new required payload fields, and register genuine new mirrors/shared names without raising any ratchet.
+- [x] Verify focused Python rendering, Node parity/lens behavior, and narrow-width/keyboard browser checks; commit.
 
 ### Task 5: Document and verify the complete feature
 

@@ -27,7 +27,7 @@
       <section aria-labelledby="how-the-numbers-work">
         <h2 id="how-the-numbers-work">How the numbers work</h2>
         <p>Each organization gets one point per race. If it endorses more than one candidate,
-          that point splits evenly among them unless the organization states its own split.</p>
+          that point splits evenly among them.</p>
         <p>The percentage is the leading choice's share of those points. The source count beside
           it tells you how many organizations contributed; neither number is a quality rating of the
           candidate.</p>
@@ -46,6 +46,26 @@
         <p>The Seattle Times is tracked only as a comparison. It contributes no points, and
           the Endorsements page does not show it. The Sources page documents it, and
           the Comparisons page is where you can put it beside the aggregate.</p>
+      </section>
+
+      <section aria-labelledby="source-checks">
+        <h2 id="source-checks">How much do the sources change the result?</h2>
+        <p>Each race page includes source checks for All sources. We remove one contributing
+          organization at a time, then one reporting category at a time when at least two
+          categories contribute, and each disclosed group with at least two eligible members
+          and one contributing endorsement. Each check starts from the same recorded endorsements.</p>
+        <p>A warning appears when a check changes the measured leading choices, recommended
+          choices, or whether the result is tied or has too few endorsements. Crossing the
+          majority boundary or changing agreement by at least 10 percentage points also produces
+          a warning. An ordinary audit-grade change alone does not.</p>
+        <p>A close lead means the leading and next choice are no more than 10 percentage points
+          apart. “Same leading choice in all tested exclusions” means none of these checks
+          materially changed the result. The checks overlap: they are not a confidence
+          percentage, a prediction, or proof that the sources represent all voters.</p>
+        <p>The overview hides these warnings while a customized selection is active. Race-page
+          details always say All sources; they do not recompute the checks for a selection.
+          Older guides without source checks make no stability claim. Full results and exact
+          changes are linked from each race page as JSON and CSV.</p>
       </section>
 
       <section aria-labelledby="compare-sources">

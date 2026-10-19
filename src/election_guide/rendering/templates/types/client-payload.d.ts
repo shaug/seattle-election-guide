@@ -41,7 +41,7 @@ interface ClientPayloadTypes {
  * The endorsements guide's payload.
  */
 interface GuidePayload {
-  schema_version: "1.0";
+  schema_version: "1.1";
   data_version: string;
   panel_id: string;
   panel_hash: string;
@@ -98,7 +98,12 @@ interface RaceDisplay {
   race_label: string;
   audited_accessible_summary: string;
   race_path: string;
+  sensitivity_warning: SensitivityWarning | null;
   candidates: RaceCandidateDisplay[];
+}
+interface SensitivityWarning {
+  text: string;
+  href: string;
 }
 /**
  * One candidate's published identity and display label.
@@ -257,7 +262,7 @@ interface PersonalizationCell {
  * because there is one race on it and nothing to filter.
  */
 interface RacePayload {
-  schema_version: "1.0";
+  schema_version: "1.1";
   data_version: string;
   panel_id: string;
   panel_hash: string;
@@ -319,7 +324,7 @@ interface RaceSourceRow {
  * personalization contract and no race display data.
  */
 interface SourcesPayload {
-  schema_version: "1.0";
+  schema_version: "1.1";
   data_version: string;
   panel_id: string;
   panel_hash: string;
@@ -358,7 +363,7 @@ interface SourcesTreeSource {
  * The Comparisons page's payload.
  */
 interface ComparisonsPayload {
-  schema_version: "1.0";
+  schema_version: "1.1";
   data_version: string;
   default_columns: string[];
   personalization: PersonalizationContract;

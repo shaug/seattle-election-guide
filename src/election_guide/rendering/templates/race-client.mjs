@@ -284,6 +284,7 @@ export function wireRacePage(payload) {
     if (footRegion) {
       render(
         raceFootTemplate({
+          sensitivityWarning: null,
           insufficientNote:
             scored.grade !== 'Insufficient'
               ? null

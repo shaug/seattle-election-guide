@@ -174,7 +174,9 @@ test('the no-majority pill is present but hidden when there is a majority', () =
 });
 
 test('an ordinary audited card foot renders nothing at all', () => {
-  const host = rendered(raceFootTemplate({ insufficientNote: null, allSources: null }));
+  const host = rendered(
+    raceFootTemplate({ sensitivityWarning: null, insufficientNote: null, allSources: null }),
+  );
   assert.equal(host.querySelector('.insufficient-note'), null);
   assert.equal(host.querySelector('.lens-comparison'), null);
 });
@@ -183,6 +185,7 @@ test('an ordinary audited card foot renders nothing at all', () => {
 test('the reference bar states its agreement in words as well as in tone', () => {
   const host = rendered(
     raceFootTemplate({
+      sensitivityWarning: null,
       insufficientNote: 'Too few endorsements to measure agreement.',
       allSources: { summary: 'All sources: Ada · 60%', leaderChanged: true },
     }),
@@ -201,6 +204,7 @@ test('the reference bar states its agreement in words as well as in tone', () =>
 test('an agreeing reference bar takes the agree tone', () => {
   const host = rendered(
     raceFootTemplate({
+      sensitivityWarning: null,
       insufficientNote: null,
       allSources: { summary: 'All sources: Ada · 60%', leaderChanged: false },
     }),

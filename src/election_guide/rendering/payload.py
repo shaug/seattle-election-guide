@@ -41,7 +41,7 @@ from election_guide.rendering.bundler import (
 )
 from election_guide.scoring.models import Grade
 
-CLIENT_PAYLOAD_SCHEMA_VERSION = "1.0"
+CLIENT_PAYLOAD_SCHEMA_VERSION = "1.1"
 """Bumped whenever a published payload stops being readable by the shipped
 client. The client validates it at parse time and, on a version it does not
 understand, leaves the server-rendered baseline alone behind a visible notice
@@ -238,10 +238,16 @@ class AuditedRace(ClientPayloadModel):
     clearing a lens restores it verbatim."""
 
 
+class SensitivityWarning(ClientPayloadModel):
+    text: str
+    href: str
+
+
 class RaceDisplay(AuditedRace):
     """One race as the guide's own card renders it."""
 
     race_path: str
+    sensitivity_warning: SensitivityWarning | None
     """The race's own page, so the guide can forward a `#race-…` link already
     out in the world to the address that link now means (issue #136). Published
     rather than composed on the client, because composing it would put the URL
@@ -268,7 +274,7 @@ class LensPayload(ClientPayloadModel):
     """What every lens-aware page publishes: the panel identity the fragment
     codec validates a link against, plus the categories and sources it names."""
 
-    schema_version: Literal["1.0"]
+    schema_version: Literal["1.1"]
     data_version: str
     panel_id: str
     panel_hash: str
@@ -343,7 +349,7 @@ class SourcesPayload(LensPayload):
 class ComparisonsPayload(ClientPayloadModel):
     """The Comparisons page's payload."""
 
-    schema_version: Literal["1.0"]
+    schema_version: Literal["1.1"]
     data_version: str
     default_columns: list[str]
     personalization: PersonalizationContract

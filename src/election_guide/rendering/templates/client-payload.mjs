@@ -12,7 +12,7 @@
 /** The payload schema this build understands. Mirrors
  * `CLIENT_PAYLOAD_SCHEMA_VERSION` in `rendering/payload.py`, which is the
  * version every published payload carries. */
-export const CLIENT_PAYLOAD_SCHEMA_VERSION = '1.0';
+export const CLIENT_PAYLOAD_SCHEMA_VERSION = '1.1';
 
 /** What a reader is told when the payload cannot be used. */
 export const PAYLOAD_NOTICE =
