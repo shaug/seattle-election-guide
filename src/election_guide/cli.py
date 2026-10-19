@@ -28,6 +28,7 @@ from election_guide.analytics import (
     missing_dates,
     newest_complete_day,
     open_analytics_zone,
+    record_expired_gaps,
     window_floor,
     write_rollup,
 )
@@ -2075,10 +2076,9 @@ def analytics_export(
 ) -> None:
     """Archive every in-window UTC day that is not archived yet (O9 follow-up, #381).
 
-    One command rather than a backfill and a scheduler, because they are the
-    same operation: ask which days are missing, fetch those, write them. That
-    is what makes the schedule self-healing — a run that never fired leaves a
-    gap the next run fills on its own — and it is why re-running is free.
+    Manual investigations use a separate --archive-dir from the retired
+    repository history (docs/MONITORING.md). Missed in-window days are fetched;
+    expired interior dates are explained separately under that directory's gaps/.
 
     An already-archived day is never re-fetched. Byte-identity across runs is
     then a property of not asking again, rather than a bet that Cloudflare
@@ -2101,10 +2101,6 @@ def analytics_export(
     except ValueError as error:
         typer.echo(f"analytics export failed: {error}", err=True)
         raise typer.Exit(code=1) from error
-
-    if not pending:
-        typer.echo(f"analytics export: 0 archived, {len(already)} already present")
-        return
 
     written: list[Path] = []
     # An empty answer is ambiguous: it is what a day outside the retention
@@ -2133,8 +2129,9 @@ def analytics_export(
         # Resolved before the first fetch and before any write, so a missing
         # or unscoped credential fails with an empty archive, never a partial
         # one.
-        zone = open_analytics_zone()
+        zone = open_analytics_zone() if pending else None
         for candidate in pending:
+            assert zone is not None
             rollup = zone.archive_day(candidate, as_of=today)
             if rollup is None:
                 if oldest_with_data is None or oldest_with_data >= candidate:
@@ -2145,6 +2142,7 @@ def analytics_export(
             elif oldest_with_data is None or candidate < oldest_with_data:
                 oldest_with_data = candidate
             written.append(write_rollup(archive_dir, rollup))
+        gap_path = record_expired_gaps(archive_dir, as_of=today)
     except (OSError, ValidationError, ValueError) as error:
         # The credential is named on every failure, not only the ones this
         # process can attribute to it: the operator's next move is the same
@@ -2157,8 +2155,11 @@ def analytics_export(
         )
         raise typer.Exit(code=1) from error
 
+    if gap_path is not None:
+        typer.echo(f"analytics export: expired gap dates recorded -> {gap_path}")
+
     # An operator who named one date gets an exit code about that date; a
-    # scheduled sweep reports and carries on, because one day past the window
+    # full sweep reports and carries on, because one day past the window
     # is not a reason to abandon the other twenty-nine.
     for candidate in aged_out:
         typer.echo(
