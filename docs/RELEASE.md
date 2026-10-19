@@ -166,6 +166,9 @@ Formatting-only changes to those files therefore require preparation again. It c
 current election declaration; archived declarations and their release pins remain intact.
 The previous published tag is resolved from remote state to a full commit and must be an
 ancestor of the checkout. Preparation fetches that exact object if it is missing locally.
+It also fetches the selected named tag if absent, without fetching unrelated tags or
+overwriting an existing tag, and verifies its peeled commit against the authenticated
+published source. A conflicting local or fetched tag blocks preparation.
 Preparation does not imply editorial or baseline approval.
 
 If the selected declaration on captured main never published, preparation and admission may
