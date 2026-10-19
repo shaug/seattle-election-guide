@@ -576,6 +576,7 @@ def test_cli_failed_main_recovery_requires_verified_unpublished_base(
     git(repository, "remote", "add", "origin", "https://github.com/owner/repository.git")
     for key, value in {
         "GITHUB_SHA": source_sha,
+        "RELEASE_SOURCE_SHA": source_sha,
         "GITHUB_RUN_ID": "100",
         "GITHUB_RUN_ATTEMPT": "2",
         "GITHUB_REF": "refs/heads/main",
