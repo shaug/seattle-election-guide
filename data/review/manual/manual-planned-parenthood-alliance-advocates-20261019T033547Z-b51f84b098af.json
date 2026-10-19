@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-planned-parenthood-alliance-advocates-20261019T032900Z-c45c115d784a",
+  "entered_at": "2026-10-19T03:35:47.997192Z",
+  "entry_method": "manual",
+  "evidence_locator": "Derived browser factual transcription, Debra Stephens for Washington Supreme Court | Planned Parenthood Alliance Advocates; full page/tab/expanded-content research; exact row locators are retained in the private capture. Existing approved identity mappings retained; no new ledger change.",
+  "evidence_type": "web_page",
+  "id": "manual-planned-parenthood-alliance-advocates-20261019T033547Z-b51f84b098af",
+  "review_note": "shaug explicitly approved the six exact baseline reviews and the37 current manual-source reviews after their concrete packets and private source views. OpenAI Codex transcribed the approval at its actual time. This verifies the recorded source facts; WA4PJ grey ratings remain unresolved/unscored and no new ledger decision is inferred. data/review/approvals/wa-2026-general-2026-10-18-verification.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:14:31.209146Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "transcription": "supreme-court-justice-1 — Colleen Melody\nsupreme-court-justice-3 — Jaime Michelle Hawk\nsupreme-court-justice-4 — Ian Birk\nsupreme-court-justice-5 — Theo Angelis\nsupreme-court-justice-7 — Debra Stephens"
+}

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-sierra-club-washington-20261019T042207Z-9a06073d0313",
+  "entered_at": "2026-10-19T04:22:07.273160Z",
+  "entry_method": "manual",
+  "evidence_locator": "Derived complete rendered-text capture; named initiative, Supreme Court, congressional, legislative and local sections. Each frozen race is identified by jurisdiction, district and office position. Supplemental viewport capture: capture-sierra-club-washington-20261019T042207Z-bffe366f071e.",
+  "evidence_type": "web_page",
+  "id": "manual-sierra-club-washington-20261019T042207Z-55c8e57ba80a",
+  "review_note": "shaug explicitly approved both current WEA/Sierra source reviews and five acknowledgements after the complete concrete packet. OpenAI Codex transcribed the approval at its actual time. Preserve prior attribution, equal dual and spelling treatments; no new endorsement or historical review is inferred. data/review/approvals/wa-2026-general-2026-10-18-wea-sierra.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:30:32.442975Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "transcription": "us-house-7: Pramila Jayapal\nus-house-9: Adam Smith\ninitiative-26-645: No\nseattle-proposition-1-transit: Yes\nld-11-state-representative-2: Steve Bergquist\nld-32-state-representative-1: Keith Scully\nld-34-state-representative-2: Joe Fitzgibbon\nld-34-state-senator: Emily Alvarado\nld-36-state-representative-1: Julia Reed\nld-36-state-representative-2: Liz Berry\nld-36-state-senator: Noel Frame\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nld-37-state-senator: Chiaplo Street\nld-43-state-representative-1: Nicole Macri\nld-43-state-senator: Jamie Pedersen\nld-46-state-representative-1: Gerry Pollet\nld-46-state-representative-2: Darya Farivar\nld-46-state-senator: Javier Valdez\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens\nSource Chiaplo Street retains the prior approved Chipalo Street identity."
+}

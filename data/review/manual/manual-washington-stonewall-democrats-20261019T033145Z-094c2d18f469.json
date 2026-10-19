@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+  "entered_at": "2026-10-19T03:31:45.555081Z",
+  "entry_method": "manual",
+  "evidence_locator": "Current official GoogleSite/embedded 2026 GENERAL ELECTION guide; normalized Seattle facts rows1–10; exact section locators and original AX/screenshot witnesses in proposal packet. LD43 Senate dual preserves equal total-source allocation.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+  "review_note": "shaug approved all 34 enumerated additions in the exact October 18 review packet. OpenAI Codex transcribed the approval at its actual time. This successor verifies only the proposed additions in this transcription, not automatic baselines or other daily obligations. Approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T03:51:20.554554Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "transcription": "us-house-7 — us-house-7--pramila-jayapal; allocation each 1/1\nus-house-9 — us-house-9--adam-smith; allocation each 1/1\nsupreme-court-justice-1 — supreme-court-justice-1--colleen-melody; allocation each 1/1\nsupreme-court-justice-3 — supreme-court-justice-3--jaime-michelle-hawk; allocation each 1/1\nsupreme-court-justice-4 — supreme-court-justice-4--ian-birk; allocation each 1/1\nsupreme-court-justice-5 — supreme-court-justice-5--theo-angelis; allocation each 1/1\nsupreme-court-justice-7 — supreme-court-justice-7--debra-l-stephens; allocation each 1/1\ninitiative-26-001 — initiative-26-001--no; allocation each 1/1\ninitiative-26-638 — initiative-26-638--no; allocation each 1/1\ninitiative-26-645 — initiative-26-645--no; allocation each 1/1"
+}

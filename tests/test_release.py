@@ -560,7 +560,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         ).data_as_of,
         git_commit="a" * 40,
     )
-    expected_registry_hash = "08473de324a7ca66617885e774d406fa992bc2bfbf3916acff366aad017bf2a2"
+    expected_registry_hash = "af0b82abe821281c43317480df5f0e22270ba97e05b3cd52215d91aa82fb4a48"
 
     assert general_release.status.schema_version == "1.3"
     assert general_release.status.source_registry_hash == expected_registry_hash

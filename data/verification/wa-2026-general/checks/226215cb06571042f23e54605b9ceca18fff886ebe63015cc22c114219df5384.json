@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-19T04:36:18.741704Z",
+  "event_id": null,
+  "evidence": "shaug: Human response: \"Approve Stranger review and both acknowledgements\" after the complete supplied-image review packet. data/review/approvals/wa-2026-general-2026-10-18-stranger.json; data/review/proposals/wa-2026-general-2026-10-18-stranger.json, SHA-256 9c054bd53936959ebf64d63b76e7559e161333b51a9b35f363e5dc17086bbe4f. This actual-time review resolves the past-due obligation using the user-supplied image without asserting historical webpage contents, review on the missed date, or independent live-page access. All 31 existing decisions match; prior name treatments remain. No new ledger decisions. The prior October 16 acknowledgement remains intact.",
+  "mode": "human",
+  "scheduled_for": "2026-10-18",
+  "source_id": "the-stranger",
+  "status": "manual"
+}

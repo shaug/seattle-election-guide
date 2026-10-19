@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-for-peace-and-justice-20261019T033548Z-d208f9ade6af",
+  "entered_at": "2026-10-19T03:35:48.054785Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official12-slide general guide; derived factual review of slides3–9; full original post read through slide12. Source JSON witness capture-washington-for-peace-and-justice-20261019T032925Z-95b64ab68142 retains per-row slide locators; grey ratings remain unresolved.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-for-peace-and-justice-20261019T033548Z-bc0da734d38a",
+  "review_note": "shaug explicitly approved the six exact baseline reviews and the37 current manual-source reviews after their concrete packets and private source views. OpenAI Codex transcribed the approval at its actual time. This verifies the recorded source facts; WA4PJ grey ratings remain unresolved/unscored and no new ledger decision is inferred. data/review/approvals/wa-2026-general-2026-10-18-verification.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:14:31.209146Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "transcription": "ld-43-state-senator — ld-43-state-senator--hannah-sabio-howell; observed green affirmative rating\nld-43-state-representative-2 — ld-43-state-representative-2--shaun-scott; observed green affirmative rating\nld-43-state-representative-1 — ld-43-state-representative-1--nicole-macri; observed green affirmative rating\nld-46-state-senator — ld-46-state-senator--javier-valdez; observed green affirmative rating\nld-46-state-representative-2 — ld-46-state-representative-2--darya-farivar; observed green affirmative rating\ninitiative-26-645 — initiative-26-645--no; observed explicit No ballot instruction\ninitiative-26-001 — initiative-26-001--no; observed explicit No ballot instruction\ninitiative-26-638 — initiative-26-638--no; observed explicit No ballot instruction\nus-house-9 — red leave-blank/write-in instruction; observed red leave-blank/write-in instruction\nsupreme-court-justice-7 — red leave-blank/write-in instruction; observed red leave-blank/write-in instruction\nld-11-state-representative-2 — ld-11-state-representative-2--steve-bergquist; observed green affirmative rating\nsupreme-court-justice-1 / Colleen Melody — grey; unresolved and unscored\nsupreme-court-justice-4 / Ian Birk — grey; unresolved and unscored"
+}

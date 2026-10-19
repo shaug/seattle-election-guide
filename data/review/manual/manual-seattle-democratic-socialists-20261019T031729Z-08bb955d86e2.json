@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c",
+  "entered_at": "2026-10-19T03:17:29.101678Z",
+  "entry_method": "manual",
+  "evidence_locator": "North Seattle Canvass — No On 001, 638, 645; October 10 event description, opening paragraphs and closing November voting instruction",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-democratic-socialists-20261019T031729Z-08bb955d86e2",
+  "review_note": "shaug approved all 34 enumerated additions in the exact October 18 review packet. OpenAI Codex transcribed the approval at its actual time. This successor verifies only the proposed additions in this transcription, not automatic baselines or other daily obligations. Approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T03:51:20.554554Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "transcription": "initiative-26-645 — initiative-26-645--no"
+}

@@ -1,8 +1,10 @@
 # October 18 endorsement verification for October 16–18
 
+> Follow-up: shaug subsequently approved all 34 proposed additions. The [application record](GENERAL_VERIFICATION_APPLICATION_2026-10-18.md) records their application and six verified transcription successors. The proposal and original pending records below preserve the state submitted for approval. Current remaining obligations are tracked in the [closeout status](GENERAL_VERIFICATION_CLOSEOUT_2026-10-18.md).
+
 Scope: [October 16 #545](https://github.com/shaug/seattle-election-guide/issues/545), [October 17 #560](https://github.com/shaug/seattle-election-guide/issues/560), and [October 18 #567](https://github.com/shaug/seattle-election-guide/issues/567). Prepared by OpenAI Codex on October 18 Pacific time; captures retain their actual October 19 UTC timestamps. Missed historical reviews are not backdated.
 
-**Human approval pending.** This current pass attempts all 46 frozen-panel sources and proposes **34 additions across four publishers**. It applies no ledger change, baseline approval or new human manual acknowledgement. The approved dataset remains at 880 decisions across 45 source blocks.
+**Original proposal state, before the subsequent approvals above.** This pass attempted all 46 frozen-panel sources and proposed **34 additions across four publishers**. At proposal preparation it applied no ledger change, baseline approval or new human manual acknowledgement; the approved dataset then contained 880 decisions across 45 source blocks.
 
 The [structured packet](../data/review/proposals/wa-2026-general-2026-10-18-verification.json) contains every original observation, source disposition, capture reference, input hash, exact automatic snapshot, pending transcription and proposed value. It records 208 fresh capture attempts: 179 retained artifacts and 29 unavailable records. Every retained artifact passed its recorded hash in the persistent private store. Raw pages, PDFs and browser screenshots remain outside Git. Derived accessibility snapshots and factual transcriptions explicitly identify themselves; none invents HTTP status or redirect history.
 

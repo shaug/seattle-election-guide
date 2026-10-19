@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-19T04:30:32.442975Z",
+  "event_id": null,
+  "evidence": "shaug: Human response: \"Approve both reviews and five acknowledgements\" after the concrete fresh WEA/Sierra packet. data/review/approvals/wa-2026-general-2026-10-18-wea-sierra.json; data/review/proposals/wa-2026-general-2026-10-18-wea-sierra.json, SHA-256 617caeed72f21e1eb0a7dcae5d4773c44804cf226c2a5449e0f4ae308ee9f444. This actual-time current review resolves the past-due obligation without asserting historical webpage contents or review on the missed date. All 44 existing decisions match; prior attribution and name treatments remain. No new ledger decisions. The prior October 16 WEA acknowledgement remains intact. Stranger October 17/18 excluded.",
+  "mode": "human",
+  "scheduled_for": "2026-10-16",
+  "source_id": "sierra-club-washington",
+  "status": "manual"
+}

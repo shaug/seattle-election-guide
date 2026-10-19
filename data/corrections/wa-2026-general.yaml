@@ -1,6 +1,31 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
+  - corrected_on: 2026-10-18
+    headline: "Added 34 source decisions from four publishers."
+    body: >-
+      Stonewall Democrats’ general-election guide adds 29 decisions, including
+      three No initiative recommendations and an equal split between Hannah
+      Sabio-Howell and Jamie Pedersen for LD43 Senate. The 11th District Democrats’
+      Julie Wise endorsement and Seattle DSA’s No on IP26-645 are also included.
+      The Seattle Times explicitly withheld endorsements in the LD36, LD37 and
+      LD46 Senate races; it remains a comparison source. All 880 previously
+      recorded decisions are retained. LD11 House Position 1 now has a tie between
+      David Hackney and Ashley Fedan. The linked review lists every addition
+      and its evidence.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "LD43 Senate"
+        url: /e/wa-2026-general/races/ld-43-state-senator/
+      - label: "LD11 House Position 1"
+        url: /e/wa-2026-general/races/ld-11-state-representative-1/
+      - label: "King County Director of Elections"
+        url: /e/wa-2026-general/races/king-county-director-of-elections/
+      - label: "IP26-645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "Complete approved decisions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.13/docs/GENERAL_VERIFICATION_APPLICATION_2026-10-18.md
   - corrected_on: 2026-10-17
     headline: "Mobile meters now show percentages before inspection."
     body: >-

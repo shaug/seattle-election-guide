@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-young-democrats-of-washington-20261019T032756Z-4cb3e944421c",
+  "entered_at": "2026-10-19T03:35:47.998449Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 8 official endorsement carousel, slide 1; named office/district row(s). Complete official slide; prior approved duals and labels retained.",
+  "evidence_type": "image",
+  "id": "manual-young-democrats-of-washington-20261019T033547Z-60d33c059ffa",
+  "review_note": "shaug explicitly approved the six exact baseline reviews and the37 current manual-source reviews after their concrete packets and private source views. OpenAI Codex transcribed the approval at its actual time. This verifies the recorded source facts; WA4PJ grey ratings remain unresolved/unscored and no new ledger decision is inferred. data/review/approvals/wa-2026-general-2026-10-18-verification.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:14:31.209146Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "transcription": "us-house-7 — us-house-7--pramila-jayapal\nus-house-9 — us-house-9--adam-smith\nsupreme-court-justice-3 — supreme-court-justice-3--jaime-michelle-hawk"
+}

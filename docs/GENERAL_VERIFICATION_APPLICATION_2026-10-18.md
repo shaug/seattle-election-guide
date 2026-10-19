@@ -1,0 +1,28 @@
+# October 18 approved endorsement application
+
+Refs [#545](https://github.com/shaug/seattle-election-guide/issues/545), [#560](https://github.com/shaug/seattle-election-guide/issues/560), and [#567](https://github.com/shaug/seattle-election-guide/issues/567).
+
+shaug approved all 34 enumerated additions with: “Approved. Apply all 34 additions and work through the remaining baseline approvals and source-access barriers so we can close all three tickets.” OpenAI Codex recorded that approval at its actual transcription time, `2026-10-19T03:51:20.554554Z`; no review is backdated. The [immutable approval](../data/review/approvals/wa-2026-general-2026-10-18.json) binds the exact [proposal](../data/review/proposals/wa-2026-general-2026-10-18-verification.json), its SHA-256, each prior/new value, evidence captures, and six verified manual successors. The original pending records and proposal remain intact. shaug is the verifier; OpenAI Codex is the transcriber.
+
+## Applied decisions
+
+The ledger and compiled dataset now contain **914 decisions across 46 source blocks**, up from 880 across 45. All 880 prior choices, statuses, allocations and decision-level locators are preserved.
+
+| Publisher | Added decisions | Treatment |
+| --- | ---: | --- |
+| Washington State Stonewall Democrats | 29 | Explicit official general guide: 26 candidate races and three No initiative choices. LD43 Senate is a dual endorsement with one-half allocated to each candidate. The existing eligible publisher now has its first approved decision block. |
+| 11th District Democrats | 1 | Julie Wise, King County Director of Elections, in the October newsletter. The prior explicit CD9 no-endorsement decision remains intact despite its omission from October. |
+| Seattle DSA | 1 | Explicit No on IP26-645. Prior No decisions on 001 and 638 remain intact. |
+| Seattle Times Editorial Board | 3 | Explicit no-endorsement decisions for LD36, LD37 and LD46 Senate. These have no candidate allocation, and the Times remains comparison-only. |
+
+The [complete review](GENERAL_VERIFICATION_2026-10-18.md#proposed-changes) and approval record enumerate every source/race addition and link its original publication. Stonewall’s discovery now points to the official general guide. Its frozen eligibility, source code, panel membership and scoring treatment are unchanged. The stable panel hash remains `5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569`.
+
+An Updates entry accompanies the changed publication inputs. The prepared release request is owned by #567 and also supports #545 and #560. Merge, archive publication and production verification remain separate from applying the approved data locally.
+
+## Remaining verification work
+
+Approval of the 34 decisions did not itself attest to automatic baselines or daily obligations. After authenticated original review, shaug separately approved all six exact baselines and 37 current manual-source reviews, recorded in [six baseline approvals and 111 manual acknowledgements](../data/review/approvals/wa-2026-general-2026-10-18-verification.json). Initially only TRU and WFP exact originals were locally present. At the user’s explicit request, OpenAI Codex used the existing private 1Password backup of the original evidence key to authenticate and restore all 71 archived captures. The [authentication receipt](../data/review/evidence-authentication/wa-2026-general-2026-10-18.json) records each envelope and original-content hash. The key was neither printed, persisted, replaced nor committed; decrypted originals remain outside Git. Review included SGN’s underlying index and article captures.
+
+The current archive branch `a0aa1050659d1459662d6bd260dd20a60c94ce55` retains the same verification data as the packet’s immutable archive revision `7e9c59c0602dbd1f0caf8d00c999a966e1b5c72a`. The latest no-due Actions run returns before vault restoration; its success is not new capture authentication. The stock workflow has no force-restore dispatch mode. Replaying an older run uses the current date and current archive, so cannot truthfully create historical approvals. Existing future due runs can authenticate the vault using the configured Actions secret, but do not grant human baseline approval or make the originals available for full-publication spot-checks.
+
+The subsequent [WEA/Sierra approval](../data/review/approvals/wa-2026-general-2026-10-18-wea-sierra.json) records five more actual-time manual acknowledgements and two verified successors after the recovered official lists matched all 44 existing decisions. Current official source access recovery and validation results are recorded in the accompanying [closeout status](GENERAL_VERIFICATION_CLOSEOUT_2026-10-18.md). All three tickets remain open until their remaining source obligations and applicable merged publication evidence are resolved. Washington Bikes’ three omissions remain preserved without inferring withdrawals; WA4PJ’s grey court ratings remain unresolved and unscored.

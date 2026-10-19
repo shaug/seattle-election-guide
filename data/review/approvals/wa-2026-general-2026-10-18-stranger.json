@@ -1,0 +1,50 @@
+{
+  "approval_text": "Approve Stranger review and both acknowledgements",
+  "approved_source_ids": [
+    "the-stranger"
+  ],
+  "election_id": "wa-2026-general",
+  "manual_acknowledgement_records": [
+    {
+      "path": "data/verification/wa-2026-general/checks/226215cb06571042f23e54605b9ceca18fff886ebe63015cc22c114219df5384.json",
+      "sha256": "226215cb06571042f23e54605b9ceca18fff886ebe63015cc22c114219df5384"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/871d311a52439c6d62c5c1fa19d3441bedc6579304519326f89d530de9276405.json",
+      "sha256": "871d311a52439c6d62c5c1fa19d3441bedc6579304519326f89d530de9276405"
+    }
+  ],
+  "manual_entry_successors": [
+    {
+      "capture_id": "capture-the-stranger-20261019T043508Z-ede36174bf25",
+      "pending_manual_entry_id": "manual-the-stranger-20261019T043508Z-86564fd1f058",
+      "pending_sha256": "3aff178039a4b2019d9f520da98942ca7cd98816df4cc249450275d692e73cae",
+      "verified_manual_entry_id": "manual-the-stranger-20261019T043508Z-d70b491f3a6a",
+      "verified_sha256": "e4953ccc7ab3e8d524aa690abf44693d7378d866e96bcac72a12d44a115317e6"
+    }
+  ],
+  "no_historical_reviews_backdated": true,
+  "no_independent_live_page_access_claimed": true,
+  "no_new_ledger_decisions": true,
+  "prior_october16_acknowledgement_preserved": true,
+  "proposal_path": "data/review/proposals/wa-2026-general-2026-10-18-stranger.json",
+  "proposal_sha256": "9c054bd53936959ebf64d63b76e7559e161333b51a9b35f363e5dc17086bbe4f",
+  "record_type": "human_supplied_image_attestations",
+  "result": {
+    "manual_acknowledgements": 2,
+    "manual_sources": 1,
+    "unchanged_decisions": 31,
+    "verified_manual_successors": 1
+  },
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:36:18.741704Z",
+  "reviewed_by": "shaug",
+  "schema_version": "1.0",
+  "scope_issues": [
+    545,
+    560,
+    567
+  ],
+  "timestamp_semantics": "Actual time the explicit human approval was transcribed; missed historical reviews remain visible.",
+  "transcriber": "OpenAI Codex"
+}

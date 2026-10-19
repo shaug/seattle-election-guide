@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 276169,
+  "canonical_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "403f1c63725ae38d9e97129297dae2ce7a47b4d1d735cee4fa38a157b74618cb",
+  "http_status": 200,
+  "id": "capture-oneamerica-votes-20261019T042034Z-758938c52c7e",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original publisher response retained privately; no raw third-party content committed. Normal collector request with unchanged public-peer/TLS/redirect/timeout/size safeguards.",
+  "requested_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "retrieved_at": "2026-10-19T04:20:34.742241Z",
+  "schema_version": "1.0",
+  "source_id": "oneamerica-votes",
+  "storage_reference": "sha256/40/403f1c63725ae38d9e97129297dae2ce7a47b4d1d735cee4fa38a157b74618cb",
+  "storage_scope": "local_only",
+  "title": "Official current publication: guarded HTTPS transport verification",
+  "updated_at": null
+}

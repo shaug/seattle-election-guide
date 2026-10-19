@@ -1,0 +1,668 @@
+{
+  "approval_events": [
+    {
+      "approval_text": "Approve all six baselines",
+      "approved_snapshot_ids": [
+        "extraction-sage-leaders-20261018T084551Z-514e2bfe9835",
+        "extraction-seattle-gay-news-20261018T084551Z-d8e1ec3a96de",
+        "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+        "extraction-transit-riders-union-20261016T150136Z-76cb0dd8b335",
+        "extraction-ufcw-3000-20261018T084551Z-60f99c6a9a18",
+        "extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c"
+      ],
+      "proposal_path": "data/review/proposals/wa-2026-general-2026-10-18-baselines.json",
+      "proposal_sha256": "a777989844a946f49762b5a80090cf24b7d3e35c923d6cb3e0d8f4abfcb80675"
+    },
+    {
+      "approval_text": "Approve all 37 source reviews",
+      "approved_source_ids": [
+        "11th-district-democrats",
+        "32nd-district-democrats",
+        "34th-district-democrats",
+        "36th-district-democrats",
+        "37th-district-democrats",
+        "43rd-district-democrats",
+        "46th-district-democrats",
+        "aft-washington",
+        "alliance-for-gun-responsibility",
+        "citizens-against-aipac-corruption",
+        "environmental-climate-caucus-wa-democrats",
+        "fuse-washington",
+        "king-county-democrats",
+        "mlk-labor",
+        "nondriver-action",
+        "nwpc-washington",
+        "oneamerica-votes",
+        "planned-parenthood-alliance-advocates",
+        "protec17",
+        "seattle-democratic-socialists",
+        "seattle-subway",
+        "seattle-times-editorial-board",
+        "seiu-925",
+        "tech-4-housing",
+        "tech-4-taxes",
+        "the-urbanist",
+        "washington-bikes",
+        "washington-bus",
+        "washington-community-action-network",
+        "washington-conservation-action",
+        "washington-for-peace-and-justice",
+        "washington-housing-alliance",
+        "washington-state-building-trades",
+        "washington-state-democrats",
+        "washington-state-labor-council",
+        "washington-stonewall-democrats",
+        "young-democrats-of-washington"
+      ],
+      "proposal_path": "data/review/proposals/wa-2026-general-2026-10-18-manual-reviews.json",
+      "proposal_sha256": "6609cf4c3a67f7a10b6ebdc6ae94f96f1eeabca45732cc3038576191c999219c",
+      "scheduled_obligations": 111
+    }
+  ],
+  "baseline_approval_records": [
+    {
+      "path": "data/verification/wa-2026-general/approvals/extraction-sage-leaders-20261018T084551Z-514e2bfe9835.json",
+      "sha256": "f5520ab5ed47e288bcf055075804c49903832c4d4ab371d2ca82f5888c45ce11"
+    },
+    {
+      "path": "data/verification/wa-2026-general/approvals/extraction-seattle-gay-news-20261018T084551Z-d8e1ec3a96de.json",
+      "sha256": "cb204205fb7f4b6f4bc607beb8681ba4ea5dfe9d327fd193f52909ce2fc02b45"
+    },
+    {
+      "path": "data/verification/wa-2026-general/approvals/extraction-seiu-775-20261016T150136Z-d1fe38b533b0.json",
+      "sha256": "772b2c5608c3bb644b0ed95c669332565bf13fd3bd3f462bd051be083f1a6bba"
+    },
+    {
+      "path": "data/verification/wa-2026-general/approvals/extraction-transit-riders-union-20261016T150136Z-76cb0dd8b335.json",
+      "sha256": "e171aca487e699745d3436707539f938a3fcd1a9dfd473445c17bd118445bca5"
+    },
+    {
+      "path": "data/verification/wa-2026-general/approvals/extraction-ufcw-3000-20261018T084551Z-60f99c6a9a18.json",
+      "sha256": "69d5608340ea32aea68cfc8b67bb33d1bbb491de4949d983f0c30709d9900cf8"
+    },
+    {
+      "path": "data/verification/wa-2026-general/approvals/extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c.json",
+      "sha256": "4771221d5911ba2f63121b40a59b7f550917fe4b22b4c31c53e192d879a5705a"
+    }
+  ],
+  "election_id": "wa-2026-general",
+  "inaccessible_sources_excluded": [
+    "the-stranger",
+    "washington-education-association",
+    "sierra-club-washington"
+  ],
+  "manual_acknowledgement_records": [
+    {
+      "path": "data/verification/wa-2026-general/checks/005207d4fbcaa6ef1bcb20eb3dc63c1acfac4f4c57bae6e79b95a895194ba598.json",
+      "sha256": "005207d4fbcaa6ef1bcb20eb3dc63c1acfac4f4c57bae6e79b95a895194ba598"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/028d6b3a16be1932fe6ecbb91653a82a63ae82dd5c5450265bb485199613badc.json",
+      "sha256": "028d6b3a16be1932fe6ecbb91653a82a63ae82dd5c5450265bb485199613badc"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/06620be4b073d1dba0e6a9c0c6bef8da023d539d2cb0e3d91fb9e0c82e1cf07e.json",
+      "sha256": "06620be4b073d1dba0e6a9c0c6bef8da023d539d2cb0e3d91fb9e0c82e1cf07e"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/0847c860bbd37873aad90d94be6e828bb2cb7f35cbea7ef4fbd96961c257b346.json",
+      "sha256": "0847c860bbd37873aad90d94be6e828bb2cb7f35cbea7ef4fbd96961c257b346"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/088d04dd7c2ad1d52fabbcf93eb02f2202fa9eec6ea972fff015b8043a54e387.json",
+      "sha256": "088d04dd7c2ad1d52fabbcf93eb02f2202fa9eec6ea972fff015b8043a54e387"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/09267d368925d5f2fb4582de3e2b22b662637c1e7f6ab58f18d000f71a71db19.json",
+      "sha256": "09267d368925d5f2fb4582de3e2b22b662637c1e7f6ab58f18d000f71a71db19"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/0b8a2f3cb91327d5369f6a39c9dd62115fd289688fb2658ae078392e8b4acadb.json",
+      "sha256": "0b8a2f3cb91327d5369f6a39c9dd62115fd289688fb2658ae078392e8b4acadb"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/0cb4f61e5f04a377fd8816fc30243e044d5be5e0bdcfcfeab19655bc2af5c0bc.json",
+      "sha256": "0cb4f61e5f04a377fd8816fc30243e044d5be5e0bdcfcfeab19655bc2af5c0bc"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/0cd800e8104daa615f4d17134f197ed1b99266fb9f1c92100609c9bf36af6985.json",
+      "sha256": "0cd800e8104daa615f4d17134f197ed1b99266fb9f1c92100609c9bf36af6985"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/0ef6c4486cce54c36f40406f9f6a3c4b9d5586533b5483980c28c63d30154a9f.json",
+      "sha256": "0ef6c4486cce54c36f40406f9f6a3c4b9d5586533b5483980c28c63d30154a9f"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/1069c9da766a6dfbb564d57594b1515979d4b4b95cbc91b2e6ddcad25b59cfb8.json",
+      "sha256": "1069c9da766a6dfbb564d57594b1515979d4b4b95cbc91b2e6ddcad25b59cfb8"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/137d7e5b7038482c416d30ba101052732a24905618495b07ca855a8d397de64e.json",
+      "sha256": "137d7e5b7038482c416d30ba101052732a24905618495b07ca855a8d397de64e"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/1478b350fa2cb2ab17b846877217bbd83ee307e95fd730b445a09af0fb8e995d.json",
+      "sha256": "1478b350fa2cb2ab17b846877217bbd83ee307e95fd730b445a09af0fb8e995d"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/153d19f87e21419def63d43ddb74888c82935d87998846a690e7564c18e6139a.json",
+      "sha256": "153d19f87e21419def63d43ddb74888c82935d87998846a690e7564c18e6139a"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/15ff2d594abbd8224c9e2bef5eecfb736adda85aee2395ccde2a54edef9deff1.json",
+      "sha256": "15ff2d594abbd8224c9e2bef5eecfb736adda85aee2395ccde2a54edef9deff1"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/167c374594656f0b0f12eefef69c3fe919843f4908adae1e81cc027522dd1ab2.json",
+      "sha256": "167c374594656f0b0f12eefef69c3fe919843f4908adae1e81cc027522dd1ab2"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/169671d8cebab31936083f2431e5a428c3f144a6cdd646b2de755b02d84ea3ca.json",
+      "sha256": "169671d8cebab31936083f2431e5a428c3f144a6cdd646b2de755b02d84ea3ca"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/172de019a823e8cac0c0b6f3361f89195802f30d33a12818d61253cd31269cca.json",
+      "sha256": "172de019a823e8cac0c0b6f3361f89195802f30d33a12818d61253cd31269cca"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/1d85f681cfd2a631198c4e6213f0bbad32a548ba709ab641053d48f9ee5ee88f.json",
+      "sha256": "1d85f681cfd2a631198c4e6213f0bbad32a548ba709ab641053d48f9ee5ee88f"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/1ee99ef2d4303c3b80dc6f1b21f8b8e344182789585628aeb46e6fb3b870a56c.json",
+      "sha256": "1ee99ef2d4303c3b80dc6f1b21f8b8e344182789585628aeb46e6fb3b870a56c"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/21ea8d1b021ffeeece5a15eb2cdf09f864ebc76d7a0fdb46e928ffbec994ec0f.json",
+      "sha256": "21ea8d1b021ffeeece5a15eb2cdf09f864ebc76d7a0fdb46e928ffbec994ec0f"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/23513b4b83343856eae2567d6ad4bb0eee36083389338a13a7c52d5cf4bac7e1.json",
+      "sha256": "23513b4b83343856eae2567d6ad4bb0eee36083389338a13a7c52d5cf4bac7e1"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/259cb86fdf481e968c81ddb584db2e2ebc19e88be1e606cd5603d2d95e6b5917.json",
+      "sha256": "259cb86fdf481e968c81ddb584db2e2ebc19e88be1e606cd5603d2d95e6b5917"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/28ef53e742ad63566ad7d4ca2f8968a3cfd31ded041b09feb81ec74825832df9.json",
+      "sha256": "28ef53e742ad63566ad7d4ca2f8968a3cfd31ded041b09feb81ec74825832df9"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/29dae51b8e66dae66b26674fe5d3f3725cc713ec06fbc005a0152bef33f69e91.json",
+      "sha256": "29dae51b8e66dae66b26674fe5d3f3725cc713ec06fbc005a0152bef33f69e91"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/29fd232dd73df4e6477a342a67d198c12c28cf73c2bc94d7751ac8c70b3a7d52.json",
+      "sha256": "29fd232dd73df4e6477a342a67d198c12c28cf73c2bc94d7751ac8c70b3a7d52"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/2d602d60305845e365ddabc2781b14b91de09617340d2909cca6cf68fceabb9a.json",
+      "sha256": "2d602d60305845e365ddabc2781b14b91de09617340d2909cca6cf68fceabb9a"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/32fbdb203fa997752dd3a85390fde94c8ea1f8d7634b33c9097674522add5724.json",
+      "sha256": "32fbdb203fa997752dd3a85390fde94c8ea1f8d7634b33c9097674522add5724"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/359695555da684f802aa594c1e1a3debe4365000dbf8692bd0a7d50f199e4ee0.json",
+      "sha256": "359695555da684f802aa594c1e1a3debe4365000dbf8692bd0a7d50f199e4ee0"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/35a45bd9b96248e8148e305cf8f620015aa44f69ddf32b9d7241e9647ed6ad50.json",
+      "sha256": "35a45bd9b96248e8148e305cf8f620015aa44f69ddf32b9d7241e9647ed6ad50"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/3d49d3acea65927ec740dcd53d47b346db5392e7efa9eb34af51f36506989caf.json",
+      "sha256": "3d49d3acea65927ec740dcd53d47b346db5392e7efa9eb34af51f36506989caf"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/3eebc0af0ab539e4835782bc2ff3c5664198d36bb931a407618d08d58a6fe566.json",
+      "sha256": "3eebc0af0ab539e4835782bc2ff3c5664198d36bb931a407618d08d58a6fe566"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/3fbff8f11f4e9ce2e71f2988dd447f7600e2a0582216619dc80ba5d9d784fe1d.json",
+      "sha256": "3fbff8f11f4e9ce2e71f2988dd447f7600e2a0582216619dc80ba5d9d784fe1d"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/3fd93a20410ff8d5348ff8aa3c0c5c935ea4dade10c674415bdf7cdf3db0b363.json",
+      "sha256": "3fd93a20410ff8d5348ff8aa3c0c5c935ea4dade10c674415bdf7cdf3db0b363"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/48e5192b3dea33c4bcf4dbc1568a2ae77e92578b054f884ccce1c99b9a14f345.json",
+      "sha256": "48e5192b3dea33c4bcf4dbc1568a2ae77e92578b054f884ccce1c99b9a14f345"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/4b14224d23120342911c10b44b645414bf8488bbc0484fe5f713b15594fb7e29.json",
+      "sha256": "4b14224d23120342911c10b44b645414bf8488bbc0484fe5f713b15594fb7e29"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/4d8e657400c552945633f3bffc246107dfaba8a160cb6f895ececbd760d72436.json",
+      "sha256": "4d8e657400c552945633f3bffc246107dfaba8a160cb6f895ececbd760d72436"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/50ffc6ebc97a7fc6b88d017c794dd5d3d891bb61bff47710ebcdf523a4f72126.json",
+      "sha256": "50ffc6ebc97a7fc6b88d017c794dd5d3d891bb61bff47710ebcdf523a4f72126"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/552d77b6d4ca58872b0111aa15109f089a2e1917d32c560b9e7e1fe9df17fc9c.json",
+      "sha256": "552d77b6d4ca58872b0111aa15109f089a2e1917d32c560b9e7e1fe9df17fc9c"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5b81097b35454af9850ce8d14c4b513299c0b91aa5c09e0b4e9848d776aa95ad.json",
+      "sha256": "5b81097b35454af9850ce8d14c4b513299c0b91aa5c09e0b4e9848d776aa95ad"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5cd0d023ceb90430011628c0c76ea97de2259e9dc4c74f4b33a6d3d3aeaeffc6.json",
+      "sha256": "5cd0d023ceb90430011628c0c76ea97de2259e9dc4c74f4b33a6d3d3aeaeffc6"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5d1c6ce16a3a0f8004b26cea543f6407b957265c409fe4e8bc69c3ef0c163a25.json",
+      "sha256": "5d1c6ce16a3a0f8004b26cea543f6407b957265c409fe4e8bc69c3ef0c163a25"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5dfbbec9c16670b23051e0cb96196e85dae699d82346e400172389b73a47eade.json",
+      "sha256": "5dfbbec9c16670b23051e0cb96196e85dae699d82346e400172389b73a47eade"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5e40d18b6d849d1247ac1bd9a23009566f4f75162f68386b00ffc57d180a3863.json",
+      "sha256": "5e40d18b6d849d1247ac1bd9a23009566f4f75162f68386b00ffc57d180a3863"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5e4d745681bb7c8d6799f93546c1bb111f39887d47a4b3ce22e813940f59d16b.json",
+      "sha256": "5e4d745681bb7c8d6799f93546c1bb111f39887d47a4b3ce22e813940f59d16b"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5f2bff77de87c875279bc6bcf0841d4a842fbcc83bb11937c1fc1b2dac49fe94.json",
+      "sha256": "5f2bff77de87c875279bc6bcf0841d4a842fbcc83bb11937c1fc1b2dac49fe94"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5f8133ab5cbde1a21cf9be0b2ab2be10b7629f04ba2737212144bb8ba3cac5a5.json",
+      "sha256": "5f8133ab5cbde1a21cf9be0b2ab2be10b7629f04ba2737212144bb8ba3cac5a5"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/6489bbef798f80137a491ce0ecc9b4c735585b4747bb613553e41e384f3d04e0.json",
+      "sha256": "6489bbef798f80137a491ce0ecc9b4c735585b4747bb613553e41e384f3d04e0"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/67ff4b6a8c0972eb56dc9e27d25057b822a467c1dd447143acf7828d4e75bec1.json",
+      "sha256": "67ff4b6a8c0972eb56dc9e27d25057b822a467c1dd447143acf7828d4e75bec1"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/69ec501b7f308c4465223eec695fa325e6b28851b9e510e1b28b537d597c216f.json",
+      "sha256": "69ec501b7f308c4465223eec695fa325e6b28851b9e510e1b28b537d597c216f"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/6cc6d72b2e54c52c1a8bb0c16d1b6b16d19b0b9b35a6bd269a4e32611c911d3b.json",
+      "sha256": "6cc6d72b2e54c52c1a8bb0c16d1b6b16d19b0b9b35a6bd269a4e32611c911d3b"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/6fd39329daa75b34dd62a1ffd3ee4dd741b7217219a6d8c6d332607b7ed52db6.json",
+      "sha256": "6fd39329daa75b34dd62a1ffd3ee4dd741b7217219a6d8c6d332607b7ed52db6"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/7050e6b3913f592f9d4ac7874c538e79ac01520910441a069980ab33e71ad21e.json",
+      "sha256": "7050e6b3913f592f9d4ac7874c538e79ac01520910441a069980ab33e71ad21e"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/71e40dcb42b04d18a404df138be0fe69020ecd29e7561d8c8f789caf860b6e02.json",
+      "sha256": "71e40dcb42b04d18a404df138be0fe69020ecd29e7561d8c8f789caf860b6e02"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/723829cb85bd072535f623bc9520dc3134b561a71aa06997a8ff52069abd7fa6.json",
+      "sha256": "723829cb85bd072535f623bc9520dc3134b561a71aa06997a8ff52069abd7fa6"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/7252c1f18b2d8d2d9bfe736c806e4a16e0916e3e873fa9f4157e7cc318548f0b.json",
+      "sha256": "7252c1f18b2d8d2d9bfe736c806e4a16e0916e3e873fa9f4157e7cc318548f0b"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/7350d3d266127c4efe3a8a0603f7c94d40c19d3bd6e0d4597c4cc6a4efcebffb.json",
+      "sha256": "7350d3d266127c4efe3a8a0603f7c94d40c19d3bd6e0d4597c4cc6a4efcebffb"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/74eb71d8576c4f72ebf6c361d8650a721d483049afaac0ffbe18b4690b824bb6.json",
+      "sha256": "74eb71d8576c4f72ebf6c361d8650a721d483049afaac0ffbe18b4690b824bb6"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/76e75ce55f7f1f1f9c522c09ba87f0cb7b9e00761d39f10e0147ae8dc0c1c23b.json",
+      "sha256": "76e75ce55f7f1f1f9c522c09ba87f0cb7b9e00761d39f10e0147ae8dc0c1c23b"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/76f0ebd10bc03b112962a35109bf79aac98447e0fecc84600af87c70d00903a0.json",
+      "sha256": "76f0ebd10bc03b112962a35109bf79aac98447e0fecc84600af87c70d00903a0"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/78c66b1bf8f6528a48b116dcb96e5d2846666234460db9fb9cedcc5c86186ccc.json",
+      "sha256": "78c66b1bf8f6528a48b116dcb96e5d2846666234460db9fb9cedcc5c86186ccc"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/7ac3993c07e2f984a9f7f5b2f5e7f6fd837b7fc9b5236f0b81a0d294c577843f.json",
+      "sha256": "7ac3993c07e2f984a9f7f5b2f5e7f6fd837b7fc9b5236f0b81a0d294c577843f"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/840a82c28e9e5f9eddf503b3ea55cc1d1a829f4153c9da7c7ecf080b68bcad65.json",
+      "sha256": "840a82c28e9e5f9eddf503b3ea55cc1d1a829f4153c9da7c7ecf080b68bcad65"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/86b6091084d884da8b9ca1ca3deb113748837d2d1a0027c3c7c3ca8c9a51a04d.json",
+      "sha256": "86b6091084d884da8b9ca1ca3deb113748837d2d1a0027c3c7c3ca8c9a51a04d"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/86b8630bc13fdb4ff682e340c14550f5abb3eff602893a9d9d1ee3f44ccb6dd3.json",
+      "sha256": "86b8630bc13fdb4ff682e340c14550f5abb3eff602893a9d9d1ee3f44ccb6dd3"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/86beaa5d5d5abd17e575442c67fe6a210a1ec22dd9560e641b44879f8b1935b7.json",
+      "sha256": "86beaa5d5d5abd17e575442c67fe6a210a1ec22dd9560e641b44879f8b1935b7"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/89e7f1eb02f994e2036187d9b42067df7c243e9181785f1fa159913b3290af77.json",
+      "sha256": "89e7f1eb02f994e2036187d9b42067df7c243e9181785f1fa159913b3290af77"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/8b8782f159c68fc2536a137b24c0ced2196a98246bf706013e34153dd3af0e07.json",
+      "sha256": "8b8782f159c68fc2536a137b24c0ced2196a98246bf706013e34153dd3af0e07"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/920d63a79523d2bec304e2785bd251881204e9153d9a964e2cf4167071ffd4ac.json",
+      "sha256": "920d63a79523d2bec304e2785bd251881204e9153d9a964e2cf4167071ffd4ac"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/974f3662bf909d0ccbe9b09ca1da7a6394de35097176daa2f0c27083c3ceb4ad.json",
+      "sha256": "974f3662bf909d0ccbe9b09ca1da7a6394de35097176daa2f0c27083c3ceb4ad"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/9888651100d61aa879af12712fa9a22e52fb33903b097fd7407753c5da492bca.json",
+      "sha256": "9888651100d61aa879af12712fa9a22e52fb33903b097fd7407753c5da492bca"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/997abff988b75268722e9474c12354ff6d6d3ed28815e117a1ccb9ba8e4f355a.json",
+      "sha256": "997abff988b75268722e9474c12354ff6d6d3ed28815e117a1ccb9ba8e4f355a"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/9af73ba384c132e69b1337fec55946f90ed4e89ee2d125f77db46be68a7fe53a.json",
+      "sha256": "9af73ba384c132e69b1337fec55946f90ed4e89ee2d125f77db46be68a7fe53a"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/9f166e52d2bbb03cb7e2627fa2c26eddf988864322f654d9b6af650941987533.json",
+      "sha256": "9f166e52d2bbb03cb7e2627fa2c26eddf988864322f654d9b6af650941987533"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/a05d3db452c3da401792be235b0cade159896e1c5800ef7f7447b4ac33f0870d.json",
+      "sha256": "a05d3db452c3da401792be235b0cade159896e1c5800ef7f7447b4ac33f0870d"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/a1687e4ddb198c1b9aac01e01d31377a10ceca2509bf535962ffd3700bc173a1.json",
+      "sha256": "a1687e4ddb198c1b9aac01e01d31377a10ceca2509bf535962ffd3700bc173a1"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/a571d7d73541d83263e38185bb7baeb1e7552d31ae6b2e837aca76a6a9ad5214.json",
+      "sha256": "a571d7d73541d83263e38185bb7baeb1e7552d31ae6b2e837aca76a6a9ad5214"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/a5a5b0fcffee358210aaaa18c023cad507194b2b835398a859faddbfa8afa8cb.json",
+      "sha256": "a5a5b0fcffee358210aaaa18c023cad507194b2b835398a859faddbfa8afa8cb"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/a5d271ee3bb798b738ddd536e9734ba680932a6a53fc02a2346f92640f7d6d23.json",
+      "sha256": "a5d271ee3bb798b738ddd536e9734ba680932a6a53fc02a2346f92640f7d6d23"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/a7ebbdf712584999724fb9627e342adc6b61ad30bca507c6951a93f55c5d2fe3.json",
+      "sha256": "a7ebbdf712584999724fb9627e342adc6b61ad30bca507c6951a93f55c5d2fe3"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/accf7e01ef0851a4328f1c9f1e6f55a4c167dc2364b2e8171c2d945c4700d06f.json",
+      "sha256": "accf7e01ef0851a4328f1c9f1e6f55a4c167dc2364b2e8171c2d945c4700d06f"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/af79bc02416fa862e75f7c2f4b0fad5b6c97879fc1c40675df35ca74c16447ba.json",
+      "sha256": "af79bc02416fa862e75f7c2f4b0fad5b6c97879fc1c40675df35ca74c16447ba"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/b0a57a6b2b120be0a8a8aea2cb4198213be0ff0576b96990ff7669bc24347ed5.json",
+      "sha256": "b0a57a6b2b120be0a8a8aea2cb4198213be0ff0576b96990ff7669bc24347ed5"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/b5703dd00b0f17175885523c4633ce5b38cecc764643e3ec14f0d18ee4ae6874.json",
+      "sha256": "b5703dd00b0f17175885523c4633ce5b38cecc764643e3ec14f0d18ee4ae6874"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/b5b06032a650bea99a334f8f8fc2a1d2abcd594d47998b31ef4e1ad33b126d37.json",
+      "sha256": "b5b06032a650bea99a334f8f8fc2a1d2abcd594d47998b31ef4e1ad33b126d37"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/b635f199c2b93403cc1b3c2b47a75a25397b8472eedff5294b8c33275f44a758.json",
+      "sha256": "b635f199c2b93403cc1b3c2b47a75a25397b8472eedff5294b8c33275f44a758"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/b66b12fc3f3756abaf5772632cec64c4c813005ffe89bdeff6edb7a95acc18bc.json",
+      "sha256": "b66b12fc3f3756abaf5772632cec64c4c813005ffe89bdeff6edb7a95acc18bc"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/b71af49fdef488000587e01591d05dc0839319f0b7cff1105909487a04baca33.json",
+      "sha256": "b71af49fdef488000587e01591d05dc0839319f0b7cff1105909487a04baca33"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/be3a2ff346cf48d11f63a718b2f47b3b5e34ad9991c13f6647bc8a943adc7290.json",
+      "sha256": "be3a2ff346cf48d11f63a718b2f47b3b5e34ad9991c13f6647bc8a943adc7290"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/bf9788d7387c5a2d222b061af8613c579bacf69edb823705927578b8ad1a2541.json",
+      "sha256": "bf9788d7387c5a2d222b061af8613c579bacf69edb823705927578b8ad1a2541"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/c259713360029e6ebaf659b8de6007b4d8589e531af9a93ecf17a412a6459456.json",
+      "sha256": "c259713360029e6ebaf659b8de6007b4d8589e531af9a93ecf17a412a6459456"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/c8ffe77e8e102357fe0770a63e3f67f9c8ca17c8931825028d755da5680c88ea.json",
+      "sha256": "c8ffe77e8e102357fe0770a63e3f67f9c8ca17c8931825028d755da5680c88ea"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/c953a08c7cc3f9e28e56b6e38433ed2df66b19ee0ca1c3c06bd62726cf72fa30.json",
+      "sha256": "c953a08c7cc3f9e28e56b6e38433ed2df66b19ee0ca1c3c06bd62726cf72fa30"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/d37175cdf7db0f3d737df4e515c8ff43e86cda169f6af8f763456fc493386acb.json",
+      "sha256": "d37175cdf7db0f3d737df4e515c8ff43e86cda169f6af8f763456fc493386acb"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/d5add313b7b9eacd8ce368266df3f1dd84b9f9a693cf620ae919c22a826cd960.json",
+      "sha256": "d5add313b7b9eacd8ce368266df3f1dd84b9f9a693cf620ae919c22a826cd960"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/d7fd39c040371d1007b503e417b72d87f2c44a158fad041121a768ea98cc404e.json",
+      "sha256": "d7fd39c040371d1007b503e417b72d87f2c44a158fad041121a768ea98cc404e"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/d80213109a43630f2049707df0d147970e3b4771152dbf8ff3d936ec8ae69f89.json",
+      "sha256": "d80213109a43630f2049707df0d147970e3b4771152dbf8ff3d936ec8ae69f89"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/dabbf03ed971cffd9431d62f9499790fc0b2c4a308cdea4400a8dbc08b5af469.json",
+      "sha256": "dabbf03ed971cffd9431d62f9499790fc0b2c4a308cdea4400a8dbc08b5af469"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/dcb5d761515760f1e1cf5e6006d0a0b9d227dc9cce2a5413e379b3311ddb018d.json",
+      "sha256": "dcb5d761515760f1e1cf5e6006d0a0b9d227dc9cce2a5413e379b3311ddb018d"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/de8eae47d8544041c0749869ca662e03f23732c4e1f08e50456912f0575d65ed.json",
+      "sha256": "de8eae47d8544041c0749869ca662e03f23732c4e1f08e50456912f0575d65ed"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/df2924c5f7f7b16fe08ca649089e7d5ffd5e5e0826d50383cca7d0794a17312a.json",
+      "sha256": "df2924c5f7f7b16fe08ca649089e7d5ffd5e5e0826d50383cca7d0794a17312a"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/e18e614955d51dc5f7d58febab19be7d4d66d6698a413dcadbab5551c6eb54bd.json",
+      "sha256": "e18e614955d51dc5f7d58febab19be7d4d66d6698a413dcadbab5551c6eb54bd"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/e4b711a14a534a224da52614f1eb5a14ff5af945025140d70fddd7dd6c006d95.json",
+      "sha256": "e4b711a14a534a224da52614f1eb5a14ff5af945025140d70fddd7dd6c006d95"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/eb4a9a5d3e7443238049f7f1e00efe2c468cefe33e35fbcb01c32ea1d211c1bf.json",
+      "sha256": "eb4a9a5d3e7443238049f7f1e00efe2c468cefe33e35fbcb01c32ea1d211c1bf"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/ec8316fef0d9f608aad5db6d28367d88bc942d0b8bf5daad845cdadf763e8f2f.json",
+      "sha256": "ec8316fef0d9f608aad5db6d28367d88bc942d0b8bf5daad845cdadf763e8f2f"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/ecc74cd014663a4ee2fa55aa31b23d8de86e97fd9ab8f9bf9a2d553cd844372c.json",
+      "sha256": "ecc74cd014663a4ee2fa55aa31b23d8de86e97fd9ab8f9bf9a2d553cd844372c"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/f0d9b6e5e7fce8dea4986ee0b533f5632b6567ecd859671852b156d3342d5e49.json",
+      "sha256": "f0d9b6e5e7fce8dea4986ee0b533f5632b6567ecd859671852b156d3342d5e49"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/f147020b6b047c8c7f5003e82f485ce1666f177a698b54adccf32a264d7da9fa.json",
+      "sha256": "f147020b6b047c8c7f5003e82f485ce1666f177a698b54adccf32a264d7da9fa"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/f157cb725a85e648c549976553c21fff3459142afe5feed1cd77fb3bd03e31e9.json",
+      "sha256": "f157cb725a85e648c549976553c21fff3459142afe5feed1cd77fb3bd03e31e9"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/f39e27ecf371717ba3e601510d59f9425bc3288fb9a007e505dcb44278b9f4e2.json",
+      "sha256": "f39e27ecf371717ba3e601510d59f9425bc3288fb9a007e505dcb44278b9f4e2"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/fd04343dea4d25c156fb26029f899232744af9ada2d53cc3c23df2332d3a6c20.json",
+      "sha256": "fd04343dea4d25c156fb26029f899232744af9ada2d53cc3c23df2332d3a6c20"
+    }
+  ],
+  "manual_entry_successors": [
+    {
+      "capture_id": "capture-nondriver-action-20261019T032049Z-6d155f9a4c22",
+      "pending_manual_entry_id": "manual-nondriver-action-20261019T032049Z-2729ccf3edb5",
+      "pending_sha256": "b583665f4de081b789f791df9113992a7825af5ce3a5f067011b4cffa30277e5",
+      "verified_manual_entry_id": "manual-nondriver-action-20261019T032049Z-750c9d04c957",
+      "verified_sha256": "fb958a2c3841a17dfea560be98036869df0a0b0a390b9f6256d3949bcb73613c"
+    },
+    {
+      "capture_id": "capture-nondriver-action-20261019T032749Z-67fa4f21a00c",
+      "pending_manual_entry_id": "manual-nondriver-action-20261019T032750Z-b211976f65f3",
+      "pending_sha256": "298ffbb14a7cc03a56c01903963f5877863e8b1a52872d214b659bf253ce5721",
+      "verified_manual_entry_id": "manual-nondriver-action-20261019T032750Z-2a1821c92a76",
+      "verified_sha256": "058e5e99a5d5f11c16224f6ed6a42c37a5f720963b593f75998b309446048cbf"
+    },
+    {
+      "capture_id": "capture-planned-parenthood-alliance-advocates-20261019T032900Z-f6c0c3aa4023",
+      "pending_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261019T033547Z-565c2ccd4d3e",
+      "pending_sha256": "e0f201ca0d652050193f0a0352b52ecc37c5fb8058239ad9cfa8ef970bec40af",
+      "verified_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261019T033547Z-0c638acb9e41",
+      "verified_sha256": "72e15829c508bc3ba7884fd5016a4ea664af40945c09b2372c0d0a533f6820b4"
+    },
+    {
+      "capture_id": "capture-planned-parenthood-alliance-advocates-20261019T032900Z-5954852453fb",
+      "pending_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261019T033547Z-1f79de278ad3",
+      "pending_sha256": "df7600b646f1cb13a59fe6b665705d483d7eb3d125efb1f6e215b134c53ff2e1",
+      "verified_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261019T033547Z-3386d445820a",
+      "verified_sha256": "5e33f9a32fb8ebd76296db23bb1901706d82c2ca98308f21cc96ebe3586c9091"
+    },
+    {
+      "capture_id": "capture-planned-parenthood-alliance-advocates-20261019T032900Z-c45c115d784a",
+      "pending_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261019T033547Z-2be6ff2523ea",
+      "pending_sha256": "1e87553538dfe0e6f60a056db4f710256b94ee47931fd190104346e93a0fca95",
+      "verified_manual_entry_id": "manual-planned-parenthood-alliance-advocates-20261019T033547Z-b51f84b098af",
+      "verified_sha256": "0aaeae929a7c4a24f3bf99b7abd3d874aaefc0eddf91b88a6578bfab6a3bf444"
+    },
+    {
+      "capture_id": "capture-transit-riders-union-20261019T031621Z-114403d93ea1",
+      "pending_manual_entry_id": "manual-transit-riders-union-20261019T031621Z-ef26a4f0dfed",
+      "pending_sha256": "d4bcb05d67efe4410c93d66ef8a31139679477cc24e50f135d4abd16427fc360",
+      "verified_manual_entry_id": "manual-transit-riders-union-20261019T031621Z-5380b1c712a3",
+      "verified_sha256": "074c84b92b98b90a6821f6a2ab57ff99cdb5a0d58aa859d93113da89d77a5027"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20261019T033548Z-d208f9ade6af",
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261019T033548Z-802b904a24cc",
+      "pending_sha256": "c1d1ad27e32fc6088de9f6d3fb4bea0ca29b89d0c4eab02392a3149fccb22a52",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261019T033548Z-d225dcb643c3",
+      "verified_sha256": "72983c7cc3ee6ff44d612759140d0594300ccb47887f8b659613469d847e4d35"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20261019T033548Z-d208f9ade6af",
+      "pending_manual_entry_id": "manual-washington-for-peace-and-justice-20261019T033548Z-227cf16ce70d",
+      "pending_sha256": "0eaf235641dae039442520f21eb9b32715ee944f392cb1fbcaf1121395a7fad5",
+      "verified_manual_entry_id": "manual-washington-for-peace-and-justice-20261019T033548Z-bc0da734d38a",
+      "verified_sha256": "ddf65839ffc9eb4d7b189cc826bfe61c91cd86d105952bd8cfb34334a50e78bc"
+    },
+    {
+      "capture_id": "capture-washington-state-labor-council-20261019T032900Z-541b720f7dba",
+      "pending_manual_entry_id": "manual-washington-state-labor-council-20261019T033547Z-ca6b4150514c",
+      "pending_sha256": "6876a39b9a470980cf4c997d1a06b4b47c3b02f616e1eef1f39ed11b61b09ddd",
+      "verified_manual_entry_id": "manual-washington-state-labor-council-20261019T033547Z-9330339cae25",
+      "verified_sha256": "29a9e437da1fa1a2a3ecf891482fdcaa2bdd6fa1dde394ffbedcb4d552ea6ee4"
+    },
+    {
+      "capture_id": "capture-washington-state-labor-council-20261019T032900Z-541b720f7dba",
+      "pending_manual_entry_id": "manual-washington-state-labor-council-20261019T033547Z-858330dc2556",
+      "pending_sha256": "514c4bf0de29cde1dc53b4fde373ed86ac15543fb15723cffb8056482f42e5d0",
+      "verified_manual_entry_id": "manual-washington-state-labor-council-20261019T033547Z-526be2376d10",
+      "verified_sha256": "3e5a9529869b9e8a100a32c9dcd2e7e216e0c572ec82bfb7570f72431071dac2"
+    },
+    {
+      "capture_id": "capture-washington-working-families-party-20261019T031438Z-f4ef0085892e",
+      "pending_manual_entry_id": "manual-washington-working-families-party-20261019T031438Z-36ef23ab5e98",
+      "pending_sha256": "c0bad639f1a49db730f26a063b352235f7bb8edd8195974806c30415e29c575f",
+      "verified_manual_entry_id": "manual-washington-working-families-party-20261019T031438Z-4de0b9650719",
+      "verified_sha256": "66588d5b44fdd059cae83eb4d4d9cb09721323b9b9a01f41a8f80e9c52e911f7"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261019T032756Z-4cb3e944421c",
+      "pending_manual_entry_id": "manual-young-democrats-of-washington-20261019T033547Z-fa1c3003f1cb",
+      "pending_sha256": "62d6ebe41cbd3f2ad56905940ee6e32b0a4f39e2a3d514cb8502e910f4586d4c",
+      "verified_manual_entry_id": "manual-young-democrats-of-washington-20261019T033547Z-60d33c059ffa",
+      "verified_sha256": "6170980fef42c86034b0adca7b4e70a6ded86b9bd1d7ad1588bddd3f6d673893"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261019T032803Z-5d5fccea596c",
+      "pending_manual_entry_id": "manual-young-democrats-of-washington-20261019T033547Z-54fc91dbef19",
+      "pending_sha256": "d12278df607c184193a1341b54b50482069e62f36e000220de91d723dbb9abdd",
+      "verified_manual_entry_id": "manual-young-democrats-of-washington-20261019T033547Z-adb705aca18f",
+      "verified_sha256": "06bbeb6297e2d71fa3cd60e99c9e2ff28ae192edc1821d75800d50afec5c3c78"
+    },
+    {
+      "capture_id": "capture-young-democrats-of-washington-20261019T032809Z-190cb68d387c",
+      "pending_manual_entry_id": "manual-young-democrats-of-washington-20261019T033548Z-b877f625c3c4",
+      "pending_sha256": "dce58dc37ca7534687ab186c5bd8fd0114c7606f8378743ae1985ec184aac631",
+      "verified_manual_entry_id": "manual-young-democrats-of-washington-20261019T033548Z-2d5c009aa5bd",
+      "verified_sha256": "8507c32ae5842e6c3952d176f2b263360c6a2f7152b085992b18b5c56d37526b"
+    },
+    {
+      "capture_id": "capture-oneamerica-votes-20261019T035239Z-19122f1deedd",
+      "pending_manual_entry_id": "manual-oneamerica-votes-20261019T035239Z-71b08efa660a",
+      "pending_sha256": "f1dc58d10226d3dcaf071837fa22e4718d1265c06e34ba6fecb056b788a3b400",
+      "verified_manual_entry_id": "manual-oneamerica-votes-20261019T035239Z-3691fbaede48",
+      "verified_sha256": "0010d9f274f82e99dc47afd3ee7fb244ab6ea5bfac34fdc9c1f48a7140d0e06f"
+    }
+  ],
+  "no_historical_reviews_backdated": true,
+  "no_new_ledger_decisions": true,
+  "original_capture_authentication": "data/review/evidence-authentication/wa-2026-general-2026-10-18.json",
+  "record_type": "human_verification_attestations",
+  "result": {
+    "baseline_approvals": 6,
+    "manual_acknowledgements": 111,
+    "manual_sources": 37,
+    "verified_manual_successors": 15
+  },
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:14:31.209146Z",
+  "reviewed_by": "shaug",
+  "schema_version": "1.0",
+  "scope_issues": [
+    545,
+    560,
+    567
+  ],
+  "timestamp_semantics": "Actual time the explicit human approvals were transcribed; missed historical reviews remain visible.",
+  "transcriber": "OpenAI Codex"
+}

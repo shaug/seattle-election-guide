@@ -1711,7 +1711,7 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         "bundle_sha256": None,
         "source_panel_id": "wa-2026-general-default-sources-v2",
         "source_panel_hash": "5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569",
-        "source_registry_hash": "08473de324a7ca66617885e774d406fa992bc2bfbf3916acff366aad017bf2a2",
+        "source_registry_hash": "af0b82abe821281c43317480df5f0e22270ba97e05b3cd52215d91aa82fb4a48",
     }
     historical = site_manifest["elections"][1]
     assert historical["bundle_id"] == "wa-2026-primary-2026-primary.4"
