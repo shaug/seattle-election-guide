@@ -460,7 +460,7 @@ export function raceFootTemplate(view) {
   }${
     view.sensitivityWarning == null
       ? nothing
-      : html`<p class="sensitivity-warning" role="note"><a href=${view.sensitivityWarning.href}
+      : html`<p class="sensitivity-warning" role="note" data-display-role="sensitivity-warning"><a href=${view.sensitivityWarning.href}
         >${view.sensitivityWarning.text}</a></p>`
   }${
     view.allSources === null

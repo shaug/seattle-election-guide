@@ -129,6 +129,37 @@ def test_insufficient_measured_leader_has_no_recommendation(tmp_path: Path) -> N
     assert race.scenarios[0].after.leading_margin is None
 
 
+def test_tied_classification_does_not_claim_stability(tmp_path: Path) -> None:
+    dataset = _dataset(
+        tmp_path,
+        [(source, "dual_endorsement", _candidate_ids()[:2]) for source in CONSENSUS_SOURCE_IDS[:3]],
+    )
+    consensus = score_dataset(dataset, _configuration(), computed_at=NOW)
+    race = next(
+        r
+        for r in build_sensitivity_report(dataset, consensus, git_commit="fixture").races
+        if r.race_id == RACE_ID
+    )
+    assert race.classification == "tied"
+    assert race.material_scenario_ids == []
+    assert race.summary == "Tied across tested exclusions."
+    assert race.warning is None
+
+
+def test_primary_classification_preserves_secondary_category_and_group_effects(
+    tmp_path: Path,
+) -> None:
+    dataset = synthetic_dataset(tmp_path, [(2, 1), (1, 0)], grouped_a_per_category=2)
+    consensus = score_dataset(dataset, _configuration(), computed_at=NOW)
+    race = build_sensitivity_report(dataset, consensus, git_commit="fixture").races[0]
+    assert race.classification == "source_sensitive"
+    assert race.affected_scenario_kinds == ["source", "category", "overlap"]
+    assert all(
+        any(s.id in race.material_scenario_ids for s in race.scenarios if s.kind == kind)
+        for kind in race.affected_scenario_kinds
+    )
+
+
 @pytest.mark.parametrize(("a", "expected"), [(9, True), (10, False)])
 def test_share_change_threshold_is_inclusive_and_grade_only_is_audit(
     tmp_path: Path, a: int, expected: bool

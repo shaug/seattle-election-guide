@@ -856,6 +856,7 @@
       "template",
       "stylesheet",
       "client",
+      "python",
       "test"
     ],
     "source-checks": [

@@ -208,6 +208,11 @@ def validate_rendered_guide(
         # Every card's core recommendation area links its race's own page
         # (issue #136), where the evidence links now live.
         *(race_page_path(view_model.metadata.election_id, race.id) for race in overview_races),
+        *(
+            f"{race_page_path(view_model.metadata.election_id, race.id)}#source-checks"
+            for race in overview_races
+            if race.sensitivity is not None and race.sensitivity.warning is not None
+        ),
     }
     if view_model.results is None:
         # Slot 4's "How to vote" (issue 192). King County Elections administers
@@ -382,6 +387,11 @@ def _html_semantic_values(
         ],
         "insufficient-warning": (
             ["Too few endorsements to measure agreement."] if race.grade == "Insufficient" else []
+        ),
+        "sensitivity-warning": (
+            [race.sensitivity.warning]
+            if race.sensitivity is not None and race.sensitivity.warning is not None
+            else []
         ),
     }
 

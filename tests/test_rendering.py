@@ -2588,6 +2588,24 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
     )
     assert not unexpected_link_check.passed
 
+    wrong_warning_html = tmp_path / "wrong-sensitivity-warning.html"
+    wrong_warning, replaced = re.subn(
+        r'(<p class="sensitivity-warning"[^>]*><a[^>]*>)[^<]*(</a></p>)',
+        r"\1Same leading choice in every possible source selection.\2",
+        rendered_html,
+        count=1,
+    )
+    assert replaced == 1, "the fixture must exercise a material source check"
+    wrong_warning_html.write_text(wrong_warning, encoding="utf-8")
+    warning_report = validate_rendered_guide(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        wrong_warning_html,
+        rendered.screenshots,
+        race_documents,
+    )
+    assert not next(c for c in warning_report.checks if c.id == "html-display-values").passed
+
     detail_race, detail_cell = next(
         (race, cell)
         for race in races

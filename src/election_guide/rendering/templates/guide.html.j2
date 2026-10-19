@@ -128,7 +128,7 @@
                 Too few endorsements to measure agreement.</div>
               {% endif %}
               {% if race.sensitivity and race.sensitivity.warning %}
-              <p class="sensitivity-warning" role="note"><a href="{{ race_page_path(race.id) }}#source-checks">{{ race.sensitivity.warning }}</a></p>
+              <p class="sensitivity-warning" role="note" data-display-role="sensitivity-warning"><a href="{{ race_page_path(race.id) }}#source-checks">{{ race.sensitivity.warning }}</a></p>
               {% endif %}
             </div>
             {# The results strip (docs/RESULTS.md, Rendering § Race cards;
