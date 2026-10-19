@@ -123,6 +123,20 @@ def _release(base: str, version: str) -> dict[str, Any] | None:
     return matches[0] if matches else None
 
 
+def verify_published_release_source(base: str, version: str, source_sha: str) -> None:
+    """Authenticate a published predecessor using complete release and tag metadata."""
+    release = _release(base, version)
+    if (
+        release is None
+        or release.get("draft") is not False
+        or release.get("prerelease") is not False
+    ):
+        raise ValueError("previous release boundary requires an actual published release")
+    _id(release)
+    if _tag_commit(base, version) != source_sha:
+        raise ValueError("previous published release tag differs from its exact source")
+
+
 def _check_release(
     release: dict[str, Any], candidate: CandidateRecord, body: str, notes: str
 ) -> None:
