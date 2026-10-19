@@ -2184,6 +2184,11 @@ def _bundle_view_model(
         }
     )
     payload = updated.model_dump(mode="json")
+    payload["metadata"].pop("sensitivity_report_hash")
+    payload["methodology"].pop("sensitivity_policy")
+    for section in payload["sections"]:
+        for race in section["races"]:
+            race.pop("sensitivity")
     if source_registry_hash is None:
         payload["schema_version"] = "1.9"
         payload["metadata"].pop("source_registry_hash")

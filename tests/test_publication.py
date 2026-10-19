@@ -7,6 +7,7 @@ import io
 import json
 import os
 from pathlib import Path
+from typing import Any
 
 import pytest
 from pydantic import ValidationError
@@ -429,7 +430,7 @@ def test_bundle_publishes_stable_panel_and_complete_registry_hashes(tmp_path: Pa
 
     snapshot = build_panel_snapshot(dataset.source_registry)
     metadata = bundle.view_model.metadata
-    assert bundle.view_model.schema_version == "1.14"
+    assert bundle.view_model.schema_version == "1.15"
     assert metadata.source_panel_hash == snapshot.panel_hash
     assert metadata.source_registry_hash == source_registry_hash(dataset.source_registry)
     assert metadata.source_panel_hash != metadata.source_registry_hash
@@ -457,13 +458,14 @@ def test_publication_schema_requires_registry_hash_only_for_1_14(tmp_path: Path)
     missing["metadata"].pop("source_registry_hash")
     with pytest.raises(
         ValidationError,
-        match=r"schema 1\.14 requires source_registry_hash",
+        match=r"schema 1\.15 requires source_registry_hash",
     ):
         PublicationViewModel.model_validate(missing)
 
     legacy = copy.deepcopy(current)
     legacy["schema_version"] = "1.13"
     legacy["metadata"].pop("source_registry_hash")
+    _without_sensitivity(legacy)
     validated_legacy = PublicationViewModel.model_validate(legacy)
     assert validated_legacy.schema_version == "1.13"
     assert "source_registry_hash" not in validated_legacy.model_dump(mode="json")["metadata"]
@@ -503,6 +505,7 @@ def test_publication_schema_accepts_the_published_1_9_archive(tmp_path: Path) ->
     archived = bundle.view_model.model_dump(mode="json")
     archived["schema_version"] = "1.9"
     archived["metadata"].pop("source_registry_hash")
+    _without_sensitivity(archived)
     archived.pop("results")
     archived.pop("corrections")
 
@@ -563,7 +566,7 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     )
 
     methodology = bundle.view_model.methodology
-    assert bundle.view_model.schema_version == "1.14"
+    assert bundle.view_model.schema_version == "1.15"
     assert bundle.view_model.metadata.source_panel_id == dataset.source_registry.id
     assert len(bundle.view_model.metadata.source_panel_hash) == 64
     coverage_gaps = [
@@ -734,7 +737,7 @@ def test_writer_and_cli_emit_the_same_canonical_bundle(tmp_path: Path) -> None:
     )
 
     assert result.exit_code == 0, result.output
-    assert "10 artifacts" in result.output
+    assert "12 artifacts" in result.output
     for name in ARTIFACT_NAMES:
         assert (direct_dir / name).read_bytes() == (cli_dir / name).read_bytes()
 
@@ -1093,3 +1096,15 @@ def _snapshot_store(root: Path, dataset: CanonicalDataset) -> Path:
         artifact.parent.mkdir(parents=True, exist_ok=True)
         artifact.write_bytes(content)
     return storage_root
+
+
+def _without_sensitivity(payload: dict[str, Any]) -> None:
+    # Reconstruct the fields that existed in the immutable pre-1.15 format.
+    metadata = payload["metadata"]
+    methodology = payload["methodology"]
+    metadata.pop("sensitivity_report_hash", None)
+    methodology.pop("sensitivity_policy", None)
+    sections = payload["sections"]
+    for section in sections:
+        for race in section["races"]:
+            race.pop("sensitivity", None)

@@ -11,6 +11,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validato
 from election_guide.corrections.models import ElectionCorrections
 from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.personalization import PersonalizationContract
+from election_guide.publication.sensitivity import SensitivityDisplay, SensitivityPolicy
 from election_guide.results.models import ElectionResults
 from election_guide.scoring.models import ComparisonStatus, Grade
 
@@ -305,6 +306,7 @@ class PublicationRaceCandidate(PublicationModel):
 
 
 class PublicationRace(PublicationModel):
+    sensitivity: SensitivityDisplay | None = Field(default=None, exclude_if=lambda v: v is None)
     id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     """A slug, because issue #136 made it an address.
 
@@ -506,6 +508,9 @@ class SourceOverlapGroup(PublicationModel):
 
 
 class PublicationMethodology(PublicationModel):
+    sensitivity_policy: SensitivityPolicy | None = Field(
+        default=None, exclude_if=lambda v: v is None
+    )
     process_steps: list[str]
     grade_legend: list[GradeLegendItem]
     source_categories: list[SourceCategoryGroup]
@@ -518,6 +523,11 @@ class PublicationMethodology(PublicationModel):
 
 
 class PublicationMetadata(PublicationModel):
+    sensitivity_report_hash: str | None = Field(
+        default=None,
+        pattern=HASH_PATTERN,
+        exclude_if=lambda v: v is None,
+    )
     election_id: str
     election_name: str
     election_date: str
@@ -577,7 +587,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.9", "1.13", "1.14"] = "1.14"
+    schema_version: Literal["1.9", "1.13", "1.14", "1.15"] = "1.15"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
@@ -625,13 +635,26 @@ class PublicationViewModel(PublicationModel):
     @model_validator(mode="after")
     def validate_schema_fields(self) -> PublicationViewModel:
         registry_hash = self.metadata.source_registry_hash
-        if self.schema_version == "1.14" and registry_hash is None:
-            raise ValueError("schema 1.14 requires source_registry_hash")
+        if self.schema_version in {"1.14", "1.15"} and registry_hash is None:
+            raise ValueError(f"schema {self.schema_version} requires source_registry_hash")
         if (
-            self.schema_version != "1.14"
+            self.schema_version not in {"1.14", "1.15"}
             and "source_registry_hash" in self.metadata.model_fields_set
         ):
             raise ValueError(f"schema {self.schema_version} cannot declare source_registry_hash")
+        if self.schema_version == "1.15":
+            if self.metadata.sensitivity_report_hash is None:
+                raise ValueError("schema 1.15 requires sensitivity_report_hash")
+            if self.methodology.sensitivity_policy != SensitivityPolicy():
+                raise ValueError("schema 1.15 requires sensitivity policy")
+            if any(r.sensitivity is None for s in self.sections for r in s.races):
+                raise ValueError("schema 1.15 requires sensitivity for every race")
+        elif (
+            "sensitivity_report_hash" in self.metadata.model_fields_set
+            or "sensitivity_policy" in self.methodology.model_fields_set
+            or any("sensitivity" in r.model_fields_set for s in self.sections for r in s.races)
+        ):
+            raise ValueError(f"schema {self.schema_version} cannot declare sensitivity")
         return self
 
     @model_validator(mode="after")

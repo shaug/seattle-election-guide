@@ -71,8 +71,11 @@ from election_guide.publication.personalization import (
     PersonalizationScoring,
     PersonalizationSource,
 )
+from election_guide.publication.sensitivity import sensitivity_display, sensitivity_scenarios_csv
 from election_guide.results.models import ElectionResults
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
+from election_guide.scoring.sensitivity import build_sensitivity_report, validate_sensitivity_report
+from election_guide.scoring.sensitivity_models import SensitivityPolicy, SensitivityReport
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import Source
 from election_guide.sources.panel import PanelSnapshot, build_panel_snapshot
@@ -80,6 +83,8 @@ from election_guide.sources.registry import source_registry_hash
 
 ARTIFACT_NAMES = (
     "consensus.json",
+    "sensitivity.json",
+    "sensitivity_scenarios.csv",
     "publication_view_model.json",
     "race_summary.csv",
     "endorsement_records.csv",
@@ -176,6 +181,7 @@ def build_publication_bundle(
     )
     effective = dataset.effective_records()
     unresolved = _unresolved_reviews(dataset, effective)
+    sensitivity = build_sensitivity_report(dataset, validated_consensus, git_commit=stripped_commit)
     view_model = _build_view_model(
         dataset,
         validated_consensus,
@@ -187,8 +193,9 @@ def build_publication_bundle(
         certification_date,
         results_capture_urls,
         corrections,
+        sensitivity,
     )
-    checks = _validate_publication(dataset, validated_consensus, view_model)
+    checks = _validate_publication(dataset, validated_consensus, view_model, sensitivity)
     validation_report = ValidationReport(
         election_id=dataset.inventory.election.id,
         generated_at=validated_consensus.computed_at,
@@ -204,6 +211,7 @@ def build_publication_bundle(
         "election_inventory": _hash_model(dataset.inventory),
         "source_registry": _hash_model(dataset.source_registry),
         "scoring": _hash_model(validated_consensus.scoring_configuration),
+        "sensitivity_policy": _hash_model(sensitivity.policy),
     }
     snapshot_hashes = _snapshot_hashes(dataset)
     normalized_hash = _normalized_hash(dataset, effective)
@@ -219,6 +227,8 @@ def build_publication_bundle(
 
     artifacts = {
         "consensus.json": consensus_bytes,
+        "sensitivity.json": canonical_json_bytes(sensitivity.model_dump(mode="json")),
+        "sensitivity_scenarios.csv": sensitivity_scenarios_csv(sensitivity),
         "publication_view_model.json": canonical_json_bytes(view_model.model_dump(mode="json")),
         "race_summary.csv": _race_summary_csv(dataset, validated_consensus, view_model),
         "endorsement_records.csv": _endorsement_csv(dataset, effective),
@@ -320,7 +330,10 @@ def _build_view_model(
     certification_date: str | None = None,
     results_capture_urls: dict[str, str] | None = None,
     corrections: ElectionCorrections | None = None,
+    sensitivity: SensitivityReport | None = None,
 ) -> PublicationViewModel:
+    sensitivity = sensitivity or build_sensitivity_report(dataset, consensus, git_commit=git_commit)
+    sensitivity_by_race = sensitivity_display(dataset, sensitivity)
     active_sources = [
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
@@ -373,6 +386,7 @@ def _build_view_model(
         ]
         percentage_whole = _percentage_whole(result.winner_share)
         publication_race = PublicationRace(
+            sensitivity=sensitivity_by_race[race.id],
             id=race.id,
             section_id=section_id,
             section_label=section_label,
@@ -508,6 +522,7 @@ def _build_view_model(
     snapshot = build_panel_snapshot(dataset.source_registry)
     return PublicationViewModel(
         metadata=PublicationMetadata(
+            sensitivity_report_hash=_hash_model(sensitivity),
             election_id=dataset.inventory.election.id,
             election_name=dataset.inventory.election.name,
             election_date=dataset.inventory.election.election_date.isoformat(),
@@ -940,6 +955,7 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
     categories = list(dict.fromkeys(source.reporting_category_id for source in active_sources))
     categories.sort(key=lambda category: category == "comparison")
     return PublicationMethodology(
+        sensitivity_policy=SensitivityPolicy(),
         process_steps=[
             "Collect official endorsements",
             "Preserve source evidence",
@@ -1021,6 +1037,7 @@ def _validate_publication(
     dataset: CanonicalDataset,
     consensus: ConsensusReport,
     view_model: PublicationViewModel,
+    sensitivity: SensitivityReport | None = None,
 ) -> list[ValidationCheck]:
     view_races = [race for section in view_model.sections for race in section.races]
     view_by_id = {race.id: race for race in view_races}
@@ -1162,6 +1179,24 @@ def _validate_publication(
             ),
         ),
     ]
+    if view_model.schema_version == "1.15":
+        sensitivity = sensitivity or build_sensitivity_report(
+            dataset, consensus, git_commit=view_model.metadata.git_commit
+        )
+        validate_sensitivity_report(sensitivity, dataset, consensus)
+        expected_display = sensitivity_display(dataset, sensitivity)
+        checks.append(
+            ValidationCheck(
+                id="sensitivity",
+                passed=(
+                    view_model.metadata.sensitivity_report_hash == _hash_model(sensitivity)
+                    and view_model.methodology.sensitivity_policy == sensitivity.policy
+                    and set(view_by_id) == set(expected_display)
+                    and all(r.sensitivity == expected_display[r.id] for r in view_races)
+                ),
+                message="Sensitivity matches canonical exclusions, provenance and display.",
+            )
+        )
     return checks
 
 
@@ -1285,6 +1320,19 @@ def _race_summary_csv(
                     ),
                     "warning_codes": "|".join(race.warning_codes),
                     "input_hash": consensus.input_hash,
+                    "sensitivity_policy_id": race.sensitivity.policy_id if race.sensitivity else "",
+                    "sensitivity_classification": race.sensitivity.classification
+                    if race.sensitivity
+                    else "",
+                    "sensitivity_tested_count": str(race.sensitivity.tested_count)
+                    if race.sensitivity
+                    else "",
+                    "sensitivity_material_count": str(race.sensitivity.material_count)
+                    if race.sensitivity
+                    else "",
+                    "sensitivity_affected_kinds": "|".join(race.sensitivity.affected_kinds)
+                    if race.sensitivity
+                    else "",
                 }
             )
     return _csv_bytes(rows)

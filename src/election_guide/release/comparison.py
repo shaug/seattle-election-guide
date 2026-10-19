@@ -6,7 +6,13 @@ import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 
+from election_guide.normalization.models import CanonicalDataset
+from election_guide.publication.models import PublicationViewModel
+from election_guide.publication.sensitivity import sensitivity_display, sensitivity_scenarios_csv
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
+from election_guide.scoring.models import ConsensusReport
+from election_guide.scoring.sensitivity import validate_sensitivity_report
+from election_guide.scoring.sensitivity_models import SensitivityReport
 from election_guide.serialization import read_json
 
 
@@ -77,7 +83,45 @@ def _inspect_release_bundle_artifacts(
     for relative in sorted(manifest.unhashed_artifacts):
         if not (bundle_dir / relative).is_file():
             artifact_errors.append(f"release artifact is missing: {relative}")
+    if not artifact_errors:
+        _verify_sensitivity(bundle_dir, hashed)
     return VerifiedReleaseBundle(bundle_dir, status, manifest), tuple(artifact_errors)
+
+
+def _verify_sensitivity(bundle_dir: Path, hashed: set[str]) -> None:
+    view_path = bundle_dir / "data/publication_view_model.json"
+    if not view_path.is_file():
+        return
+    view = PublicationViewModel.model_validate(read_json(view_path))
+    if view.schema_version != "1.15":
+        return
+    if not {"data/sensitivity.json", "data/sensitivity_scenarios.csv"} <= hashed:
+        raise ValueError("schema 1.15 requires sensitivity artifacts in the hashed manifest")
+    dataset = CanonicalDataset.model_validate(read_json(bundle_dir / "data/canonical-dataset.json"))
+    consensus = ConsensusReport.model_validate(
+        read_json(bundle_dir / "data/consensus.json"), context={"canonical_dataset": dataset}
+    )
+    report_path = bundle_dir / "data/sensitivity.json"
+    report = SensitivityReport.model_validate(read_json(report_path))
+    validate_sensitivity_report(report, dataset, consensus)
+    if (
+        hashlib.sha256(report_path.read_bytes()).hexdigest()
+        != view.metadata.sensitivity_report_hash
+        or report.source_panel_hash != view.metadata.source_panel_hash
+        or report.source_registry_hash != view.metadata.source_registry_hash
+        or report.election_id != view.metadata.election_id
+        or report.computed_at != view.metadata.generated_at
+        or report.git_commit != view.metadata.git_commit
+        or (bundle_dir / "data/sensitivity_scenarios.csv").read_bytes()
+        != sensitivity_scenarios_csv(report)
+    ):
+        raise ValueError("sensitivity artifacts do not match publication provenance")
+    display = sensitivity_display(dataset, report)
+    published = [r for s in view.sections for r in s.races]
+    if set(display) != {r.id for r in published} or any(
+        r.sensitivity != display[r.id] for r in published
+    ):
+        raise ValueError("sensitivity display disagrees with audit report")
 
 
 def verify_release_bundle_artifacts(

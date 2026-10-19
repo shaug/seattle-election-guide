@@ -250,3 +250,39 @@ def test_exceptional_review_state_survives_excluding_the_flagged_source(tmp_path
         == race.baseline.score.unresolved_high_severity_review_item_ids
     )
     assert "unresolved_high_severity" in [w.code for w in race.scenarios[0].after.score.warnings]
+
+
+def test_district_eligibility_and_comparison_role_cannot_expand_in_scenarios(
+    tmp_path: Path,
+) -> None:
+    source = CONSENSUS_SOURCE_IDS[0]
+    dataset = _dataset(
+        tmp_path,
+        [
+            (source, "endorsed", _candidate_ids()[:1]),
+            (COMPARISON_SOURCE_ID, "endorsed", _candidate_ids()[1:2]),
+        ],
+        overlap_group_source_ids=(source, CONSENSUS_SOURCE_IDS[1]),
+    )
+    payload = dataset.model_dump(mode="json")
+    item = next(s for s in payload["source_registry"]["sources"] if s["id"] == source)
+    item["geographic_kind"] = "legislative_district"
+    item["eligibility"] = {
+        "kind": "seattle_ballot_races_except_other_legislative_districts",
+        "jurisdiction_ids": ["legislative-district-32"],
+        "rationale": "Fixture district scope.",
+    }
+    dataset = CanonicalDataset.model_validate(payload)
+    consensus = score_dataset(dataset, _configuration(), computed_at=NOW)
+    report = build_sensitivity_report(dataset, consensus, git_commit="fixture")
+    assessor = next(r for r in report.races if r.race_id == RACE_ID)
+    assert source in assessor.baseline.populations["eligible_source_ids"]
+    other = next(r for r in report.races if r.race_id == "ld-43-state-representative-1")
+    assert source not in other.baseline.populations["eligible_source_ids"]
+    assert (
+        next(s for s in other.skipped_scenarios if s.kind == "overlap").reason
+        == "fewer_than_two_eligible_members"
+    )
+    assert all(
+        COMPARISON_SOURCE_ID not in s.excluded_source_ids for r in report.races for s in r.scenarios
+    )

@@ -591,6 +591,12 @@ def _stage_verified_bundles(
         )
 
         root_path = f"/e/{bundle.declaration.election_id}/"
+        if bundle.view_model.schema_version == "1.15":
+            audit_dir = election_root / "data"
+            audit_dir.mkdir()
+            for name in ("sensitivity.json", "sensitivity_scenarios.csv"):
+                shutil.copy2(bundle.directory / "data" / name, audit_dir / name)
+                public_paths.add(f"{root_path}data/{name}")
         public_paths.update({root_path, f"{root_path}index.html"})
         public_paths.update({f"{root_path}sources/", f"{root_path}sources/index.html"})
         public_paths.update(_stage_race_pages(bundle, election_root, canonical_origin))
