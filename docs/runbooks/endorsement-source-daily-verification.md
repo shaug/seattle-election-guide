@@ -40,7 +40,7 @@ The first general-election tranche is:
 | Transit Riders Union | Current general endorsement page | Prior self-redirect failures are preserved. October 18 diagnosis found the TLS transport serialized the wrong default Host port; corrected HTTPS transport recovers the official page with the same redirect limit. Independent scheduled reuse remains adoption work. |
 | Sage Leaders | Current 2026 section, excluding past-year sections | Fixed, reviewed factual mappings; changed bytes require review. |
 | SEIU 775 | Washington section | Fixed, reviewed factual mappings; changed bytes require review. |
-| UFCW 3000 | Official endorsements page | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. |
+| UFCW 3000 | Complete endorsements landing page plus known/new relevant official articles | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. The expanded composite requires review of its exact new baseline. |
 | Washington Working Families Party | Our Candidates section | Fixed, reviewed factual mappings; changed bytes require review. |
 | Seattle Gay News | Current Seattle index plus known/new articles | Daily from collection opening. Traverse pagination to the reviewed oldest current-cycle article, then revisit every known article. |
 
@@ -113,6 +113,25 @@ turn one article into two identities. Missing boundary, ambiguous/looping
 pagination, inaccessible article, or exceeded bounds fails the check. Discovery
 allows at most 40 index pages, 100 articles, and 64 MiB total response bytes;
 each HTTP fetch retains the existing public-peer, redirect, time, and size limits.
+
+UFCW 3000 scans only its endorsements landing page for relevant current-year
+news article links, then revisits every retained article URL, including both
+known October 15 initiative publications when their links are absent. It does
+not follow news feeds, pagination, unrelated news, or historical article links.
+The discovery records persist article membership across runners. A maximum of
+100 articles and 64 MiB of total response bytes bounds each check; the existing
+per-request GET safeguards remain in effect. Required article fetch or parsing
+failure records a failed check and retains the prior comparison baseline.
+
+Its derived comparison preserves the landing page for the existing factual
+extractor and binds all complete original article URLs and content hashes.
+Article-only edits, including corrections and withdrawals, therefore produce a
+changed-byte review lead even with zero recognized decision changes. Each actual
+HTTP response remains a separate encrypted original with observed metadata;
+the composite has derived/manual-upload provenance and no HTTP status. Review
+the entire expanded publication and exact new snapshot before approving this
+baseline. The October 18 landing-page approval cannot approve the new composite.
+Fixture-controlled independent reuse does not establish live scheduled adoption.
 
 ## Results and finite review tasks
 

@@ -20,8 +20,9 @@ elections:
       Exact live baseline approved October 18; see docs/GENERAL_BASELINES_2026-10-18.md.
   - source_id: ufcw-3000
     adapter: config/adapters/wa-2026-general/ufcw-3000.yaml
-    limitation: Conservative reviewed fact mappings; every changed publication requires human review.
-      Exact live baseline approved October 18; see docs/GENERAL_BASELINES_2026-10-18.md.
+    limitation: Conservative reviewed fact mappings; complete landing page and relevant official articles
+      require human review. The expanded composite needs exact baseline review; the October 18 approval
+      covers the earlier landing page. Independent scheduled reuse remains adoption work.
   - source_id: washington-working-families-party
     adapter: config/adapters/wa-2026-general/washington-working-families-party.yaml
     request:
