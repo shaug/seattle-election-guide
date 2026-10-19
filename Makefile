@@ -1,4 +1,4 @@
-.PHONY: sync format check check-election-contracts check-evidence check-results check-js check-changelog check-release-reproducible check-release-reproducible-general changelog types test test-unit test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify release-verify-primary release-verify-general hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-election-contracts check-evidence check-results check-js check-changelog check-release-reproducible check-release-reproducible-general check-updates changelog types test test-unit test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify release-verify-primary release-verify-general hosting-stage hosting-serve hosting-deploy
 
 INTEGRATION_COMPARISONS_TESTS := tests/test_compare_rendering.py
 INTEGRATION_RENDERING_TESTS := tests/test_rendering.py
@@ -43,6 +43,11 @@ check:
 # checks cannot drift apart.
 check-evidence:
 	uv run election-guide evidence verify-all
+
+# A live publication comparison, separate from the offline make check suite.
+# Required CI and serialized production deployment both invoke this target.
+check-updates:
+	uv run election-guide hosting check-updates dist/cloudflare-site --output-path dist/updates-check.json
 
 # Validate every committed results file (issue #283). No file is committed
 # there yet -- #284 owns ingestion -- so this is a no-op until one lands, but

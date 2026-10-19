@@ -41,7 +41,23 @@ from tests.test_rendering import (  # pyright: ignore[reportPrivateUsage]
 # guides, release files, sources and (when enabled) comparison routes, plus the
 # site-wide documents, brand assets, calendar feed, headers, worker and
 # deployment manifest.
-SITE_WIDE_ASSET_COUNT = 17
+SITE_WIDE_ASSET_COUNT = 18
+
+
+def test_independent_verification_rejects_hash_valid_stale_updates_snapshot(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+    stage_pages_site(manifest, {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older}, output)
+    page = f"e/{CURRENT_ID}/index.html"
+    (output / page).write_text("<main>A new aggregate</main>")
+    deployment_path = output / "deployment-manifest.json"
+    deployment = json.loads(deployment_path.read_bytes())
+    deployment["assets"][page] = hashlib.sha256((output / page).read_bytes()).hexdigest()
+    deployment_path.write_bytes(canonical_json_bytes(deployment))
+
+    with pytest.raises(ValueError, match="snapshot differs"):
+        verify_staged_pages_site(output, manifest)
 
 
 def _staged_race_asset_count(site_dir: Path) -> int:

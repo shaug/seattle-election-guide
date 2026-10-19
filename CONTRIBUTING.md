@@ -29,6 +29,12 @@ their membership is defined once in the `Makefile` (issue #428).
 
 Neither focused target replaces `make check` before proposing a diff.
 
+After staging election-page changes, run `make check-updates` with an authenticated GitHub CLI.
+This live comparison is separate from offline `make check`; required CI runs it and production
+repeats it before upload. Add a new entry to each affected election's served Updates page in the
+same PR. See [RELEASE.md](docs/RELEASE.md#public-update-log) for the exact comparison contract and
+an offline diagnostic against a retained production artifact.
+
 `make types` regenerates the client payload declarations from the Pydantic
 models (docs/FRONTEND.md, The data contract). Run it after changing anything
 the payload publishes and commit the result; `make check` fails while the
