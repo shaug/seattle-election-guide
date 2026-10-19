@@ -1,7 +1,7 @@
 schema_version: '1.0'
 election_id: wa-2026-general
-data_as_of: '2026-10-19T04:14:31.209146Z'
-reviewer: shaug
+data_as_of: '2026-10-19T14:47:01.559556Z'
+reviewer: OpenAI Codex / root (explicit maintainer delegation)
 review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured 21
   new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every new or
   changed transcription and independently rechecked the 13 unchanged published source blocks against current official evidence.
@@ -22,7 +22,11 @@ review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex reche
   DSA, three Seattle Times explicit no-endorsement decisions). Prior 880 decisions remain intact; 914 decisions across 46
   source blocks. No automatic baseline or daily/whole-panel attestation. See data/review/approvals/wa-2026-general-2026-10-18.json.
   Provenance follow-up: refresh three amended source blocks to their already-approved complete current review times; preserve
-  all decision dictionaries and original approval events. data/review/provenance-corrections/wa-2026-general-2026-10-18.json.'
+  all decision dictionaries and original approval events. data/review/provenance-corrections/wa-2026-general-2026-10-18.json.
+  October 19 targeted update under explicit maintainer delegation: OpenAI Codex / oct19_political_sources and OpenAI Codex
+  / root independently verified one 46th Democrats Seattle transit Yes addition. All 914 prior decision dictionaries and original
+  approvals are preserved. This header identifies the current delegated operator; each retained source and decision preserves
+  its own historical reviewer. No new personal human source read is asserted. See data/review/approvals/wa-2026-general-2026-10-19-transit.json.'
 sources:
 - source_id: washington-community-action-network
   captured_at: '2026-10-11T01:07:23.909422Z'
@@ -1672,14 +1676,22 @@ sources:
     candidate_ids:
     - seattle-proposition-1-transit--yes
 - source_id: 46th-district-democrats
-  captured_at: '2026-10-04T04:56:54Z'
-  reviewed_at: '2026-10-04T05:30:06Z'
-  reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
-    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
-    Codex transcribed the refreshed official page; shaug verified every addition, confirmed the unambiguous Lessa Manion and
-    Debra Stephans mappings, and confirmed prior decisions remain unchanged.'
-  evidence_locator: Official 2026 page updated after the September 15 general endorsement meeting. Capture capture-46th-district-democrats-20261004T045654Z-9105db21d8ac.
+  captured_at: '2026-10-19T14:36:53.724038Z'
+  reviewed_at: '2026-10-19T14:47:01.559556Z'
+  reviewer: OpenAI Codex / root (explicit maintainer delegation)
+  review_note: 'Issue #578: two actual Codex reviewers verified the complete current official replacement publication. Add
+    only Yes on the explicitly named Seattle Transit Measure under the maintainer''s direct standing delegation. All 23 prior
+    decision dictionaries and their original review treatments remain intact. This does not assert a new personal human source
+    read. See data/review/approvals/wa-2026-general-2026-10-19-transit.json. Prior source review: Issue #474: shaug verified
+    the complete source-by-source review packet, including this source and all prior review treatments. Current official capture
+    retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the refreshed official
+    page; shaug verified every addition, confirmed the unambiguous Lessa Manion and Debra Stephans mappings, and confirmed
+    prior decisions remain unchanged.'
+  evidence_locator: 'Official 2026 Endorsed Candidates and Positions; City of Seattle Campaigns; Proposition No. 1 - Seattle
+    Transit Measure; Vote Yes. Capture capture-46th-district-democrats-20261019T143653Z-3eb526091a72. The page identifies
+    its May primary and September general endorsement meetings; this is the explicitly named Seattle transit measure, not
+    the August library levy. Prior locator: Official 2026 page updated after the September 15 general endorsement meeting.
+    Capture capture-46th-district-democrats-20261004T045654Z-9105db21d8ac.'
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -1750,6 +1762,14 @@ sources:
   - race_id: supreme-court-justice-7
     candidate_ids:
     - supreme-court-justice-7--debra-l-stephens
+  - race_id: seattle-proposition-1-transit
+    candidate_ids:
+    - seattle-proposition-1-transit--yes
+    evidence_excerpt: Proposition No. 1 - Seattle Transit Measure; Vote Yes
+    evidence_locator: Official 2026 Endorsed Candidates and Positions; City of Seattle Campaigns; Proposition No. 1 - Seattle
+      Transit Measure; Vote Yes. Capture capture-46th-district-democrats-20261019T143653Z-3eb526091a72. The page identifies
+      its May primary and September general endorsement meetings; this is the explicitly named Seattle transit measure, not
+      the August library levy. Verified manual record manual-46th-district-democrats-20261019T144701Z-482a8bb6471c.
 - source_id: washington-conservation-action
   captured_at: '2026-10-16T18:21:36.240131Z'
   reviewed_at: '2026-10-16T18:26:39.551180Z'
