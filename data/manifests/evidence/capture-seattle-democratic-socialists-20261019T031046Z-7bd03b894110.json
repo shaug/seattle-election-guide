@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 85322,
+  "canonical_url": "https://seattledsa.org/committees/electoral/",
+  "capture_method": "static_html",
+  "content_sha256": "3950d23820405fdeba4068d517564b4c1b3dfedaddaacfc7b7e169f7ff9235aa",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261019T031046Z-7bd03b894110",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://seattledsa.org/committees/electoral/",
+  "retrieved_at": "2026-10-19T03:10:46.619078Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/39/3950d23820405fdeba4068d517564b4c1b3dfedaddaacfc7b7e169f7ff9235aa",
+  "storage_scope": "local_only",
+  "title": "Seattle Democratic Socialists of America current official publication",
+  "updated_at": null
+}

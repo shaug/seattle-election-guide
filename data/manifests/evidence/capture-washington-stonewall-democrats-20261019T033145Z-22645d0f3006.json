@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 2892,
+  "canonical_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+  "capture_method": "manual_upload",
+  "content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+  "http_status": null,
+  "id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived normalized facts from full official browser accessibility snapshot and screenshot, separately retained; not original response HTML; no HTTP status asserted.",
+  "requested_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+  "retrieved_at": "2026-10-19T03:31:45.522306Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/07/07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+  "storage_scope": "local_only",
+  "title": "Stonewall normalized Seattle general-guide facts: derived transcription",
+  "updated_at": null
+}

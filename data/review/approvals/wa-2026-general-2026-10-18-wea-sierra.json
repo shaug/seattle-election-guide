@@ -1,0 +1,72 @@
+{
+  "approval_text": "Approve both reviews and five acknowledgements",
+  "approved_source_ids": [
+    "washington-education-association",
+    "sierra-club-washington"
+  ],
+  "election_id": "wa-2026-general",
+  "inaccessible_sources_excluded": [
+    "the-stranger"
+  ],
+  "manual_acknowledgement_records": [
+    {
+      "path": "data/verification/wa-2026-general/checks/0dd2db218b0e93c4f34edeb766060bb54f127be6fa8314ef088dfebd285750e9.json",
+      "sha256": "0dd2db218b0e93c4f34edeb766060bb54f127be6fa8314ef088dfebd285750e9"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/c25a0066c186077fbe0574e6a128cf90da242c84776142de70fb1bc6e4efd915.json",
+      "sha256": "c25a0066c186077fbe0574e6a128cf90da242c84776142de70fb1bc6e4efd915"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/dec2904c66e96f48221d5ee02c24f53e6c3f69f1ace74cb46531fbd411bb9f7c.json",
+      "sha256": "dec2904c66e96f48221d5ee02c24f53e6c3f69f1ace74cb46531fbd411bb9f7c"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/e17b0bcce93663c5da5dc800b2904d4f2886bc8215cc6ddd77933e0658e85f86.json",
+      "sha256": "e17b0bcce93663c5da5dc800b2904d4f2886bc8215cc6ddd77933e0658e85f86"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/f39505908513ede6af1327ee53c31c246b107c8c7ab2b8c468d9ec102dd907a8.json",
+      "sha256": "f39505908513ede6af1327ee53c31c246b107c8c7ab2b8c468d9ec102dd907a8"
+    }
+  ],
+  "manual_entry_successors": [
+    {
+      "capture_id": "capture-washington-education-association-20261019T042207Z-e50342f82190",
+      "pending_manual_entry_id": "manual-washington-education-association-20261019T042207Z-e3d4a508c54f",
+      "pending_sha256": "74fdd4ee3f2130d94f7ac21d685d3ce907b87418f966fc99599da0999d57245c",
+      "verified_manual_entry_id": "manual-washington-education-association-20261019T042207Z-6a92923e9508",
+      "verified_sha256": "261e1d6d93f64db1802ae297dcc539ce17ce7598ce9dc02c62566092585312b2"
+    },
+    {
+      "capture_id": "capture-sierra-club-washington-20261019T042207Z-9a06073d0313",
+      "pending_manual_entry_id": "manual-sierra-club-washington-20261019T042207Z-e983c07711dc",
+      "pending_sha256": "a0cb92247894a96243f79d12af0922975700ea5d4c54cff4e8ed0068245ec13f",
+      "verified_manual_entry_id": "manual-sierra-club-washington-20261019T042207Z-55c8e57ba80a",
+      "verified_sha256": "dc7dbb4435a68fb16ebb6682739f36342aab806bdc5bc4439be926a2358b5a7f"
+    }
+  ],
+  "no_historical_reviews_backdated": true,
+  "no_new_ledger_decisions": true,
+  "prior_october16_wea_acknowledgement_preserved": true,
+  "proposal_path": "data/review/proposals/wa-2026-general-2026-10-18-wea-sierra.json",
+  "proposal_sha256": "617caeed72f21e1eb0a7dcae5d4773c44804cf226c2a5449e0f4ae308ee9f444",
+  "record_type": "human_recovered_source_attestations",
+  "result": {
+    "manual_acknowledgements": 5,
+    "manual_sources": 2,
+    "unchanged_decisions": 44,
+    "verified_manual_successors": 2
+  },
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:30:32.442975Z",
+  "reviewed_by": "shaug",
+  "schema_version": "1.0",
+  "scope_issues": [
+    545,
+    560,
+    567
+  ],
+  "timestamp_semantics": "Actual time the explicit human approval was transcribed; missed historical reviews remain visible.",
+  "transcriber": "OpenAI Codex"
+}

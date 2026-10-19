@@ -1,0 +1,1446 @@
+{
+  "archive_revision": "a0aa1050659d1459662d6bd260dd20a60c94ce55",
+  "authenticated_capture_count": 71,
+  "authentication_receipt": "data/review/evidence-authentication/wa-2026-general-2026-10-18.json",
+  "election_id": "wa-2026-general",
+  "full_approved_decisions": 99,
+  "human_approval": "pending",
+  "limits": [
+    "Human spot-check and explicit attestation required for each exact snapshot.",
+    "No approval of newly named choices or change in adapter coverage is implied.",
+    "TRU automatic access failure and the three remaining inaccessible manual publishers are separate.",
+    "Current research never backdates October16/17 reviews."
+  ],
+  "mapped_decisions": 87,
+  "prepared_at": "2026-10-19T04:10:19.067246Z",
+  "prepared_by": "OpenAI Codex",
+  "private_research_report_sha256": {
+    "baseline-review-sage-ufcw.json": "16a1396de6426a9fa7c1be7b08e208375d6d7f8a22c654262f485141b970c0d1",
+    "baseline-review-sgn.json": "8148c8c282d41f9bd3342408d43b3265fb3fb6c06d3a9a4265c548d879900902",
+    "baseline-review-tru-wfp-seiu.json": "789f612ca5312cf5ba8d85734b0ce0ce0eecc696e8f6d1f24fa3d5fc9cb5ba70"
+  },
+  "record_type": "automatic_baseline_review_proposal",
+  "schema_version": "1.0",
+  "scope_issues": [
+    545,
+    560,
+    567
+  ],
+  "sources": [
+    {
+      "adapter_fingerprint": "bd7cea6b6fd5b66c6641b7eca5e46976ad1cc2647b95daf4934a82423dd8c912",
+      "capture_id": "capture-sage-leaders-20261018T084551Z-ec5177b91380",
+      "coverage_and_limits": "All 33 current candidate lines reviewed: 14 Seattle choices across 13 decisions, 19 outside the inventory. Past-year sections excluded. The live current-cycle list is not labeled primary-only; this is not a newly issued general-only slate.",
+      "extraction_fingerprint": "1245879f06fc8554811e9726b66ffbe65ab90c8ebcd24a29380ec4565259b8b1",
+      "extraction_reproduced_exactly": true,
+      "full_approved_decisions": 13,
+      "full_original_review": "completed_by_agent_pending_human_attestation",
+      "mapped_decisions": 13,
+      "original_byte_length": 148203,
+      "original_content_sha256": "6b2a0cd033cedbccd672041e892a57f1369410587b1974fefca758a3d763598e",
+      "original_url": "https://www.sageleaders.org/2026-endorsements",
+      "snapshot_file_sha256": "b52b4e95d2799d5175ca6f199280bae549fc0ea3b6db978edd192dc2338535bf",
+      "snapshot_id": "extraction-sage-leaders-20261018T084551Z-514e2bfe9835",
+      "snapshot_url": "https://github.com/shaug/seattle-election-guide/blob/a0aa1050659d1459662d6bd260dd20a60c94ce55/data/verification/wa-2026-general/extractions/extraction-sage-leaders-20261018T084551Z-514e2bfe9835.json",
+      "source_decisions": [
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-34-state-senator--emily-alvarado"
+          ],
+          "choice_names": [
+            "Emily Alvarado"
+          ],
+          "race_display_name": "Legislative District 34 State Senator",
+          "race_id": "ld-34-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/2",
+          "candidate_ids": [
+            "ld-37-state-senator--chipalo-street",
+            "ld-37-state-senator--tatiana-brown"
+          ],
+          "choice_names": [
+            "Chipalo Street",
+            "Tatiana Brown"
+          ],
+          "race_display_name": "Legislative District 37 State Senator",
+          "race_id": "ld-37-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "choice_names": [
+            "Hannah Sabio-Howell"
+          ],
+          "race_display_name": "Legislative District 43 State Senator",
+          "race_id": "ld-43-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "choice_names": [
+            "Julia Grant Reed"
+          ],
+          "race_display_name": "Legislative District 36 State Representative — Position 1",
+          "race_id": "ld-36-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "choice_names": [
+            "Kelabe Tewolde"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 1",
+          "race_id": "ld-37-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "choice_names": [
+            "Jaelynn Scott"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 2",
+          "race_id": "ld-37-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "choice_names": [
+            "Darya Farivar"
+          ],
+          "race_display_name": "Legislative District 46 State Representative — Position 2",
+          "race_id": "ld-46-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "choice_names": [
+            "Rebecca Saldaña"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 2",
+          "race_id": "king-county-council-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-4--jorge-l-baron"
+          ],
+          "choice_names": [
+            "Jorge L. Barón"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 4",
+          "race_id": "king-county-council-4",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "choice_names": [
+            "Teresa Mosqueda"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 8",
+          "race_id": "king-county-council-8",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "choice_names": [
+            "Nilu Jenks"
+          ],
+          "race_display_name": "Seattle City Council — District 5",
+          "race_id": "seattle-city-council-5",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-32-state-senator--cindy-ryu"
+          ],
+          "choice_names": [
+            "Cindy Ryu"
+          ],
+          "race_display_name": "Legislative District 32 State Senator",
+          "race_id": "ld-32-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "choice_names": [
+            "Imraan Siddiqi"
+          ],
+          "race_display_name": "Legislative District 32 State Representative — Position 2",
+          "race_id": "ld-32-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        }
+      ],
+      "source_id": "sage-leaders",
+      "source_name": "Sage Leaders"
+    },
+    {
+      "adapter_fingerprint": "640efafeec169c0f8ed0e5ac8e2ad0837c359a7bedb913d8c79cb9b430b87143",
+      "capture_id": "capture-seattle-gay-news-20261018T084551Z-bff391144189",
+      "coverage_and_limits": "Authenticated all four index responses and all ten article responses plus the derived comparison. Pagination 0/10/20/30 reaches story168513; all ten known articles remain listed, with no new or missing endorsement article. Full article bodies support seven approved choices. Exclude Sawant absent from the general ballot, Chapman-Smith in LD29, and the primary library levy. July publications are current-cycle endorsements, not an expressly primary-only list or a new general-only slate.",
+      "extraction_fingerprint": "fb32692d84ed3e0dca1be6ed0d42c9033e039e713105ec81700f5b7ca8f22839",
+      "extraction_reproduced_exactly": true,
+      "full_approved_decisions": 7,
+      "full_original_review": "completed_by_agent_pending_human_attestation",
+      "mapped_decisions": 7,
+      "original_byte_length": 964,
+      "original_content_sha256": "cd3fbf409b40241ec479942c6b4f06cf733af0c78ad6c17b291cbf7b5bf23f25",
+      "original_url": "https://www.sgn.org/ch/News/Seattle",
+      "snapshot_file_sha256": "3acf0c14f33400c971b35c811ec397ae59e05b136b8c763b900d50fcd43f6f38",
+      "snapshot_id": "extraction-seattle-gay-news-20261018T084551Z-d8e1ec3a96de",
+      "snapshot_url": "https://github.com/shaug/seattle-election-guide/blob/a0aa1050659d1459662d6bd260dd20a60c94ce55/data/verification/wa-2026-general/extractions/extraction-seattle-gay-news-20261018T084551Z-d8e1ec3a96de.json",
+      "source_decisions": [
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "choice_names": [
+            "Pramila Jayapal"
+          ],
+          "race_display_name": "U.S. Representative — Congressional District 7",
+          "race_id": "us-house-7",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-senator--tatiana-brown"
+          ],
+          "choice_names": [
+            "Tatiana Brown"
+          ],
+          "race_display_name": "Legislative District 37 State Senator",
+          "race_id": "ld-37-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "choice_names": [
+            "Kelabe Tewolde"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 1",
+          "race_id": "ld-37-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "choice_names": [
+            "Jaelynn Scott"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 2",
+          "race_id": "ld-37-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "choice_names": [
+            "Hannah Sabio-Howell"
+          ],
+          "race_display_name": "Legislative District 43 State Senator",
+          "race_id": "ld-43-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "choice_names": [
+            "Rebecca Saldaña"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 2",
+          "race_id": "king-county-council-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "choice_names": [
+            "Nilu Jenks"
+          ],
+          "race_display_name": "Seattle City Council — District 5",
+          "race_id": "seattle-city-council-5",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        }
+      ],
+      "source_id": "seattle-gay-news",
+      "source_name": "Seattle Gay News Editorial Board"
+    },
+    {
+      "adapter_fingerprint": "c06c5b87be0ebe532ee74e6ac3fd4406f1603b8296062f4023c9d92069f4d595",
+      "capture_id": "capture-seiu-775-20261016T150136Z-8772d8cd8a06",
+      "coverage_and_limits": "All 110 Washington decisions reviewed: 32 in Seattle scope, 78 outside. The adapter recognizes 29. The three other approved decisions are Danica Noble for LD32 House1, Santos/Tewolde as an equal LD37 House1 dual, and Jorge Baron for County Council4. Other-state sections, LD39 dual and Pierce Transit are excluded.",
+      "extraction_fingerprint": "e09ddae9cc2a4d15ab39e5a86cccfd21059a3a74e14b03704204da5dde03599c",
+      "extraction_reproduced_exactly": true,
+      "full_approved_decisions": 32,
+      "full_original_review": "completed_by_agent_pending_human_attestation",
+      "mapped_decisions": 29,
+      "original_byte_length": 92070,
+      "original_content_sha256": "83a7883864b227b5f77d3e629f28dd02095788103da57eeca8df192071ad6ffe",
+      "original_url": "https://seiu775.org/2026endorsements/",
+      "snapshot_file_sha256": "a9aa41d2a5db922526e4379d6f57aa40dd3fb83a1d2ae3a761bfdaa1b671e8dd",
+      "snapshot_id": "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+      "snapshot_url": "https://github.com/shaug/seattle-election-guide/blob/a0aa1050659d1459662d6bd260dd20a60c94ce55/data/verification/wa-2026-general/extractions/extraction-seiu-775-20261016T150136Z-d1fe38b533b0.json",
+      "source_decisions": [
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "choice_names": [
+            "No"
+          ],
+          "race_display_name": "Initiative IL26-001 — Parental Rights in Public Schools",
+          "race_id": "initiative-26-001",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "choice_names": [
+            "No"
+          ],
+          "race_display_name": "Initiative IL26-638 — Participation in K-12 School Athletics",
+          "race_id": "initiative-26-638",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "choice_names": [
+            "No"
+          ],
+          "race_display_name": "Initiative IP26-645 — State and Local Taxes",
+          "race_id": "initiative-26-645",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "supreme-court-justice-1--colleen-melody"
+          ],
+          "choice_names": [
+            "Colleen Melody"
+          ],
+          "race_display_name": "Washington Supreme Court Justice — Position 1",
+          "race_id": "supreme-court-justice-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "choice_names": [
+            "Jaime Michelle Hawk"
+          ],
+          "race_display_name": "Washington Supreme Court Justice — Position 3",
+          "race_id": "supreme-court-justice-3",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "supreme-court-justice-4--ian-birk"
+          ],
+          "choice_names": [
+            "Ian Birk"
+          ],
+          "race_display_name": "Washington Supreme Court Justice — Position 4",
+          "race_id": "supreme-court-justice-4",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "supreme-court-justice-5--theo-angelis"
+          ],
+          "choice_names": [
+            "Theo Angelis"
+          ],
+          "race_display_name": "Washington Supreme Court Justice — Position 5",
+          "race_id": "supreme-court-justice-5",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "choice_names": [
+            "Pramila Jayapal"
+          ],
+          "race_display_name": "U.S. Representative — Congressional District 7",
+          "race_id": "us-house-7",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "choice_names": [
+            "Adam Smith"
+          ],
+          "race_display_name": "U.S. Representative — Congressional District 9",
+          "race_id": "us-house-9",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-11-state-representative-1--david-hackney"
+          ],
+          "choice_names": [
+            "David Hackney"
+          ],
+          "race_display_name": "Legislative District 11 State Representative — Position 1",
+          "race_id": "ld-11-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-11-state-representative-2--steve-bergquist"
+          ],
+          "choice_names": [
+            "Steve Bergquist"
+          ],
+          "race_display_name": "Legislative District 11 State Representative — Position 2",
+          "race_id": "ld-11-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ],
+          "choice_names": [
+            "Lauren Davis"
+          ],
+          "race_display_name": "Legislative District 32 State Representative — Position 2",
+          "race_id": "ld-32-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-34-state-senator--emily-alvarado"
+          ],
+          "choice_names": [
+            "Emily Alvarado"
+          ],
+          "race_display_name": "Legislative District 34 State Senator",
+          "race_id": "ld-34-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-34-state-representative-1--brianna-k-thomas"
+          ],
+          "choice_names": [
+            "Brianna K. Thomas"
+          ],
+          "race_display_name": "Legislative District 34 State Representative — Position 1",
+          "race_id": "ld-34-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ],
+          "choice_names": [
+            "Joe Fitzgibbon"
+          ],
+          "race_display_name": "Legislative District 34 State Representative — Position 2",
+          "race_id": "ld-34-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-36-state-senator--noel-c-frame"
+          ],
+          "choice_names": [
+            "Noel C. Frame"
+          ],
+          "race_display_name": "Legislative District 36 State Senator",
+          "race_id": "ld-36-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "choice_names": [
+            "Julia Grant Reed"
+          ],
+          "race_display_name": "Legislative District 36 State Representative — Position 1",
+          "race_id": "ld-36-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-36-state-representative-2--liz-berry"
+          ],
+          "choice_names": [
+            "Liz Berry"
+          ],
+          "race_display_name": "Legislative District 36 State Representative — Position 2",
+          "race_id": "ld-36-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "choice_names": [
+            "Chipalo Street"
+          ],
+          "race_display_name": "Legislative District 37 State Senator",
+          "race_id": "ld-37-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "choice_names": [
+            "Jaelynn Scott"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 2",
+          "race_id": "ld-37-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen"
+          ],
+          "choice_names": [
+            "Jamie Pedersen"
+          ],
+          "race_display_name": "Legislative District 43 State Senator",
+          "race_id": "ld-43-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-representative-1--nicole-macri"
+          ],
+          "choice_names": [
+            "Nicole Macri"
+          ],
+          "race_display_name": "Legislative District 43 State Representative — Position 1",
+          "race_id": "ld-43-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-representative-2--shaun-scott"
+          ],
+          "choice_names": [
+            "Shaun Scott"
+          ],
+          "race_display_name": "Legislative District 43 State Representative — Position 2",
+          "race_id": "ld-43-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "choice_names": [
+            "Javier Valdez"
+          ],
+          "race_display_name": "Legislative District 46 State Senator",
+          "race_id": "ld-46-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "choice_names": [
+            "Gerry Pollet"
+          ],
+          "race_display_name": "Legislative District 46 State Representative — Position 1",
+          "race_id": "ld-46-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "choice_names": [
+            "Darya Farivar"
+          ],
+          "race_display_name": "Legislative District 46 State Representative — Position 2",
+          "race_id": "ld-46-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "choice_names": [
+            "Rebecca Saldaña"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 2",
+          "race_id": "king-county-council-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "choice_names": [
+            "Teresa Mosqueda"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 8",
+          "race_id": "king-county-council-8",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "choice_names": [
+            "Nilu Jenks"
+          ],
+          "race_display_name": "Seattle City Council — District 5",
+          "race_id": "seattle-city-council-5",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ],
+          "choice_names": [
+            "Danica Noble"
+          ],
+          "race_display_name": "Legislative District 32 State Representative — Position 1",
+          "race_id": "ld-32-state-representative-1",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/2",
+          "candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos",
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "choice_names": [
+            "Sharon Tomiko Santos",
+            "Kelabe Tewolde"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 1",
+          "race_id": "ld-37-state-representative-1",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-4--jorge-l-baron"
+          ],
+          "choice_names": [
+            "Jorge L. Barón"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 4",
+          "race_id": "king-county-council-4",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        }
+      ],
+      "source_id": "seiu-775",
+      "source_name": "SEIU 775"
+    },
+    {
+      "adapter_fingerprint": "745d3b594d9818757524150abffe72af9a300a969205087f72cea8a0a235409f",
+      "capture_id": "capture-transit-riders-union-20261016T150136Z-6945a2e7403e",
+      "coverage_and_limits": "All eight original list decisions match, including the King County Council 2 dual. The automatic live collector still self-redirects; its bounded failures remain visible. A separate current browser read matches all eight choices.",
+      "extraction_fingerprint": "cec2392e7a651c5e2972303ae9269295f6103d7c70f37e0e8fad549fc5e25ba7",
+      "extraction_reproduced_exactly": true,
+      "full_approved_decisions": 8,
+      "full_original_review": "completed_by_agent_pending_human_attestation",
+      "mapped_decisions": 8,
+      "original_byte_length": 50981,
+      "original_content_sha256": "04356a81d5e103b535b474b0f72be1b60ea038f1a4ac19e0d9cd2bad792770b4",
+      "original_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+      "snapshot_file_sha256": "ea4af66d2a765ca862ecc35c34696b39aefcd32969dc097ad9b79c6286ae8b4a",
+      "snapshot_id": "extraction-transit-riders-union-20261016T150136Z-76cb0dd8b335",
+      "snapshot_url": "https://github.com/shaug/seattle-election-guide/blob/a0aa1050659d1459662d6bd260dd20a60c94ce55/data/verification/wa-2026-general/extractions/extraction-transit-riders-union-20261016T150136Z-76cb0dd8b335.json",
+      "source_decisions": [
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ],
+          "choice_names": [
+            "Danica Noble"
+          ],
+          "race_display_name": "Legislative District 32 State Representative — Position 1",
+          "race_id": "ld-32-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "choice_names": [
+            "Imraan Siddiqi"
+          ],
+          "race_display_name": "Legislative District 32 State Representative — Position 2",
+          "race_id": "ld-32-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "choice_names": [
+            "Kelabe Tewolde"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 1",
+          "race_id": "ld-37-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-senator--tatiana-brown"
+          ],
+          "choice_names": [
+            "Tatiana Brown"
+          ],
+          "race_display_name": "Legislative District 37 State Senator",
+          "race_id": "ld-37-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "choice_names": [
+            "Hannah Sabio-Howell"
+          ],
+          "race_display_name": "Legislative District 43 State Senator",
+          "race_id": "ld-43-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/2",
+          "candidate_ids": [
+            "king-county-council-2--toshiko-grace-hasegawa",
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "choice_names": [
+            "Toshiko Grace Hasegawa",
+            "Rebecca Saldaña"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 2",
+          "race_id": "king-county-council-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "choice_names": [
+            "Nilu Jenks"
+          ],
+          "race_display_name": "Seattle City Council — District 5",
+          "race_id": "seattle-city-council-5",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "seattle-municipal-court-judge-5--gabe-rothstein"
+          ],
+          "choice_names": [
+            "Gabe Rothstein"
+          ],
+          "race_display_name": "Seattle Municipal Court Judge — Position 5",
+          "race_id": "seattle-municipal-court-judge-5",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        }
+      ],
+      "source_id": "transit-riders-union",
+      "source_name": "Transit Riders Union"
+    },
+    {
+      "adapter_fingerprint": "e5e02bb21e54d3a2f91f63854fc147012ba3358d3580e6e3f5fb34ab06822b01",
+      "capture_id": "capture-ufcw-3000-20261018T084551Z-fbf8a7c7a18d",
+      "coverage_and_limits": "Entire original reviewed, including all 78 candidate rows and initiative-news summaries. The adapter recognizes 25 of 29 approved decisions. Shaun Scott and the three No initiative decisions remain supported by the broader reviewed publication and linked official articles. Fixed name alternations do not bind enclosing district headings; office context was checked manually. Linked article bodies and external image pixels are separate from the exact archived HTML.",
+      "extraction_fingerprint": "c95326a1c6a39d89437c51d6a3c1d3ab2eb075a21447c1ff3809cb7f93a1518c",
+      "extraction_reproduced_exactly": true,
+      "full_approved_decisions": 29,
+      "full_original_review": "completed_by_agent_pending_human_attestation",
+      "mapped_decisions": 25,
+      "original_byte_length": 222383,
+      "original_content_sha256": "5227d8cf11935287ebcbd80b743b4793ccc37f1a79ccd031b9f94aa80ad039d8",
+      "original_url": "https://ufcw3000.org/endorsements",
+      "snapshot_file_sha256": "b2cda87719b3da309d15f61f711ed913c3c3478288f5060567de4fca8165102f",
+      "snapshot_id": "extraction-ufcw-3000-20261018T084551Z-60f99c6a9a18",
+      "snapshot_url": "https://github.com/shaug/seattle-election-guide/blob/a0aa1050659d1459662d6bd260dd20a60c94ce55/data/verification/wa-2026-general/extractions/extraction-ufcw-3000-20261018T084551Z-60f99c6a9a18.json",
+      "source_decisions": [
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-assessor--rob-foxcurran"
+          ],
+          "choice_names": [
+            "Rob Foxcurran"
+          ],
+          "race_display_name": "King County Assessor",
+          "race_id": "king-county-assessor",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-prosecuting-attorney--leesa-manion"
+          ],
+          "choice_names": [
+            "Leesa Manion"
+          ],
+          "race_display_name": "King County Prosecuting Attorney",
+          "race_id": "king-county-prosecuting-attorney",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "choice_names": [
+            "Rebecca Saldaña"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 2",
+          "race_id": "king-county-council-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-4--jorge-l-baron"
+          ],
+          "choice_names": [
+            "Jorge L. Barón"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 4",
+          "race_id": "king-county-council-4",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "choice_names": [
+            "Teresa Mosqueda"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 8",
+          "race_id": "king-county-council-8",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "choice_names": [
+            "Nilu Jenks"
+          ],
+          "race_display_name": "Seattle City Council — District 5",
+          "race_id": "seattle-city-council-5",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "supreme-court-justice-1--colleen-melody"
+          ],
+          "choice_names": [
+            "Colleen Melody"
+          ],
+          "race_display_name": "Washington Supreme Court Justice — Position 1",
+          "race_id": "supreme-court-justice-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "choice_names": [
+            "Jaime Michelle Hawk"
+          ],
+          "race_display_name": "Washington Supreme Court Justice — Position 3",
+          "race_id": "supreme-court-justice-3",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-11-state-representative-1--david-hackney"
+          ],
+          "choice_names": [
+            "David Hackney"
+          ],
+          "race_display_name": "Legislative District 11 State Representative — Position 1",
+          "race_id": "ld-11-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ],
+          "choice_names": [
+            "Danica Noble"
+          ],
+          "race_display_name": "Legislative District 32 State Representative — Position 1",
+          "race_id": "ld-32-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/2",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis",
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "choice_names": [
+            "Lauren Davis",
+            "Imraan Siddiqi"
+          ],
+          "race_display_name": "Legislative District 32 State Representative — Position 2",
+          "race_id": "ld-32-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-32-state-senator--jesse-salomon"
+          ],
+          "choice_names": [
+            "Jesse Salomon"
+          ],
+          "race_display_name": "Legislative District 32 State Senator",
+          "race_id": "ld-32-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-34-state-senator--emily-alvarado"
+          ],
+          "choice_names": [
+            "Emily Alvarado"
+          ],
+          "race_display_name": "Legislative District 34 State Senator",
+          "race_id": "ld-34-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-34-state-representative-1--brianna-k-thomas"
+          ],
+          "choice_names": [
+            "Brianna K. Thomas"
+          ],
+          "race_display_name": "Legislative District 34 State Representative — Position 1",
+          "race_id": "ld-34-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ],
+          "choice_names": [
+            "Joe Fitzgibbon"
+          ],
+          "race_display_name": "Legislative District 34 State Representative — Position 2",
+          "race_id": "ld-34-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-36-state-senator--noel-c-frame"
+          ],
+          "choice_names": [
+            "Noel C. Frame"
+          ],
+          "race_display_name": "Legislative District 36 State Senator",
+          "race_id": "ld-36-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "choice_names": [
+            "Julia Grant Reed"
+          ],
+          "race_display_name": "Legislative District 36 State Representative — Position 1",
+          "race_id": "ld-36-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-36-state-representative-2--liz-berry"
+          ],
+          "choice_names": [
+            "Liz Berry"
+          ],
+          "race_display_name": "Legislative District 36 State Representative — Position 2",
+          "race_id": "ld-36-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "choice_names": [
+            "Chipalo Street"
+          ],
+          "race_display_name": "Legislative District 37 State Senator",
+          "race_id": "ld-37-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "choice_names": [
+            "Jaelynn Scott"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 2",
+          "race_id": "ld-37-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen"
+          ],
+          "choice_names": [
+            "Jamie Pedersen"
+          ],
+          "race_display_name": "Legislative District 43 State Senator",
+          "race_id": "ld-43-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-representative-1--nicole-macri"
+          ],
+          "choice_names": [
+            "Nicole Macri"
+          ],
+          "race_display_name": "Legislative District 43 State Representative — Position 1",
+          "race_id": "ld-43-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "choice_names": [
+            "Javier Valdez"
+          ],
+          "race_display_name": "Legislative District 46 State Senator",
+          "race_id": "ld-46-state-senator",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "choice_names": [
+            "Gerry Pollet"
+          ],
+          "race_display_name": "Legislative District 46 State Representative — Position 1",
+          "race_id": "ld-46-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "choice_names": [
+            "Darya Farivar"
+          ],
+          "race_display_name": "Legislative District 46 State Representative — Position 2",
+          "race_id": "ld-46-state-representative-2",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-representative-2--shaun-scott"
+          ],
+          "choice_names": [
+            "Shaun Scott"
+          ],
+          "race_display_name": "Legislative District 43 State Representative — Position 2",
+          "race_id": "ld-43-state-representative-2",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "choice_names": [
+            "No"
+          ],
+          "race_display_name": "Initiative IL26-001 — Parental Rights in Public Schools",
+          "race_id": "initiative-26-001",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "choice_names": [
+            "No"
+          ],
+          "race_display_name": "Initiative IL26-638 — Participation in K-12 School Athletics",
+          "race_id": "initiative-26-638",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "choice_names": [
+            "No"
+          ],
+          "race_display_name": "Initiative IP26-645 — State and Local Taxes",
+          "race_id": "initiative-26-645",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        }
+      ],
+      "source_id": "ufcw-3000",
+      "source_name": "UFCW 3000"
+    },
+    {
+      "adapter_fingerprint": "0e002a960bc19b4deb9bc0544482960432f8231c6ac6105a79f0bae8a04b908a",
+      "capture_id": "capture-washington-working-families-party-20261017T084504Z-756bb2993ef5",
+      "coverage_and_limits": "Original static HTML has ten Washington rows: five Seattle choices and five outside scope. The separately retained current browser View More table contains 17 rows: ten Seattle choices and seven exclusions. The five additional approved Seattle decisions are absent from the exact static baseline HTML and remain outside its fixed adapter. No missing original rows are invented.",
+      "extraction_fingerprint": "89d60aed4bffed899f07d6af89d7b40cbe24b2f3eb7103de395466c63b7d240c",
+      "extraction_reproduced_exactly": true,
+      "full_approved_decisions": 10,
+      "full_original_review": "completed_by_agent_pending_human_attestation",
+      "mapped_decisions": 5,
+      "original_byte_length": 129913,
+      "original_content_sha256": "add4b4aa02c6deb568d9a251f513c3e97ab8a441076e7cdbaf9c35a0d33d51e6",
+      "original_url": "https://workingfamilies.org/candidates/",
+      "snapshot_file_sha256": "ba4556af3f55e408f39697576ade196baab25d0fabfe7ef67110d9e5589122a5",
+      "snapshot_id": "extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c",
+      "snapshot_url": "https://github.com/shaug/seattle-election-guide/blob/a0aa1050659d1459662d6bd260dd20a60c94ce55/data/verification/wa-2026-general/extractions/extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c.json",
+      "source_decisions": [
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "choice_names": [
+            "Pramila Jayapal"
+          ],
+          "race_display_name": "U.S. Representative — Congressional District 7",
+          "race_id": "us-house-7",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-4--jorge-l-baron"
+          ],
+          "choice_names": [
+            "Jorge L. Barón"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 4",
+          "race_id": "king-county-council-4",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "choice_names": [
+            "Teresa Mosqueda"
+          ],
+          "race_display_name": "Metropolitan King County Council — District 8",
+          "race_id": "king-county-council-8",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "choice_names": [
+            "Nilu Jenks"
+          ],
+          "race_display_name": "Seattle City Council — District 5",
+          "race_id": "seattle-city-council-5",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "choice_names": [
+            "Kelabe Tewolde"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 1",
+          "race_id": "ld-37-state-representative-1",
+          "recognized_by_snapshot_adapter": true,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "choice_names": [
+            "Jaelynn Scott"
+          ],
+          "race_display_name": "Legislative District 37 State Representative — Position 2",
+          "race_id": "ld-37-state-representative-2",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-representative-2--shaun-scott"
+          ],
+          "choice_names": [
+            "Shaun Scott"
+          ],
+          "race_display_name": "Legislative District 43 State Representative — Position 2",
+          "race_id": "ld-43-state-representative-2",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "choice_names": [
+            "Darya Farivar"
+          ],
+          "race_display_name": "Legislative District 46 State Representative — Position 2",
+          "race_id": "ld-46-state-representative-2",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-36-state-senator--noel-c-frame"
+          ],
+          "choice_names": [
+            "Noel C. Frame"
+          ],
+          "race_display_name": "Legislative District 36 State Senator",
+          "race_id": "ld-36-state-senator",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        },
+        {
+          "allocation_each": "1/1",
+          "candidate_ids": [
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "choice_names": [
+            "Hannah Sabio-Howell"
+          ],
+          "race_display_name": "Legislative District 43 State Senator",
+          "race_id": "ld-43-state-senator",
+          "recognized_by_snapshot_adapter": false,
+          "status": "endorsed"
+        }
+      ],
+      "source_id": "washington-working-families-party",
+      "source_name": "Washington Working Families Party"
+    }
+  ]
+}

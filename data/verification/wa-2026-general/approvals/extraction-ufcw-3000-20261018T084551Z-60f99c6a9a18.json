@@ -1,0 +1,6 @@
+{
+  "evidence": "Human response: \"Approve all six baselines\" after the exact authenticated baseline review and private source views. data/review/approvals/wa-2026-general-2026-10-18-verification.json; data/review/proposals/wa-2026-general-2026-10-18-baselines.json, SHA-256 a777989844a946f49762b5a80090cf24b7d3e35c923d6cb3e0d8f4abfcb80675; source ufcw-3000. All87 mapped decisions and99 broader source decisions accounted for; preserve fixed-adapter coverage limits. No endorsement ledger edit, historical review, or first-tranche adoption approval.",
+  "reviewed_at": "2026-10-19T04:14:31.209146Z",
+  "reviewer": "shaug",
+  "snapshot_id": "extraction-ufcw-3000-20261018T084551Z-60f99c6a9a18"
+}

@@ -1,0 +1,1418 @@
+{
+  "approval_text": "Approved. Apply all 34 additions and work through the remaining baseline approvals and source-access barriers so we can close all three tickets.",
+  "approved_decisions": [
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "f1c958d77d704b784a410e3221254540e2dd67a6d78f0bf72b6adb67f0d6ac2d",
+      "capture_id": "capture-11th-district-democrats-20261019T031241Z-50589efcbce7",
+      "capture_ids": [
+        "capture-11th-district-democrats-20261019T031241Z-50589efcbce7"
+      ],
+      "capture_manifest_sha256": "7a9bfa6211dc09bb7af04f52f099bae6ca6902fa9cf8fd052b79dbfdbbdcd7bf",
+      "evidence_locator": "October 2026 newsletter > 11th LD Dems Endorsed Candidates > King County, Director of Elections > Director Julie Wise; extracted text lines 99–100.",
+      "evidence_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+      "manual_capture_id": "capture-11th-district-democrats-20261019T031241Z-50589efcbce7",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "king-county-director-of-elections--julie-wise"
+        ],
+        "evidence_locator": "October 2026 newsletter > 11th LD Dems Endorsed Candidates > King County, Director of Elections > Director Julie Wise; extracted text lines 99–100. Official source: https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41. Captures: capture-11th-district-democrats-20261019T031241Z-50589efcbce7; verified manual manual-11th-district-democrats-20261019T031729Z-219197aef07c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "king-county-director-of-elections"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-director-of-elections--julie-wise"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-11th-district-democrats-20261019T031729Z-d6d7d5db849c",
+      "pending_sha256": "03d0f014eb959fdd65f52499ad80d1485ea14313ba8b0c1ab210ae7f7f0606ec",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "king-county-director-of-elections",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "11th-district-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-11th-district-democrats-20261019T031729Z-219197aef07c",
+      "verified_sha256": "8bcd0ee959f67de65c5397148c62969e6e3edbb5f2945c3896a2248f042d98eb"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "2d48083a960652af1c2c167fcce3256b1f605ea97962e39cb8110e01432ccc86",
+      "capture_id": "capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c",
+      "capture_ids": [
+        "capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c"
+      ],
+      "capture_manifest_sha256": "e6ea0cf898b261ba0a46bcee3e226f7ea9ff453c6509cee47520ae33eebcf931",
+      "evidence_locator": "North Seattle Canvass — No On 001, 638, 645; October 10 event description, opening paragraphs and closing November voting instruction",
+      "evidence_url": "https://seattledsa.org/event/nseattlecanvass/",
+      "manual_capture_id": "capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_locator": "North Seattle Canvass — No On 001, 638, 645; October 10 event description, opening paragraphs and closing November voting instruction Official source: https://seattledsa.org/event/nseattlecanvass/. Captures: capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c; verified manual manual-seattle-democratic-socialists-20261019T031729Z-08bb955d86e2. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "initiative-26-645"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-seattle-democratic-socialists-20261019T031729Z-538762f0041d",
+      "pending_sha256": "856058bfde16bc28d3c96fa00a4ba4897703d4d34a7998f2aac12b7706349be2",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "initiative-26-645",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "seattle-democratic-socialists",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-seattle-democratic-socialists-20261019T031729Z-08bb955d86e2",
+      "verified_sha256": "9f6967fd33607466f7258d48a5580d53ddc95bb44caca15c741c101ada08334a"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "e5ee9e07d16b053d799c2317fe7b053e0dc514e40a04dbd42caa694a93c2e3ef",
+      "capture_id": "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97",
+      "capture_ids": [
+        "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97"
+      ],
+      "capture_manifest_sha256": "215d549da4950c8b1035d7de07bdd32305e9d59957bacb3cb7b81b39dd1e5019",
+      "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 36th District, Senate",
+      "evidence_url": "https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/",
+      "manual_capture_id": "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97",
+      "new_ledger_value": {
+        "candidate_ids": [],
+        "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 36th District, Senate Official source: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/. Captures: capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97; verified manual manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-36-state-senator",
+        "status": "no_endorsement"
+      },
+      "new_value": {
+        "allocation_each": null,
+        "candidate_ids": [],
+        "status": "no_endorsement"
+      },
+      "pending_manual_entry_id": "manual-seattle-times-editorial-board-20261019T031729Z-361d914570f7",
+      "pending_sha256": "050165881431a6ba23c6bb05b6c9c5abb3f43b728eb48afd127c8867747a953c",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-36-state-senator",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "seattle-times-editorial-board",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3",
+      "verified_sha256": "f96be940840c4b8798e62b73623d8599ff15f6a307864ecfa8f5fc596152e741"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "e5ee9e07d16b053d799c2317fe7b053e0dc514e40a04dbd42caa694a93c2e3ef",
+      "capture_id": "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97",
+      "capture_ids": [
+        "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97"
+      ],
+      "capture_manifest_sha256": "215d549da4950c8b1035d7de07bdd32305e9d59957bacb3cb7b81b39dd1e5019",
+      "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 37th District, House, Senate",
+      "evidence_url": "https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/",
+      "manual_capture_id": "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97",
+      "new_ledger_value": {
+        "candidate_ids": [],
+        "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 37th District, House, Senate Official source: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/. Captures: capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97; verified manual manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-37-state-senator",
+        "status": "no_endorsement"
+      },
+      "new_value": {
+        "allocation_each": null,
+        "candidate_ids": [],
+        "status": "no_endorsement"
+      },
+      "pending_manual_entry_id": "manual-seattle-times-editorial-board-20261019T031729Z-361d914570f7",
+      "pending_sha256": "050165881431a6ba23c6bb05b6c9c5abb3f43b728eb48afd127c8867747a953c",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-senator",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "seattle-times-editorial-board",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3",
+      "verified_sha256": "f96be940840c4b8798e62b73623d8599ff15f6a307864ecfa8f5fc596152e741"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "e5ee9e07d16b053d799c2317fe7b053e0dc514e40a04dbd42caa694a93c2e3ef",
+      "capture_id": "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97",
+      "capture_ids": [
+        "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97"
+      ],
+      "capture_manifest_sha256": "215d549da4950c8b1035d7de07bdd32305e9d59957bacb3cb7b81b39dd1e5019",
+      "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 46th District, Senate",
+      "evidence_url": "https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/",
+      "manual_capture_id": "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97",
+      "new_ledger_value": {
+        "candidate_ids": [],
+        "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 46th District, Senate Official source: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/. Captures: capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97; verified manual manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-46-state-senator",
+        "status": "no_endorsement"
+      },
+      "new_value": {
+        "allocation_each": null,
+        "candidate_ids": [],
+        "status": "no_endorsement"
+      },
+      "pending_manual_entry_id": "manual-seattle-times-editorial-board-20261019T031729Z-361d914570f7",
+      "pending_sha256": "050165881431a6ba23c6bb05b6c9c5abb3f43b728eb48afd127c8867747a953c",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-46-state-senator",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "seattle-times-editorial-board",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3",
+      "verified_sha256": "f96be940840c4b8798e62b73623d8599ff15f6a307864ecfa8f5fc596152e741"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "1. Congressional Districts > Congressional District 7 > U.S. Representative",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "evidence_locator": "1. Congressional Districts > Congressional District 7 > U.S. Representative Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "us-house-7"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "us-house-7",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "1. Congressional Districts > Congressional District 9 > U.S. Representative",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "evidence_locator": "1. Congressional Districts > Congressional District 9 > U.S. Representative Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "us-house-9"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "us-house-9",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "2. Supreme Court > Justice, Position 1",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "evidence_locator": "2. Supreme Court > Justice, Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "supreme-court-justice-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-1",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "2. Supreme Court > Justice, Position 3",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "evidence_locator": "2. Supreme Court > Justice, Position 3 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "supreme-court-justice-3"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-3",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "2. Supreme Court > Justice, Position 4",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "evidence_locator": "2. Supreme Court > Justice, Position 4 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "supreme-court-justice-4"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-4",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "2. Supreme Court > Justice, Position 5",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "evidence_locator": "2. Supreme Court > Justice, Position 5 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "supreme-court-justice-5"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-5",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "2. Supreme Court > Justice, Position 7",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "evidence_locator": "2. Supreme Court > Justice, Position 7 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "supreme-court-justice-7"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "supreme-court-justice-7",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "3. Ballot Initiatives > IL26-001 > VOTE NO",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "evidence_locator": "3. Ballot Initiatives > IL26-001 > VOTE NO Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "initiative-26-001"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "initiative-26-001",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "3. Ballot Initiatives > IL26-638 > VOTE NO",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "evidence_locator": "3. Ballot Initiatives > IL26-638 > VOTE NO Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "initiative-26-638"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "initiative-26-638",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "3. Ballot Initiatives > IP26-645 > VOTE NO",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_locator": "3. Ballot Initiatives > IP26-645 > VOTE NO Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "initiative-26-645"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "initiative-26-645",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 11 > State Representative Position 1",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-11-state-representative-1--ashley-fedan"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 11 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-11-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-11-state-representative-1--ashley-fedan"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-11-state-representative-1",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 32 > State Senator",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 32 > State Senator Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-32-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-32-state-senator",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 32 > State Representative Position 1",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-representative-1--danica-noble"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 32 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-32-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-1--danica-noble"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-32-state-representative-1",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 32 > State Representative Position 2",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 32 > State Representative Position 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-32-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-32-state-representative-2",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 34 > State Representative Position 1",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 34 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-34-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-34-state-representative-1",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 34 > State Representative Position 2",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 34 > State Representative Position 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-34-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-34-state-representative-2",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 36 > State Senator",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 36 > State Senator Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-36-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-36-state-senator",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 37 > State Senator",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 37 > State Senator Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-37-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-senator",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 37 > State Representative Position 1",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 37 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-37-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-representative-1",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 37 > State Representative Position 2",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 37 > State Representative Position 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-37-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-37-state-representative-2",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 43 > State Representative Position 1",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 43 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-43-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-43-state-representative-1",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 46 > State Senator",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 46 > State Senator Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-46-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-46-state-senator",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 46 > State Representative Position 1",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-representative-1--will-dreher"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 46 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-46-state-representative-1"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-1--will-dreher"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-46-state-representative-1",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 46 > State Representative Position 2",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 46 > State Representative Position 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-46-state-representative-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-46-state-representative-2",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "5. King County > Assessor",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "king-county-assessor--rob-foxcurran"
+        ],
+        "evidence_locator": "5. King County > Assessor Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "king-county-assessor"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-assessor--rob-foxcurran"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "king-county-assessor",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "5. King County > King County Council District 2",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "evidence_locator": "5. King County > King County Council District 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "king-county-council-2"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "king-county-council-2",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "6. City of Seattle > Municipal Court Judge Position No. 5",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
+        "evidence_locator": "6. City of Seattle > Municipal Court Judge Position No. 5 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "seattle-municipal-court-judge-5"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "seattle-municipal-court-judge-5",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "6. City of Seattle > City Council, District 5",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "evidence_locator": "6. City of Seattle > City Council, District 5 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "seattle-city-council-5"
+      },
+      "new_value": {
+        "allocation_each": "1/1",
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "status": "endorsed"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "seattle-city-council-5",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    },
+    {
+      "action": "addition",
+      "author": "shaug",
+      "capture_content_sha256": "07f7bc61c728bf3d6cb9046e576b760d4a2f17684a8aa71789f214fcf96ae259",
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd"
+      ],
+      "capture_manifest_sha256": "ba7d5f948dd34446c4cd81a3b2dbb4979fc0c55c124fd35644b05bbbf1b27507",
+      "evidence_locator": "4. Legislative Races > Legislative District 43 > State Senator; both named cards displayed without rank or preference.",
+      "evidence_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+      "manual_capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "new_ledger_value": {
+        "candidate_ids": [
+          "ld-43-state-senator--hannah-sabio-howell",
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "evidence_locator": "4. Legislative Races > Legislative District 43 > State Senator; both named cards displayed without rank or preference. Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "race_id": "ld-43-state-senator"
+      },
+      "new_value": {
+        "allocation_each": "1/2",
+        "candidate_ids": [
+          "ld-43-state-senator--hannah-sabio-howell",
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "status": "dual_endorsement"
+      },
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "prior_ledger_value": null,
+      "prior_value": null,
+      "race_id": "ld-43-state-senator",
+      "reason": "Apply the exact user-approved official-source decision; preserve every prior decision, allocation and explicit source-label treatment.",
+      "source_id": "washington-stonewall-democrats",
+      "timestamp": "2026-10-19T03:51:20.554554Z",
+      "transcriber": "OpenAI Codex",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    }
+  ],
+  "approved_discovery_changes": [
+    {
+      "new_value": {
+        "canonical_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+        "checked_at": "2026-10-19T03:27:56.019153Z",
+        "evidence_locator": "Official chapter profile → official post → organization Google Site → embedded explicit 2026 GENERAL ELECTION guide. Retained original browser witness capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd and normalized factual capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006. data/review/approvals/wa-2026-general-2026-10-18.json.",
+        "media_type": "text/html",
+        "notes": "The current official general guide resolves the earlier primary-only/access limitation. shaug approved 29 Seattle race decisions, including three No initiative choices and one equal Senate dual. Frozen eligibility, panel membership, codes and scoring remain intact.",
+        "requested_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+        "status": "published"
+      },
+      "prior_value": {
+        "checked_at": "2026-10-04T04:56:54Z",
+        "evidence_locator": "Official-source rolling recheck for issue #474. Capture capture-washington-stonewall-democrats-20261004T045654Z-72ae3a59634c.",
+        "notes": "Official Facebook response exposed no reconstructable post content; access-restricted disposition preserved.",
+        "requested_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+        "status": "access_restricted"
+      },
+      "source_id": "washington-stonewall-democrats"
+    }
+  ],
+  "baseline_input_sha256": {
+    "config/sources/wa-2026-general.yaml": "b768ab12d366d345a7886c8dc3a61438ff2cc33a52042b49cf5eb7c505e7dd0f",
+    "data/normalized/wa-2026-general-canonical-dataset.json": "da873f6755f0b83a82e1a5c5a00acbc3ed576dd52035aed65e76d5a6e241cd7c",
+    "data/normalized/wa-2026-general-inventory.json": "46072aa86d3a63dc66c88ae8c347b813dfc3dea2b0334d87b835eb9d80640ed6",
+    "data/releases/wa-2026-general/source-decisions.yaml": "1286c04ba2b8c38081f1f77d0d7789bdc95402bf52b955c7d4965625240f9b6e"
+  },
+  "election_id": "wa-2026-general",
+  "held_unresolved": [
+    "Six snapshot-bound human automatic baselines",
+    "Current Stranger, WEA, OneAmerica and Sierra publication access research remains separate",
+    "Washington Bikes omissions preserved without withdrawal inference",
+    "WA4PJ grey court ratings remain unresolved/unscored"
+  ],
+  "manual_entry_successors": [
+    {
+      "capture_id": "capture-11th-district-democrats-20261019T031241Z-50589efcbce7",
+      "pending_manual_entry_id": "manual-11th-district-democrats-20261019T031729Z-d6d7d5db849c",
+      "pending_sha256": "03d0f014eb959fdd65f52499ad80d1485ea14313ba8b0c1ab210ae7f7f0606ec",
+      "verified_manual_entry_id": "manual-11th-district-democrats-20261019T031729Z-219197aef07c",
+      "verified_sha256": "8bcd0ee959f67de65c5397148c62969e6e3edbb5f2945c3896a2248f042d98eb"
+    },
+    {
+      "capture_id": "capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c",
+      "pending_manual_entry_id": "manual-seattle-democratic-socialists-20261019T031729Z-538762f0041d",
+      "pending_sha256": "856058bfde16bc28d3c96fa00a4ba4897703d4d34a7998f2aac12b7706349be2",
+      "verified_manual_entry_id": "manual-seattle-democratic-socialists-20261019T031729Z-08bb955d86e2",
+      "verified_sha256": "9f6967fd33607466f7258d48a5580d53ddc95bb44caca15c741c101ada08334a"
+    },
+    {
+      "capture_id": "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97",
+      "pending_manual_entry_id": "manual-seattle-times-editorial-board-20261019T031729Z-361d914570f7",
+      "pending_sha256": "050165881431a6ba23c6bb05b6c9c5abb3f43b728eb48afd127c8867747a953c",
+      "verified_manual_entry_id": "manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3",
+      "verified_sha256": "f96be940840c4b8798e62b73623d8599ff15f6a307864ecfa8f5fc596152e741"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-53407b6376b1",
+      "pending_sha256": "5e7d425571a2afc6e4f4490015dd589237e868e4b58b6efa950053cff78c7c55",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469",
+      "verified_sha256": "5e04d4be2572b413d2f3f76d55b0343550fae8bbe48fabf3134b861faacbe0a3"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-60f433951aec",
+      "pending_sha256": "33fe22b237a945e9032f9397f62ef6b2f32e75afc1bea97b177eaabac1558f94",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c",
+      "verified_sha256": "cbc79468d4f6a3e3edf05ff00a9e0f7c7d85cda8ffc72ea9a9faabb46d762519"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006",
+      "pending_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-fcddaee58c21",
+      "pending_sha256": "f7281c5ed410a7cb409ccaad545a73e3ec158af6afb96bf92b06572620193e06",
+      "verified_manual_entry_id": "manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c",
+      "verified_sha256": "432a36e94823488d91adacfb574a8364e40948d2bae30b8d8a15939c86758af6"
+    }
+  ],
+  "no_new_baseline_or_daily_or_whole_panel_attestation": true,
+  "prior_source_reviews": {
+    "11th-district-democrats": {
+      "captured_at": "2026-10-04T04:56:53Z",
+      "evidence_locator": "Official September 12 endorsement-meeting results distributed by the district. Capture capture-11th-district-democrats-20261004T045653Z-1c69ce0cdea5.",
+      "review_note": "Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the September meeting results; shaug verified every source decision, the explicit US House 9 no-endorsement, and the unambiguous Debra Stephens Position 7 mapping despite the source Position 6 typo. Sharonda Amamilo is absent from the frozen general ballot, so the source co-endorsement resolves to Theo Angelis alone under REVIEW_GUIDE.md.",
+      "reviewed_at": "2026-10-04T05:30:06Z",
+      "reviewer": "shaug",
+      "source_id": "11th-district-democrats"
+    },
+    "seattle-democratic-socialists": {
+      "captured_at": "2026-10-16T15:04:11.581148Z",
+      "evidence_locator": "October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
+      "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Related-event widget changed; Jaelynn Scott endorsement text unchanged. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle official endorsement; shaug verified the wording, general-ballot match, and current-cycle treatment.",
+      "reviewed_at": "2026-10-16T15:48:50.280092Z",
+      "reviewer": "shaug",
+      "source_id": "seattle-democratic-socialists"
+    },
+    "seattle-times-editorial-board": {
+      "captured_at": "2026-10-16T15:03:29.871948Z",
+      "evidence_locator": "October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
+      "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the official general-election recommendation index; shaug verified all five clear recommendations and confirmed the Supreme Court Position 4 critique is not a recommendation. This source remains comparison-only.",
+      "reviewed_at": "2026-10-16T15:48:50.280092Z",
+      "reviewer": "shaug",
+      "source_id": "seattle-times-editorial-board"
+    },
+    "washington-stonewall-democrats": {}
+  },
+  "proposal_path": "data/review/proposals/wa-2026-general-2026-10-18-verification.json",
+  "proposal_sha256": "870ba7f044bcecc8766eae630d7d363907cd26f3e102696adbc4ccf302c838a4",
+  "record_type": "endorsement_refresh_approval",
+  "result": {
+    "additions": 34,
+    "new_decisions": 914,
+    "prior_decisions": 880,
+    "removals": 0,
+    "replacements": 0,
+    "source_blocks": 46
+  },
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T03:51:20.554554Z",
+  "reviewed_by": "shaug",
+  "schema_version": "1.0",
+  "scope_issues": [
+    545,
+    560,
+    567
+  ],
+  "timestamp_semantics": "Actual time the user approval was transcribed; no historical check is backdated.",
+  "transcriber": "OpenAI Codex"
+}

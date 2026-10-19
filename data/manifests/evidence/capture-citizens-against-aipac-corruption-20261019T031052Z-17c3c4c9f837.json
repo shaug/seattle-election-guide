@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 588616,
+  "canonical_url": "https://www.trackaipac.com/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "ac70668e287c674b36a34abae4c5660b641f7b542a5bca94f403e50d96343ca5",
+  "http_status": 200,
+  "id": "capture-citizens-against-aipac-corruption-20261019T031052Z-17c3c4c9f837",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.trackaipac.com/endorsements",
+  "retrieved_at": "2026-10-19T03:10:52.924212Z",
+  "schema_version": "1.0",
+  "source_id": "citizens-against-aipac-corruption",
+  "storage_reference": "sha256/ac/ac70668e287c674b36a34abae4c5660b641f7b542a5bca94f403e50d96343ca5",
+  "storage_scope": "local_only",
+  "title": "Citizens Against AIPAC Corruption (Track AIPAC) current official publication",
+  "updated_at": null
+}

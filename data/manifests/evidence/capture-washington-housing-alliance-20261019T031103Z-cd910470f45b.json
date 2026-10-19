@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 275624,
+  "canonical_url": "https://www.wahousingalliance.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "f3e8eebd20483308eaaaf162fa7f8cf9a4def3c7823213bfcdc643a8afb91b9d",
+  "http_status": 200,
+  "id": "capture-washington-housing-alliance-20261019T031103Z-cd910470f45b",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.wahousingalliance.org/endorsements",
+  "retrieved_at": "2026-10-19T03:11:03.714323Z",
+  "schema_version": "1.0",
+  "source_id": "washington-housing-alliance",
+  "storage_reference": "sha256/f3/f3e8eebd20483308eaaaf162fa7f8cf9a4def3c7823213bfcdc643a8afb91b9d",
+  "storage_scope": "local_only",
+  "title": "Washington Housing Alliance current official publication",
+  "updated_at": null
+}

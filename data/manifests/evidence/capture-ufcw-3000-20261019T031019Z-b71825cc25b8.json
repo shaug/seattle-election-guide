@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 222383,
+  "canonical_url": "https://ufcw3000.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "c1cfee7584c033d51f5b6173b6fd504ea2733133f192d423f5bf19f03969d34d",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20261019T031019Z-b71825cc25b8",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://ufcw3000.org/endorsements",
+  "retrieved_at": "2026-10-19T03:10:19.799518Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "storage_reference": "sha256/c1/c1cfee7584c033d51f5b6173b6fd504ea2733133f192d423f5bf19f03969d34d",
+  "storage_scope": "local_only",
+  "title": "UFCW 3000 current official publication",
+  "updated_at": null
+}

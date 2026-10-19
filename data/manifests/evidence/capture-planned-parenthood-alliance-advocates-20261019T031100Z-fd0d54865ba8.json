@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 174868,
+  "canonical_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "d8a7156ffd90f907b0e1793494b7fb75021dfb8a5ac4ac802891665ec1d8adbb",
+  "http_status": 200,
+  "id": "capture-planned-parenthood-alliance-advocates-20261019T031100Z-fd0d54865ba8",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+  "retrieved_at": "2026-10-19T03:11:00.412168Z",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "storage_reference": "sha256/d8/d8a7156ffd90f907b0e1793494b7fb75021dfb8a5ac4ac802891665ec1d8adbb",
+  "storage_scope": "local_only",
+  "title": "Planned Parenthood Alliance Advocates current official publication",
+  "updated_at": null
+}

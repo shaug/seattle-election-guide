@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-19T03:13:06.726105Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "July 1, 2026 official Trans Athletes & Supreme Court statement; paragraphs naming both November measures and expressly opposing their passage. Source semantics: opposition to passage; not a verbatim Vote No quotation. Official source: https://seattledsa.org/2026/07/trans-athletes-supreme-court/. Capture capture-seattle-democratic-socialists-20261016T150411Z-acae1ccfa734; verified manual manual-seattle-democratic-socialists-20261016T154850Z-1e2d0dd7af18.",
+      "race_id": "initiative-26-001",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "July 1, 2026 official Trans Athletes & Supreme Court statement; paragraphs naming both November measures and expressly opposing their passage. Source semantics: opposition to passage; not a verbatim Vote No quotation. Official source: https://seattledsa.org/2026/07/trans-athletes-supreme-court/. Capture capture-seattle-democratic-socialists-20261016T150411Z-acae1ccfa734; verified manual manual-seattle-democratic-socialists-20261016T154850Z-1e2d0dd7af18.",
+      "race_id": "initiative-26-638",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Complete current source review: data/review/approvals/wa-2026-general-2026-10-18-verification.json; actual source captures capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c. Individual decisions retain their own exact publication locators, including earlier approved evidence. Metadata correction: data/review/provenance-corrections/wa-2026-general-2026-10-18.json.",
+  "review_note": "shaug approved the complete current source review at 2026-10-19T04:14:31.209146Z: data/review/approvals/wa-2026-general-2026-10-18-verification.json. The enumerated additions were separately approved at 2026-10-19T03:51:20.554554Z: data/review/approvals/wa-2026-general-2026-10-18.json. OpenAI Codex transcribed both approvals. This source block uses the actual current capture and complete source-review times; earlier source metadata is preserved verbatim in data/review/provenance-corrections/wa-2026-general-2026-10-18.json and the original approval prior_source_reviews. All decision dictionaries, original per-decision locators, prior source-label mappings and allocations are unchanged. Omissions do not establish withdrawals; preserve the earlier 11th District CD9 no-endorsement and the Times comparison-only treatment. No new human approval, baseline adoption or historical webpage access is asserted by the metadata correction.",
+  "reviewer": "shaug",
+  "source_id": "seattle-democratic-socialists"
+}

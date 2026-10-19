@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 95657,
+  "canonical_url": "https://www.seiu925.org/2026endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "d8ef830bb872cb03750f75d81ef5b7b819b5e8b9ef564191a882eeafc46e4aa9",
+  "http_status": 200,
+  "id": "capture-seiu-925-20261019T031056Z-c8587c887078",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.seiu925.org/2026endorsements/",
+  "retrieved_at": "2026-10-19T03:10:56.353658Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-925",
+  "storage_reference": "sha256/d8/d8ef830bb872cb03750f75d81ef5b7b819b5e8b9ef564191a882eeafc46e4aa9",
+  "storage_scope": "local_only",
+  "title": "SEIU 925 current official publication",
+  "updated_at": null
+}

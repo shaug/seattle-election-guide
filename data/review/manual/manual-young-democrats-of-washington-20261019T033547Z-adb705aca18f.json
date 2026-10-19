@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-young-democrats-of-washington-20261019T032803Z-5d5fccea596c",
+  "entered_at": "2026-10-19T03:35:47.999905Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 8 official endorsement carousel, slide 2; named office/district row(s). Complete official slide; prior approved duals and labels retained.",
+  "evidence_type": "image",
+  "id": "manual-young-democrats-of-washington-20261019T033547Z-adb705aca18f",
+  "review_note": "shaug explicitly approved the six exact baseline reviews and the37 current manual-source reviews after their concrete packets and private source views. OpenAI Codex transcribed the approval at its actual time. This verifies the recorded source facts; WA4PJ grey ratings remain unresolved/unscored and no new ledger decision is inferred. data/review/approvals/wa-2026-general-2026-10-18-verification.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:14:31.209146Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "transcription": "ld-32-state-senator — ld-32-state-senator--cindy-ryu\nld-32-state-representative-1 — ld-32-state-representative-1--danica-noble, ld-32-state-representative-1--keith-scully\nld-32-state-representative-2 — ld-32-state-representative-2--imraan-siddiqi\nld-37-state-representative-1 — ld-37-state-representative-1--sharon-tomiko-santos\nld-37-state-representative-2 — ld-37-state-representative-2--jaelynn-scott\nld-43-state-senator — ld-43-state-senator--jamie-pedersen, ld-43-state-senator--hannah-sabio-howell\nld-46-state-representative-1 — ld-46-state-representative-1--gerry-pollet\nld-46-state-senator — ld-46-state-senator--javier-valdez"
+}

@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": true,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": null,
+  "id": "capture-washington-education-association-20261019T032049Z-b35305eea4b8",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Only the clean official URL and factual access outcome are recorded; no security-challenge URL or membership data retained.",
+  "requested_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+  "retrieved_at": "2026-10-19T03:20:49.052633Z",
+  "schema_version": "1.0",
+  "source_id": "washington-education-association",
+  "title": null,
+  "unavailable_reason": "Standard browser displays a membership-certification modal. Proceed would certify WEA membership, so it was not clicked; no new authorized publication review claimed.",
+  "updated_at": null
+}

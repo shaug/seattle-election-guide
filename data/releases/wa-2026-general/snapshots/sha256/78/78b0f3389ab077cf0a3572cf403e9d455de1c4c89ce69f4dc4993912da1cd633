@@ -1,0 +1,33 @@
+{
+  "captured_at": "2026-10-19T03:11:53.841580Z",
+  "decisions": [
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 36th District, Senate Official source: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/. Captures: capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97; verified manual manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "evidence_url": "https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/",
+      "race_id": "ld-36-state-senator",
+      "status": "no_endorsement"
+    },
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 37th District, House, Senate Official source: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/. Captures: capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97; verified manual manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "evidence_url": "https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/",
+      "race_id": "ld-37-state-senator",
+      "status": "no_endorsement"
+    },
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 46th District, Senate Official source: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/. Captures: capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97; verified manual manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "evidence_url": "https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/",
+      "race_id": "ld-46-state-senator",
+      "status": "no_endorsement"
+    }
+  ],
+  "evidence_locator": "Complete current source review: data/review/approvals/wa-2026-general-2026-10-18-verification.json; actual source captures capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97. Individual decisions retain their own exact publication locators, including earlier approved evidence. Metadata correction: data/review/provenance-corrections/wa-2026-general-2026-10-18.json.",
+  "review_note": "shaug approved the complete current source review at 2026-10-19T04:14:31.209146Z: data/review/approvals/wa-2026-general-2026-10-18-verification.json. The enumerated additions were separately approved at 2026-10-19T03:51:20.554554Z: data/review/approvals/wa-2026-general-2026-10-18.json. OpenAI Codex transcribed both approvals. This source block uses the actual current capture and complete source-review times; earlier source metadata is preserved verbatim in data/review/provenance-corrections/wa-2026-general-2026-10-18.json and the original approval prior_source_reviews. All decision dictionaries, original per-decision locators, prior source-label mappings and allocations are unchanged. Omissions do not establish withdrawals; preserve the earlier 11th District CD9 no-endorsement and the Times comparison-only treatment. No new human approval, baseline adoption or historical webpage access is asserted by the metadata correction.",
+  "reviewer": "shaug",
+  "source_id": "seattle-times-editorial-board"
+}

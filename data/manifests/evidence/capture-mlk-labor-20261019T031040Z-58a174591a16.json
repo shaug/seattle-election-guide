@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 108645,
+  "canonical_url": "https://www.mlklabor.org/wp-content/uploads/2026/01/Endorsements-Web-2048x1200.jpg",
+  "capture_method": "image",
+  "content_sha256": "84851cf5121830dfdd377e04e24bcbfb5ea78f5e3ba0232721aad586c501f88d",
+  "http_status": 200,
+  "id": "capture-mlk-labor-20261019T031040Z-58a174591a16",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.mlklabor.org/wp-content/uploads/2026/01/Endorsements-Web-2048x1200.jpg",
+  "retrieved_at": "2026-10-19T03:10:40.401946Z",
+  "schema_version": "1.0",
+  "source_id": "mlk-labor",
+  "storage_reference": "sha256/84/84851cf5121830dfdd377e04e24bcbfb5ea78f5e3ba0232721aad586c501f88d",
+  "storage_scope": "local_only",
+  "title": "MLK Labor current official publication",
+  "updated_at": null
+}

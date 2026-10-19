@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 84950,
+  "canonical_url": "https://platform.winnable.app/organizations/wadems",
+  "capture_method": "static_html",
+  "content_sha256": "662ab4cd09c0067687cf4b2c70da2323ddc0484bdd5ea58fd69f063105526769",
+  "http_status": 200,
+  "id": "capture-washington-state-democrats-20261019T031036Z-81f4925dc8ee",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://platform.winnable.app/organizations/wadems",
+  "retrieved_at": "2026-10-19T03:10:36.278731Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-democrats",
+  "storage_reference": "sha256/66/662ab4cd09c0067687cf4b2c70da2323ddc0484bdd5ea58fd69f063105526769",
+  "storage_scope": "local_only",
+  "title": "Washington State Democratic Party current official publication",
+  "updated_at": null
+}

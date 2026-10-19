@@ -1,0 +1,52 @@
+{
+  "record_type": "technical_decision_publication_link_correction",
+  "recorded_at": "2026-10-19T05:50:12.116722Z",
+  "recorder": "OpenAI Codex",
+  "base_revision": "43736b3d4a8666410876bf6edafcf02933b883ab",
+  "reason": "Two newly approved decisions inherited older source-wide URLs. Bind their generated factual captures to the exact already-approved supporting publications while retaining existing receipt URLs on all other decisions.",
+  "authority": {
+    "approval_record": "data/review/approvals/wa-2026-general-2026-10-18.json",
+    "approval_sha256": "8d6c4961aef5e17878b3f3dc9f5c292c669b273a025085a74cc8a954372d6d7f",
+    "human_text": "Approved. Apply all 34 additions and work through the remaining baseline approvals and source-access barriers so we can close all three tickets.",
+    "new_human_attestation": false
+  },
+  "changes": [
+    {
+      "source_id": "11th-district-democrats",
+      "race_id": "king-county-director-of-elections",
+      "prior_receipt_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=c0097e484d",
+      "evidence_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+      "original_capture_id": "capture-11th-district-democrats-20261019T031241Z-50589efcbce7",
+      "original_capture_manifest_sha256": "7a9bfa6211dc09bb7af04f52f099bae6ca6902fa9cf8fd052b79dbfdbbdcd7bf",
+      "original_content_sha256": "f1c958d77d704b784a410e3221254540e2dd67a6d78f0bf72b6adb67f0d6ac2d",
+      "compiled_capture_id": "capture-11th-district-democrats-20261019T031241Z-3e0a05ca98f4"
+    },
+    {
+      "source_id": "seattle-democratic-socialists",
+      "race_id": "initiative-26-645",
+      "prior_receipt_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+      "evidence_url": "https://seattledsa.org/event/nseattlecanvass/",
+      "original_capture_id": "capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c",
+      "original_capture_manifest_sha256": "e6ea0cf898b261ba0a46bcee3e226f7ea9ff453c6509cee47520ae33eebcf931",
+      "original_content_sha256": "2d48083a960652af1c2c167fcce3256b1f605ea97962e39cb8110e01432ccc86",
+      "compiled_capture_id": "capture-seattle-democratic-socialists-20261019T031306Z-5ecd28126955"
+    }
+  ],
+  "before_hashes": {
+    "ledger_sha256": "b5e831309c18f82a76f11659befa44668af29f962b74201f6cc83b04456c479e",
+    "dataset_sha256": "2348faea67c5e73a086d863afa5c641ee26638b06e5cfce6091d4e8a31ffc4ab"
+  },
+  "after_hashes": {
+    "ledger_sha256": "85e8200fea2f0968865b99881b19f878517cef3d88fb5a50024dcc28aaff6400",
+    "dataset_sha256": "af335aa62353ea21617d2ce04f5d428d881ec43f5ec0fb4e3e1be2110d45cb6b"
+  },
+  "preserved": {
+    "all_914_choices_statuses_allocations_and_review_times": true,
+    "all_880_prior_decision_dictionaries": true,
+    "all_prior_per_decision_locators": true,
+    "only_two_new_decisions_gain_optional_evidence_url": true,
+    "original_proposals_approvals_and_capture_records_unchanged": true,
+    "registry_and_scoring_unchanged": true
+  },
+  "capture_semantics": "Generated captures remain explicitly manual-upload permitted factual extracts with no asserted HTTP status. Each publication capture contains only its associated decisions. An explicit decision URL does not inherit the older discovery publication or update dates. Original restricted source bytes remain private."
+}

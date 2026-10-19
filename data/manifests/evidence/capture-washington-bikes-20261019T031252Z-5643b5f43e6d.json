@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 60454,
+  "canonical_url": "https://wabikes.org/index.php/2026/10/16/wa-bikes-voter-guide-read-our-2026-endorsements-for-better-biking/",
+  "capture_method": "static_html",
+  "content_sha256": "6a41cd50f70a59a4aedac21c63c8ea6ff28e9ea02300d8f98a1079358900692a",
+  "http_status": 200,
+  "id": "capture-washington-bikes-20261019T031252Z-5643b5f43e6d",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://wabikes.org/index.php/2026/10/16/wa-bikes-voter-guide-read-our-2026-endorsements-for-better-biking/",
+  "retrieved_at": "2026-10-19T03:12:52.986705Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "storage_reference": "sha256/6a/6a41cd50f70a59a4aedac21c63c8ea6ff28e9ea02300d8f98a1079358900692a",
+  "storage_scope": "local_only",
+  "title": "Washington Bikes linked official publication",
+  "updated_at": null
+}

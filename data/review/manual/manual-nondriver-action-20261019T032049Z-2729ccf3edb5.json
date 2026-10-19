@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-nondriver-action-20261019T032049Z-6d155f9a4c22",
+  "entered_at": "2026-10-19T03:20:49.087036Z",
+  "entry_method": "manual",
+  "evidence_locator": "Complete November Election textual endorsement list, King County section; linked questionnaire PDF was not newly reviewed. Rebecca Saldana office uses prior approved CountyCouncil2 mapping; source omits district number.",
+  "evidence_type": "web_page",
+  "id": "manual-nondriver-action-20261019T032049Z-2729ccf3edb5",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "transcription": "Seattle Transit Measure — Vote Yes\nSeattle City Council District 5 — Nilu Jenks\nKing County Council District (number not printed in source) — Rebecca Saldana\nKing County Council District 8 — Teresa Mosqueda"
+}

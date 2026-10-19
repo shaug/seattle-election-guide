@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 91681,
+  "canonical_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "capture_method": "manual_upload",
+  "content_sha256": "e455ec6ed2d5ba920f7575b9f73afd01b77063d0798b06d4c4c6302bde6b3073",
+  "http_status": null,
+  "id": "capture-young-democrats-of-washington-20261019T032803Z-5d5fccea596c",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived evidence preserved from a normal public browser visit without login. Accessibility snapshots/screenshots are not original HTTP responses; no HTTP status or redirect history asserted. Raw derived artifacts retained privately by content hash; no redistribution permission asserted.",
+  "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "retrieved_at": "2026-10-19T03:28:03.949811Z",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "storage_reference": "sha256/e4/e455ec6ed2d5ba920f7575b9f73afd01b77063d0798b06d4c4c6302bde6b3073",
+  "storage_scope": "local_only",
+  "title": "YDWA October 8 endorsement carousel: derived screenshot of slide 2",
+  "updated_at": null
+}

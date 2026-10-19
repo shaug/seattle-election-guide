@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97",
+  "entered_at": "2026-10-19T03:17:29.101678Z",
+  "entry_method": "manual",
+  "evidence_locator": "October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 36th District, Senate; October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 37th District, House, Senate; October 18 editorial introduction identifying races where neither candidate earned the board seal, followed by section 46th District, Senate",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3",
+  "review_note": "shaug approved all 34 enumerated additions in the exact October 18 review packet. OpenAI Codex transcribed the approval at its actual time. This successor verifies only the proposed additions in this transcription, not automatic baselines or other daily obligations. Approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T03:51:20.554554Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "transcription": "ld-36-state-senator — Explicit no endorsement; no candidate allocation\nld-37-state-senator — Explicit no endorsement; no candidate allocation\nld-46-state-senator — Explicit no endorsement; no candidate allocation"
+}

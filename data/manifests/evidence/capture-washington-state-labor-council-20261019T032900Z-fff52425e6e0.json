@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 1532,
+  "canonical_url": "https://wslc.org/endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "0fa9b6502aca5b95b4554daa60c7dc752d6a09168786ab523779a6285f37188a",
+  "http_status": null,
+  "id": "capture-washington-state-labor-council-20261019T032900Z-fff52425e6e0",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived visible factual transcription from ordinary browser review. This is manually preserved factual HTML, not an original HTTP response or full third-party page. HTTP status and redirect chain were not observed. Original attempted URL and visible final URL are retained in the private artifact. Human approval remains pending.",
+  "requested_url": "https://wslc.org/endorsements/",
+  "retrieved_at": "2026-10-19T03:29:00.522362Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-labor-council",
+  "storage_reference": "sha256/0f/0fa9b6502aca5b95b4554daa60c7dc752d6a09168786ab523779a6285f37188a",
+  "storage_scope": "local_only",
+  "title": "Page not found - Washington State Labor Council, AFL-CIO — derived visible factual browser transcription",
+  "updated_at": null
+}

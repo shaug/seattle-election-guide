@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 138086,
+  "canonical_url": "https://storage.ghost.io/c/19/31/1931222a-d1c5-42ac-8932-2ee3ac1f8927/content/images/2026/10/Urbanist-2026-General-Election-Endorsements-2-4.png",
+  "capture_method": "image",
+  "content_sha256": "b15f9f591cdabaf1b533b4ec9aaf57bd3de0ceb388b2ce7089e5f2ad45a54a02",
+  "http_status": 200,
+  "id": "capture-the-urbanist-20261019T031456Z-9ef218c0f93e",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://storage.ghost.io/c/19/31/1931222a-d1c5-42ac-8932-2ee3ac1f8927/content/images/2026/10/Urbanist-2026-General-Election-Endorsements-2-4.png",
+  "retrieved_at": "2026-10-19T03:14:56.307579Z",
+  "schema_version": "1.0",
+  "source_id": "the-urbanist",
+  "storage_reference": "sha256/b1/b15f9f591cdabaf1b533b4ec9aaf57bd3de0ceb388b2ce7089e5f2ad45a54a02",
+  "storage_scope": "local_only",
+  "title": "The Urbanist Elections Committee linked official publication",
+  "updated_at": null
+}

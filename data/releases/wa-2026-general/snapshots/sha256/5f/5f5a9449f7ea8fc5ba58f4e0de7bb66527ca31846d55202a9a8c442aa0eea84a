@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-10-19T03:12:41.851591Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "king-county-director-of-elections--julie-wise"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "October 2026 newsletter > 11th LD Dems Endorsed Candidates > King County, Director of Elections > Director Julie Wise; extracted text lines 99–100. Official source: https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41. Captures: capture-11th-district-democrats-20261019T031241Z-50589efcbce7; verified manual manual-11th-district-democrats-20261019T031729Z-219197aef07c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "evidence_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+      "race_id": "king-county-director-of-elections",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Complete current source review: data/review/approvals/wa-2026-general-2026-10-18-verification.json; actual source captures capture-11th-district-democrats-20261019T031241Z-50589efcbce7. Individual decisions retain their own exact publication locators, including earlier approved evidence. Metadata correction: data/review/provenance-corrections/wa-2026-general-2026-10-18.json.",
+  "review_note": "shaug approved the complete current source review at 2026-10-19T04:14:31.209146Z: data/review/approvals/wa-2026-general-2026-10-18-verification.json. The enumerated additions were separately approved at 2026-10-19T03:51:20.554554Z: data/review/approvals/wa-2026-general-2026-10-18.json. OpenAI Codex transcribed both approvals. This source block uses the actual current capture and complete source-review times; earlier source metadata is preserved verbatim in data/review/provenance-corrections/wa-2026-general-2026-10-18.json and the original approval prior_source_reviews. All decision dictionaries, original per-decision locators, prior source-label mappings and allocations are unchanged. Omissions do not establish withdrawals; preserve the earlier 11th District CD9 no-endorsement and the Times comparison-only treatment. No new human approval, baseline adoption or historical webpage access is asserted by the metadata correction.",
+  "reviewer": "shaug",
+  "source_id": "11th-district-democrats"
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 259008,
+  "canonical_url": "https://www.seattletimes.com/opinion/editorials/",
+  "capture_method": "static_html",
+  "content_sha256": "25e1d3b93a7633a7cd6d0ce0ea35c1116139199d79a6fef75dadc74f2251e613",
+  "http_status": 200,
+  "id": "capture-seattle-times-editorial-board-20261019T031054Z-d85d2b1d49fa",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.seattletimes.com/opinion/editorials/",
+  "retrieved_at": "2026-10-19T03:10:54.154264Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "storage_reference": "sha256/25/25e1d3b93a7633a7cd6d0ce0ea35c1116139199d79a6fef75dadc74f2251e613",
+  "storage_scope": "local_only",
+  "title": "The Seattle Times Editorial Board current official publication",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 30888,
+  "canonical_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/4c1a552a-f1b4-8e3c-3b7b-f6885c962d0b.gif",
+  "capture_method": "image",
+  "content_sha256": "aa0863f7b9296d262f7d8dcc010a216b3809d261a48761faebbb2b016f9c9fd2",
+  "http_status": 200,
+  "id": "capture-11th-district-democrats-20261019T031037Z-9e3a9e0f2c21",
+  "media_type": "image/gif",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/4c1a552a-f1b4-8e3c-3b7b-f6885c962d0b.gif",
+  "retrieved_at": "2026-10-19T03:10:37.314941Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/aa/aa0863f7b9296d262f7d8dcc010a216b3809d261a48761faebbb2b016f9c9fd2",
+  "storage_scope": "local_only",
+  "title": "11th Legislative District Democrats current official publication",
+  "updated_at": null
+}

@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-19T04:14:31.209146Z",
+  "event_id": null,
+  "evidence": "shaug: Human response: \"Approve all 37 source reviews\" after the current complete research packet. data/review/approvals/wa-2026-general-2026-10-18-verification.json; data/review/proposals/wa-2026-general-2026-10-18-manual-reviews.json, SHA-256 6609cf4c3a67f7a10b6ebdc6ae94f96f1eeabca45732cc3038576191c999219c; source mlk-labor. Actual-time current review resolves this past-due obligation without asserting review or webpage contents on the missed day. Preserve earlier choices, Washington Bikes omissions and unscored WA4PJ grey ratings; inaccessible Stranger/WEA/Sierra excluded.",
+  "mode": "human",
+  "scheduled_for": "2026-10-18",
+  "source_id": "mlk-labor",
+  "status": "manual"
+}

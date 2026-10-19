@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 371748,
+  "canonical_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/4790b2d9-8f78-dd12-2def-a2681f4344c9.png",
+  "capture_method": "image",
+  "content_sha256": "218ee38308ccf23b8b77db453be971e777fff0f30942202dad4814afa3d7fe84",
+  "http_status": 200,
+  "id": "capture-11th-district-democrats-20261019T031311Z-5a5b8784c726",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source evidence retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/4790b2d9-8f78-dd12-2def-a2681f4344c9.png",
+  "retrieved_at": "2026-10-19T03:13:11.779990Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/21/218ee38308ccf23b8b77db453be971e777fff0f30942202dad4814afa3d7fe84",
+  "storage_scope": "local_only",
+  "title": "Official linked publication evidence",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 73591,
+  "canonical_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "58cc31f46bcb3b02fe5f74d9f231523f92b4b0f867fe45335fd8da3d2a034dc5",
+  "http_status": null,
+  "id": "capture-oneamerica-votes-20261019T035239Z-19122f1deedd",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived representation captured from official-source web-tool opens on October 19 UTC. This agent-created HTML wrapper contains the web tool readable text, not original publisher HTML or browser pixels. No HTTP status, network redirect history, or exact publisher-byte retrieval is asserted. The repository collector still refuses an HTTPS downgrade redirect; no downgrade was followed. Full representation remains private; human review pending.",
+  "requested_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "retrieved_at": "2026-10-19T03:52:39.899410Z",
+  "schema_version": "1.0",
+  "source_id": "oneamerica-votes",
+  "storage_reference": "sha256/58/58cc31f46bcb3b02fe5f74d9f231523f92b4b0f867fe45335fd8da3d2a034dc5",
+  "storage_scope": "local_only",
+  "title": "Derived web-tool readable representation of OneAmerica Votes 2026 Endorsements; original publisher bytes unavailable",
+  "updated_at": null
+}

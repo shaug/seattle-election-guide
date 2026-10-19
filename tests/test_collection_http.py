@@ -4,11 +4,48 @@ import time
 from collections.abc import Generator
 from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from io import BytesIO
 from typing import cast
 
 import pytest
 
 import election_guide.collection.http as collection_http
+
+
+@pytest.mark.parametrize(
+    ("url", "host_header"),
+    [
+        ("http://example.com/endorsements/", b"Host: example.com"),
+        ("http://example.com:80/endorsements/", b"Host: example.com"),
+        ("https://example.com/endorsements/", b"Host: example.com"),
+        ("https://example.com:443/endorsements/", b"Host: example.com"),
+        ("http://example.com:8080/endorsements/", b"Host: example.com:8080"),
+        ("https://example.com:8443/endorsements/", b"Host: example.com:8443"),
+    ],
+)
+def test_live_fetch_serializes_host_with_the_scheme_default_port(
+    monkeypatch: pytest.MonkeyPatch, url: str, host_header: bytes
+) -> None:
+    peer = _RecordingPublicSocket()
+
+    def open_socket(*args: object) -> _RecordingPublicSocket:
+        del args
+        return peer
+
+    def resolve(
+        *args: object, **kwargs: object
+    ) -> list[tuple[int, int, int, str, tuple[str, int]]]:
+        del args, kwargs
+        return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 0))]
+
+    monkeypatch.setattr(collection_http.socket, "socket", open_socket)
+    monkeypatch.setattr(collection_http.socket, "getaddrinfo", resolve)
+    monkeypatch.setattr(collection_http.ssl, "create_default_context", _OfflineTLSContext)
+
+    artifact = collection_http.fetch_http(url)
+
+    assert artifact.content == b"ok"
+    assert [line for line in peer.sent.split(b"\r\n") if line.startswith(b"Host:")] == [host_header]
 
 
 def test_live_fetch_rejects_non_public_initial_address() -> None:
@@ -153,3 +190,46 @@ def _skip_dns(host: str, port: int, *, deadline: float) -> set[str]:
 
 def _skip_peer(peer: socket.socket) -> None:
     del peer
+
+
+class _RecordingPublicSocket:
+    def __init__(self) -> None:
+        self.sent = bytearray()
+
+    def settimeout(self, timeout: float) -> None:
+        del timeout
+
+    def connect(self, address: tuple[str, int]) -> None:
+        if address[0] != "93.184.216.34":
+            raise OSError("fixture only accepts the validated public address")
+
+    def getpeername(self) -> tuple[str, int]:
+        return ("93.184.216.34", 443)
+
+    def do_handshake(self) -> None:
+        pass
+
+    def sendall(self, data: bytes) -> None:
+        self.sent.extend(data)
+
+    def makefile(self, mode: str) -> BytesIO:
+        if mode != "rb":
+            raise ValueError("fixture only serves a binary HTTP response")
+        return BytesIO(
+            b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\n\r\nok"
+        )
+
+    def close(self) -> None:
+        pass
+
+
+class _OfflineTLSContext:
+    def wrap_socket(
+        self,
+        peer: _RecordingPublicSocket,
+        *,
+        server_hostname: str,
+        do_handshake_on_connect: bool,
+    ) -> _RecordingPublicSocket:
+        del server_hostname, do_handshake_on_connect
+        return peer

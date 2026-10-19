@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 257993,
+  "canonical_url": "https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/",
+  "capture_method": "static_html",
+  "content_sha256": "e5ee9e07d16b053d799c2317fe7b053e0dc514e40a04dbd42caa694a93c2e3ef",
+  "http_status": 200,
+  "id": "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/",
+  "retrieved_at": "2026-10-19T03:11:53.841580Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "storage_reference": "sha256/e5/e5ee9e07d16b053d799c2317fe7b053e0dc514e40a04dbd42caa694a93c2e3ef",
+  "storage_scope": "local_only",
+  "title": "The Seattle Times Editorial Board linked official publication",
+  "updated_at": null
+}

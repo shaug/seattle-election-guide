@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 93387,
+  "canonical_url": "https://www.protec17.org/wp-content/uploads/2024/10/WA-Endorsement-Graphic-1024x806.png",
+  "capture_method": "image",
+  "content_sha256": "974e4e3128a439c12029bfe46a993691a108ddfa67c964965de729306439643e",
+  "http_status": 200,
+  "id": "capture-protec17-20261019T031100Z-329ac470c32c",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.protec17.org/wp-content/uploads/2024/10/WA-Endorsement-Graphic-1024x806.png",
+  "retrieved_at": "2026-10-19T03:11:00.098905Z",
+  "schema_version": "1.0",
+  "source_id": "protec17",
+  "storage_reference": "sha256/97/974e4e3128a439c12029bfe46a993691a108ddfa67c964965de729306439643e",
+  "storage_scope": "local_only",
+  "title": "PROTEC17 current official publication",
+  "updated_at": null
+}
