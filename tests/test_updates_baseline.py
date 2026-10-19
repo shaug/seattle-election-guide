@@ -149,7 +149,12 @@ def test_managed_upload_uses_its_verified_promotion_artifact(
     artifact = SimpleNamespace(producer=SimpleNamespace(run_id=25))
     production["managed"] = SimpleNamespace(
         upload=SimpleNamespace(github_deployment_id=20, source_sha="a" * 40),
-        publication=SimpleNamespace(promotion_artifact=artifact),
+        publication=SimpleNamespace(
+            published=SimpleNamespace(
+                promotion_manifest_sha256=hashlib.sha256(production["live"]).hexdigest()
+            ),
+            promotion_artifact=artifact,
+        ),
     )
     production["runs"] = {"workflow_runs": []}
 
@@ -190,6 +195,15 @@ def test_durable_snapshot_is_authenticated_without_expiring_artifacts(
     manifest["assets"][UPDATES_SNAPSHOT] = hashlib.sha256(payload).hexdigest()
     production["live"] = canonical_json_bytes(manifest)
     production["runs"] = {"workflow_runs": []}
+    production["managed"] = SimpleNamespace(
+        upload=SimpleNamespace(github_deployment_id=20, source_sha="a" * 40),
+        publication=SimpleNamespace(
+            published=SimpleNamespace(
+                promotion_manifest_sha256=hashlib.sha256(production["live"]).hexdigest()
+            ),
+            promotion_artifact=SimpleNamespace(producer=SimpleNamespace(run_id=25)),
+        ),
+    )
 
     def fetch_asset(base_url: str, path: str, *, timeout: float) -> tuple[Observation, bytes]:
         return Observation(status=200), payload + (b"changed" if corrupt else b"")
@@ -202,6 +216,44 @@ def test_durable_snapshot_is_authenticated_without_expiring_artifacts(
     else:
         resolved, receipt = updates_baseline.resolve_production_snapshot(tmp_path / "download")
         assert resolved == snapshot
-        assert receipt["deployment_id"] == 9
+        assert receipt["deployment_id"] == 20
         assert receipt["manifest_sha256"] == hashlib.sha256(production["live"]).hexdigest()
         assert not any(c[1:3] == ["run", "download"] for c in production["calls"])
+
+
+def test_durable_snapshot_rejects_a_different_manifest_at_the_verified_source(
+    tmp_path: Path,
+    sites: tuple[Path, Path],
+    production: dict[str, Any],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    snapshot = build_updates_snapshot(sites[0])
+    manifest = json.loads(production["live"])
+    manifest["assets"][UPDATES_SNAPSHOT] = hashlib.sha256(
+        canonical_json_bytes(snapshot.model_dump(mode="json"))
+    ).hexdigest()
+    verified_manifest = canonical_json_bytes(manifest)
+    production["managed"] = SimpleNamespace(
+        upload=SimpleNamespace(github_deployment_id=20, source_sha="a" * 40),
+        publication=SimpleNamespace(
+            published=SimpleNamespace(
+                promotion_manifest_sha256=hashlib.sha256(verified_manifest).hexdigest()
+            ),
+            promotion_artifact=SimpleNamespace(producer=SimpleNamespace(run_id=25)),
+        ),
+    )
+    # A self-consistent replacement snapshot must not become the baseline merely
+    # because its manifest still names the verified upload's source revision.
+    election = next(iter(snapshot.elections.values()))
+    election.pages = dict.fromkeys(election.pages, "0" * 64)
+    payload = canonical_json_bytes(snapshot.model_dump(mode="json"))
+    manifest["assets"][UPDATES_SNAPSHOT] = hashlib.sha256(payload).hexdigest()
+    production["live"] = canonical_json_bytes(manifest)
+
+    def fetch_asset(base_url: str, path: str, *, timeout: float) -> tuple[Observation, bytes]:
+        return Observation(status=200), payload
+
+    monkeypatch.setattr(updates_baseline, "fetch_asset_body", fetch_asset)
+
+    with pytest.raises(ValueError, match=r"manifest.*verified upload"):
+        updates_baseline.resolve_production_snapshot(tmp_path / "download")

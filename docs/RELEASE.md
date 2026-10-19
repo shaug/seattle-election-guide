@@ -33,7 +33,8 @@ archive containing the entry and update its reviewed pins.
 
 Each staged site carries `updates-snapshot.json`, protected by the deployment manifest's asset
 hash. It records content fingerprints and dated/headlined entry identities, so the next check
-does not depend on short-lived Actions artifacts. Before the first snapshot is deployed, the
+does not depend on short-lived Actions artifacts. The served source and manifest hash must match
+the last verified automatic-release upload. Before the first snapshot is deployed, the
 gate downloads and verifies the legacy `cloudflare-site` artifact for the successful production
 revision, or the exact promotion artifact bound to a verified automatic-release receipt. A
 successful job that skipped uploading cannot replace that baseline. Missing or expired bootstrap

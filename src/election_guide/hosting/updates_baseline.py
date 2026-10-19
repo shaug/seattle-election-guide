@@ -39,7 +39,7 @@ def _served_manifest() -> tuple[DeploymentManifest, str]:
         raise ValueError(f"invalid production manifest: {error}") from error
 
 
-def _successful_deployment(served: DeploymentManifest) -> dict[str, Any]:
+def _successful_deployment(served: DeploymentManifest, *, manifest_sha256: str) -> dict[str, Any]:
     # Deployment records, rather than the newest successful build or release
     # tag, identify what actually reached production. Never fall back to main.
     current = next(e for e in served.elections if e.election_id == served.current_election_id)
@@ -47,6 +47,8 @@ def _successful_deployment(served: DeploymentManifest) -> dict[str, Any]:
     if managed is not None:
         if managed.upload is None or managed.upload.source_sha != current.git_commit:
             raise ValueError("served production revision differs from last verified upload")
+        if managed.publication.published.promotion_manifest_sha256 != manifest_sha256:
+            raise ValueError("served production manifest differs from last verified upload")
         return {
             "id": managed.upload.github_deployment_id,
             "sha": managed.upload.source_sha,
@@ -73,7 +75,7 @@ def _successful_deployment(served: DeploymentManifest) -> dict[str, Any]:
 def resolve_production_baseline(destination: Path) -> dict[str, Any]:
     """Bootstrap from the legacy production artifact, before snapshots existed."""
     served, manifest_sha256 = _served_manifest()
-    deployment = _successful_deployment(served)
+    deployment = _successful_deployment(served, manifest_sha256=manifest_sha256)
     current = next(e for e in served.elections if e.election_id == served.current_election_id)
     if "promotion_artifact" in deployment:
         reference = deployment["promotion_artifact"]
@@ -135,7 +137,7 @@ def resolve_production_snapshot(destination: Path) -> tuple[UpdatesSnapshot, dic
     if UPDATES_SNAPSHOT not in served.assets:
         receipt = resolve_production_baseline(destination)
         return build_updates_snapshot(destination), receipt
-    deployment = _successful_deployment(served)
+    deployment = _successful_deployment(served, manifest_sha256=manifest_sha256)
     observation, body = fetch_asset_body(PRODUCTION_ORIGIN, f"/{UPDATES_SNAPSHOT}", timeout=20)
     if observation.status != 200 or body is None:
         raise ValueError("published Updates snapshot is unavailable")
