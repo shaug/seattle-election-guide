@@ -131,7 +131,7 @@ class _PageContent(HTMLParser):
             attributes.get("src")
             if tag == "script"
             else attributes.get("href")
-            if tag == "link" and attributes.get("rel") == "stylesheet"
+            if tag == "link" and "stylesheet" in (attributes.get("rel") or "").lower().split()
             else None
         )
         if reference:

@@ -229,6 +229,25 @@ def test_referenced_client_asset_changes_require_an_entry(sites: tuple[Path, Pat
     assert check_updates(baseline, candidate)["result"] == "fail"
 
 
+@pytest.mark.parametrize("relation", ["stylesheet", "StyleSheet", "alternate stylesheet"])
+def test_linked_stylesheet_changes_require_an_entry(
+    sites: tuple[Path, Path], relation: str
+) -> None:
+    baseline, candidate = sites
+    for site in sites:
+        _write(site, "assets/race.css", ".meter { color: navy; }")
+        _write(
+            site,
+            f"e/{GENERAL}/index.html",
+            _page() + f'<link rel="{relation}" href="/assets/race.css" title="Other">',
+        )
+        _seal(site)
+    _write(candidate, "assets/race.css", ".meter { color: red; }")
+    _seal(candidate)
+
+    assert check_updates(baseline, candidate)["result"] == "fail"
+
+
 @pytest.mark.parametrize("added", [True, False])
 def test_added_and_removed_position_pages_require_entries(
     sites: tuple[Path, Path], added: bool
