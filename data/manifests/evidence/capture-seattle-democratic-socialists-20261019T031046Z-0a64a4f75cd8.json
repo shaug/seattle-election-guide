@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 80632,
+  "canonical_url": "https://seattledsa.org/blog/",
+  "capture_method": "static_html",
+  "content_sha256": "24b02478c8b1b29ba8dc8e87cd38a991d4f7f38f716a2910d1191ff8d1d7d368",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261019T031046Z-0a64a4f75cd8",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://seattledsa.org/blog/",
+  "retrieved_at": "2026-10-19T03:10:46.763758Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/24/24b02478c8b1b29ba8dc8e87cd38a991d4f7f38f716a2910d1191ff8d1d7d368",
+  "storage_scope": "local_only",
+  "title": "Seattle Democratic Socialists of America current official publication",
+  "updated_at": null
+}

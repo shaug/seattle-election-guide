@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 680,
+  "canonical_url": "https://ndaction.org/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "d510b6e8e1d8e0724d7e283eadabcb4563ba24c339eb058be43be75d24a2a4f1",
+  "http_status": null,
+  "id": "capture-nondriver-action-20261019T032049Z-6d155f9a4c22",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived visible factual transcription from standard browser after HTTP403; not original response HTML. No HTTP status or redirect chain asserted.",
+  "requested_url": "https://ndaction.org/2026-endorsements/",
+  "retrieved_at": "2026-10-19T03:20:49.052633Z",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "storage_reference": "sha256/d5/d510b6e8e1d8e0724d7e283eadabcb4563ba24c339eb058be43be75d24a2a4f1",
+  "storage_scope": "local_only",
+  "title": "Nondriver Action November page: manually preserved visible facts",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 9598,
+  "canonical_url": "https://wslc.org/vote/",
+  "capture_method": "manual_upload",
+  "content_sha256": "a92024605fc3cefee7cfda1a479d460733b5cb266eefbd5c5aaf3dabcaac1ac6",
+  "http_status": null,
+  "id": "capture-washington-state-labor-council-20261019T032900Z-541b720f7dba",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived visible factual transcription from ordinary browser review. This is manually preserved factual HTML, not an original HTTP response or full third-party page. HTTP status and redirect chain were not observed. Original attempted URL and visible final URL are retained in the private artifact. Human approval remains pending.",
+  "requested_url": "https://wslc.org/vote/",
+  "retrieved_at": "2026-10-19T03:29:00.522362Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-labor-council",
+  "storage_reference": "sha256/a9/a92024605fc3cefee7cfda1a479d460733b5cb266eefbd5c5aaf3dabcaac1ac6",
+  "storage_scope": "local_only",
+  "title": "Union members: Got your ballot in Washington state? — derived visible factual browser transcription",
+  "updated_at": null
+}

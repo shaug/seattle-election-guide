@@ -10,7 +10,7 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
-from http.client import HTTPConnection, HTTPResponse
+from http.client import HTTPConnection, HTTPResponse, HTTPSConnection
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
 from election_guide.validation import validated_http_url, validated_media_type
@@ -213,7 +213,11 @@ def _open_public_connection(
                 _run_with_socket_deadline(tls, deadline, tls.do_handshake)
                 _validate_connected_peer(tls)
                 connected = tls
-            connection = HTTPConnection(host, port, timeout=_remaining_seconds(deadline))
+                connection = HTTPSConnection(
+                    host, port, timeout=_remaining_seconds(deadline), context=context
+                )
+            else:
+                connection = HTTPConnection(host, port, timeout=_remaining_seconds(deadline))
             connection.sock = connected
             return connection, connected
         except OSError as error:

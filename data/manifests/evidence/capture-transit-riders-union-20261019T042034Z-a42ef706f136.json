@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 50981,
+  "canonical_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "c8d73cf12129d8014348a8b4d6670569e321b530072fef0ecd790ba299842dc7",
+  "http_status": 200,
+  "id": "capture-transit-riders-union-20261019T042034Z-a42ef706f136",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original publisher response retained privately; no raw third-party content committed. Normal collector request with unchanged public-peer/TLS/redirect/timeout/size safeguards.",
+  "requested_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+  "retrieved_at": "2026-10-19T04:20:34.741563Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "storage_reference": "sha256/c8/c8d73cf12129d8014348a8b4d6670569e321b530072fef0ecd790ba299842dc7",
+  "storage_scope": "local_only",
+  "title": "Official current publication: guarded HTTPS transport verification",
+  "updated_at": null
+}

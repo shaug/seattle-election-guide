@@ -37,7 +37,7 @@ The first general-election tranche is:
 
 | Source | Automatic publication check | Limitation |
 |---|---|---|
-| Transit Riders Union | Current general endorsement page | A bounded live probe currently exceeds the redirect limit. Keep failed checks visible; diagnose access without bypassing the limit. |
+| Transit Riders Union | Current general endorsement page | Prior self-redirect failures are preserved. October 18 diagnosis found the TLS transport serialized the wrong default Host port; corrected HTTPS transport recovers the official page with the same redirect limit. Independent scheduled reuse remains adoption work. |
 | Sage Leaders | Current 2026 section, excluding past-year sections | Fixed, reviewed factual mappings; changed bytes require review. |
 | SEIU 775 | Washington section | Fixed, reviewed factual mappings; changed bytes require review. |
 | UFCW 3000 | Official endorsements page | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. |
@@ -234,6 +234,30 @@ current due/coverage output; all six live source outcomes and approved initial
 baselines; a second independent run proving reuse; immutable evidence/task links;
 manual queue and missing/failure reconciliation; and a green `make check`.
 The current implementation tests fixture runs, task retries, and index edits.
-Live deployment, the real encryption secret, baseline approval, and the first
-scheduled cycle remain operator/adoption work. Keep #497 open until this packet
-exists. Append dated execution lessons here after each adoption exercise.
+Keep #497 open until the complete adoption packet exists. Append dated execution
+lessons here after each adoption exercise.
+
+### October 18 verification follow-up
+
+The maintainer’s existing private 1Password backup authenticated all 71 archived
+captures; no key was printed, replaced or committed. The exact six baseline
+reviews now have explicit human approvals. Separate current human reviews resolve
+111 manual obligations across 37 sources without backdating missed dates. See
+[the baseline review](../GENERAL_BASELINES_2026-10-18.md) and
+[manual review](../GENERAL_MANUAL_REVIEWS_2026-10-18.md). A subsequent explicit
+[WEA/Sierra approval](../GENERAL_WEA_SIERRA_2026-10-18.md) records five more
+actual-time manual acknowledgements after normal browser access recovered both
+official lists. The subsequent user-supplied [Stranger image review](../GENERAL_STRANGER_2026-10-18.md) and explicit human approval resolve its final two date obligations. All 120 manual-source obligations for October 16–18 now have actual-time acknowledgements.
+
+TRU’s bounded redirect loop came from serializing `Host: transitriders.org:443`
+through an HTTP connection object whose default port was 80. Using an HTTPS
+connection with the same existing TLS context and validated socket produces the
+standard Host header and recovers HTTP 200 with zero redirects. The same correction
+recovers OneAmerica’s original page. Six offline request-serialization cases cover
+default and nondefault HTTP/HTTPS ports. Public-peer checks, TLS validation,
+deadline, size, downgrade and ten-redirect limits are unchanged.
+
+These results do not mark the runbook adopted. An independent scheduled cycle
+must still prove approved baseline reuse through the deployed workflow. Current
+remaining source obligations and publication status are tracked in the
+[October 18 closeout](../GENERAL_VERIFICATION_CLOSEOUT_2026-10-18.md).

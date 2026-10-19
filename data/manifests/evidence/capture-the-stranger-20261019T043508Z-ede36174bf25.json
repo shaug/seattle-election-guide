@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 827494,
+  "canonical_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+  "capture_method": "manual_upload",
+  "content_sha256": "2f1b85b3e68f7e56bcf3f307ecff4a91f9c3b158c91b615614b77ee334b40546",
+  "http_status": null,
+  "id": "capture-the-stranger-20261019T043508Z-ede36174bf25",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original user-supplied image preserved unmodified. User identified this official URL and said the publication is an image. The page was not retrieved: browser security policy blocks it and no alternate client, tool or URL was used. Timestamp is actual local evidence import time, not an observed publication or page retrieval time. No HTTP status, redirect or original page-response claim. Human review pending.",
+  "requested_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+  "retrieved_at": "2026-10-19T04:35:08.455698Z",
+  "schema_version": "1.0",
+  "source_id": "the-stranger",
+  "storage_reference": "sha256/2f/2f1b85b3e68f7e56bcf3f307ecff4a91f9c3b158c91b615614b77ee334b40546",
+  "storage_scope": "local_only",
+  "title": "User-supplied Stranger November 3, 2026 general-election two-column cheat sheet",
+  "updated_at": null
+}

@@ -1,0 +1,13 @@
+{
+  "capture_id": null,
+  "checked_at": "2026-10-18T08:45:51Z",
+  "content_changed": null,
+  "diff": [],
+  "error": "Source check failed (ValueError); inspect official access and adapter.",
+  "id": "refresh-seiu-775-20261018T084551Z-9db40f69737e",
+  "previous_snapshot_id": "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+  "schema_version": "1.0",
+  "snapshot_id": null,
+  "source_id": "seiu-775",
+  "status": "failed"
+}

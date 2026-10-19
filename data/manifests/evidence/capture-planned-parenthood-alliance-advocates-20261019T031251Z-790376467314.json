@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 154240,
+  "canonical_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-angelis",
+  "capture_method": "static_html",
+  "content_sha256": "29ab088ed33b54d8036272647a287006361587966b99a937e76c525ef8513b98",
+  "http_status": 200,
+  "id": "capture-planned-parenthood-alliance-advocates-20261019T031251Z-790376467314",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification research; no redistribution permission asserted.",
+  "requested_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-angelis",
+  "retrieved_at": "2026-10-19T03:12:51.565607Z",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "storage_reference": "sha256/29/29ab088ed33b54d8036272647a287006361587966b99a937e76c525ef8513b98",
+  "storage_scope": "local_only",
+  "title": "Planned Parenthood Alliance Advocates linked official publication",
+  "updated_at": null
+}

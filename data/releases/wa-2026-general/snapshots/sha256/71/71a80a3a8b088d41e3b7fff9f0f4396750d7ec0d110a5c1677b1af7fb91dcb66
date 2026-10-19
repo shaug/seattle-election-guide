@@ -1,0 +1,271 @@
+{
+  "captured_at": "2026-10-19T03:27:56.019153Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "1. Congressional Districts > Congressional District 7 > U.S. Representative Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "1. Congressional Districts > Congressional District 9 > U.S. Representative Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "us-house-9",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "2. Supreme Court > Justice, Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "2. Supreme Court > Justice, Position 3 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "2. Supreme Court > Justice, Position 4 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "supreme-court-justice-4",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "2. Supreme Court > Justice, Position 5 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "supreme-court-justice-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "2. Supreme Court > Justice, Position 7 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "supreme-court-justice-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "3. Ballot Initiatives > IL26-001 > VOTE NO Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "initiative-26-001",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "3. Ballot Initiatives > IL26-638 > VOTE NO Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "initiative-26-638",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "3. Ballot Initiatives > IP26-645 > VOTE NO Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-094c2d18f469. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "initiative-26-645",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 11 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-11-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 32 > State Senator Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-32-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 32 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-32-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 32 > State Representative Position 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-32-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-1--brianna-k-thomas"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 34 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-34-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 34 > State Representative Position 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-34-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 36 > State Senator Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-36-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 37 > State Senator Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-37-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 37 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 37 > State Representative Position 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-f16c38112f3c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 43 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-43-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 46 > State Senator Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-46-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-1--will-dreher"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 46 > State Representative Position 1 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-46-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 46 > State Representative Position 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-46-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "5. King County > Assessor Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "king-county-assessor",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "5. King County > King County Council District 2 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "6. City of Seattle > Municipal Court Judge Position No. 5 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "seattle-municipal-court-judge-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "6. City of Seattle > City Council, District 5 Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell",
+        "ld-43-state-senator--jamie-pedersen"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "4. Legislative Races > Legislative District 43 > State Senator; both named cards displayed without rank or preference. Official source: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide. Captures: capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd; verified manual manual-washington-stonewall-democrats-20261019T033145Z-85e990ed434c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official organization Facebook post links its Google Site and embedded general guide; full authority chain and 118-card review in data/review/proposals/wa-2026-general-2026-10-18-verification.json.",
+  "review_note": "Issues #545, #560, #567: shaug approved 29 source/race decisions from the official explicit 2026 GENERAL ELECTION guide. OpenAI Codex transcribed; shaug verified. The LD43 Senate dual has equal one-half allocations. Candidates absent from the frozen Seattle ballot are excluded. This is a targeted decision approval, not an automatic baseline or daily verification attestation. See data/review/approvals/wa-2026-general-2026-10-18.json.",
+  "reviewer": "shaug",
+  "source_id": "washington-stonewall-democrats"
+}

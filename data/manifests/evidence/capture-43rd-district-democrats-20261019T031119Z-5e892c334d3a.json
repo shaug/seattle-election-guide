@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 252105,
+  "canonical_url": "https://43rddemocrats.org/",
+  "capture_method": "static_html",
+  "content_sha256": "73d2d6157172790bda955a0dcc0cf8bf997a2f64c6bd625f06280aecdf249321",
+  "http_status": 200,
+  "id": "capture-43rd-district-democrats-20261019T031119Z-5e892c334d3a",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://43rddemocrats.org/",
+  "retrieved_at": "2026-10-19T03:11:19.493544Z",
+  "schema_version": "1.0",
+  "source_id": "43rd-district-democrats",
+  "storage_reference": "sha256/73/73d2d6157172790bda955a0dcc0cf8bf997a2f64c6bd625f06280aecdf249321",
+  "storage_scope": "local_only",
+  "title": "43rd Legislative District Democrats current official publication",
+  "updated_at": null
+}

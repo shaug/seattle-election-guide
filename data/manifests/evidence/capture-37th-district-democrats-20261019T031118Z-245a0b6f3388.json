@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 103735,
+  "canonical_url": "https://37dems.org/",
+  "capture_method": "static_html",
+  "content_sha256": "27ed4c63045fb85de462549168a4dd7d4df9b9c052fe01a227ef916e34068ade",
+  "http_status": 200,
+  "id": "capture-37th-district-democrats-20261019T031118Z-245a0b6f3388",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://37dems.org/",
+  "retrieved_at": "2026-10-19T03:11:18.795704Z",
+  "schema_version": "1.0",
+  "source_id": "37th-district-democrats",
+  "storage_reference": "sha256/27/27ed4c63045fb85de462549168a4dd7d4df9b9c052fe01a227ef916e34068ade",
+  "storage_scope": "local_only",
+  "title": "37th Legislative District Democrats current official publication",
+  "updated_at": null
+}

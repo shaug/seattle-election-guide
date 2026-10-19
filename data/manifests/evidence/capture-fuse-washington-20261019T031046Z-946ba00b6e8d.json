@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 61167,
+  "canonical_url": "https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "c0dfe92ce9e182887dfceb1667516614b305e3365b88856c8708abdc545dcb47",
+  "http_status": 200,
+  "id": "capture-fuse-washington-20261019T031046Z-946ba00b6e8d",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements",
+  "retrieved_at": "2026-10-19T03:10:46.441981Z",
+  "schema_version": "1.0",
+  "source_id": "fuse-washington",
+  "storage_reference": "sha256/c0/c0dfe92ce9e182887dfceb1667516614b305e3365b88856c8708abdc545dcb47",
+  "storage_scope": "local_only",
+  "title": "Fuse Washington current official publication",
+  "updated_at": null
+}

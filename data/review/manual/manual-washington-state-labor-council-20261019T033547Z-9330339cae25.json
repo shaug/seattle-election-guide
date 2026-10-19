@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-state-labor-council-20261019T032900Z-541b720f7dba",
+  "entered_at": "2026-10-19T03:35:47.990618Z",
+  "entry_method": "manual",
+  "evidence_locator": "Derived browser factual transcription, Union members: Got your ballot in Washington state?; full page/tab/expanded-content research; exact row locators are retained in the private capture. Existing approved identity mappings retained; no new ledger change.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-state-labor-council-20261019T033547Z-9330339cae25",
+  "review_note": "shaug explicitly approved the six exact baseline reviews and the37 current manual-source reviews after their concrete packets and private source views. OpenAI Codex transcribed the approval at its actual time. This verifies the recorded source facts; WA4PJ grey ratings remain unresolved/unscored and no new ledger decision is inferred. data/review/approvals/wa-2026-general-2026-10-18-verification.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:14:31.209146Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-state-labor-council",
+  "transcription": "initiative-26-001 — No\ninitiative-26-638 — No\ninitiative-26-645 — No\nus-house-7 — Pramila Jayapal\nus-house-9 — Adam Smith\nsupreme-court-justice-1 — Colleen Melody\nsupreme-court-justice-3 — Jamie Michelle Hawk\nsupreme-court-justice-4 — Ian Birk\nsupreme-court-justice-5 — Theo Angelis\nsupreme-court-justice-7 — Debra L. Stephens\nld-11-state-representative-1 — David Hackney\nld-11-state-representative-2 — Steve Bergquist\nld-32-state-senator — Cindy Ryu\nld-32-state-representative-1 — Danica Noble\nld-32-state-representative-2 — Lauren Davis\nld-34-state-senator — Emily Alvarado\nld-34-state-representative-1 — Brianna K. Thomas\nld-34-state-representative-2 — Joe Fitzgibbon\nld-36-state-senator — Noel C. Frame\nld-36-state-representative-1 — Julia Grant Reed"
+}

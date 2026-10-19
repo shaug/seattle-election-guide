@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 38721,
+  "canonical_url": "https://www.aftwa.org/endorsements-and-elections/washington-state-supreme-court-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "5cb44eb07498f3143d7fdc83d517aaa12ebd157134adeff499b13dadecc2a3fd",
+  "http_status": 200,
+  "id": "capture-aft-washington-20261019T031057Z-762dda3f2f13",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.aftwa.org/endorsements-and-elections/washington-state-supreme-court-endorsements",
+  "retrieved_at": "2026-10-19T03:10:57.096515Z",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "storage_reference": "sha256/5c/5cb44eb07498f3143d7fdc83d517aaa12ebd157134adeff499b13dadecc2a3fd",
+  "storage_scope": "local_only",
+  "title": "AFT Washington current official publication",
+  "updated_at": null
+}

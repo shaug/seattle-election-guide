@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 78930,
+  "canonical_url": "https://seattledsa.org/event/no-hate-in-wa-state-kent-canvass/",
+  "capture_method": "static_html",
+  "content_sha256": "24de3fa0db1dd3e3aa7ec9824d1b305f5e6236ff738d6b9e9c0cb0369561a48c",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261019T031307Z-fba63f61289c",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://seattledsa.org/event/no-hate-in-wa-state-kent-canvass/",
+  "retrieved_at": "2026-10-19T03:13:07.069798Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/24/24de3fa0db1dd3e3aa7ec9824d1b305f5e6236ff738d6b9e9c0cb0369561a48c",
+  "storage_scope": "local_only",
+  "title": "Seattle Democratic Socialists of America linked official publication",
+  "updated_at": null
+}

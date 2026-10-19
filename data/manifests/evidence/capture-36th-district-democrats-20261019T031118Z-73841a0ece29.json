@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 88633,
+  "canonical_url": "https://36th.org/",
+  "capture_method": "static_html",
+  "content_sha256": "f4ab8141e4edac685b72ba6ad46d366c35b716e2507b92d76fb3ecef98506ae1",
+  "http_status": 200,
+  "id": "capture-36th-district-democrats-20261019T031118Z-73841a0ece29",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://36th.org/",
+  "retrieved_at": "2026-10-19T03:11:18.531636Z",
+  "schema_version": "1.0",
+  "source_id": "36th-district-democrats",
+  "storage_reference": "sha256/f4/f4ab8141e4edac685b72ba6ad46d366c35b716e2507b92d76fb3ecef98506ae1",
+  "storage_scope": "local_only",
+  "title": "36th Legislative District Democrats current official publication",
+  "updated_at": null
+}

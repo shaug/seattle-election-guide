@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 1609,
+  "canonical_url": "https://workingfamilies.org/candidates/",
+  "capture_method": "manual_upload",
+  "content_sha256": "c7a7d280ce3d38b32f2f340869f720a3d323e6fb0c714c34f41258aaaa8b0941",
+  "http_status": null,
+  "id": "capture-washington-working-families-party-20261019T031438Z-f4ef0085892e",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived factual transcription after browser Washington filter and View More. Not response HTML; no HTTP status asserted. Retained privately for review.",
+  "requested_url": "https://workingfamilies.org/candidates/",
+  "retrieved_at": "2026-10-19T03:14:38.155637Z",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "storage_reference": "sha256/c7/c7a7d280ce3d38b32f2f340869f720a3d323e6fb0c714c34f41258aaaa8b0941",
+  "storage_scope": "local_only",
+  "title": "WFP Washington expanded 17-row table: manually preserved visible facts",
+  "updated_at": null
+}

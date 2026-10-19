@@ -17,6 +17,8 @@ from pydantic import (
     model_validator,
 )
 
+from election_guide.validation import validated_http_url
+
 ARCHIVE_ROOT_DIR = "seattle-election-guide"
 REQUIRED_VALIDATION_REPORTS = frozenset({"publication", "rendering"})
 UNHASHED_RASTERIZED_ARTIFACTS = frozenset(
@@ -134,6 +136,12 @@ class ReleaseDecision(ReleaseModel):
     candidate_ids: list[str] = Field(default_factory=list)
     evidence_excerpt: str | None = Field(default=None, min_length=1, max_length=4_000)
     evidence_locator: str | None = Field(default=None, min_length=1, max_length=1_000)
+    evidence_url: str | None = Field(default=None, exclude_if=lambda value: value is None)
+
+    @field_validator("evidence_url")
+    @classmethod
+    def validate_evidence_url(cls, value: str | None) -> str | None:
+        return None if value is None else validated_http_url(value)
 
     @field_validator("evidence_excerpt", "evidence_locator")
     @classmethod

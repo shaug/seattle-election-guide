@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 103186,
+  "canonical_url": "https://gunresponsibility.org/wp-content/smush-webp/2026/06/2026-Endorsements-Header.png.webp",
+  "capture_method": "image",
+  "content_sha256": "1f8897306921ee37f829414e3ff052f73b1ac5b8446ce43f241a5b7432cd78af",
+  "http_status": 200,
+  "id": "capture-alliance-for-gun-responsibility-20261019T031251Z-6395865c4d91",
+  "media_type": "image/webp",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification research; no redistribution permission asserted.",
+  "requested_url": "https://gunresponsibility.org/wp-content/smush-webp/2026/06/2026-Endorsements-Header.png.webp",
+  "retrieved_at": "2026-10-19T03:12:51.258702Z",
+  "schema_version": "1.0",
+  "source_id": "alliance-for-gun-responsibility",
+  "storage_reference": "sha256/1f/1f8897306921ee37f829414e3ff052f73b1ac5b8446ce43f241a5b7432cd78af",
+  "storage_scope": "local_only",
+  "title": "Alliance for Gun Responsibility Victory Fund linked official publication",
+  "updated_at": null
+}

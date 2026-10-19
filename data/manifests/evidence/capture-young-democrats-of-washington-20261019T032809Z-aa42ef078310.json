@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 7485,
+  "canonical_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "capture_method": "manual_upload",
+  "content_sha256": "a009db79e8a5258bfa46c31356fd970e08dcff878635c5c60eff5744d4ff3cab",
+  "http_status": null,
+  "id": "capture-young-democrats-of-washington-20261019T032809Z-aa42ef078310",
+  "media_type": "text/plain; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived evidence preserved from a normal public browser visit without login. Accessibility snapshots/screenshots are not original HTTP responses; no HTTP status or redirect history asserted. Raw derived artifacts retained privately by content hash; no redistribution permission asserted.",
+  "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "retrieved_at": "2026-10-19T03:28:09.732881Z",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "storage_reference": "sha256/a0/a009db79e8a5258bfa46c31356fd970e08dcff878635c5c60eff5744d4ff3cab",
+  "storage_scope": "local_only",
+  "title": "YDWA October 8 post: derived browser accessibility snapshot",
+  "updated_at": null
+}

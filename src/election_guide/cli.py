@@ -924,7 +924,8 @@ def release_compile(
         raise typer.Exit(code=1) from error
     typer.echo(
         f"release dataset: {output_path} "
-        f"({len(dataset.captures)} sources, {len(dataset.endorsements)} decisions)"
+        f"({len({capture.source_id for capture in dataset.captures})} sources, "
+        f"{len(dataset.endorsements)} decisions)"
     )
 
 
@@ -1047,7 +1048,8 @@ def release_verify(
         raise typer.Exit(code=1) from error
     typer.echo(
         f"release inputs: reproducible "
-        f"({len(dataset.captures)} sources, {len(dataset.endorsements)} decisions)"
+        f"({len({capture.source_id for capture in dataset.captures})} sources, "
+        f"{len(dataset.endorsements)} decisions)"
     )
 
 

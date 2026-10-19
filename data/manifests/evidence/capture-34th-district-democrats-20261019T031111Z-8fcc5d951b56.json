@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 86376,
+  "canonical_url": "https://34dems.org/wp-content/uploads/2026/05/Leaders-We-Can-Trust-Banner-3.jpg",
+  "capture_method": "image",
+  "content_sha256": "1eebda78bdd3af11c8f2d182f6a06b06cd97164d5186155d02902ac9a8ebf1aa",
+  "http_status": 200,
+  "id": "capture-34th-district-democrats-20261019T031111Z-8fcc5d951b56",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://34dems.org/wp-content/uploads/2026/05/Leaders-We-Can-Trust-Banner-3.jpg",
+  "retrieved_at": "2026-10-19T03:11:11.511627Z",
+  "schema_version": "1.0",
+  "source_id": "34th-district-democrats",
+  "storage_reference": "sha256/1e/1eebda78bdd3af11c8f2d182f6a06b06cd97164d5186155d02902ac9a8ebf1aa",
+  "storage_scope": "local_only",
+  "title": "34th Legislative District Democrats current official publication",
+  "updated_at": null
+}
