@@ -1,11 +1,18 @@
+import csv
+import io
 import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from election_guide.cli import app
+from election_guide.normalization.models import CanonicalDataset
+from election_guide.publication import build_publication_bundle
 from election_guide.release import verify_release_compilation
+from election_guide.scoring import score_dataset
+from election_guide.scoring.config import read_scoring_configuration
 from election_guide.sources.catalog import (
     appended_panel_snapshot,
     read_panel_snapshot_catalog,
@@ -234,3 +241,54 @@ def test_october18_additions_do_not_inherit_earlier_source_provenance() -> None:
         assert datetime.fromisoformat(compiled["retrieved_at"]) >= datetime.fromisoformat(
             original["retrieved_at"]
         ), key
+
+
+@pytest.mark.parametrize(
+    ("source_id", "race_id", "publication_url", "retained_race_id", "retained_url"),
+    [
+        (
+            "11th-district-democrats",
+            "king-county-director-of-elections",
+            "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+            "us-house-9",
+            "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=c0097e484d",
+        ),
+        (
+            "seattle-democratic-socialists",
+            "initiative-26-645",
+            "https://seattledsa.org/event/nseattlecanvass/",
+            "ld-37-state-representative-2",
+            "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+        ),
+    ],
+)
+def test_new_endorsement_receipts_open_the_approved_publication(
+    source_id: str,
+    race_id: str,
+    publication_url: str,
+    retained_race_id: str,
+    retained_url: str,
+) -> None:
+    dataset = CanonicalDataset.model_validate_json(GENERAL_DATASET_PATH.read_bytes())
+    report = score_dataset(
+        dataset,
+        read_scoring_configuration(PROJECT_ROOT / "config/scoring/default.yaml"),
+        computed_at=datetime(2026, 10, 19, 5, tzinfo=UTC),
+    )
+    bundle = build_publication_bundle(
+        dataset, report, git_commit="receipt-regression", snapshot_root=GENERAL_SNAPSHOT_ROOT
+    )
+    cells = {
+        (cell.source_id, race.id): cell
+        for section in bundle.view_model.sections
+        for race in section.races
+        for cell in race.source_cells
+    }
+    assert cells[source_id, race_id].evidence_url == publication_url
+    assert cells[source_id, retained_race_id].evidence_url == retained_url
+    exported = {
+        (row["source_id"], row["race_id"]): row
+        for row in csv.DictReader(io.StringIO(bundle.artifacts["endorsement_records.csv"].decode()))
+    }
+    assert exported[source_id, race_id]["evidence_url"] == publication_url
+    assert exported[source_id, retained_race_id]["evidence_url"] == retained_url

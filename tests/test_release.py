@@ -180,6 +180,70 @@ def test_release_compiler_preserves_review_history_when_data_cutoff_advances(
     assert second == first
 
 
+def test_release_compiler_keeps_decisions_with_their_reviewed_publication(
+    tmp_path: Path,
+) -> None:
+    payload = _ledger_payload()
+    payload["sources"][1]["decisions"].append(
+        {
+            "race_id": "king-county-assessor",
+            "candidate_ids": ["king-county-assessor--rob-foxcurran"],
+            "evidence_url": "https://www.kcdems.org/2026/updated-endorsements/",
+            "evidence_locator": "Updated endorsement announcement, Assessor entry.",
+        }
+    )
+    ledger = tmp_path / "release-ledger.yaml"
+    ledger.write_text(yaml.safe_dump(payload, sort_keys=False))
+    dataset_path = tmp_path / "dataset.json"
+    snapshots = tmp_path / "snapshots"
+    manifests = tmp_path / "manifests"
+    options = [
+        str(ledger),
+        "--inventory-path",
+        str(INVENTORY),
+        "--registry-path",
+        str(REGISTRY),
+        "--snapshot-root",
+        str(snapshots),
+        "--manifest-dir",
+        str(manifests),
+    ]
+    result = CliRunner().invoke(
+        app, ["release", "compile", *options, "--output-path", str(dataset_path)]
+    )
+    assert result.exit_code == 0, result.output
+    assert "(2 sources, 3 decisions)" in result.output
+    dataset = CanonicalDataset.model_validate_json(dataset_path.read_bytes())
+    captures = {capture.id: capture for capture in dataset.captures}
+    by_race = {
+        row.race_id: captures[row.source_capture_id]
+        for row in dataset.endorsements
+        if row.source_id == "king-county-democrats"
+    }
+    updated = by_race["king-county-assessor"]
+    retained = by_race["ld-11-state-representative-1"]
+    assert updated.canonical_url == "https://www.kcdems.org/2026/updated-endorsements/"
+    assert retained.canonical_url == "https://www.kcdems.org/our-party/e/2026-endorsements/"
+    assert updated.published_at is None
+    assert retained.published_at is not None
+    assert len(dataset.captures) == 3
+    assert isinstance(updated, CapturedManifest)
+    assert isinstance(retained, CapturedManifest)
+    for capture, expected_race in [
+        (updated, "king-county-assessor"),
+        (retained, "ld-11-state-representative-1"),
+    ]:
+        extract = json.loads((snapshots / capture.storage_reference).read_bytes())
+        assert [row["race_id"] for row in extract["decisions"]] == [expected_race]
+    first_bytes = dataset_path.read_bytes()
+    result = CliRunner().invoke(
+        app, ["release", "verify", *options, "--dataset-path", str(dataset_path)]
+    )
+    assert result.exit_code == 0, result.output
+    assert "(2 sources, 3 decisions)" in result.output
+    assert dataset_path.read_bytes() == first_bytes
+
+
 def test_release_compiler_localizes_source_review_provenance(tmp_path: Path) -> None:
     ledger_payload = _ledger_payload()
     ledger = tmp_path / "release-ledger.yaml"

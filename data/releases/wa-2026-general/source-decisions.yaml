@@ -488,6 +488,7 @@ sources:
       Julie Wise; extracted text lines 99–100. Official source: https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41.
       Captures: capture-11th-district-democrats-20261019T031241Z-50589efcbce7; verified manual manual-11th-district-democrats-20261019T031729Z-219197aef07c.
       Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.'
+    evidence_url: https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41
 - source_id: 34th-district-democrats
   captured_at: '2026-10-04T04:56:53Z'
   reviewed_at: '2026-10-04T05:30:06Z'
@@ -1298,6 +1299,7 @@ sources:
     evidence_locator: 'North Seattle Canvass — No On 001, 638, 645; October 10 event description, opening paragraphs and closing
       November voting instruction Official source: https://seattledsa.org/event/nseattlecanvass/. Captures: capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c;
       verified manual manual-seattle-democratic-socialists-20261019T031729Z-08bb955d86e2. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.'
+    evidence_url: https://seattledsa.org/event/nseattlecanvass/
 - source_id: tech-4-housing
   captured_at: '2026-10-11T01:07:23.077654Z'
   reviewed_at: '2026-10-11T01:24:53Z'

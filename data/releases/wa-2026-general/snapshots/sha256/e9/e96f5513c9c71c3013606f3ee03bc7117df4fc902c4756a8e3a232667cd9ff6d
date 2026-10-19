@@ -134,15 +134,6 @@
       "evidence_locator": null,
       "race_id": "initiative-26-645",
       "status": "endorsed"
-    },
-    {
-      "candidate_ids": [
-        "king-county-director-of-elections--julie-wise"
-      ],
-      "evidence_excerpt": null,
-      "evidence_locator": "October 2026 newsletter > 11th LD Dems Endorsed Candidates > King County, Director of Elections > Director Julie Wise; extracted text lines 99–100. Official source: https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41. Captures: capture-11th-district-democrats-20261019T031241Z-50589efcbce7; verified manual manual-11th-district-democrats-20261019T031729Z-219197aef07c. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
-      "race_id": "king-county-director-of-elections",
-      "status": "endorsed"
     }
   ],
   "evidence_locator": "Complete current source review: data/review/approvals/wa-2026-general-2026-10-18-verification.json; actual source captures capture-11th-district-democrats-20261019T031241Z-50589efcbce7. Individual decisions retain their own exact publication locators, including earlier approved evidence. Metadata correction: data/review/provenance-corrections/wa-2026-general-2026-10-18.json.",

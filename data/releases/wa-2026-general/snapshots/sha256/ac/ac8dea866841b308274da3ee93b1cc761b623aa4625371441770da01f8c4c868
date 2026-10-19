@@ -27,15 +27,6 @@
       "evidence_locator": "July 1, 2026 official Trans Athletes & Supreme Court statement; paragraphs naming both November measures and expressly opposing their passage. Source semantics: opposition to passage; not a verbatim Vote No quotation. Official source: https://seattledsa.org/2026/07/trans-athletes-supreme-court/. Capture capture-seattle-democratic-socialists-20261016T150411Z-acae1ccfa734; verified manual manual-seattle-democratic-socialists-20261016T154850Z-1e2d0dd7af18.",
       "race_id": "initiative-26-638",
       "status": "endorsed"
-    },
-    {
-      "candidate_ids": [
-        "initiative-26-645--no"
-      ],
-      "evidence_excerpt": null,
-      "evidence_locator": "North Seattle Canvass — No On 001, 638, 645; October 10 event description, opening paragraphs and closing November voting instruction Official source: https://seattledsa.org/event/nseattlecanvass/. Captures: capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c; verified manual manual-seattle-democratic-socialists-20261019T031729Z-08bb955d86e2. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
-      "race_id": "initiative-26-645",
-      "status": "endorsed"
     }
   ],
   "evidence_locator": "Complete current source review: data/review/approvals/wa-2026-general-2026-10-18-verification.json; actual source captures capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c. Individual decisions retain their own exact publication locators, including earlier approved evidence. Metadata correction: data/review/provenance-corrections/wa-2026-general-2026-10-18.json.",
