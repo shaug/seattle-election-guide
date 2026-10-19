@@ -203,6 +203,27 @@ page's content hash participates in the comparison. An index change that the
 link matcher cannot classify therefore remains a human-review lead, including
 after the prior baseline was approved.
 
+UFCW 3000 monitoring (#584) captures the complete endorsements landing page and
+its relevant current-year official news articles, including the two October 15
+initiative publications. The finite landing-page scan follows endorsement links;
+it does not traverse the news feed or historical archive. Previously discovered
+articles and the two known publications remain required after links rotate away.
+The existing discovery records retain these URLs across independent runners.
+At most 100 articles and 64 MiB of total HTML are accepted, with the existing
+bounded public-peer HTTP checks on every request. Unsafe article identities,
+inaccessible required articles, and missing article heading/body structure fail
+the check while preserving the prior comparison baseline.
+
+The derived UFCW comparison binds the landing-page bytes and every original
+article URL/hash. An article-only correction or withdrawal therefore requires
+review even when the landing page and recognized factual mappings are unchanged.
+Original HTTP captures retain their observed status and redirect metadata;
+the derived comparison is a manual upload without an invented HTTP response.
+The reviewed factual mappings remain unchanged. This expanded composite needs
+review of its exact new baseline; the earlier landing-page approval does not
+approve the new snapshot. Fixture-controlled reuse proves durable mechanics,
+not live independent scheduled adoption or completion of #497.
+
 Full third-party plaintext retains the existing private-storage restrictions.
 The new verification vault stores authenticated ciphertext in Git, with a key
 outside Git, so independent runners can restore and verify prior raw captures.

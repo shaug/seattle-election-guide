@@ -11,7 +11,11 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from election_guide.calendar.models import ELECTION_TIMEZONE
-from election_guide.collection.discovery import discover_publication
+from election_guide.collection.discovery import (
+    UFCW_INDEX,
+    discover_publication,
+    discover_ufcw_publication,
+)
 from election_guide.collection.http import fetch_http
 from election_guide.collection.models import RefreshEvent
 from election_guide.collection.refresh import (
@@ -243,13 +247,22 @@ def _refresh(
     source = next(item for item in registry.sources if item.id == policy.source_id)
     try:
         if live:
-            if policy.index_url:
-                raw = discover_publication(policy, root, storage, checked_at)
+            if policy.index_url or source.id == "ufcw-3000":
+                comparison_url = policy.index_url or UFCW_INDEX
+                if source.id == "ufcw-3000":
+                    raw = discover_ufcw_publication(root, storage, checked_at)
+                else:
+                    raw = discover_publication(policy, root, storage, checked_at)
+
                 request = CaptureRequest(
                     source_id=source.id,
-                    requested_url=policy.index_url,
-                    canonical_url=policy.index_url,
-                    title="Derived article-heading comparison; inputs linked by discovery record",
+                    requested_url=comparison_url,
+                    canonical_url=comparison_url,
+                    title=(
+                        "Derived UFCW publication comparison; inputs linked by discovery record"
+                        if source.id == "ufcw-3000"
+                        else "Derived article-heading comparison; inputs linked by discovery record"
+                    ),
                     retrieved_at=checked_at,
                     media_type="text/html",
                     capture_method="manual_upload",
