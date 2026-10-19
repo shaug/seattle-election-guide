@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 109487,
+  "canonical_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "e15c11d837ae4dcd7ff606cd02c317bb83460380a27b702414273e82a2eb798c",
+  "http_status": 200,
+  "id": "capture-washington-conservation-action-20261019T031122Z-75cd27dd155a",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "retrieved_at": "2026-10-19T03:11:22.785077Z",
+  "schema_version": "1.0",
+  "source_id": "washington-conservation-action",
+  "storage_reference": "sha256/e1/e15c11d837ae4dcd7ff606cd02c317bb83460380a27b702414273e82a2eb798c",
+  "storage_scope": "local_only",
+  "title": "Washington Conservation Action current official publication",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 13161,
+  "canonical_url": "https://www.facebook.com/stonewallwa/",
+  "capture_method": "manual_upload",
+  "content_sha256": "caf57e7cbfcf2d1b98050ec754b6478868ac661cc376e21284b983d4f0eddabb",
+  "http_status": null,
+  "id": "capture-washington-stonewall-democrats-20261019T032756Z-526ca97665f1",
+  "media_type": "text/plain; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived evidence preserved from a normal public browser visit without login. Accessibility snapshots/screenshots are not original HTTP responses; no HTTP status or redirect history asserted. Raw derived artifacts retained privately by content hash; no redistribution permission asserted.",
+  "requested_url": "https://www.facebook.com/stonewallwa/",
+  "retrieved_at": "2026-10-19T03:27:56.018296Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/ca/caf57e7cbfcf2d1b98050ec754b6478868ac661cc376e21284b983d4f0eddabb",
+  "storage_scope": "local_only",
+  "title": "Stonewall public profile: derived browser accessibility snapshot",
+  "updated_at": null
+}

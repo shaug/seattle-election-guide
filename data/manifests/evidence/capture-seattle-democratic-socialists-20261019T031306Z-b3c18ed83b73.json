@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 76068,
+  "canonical_url": "https://seattledsa.org/event/redmond-overlake-canvass-no-on-001-638-645/",
+  "capture_method": "static_html",
+  "content_sha256": "16fee40c75bbbc6b1e0a4efcd9467137ae5c3b72758a272620b68a6b35b1647a",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261019T031306Z-b3c18ed83b73",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://seattledsa.org/event/redmond-overlake-canvass-no-on-001-638-645/",
+  "retrieved_at": "2026-10-19T03:13:06.874426Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/16/16fee40c75bbbc6b1e0a4efcd9467137ae5c3b72758a272620b68a6b35b1647a",
+  "storage_scope": "local_only",
+  "title": "Seattle Democratic Socialists of America linked official publication",
+  "updated_at": null
+}

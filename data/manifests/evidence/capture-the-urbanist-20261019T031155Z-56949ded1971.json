@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 82699,
+  "canonical_url": "https://www.theurbanist.org/tag/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "52d62dfc69353abab29b8d97061083b524c0eb695489c7e502919321ca28e41c",
+  "http_status": 200,
+  "id": "capture-the-urbanist-20261019T031155Z-56949ded1971",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.theurbanist.org/tag/2026-endorsements/",
+  "retrieved_at": "2026-10-19T03:11:55.569383Z",
+  "schema_version": "1.0",
+  "source_id": "the-urbanist",
+  "storage_reference": "sha256/52/52d62dfc69353abab29b8d97061083b524c0eb695489c7e502919321ca28e41c",
+  "storage_scope": "local_only",
+  "title": "The Urbanist Elections Committee linked official publication",
+  "updated_at": null
+}

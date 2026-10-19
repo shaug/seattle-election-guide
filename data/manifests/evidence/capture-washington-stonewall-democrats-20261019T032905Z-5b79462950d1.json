@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 97334,
+  "canonical_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+  "capture_method": "manual_upload",
+  "content_sha256": "b675a405bb0d2f318ab2b9033e488c8a49533a2ef7543281b8f5f474b990e611",
+  "http_status": null,
+  "id": "capture-washington-stonewall-democrats-20261019T032905Z-5b79462950d1",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived evidence preserved from a normal public browser visit without login. Accessibility snapshots/screenshots are not original HTTP responses; no HTTP status or redirect history asserted. Raw derived artifacts retained privately by content hash; no redistribution permission asserted.",
+  "requested_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+  "retrieved_at": "2026-10-19T03:29:05.813577Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/b6/b675a405bb0d2f318ab2b9033e488c8a49533a2ef7543281b8f5f474b990e611",
+  "storage_scope": "local_only",
+  "title": "Stonewall general endorsement guide: derived browser context screenshot",
+  "updated_at": null
+}

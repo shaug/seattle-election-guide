@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 153910,
+  "canonical_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-melody",
+  "capture_method": "static_html",
+  "content_sha256": "eda42505c5128131a153bc8391239889cbf180e1836676dcd941bd3dd72a6e79",
+  "http_status": 200,
+  "id": "capture-planned-parenthood-alliance-advocates-20261019T031251Z-6b0e434a80d9",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification research; no redistribution permission asserted.",
+  "requested_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-melody",
+  "retrieved_at": "2026-10-19T03:12:51.483966Z",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "storage_reference": "sha256/ed/eda42505c5128131a153bc8391239889cbf180e1836676dcd941bd3dd72a6e79",
+  "storage_scope": "local_only",
+  "title": "Planned Parenthood Alliance Advocates linked official publication",
+  "updated_at": null
+}

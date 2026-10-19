@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": null,
+  "id": "capture-oneamerica-votes-20261019T031251Z-35c492b7d366",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification research; no redistribution permission asserted.",
+  "requested_url": "https://oavotes.org/our-work/endorsements/",
+  "retrieved_at": "2026-10-19T03:12:51.258589Z",
+  "schema_version": "1.0",
+  "source_id": "oneamerica-votes",
+  "title": null,
+  "unavailable_reason": "live collection failed: live collection refuses an HTTPS downgrade redirect",
+  "updated_at": null
+}

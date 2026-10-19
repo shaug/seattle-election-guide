@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": true,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": null,
+  "id": "capture-sierra-club-washington-20261019T032049Z-9767013884cb",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Only the clean official URL and factual access outcome are recorded; no security-challenge URL or membership data retained.",
+  "requested_url": "https://www.sierraclub.org/washington/2026-endorsements",
+  "retrieved_at": "2026-10-19T03:20:49.052633Z",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "title": null,
+  "unavailable_reason": "Standard browser displays an additional security check and hCaptcha before the publication. Challenge not completed; no access-control bypass.",
+  "updated_at": null
+}

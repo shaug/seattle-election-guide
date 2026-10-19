@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-nondriver-action-20261019T032749Z-67fa4f21a00c",
+  "entered_at": "2026-10-19T03:27:50.029981Z",
+  "entry_method": "manual",
+  "evidence_locator": "PDF page1, KingCounty endorsement section. Pages1–3 visually inspected; page3 explicitly separates All Candidate Questionnaire Responses; pages3–29 response sections examined by text. Candidate questionnaire participation is not an endorsement.",
+  "evidence_type": "pdf",
+  "id": "manual-nondriver-action-20261019T032750Z-b211976f65f3",
+  "review_note": null,
+  "review_status": "pending",
+  "reviewed_at": null,
+  "reviewed_by": null,
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "transcription": "Seattle Transit Measure — Yes\nSeattle Council District5 — Nilu Jenks\nKingCounty Council District (not numbered in source) — Rebecca Saldana\nKingCounty Council District8 — Teresa Mosqueda\nToshiko Hasegawa appears among questionnaire respondents, not the affirmative endorsement section."
+}

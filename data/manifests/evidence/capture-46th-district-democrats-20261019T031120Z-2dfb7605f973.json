@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 56685,
+  "canonical_url": "https://www.46dems.org/",
+  "capture_method": "static_html",
+  "content_sha256": "eadf884f3d727e6a086cc0f8b4a5f054b765fda58d8a793ed66de7b383f56d15",
+  "http_status": 200,
+  "id": "capture-46th-district-democrats-20261019T031120Z-2dfb7605f973",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.46dems.org/",
+  "retrieved_at": "2026-10-19T03:11:20.295224Z",
+  "schema_version": "1.0",
+  "source_id": "46th-district-democrats",
+  "storage_reference": "sha256/ea/eadf884f3d727e6a086cc0f8b4a5f054b765fda58d8a793ed66de7b383f56d15",
+  "storage_scope": "local_only",
+  "title": "46th Legislative District Democrats current official publication",
+  "updated_at": null
+}

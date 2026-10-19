@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 213767,
+  "canonical_url": "https://www.nwpcwa.org/endorsements_2026",
+  "capture_method": "static_html",
+  "content_sha256": "5af3529dbc0fb81abe8eb4c27492c9e546d57766846b4f345dd68741a60b8080",
+  "http_status": 200,
+  "id": "capture-nwpc-washington-20261019T031104Z-ec8e2f56bd75",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.nwpcwa.org/endorsements_2026",
+  "retrieved_at": "2026-10-19T03:11:04.515532Z",
+  "schema_version": "1.0",
+  "source_id": "nwpc-washington",
+  "storage_reference": "sha256/5a/5af3529dbc0fb81abe8eb4c27492c9e546d57766846b4f345dd68741a60b8080",
+  "storage_scope": "local_only",
+  "title": "National Women's Political Caucus of Washington current official publication",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 56694,
+  "canonical_url": "https://wabikes.org/index.php/advocacy/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "f32fe60a4f99a60571f23db61c2a5e1e6c3001062475dc886f7fc130564c5fbd",
+  "http_status": 200,
+  "id": "capture-washington-bikes-20261019T031051Z-d44c1bae4562",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://wabikes.org/index.php/advocacy/endorsements/",
+  "retrieved_at": "2026-10-19T03:10:51.656356Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "storage_reference": "sha256/f3/f32fe60a4f99a60571f23db61c2a5e1e6c3001062475dc886f7fc130564c5fbd",
+  "storage_scope": "local_only",
+  "title": "Washington Bikes current official publication",
+  "updated_at": null
+}

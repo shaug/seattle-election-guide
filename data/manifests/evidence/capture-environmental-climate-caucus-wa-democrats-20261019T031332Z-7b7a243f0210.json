@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 10277,
+  "canonical_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+  "capture_method": "manual_upload",
+  "content_sha256": "c30ad6bfbede125e8711f43a090632a281e148401aa55ca7ac74ad6f29ae35dc",
+  "http_status": null,
+  "id": "capture-environmental-climate-caucus-wa-democrats-20261019T031332Z-7b7a243f0210",
+  "media_type": "text/plain; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source evidence retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+  "retrieved_at": "2026-10-19T03:13:32.332661Z",
+  "schema_version": "1.0",
+  "source_id": "environmental-climate-caucus-wa-democrats",
+  "storage_reference": "sha256/c3/c30ad6bfbede125e8711f43a090632a281e148401aa55ca7ac74ad6f29ae35dc",
+  "storage_scope": "local_only",
+  "title": "Official page textual rendering via standard web open",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 68095,
+  "canonical_url": "https://seattlesubway.org/election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "a0d923870f8e3fc012586e1af619dd8263d8d8b1363eba9dcbdd0149ac59462e",
+  "http_status": 200,
+  "id": "capture-seattle-subway-20261019T031052Z-7f95d0e43116",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://seattlesubway.org/election-endorsements/",
+  "retrieved_at": "2026-10-19T03:10:52.328571Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-subway",
+  "storage_reference": "sha256/a0/a0d923870f8e3fc012586e1af619dd8263d8d8b1363eba9dcbdd0149ac59462e",
+  "storage_scope": "local_only",
+  "title": "Seattle Subway current official publication",
+  "updated_at": null
+}

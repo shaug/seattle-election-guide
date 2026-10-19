@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 444723,
+  "canonical_url": "https://seattledsa.org/events/category/electoral/",
+  "capture_method": "static_html",
+  "content_sha256": "97262fd1b83ad818f9564c20463c706dbbe2deba755fb90fc66ce99fab5d80dd",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261019T031153Z-ba30a4c8f58a",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://seattledsa.org/events/category/electoral/",
+  "retrieved_at": "2026-10-19T03:11:53.929562Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/97/97262fd1b83ad818f9564c20463c706dbbe2deba755fb90fc66ce99fab5d80dd",
+  "storage_scope": "local_only",
+  "title": "Seattle Democratic Socialists of America linked official publication",
+  "updated_at": null
+}

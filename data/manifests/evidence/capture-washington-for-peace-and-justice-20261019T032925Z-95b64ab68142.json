@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 14993,
+  "canonical_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+  "capture_method": "manual_upload",
+  "content_sha256": "6bd54738e1cb5e55a6a989aa93e6062b3e4def998365ce16d1d59a3abc604266",
+  "http_status": null,
+  "id": "capture-washington-for-peace-and-justice-20261019T032925Z-95b64ab68142",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived normalized facts and original agent review notes from a standard public browser read of all 12 official carousel slides. This capture is not original image bytes or HTTP response HTML; no HTTP status asserted. Full third-party content and signed delivery details are not redistributed. Human approval remains pending.",
+  "requested_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+  "retrieved_at": "2026-10-19T03:29:25.746193Z",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "storage_reference": "sha256/6b/6bd54738e1cb5e55a6a989aa93e6062b3e4def998365ce16d1d59a3abc604266",
+  "storage_scope": "local_only",
+  "title": "WA4PJ current public 12-slide carousel — derived normalized agent review",
+  "updated_at": null
+}

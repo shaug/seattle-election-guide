@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 92070,
+  "canonical_url": "https://seiu775.org/2026endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "aaf5dff45bd0d29efdf477967e77f2baf55a550cb198b08375cd59aacf8de4cf",
+  "http_status": 200,
+  "id": "capture-seiu-775-20261019T031019Z-da330f44f795",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://seiu775.org/2026endorsements/",
+  "retrieved_at": "2026-10-19T03:10:19.553947Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-775",
+  "storage_reference": "sha256/aa/aaf5dff45bd0d29efdf477967e77f2baf55a550cb198b08375cd59aacf8de4cf",
+  "storage_scope": "local_only",
+  "title": "SEIU 775 current official publication",
+  "updated_at": null
+}

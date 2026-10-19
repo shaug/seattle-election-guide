@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 86559,
+  "canonical_url": "https://www.tech4housing.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "fa2a14b136d3c8c92d1c441b858f1aafbfe7d0375e70824b0ce92976a9ce8e67",
+  "http_status": 200,
+  "id": "capture-tech-4-housing-20261019T031048Z-37dbdbbf8dc4",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.tech4housing.org/endorsements",
+  "retrieved_at": "2026-10-19T03:10:48.643300Z",
+  "schema_version": "1.0",
+  "source_id": "tech-4-housing",
+  "storage_reference": "sha256/fa/fa2a14b136d3c8c92d1c441b858f1aafbfe7d0375e70824b0ce92976a9ce8e67",
+  "storage_scope": "local_only",
+  "title": "Tech 4 Housing current official publication",
+  "updated_at": null
+}

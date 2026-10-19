@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 16571,
+  "canonical_url": "https://www.wabuildingtrades.org/uploads/1/3/6/1/136135495/union-and-i-vote_orig.jpg",
+  "capture_method": "image",
+  "content_sha256": "7bfe80f5eb5a678014bcb1bc3be3561db08d56e404cf12aba525c3df23e5c864",
+  "http_status": 200,
+  "id": "capture-washington-state-building-trades-20261019T031251Z-b60035538ce7",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification research; no redistribution permission asserted.",
+  "requested_url": "https://www.wabuildingtrades.org/uploads/1/3/6/1/136135495/union-and-i-vote_orig.jpg",
+  "retrieved_at": "2026-10-19T03:12:51.365290Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-building-trades",
+  "storage_reference": "sha256/7b/7bfe80f5eb5a678014bcb1bc3be3561db08d56e404cf12aba525c3df23e5c864",
+  "storage_scope": "local_only",
+  "title": "Washington State Building and Construction Trades Council linked official publication",
+  "updated_at": null
+}

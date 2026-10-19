@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 3264,
+  "canonical_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-hawk",
+  "capture_method": "manual_upload",
+  "content_sha256": "93c503d105bfae54770b7cabee9019031e7fcf124f6584e7990d67f5ed505dfc",
+  "http_status": null,
+  "id": "capture-planned-parenthood-alliance-advocates-20261019T032900Z-5954852453fb",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Derived visible factual transcription from ordinary browser review. This is manually preserved factual HTML, not an original HTTP response or full third-party page. HTTP status and redirect chain were not observed. Original attempted URL and visible final URL are retained in the private artifact. Human approval remains pending.",
+  "requested_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-hawk",
+  "retrieved_at": "2026-10-19T03:29:00.522362Z",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "storage_reference": "sha256/93/93c503d105bfae54770b7cabee9019031e7fcf124f6584e7990d67f5ed505dfc",
+  "storage_scope": "local_only",
+  "title": "Jaime Hawk for Washington Supreme Court | Planned Parenthood Alliance Advocates — derived visible factual browser transcription",
+  "updated_at": null
+}
