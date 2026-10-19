@@ -1,6 +1,22 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
+  - corrected_on: 2026-10-18
+    headline: "Added source checks for endorsement results."
+    body: >-
+      Race pages now show how the All sources result changes when an endorsing
+      source, a source category, or a registered group is removed. The overview
+      flags material changes and links to the details. These checks help readers
+      see which sources a result depends on; the recorded endorsements, shares,
+      and leading choices remain unchanged. Customizing sources hides the overview
+      warning until All sources is restored.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Source checks methodology"
+        url: /e/wa-2026-general/about/#source-checks
+      - label: "Source checks implementation"
+        url: https://github.com/shaug/seattle-election-guide/pull/572
   - corrected_on: 2026-10-17
     headline: "Mobile meters now show percentages before inspection."
     body: >-
