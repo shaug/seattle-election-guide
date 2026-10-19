@@ -325,8 +325,10 @@ Four rules govern when a preview exists:
 - **Closing tears the preview down.** Closing or merging the pull request deletes its deployments.
   Teardown is not label-gated, so a preview whose label was removed before the pull request closed
   is still cleaned up. It enumerates every page of the Cloudflare deployments API with
-  `env=preview`, then deletes only entries whose raw `deployment_trigger.metadata.branch` equals
-  `pr-<number>` and whose `environment` is `preview`. Enumeration finishes before deletion so
+  `env=preview` and Cloudflare's default page size, continuing until an empty page as in
+  [Cloudflare's SDK pagination](https://github.com/cloudflare/cloudflare-typescript/blob/main/src/core/pagination.ts).
+  A short nonempty page does not end enumeration. Teardown then deletes only entries whose raw
+  `deployment_trigger.metadata.branch` equals `pr-<number>` and whose `environment` is `preview`. Enumeration finishes before deletion so
   removing entries cannot shift unread pages. HTTP errors, unsuccessful API responses, and
   malformed deployment records fail the job; only a complete listing with no matches is a no-op.
 - **`CLOUDFLARE_PAGES_ENABLED` still applies.** Previews respect the same publication switch as
