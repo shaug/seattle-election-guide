@@ -40,10 +40,10 @@
 - Produces `prepare_scoring(dataset, configuration, *, computed_at, allow_unresolved=False) -> ScoringContext` and `score_race(context, race, *, excluded_source_ids=frozenset()) -> RaceConsensus`.
 - `ScoringContext` carries the canonical dataset/configuration, prepared effective records/review context, per-race endorsements and eligible sources, component hashes, and timestamp. Existing `score_dataset(...) -> ConsensusReport` keeps its signature and bytes.
 
-- [ ] Record the base's existing scoring/publication/personalization test result and a canonical consensus-byte digest.
-- [ ] Extract preparation and reuse the same race allocation/state logic; compute eligibility once per source, then reuse it across scenarios. Reject exclusion IDs outside a race's eligible consensus set.
-- [ ] Verify the same existing tests and baseline digest. This task is a behavior-preserving extraction; it uses the preservation evidence exemption.
-- [ ] Commit the extraction with its focused validation evidence.
+- [x] Record the base's existing scoring/publication/personalization test result and a canonical consensus-byte digest.
+- [x] Extract preparation and reuse the same race allocation/state logic; compute eligibility once per source, then reuse it across scenarios. Reject exclusion IDs outside a race's eligible consensus set.
+- [x] Verify the same existing tests and baseline digest. This task is a behavior-preserving extraction; it uses the preservation evidence exemption.
+- [x] Commit the extraction with its focused validation evidence.
 
 ### Task 2: Compute and validate the complete sensitivity suite
 

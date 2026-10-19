@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from collections import defaultdict
+from dataclasses import dataclass
 from datetime import datetime
 from fractions import Fraction
 from typing import cast
@@ -47,14 +48,33 @@ class PublicationBlockedError(ValueError):
         )
 
 
-def score_dataset(
+@dataclass(frozen=True)
+class ScoringContext:
+    """Canonical inputs prepared once for audited and exclusion scoring."""
+
+    dataset: CanonicalDataset
+    configuration: ScoringConfiguration
+    computed_at: datetime
+    races: list[Race]
+    endorsements_by_race: dict[str, list[NormalizedEndorsement]]
+    eligible_sources_by_race: dict[str, list[Source]]
+    claims: dict[str, ExtractedClaim]
+    unresolved: list[ReviewItem]
+    unresolved_high: list[ReviewItem]
+    relevant_review_races: dict[str, set[str]]
+    dataset_hash: str
+    publication_scope_hash: str
+    input_hash: str
+
+
+def prepare_scoring(
     dataset: CanonicalDataset,
     configuration: ScoringConfiguration,
     *,
     computed_at: datetime,
     allow_unresolved: bool = False,
-) -> ConsensusReport:
-    """Score every publication-eligible race from validated canonical inputs."""
+) -> ScoringContext:
+    """Prepare eligibility and reviewed records without changing scoring policy."""
     if computed_at.tzinfo is None or computed_at.utcoffset() is None:
         raise ValueError("computed_at must include a UTC offset")
     effective = dataset.effective_records()
@@ -104,38 +124,84 @@ def score_dataset(
     for endorsement in endorsements:
         endorsements_by_race[endorsement.race_id].append(endorsement)
 
-    results = [
-        _score_race(
-            race,
-            dataset,
-            configuration,
-            endorsements_by_race.get(race.id, []),
-            claims,
-            relevant_unresolved,
-            unresolved_high,
-            relevant_review_races,
-            input_hash,
-            computed_at,
-        )
-        for race in races
-    ]
+    eligible_sources_by_race: dict[str, list[Source]] = {race.id: [] for race in races}
+    for source in sorted(source_by_id.values(), key=lambda item: item.id):
+        if source.panel_role != "consensus":
+            continue
+        for race_id in eligible_race_ids(source.id, dataset.inventory, dataset.source_registry):
+            eligible_sources_by_race[race_id].append(source)
+    return ScoringContext(
+        dataset=dataset,
+        configuration=configuration,
+        computed_at=computed_at,
+        races=races,
+        endorsements_by_race=dict(endorsements_by_race),
+        eligible_sources_by_race=eligible_sources_by_race,
+        claims=claims,
+        unresolved=relevant_unresolved,
+        unresolved_high=unresolved_high,
+        relevant_review_races=relevant_review_races,
+        dataset_hash=dataset_hash,
+        publication_scope_hash=publication_scope_hash,
+        input_hash=input_hash,
+    )
+
+
+def score_dataset(
+    dataset: CanonicalDataset,
+    configuration: ScoringConfiguration,
+    *,
+    computed_at: datetime,
+    allow_unresolved: bool = False,
+) -> ConsensusReport:
+    """Score every publication-eligible race from validated canonical inputs."""
+    prepared = prepare_scoring(
+        dataset, configuration, computed_at=computed_at, allow_unresolved=allow_unresolved
+    )
     return ConsensusReport.model_validate(
         {
             "election_id": dataset.inventory.election.id,
             "configuration_id": configuration.id,
             "scoring_configuration": configuration,
             "computed_at": computed_at,
-            "dataset_hash": dataset_hash,
-            "publication_scope_hash": publication_scope_hash,
-            "input_hash": input_hash,
-            "publication_race_ids": publication_race_ids,
-            "publication_has_unresolved_high_severity": bool(unresolved_high),
-            "races": results,
+            "dataset_hash": prepared.dataset_hash,
+            "publication_scope_hash": prepared.publication_scope_hash,
+            "input_hash": prepared.input_hash,
+            "publication_race_ids": [race.id for race in prepared.races],
+            "publication_has_unresolved_high_severity": bool(prepared.unresolved_high),
+            "races": [score_race(prepared, race) for race in prepared.races],
         },
         context={
             "canonical_dataset": dataset,
             "skip_derived_validation": True,
         },
+    )
+
+
+def score_race(
+    context: ScoringContext,
+    race: Race,
+    *,
+    excluded_source_ids: frozenset[str] = frozenset(),
+) -> RaceConsensus:
+    """Apply the canonical scorer to one race after an explicit source exclusion."""
+    eligible = context.eligible_sources_by_race.get(race.id)
+    if eligible is None:
+        raise ValueError("race is outside the canonical publication scope")
+    if excluded_source_ids - {source.id for source in eligible}:
+        raise ValueError("excluded sources must be eligible consensus sources for this race")
+    return _score_race(
+        race,
+        context.dataset,
+        context.configuration,
+        context.endorsements_by_race.get(race.id, []),
+        context.claims,
+        context.unresolved,
+        context.unresolved_high,
+        context.relevant_review_races,
+        context.input_hash,
+        context.computed_at,
+        eligible_sources=[source for source in eligible if source.id not in excluded_source_ids],
     )
 
 
@@ -150,20 +216,13 @@ def _score_race(
     relevant_review_races: dict[str, set[str]],
     input_hash: str,
     computed_at: datetime,
+    *,
+    eligible_sources: list[Source],
 ) -> RaceConsensus:
     endorsement_by_source = {item.source_id: item for item in race_endorsements}
     for endorsement in race_endorsements:
         if endorsement.status in EXPLICIT_STATUSES:
             _validate_exact_equal_split(endorsement)
-    eligible_sources = sorted(
-        (
-            source
-            for source in dataset.source_registry.sources
-            if source.panel_role == "consensus"
-            and race.id in eligible_race_ids(source.id, dataset.inventory, dataset.source_registry)
-        ),
-        key=lambda source: source.id,
-    )
     explicit = [
         endorsement_by_source[source.id]
         for source in eligible_sources
