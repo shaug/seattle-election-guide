@@ -2081,6 +2081,7 @@ def analytics_export(
     Manual investigations use a separate --archive-dir from the retired
     repository history (docs/MONITORING.md). Missed in-window days are fetched;
     expired interior dates are explained separately under that directory's gaps/.
+    A later export retries any day an earlier run left unwritten.
 
     An already-archived day is never re-fetched. Byte-identity across runs is
     then a property of not asking again, rather than a bet that Cloudflare
@@ -2088,8 +2089,9 @@ def analytics_export(
     """
     try:
         today = date.fromisoformat(as_of) if as_of is not None else datetime.now(UTC).date()
+        newest = newest_complete_day(today)
         requested = [date.fromisoformat(day)] if day is not None else None
-        if requested is not None and requested[0] > newest_complete_day(today):
+        if requested is not None and requested[0] > newest:
             raise ValueError(
                 f"{requested[0].isoformat()} is not a complete UTC day yet; "
                 "archiving it would record a partial count"
@@ -2105,8 +2107,10 @@ def analytics_export(
         raise typer.Exit(code=1) from error
 
     written: list[Path] = []
-    # An empty answer is ambiguous: it is what a day outside the retention
-    # window returns, and also what a day with genuinely no traffic returns.
+    # The newest complete day's empty answer is left for retry; the policy
+    # boundary and its rationale live in `newest_complete_day` (issue #398).
+    # For older days, an empty answer is ambiguous: it is what a day outside
+    # the retention window returns, and also what a day with no traffic returns.
     # The discriminator is whether some *older* day is known to be readable. If
     # one is, this day is inside the window and its zero is real, so it is
     # archived as a zero — a gap there would say "nobody looked" about a day
@@ -2124,6 +2128,7 @@ def analytics_export(
     # never fire again. That needs a long schedule outage to surface — which is
     # exactly when days are aging out unnoticed.
     aged_out: list[date] = []
+    unsettled: list[date] = []
     zeroed: list[date] = []
     floor = window_floor(today)
     oldest_with_data = min((day for day in already if day >= floor), default=None)
@@ -2136,6 +2141,9 @@ def analytics_export(
             assert zone is not None
             rollup = zone.archive_day(candidate, as_of=today)
             if rollup is None:
+                if candidate == newest:
+                    unsettled.append(candidate)
+                    continue
                 if oldest_with_data is None or oldest_with_data >= candidate:
                     aged_out.append(candidate)
                     continue
@@ -2160,16 +2168,21 @@ def analytics_export(
     if gap_path is not None:
         typer.echo(f"analytics export: expired gap dates recorded -> {gap_path}")
 
-    # An operator who named one date gets an exit code about that date; a
-    # full sweep reports and carries on, because one day past the window
-    # is not a reason to abandon the other twenty-nine.
+    # A named date gets an exit code about that date; a sweep reports every
+    # skipped day while retaining the other days it could archive.
+    for candidate in unsettled:
+        typer.echo(
+            f"analytics export: no data for {candidate.isoformat()}; daily aggregation may "
+            "still be settling; left unwritten, retry a later manual export",
+            err=True,
+        )
     for candidate in aged_out:
         typer.echo(
             f"analytics export: no data for {candidate.isoformat()}; treating it as older "
             f"than the {RETENTION_DAYS}-day window",
             err=True,
         )
-    if requested is not None and aged_out:
+    if requested is not None and (aged_out or unsettled):
         typer.echo(
             f"analytics export failed: {requested[0].isoformat()} was not archived; "
             "see the reason above",
@@ -2180,6 +2193,7 @@ def analytics_export(
     typer.echo(
         f"analytics export: {len(written)} archived ({len(zeroed)} with no traffic), "
         f"{len(aged_out)} past the window, "
+        f"{len(unsettled)} awaiting retry, "
         f"{len(already)} already present -> {archive_dir}"
     )
 

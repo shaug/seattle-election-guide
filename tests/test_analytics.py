@@ -286,21 +286,25 @@ def test_backfill_resumes_over_an_existing_archive(
     assert zone.queried == [date(2026, 8, 15)]
 
 
+@pytest.mark.parametrize("newest_empty", [False, True])
 def test_manual_export_resumes_after_a_long_pause_with_exact_gap_evidence(
-    runner: CliRunner, archive: Path, monkeypatch: pytest.MonkeyPatch
+    runner: CliRunner, archive: Path, monkeypatch: pytest.MonkeyPatch, newest_empty: bool
 ) -> None:
     """Expired dates must be explained, never silently missing or fabricated zeros."""
     today = date(2026, 9, 25)
     last_saved = date(2026, 8, 20)
     write_rollup(archive, _rollup(last_saved))
-    _install(monkeypatch, StubZone(_available(today, range(1, RETENTION_DAYS + 1))))
+    available = _available(today, range(1, RETENTION_DAYS + 1))
+    if newest_empty:
+        del available[date(2026, 9, 24)]
+    _install(monkeypatch, StubZone(available))
     result = runner.invoke(
         app, ["analytics", "export", "--as-of", "2026-09-25", "--archive-dir", str(archive)]
     )
     assert result.exit_code == 0, result.output
     days = archived_dates(archive)
     assert days == {last_saved} | {
-        date(2026, 8, 26) + timedelta(days=offset) for offset in range(30)
+        date(2026, 8, 26) + timedelta(days=offset) for offset in range(29 if newest_empty else 30)
     }
     records = sorted((archive / "gaps").glob("*.json"))
     assert len(records) == 1, "the CLI must explain the expired span separately from traffic"
@@ -414,8 +418,85 @@ def test_export_does_not_explain_an_ambiguous_in_window_hole(
         test_committed_archive_has_no_gaps()
 
 
+@pytest.mark.parametrize("next_run_days_later", [0, 1])
+def test_an_empty_newest_day_is_left_unwritten_and_retried(
+    runner: CliRunner,
+    archive: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    next_run_days_later: int,
+) -> None:
+    """An unanswered tail stays retryable within the same day and on the next day."""
+    today = date(2026, 8, 16)
+    newest = date(2026, 8, 15)
+    available = _available(today, range(2, RETENTION_DAYS + 1))
+    _install(monkeypatch, StubZone(available))
+    arguments = ["analytics", "export", "--archive-dir", str(archive), "--as-of"]
+
+    first = runner.invoke(app, [*arguments, today.isoformat()])
+
+    assert first.exit_code == 0, first.output
+    target = archive / "2026-08-15.json"
+    assert not target.exists(), "an unanswered newest day must not become a permanent zero"
+    assert newest.isoformat() in first.output
+    assert "retry" in first.output.lower()
+    archived = sorted(date.fromisoformat(path.stem) for path in archive.glob("*.json"))
+    assert archived[-1] == date(2026, 8, 14)
+    assert len(archived) == 29
+    assert _gaps(archived) == []
+    assert not list((archive / "gaps").glob("*.json"))
+    previous_bytes = {path.name: path.read_bytes() for path in archive.glob("*.json")}
+
+    available[newest] = _rollup(newest, requests=548)
+    available[today] = _rollup(today)
+    next_today = today + timedelta(days=next_run_days_later)
+    second = runner.invoke(app, [*arguments, next_today.isoformat()])
+
+    assert second.exit_code == 0, second.output
+    assert json.loads(target.read_text(encoding="utf-8"))["requests"] == 548
+    assert _gaps(sorted(date.fromisoformat(path.stem) for path in archive.glob("*.json"))) == []
+    assert all((archive / name).read_bytes() == content for name, content in previous_bytes.items())
+
+
+@pytest.mark.parametrize("older_day_archived", [False, True])
+def test_an_explicit_empty_newest_day_fails_and_remains_retryable(
+    runner: CliRunner,
+    archive: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    older_day_archived: bool,
+) -> None:
+    """A named unanswered yesterday fails even when older readable history exists."""
+    if older_day_archived:
+        write_rollup(archive, _rollup(date(2026, 8, 14)))
+    _install(monkeypatch, StubZone({}))
+
+    result = runner.invoke(
+        app,
+        [
+            "analytics",
+            "export",
+            "--date",
+            "2026-08-15",
+            "--as-of",
+            "2026-08-16",
+            "--archive-dir",
+            str(archive),
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert not (archive / "2026-08-15.json").exists()
+    assert "2026-08-15" in result.output
+    assert "retry" in result.output.lower()
+
+
+@pytest.mark.parametrize("newest_already_archived", [False, True])
+@pytest.mark.parametrize("quiet", [date(2026, 8, 10), date(2026, 8, 14)])
 def test_a_day_with_no_traffic_is_archived_as_zero_not_left_as_a_gap(
-    runner: CliRunner, archive: Path, monkeypatch: pytest.MonkeyPatch
+    runner: CliRunner,
+    archive: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    newest_already_archived: bool,
+    quiet: date,
 ) -> None:
     """An interior empty day is a fact about the site; a gap would be a fact about us.
 
@@ -424,9 +505,10 @@ def test_a_day_with_no_traffic_is_archived_as_zero_not_left_as_a_gap(
     apart — so this day is inside the window, and its zero is real.
     """
     today = date(2026, 8, 16)
-    quiet = date(2026, 8, 10)
     available = _available(today, range(1, RETENTION_DAYS + 1))
     del available[quiet]
+    if newest_already_archived:
+        write_rollup(archive, available[date(2026, 8, 15)])
     _install(monkeypatch, StubZone(available))
 
     result = runner.invoke(
@@ -508,6 +590,32 @@ def test_days_past_the_window_are_skipped_rather_than_zeroed(
     archived = sorted(date.fromisoformat(path.stem) for path in archive.glob("*.json"))
     assert archived == sorted(available)
     assert _gaps(archived) == []
+
+
+def test_an_explicit_aged_out_day_exits_non_zero_and_writes_nothing(
+    runner: CliRunner, archive: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The newest-day retry guard preserves failure for a named aged-out date."""
+    _install(monkeypatch, StubZone({}))
+
+    result = runner.invoke(
+        app,
+        [
+            "analytics",
+            "export",
+            "--date",
+            "2026-07-01",
+            "--as-of",
+            "2026-08-16",
+            "--archive-dir",
+            str(archive),
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "2026-07-01" in result.output
+    assert "older" in result.output
+    assert not list(archive.glob("*.json"))
 
 
 def test_missing_token_exits_non_zero_and_writes_nothing(runner: CliRunner, archive: Path) -> None:

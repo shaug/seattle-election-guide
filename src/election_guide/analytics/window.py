@@ -38,6 +38,13 @@ def newest_complete_day(as_of: date) -> date:
     Today is still accumulating, and a day archived while in progress would
     record a partial count and never be revisited, because an archived day is
     never fetched again.
+
+    This is also the empty-answer retry boundary: yesterday can have closed
+    only moments before a manual export, so an empty daily aggregate is not
+    yet evidence of zero traffic. Leave it unwritten until a later export
+    returns data or the day is older than this boundary (issue #398). This
+    one-UTC-day margin is a conservative policy, not a measured Cloudflare
+    finalization guarantee; non-empty answers are still archived immediately.
     """
     return as_of - timedelta(days=1)
 
