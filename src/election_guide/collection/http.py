@@ -11,7 +11,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
 from http.client import HTTPConnection, HTTPResponse, HTTPSConnection
-from urllib.parse import urljoin, urlsplit, urlunsplit
+from urllib.parse import urlencode, urljoin, urlsplit, urlunsplit
 
 from election_guide.validation import validated_http_url, validated_media_type
 
@@ -45,7 +45,9 @@ class HttpArtifact:
     media_type: str
 
 
-def fetch_http(url: str, *, timeout_seconds: float = 30) -> HttpArtifact:
+def fetch_http(
+    url: str, *, timeout_seconds: float = 30, form: dict[str, str] | None = None
+) -> HttpArtifact:
     """Fetch one public artifact within a total deadline and strict size cap."""
     if timeout_seconds <= 0:
         raise ValueError("live collection timeout must be positive")
@@ -53,6 +55,7 @@ def fetch_http(url: str, *, timeout_seconds: float = 30) -> HttpArtifact:
     current_url = requested_url
     redirects: list[str] = []
     deadline = time.monotonic() + timeout_seconds
+    body = None if form is None else urlencode(form).encode("ascii")
 
     try:
         for _ in range(MAX_REDIRECTS + 1):
@@ -77,9 +80,15 @@ def fetch_http(url: str, *, timeout_seconds: float = 30) -> HttpArtifact:
             try:
                 target = urlunsplit(("", "", split.path or "/", split.query, ""))
                 connection.request(
-                    "GET",
+                    "GET" if form is None else "POST",
                     target,
+                    body=body,
                     headers={
+                        **(
+                            {"Content-Type": "application/x-www-form-urlencoded"}
+                            if form is not None
+                            else {}
+                        ),
                         "Accept": (
                             "text/html,application/xhtml+xml,application/pdf,"
                             "image/*;q=0.9,*/*;q=0.1"
@@ -92,6 +101,8 @@ def fetch_http(url: str, *, timeout_seconds: float = 30) -> HttpArtifact:
                 )
                 response = connection.getresponse()
                 if response.status in REDIRECT_STATUSES:
+                    if form is not None:
+                        raise ValueError("live collection refuses a POST redirect")
                     location = response.getheader("Location")
                     if location is None:
                         raise ValueError("redirect response has no Location header")

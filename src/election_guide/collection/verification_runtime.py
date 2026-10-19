@@ -8,6 +8,7 @@ import tempfile
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
 from election_guide.calendar.models import ELECTION_TIMEZONE
@@ -259,11 +260,14 @@ def _refresh(
                     ),
                 )
             else:
-                artifact = fetch_http(source.discovery.requested_url)
+                url = policy.request.url if policy.request else source.discovery.requested_url
+                artifact = (
+                    fetch_http(url, form=policy.request.form) if policy.request else fetch_http(url)
+                )
                 raw = artifact.content
                 request = CaptureRequest(
                     source_id=source.id,
-                    requested_url=source.discovery.requested_url,
+                    requested_url=url,
                     canonical_url=artifact.canonical_url,
                     title=f"Official {election.election_id} endorsement publication",
                     retrieved_at=checked_at,
@@ -272,7 +276,16 @@ def _refresh(
                     http_status=artifact.status,
                     redirect_chain=artifact.redirect_chain,
                     redistribution="restricted",
-                    redistribution_note="Original bytes retained in the committed encrypted vault.",
+                    redistribution_note=(
+                        "Original bytes retained in the committed encrypted vault."
+                        + (
+                            " Public POST; application/x-www-form-urlencoded; "
+                            f"{urlencode(policy.request.form)}. "
+                            "Reviewed WFP request bound by verification policy."
+                            if policy.request
+                            else ""
+                        )
+                    ),
                 )
         else:
             if fixtures is None:

@@ -14,3 +14,13 @@ new fixture observation needs its own independently reviewed expected facts.
 Index tests
 use authored article bodies and a controlled HTTP boundary. These fixtures are
 parser exercises; they do not establish live access or approve an automatic baseline.
+
+WFP's October 19 fixture expands to all 17 reviewed Washington rows and the ten
+already approved in-inventory mappings. Its expected facts also use the October 19
+independent complete-publication review; this is a scoped extension of the five
+initial-page facts above. Seven exact rows remain excluded outside the frozen
+inventory. The main fixture mirrors the actual response's newline/tab separation
+between adjacent `td` cells and leading office whitespace; the alternate layout
+minifies the same authored rows. `-initial-page.html` preserves the earlier five
+mapped facts to catch accidental fallback to the unchanged discovery page. None
+of these snippets reproduces the private original markup.

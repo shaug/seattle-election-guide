@@ -219,6 +219,31 @@ proposed sections without GitHub writes and permits an uncommitted local exercis
 
 ## Adoption evidence and postmortem notes
 
+### October 19 WFP complete-publication correction (#497)
+
+WFP's initial page exposes only five of the ten approved in-inventory choices.
+The public complete-list request is POST
+`https://workingfamilies.org/wp-admin/admin-ajax.php`, URL-encoded form
+`action=more_candidates&state=25&count=0`. GET with the same query returns an empty
+body and cannot replace it. The reviewed public response contained 17 Washington
+rows, including all ten approved choices and seven rows outside the frozen
+inventory. The retained original is 2383 bytes with SHA-256
+`193b7dbe1a1e2883513cc49a6c434ab19689a377623774295d7c4fc994890574`;
+root's actual October 19 capture completed at `2026-10-19T15:24:08.372959Z` with
+HTTP 200 and no redirects, independently matching the earlier public probe.
+The original remains private; this observation is source proof, not a scheduled
+run or baseline approval.
+
+The WFP policy binds that exact endpoint, method and form. Its adapter recognizes
+all ten existing mappings, checks two nonempty cells per row, and excludes only
+the seven reviewed out-of-inventory facts. Unknown or malformed rows fail while
+retaining the prior baseline. The original response is archived through the
+existing encrypted pipeline, with actual request provenance in the manifest note.
+The October 18 initial-page approval does not approve this different complete
+snapshot. Review its full live capture and mappings, then obtain an independent
+scheduled reuse through the deployed workflow. Keep #497 open until the full
+adoption packet below exists; fixture exercises cannot satisfy these obligations.
+
 The first live run on October 15 exposed publication-layout gaps (#542): SGN's
 article headline is an `h2.mb-3.font-weight-bold`, and WFP's national index now
 groups candidates under a Washington section. The adapters also recognize
