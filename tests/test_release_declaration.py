@@ -7,7 +7,7 @@ import json
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 from typer.testing import CliRunner
@@ -253,12 +253,30 @@ def test_cli_preparation_reads_all_remote_names(
             return json.dumps({"object": {"sha": sha, "type": "commit"}})
         assert "--paginate" in command and "--slurp" in command
         if "/tags?" in endpoint:
-            return '[[{"name":"2026-general.9"}],[{"name":"2026-general.10"}]]'
+            return json.dumps(
+                [
+                    [{"name": "2026-general.9"}],
+                    [{"name": "2026-general.10"}, {"name": "2026-general.20"}],
+                ]
+            )
         if "/releases?" in endpoint:
-            return '[[{"tag_name":"2026-general.12","draft":true}]]'
+            return json.dumps(
+                [
+                    [
+                        {"tag_name": "2026-general.12", "draft": True},
+                        {
+                            "id": 20,
+                            "tag_name": "2026-general.20",
+                            "draft": False,
+                            "prerelease": False,
+                        },
+                    ]
+                ]
+            )
         raise AssertionError((command, failure))
 
     monkeypatch.setattr("election_guide.release.automation_cli.run_gh", remote)
+    monkeypatch.setattr("election_guide.release.publication.run_gh", remote)
     result = CliRunner().invoke(app, ["release", "automation", "prepare", "--issue", "550"])
     assert result.exit_code == 0, result.output
     assert resolve_release(SITE, repository=repository).current.release_version == "2026-general.21"
@@ -420,3 +438,215 @@ def test_cli_admits_reviewed_commit_and_ignores_unchanged_docs(
     )
     assert result.exit_code == 0, result.output
     assert json.loads(result.stdout) == {"requests_release": False}
+
+
+def commit_fixture(repo: Path, message: str) -> str:
+    git(repo, "add", ".")
+    git(repo, "-c", "user.name=Test", "-c", "user.email=test@example.org", "commit", "-m", message)
+    return git(repo, "rev-parse", "HEAD")
+
+
+@pytest.mark.parametrize("command", ["prepare", "validate-request", "admit", "preflight"])
+@pytest.mark.parametrize(
+    "case",
+    [
+        "healthy",
+        "published-base",
+        "tag-reservation",
+        "draft-reservation",
+        "wrong-owner",
+        "wrong-tag",
+        "prior-draft",
+        "prior-missing",
+        "wrong-prior-version",
+        "wrong-prior-election",
+        "missing-prior-object",
+        "nonancestor-base",
+        "api-error",
+        "malformed-pages",
+        "partial-pages",
+        "malformed-release",
+        "same-version",
+        "stale-inputs",
+    ],
+)
+def test_cli_failed_main_recovery_requires_verified_unpublished_base(
+    repository: Path, monkeypatch: pytest.MonkeyPatch, command: str, case: str
+) -> None:
+    from election_guide.hosting import promotion
+    from election_guide.release import automation_cli, publication
+    from tests.test_release_promotion import AdmissionAPI
+
+    monkeypatch.chdir(repository)
+    prior_sha = git(repository, "rev-parse", "HEAD")
+    original_sha = prior_sha
+    if case == "nonancestor-base":
+        git(repository, "checkout", "-b", "published-line")
+        (repository / "prior-lineage.txt").write_text("Published predecessor on a separate line.\n")
+        prior_sha = commit_fixture(repository, "fixture: separately published predecessor")
+        git(repository, "checkout", "main")
+    prior = read_site_manifest(repository / SITE)
+    if case in {"wrong-prior-version", "wrong-prior-election"}:
+        if case == "wrong-prior-version":
+            prior.elections[0].release_version = "2026-general.9"
+            prior.elections[0].bundle_id = "wa-2026-general-2026-general.9"
+        else:
+            prior.elections = [prior.elections[1]]
+            prior.current_election_id = prior.elections[0].election_id
+        (repository / SITE).write_text(prior.model_dump_json())
+        prior_sha = commit_fixture(repository, "fixture: invalid predecessor declaration")
+        # The selected failed declaration still belongs to the general election.
+        original = read_site_manifest(ROOT / SITE)
+        original.elections[0].release_version = "2026-general.8"
+        original.elections[0].bundle_id = "wa-2026-general-2026-general.8"
+        original.elections[0].publication_request = None
+        (repository / SITE).write_text(original.model_dump_json())
+    failed = prepare(
+        repository, previous_release_sha=original_sha if case == "nonancestor-base" else prior_sha
+    )
+    if case == "wrong-prior-version":
+        failed.current.release_version = "2026-general.9"
+        failed.current.bundle_id = "wa-2026-general-2026-general.9"
+    if case == "nonancestor-base":
+        assert failed.current.publication_request is not None
+        failed.current.publication_request.previous_release_sha = prior_sha
+    if case == "missing-prior-object":
+        assert failed.current.publication_request is not None
+        failed.current.publication_request.previous_release_sha = "f" * 40
+    (repository / SITE).write_text(failed.site.model_dump_json())
+    failed_sha = commit_fixture(repository, "fixture: failed automatic release")
+    if case == "nonancestor-base":
+        git(
+            repository,
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.org",
+            "merge",
+            "--no-ff",
+            "published-line",
+            "-m",
+            "fixture: bring predecessor into HEAD",
+        )
+        # HEAD now includes the predecessor; the exact failed base still does not.
+        assert git(repository, "merge-base", prior_sha, "HEAD") == prior_sha
+        assert git(repository, "merge-base", prior_sha, failed_sha) == original_sha
+    failed = resolve_release(SITE, repository=repository)
+    version = failed.current.release_version
+    if command != "prepare":
+        proposal = prepare(repository, main_manifest=failed.site, previous_release_sha=prior_sha)
+        if case == "same-version":
+            proposal.current.release_version = version
+            proposal.current.bundle_id = failed.current.bundle_id
+        if case == "wrong-owner":
+            assert proposal.current.publication_request is not None
+            proposal.current.publication_request.issue_number = 551
+        (repository / SITE).write_text(proposal.site.model_dump_json())
+        if case == "stale-inputs":
+            proposal.inputs.ledger.write_bytes(proposal.inputs.ledger.read_bytes() + b"\n")
+        (repository / "src").mkdir(exist_ok=True)
+        (repository / "src/runtime.py").write_text("# corrected implementation fixture\n")
+        source_sha = commit_fixture(repository, "fix: corrected release")
+    else:
+        source_sha = failed_sha
+    tags: list[dict[str, Any]] = [{"name": "2026-general.8"}]
+    releases: list[dict[str, Any]] = [
+        {
+            "id": 1,
+            "tag_name": "2026-general.8",
+            "draft": False,
+            "prerelease": False,
+        }
+    ]
+    if case == "tag-reservation":
+        tags.append({"name": version})
+    if case == "published-base":
+        tags.append({"name": version})
+        releases.append({"id": 2, "tag_name": version, "draft": False, "prerelease": False})
+        git(repository, "tag", version, failed_sha)
+    if case == "draft-reservation":
+        releases.append({"id": 2, "tag_name": version, "draft": True, "prerelease": False})
+    if case == "prior-draft":
+        releases[0]["draft"] = True
+    if case == "prior-missing":
+        releases.clear()
+    if case == "malformed-release":
+        releases.append({"id": 3, "draft": True})
+    api = AdmissionAPI(source_sha)
+    git(repository, "remote", "add", "origin", "https://github.com/owner/repository.git")
+    for key, value in {
+        "GITHUB_SHA": source_sha,
+        "RELEASE_SOURCE_SHA": source_sha,
+        "GITHUB_RUN_ID": "100",
+        "GITHUB_RUN_ATTEMPT": "2",
+        "GITHUB_REF": "refs/heads/main",
+    }.items():
+        monkeypatch.setenv(key, value)
+
+    def remote(args: list[str], failure: str) -> str:
+        endpoint = args[2]
+        if endpoint.endswith("/git/ref/heads/main"):
+            return json.dumps({"object": {"sha": failed_sha, "type": "commit"}})
+        if "/contents/" in endpoint:
+            assert endpoint.endswith(f"?ref={failed_sha}")
+            return failed.site.model_dump_json()
+        if "/tags?" in endpoint or "/releases?" in endpoint:
+            assert "--paginate" in args and "--slurp" in args
+            if case == "api-error":
+                raise ValueError("fixture service unavailable (HTTP 503)")
+            if case == "malformed-pages":
+                return '{"message":"denied"}'
+            if case == "partial-pages":
+                return json.dumps([tags, {"message": "second page denied"}])
+            return json.dumps([tags if "/tags?" in endpoint else releases])
+        if "/git/ref/tags/" in endpoint:
+            tag = endpoint.rsplit("/", 1)[1]
+            if tag == "2026-general.8":
+                sha = failed_sha if case == "wrong-tag" else prior_sha
+                return json.dumps({"object": {"sha": sha, "type": "commit"}})
+            if tag == version and case == "published-base":
+                return json.dumps({"object": {"sha": failed_sha, "type": "commit"}})
+            raise ValueError("fixture tag missing (HTTP 404)")
+        return api(args, failure)
+
+    monkeypatch.setattr(automation_cli, "run_gh", remote)
+    monkeypatch.setattr(publication, "run_gh", remote)
+    monkeypatch.setattr(promotion, "run_gh", remote)
+    real_run = subprocess.run
+
+    def fixture_git(args: list[str], **kwargs: Any) -> Any:
+        if args[:3] == ["git", "fetch", "--no-tags"]:
+            return subprocess.CompletedProcess(args, 1, stdout="", stderr="fixture object absent")
+        return cast(Any, real_run(args, **kwargs))
+
+    monkeypatch.setattr(subprocess, "run", fixture_git)
+    before = (repository / SITE).read_bytes()
+    args = ["prepare", "--issue", "551" if case == "wrong-owner" else "550"]
+    if command == "validate-request":
+        args = [command, "--base-sha", failed_sha]
+    elif command in {"admit", "preflight"}:
+        args = ["admit", "--source-sha", source_sha, "--base-sha", failed_sha]
+        if command == "preflight":
+            args.append("--preflight")
+    result = CliRunner().invoke(automation_cli.app, args)
+    # Same-version/stale mutations apply to admission, not preparation's refresh.
+    allowed = case == "healthy" or (
+        command == "prepare" and case in {"same-version", "stale-inputs", "published-base"}
+    )
+    if allowed:
+        assert result.exit_code == 0, result.output
+        if command == "prepare":
+            recovered = resolve_release(SITE, repository=repository)
+            assert recovered.current.release_version == "2026-general.10"
+            assert recovered.current.publication_request is not None
+            if case == "published-base":
+                assert recovered.current.publication_request.previous_release_sha == failed_sha
+                assert recovered.current.publication_request != failed.current.publication_request
+            else:
+                assert recovered.current.publication_request == failed.current.publication_request
+            assert recovered.site.elections[1:] == failed.site.elections[1:]
+        else:
+            assert json.loads(result.stdout)["requests_release"] is True
+    else:
+        assert result.exit_code == 1, result.output
+        assert (repository / SITE).read_bytes() == before

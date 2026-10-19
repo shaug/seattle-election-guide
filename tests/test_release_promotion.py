@@ -519,7 +519,7 @@ def test_preflight_waits_for_ci_before_claiming_publication_eligibility(
 ) -> None:
     import yaml
 
-    from election_guide.release import automation_cli
+    from election_guide.release import automation_cli, publication
 
     promotion, _, root, _ = admission
     path = root / "config/hosting/site.yaml"
@@ -552,6 +552,30 @@ def test_preflight_waits_for_ci_before_claiming_publication_eligibility(
     api = AdmissionAPI(sha)
     api.jobs[-1]["status"] = "in_progress"
     api.jobs[-1]["conclusion"] = None
+
+    def published_base(command: list[str], failure: str) -> str:
+        endpoint = command[2]
+        if endpoint.endswith("/tags?per_page=100"):
+            return json.dumps([[{"name": "2026-primary.2"}]])
+        if endpoint.endswith("/releases?per_page=100"):
+            return json.dumps(
+                [
+                    [
+                        {
+                            "id": 20,
+                            "tag_name": "2026-primary.2",
+                            "draft": False,
+                            "prerelease": False,
+                        }
+                    ]
+                ]
+            )
+        if endpoint.endswith("/git/ref/tags/2026-primary.2"):
+            return json.dumps({"object": {"type": "commit", "sha": base_sha}})
+        raise AssertionError((command, failure))
+
+    monkeypatch.setattr(automation_cli, "run_gh", published_base)
+    monkeypatch.setattr(publication, "run_gh", published_base)
     monkeypatch.setattr(promotion, "run_gh", api)
     monkeypatch.setenv("GITHUB_SHA", sha)
     monkeypatch.setattr(automation_cli, "_repository", lambda: root)

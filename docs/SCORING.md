@@ -89,3 +89,13 @@ validate merely by rewriting its public hashes.
 
 Consensus report schema `1.1` adds per-race possible-overlap group details. It is intentionally a
 new wire version because a `1.0` consumer cannot validate those required fields.
+
+## Proposed source sensitivity analysis
+
+Issue [#65](https://github.com/shaug/seattle-election-guide/issues/65) has a
+[proposed methodology](superpowers/specs/2026-10-18-source-panel-sensitivity-methodology-design.md)
+for deterministic source, reporting-category, and disclosed-group exclusions.
+It defines the scenario set, material-change thresholds, classifications, and
+audit outputs before examining real-data scenario results. The proposal is
+pending review and implementation; the canonical scoring rules above remain
+unchanged.
