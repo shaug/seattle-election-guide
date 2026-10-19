@@ -3,7 +3,7 @@
 import base64
 from pathlib import Path
 
-from election_guide.collection.discovery import DiscoveryAudit
+from election_guide.collection.discovery import DiscoveryAudit, read_ufcw_discovery_obligation
 from election_guide.collection.refresh import read_extraction_snapshot, read_refresh_event
 from election_guide.collection.vault import SealedCapture
 from election_guide.collection.verification import (
@@ -42,6 +42,7 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
             "checks",
             "approvals",
             "discovery",
+            "discovery-obligations",
             "activation.json",
         }
         if directory.exists() and any(path.name not in expected for path in directory.iterdir()):
@@ -139,6 +140,11 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
                 for check in checks
             ):
                 raise ValueError("fixture baseline cannot receive live approval")
+            count += 1
+        for path in directory.glob("discovery-obligations/*.json"):
+            obligation = read_ufcw_discovery_obligation(path)
+            if obligation.source_id not in sources or obligation.capture_id not in manifests:
+                raise ValueError("UFCW discovery obligation lacks durable source evidence")
             count += 1
         for path in directory.glob("discovery/*.json"):
             record = read_json(path)

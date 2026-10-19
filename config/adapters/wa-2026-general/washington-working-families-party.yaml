@@ -1,10 +1,10 @@
-# Reviewed facts only. Every changed byte set routes to human review.
+# Reviewed complete Washington response; seven exact rows excluded outside frozen inventory.
 schema_version: '1.0'
 source_id: washington-working-families-party
-adapter_kind: static_html
-extractor_version: 1.0.1
+adapter_kind: dynamic_html
+extractor_version: 1.1.0
 complete: true
-decision_pattern: (?:^Pramila\s+Jayapal\s+U\.S\.\s+House\s+of\s+Representatives,\s+District\s+7$|^Jorge\s+Baron\s+King\s+County\s+Council,\s+District\s+4$|^Teresa\s+Mosqueda\s+King\s+County\s+Council,\s+District\s+8$|^Nilu\s+Jenks\s+Seattle\s+City\s+Council,\s+District\s+5$|^Kelabe\s+Tewolde\s+State\s+House,\s+District\s+37,\s+Position\s+1$)
+decision_pattern: ^(?!(?:Danny\s+Tarkenton\s+Spokane\s+County\s+Prosecutor|Natasha\s+Hill\s+Washington\s+State\s+House,\s+District\s+3,\s+Position\s+1|Luc\s+Jasmin\s+III\s+Washington\s+State\s+House,\s+District\s+3,\s+Position\s+2|Chelsea\s+Dimas\s+Washington\s+State\s+House,\s+District\s+14,\s+Position\s+1|Edwin\s+Obras\s+Washington\s+State\s+House,\s+District\s+33,\s+Position\s+1|Mia\s+Gregerson\s+Washington\s+State\s+House,\s+District\s+33,\s+Position\s+2|Jessica\s+Forsythe\s+Washington\s+State\s+House,\s+District\s+48,\s+Position\s+2)$).+$
 rules:
 - race_id: us-house-7
   pattern: ^Pramila\s+Jayapal\s+U\.S\.\s+House\s+of\s+Representatives,\s+District\s+7$
@@ -41,4 +41,38 @@ rules:
   - ld-37-state-representative-1--kelabe-tewolde
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
-section_pattern: (?s)^(?:Our Candidates|Washington\nWFP Washington)\n(.*?)\nView More(?:\n|$)
+- race_id: ld-37-state-representative-2
+  pattern: ^Jaelynn\s+Scott\s+Washington\s+State\s+House,\s+District\s+37,\s+Position\s+2$
+  status: endorsed
+  candidate_ids:
+  - ld-37-state-representative-2--jaelynn-scott
+  evidence_locator: 'Complete official Washington candidate response; existing approved ledger mapping
+    reviewed October 19 for #497. Changed bytes require renewed review.'
+- race_id: ld-43-state-representative-2
+  pattern: ^Shaun\s+Scott\s+Washington\s+State\s+House,\s+District\s+43,\s+Position\s+2$
+  status: endorsed
+  candidate_ids:
+  - ld-43-state-representative-2--shaun-scott
+  evidence_locator: 'Complete official Washington candidate response; existing approved ledger mapping
+    reviewed October 19 for #497. Changed bytes require renewed review.'
+- race_id: ld-46-state-representative-2
+  pattern: ^Darya\s+Farivar\s+Washington\s+State\s+House,\s+District\s+46,\s+Position\s+2$
+  status: endorsed
+  candidate_ids:
+  - ld-46-state-representative-2--darya-farivar
+  evidence_locator: 'Complete official Washington candidate response; existing approved ledger mapping
+    reviewed October 19 for #497. Changed bytes require renewed review.'
+- race_id: ld-36-state-senator
+  pattern: ^Noel\s+Frame\s+Washington\s+State\s+Senate,\s+District\s+36$
+  status: endorsed
+  candidate_ids:
+  - ld-36-state-senator--noel-c-frame
+  evidence_locator: 'Complete official Washington candidate response; existing approved ledger mapping
+    reviewed October 19 for #497. Changed bytes require renewed review.'
+- race_id: ld-43-state-senator
+  pattern: ^Hannah\s+Sabio\-Howell\s+Washington\s+State\s+Senate,\s+District\s+43$
+  status: endorsed
+  candidate_ids:
+  - ld-43-state-senator--hannah-sabio-howell
+  evidence_locator: 'Complete official Washington candidate response; existing approved ledger mapping
+    reviewed October 19 for #497. Changed bytes require renewed review.'

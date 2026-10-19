@@ -21,6 +21,45 @@ class ExtractionError(ValueError):
     """Raised when reviewed extraction rules no longer match the source exactly."""
 
 
+class _WfpRowsParser(HTMLParser):
+    """Keep the complete public response's two-cell rows intact for coverage."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.stack: list[str] = []
+        self.cells: list[str] = []
+        self.rows: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if (tag, self.stack) not in (("tr", []), ("td", ["tr"])):
+            raise ExtractionError("WFP complete response requires two-cell table rows")
+        if _html_element_is_hidden(tag, attrs):
+            raise ExtractionError("WFP complete response has an explicitly hidden row or cell")
+        self.stack.append(tag)
+        if tag == "td":
+            self.cells.append("")
+
+    def handle_endtag(self, tag: str) -> None:
+        if not self.stack or self.stack.pop() != tag:
+            raise ExtractionError("WFP complete response has malformed rows")
+        if tag == "tr":
+            if len(self.cells) != 2 or not all(cell.strip() for cell in self.cells):
+                raise ExtractionError("WFP complete response requires two nonempty cells")
+            self.rows.append(" ".join(" ".join(self.cells).split()))
+            self.cells = []
+
+    def handle_data(self, data: str) -> None:
+        if self.stack == ["tr", "td"]:
+            self.cells[-1] += data
+        elif data.strip():
+            raise ExtractionError("WFP complete response has text outside a cell")
+
+    def close(self) -> None:
+        super().close()
+        if self.stack or not self.rows:
+            raise ExtractionError("WFP complete response has incomplete or empty rows")
+
+
 class _VisibleTextParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -160,9 +199,15 @@ def _artifact_text(
             "application/xhtml+xml",
         }:
             raise ExtractionError(f"{kind} adapter requires HTML")
-        parser = _VisibleTextParser()
+        parser = (
+            _WfpRowsParser()
+            if spec.source_id == "washington-working-families-party" and kind == "dynamic_html"
+            else _VisibleTextParser()
+        )
         parser.feed(artifact.decode("utf-8"))
         parser.close()
+        if isinstance(parser, _WfpRowsParser):
+            return "\n".join(parser.rows), True, "0.99"
         return _normalized_lines("".join(parser.parts)), True, "0.99"
     if kind == "pdf":
         if ocr_text is not None or ocr_confidence is not None:

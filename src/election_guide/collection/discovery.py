@@ -5,9 +5,10 @@ from __future__ import annotations
 import hashlib
 import html
 import re
-from datetime import datetime
+from datetime import date, datetime
 from html.parser import HTMLParser
 from pathlib import Path
+from typing import Literal
 from urllib.parse import unquote, urljoin, urlsplit
 
 from pydantic import AwareDatetime, Field, model_validator
@@ -15,8 +16,10 @@ from pydantic import AwareDatetime, Field, model_validator
 from election_guide.collection.http import fetch_http
 from election_guide.collection.verification import SourcePolicy, VerificationModel
 from election_guide.evidence.models import (
+    CAPTURE_ID_PATTERN,
     SHA256_PATTERN,
     SOURCE_ID_PATTERN,
+    CapturedManifest,
     CaptureRequest,
     evidence_fingerprint,
 )
@@ -27,12 +30,34 @@ from election_guide.evidence.storage import (
 )
 from election_guide.serialization import canonical_json_bytes, read_json
 
+UFCW_INDEX = "https://ufcw3000.org/endorsements"
+UFCW_ARTICLES = (
+    "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+    "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote",
+)
+
+
+def validate_ufcw_article(url: str) -> None:
+    parsed = urlsplit(url)
+    match = re.fullmatch(
+        r"/news/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/[a-z0-9]+(?:-[a-z0-9]+)*", parsed.path
+    )
+    if (
+        parsed.scheme != "https"
+        or parsed.netloc != "ufcw3000.org"
+        or parsed.query
+        or parsed.fragment
+        or match is None
+    ):
+        raise ValueError("UFCW discovery requires a clean official dated article URL")
+    date(*(int(part) for part in match.groups()))
+
 
 class DiscoveryAudit(VerificationModel):
     source_id: str = Field(pattern=SOURCE_ID_PATTERN)
     checked_at: AwareDatetime
     articles: list[str] = Field(min_length=1, max_length=100)
-    listed: list[str] = Field(min_length=1, max_length=100)
+    listed: list[str] = Field(max_length=100)
     captures: list[str] = Field(min_length=1, max_length=140)
     comparison_sha256: str = Field(pattern=SHA256_PATTERN)
 
@@ -40,19 +65,66 @@ class DiscoveryAudit(VerificationModel):
     def validate_articles(self) -> DiscoveryAudit:
         for url in [*self.articles, *self.listed]:
             parsed = urlsplit(url)
-            if (
-                parsed.scheme != "https"
+            if self.source_id == "ufcw-3000":
+                validate_ufcw_article(url)
+            elif (
+                self.source_id != "seattle-gay-news"
+                or parsed.scheme != "https"
                 or parsed.netloc != "www.sgn.org"
                 or not re.fullmatch(r"/story/[0-9]+/", parsed.path)
                 or parsed.query
                 or parsed.fragment
             ):
                 raise ValueError("discovery audit requires clean official story identities")
+        if self.source_id == "seattle-gay-news" and not self.listed:
+            raise ValueError("SGN discovery requires listed articles")
         if len(set(self.articles)) != len(self.articles) or not set(self.listed) <= set(
             self.articles
         ):
             raise ValueError("discovery audit has contradictory article membership")
         return self
+
+
+class UfcwDiscoveryObligation(VerificationModel):
+    """Validated landing-page membership, independent of collection success."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    source_id: Literal["ufcw-3000"] = "ufcw-3000"
+    checked_at: AwareDatetime
+    articles: list[str] = Field(min_length=1, max_length=100)
+    capture_id: str = Field(pattern=CAPTURE_ID_PATTERN)
+
+    @model_validator(mode="after")
+    def validate_articles(self) -> UfcwDiscoveryObligation:
+        for url in self.articles:
+            validate_ufcw_article(url)
+            if int(urlsplit(url).path.split("/")[2]) != self.checked_at.year:
+                raise ValueError("UFCW discovery obligations require current-year articles")
+        if len(set(self.articles)) != len(self.articles):
+            raise ValueError("UFCW discovery obligations require unique articles")
+        return self
+
+
+def read_ufcw_discovery_obligation(path: Path) -> UfcwDiscoveryObligation:
+    record = read_json(path)
+    obligation = UfcwDiscoveryObligation.model_validate(record)
+    if path.stem != evidence_fingerprint(record):
+        raise ValueError("UFCW discovery obligation identity contradicts its content")
+    manifest = read_capture_manifest(
+        path.parent.parent / "manifests" / f"{obligation.capture_id}.json"
+    )
+    if (
+        not isinstance(manifest, CapturedManifest)
+        or manifest.source_id != obligation.source_id
+        or manifest.requested_url != UFCW_INDEX
+        or manifest.capture_method != "static_html"
+        or manifest.retrieved_at != obligation.checked_at
+        or manifest.redistribution != "restricted"
+        or urlsplit(manifest.canonical_url).scheme != "https"
+        or urlsplit(manifest.canonical_url).netloc != "ufcw3000.org"
+    ):
+        raise ValueError("UFCW discovery obligation lacks its original official landing capture")
+    return obligation
 
 
 class PublicationParser(HTMLParser):
@@ -99,6 +171,63 @@ class PublicationParser(HTMLParser):
             self.heading.append(data)
 
 
+class PublicationCollector:
+    """Bounded HTML GETs with the original HTTP capture metadata and private bytes."""
+
+    def __init__(
+        self, source_id: str, host: str, root: Path, storage: Path, checked_at: datetime
+    ) -> None:
+        self.source_id = source_id
+        self.host = host
+        self.root = root
+        self.storage = storage
+        self.checked_at = checked_at
+        self.captures: list[str] = []
+        self.total = 0
+
+    def fetch(
+        self, url: str, parser: PublicationParser | None = None
+    ) -> tuple[bytes, PublicationParser]:
+        if urlsplit(url).netloc != self.host or urlsplit(url).scheme != "https":
+            raise ValueError("index link leaves the official HTTPS host")
+        artifact = fetch_http(url)
+        if (
+            urlsplit(artifact.canonical_url).netloc != self.host
+            or urlsplit(artifact.canonical_url).scheme != "https"
+        ):
+            raise ValueError("index response leaves the official host")
+        if self.source_id == "ufcw-3000" and url != UFCW_INDEX:
+            validate_ufcw_article(artifact.canonical_url)
+        if artifact.media_type.split(";", 1)[0] not in {"text/html", "application/xhtml+xml"}:
+            raise ValueError("index or article is not HTML")
+        self.total += len(artifact.content)
+        if self.total > 64 * 1024 * 1024:
+            raise ValueError("publication discovery exceeds its total byte bound")
+        path = self.storage.parent / "discovery-input.html"
+        path.write_bytes(artifact.content)
+        request = CaptureRequest(
+            source_id=self.source_id,
+            requested_url=url,
+            canonical_url=artifact.canonical_url,
+            title="Official endorsement discovery input",
+            retrieved_at=self.checked_at,
+            media_type=artifact.media_type,
+            capture_method="static_html",
+            http_status=artifact.status,
+            redirect_chain=artifact.redirect_chain,
+            redistribution="restricted",
+            redistribution_note="Committed only as authenticated ciphertext.",
+        )
+        manifest = read_capture_manifest(
+            record_capture(request, path, self.storage, self.root / "manifests")
+        )
+        self.captures.append(manifest.id)
+        parser = parser or PublicationParser()
+        parser.feed(artifact.content.decode("utf-8"))
+        parser.close()
+        return artifact.content, parser
+
+
 def discover_publication(
     policy: SourcePolicy,
     root: Path,
@@ -113,45 +242,9 @@ def discover_publication(
     if not policy.index_url or not policy.article_pattern or not policy.index_boundary:
         raise ValueError("incomplete index policy")
     host = urlsplit(policy.index_url).netloc
-    captures: list[str] = []
-    total = 0
-
-    def fetch(url: str) -> tuple[bytes, PublicationParser]:
-        nonlocal total
-        if urlsplit(url).netloc != host or urlsplit(url).scheme != "https":
-            raise ValueError("index link leaves the official HTTPS host")
-        artifact = fetch_http(url)
-        if (
-            urlsplit(artifact.canonical_url).netloc != host
-            or urlsplit(artifact.canonical_url).scheme != "https"
-        ):
-            raise ValueError("index response leaves the official host")
-        if artifact.media_type.split(";", 1)[0] not in {"text/html", "application/xhtml+xml"}:
-            raise ValueError("index or article is not HTML")
-        total += len(artifact.content)
-        if total > 64 * 1024 * 1024:
-            raise ValueError("publication discovery exceeds its total byte bound")
-        path = storage.parent / "discovery-input.html"
-        path.write_bytes(artifact.content)
-        request = CaptureRequest(
-            source_id=policy.source_id,
-            requested_url=url,
-            canonical_url=artifact.canonical_url,
-            title="Official endorsement discovery input",
-            retrieved_at=checked_at,
-            media_type=artifact.media_type,
-            capture_method="static_html",
-            http_status=artifact.status,
-            redirect_chain=artifact.redirect_chain,
-            redistribution="restricted",
-            redistribution_note="Committed only as authenticated ciphertext.",
-        )
-        manifest = read_capture_manifest(record_capture(request, path, storage, root / "manifests"))
-        captures.append(manifest.id)
-        parser = PublicationParser()
-        parser.feed(artifact.content.decode("utf-8"))
-        parser.close()
-        return artifact.content, parser
+    collector = PublicationCollector(policy.source_id, host, root, storage, checked_at)
+    fetch = collector.fetch
+    captures = collector.captures
 
     known: set[str] = set()
     for path in root.glob("discovery/*.json"):
@@ -227,6 +320,125 @@ def discover_publication(
         "articles": articles,
         "listed": sorted(discovered),
         "captures": captures,
+        "comparison_sha256": hashlib.sha256(body).hexdigest(),
+    }
+    DiscoveryAudit.model_validate(record)
+    write_immutable_record(
+        root / "discovery" / f"{evidence_fingerprint(record)}.json", canonical_json_bytes(record)
+    )
+    return body
+
+
+class UfcwParser(PublicationParser):
+    """Recognize Squarespace article content and relevant landing-page links."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.article_depth = 0
+        self.content_depth = 0
+        self.content: list[str] = []
+        self.relevant_links: set[str] = set()
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        super().handle_starttag(tag, attrs)
+        classes = set((dict(attrs).get("class") or "").split())
+        if tag == "article":
+            self.article_depth += 1
+        # Layout/navigation h1 elements do not identify the publication.
+        if tag == "h1" and (not self.article_depth or "entry-title" not in classes):
+            self.heading_count -= 1
+            self.in_heading = False
+        if (
+            tag == "div"
+            and self.article_depth
+            and (self.content_depth or "sqs-html-content" in classes)
+        ):
+            self.content_depth += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "a" and self.link_href:
+            text = " ".join(self.link_text)
+            if re.search(
+                r"endorse|vote\s+no|reject.{0,100}\b(?:i[- ]?[0-9]|initiative)",
+                unquote(self.link_href) + " " + text,
+                re.I,
+            ):
+                self.relevant_links.add(self.link_href)
+        super().handle_endtag(tag)
+        if tag == "div" and self.content_depth:
+            self.content_depth -= 1
+        if tag == "article":
+            self.article_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        super().handle_data(data)
+        if self.content_depth:
+            self.content.append(data)
+
+
+def discover_ufcw_publication(root: Path, storage: Path, checked_at: datetime) -> bytes:
+    """Capture the landing page and bounded current-cycle/previously known articles."""
+    collector = PublicationCollector("ufcw-3000", "ufcw3000.org", root, storage, checked_at)
+    page = UfcwParser()
+    raw, _ = collector.fetch(UFCW_INDEX, page)
+    listed: set[str] = set()
+    for link in page.relevant_links:
+        url = urljoin(UFCW_INDEX, link)
+        # Scan this finite index only; unrelated news and past-cycle links
+        # do not open a historical crawl. Relevant invalid URLs fail closed.
+        if not re.search(r"/news/" + str(checked_at.year) + r"/", unquote(url)):
+            continue
+        validate_ufcw_article(url)
+        listed.add(url)
+    known: set[str] = set(UFCW_ARTICLES)
+    for path in root.glob("discovery/*.json"):
+        record = read_json(path)
+        if record["source_id"] == "ufcw-3000":
+            audit = DiscoveryAudit.model_validate(record)
+            known.update(audit.articles)
+    for path in root.glob("discovery-obligations/*.json"):
+        known.update(read_ufcw_discovery_obligation(path).articles)
+    articles = sorted(known | listed)
+    if len(articles) > 100:
+        raise ValueError("UFCW discovery exceeds its 100-article bound")
+    # Learning membership does not assert that any article was collected or
+    # compared. The transaction seals its original index even if collection
+    # below fails, so a later runner must retry these URLs after link rotation.
+    newly_listed = sorted(listed - known)
+    if newly_listed:
+        obligation = UfcwDiscoveryObligation(
+            checked_at=checked_at, articles=newly_listed, capture_id=collector.captures[0]
+        ).model_dump(mode="json")
+        write_immutable_record(
+            root / "discovery-obligations" / f"{evidence_fingerprint(obligation)}.json",
+            canonical_json_bytes(obligation),
+        )
+    hashes: dict[str, str] = {}
+    for url in articles:
+        validate_ufcw_article(url)
+        article = UfcwParser()
+        content, _ = collector.fetch(url, article)
+        if (
+            article.heading_count != 1
+            or not "".join(article.heading).strip()
+            or not "".join(article.content).strip()
+        ):
+            raise ValueError("UFCW article requires one publication heading and nonempty body")
+        hashes[url] = hashlib.sha256(content).hexdigest()
+    # Extract only the existing reviewed landing-page facts. The digest binds
+    # every complete original article, including unrecognized/withdrawn wording.
+    comparison = {
+        "articles": hashes,
+        "listed": sorted(listed),
+        "indexes": {UFCW_INDEX: hashlib.sha256(raw).hexdigest()},
+    }
+    body = raw + f"<!--{evidence_fingerprint(comparison)}-->".encode()
+    record = {
+        "source_id": "ufcw-3000",
+        "checked_at": checked_at.isoformat(),
+        "articles": articles,
+        "listed": sorted(listed),
+        "captures": collector.captures,
         "comparison_sha256": hashlib.sha256(body).hexdigest(),
     }
     DiscoveryAudit.model_validate(record)

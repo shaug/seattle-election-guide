@@ -28,6 +28,20 @@ class VerificationModel(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
 
+class WfpPublicRequest(VerificationModel):
+    """The reviewed unauthenticated Washington complete-list request only."""
+
+    url: Literal["https://workingfamilies.org/wp-admin/admin-ajax.php"]
+    method: Literal["POST"]
+    form: dict[str, str]
+
+    @model_validator(mode="after")
+    def validate_form(self) -> WfpPublicRequest:
+        if self.form != {"action": "more_candidates", "state": "25", "count": "0"}:
+            raise ValueError("WFP request requires the reviewed complete Washington form")
+        return self
+
+
 class SourcePolicy(VerificationModel):
     source_id: str = Field(pattern=SOURCE_ID_PATTERN)
     adapter: Path | None = None
@@ -36,9 +50,16 @@ class SourcePolicy(VerificationModel):
     index_url: str | None = None
     article_pattern: str | None = None
     index_boundary: str | None = None
+    request: WfpPublicRequest | None = None
 
     @model_validator(mode="after")
     def validate_index(self) -> SourcePolicy:
+        if self.request and (
+            self.source_id != "washington-working-families-party"
+            or self.adapter is None
+            or self.index_url is not None
+        ):
+            raise ValueError("public form requests require the automatic WFP source only")
         if bool(self.index_url) != bool(self.article_pattern):
             raise ValueError("index URL and article pattern must be declared together")
         if self.index_url and self.adapter is None:

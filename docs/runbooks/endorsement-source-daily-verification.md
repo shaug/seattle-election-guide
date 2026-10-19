@@ -40,7 +40,7 @@ The first general-election tranche is:
 | Transit Riders Union | Current general endorsement page | Prior self-redirect failures are preserved. October 18 diagnosis found the TLS transport serialized the wrong default Host port; corrected HTTPS transport recovers the official page with the same redirect limit. Independent scheduled reuse remains adoption work. |
 | Sage Leaders | Current 2026 section, excluding past-year sections | Fixed, reviewed factual mappings; changed bytes require review. |
 | SEIU 775 | Washington section | Fixed, reviewed factual mappings; changed bytes require review. |
-| UFCW 3000 | Official endorsements page | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. |
+| UFCW 3000 | Complete endorsements landing page plus known/new relevant official articles | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. The expanded composite requires review of its exact new baseline. |
 | Washington Working Families Party | Our Candidates section | Fixed, reviewed factual mappings; changed bytes require review. |
 | Seattle Gay News | Current Seattle index plus known/new articles | Daily from collection opening. Traverse pagination to the reviewed oldest current-cycle article, then revisit every known article. |
 
@@ -78,7 +78,9 @@ cannot disappear or be replaced with an older mainline baseline.
 - `checks/`: scheduled slot, actual check time, mode, result, event reference.
 - `refreshes/`, `extractions/`, `manifests/`: existing collection records.
 - `vault/sha256/<prefix>/<digest>.json`: AES-256-GCM encrypted original bytes.
-- `discovery/`: index/article capture links, known/listed articles, derived hash.
+- `discovery/`: successful index/article capture links, known/listed articles, derived hash.
+- `discovery-obligations/`: validated newly learned UFCW URLs and their original
+  landing capture; retained even when required article collection fails.
 - `approvals/`: explicit human attestations bound to a live snapshot.
 
 `data/verification/runs/` records the exact producing revision, due coverage,
@@ -113,6 +115,30 @@ turn one article into two identities. Missing boundary, ambiguous/looping
 pagination, inaccessible article, or exceeded bounds fails the check. Discovery
 allows at most 40 index pages, 100 articles, and 64 MiB total response bytes;
 each HTTP fetch retains the existing public-peer, redirect, time, and size limits.
+
+UFCW 3000 scans only its endorsements landing page for relevant current-year
+news article links, then revisits every retained article URL, including both
+known October 15 initiative publications when their links are absent. It does
+not follow news feeds, pagination, unrelated news, or historical article links.
+Successful discovery records and separate immutable discovery obligations persist
+article membership across runners. Obligations are written after bounded official
+URL validation, before required articles are fetched, and link to the encrypted
+original landing capture. A failed fetch or parse therefore cannot erase newly
+learned URLs when landing links rotate off. An obligation asserts neither a
+successful complete comparison nor baseline approval. A maximum of
+100 articles and 64 MiB of total response bytes bounds each check; the existing
+per-request GET safeguards remain in effect. Required article fetch or parsing
+failure records a failed check and retains the prior comparison baseline.
+
+Its derived comparison preserves the landing page for the existing factual
+extractor and binds all complete original article URLs and content hashes.
+Article-only edits, including corrections and withdrawals, therefore produce a
+changed-byte review lead even with zero recognized decision changes. Each actual
+HTTP response remains a separate encrypted original with observed metadata;
+the composite has derived/manual-upload provenance and no HTTP status. Review
+the entire expanded publication and exact new snapshot before approving this
+baseline. The October 18 landing-page approval cannot approve the new composite.
+Fixture-controlled independent reuse does not establish live scheduled adoption.
 
 ## Results and finite review tasks
 
@@ -222,6 +248,45 @@ proposed sections without GitHub writes and permits an uncommitted local exercis
 ### October 19 explicit delegation
 
 For the current October 19 transaction, the maintainer directly delegated source checks and necessary endorsement changes to Codex without a separate approval prompt. The [transaction record](../GENERAL_VERIFICATION_2026-10-19.md) describes this scoped exception to the usual separate human spot-check and identifies the actual delegated reviewers. The existing manual commands retain their legacy `human` mode; evidence must explicitly name the Codex reviewer and delegation rather than asserting a new personal human source read. This does not authorize future unattended judgments, acknowledge inaccessible publications, approve fixtures, or convert an operator recovery into scheduled adoption evidence.
+
+### Delegated completion of #497
+
+The maintainer's same delivery instruction also covers the actual source reviews
+needed to finish this finite #497 adoption transaction, including the new complete
+WFP and UFCW baselines captured after these collector corrections deploy. Record
+the actual Codex reviewer, review time, exact live snapshot and official-source
+evidence; do not assert a personal maintainer read. This delegation ends with
+this delivery transaction and grants no recurring unattended interpretation or
+approval of later endorsement changes.
+
+Keep the normal cadence and immutable history intact. A fixture, operator check,
+or no-due run cannot stand in for the required independent scheduled execution.
+Inaccessible originals and incomplete live evidence remain open obligations.
+
+### October 19 WFP complete-publication correction (#497)
+
+WFP's initial page exposes only five of the ten approved in-inventory choices.
+The public complete-list request is POST
+`https://workingfamilies.org/wp-admin/admin-ajax.php`, URL-encoded form
+`action=more_candidates&state=25&count=0`. GET with the same query returns an empty
+body and cannot replace it. The reviewed public response contained 17 Washington
+rows, including all ten approved choices and seven rows outside the frozen
+inventory. The retained original is 2383 bytes with SHA-256
+`193b7dbe1a1e2883513cc49a6c434ab19689a377623774295d7c4fc994890574`;
+root's actual October 19 capture completed at `2026-10-19T15:24:08.372959Z` with
+HTTP 200 and no redirects, independently matching the earlier public probe.
+The original remains private; this observation is source proof, not a scheduled
+run or baseline approval.
+
+The WFP policy binds that exact endpoint, method and form. Its adapter recognizes
+all ten existing mappings, checks two nonempty cells per row, and excludes only
+the seven reviewed out-of-inventory facts. Unknown or malformed rows fail while
+retaining the prior baseline. The original response is archived through the
+existing encrypted pipeline, with actual request provenance in the manifest note.
+The October 18 initial-page approval does not approve this different complete
+snapshot. Review its full live capture and mappings, then obtain an independent
+scheduled reuse through the deployed workflow. Keep #497 open until the full
+adoption packet below exists; fixture exercises cannot satisfy these obligations.
 
 The first live run on October 15 exposed publication-layout gaps (#542): SGN's
 article headline is an `h2.mb-3.font-weight-bold`, and WFP's national index now

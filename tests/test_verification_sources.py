@@ -94,3 +94,29 @@ def test_six_general_sources_match_reviewed_facts_and_cover_all_eligible_sources
     assert {s["source_id"] for s in coverage if s["lane"] == "manual"} == {
         s["source_id"] for s in report["manual"]
     }
+
+
+def test_wfp_complete_publication_extracts_all_ten_reviewed_choices() -> None:
+    from election_guide.collection.adapters import extract_decisions
+    from election_guide.collection.refresh import read_adapter_spec
+
+    spec = read_adapter_spec(
+        ROOT / "config/adapters/wa-2026-general/washington-working-families-party.yaml"
+    )
+    decisions = extract_decisions(
+        spec,
+        (ROOT / "tests/fixtures/verification/washington-working-families-party.html").read_bytes(),
+        media_type="text/html",
+    )
+    assert {d.race_id: d.candidate_ids for d in decisions} == {
+        "us-house-7": ["us-house-7--pramila-jayapal"],
+        "king-county-council-4": ["king-county-council-4--jorge-l-baron"],
+        "king-county-council-8": ["king-county-council-8--teresa-mosqueda"],
+        "seattle-city-council-5": ["seattle-city-council-5--nilu-jenks"],
+        "ld-37-state-representative-1": ["ld-37-state-representative-1--kelabe-tewolde"],
+        "ld-37-state-representative-2": ["ld-37-state-representative-2--jaelynn-scott"],
+        "ld-43-state-representative-2": ["ld-43-state-representative-2--shaun-scott"],
+        "ld-46-state-representative-2": ["ld-46-state-representative-2--darya-farivar"],
+        "ld-36-state-senator": ["ld-36-state-senator--noel-c-frame"],
+        "ld-43-state-senator": ["ld-43-state-senator--hannah-sabio-howell"],
+    }
