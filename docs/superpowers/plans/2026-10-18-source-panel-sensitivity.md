@@ -56,7 +56,7 @@
 - Produces `build_sensitivity_report(dataset, consensus, *, git_commit, policy=None) -> SensitivityReport` and `validate_sensitivity_report(report, dataset, consensus, *, policy=None) -> SensitivityReport`; validation recomputes the full report rather than trusting embedded hashes.
 - The policy is a frozen, machine-readable value embedded in the report, with all scenario/skip rules, materiality thresholds, and classification/reason priorities. There is one reviewed version, with no outcome-specific tuning interface.
 
-- [ ] Write public-surface tests for the spec's five worked synthetic examples and observe their failure before implementing the new API. Example assertions:
+- [x] Write public-surface tests for the spec's five worked synthetic examples and observe their failure before implementing the new API. Example assertions:
 
   ```python
   assert result.classification == "narrow_but_stable"
@@ -64,11 +64,11 @@
   assert result.material_scenario_ids == []
   ```
 
-- [ ] Implement deterministic scenario/skip enumeration in canonical race and family/target order, scoring each exclusion from the original prepared inputs.
-- [ ] Publish complete snapshots, population IDs, official-choice vectors, exact signed deltas, changed fields and IDs, material reasons, grade-boundary changes, primary classification, and all material scenario IDs/kinds.
-- [ ] Add and run the spec's tied, insufficient, one-source split, no-endorsement/missing, threshold-boundary, grade-only, district/comparison eligibility, group non-transitivity, duplicate-set, sole-category, whole-exclusion, and exceptional-review cases.
-- [ ] Add and observe failing tampering tests, then enforce full canonical-input/policy validation, complete scope/enumeration, and repeatable bytes. Include null-versus-zero deltas and an all-empty scenario suite.
-- [ ] Verify the new tests plus the canonical scoring tests and baseline-byte preservation; commit.
+- [x] Implement deterministic scenario/skip enumeration in canonical race and family/target order, scoring each exclusion from the original prepared inputs.
+- [x] Publish complete snapshots, population IDs, official-choice vectors, exact signed deltas, changed fields and IDs, material reasons, grade-boundary changes, primary classification, and all material scenario IDs/kinds.
+- [x] Add and run the spec's tied, insufficient, one-source split, no-endorsement/missing, threshold-boundary, grade-only, district/comparison eligibility, group non-transitivity, duplicate-set, sole-category, whole-exclusion, and exceptional-review cases.
+- [x] Add and observe failing tampering tests, then enforce full canonical-input/policy validation, complete scope/enumeration, and repeatable bytes. Include null-versus-zero deltas and an all-empty scenario suite.
+- [x] Verify the new tests plus the canonical scoring tests and baseline-byte preservation; commit.
 
 ### Task 3: Publish auditable artifacts and versioned display data
 

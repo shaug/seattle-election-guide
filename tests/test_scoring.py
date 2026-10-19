@@ -715,6 +715,7 @@ def _dataset(
     root: Path,
     specs: list[EndorsementSpec],
     *,
+    source_registry: SourceRegistry | None = None,
     low_confidence_sources: set[str] | None = None,
     allocation_overrides: dict[str, dict[str, str]] | None = None,
     unresolved_severity: Literal["high", "medium", "low"] | None = None,
@@ -722,7 +723,7 @@ def _dataset(
     overlap_group_source_ids: tuple[str, str] | None = None,
 ) -> CanonicalDataset:
     inventory = read_inventory(PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json")
-    registry = _source_registry()
+    registry = source_registry or _source_registry()
     if overlap_group_source_ids is not None:
         registry_payload = registry.model_dump(mode="json")
         for source in registry_payload["sources"]:
@@ -900,7 +901,8 @@ def _dataset(
             evidence_locator=claim.evidence_locator,
             created_at=NOW,
         )
-        captures.append(capture)
+        if capture.id not in {item.id for item in captures}:
+            captures.append(capture)
         claims.append(claim)
         review_items.append(review)
 
