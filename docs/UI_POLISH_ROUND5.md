@@ -7,6 +7,10 @@ Compare epic, #136 race URLs/OG images, #140 confidence-flag UX, #65
 sensitivity report); nothing below re-opens a decided item or overlaps an
 open ticket. Numbering continues the ledger (last used: I56).
 
+Status update (2026-10-18): #65 was closed as unnecessary. Source-sensitivity
+scenarios and additional voter-facing warnings are not planned; voters can already
+choose which sources count through the existing source selector.
+
 ## Bugs
 
 - **M57 — Race-dialog leading-choice header collapses at phone widths.**
