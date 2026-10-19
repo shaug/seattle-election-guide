@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 50550,
+  "canonical_url": "https://www.sgn.org/story/168513/",
+  "capture_method": "static_html",
+  "content_sha256": "b21d7efdcb8f72b7e1b63b3be3d0e0a6ad0b2669c354941a0394ef6c9230a598",
+  "http_status": 200,
+  "id": "capture-seattle-gay-news-20261019T031149Z-28ae18399138",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.sgn.org/story/168513/",
+  "retrieved_at": "2026-10-19T03:11:49.942617Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "storage_reference": "sha256/b2/b21d7efdcb8f72b7e1b63b3be3d0e0a6ad0b2669c354941a0394ef6c9230a598",
+  "storage_scope": "local_only",
+  "title": "Seattle Gay News Editorial Board current official publication",
+  "updated_at": null
+}

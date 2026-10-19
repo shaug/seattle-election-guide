@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-for-peace-and-justice-20261019T033548Z-d208f9ade6af",
+  "entered_at": "2026-10-19T03:35:48.053927Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official12-slide general guide; derived factual review of slides3–9; full original post read through slide12. Source JSON witness capture-washington-for-peace-and-justice-20261019T032925Z-95b64ab68142 retains per-row slide locators; grey ratings remain unresolved.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-for-peace-and-justice-20261019T033548Z-d225dcb643c3",
+  "review_note": "shaug explicitly approved the six exact baseline reviews and the37 current manual-source reviews after their concrete packets and private source views. OpenAI Codex transcribed the approval at its actual time. This verifies the recorded source facts; WA4PJ grey ratings remain unresolved/unscored and no new ledger decision is inferred. data/review/approvals/wa-2026-general-2026-10-18-verification.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:14:31.209146Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "transcription": "us-house-7 — us-house-7--pramila-jayapal; observed green affirmative rating\nsupreme-court-justice-3 — supreme-court-justice-3--jaime-michelle-hawk; observed green affirmative rating\nsupreme-court-justice-5 — supreme-court-justice-5--theo-angelis; observed green affirmative rating\nking-county-council-2 — king-county-council-2--rebecca-saldana; observed green affirmative rating\nking-county-council-4 — king-county-council-4--jorge-l-baron; observed green affirmative rating\nking-county-council-8 — king-county-council-8--teresa-mosqueda; observed green affirmative rating\nseattle-city-council-5 — seattle-city-council-5--nilu-jenks; observed green affirmative rating\nld-11-state-representative-1 — ld-11-state-representative-1--ashley-fedan; observed green affirmative rating\nld-32-state-senator — ld-32-state-senator--cindy-ryu; observed green affirmative rating\nld-32-state-representative-1 — ld-32-state-representative-1--danica-noble; observed green affirmative rating\nld-32-state-representative-2 — ld-32-state-representative-2--imraan-siddiqi; observed green affirmative rating\nld-34-state-representative-1 — ld-34-state-representative-1--brianna-k-thomas; observed green affirmative rating\nld-34-state-representative-2 — ld-34-state-representative-2--joe-fitzgibbon; observed green affirmative rating\nld-34-state-senator — ld-34-state-senator--emily-alvarado; observed green affirmative rating\nld-36-state-senator — ld-36-state-senator--noel-c-frame; observed green affirmative rating\nld-36-state-representative-1 — ld-36-state-representative-1--julia-grant-reed; observed green affirmative rating\nld-36-state-representative-2 — ld-36-state-representative-2--liz-berry; observed green affirmative rating\nld-37-state-senator — ld-37-state-senator--chipalo-street; observed green affirmative rating\nld-37-state-representative-1 — ld-37-state-representative-1--kelabe-tewolde; observed green affirmative rating\nld-37-state-representative-2 — ld-37-state-representative-2--jaelynn-scott; observed green affirmative rating"
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 711,
+  "canonical_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "c0dedefb30dfc39527a1db352539be5c4073ab4bd47f345e8797ded9a324516f",
+  "http_status": null,
+  "id": "capture-transit-riders-union-20261019T031621Z-114403d93ea1",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Agent-authored factual transcription of eight visible official decisions in browser. Not response HTML; no HTTP status/redirect chain asserted. Normal bounded HTTP attempt remains failed.",
+  "requested_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+  "retrieved_at": "2026-10-19T03:16:21.523430Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "storage_reference": "sha256/c0/c0dedefb30dfc39527a1db352539be5c4073ab4bd47f345e8797ded9a324516f",
+  "storage_scope": "local_only",
+  "title": "TRU current general slate: manually preserved browser-visible facts",
+  "updated_at": null
+}

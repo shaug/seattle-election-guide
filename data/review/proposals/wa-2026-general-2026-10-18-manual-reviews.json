@@ -1,0 +1,739 @@
+{
+  "approved_decision_application": "data/review/approvals/wa-2026-general-2026-10-18.json",
+  "election_id": "wa-2026-general",
+  "excluded_current_access_barriers": [
+    "sierra-club-washington",
+    "the-stranger",
+    "washington-education-association"
+  ],
+  "historical_reviews_backdated": 0,
+  "human_approval": "pending",
+  "no_automatic_baseline_approval": true,
+  "prepared_at": "2026-10-19T04:11:48.419409Z",
+  "prepared_by": "OpenAI Codex",
+  "record_type": "current_manual_review_proposal",
+  "research_packet": "data/review/proposals/wa-2026-general-2026-10-18-verification.json",
+  "research_packet_sha256": "870ba7f044bcecc8766eae630d7d363907cd26f3e102696adbc4ccf302c838a4",
+  "scheduled_obligations": 111,
+  "schema_version": "1.0",
+  "scope_issues": [
+    545,
+    560,
+    567
+  ],
+  "scope_note": "One actual-time current review would resolve the listed past-due source obligations. It cannot establish what a publisher displayed on a missed historical review day. The original scheduled/failed observations remain immutable.",
+  "source_reviews": [
+    {
+      "capture_ids": [
+        "capture-11th-district-democrats-20261019T031037Z-1b8718bf03cd",
+        "capture-11th-district-democrats-20261019T031037Z-57592346f26f",
+        "capture-11th-district-democrats-20261019T031037Z-9599a71ee6bc",
+        "capture-11th-district-democrats-20261019T031037Z-9e3a9e0f2c21",
+        "capture-11th-district-democrats-20261019T031037Z-a8c624da6c4b",
+        "capture-11th-district-democrats-20261019T031037Z-ab2e79caf7db",
+        "capture-11th-district-democrats-20261019T031037Z-df039bd380ab",
+        "capture-11th-district-democrats-20261019T031037Z-e88c0cdd2a81",
+        "capture-11th-district-democrats-20261019T031038Z-0f8739e04ac0",
+        "capture-11th-district-democrats-20261019T031241Z-50589efcbce7",
+        "capture-11th-district-democrats-20261019T031241Z-79fa2a152693",
+        "capture-11th-district-democrats-20261019T031307Z-c1fd2f0f9376",
+        "capture-11th-district-democrats-20261019T031308Z-c5ee79c71331",
+        "capture-11th-district-democrats-20261019T031309Z-75be1b28c92a",
+        "capture-11th-district-democrats-20261019T031309Z-7e98b545d876",
+        "capture-11th-district-democrats-20261019T031310Z-6fa0008e2fa0",
+        "capture-11th-district-democrats-20261019T031310Z-aacbc2648dcd",
+        "capture-11th-district-democrats-20261019T031311Z-5a5b8784c726",
+        "capture-11th-district-democrats-20261019T031311Z-eaca7f46991a",
+        "capture-11th-district-democrats-20261019T031312Z-8368da123265",
+        "capture-11th-district-democrats-20261019T031312Z-bb7ff1957a7d",
+        "capture-11th-district-democrats-20261019T031358Z-d27d6808c0fc"
+      ],
+      "current_approved_decisions": 16,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "11th-district-democrats",
+      "source_name": "11th Legislative District Democrats",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-32nd-district-democrats-20261019T031107Z-032750a5e768",
+        "capture-32nd-district-democrats-20261019T031107Z-410fd5700831",
+        "capture-32nd-district-democrats-20261019T031107Z-9d3a06329070",
+        "capture-32nd-district-democrats-20261019T031107Z-c0796928e93b",
+        "capture-32nd-district-democrats-20261019T031107Z-fea8d2ff7047",
+        "capture-32nd-district-democrats-20261019T031239Z-6ff9d16f456d"
+      ],
+      "current_approved_decisions": 21,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "32nd-district-democrats",
+      "source_name": "32nd Legislative District Democrats",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-34th-district-democrats-20261019T031111Z-8fcc5d951b56",
+        "capture-34th-district-democrats-20261019T031111Z-c6ab697df815",
+        "capture-34th-district-democrats-20261019T031230Z-c06ab1dea010"
+      ],
+      "current_approved_decisions": 23,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "34th-district-democrats",
+      "source_name": "34th Legislative District Democrats",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-36th-district-democrats-20261019T031118Z-3ef497628697",
+        "capture-36th-district-democrats-20261019T031118Z-450639570d3f",
+        "capture-36th-district-democrats-20261019T031118Z-73841a0ece29"
+      ],
+      "current_approved_decisions": 24,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "36th-district-democrats",
+      "source_name": "36th Legislative District Democrats",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-37th-district-democrats-20261019T031118Z-245a0b6f3388",
+        "capture-37th-district-democrats-20261019T031118Z-f5a97cfea888"
+      ],
+      "current_approved_decisions": 25,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "37th-district-democrats",
+      "source_name": "37th Legislative District Democrats",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-43rd-district-democrats-20261019T031119Z-17e6d060f428",
+        "capture-43rd-district-democrats-20261019T031119Z-5316281c9c5d",
+        "capture-43rd-district-democrats-20261019T031119Z-5e892c334d3a"
+      ],
+      "current_approved_decisions": 25,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "43rd-district-democrats",
+      "source_name": "43rd Legislative District Democrats",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-46th-district-democrats-20261019T031120Z-1a1e7c937f60",
+        "capture-46th-district-democrats-20261019T031120Z-2dfb7605f973"
+      ],
+      "current_approved_decisions": 23,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "46th-district-democrats",
+      "source_name": "46th Legislative District Democrats",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-aft-washington-20261019T031057Z-762dda3f2f13",
+        "capture-aft-washington-20261019T031057Z-93dedd3014db",
+        "capture-aft-washington-20261019T031057Z-af67bf81abb8",
+        "capture-aft-washington-20261019T031057Z-b10d2a820d67",
+        "capture-aft-washington-20261019T031058Z-0445b398e7a8"
+      ],
+      "current_approved_decisions": 28,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "aft-washington",
+      "source_name": "AFT Washington",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-alliance-for-gun-responsibility-20261019T031101Z-bcc694133f53",
+        "capture-alliance-for-gun-responsibility-20261019T031251Z-6395865c4d91"
+      ],
+      "current_approved_decisions": 24,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "alliance-for-gun-responsibility",
+      "source_name": "Alliance for Gun Responsibility Victory Fund",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-citizens-against-aipac-corruption-20261019T031052Z-17c3c4c9f837"
+      ],
+      "current_approved_decisions": 1,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "citizens-against-aipac-corruption",
+      "source_name": "Citizens Against AIPAC Corruption (Track AIPAC)",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-environmental-climate-caucus-wa-democrats-20261019T031332Z-7b7a243f0210"
+      ],
+      "current_approved_decisions": 14,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "environmental-climate-caucus-wa-democrats",
+      "source_name": "Environment and Climate Caucus of the Washington State Democratic Party",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-fuse-washington-20261019T031046Z-946ba00b6e8d"
+      ],
+      "current_approved_decisions": 14,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "fuse-washington",
+      "source_name": "Fuse Washington",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-king-county-democrats-20261019T031037Z-650921141acc",
+        "capture-king-county-democrats-20261019T031037Z-f80c58b68b25"
+      ],
+      "current_approved_decisions": 37,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "king-county-democrats",
+      "source_name": "King County Democrats",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-mlk-labor-20261019T031040Z-58a174591a16",
+        "capture-mlk-labor-20261019T031040Z-8a01236da1ba"
+      ],
+      "current_approved_decisions": 6,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "mlk-labor",
+      "source_name": "MLK Labor",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-nondriver-action-20261019T032049Z-6d155f9a4c22",
+        "capture-nondriver-action-20261019T032749Z-67fa4f21a00c"
+      ],
+      "current_approved_decisions": 4,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "nondriver-action",
+      "source_name": "Nondriver Action",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-nwpc-washington-20261019T031104Z-ec8e2f56bd75"
+      ],
+      "current_approved_decisions": 26,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "nwpc-washington",
+      "source_name": "National Women's Political Caucus of Washington",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-oneamerica-votes-20261019T035239Z-19122f1deedd"
+      ],
+      "current_approved_decisions": 17,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "oneamerica-votes",
+      "source_name": "OneAmerica Votes",
+      "source_review_note": "All17 approved decisions match the complete current official web representation. New explicitly derived capture; no original HTTP status asserted."
+    },
+    {
+      "capture_ids": [
+        "capture-planned-parenthood-alliance-advocates-20261019T031100Z-b254df0e0543",
+        "capture-planned-parenthood-alliance-advocates-20261019T031100Z-fd0d54865ba8",
+        "capture-planned-parenthood-alliance-advocates-20261019T031251Z-6b0e434a80d9",
+        "capture-planned-parenthood-alliance-advocates-20261019T031251Z-772aaacf095a",
+        "capture-planned-parenthood-alliance-advocates-20261019T031251Z-790376467314",
+        "capture-planned-parenthood-alliance-advocates-20261019T031251Z-fb156fe2a625",
+        "capture-planned-parenthood-alliance-advocates-20261019T032900Z-5954852453fb",
+        "capture-planned-parenthood-alliance-advocates-20261019T032900Z-c45c115d784a",
+        "capture-planned-parenthood-alliance-advocates-20261019T032900Z-f6c0c3aa4023"
+      ],
+      "current_approved_decisions": 26,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "planned-parenthood-alliance-advocates",
+      "source_name": "Planned Parenthood Alliance Advocates",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-protec17-20261019T031100Z-1c21732e2486",
+        "capture-protec17-20261019T031100Z-329ac470c32c"
+      ],
+      "current_approved_decisions": 25,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "protec17",
+      "source_name": "PROTEC17",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-seattle-democratic-socialists-20261019T031046Z-0a64a4f75cd8",
+        "capture-seattle-democratic-socialists-20261019T031046Z-5e47331cb931",
+        "capture-seattle-democratic-socialists-20261019T031046Z-7bd03b894110",
+        "capture-seattle-democratic-socialists-20261019T031046Z-ea310b7fdc0c",
+        "capture-seattle-democratic-socialists-20261019T031046Z-f9d65e668035",
+        "capture-seattle-democratic-socialists-20261019T031153Z-ba30a4c8f58a",
+        "capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c",
+        "capture-seattle-democratic-socialists-20261019T031306Z-b3c18ed83b73",
+        "capture-seattle-democratic-socialists-20261019T031307Z-fba63f61289c"
+      ],
+      "current_approved_decisions": 4,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "seattle-democratic-socialists",
+      "source_name": "Seattle Democratic Socialists of America",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-seattle-subway-20261019T031052Z-7f95d0e43116"
+      ],
+      "current_approved_decisions": 20,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "seattle-subway",
+      "source_name": "Seattle Subway",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-seattle-times-editorial-board-20261019T031054Z-37a47c526d9b",
+        "capture-seattle-times-editorial-board-20261019T031054Z-d85d2b1d49fa",
+        "capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97"
+      ],
+      "current_approved_decisions": 29,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "seattle-times-editorial-board",
+      "source_name": "The Seattle Times Editorial Board",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-seiu-925-20261019T031056Z-c8587c887078"
+      ],
+      "current_approved_decisions": 33,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "seiu-925",
+      "source_name": "SEIU 925",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-tech-4-housing-20261019T031048Z-37dbdbbf8dc4"
+      ],
+      "current_approved_decisions": 13,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "tech-4-housing",
+      "source_name": "Tech 4 Housing",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-tech-4-taxes-20261019T031049Z-305554fdabc4",
+        "capture-tech-4-taxes-20261019T031049Z-a4c8caf107b5"
+      ],
+      "current_approved_decisions": 11,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "tech-4-taxes",
+      "source_name": "Tech 4 Taxes",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-the-urbanist-20261019T031053Z-611b12c6ad09",
+        "capture-the-urbanist-20261019T031053Z-7e3a4b85d4f6",
+        "capture-the-urbanist-20261019T031155Z-56949ded1971",
+        "capture-the-urbanist-20261019T031456Z-9ef218c0f93e",
+        "capture-the-urbanist-20261019T031456Z-abd3f79e46b6"
+      ],
+      "current_approved_decisions": 30,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "the-urbanist",
+      "source_name": "The Urbanist Elections Committee",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-bikes-20261019T031051Z-78eb1cf2ccb9",
+        "capture-washington-bikes-20261019T031051Z-d44c1bae4562",
+        "capture-washington-bikes-20261019T031155Z-df9e964165c5",
+        "capture-washington-bikes-20261019T031252Z-5643b5f43e6d"
+      ],
+      "current_approved_decisions": 22,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-bikes",
+      "source_name": "Washington Bikes",
+      "source_review_note": "Current table and October16 article read. Keep the three prior choices omitted without explicit withdrawal: Siddiqi, Seattle TransitYes, IL26-001No."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-bus-20261019T031050Z-194897c337ea",
+        "capture-washington-bus-20261019T031050Z-258094e01718",
+        "capture-washington-bus-20261019T031050Z-5c5c70842e9f",
+        "capture-washington-bus-20261019T031050Z-b01be52b21bb",
+        "capture-washington-bus-20261019T031051Z-19c8d1d3e78c",
+        "capture-washington-bus-20261019T031051Z-2ceb33886239",
+        "capture-washington-bus-20261019T031051Z-4dce0a5b68fd",
+        "capture-washington-bus-20261019T031051Z-5c10e7ce899b",
+        "capture-washington-bus-20261019T031051Z-5ff1469cdd36",
+        "capture-washington-bus-20261019T031051Z-9e114d013596",
+        "capture-washington-bus-20261019T031051Z-a2cd21d1f26d",
+        "capture-washington-bus-20261019T031051Z-ab40c4b672d9",
+        "capture-washington-bus-20261019T031051Z-c36704457d58",
+        "capture-washington-bus-20261019T031051Z-d246275439ee",
+        "capture-washington-bus-20261019T031051Z-e300f79e08b2",
+        "capture-washington-bus-20261019T031051Z-f17fd4c0458a"
+      ],
+      "current_approved_decisions": 7,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-bus",
+      "source_name": "The Washington Bus",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-community-action-network-20261019T031049Z-33e73f475127",
+        "capture-washington-community-action-network-20261019T031049Z-468560b14bf9",
+        "capture-washington-community-action-network-20261019T031049Z-626eacc82a6b",
+        "capture-washington-community-action-network-20261019T031049Z-6bb1850fc0e4",
+        "capture-washington-community-action-network-20261019T031049Z-74016baa0fbd",
+        "capture-washington-community-action-network-20261019T031049Z-bd3b3f888bc9",
+        "capture-washington-community-action-network-20261019T031049Z-c5ec56cc508f",
+        "capture-washington-community-action-network-20261019T031049Z-fa6324b0580e",
+        "capture-washington-community-action-network-20261019T031049Z-fceb9f33f693",
+        "capture-washington-community-action-network-20261019T031050Z-4130192e3a66",
+        "capture-washington-community-action-network-20261019T031050Z-7d21bf8c263f",
+        "capture-washington-community-action-network-20261019T031050Z-e5e770c3d8cc",
+        "capture-washington-community-action-network-20261019T031050Z-e6c2530f9592"
+      ],
+      "current_approved_decisions": 7,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-community-action-network",
+      "source_name": "Washington Community Action Network",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-conservation-action-20261019T031122Z-75cd27dd155a"
+      ],
+      "current_approved_decisions": 26,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-conservation-action",
+      "source_name": "Washington Conservation Action",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-for-peace-and-justice-20261019T031053Z-a1568626c8ee",
+        "capture-washington-for-peace-and-justice-20261019T031053Z-d87ba627a984",
+        "capture-washington-for-peace-and-justice-20261019T032925Z-95b64ab68142",
+        "capture-washington-for-peace-and-justice-20261019T033548Z-d208f9ade6af"
+      ],
+      "current_approved_decisions": 31,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-for-peace-and-justice",
+      "source_name": "Washington for Peace and Justice",
+      "source_review_note": "All12 current slides reviewed. Keep31 approved decisions; grey Melody and Birk ratings remain unresolved and unscored."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-housing-alliance-20261019T031103Z-cd910470f45b"
+      ],
+      "current_approved_decisions": 30,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-housing-alliance",
+      "source_name": "Washington Housing Alliance",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-state-building-trades-20261019T031059Z-7b321d82a650",
+        "capture-washington-state-building-trades-20261019T031251Z-1e5b282d9a85",
+        "capture-washington-state-building-trades-20261019T031251Z-b60035538ce7"
+      ],
+      "current_approved_decisions": 20,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-state-building-trades",
+      "source_name": "Washington State Building and Construction Trades Council",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-state-democrats-20261019T031036Z-756dbf260fbe",
+        "capture-washington-state-democrats-20261019T031036Z-81f4925dc8ee",
+        "capture-washington-state-democrats-20261019T031036Z-970e3adbdaaa",
+        "capture-washington-state-democrats-20261019T031036Z-af76842603e9",
+        "capture-washington-state-democrats-20261019T031036Z-c1302033945f"
+      ],
+      "current_approved_decisions": 3,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-state-democrats",
+      "source_name": "Washington State Democratic Party",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-state-labor-council-20261019T031041Z-27f2f33d5563",
+        "capture-washington-state-labor-council-20261019T032900Z-541b720f7dba",
+        "capture-washington-state-labor-council-20261019T032900Z-fff52425e6e0"
+      ],
+      "current_approved_decisions": 30,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-state-labor-council",
+      "source_name": "Washington State Labor Council, AFL-CIO",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-washington-stonewall-democrats-20261019T031121Z-0cc7254ef26f",
+        "capture-washington-stonewall-democrats-20261019T031121Z-43100c68df9c",
+        "capture-washington-stonewall-democrats-20261019T031121Z-46f6c023d97d",
+        "capture-washington-stonewall-democrats-20261019T032756Z-526ca97665f1",
+        "capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd",
+        "capture-washington-stonewall-democrats-20261019T032905Z-5b79462950d1",
+        "capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006"
+      ],
+      "current_approved_decisions": 29,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-stonewall-democrats",
+      "source_name": "Washington State Stonewall Democrats",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    },
+    {
+      "capture_ids": [
+        "capture-young-democrats-of-washington-20261019T031122Z-4ea87338a667",
+        "capture-young-democrats-of-washington-20261019T031122Z-e2c0151b3a7d",
+        "capture-young-democrats-of-washington-20261019T031320Z-4d3115c3186b",
+        "capture-young-democrats-of-washington-20261019T032756Z-4cb3e944421c",
+        "capture-young-democrats-of-washington-20261019T032803Z-5d5fccea596c",
+        "capture-young-democrats-of-washington-20261019T032809Z-190cb68d387c",
+        "capture-young-democrats-of-washington-20261019T032809Z-aa42ef078310"
+      ],
+      "current_approved_decisions": 16,
+      "current_publication_research_complete": true,
+      "human_approval": "pending",
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "young-democrats-of-washington",
+      "source_name": "Young Democrats of Washington",
+      "source_review_note": "Current publication reviewed; preserve earlier approved source-label and race treatments."
+    }
+  ],
+  "sources": 37
+}

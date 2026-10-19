@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-education-association-20261019T042207Z-e50342f82190",
+  "entered_at": "2026-10-19T04:22:07.273160Z",
+  "entry_method": "manual",
+  "evidence_locator": "Derived complete rendered-text capture; named initiative, Supreme Court, congressional, legislative and local sections. Each frozen race is identified by jurisdiction, district and office position. Supplemental viewport capture: capture-washington-education-association-20261019T042207Z-ebc47484d671.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-education-association-20261019T042207Z-6a92923e9508",
+  "review_note": "shaug explicitly approved both current WEA/Sierra source reviews and five acknowledgements after the complete concrete packet. OpenAI Codex transcribed the approval at its actual time. Preserve prior attribution, equal dual and spelling treatments; no new endorsement or historical review is inferred. data/review/approvals/wa-2026-general-2026-10-18-wea-sierra.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T04:30:32.442975Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-education-association",
+  "transcription": "initiative-26-001: No\ninitiative-26-638: No\ninitiative-26-645: No\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra Stephens\nus-house-7: Cong. Pramila Jayapal [NEA-PAC]\nus-house-9: Cong. Adam Smith [NEA-PAC]\nld-32-state-senator: Cindy Ryu\nld-32-state-representative-2: Lauren Davis\nld-34-state-representative-2: Joe Fitzgibbon\nld-43-state-senator: Jamie Pedersen\nld-46-state-representative-1: Gerry Pollet*\nld-32-state-representative-1: Danica Noble (dual) / Keith Scully (dual) [dual]\nld-37-state-senator: Chipalo Street\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nld-11-state-representative-1: Ashley Fedan\nNEA-PAC congressional attribution and prior WEA ledger treatment retained. Source IL26-645 label retained; no new interpretation."
+}

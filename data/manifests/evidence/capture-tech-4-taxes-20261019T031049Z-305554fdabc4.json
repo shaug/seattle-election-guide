@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 10950,
+  "canonical_url": "https://tech4taxes.org/legagenda",
+  "capture_method": "static_html",
+  "content_sha256": "842b8f60fc19c12b42afa713bac52cc1db8bedc768f759a33dc6e6dbe50ecbf8",
+  "http_status": 200,
+  "id": "capture-tech-4-taxes-20261019T031049Z-305554fdabc4",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://tech4taxes.org/legagenda",
+  "retrieved_at": "2026-10-19T03:10:49.340982Z",
+  "schema_version": "1.0",
+  "source_id": "tech-4-taxes",
+  "storage_reference": "sha256/84/842b8f60fc19c12b42afa713bac52cc1db8bedc768f759a33dc6e6dbe50ecbf8",
+  "storage_scope": "local_only",
+  "title": "Tech 4 Taxes current official publication",
+  "updated_at": null
+}

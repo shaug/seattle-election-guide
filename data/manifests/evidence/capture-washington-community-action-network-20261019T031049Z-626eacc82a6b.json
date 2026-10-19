@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 252085,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316469018-N1U8CFVOU5Z3HKPMWSB7/WA+30+Claire+Wilson+2.png",
+  "capture_method": "image",
+  "content_sha256": "481873c3ab6e39fcf865ba0f74725c545e9fc98e5a0d1ef5fc468decc4e08032",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261019T031049Z-626eacc82a6b",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316469018-N1U8CFVOU5Z3HKPMWSB7/WA+30+Claire+Wilson+2.png",
+  "retrieved_at": "2026-10-19T03:10:49.882776Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/48/481873c3ab6e39fcf865ba0f74725c545e9fc98e5a0d1ef5fc468decc4e08032",
+  "storage_scope": "local_only",
+  "title": "Washington Community Action Network current official publication",
+  "updated_at": null
+}

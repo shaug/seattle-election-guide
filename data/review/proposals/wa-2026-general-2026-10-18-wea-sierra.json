@@ -1,0 +1,1135 @@
+{
+  "election_id": "wa-2026-general",
+  "human_approval": "pending",
+  "no_historical_reviews_backdated": true,
+  "prepared_at": "2026-10-19T04:23:08.048526Z",
+  "prepared_by": "OpenAI Codex",
+  "private_research_sha256": "bd83ac8c1c8267e52bbcca39e0ac0d71921ff8a372827cea684807c13124c576",
+  "record_type": "recovered_manual_source_review_proposal",
+  "schema_version": "1.0",
+  "scope_issues": [
+    545,
+    560,
+    567
+  ],
+  "sources": [
+    {
+      "browser_url_as_reported": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/#",
+      "capture_references": [
+        {
+          "byte_length": 8054,
+          "content_sha256": "e643fc043d8ab4c35b8273588cbd219e6f3f6ab8c56311cfa8290c693a21e2f8",
+          "id": "capture-washington-education-association-20261019T042207Z-e50342f82190",
+          "manifest_path": "data/manifests/evidence/capture-washington-education-association-20261019T042207Z-e50342f82190.json",
+          "media_type": "text/html; charset=utf-8"
+        },
+        {
+          "byte_length": 83884,
+          "content_sha256": "ed4f50e04e4c6fea6706fdaadb2e93cb70384f16ebff83d681566f53b9f8d6f1",
+          "id": "capture-washington-education-association-20261019T042207Z-ebc47484d671",
+          "manifest_path": "data/manifests/evidence/capture-washington-education-association-20261019T042207Z-ebc47484d671.json",
+          "media_type": "image/jpeg"
+        }
+      ],
+      "completeness_limits": [
+        "The evidence is a parent-supplied complete rendered-text view with a supplemental viewport screenshot. This worker did not retrieve original HTML or observe HTTP response metadata.",
+        "The supplemental screenshot is one viewport; full-table completeness rests on the supplied complete rendered-text view and explicit row-by-row comparison.",
+        "Personalized voter-guide form and its address-specific output were not submitted or reviewed. Current comparison covers the complete static published statewide, congressional, legislative, local and initiative sections.",
+        "No membership certification was made by this worker. Parent reports Proceed was clicked only at the user’s explicit instruction."
+      ],
+      "decisions": [
+        {
+          "allocation": {
+            "initiative-26-001--no": "1"
+          },
+          "ballot_choice_names": [
+            "No"
+          ],
+          "candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "evidence_locators": [
+            "WEA Position on Ballot Initiatives"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "initiative-26-001",
+          "review_note": "",
+          "source_choices": [
+            "No"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "initiative-26-638--no": "1"
+          },
+          "ballot_choice_names": [
+            "No"
+          ],
+          "candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "evidence_locators": [
+            "WEA Position on Ballot Initiatives"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "initiative-26-638",
+          "review_note": "",
+          "source_choices": [
+            "No"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "initiative-26-645--no": "1"
+          },
+          "ballot_choice_names": [
+            "No"
+          ],
+          "candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "evidence_locators": [
+            "WEA Position on Ballot Initiatives"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "initiative-26-645",
+          "review_note": "Source prints IL26-645 and describes repeal of the Millionaires Tax; preserve that source label and the existing approved No decision. No new measure-label override is proposed.",
+          "source_choices": [
+            "No"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-1--colleen-melody": "1"
+          },
+          "ballot_choice_names": [
+            "Colleen Melody"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-1--colleen-melody"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Supreme Court Candidates > Pos. 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "supreme-court-justice-1",
+          "review_note": "",
+          "source_choices": [
+            "Colleen Melody"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-3--jaime-michelle-hawk": "1"
+          },
+          "ballot_choice_names": [
+            "Jaime Michelle Hawk"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Supreme Court Candidates > Pos. 3"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "supreme-court-justice-3",
+          "review_note": "",
+          "source_choices": [
+            "Jaime Michelle Hawk"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-4--ian-birk": "1"
+          },
+          "ballot_choice_names": [
+            "Ian Birk"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-4--ian-birk"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Supreme Court Candidates > Pos. 4"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "supreme-court-justice-4",
+          "review_note": "",
+          "source_choices": [
+            "Ian Birk"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-5--theo-angelis": "1"
+          },
+          "ballot_choice_names": [
+            "Theo Angelis"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-5--theo-angelis"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Supreme Court Candidates > Pos. 5"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "supreme-court-justice-5",
+          "review_note": "",
+          "source_choices": [
+            "Theo Angelis"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-7--debra-l-stephens": "1"
+          },
+          "ballot_choice_names": [
+            "Debra L. Stephens"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-7--debra-l-stephens"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Supreme Court Candidates > Pos. 7"
+          ],
+          "prior_approved_aliases": [
+            {
+              "existing_ballot_choice_names": [
+                "Debra L. Stephens"
+              ],
+              "source_label": "Debra Stephens",
+              "treatment": "Preserve existing approved identity or name expansion; no new interpretation."
+            }
+          ],
+          "race_id": "supreme-court-justice-7",
+          "review_note": "",
+          "source_choices": [
+            "Debra Stephens"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "us-house-7--pramila-jayapal": "1"
+          },
+          "ballot_choice_names": [
+            "Pramila Jayapal"
+          ],
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "evidence_locators": [
+            "NEA-PAC Endorsed Congressional Candidates > U.S. House District 7"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "us-house-7",
+          "review_note": "Explicit NEA-PAC attribution retained. This is the existing approved WEA ledger treatment, not a new regional/federal attribution decision.",
+          "source_choices": [
+            "Cong. Pramila Jayapal"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "us-house-9--adam-smith": "1"
+          },
+          "ballot_choice_names": [
+            "Adam Smith"
+          ],
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "evidence_locators": [
+            "NEA-PAC Endorsed Congressional Candidates > U.S. House District 9"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "us-house-9",
+          "review_note": "Explicit NEA-PAC attribution retained. This is the existing approved WEA ledger treatment, not a new regional/federal attribution decision.",
+          "source_choices": [
+            "Cong. Adam Smith"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-32-state-senator--cindy-ryu": "1"
+          },
+          "ballot_choice_names": [
+            "Cindy Ryu"
+          ],
+          "candidate_ids": [
+            "ld-32-state-senator--cindy-ryu"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 32 > Senate"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-32-state-senator",
+          "review_note": "",
+          "source_choices": [
+            "Cindy Ryu"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-32-state-representative-2--lauren-davis": "1"
+          },
+          "ballot_choice_names": [
+            "Lauren Davis"
+          ],
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 32 > House Position 2"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-32-state-representative-2",
+          "review_note": "",
+          "source_choices": [
+            "Lauren Davis"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-34-state-representative-2--joe-fitzgibbon": "1"
+          },
+          "ballot_choice_names": [
+            "Joe Fitzgibbon"
+          ],
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 34 > House Position 2"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-34-state-representative-2",
+          "review_note": "",
+          "source_choices": [
+            "Joe Fitzgibbon"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-43-state-senator--jamie-pedersen": "1"
+          },
+          "ballot_choice_names": [
+            "Jamie Pedersen"
+          ],
+          "candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 43 > Senate"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-43-state-senator",
+          "review_note": "",
+          "source_choices": [
+            "Jamie Pedersen"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-46-state-representative-1--gerry-pollet": "1"
+          },
+          "ballot_choice_names": [
+            "Gerry Pollet"
+          ],
+          "candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 46 > House Position 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-46-state-representative-1",
+          "review_note": "",
+          "source_choices": [
+            "Gerry Pollet*"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-32-state-representative-1--danica-noble": "1/2",
+            "ld-32-state-representative-1--keith-scully": "1/2"
+          },
+          "ballot_choice_names": [
+            "Keith Scully",
+            "Danica Noble"
+          ],
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble",
+            "ld-32-state-representative-1--keith-scully"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 32 > House Position 1",
+            "WEA-PAC Endorsed Legislative Candidates > LD 32 > House Position 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-32-state-representative-1",
+          "review_note": "",
+          "source_choices": [
+            "Danica Noble (dual)",
+            "Keith Scully (dual)"
+          ],
+          "status": "dual_endorsement",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-37-state-senator--chipalo-street": "1"
+          },
+          "ballot_choice_names": [
+            "Chipalo Street"
+          ],
+          "candidate_ids": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 37 > Senate"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-37-state-senator",
+          "review_note": "",
+          "source_choices": [
+            "Chipalo Street"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-37-state-representative-1--kelabe-tewolde": "1"
+          },
+          "ballot_choice_names": [
+            "Kelabe Tewolde"
+          ],
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 37 > House Position 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-37-state-representative-1",
+          "review_note": "",
+          "source_choices": [
+            "Kelabe Tewolde"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-37-state-representative-2--jaelynn-scott": "1"
+          },
+          "ballot_choice_names": [
+            "Jaelynn Scott"
+          ],
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 37 > House Position 2"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-37-state-representative-2",
+          "review_note": "",
+          "source_choices": [
+            "Jaelynn Scott"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-11-state-representative-1--ashley-fedan": "1"
+          },
+          "ballot_choice_names": [
+            "Ashley Fedan"
+          ],
+          "candidate_ids": [
+            "ld-11-state-representative-1--ashley-fedan"
+          ],
+          "evidence_locators": [
+            "WEA-PAC Endorsed Legislative Candidates > LD 11 > House Position 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-11-state-representative-1",
+          "review_note": "",
+          "source_choices": [
+            "Ashley Fedan"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        }
+      ],
+      "expected_and_observed_decision_count": 20,
+      "observations": [
+        "All 20 approved decisions (21 choices) match the complete current static tables and explicit initiative positions, including Ashley Fedan LD11 House1 and the equal Danica Noble / Keith Scully LD32 House1 dual.",
+        "Five Supreme Court choices and all three explicit No recommendations remain. The two congressional choices are expressly under NEA-PAC Endorsed Congressional Candidates, preserving prior approved attribution.",
+        "Current WEA member and former WEA member asterisks are status footnotes, not ranked or conditional endorsement instructions. They do not change Gerry Pollet or any allocation.",
+        "The supplied text retains the initial membership notice wording, but the supplied screenshot shows the overlay gone. The separate personalized-voter-guide membership checkbox remains unchecked; that form was not used in this comparison."
+      ],
+      "observed_choice_count": 21,
+      "outside_frozen_inventory_row_count": 86,
+      "pending_manual_id": "manual-washington-education-association-20261019T042207Z-e3d4a508c54f",
+      "pending_manual_path": "data/review/manual/manual-washington-education-association-20261019T042207Z-e3d4a508c54f.json",
+      "proposed_changes": [],
+      "publication_review_complete_for_supplied_main_page": true,
+      "scheduled_dates": [
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "washington-education-association",
+      "source_row_count": 107,
+      "status": "reviewed_unchanged_human_approval_pending",
+      "whole_external_linked_publication_review_complete": false
+    },
+    {
+      "browser_url_as_reported": "https://www.sierraclub.org/washington/2026-endorsements",
+      "capture_references": [
+        {
+          "byte_length": 6276,
+          "content_sha256": "5308b8a30f7ded3da7e7a2a94cc24ed1f362779dc0167ed6654cf095fdb0ea07",
+          "id": "capture-sierra-club-washington-20261019T042207Z-9a06073d0313",
+          "manifest_path": "data/manifests/evidence/capture-sierra-club-washington-20261019T042207Z-9a06073d0313.json",
+          "media_type": "text/html; charset=utf-8"
+        },
+        {
+          "byte_length": 95404,
+          "content_sha256": "97fd9a602afa8e94a3035da92aa8016d2519ad00d30b954fc6a97ddc21e8a5af",
+          "id": "capture-sierra-club-washington-20261019T042207Z-bffe366f071e",
+          "manifest_path": "data/manifests/evidence/capture-sierra-club-washington-20261019T042207Z-bffe366f071e.json",
+          "media_type": "image/jpeg"
+        }
+      ],
+      "completeness_limits": [
+        "The evidence is a parent-supplied complete rendered-text view with a supplemental viewport screenshot. This worker did not retrieve original HTML or observe HTTP response metadata.",
+        "The supplemental screenshot is one viewport; full-table completeness rests on the supplied complete rendered-text view and explicit row-by-row comparison.",
+        "Parent reports the Ballot Initiatives navigation link resolves to https://26initiatives/, an invalid nonpublisher hostname. It was not followed and no URL variants were guessed. The main page itself explicitly supplies the two approved ballot positions.",
+        "Linked national endorsements and other external publications were not included in the supplied page text. No added claim is derived from those links."
+      ],
+      "decisions": [
+        {
+          "allocation": {
+            "us-house-7--pramila-jayapal": "1"
+          },
+          "ballot_choice_names": [
+            "Pramila Jayapal"
+          ],
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "evidence_locators": [
+            "Federal Endorsements > Congressional District 7"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "us-house-7",
+          "review_note": "",
+          "source_choices": [
+            "Pramila Jayapal"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "us-house-9--adam-smith": "1"
+          },
+          "ballot_choice_names": [
+            "Adam Smith"
+          ],
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "evidence_locators": [
+            "Federal Endorsements > Congressional District 9"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "us-house-9",
+          "review_note": "",
+          "source_choices": [
+            "Adam Smith"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "initiative-26-645--no": "1"
+          },
+          "ballot_choice_names": [
+            "No"
+          ],
+          "candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "evidence_locators": [
+            "Ballot Initiatives > Initiative 645"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "initiative-26-645",
+          "review_note": "",
+          "source_choices": [
+            "No"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "seattle-proposition-1-transit--yes": "1"
+          },
+          "ballot_choice_names": [
+            "Yes"
+          ],
+          "candidate_ids": [
+            "seattle-proposition-1-transit--yes"
+          ],
+          "evidence_locators": [
+            "Ballot Initiatives > Seattle Transit Measure"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "seattle-proposition-1-transit",
+          "review_note": "",
+          "source_choices": [
+            "Yes"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-11-state-representative-2--steve-bergquist": "1"
+          },
+          "ballot_choice_names": [
+            "Steve Bergquist"
+          ],
+          "candidate_ids": [
+            "ld-11-state-representative-2--steve-bergquist"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 11th Legislative District > House Position 2"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-11-state-representative-2",
+          "review_note": "",
+          "source_choices": [
+            "Steve Bergquist"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-32-state-representative-1--keith-scully": "1"
+          },
+          "ballot_choice_names": [
+            "Keith Scully"
+          ],
+          "candidate_ids": [
+            "ld-32-state-representative-1--keith-scully"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 32th Legislative District > House Position 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-32-state-representative-1",
+          "review_note": "",
+          "source_choices": [
+            "Keith Scully"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-34-state-representative-2--joe-fitzgibbon": "1"
+          },
+          "ballot_choice_names": [
+            "Joe Fitzgibbon"
+          ],
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 34th Legislative District > House Position 2"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-34-state-representative-2",
+          "review_note": "",
+          "source_choices": [
+            "Joe Fitzgibbon"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-34-state-senator--emily-alvarado": "1"
+          },
+          "ballot_choice_names": [
+            "Emily Alvarado"
+          ],
+          "candidate_ids": [
+            "ld-34-state-senator--emily-alvarado"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 34th Legislative District > Senate"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-34-state-senator",
+          "review_note": "",
+          "source_choices": [
+            "Emily Alvarado"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-36-state-representative-1--julia-grant-reed": "1"
+          },
+          "ballot_choice_names": [
+            "Julia Grant Reed"
+          ],
+          "candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 36th Legislative District > House Position 1"
+          ],
+          "prior_approved_aliases": [
+            {
+              "existing_ballot_choice_names": [
+                "Julia Grant Reed"
+              ],
+              "source_label": "Julia Reed",
+              "treatment": "Preserve existing approved identity or name expansion; no new interpretation."
+            }
+          ],
+          "race_id": "ld-36-state-representative-1",
+          "review_note": "",
+          "source_choices": [
+            "Julia Reed"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-36-state-representative-2--liz-berry": "1"
+          },
+          "ballot_choice_names": [
+            "Liz Berry"
+          ],
+          "candidate_ids": [
+            "ld-36-state-representative-2--liz-berry"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 36th Legislative District > House Position 2"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-36-state-representative-2",
+          "review_note": "",
+          "source_choices": [
+            "Liz Berry"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-36-state-senator--noel-c-frame": "1"
+          },
+          "ballot_choice_names": [
+            "Noel C. Frame"
+          ],
+          "candidate_ids": [
+            "ld-36-state-senator--noel-c-frame"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 36th Legislative District > Senate"
+          ],
+          "prior_approved_aliases": [
+            {
+              "existing_ballot_choice_names": [
+                "Noel C. Frame"
+              ],
+              "source_label": "Noel Frame",
+              "treatment": "Preserve existing approved identity or name expansion; no new interpretation."
+            }
+          ],
+          "race_id": "ld-36-state-senator",
+          "review_note": "",
+          "source_choices": [
+            "Noel Frame"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-37-state-representative-1--kelabe-tewolde": "1"
+          },
+          "ballot_choice_names": [
+            "Kelabe Tewolde"
+          ],
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 37th Legislative District > House Position 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-37-state-representative-1",
+          "review_note": "",
+          "source_choices": [
+            "Kelabe Tewolde"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-37-state-representative-2--jaelynn-scott": "1"
+          },
+          "ballot_choice_names": [
+            "Jaelynn Scott"
+          ],
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 37th Legislative District > House Position 2"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-37-state-representative-2",
+          "review_note": "",
+          "source_choices": [
+            "Jaelynn Scott"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-37-state-senator--chipalo-street": "1"
+          },
+          "ballot_choice_names": [
+            "Chipalo Street"
+          ],
+          "candidate_ids": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 37th Legislative District > Senate"
+          ],
+          "prior_approved_aliases": [
+            {
+              "existing_ballot_choice_names": [
+                "Chipalo Street"
+              ],
+              "source_label": "Chiaplo Street",
+              "treatment": "Preserve existing approved identity or name expansion; no new interpretation."
+            }
+          ],
+          "race_id": "ld-37-state-senator",
+          "review_note": "Source prints Chiaplo Street. Preserve original wording and the prior-approved Chipalo Street ballot identity.",
+          "source_choices": [
+            "Chiaplo Street"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-43-state-representative-1--nicole-macri": "1"
+          },
+          "ballot_choice_names": [
+            "Nicole Macri"
+          ],
+          "candidate_ids": [
+            "ld-43-state-representative-1--nicole-macri"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 43th Legislative District > House Position 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-43-state-representative-1",
+          "review_note": "",
+          "source_choices": [
+            "Nicole Macri"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-43-state-senator--jamie-pedersen": "1"
+          },
+          "ballot_choice_names": [
+            "Jamie Pedersen"
+          ],
+          "candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 43th Legislative District > Senate"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-43-state-senator",
+          "review_note": "",
+          "source_choices": [
+            "Jamie Pedersen"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-46-state-representative-1--gerry-pollet": "1"
+          },
+          "ballot_choice_names": [
+            "Gerry Pollet"
+          ],
+          "candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 46th Legislative District > House Position 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-46-state-representative-1",
+          "review_note": "",
+          "source_choices": [
+            "Gerry Pollet"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-46-state-representative-2--darya-farivar": "1"
+          },
+          "ballot_choice_names": [
+            "Darya Farivar"
+          ],
+          "candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 46th Legislative District > House Position 2"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-46-state-representative-2",
+          "review_note": "",
+          "source_choices": [
+            "Darya Farivar"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "ld-46-state-senator--javier-valdez": "1"
+          },
+          "ballot_choice_names": [
+            "Javier Valdez"
+          ],
+          "candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "evidence_locators": [
+            "State Legislative Endorsements > 46th Legislative District > Senate"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "ld-46-state-senator",
+          "review_note": "",
+          "source_choices": [
+            "Javier Valdez"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-1--colleen-melody": "1"
+          },
+          "ballot_choice_names": [
+            "Colleen Melody"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-1--colleen-melody"
+          ],
+          "evidence_locators": [
+            "Supreme Court > Position 1"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "supreme-court-justice-1",
+          "review_note": "",
+          "source_choices": [
+            "Colleen Melody"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-3--jaime-michelle-hawk": "1"
+          },
+          "ballot_choice_names": [
+            "Jaime Michelle Hawk"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "evidence_locators": [
+            "Supreme Court > Position 3"
+          ],
+          "prior_approved_aliases": [
+            {
+              "existing_ballot_choice_names": [
+                "Jaime Michelle Hawk"
+              ],
+              "source_label": "Jaime Hawk",
+              "treatment": "Preserve existing approved identity or name expansion; no new interpretation."
+            }
+          ],
+          "race_id": "supreme-court-justice-3",
+          "review_note": "",
+          "source_choices": [
+            "Jaime Hawk"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-4--ian-birk": "1"
+          },
+          "ballot_choice_names": [
+            "Ian Birk"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-4--ian-birk"
+          ],
+          "evidence_locators": [
+            "Supreme Court > Position 4"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "supreme-court-justice-4",
+          "review_note": "",
+          "source_choices": [
+            "Ian Birk"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-5--theo-angelis": "1"
+          },
+          "ballot_choice_names": [
+            "Theo Angelis"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-5--theo-angelis"
+          ],
+          "evidence_locators": [
+            "Supreme Court > Position 5"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "supreme-court-justice-5",
+          "review_note": "",
+          "source_choices": [
+            "Theo Angelis"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        },
+        {
+          "allocation": {
+            "supreme-court-justice-7--debra-l-stephens": "1"
+          },
+          "ballot_choice_names": [
+            "Debra L. Stephens"
+          ],
+          "candidate_ids": [
+            "supreme-court-justice-7--debra-l-stephens"
+          ],
+          "evidence_locators": [
+            "Supreme Court > Position 7"
+          ],
+          "prior_approved_aliases": [],
+          "race_id": "supreme-court-justice-7",
+          "review_note": "",
+          "source_choices": [
+            "Debra L. Stephens"
+          ],
+          "status": "endorsed",
+          "unchanged_from_approved_ledger_and_canonical": true
+        }
+      ],
+      "expected_and_observed_decision_count": 24,
+      "observations": [
+        "All 24 approved decisions match the complete current publication, including explicit No on Initiative 645 and Yes on the Seattle Transit Measure. No in-inventory additions, removals, replacements or allocation changes were found.",
+        "Source Chiaplo Street remains the prior-approved Chipalo Street identity. Julia Reed, Noel Frame, Jaime Hawk and other shortened source names retain existing approved ballot mappings.",
+        "The main page does not print No positions on IL26-001 or IL26-638, and none is inferred. It does not create per-race no-endorsement or skip decisions from omissions.",
+        "Out-of-inventory source labels include Jessica Forsythe in LD48 House1 and Osman Salahudin in LD48 House2. These are preserved as printed outside scope; no office correction or new choice is proposed. Two named Port of Bellingham candidates are also outside the frozen inventory."
+      ],
+      "observed_choice_count": 24,
+      "outside_frozen_inventory_row_count": 65,
+      "pending_manual_id": "manual-sierra-club-washington-20261019T042207Z-e983c07711dc",
+      "pending_manual_path": "data/review/manual/manual-sierra-club-washington-20261019T042207Z-e983c07711dc.json",
+      "proposed_changes": [],
+      "publication_review_complete_for_supplied_main_page": true,
+      "scheduled_dates": [
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "source_id": "sierra-club-washington",
+      "source_row_count": 89,
+      "status": "reviewed_unchanged_human_approval_pending",
+      "whole_external_linked_publication_review_complete": false
+    }
+  ],
+  "summary": {
+    "choices": 45,
+    "manual_acknowledgements_proposed": 5,
+    "new_ledger_changes": 0,
+    "prior_october16_wea_acknowledgement_preserved": true,
+    "reviewed_unchanged_decisions": 44
+  },
+  "user_wea_access_instruction": "just click 'proceed' on the wea page to show the endorsements"
+}

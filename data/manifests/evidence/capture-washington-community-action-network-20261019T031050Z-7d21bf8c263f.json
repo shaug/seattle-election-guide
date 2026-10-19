@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 399716,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316471230-0UFB9E9QE0XETOH68OLK/WA+45+Manka+Dhingra.png",
+  "capture_method": "image",
+  "content_sha256": "c22cf925bff19a4b491333d4412061d70602077e7ff75f904f2079c98dcda0d5",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261019T031050Z-7d21bf8c263f",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316471230-0UFB9E9QE0XETOH68OLK/WA+45+Manka+Dhingra.png",
+  "retrieved_at": "2026-10-19T03:10:50.052349Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/c2/c22cf925bff19a4b491333d4412061d70602077e7ff75f904f2079c98dcda0d5",
+  "storage_scope": "local_only",
+  "title": "Washington Community Action Network current official publication",
+  "updated_at": null
+}

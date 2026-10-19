@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 7853,
+  "canonical_url": "https://34dems.org/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "6f4b637333761907280006a957ddf94032a77411cb436ce491754c9bc45f90ef",
+  "http_status": null,
+  "id": "capture-34th-district-democrats-20261019T031230Z-c06ab1dea010",
+  "media_type": "text/plain; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source evidence retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://34dems.org/2026-endorsements/",
+  "retrieved_at": "2026-10-19T03:12:30.467918Z",
+  "schema_version": "1.0",
+  "source_id": "34th-district-democrats",
+  "storage_reference": "sha256/6f/6f4b637333761907280006a957ddf94032a77411cb436ce491754c9bc45f90ef",
+  "storage_scope": "local_only",
+  "title": "Official page textual rendering via standard web open",
+  "updated_at": null
+}

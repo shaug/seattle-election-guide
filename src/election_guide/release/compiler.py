@@ -33,9 +33,9 @@ from election_guide.normalization.records import (
     new_review_item,
 )
 from election_guide.normalization.semantics import EndorsementStatus
-from election_guide.release.models import ReleaseDecision, ReleaseLedger
+from election_guide.release.models import ReleaseDecision, ReleaseLedger, ReleaseSourceExtract
 from election_guide.serialization import canonical_json_bytes, read_yaml
-from election_guide.sources.models import SourceRegistry
+from election_guide.sources.models import Source, SourceRegistry
 from election_guide.sources.registry import read_source_registry, validate_registry_inventory
 
 
@@ -79,47 +79,16 @@ def compile_release_dataset(
 
         for source_extract in ledger.sources:
             source = source_by_id[source_extract.source_id]
-            snapshot_data = source_extract.model_dump(mode="json", exclude={"reviewed_at"})
-            if source_extract.reviewer is None:
-                snapshot_data.pop("reviewer")
-            if source_extract.review_note is None:
-                snapshot_data.pop("review_note")
-            snapshot_payload = canonical_json_bytes(snapshot_data)
-            snapshot_input = stage / f"{source.id}.json"
-            snapshot_input.write_bytes(snapshot_payload)
-            discovery = source.discovery
-            request = CaptureRequest(
-                source_id=source.id,
-                requested_url=discovery.requested_url,
-                canonical_url=discovery.canonical_url,
-                redirect_chain=discovery.redirect_chain,
-                retrieved_at=source_extract.captured_at,
-                http_status=None,
-                media_type="application/json",
-                title=f"Permitted 2026 endorsement decision extract: {source.name}",
-                published_at=discovery.published_at,
-                updated_at=discovery.updated_at,
-                capture_method="manual_upload",
-                browser_required=False,
-                redistribution="permitted",
-                redistribution_note=(
-                    "Structured factual decisions and short verification excerpts may be "
-                    "redistributed; full third-party page content is excluded."
-                ),
+            source_captures = _capture_source_publications(
+                source, source_extract, stage, stage_snapshots, stage_manifests
             )
-            manifest_path = record_capture(
-                request,
-                snapshot_input,
-                stage_snapshots,
-                stage_manifests,
-            )
-            capture = read_capture_manifest(manifest_path)
-            captures.append(capture)
+            captures.extend(source_captures.values())
             reviewed_at = source_extract.reviewed_at
             reviewer = source_extract.reviewer or ledger.reviewer
             review_note = source_extract.review_note or ledger.review_note
 
             for decision in source_extract.decisions:
+                capture = source_captures[decision.evidence_url]
                 race = race_by_id[decision.race_id]
                 status = _normalized_status(decision)
                 candidate_names = [
@@ -237,6 +206,51 @@ def compile_release_dataset(
         return dataset
     finally:
         shutil.rmtree(stage, ignore_errors=True)
+
+
+def _capture_source_publications(
+    source: Source,
+    source_extract: ReleaseSourceExtract,
+    stage: Path,
+    snapshot_root: Path,
+    manifest_dir: Path,
+) -> dict[str | None, CaptureManifest]:
+    publications: dict[str | None, list[ReleaseDecision]] = {}
+    for decision in source_extract.decisions:
+        publications.setdefault(decision.evidence_url, []).append(decision)
+    captures: dict[str | None, CaptureManifest] = {}
+    discovery = source.discovery
+    for index, (url, decisions) in enumerate(publications.items()):
+        extract = source_extract.model_copy(update={"decisions": decisions})
+        snapshot_data = extract.model_dump(mode="json", exclude={"reviewed_at"})
+        if extract.reviewer is None:
+            snapshot_data.pop("reviewer")
+        if extract.review_note is None:
+            snapshot_data.pop("review_note")
+        snapshot_input = stage / f"{source.id}-{index}.json"
+        snapshot_input.write_bytes(canonical_json_bytes(snapshot_data))
+        request = CaptureRequest(
+            source_id=source.id,
+            requested_url=url or discovery.requested_url,
+            canonical_url=url or discovery.canonical_url,
+            redirect_chain=[] if url is not None else discovery.redirect_chain,
+            retrieved_at=extract.captured_at,
+            http_status=None,
+            media_type="application/json",
+            title=f"Permitted 2026 endorsement decision extract: {source.name}",
+            published_at=None if url is not None else discovery.published_at,
+            updated_at=None if url is not None else discovery.updated_at,
+            capture_method="manual_upload",
+            browser_required=False,
+            redistribution="permitted",
+            redistribution_note=(
+                "Structured factual decisions and short verification excerpts may be "
+                "redistributed; full third-party page content is excluded."
+            ),
+        )
+        manifest_path = record_capture(request, snapshot_input, snapshot_root, manifest_dir)
+        captures[url] = read_capture_manifest(manifest_path)
+    return captures
 
 
 def verify_release_compilation(

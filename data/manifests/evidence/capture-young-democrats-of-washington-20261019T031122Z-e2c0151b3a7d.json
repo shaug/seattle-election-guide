@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 805748,
+  "canonical_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "capture_method": "static_html",
+  "content_sha256": "a948e807d8fb4cd62c246d61ab26e07121ad9c9ad9d6e70c67f09d3961199f8d",
+  "http_status": 200,
+  "id": "capture-young-democrats-of-washington-20261019T031122Z-e2c0151b3a7d",
+  "media_type": "text/html; charset=\"utf-8\"",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+  "retrieved_at": "2026-10-19T03:11:22.254516Z",
+  "schema_version": "1.0",
+  "source_id": "young-democrats-of-washington",
+  "storage_reference": "sha256/a9/a948e807d8fb4cd62c246d61ab26e07121ad9c9ad9d6e70c67f09d3961199f8d",
+  "storage_scope": "local_only",
+  "title": "Young Democrats of Washington current official publication",
+  "updated_at": null
+}

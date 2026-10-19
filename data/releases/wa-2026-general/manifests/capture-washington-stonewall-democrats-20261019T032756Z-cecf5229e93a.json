@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 19098,
+  "canonical_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+  "capture_method": "manual_upload",
+  "content_sha256": "71a80a3a8b088d41e3b7fff9f0f4396750d7ec0d110a5c1677b1af7fb91dcb66",
+  "http_status": null,
+  "id": "capture-washington-stonewall-democrats-20261019T032756Z-cecf5229e93a",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+  "retrieved_at": "2026-10-19T03:27:56.019153Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/71/71a80a3a8b088d41e3b7fff9f0f4396750d7ec0d110a5c1677b1af7fb91dcb66",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington State Stonewall Democrats",
+  "updated_at": null
+}

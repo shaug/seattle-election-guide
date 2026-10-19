@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 2313,
+  "canonical_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+  "capture_method": "manual_upload",
+  "content_sha256": "5f5a9449f7ea8fc5ba58f4e0de7bb66527ca31846d55202a9a8c442aa0eea84a",
+  "http_status": null,
+  "id": "capture-11th-district-democrats-20261019T031241Z-3e0a05ca98f4",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+  "retrieved_at": "2026-10-19T03:12:41.851591Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/5f/5f5a9449f7ea8fc5ba58f4e0de7bb66527ca31846d55202a9a8c442aa0eea84a",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: 11th Legislative District Democrats",
+  "updated_at": null
+}

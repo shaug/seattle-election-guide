@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 518772,
+  "canonical_url": "https://ndaction.org/wp-content/uploads/2026/09/nondriver-action-2026-endorsements.pdf",
+  "capture_method": "manual_upload",
+  "content_sha256": "08780c77865bdfc16ecb9dc9b00d50089a3e1db50f82e6ec634b18f192706eec",
+  "http_status": null,
+  "id": "capture-nondriver-action-20261019T032749Z-67fa4f21a00c",
+  "media_type": "application/pdf",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original29-page PDF downloaded using the official visible Download link. Browser transfer status and redirects were not exposed; no HTTP status asserted. Full bytes retained privately.",
+  "requested_url": "https://ndaction.org/wp-content/uploads/2026/09/nondriver-action-2026-endorsements.pdf",
+  "retrieved_at": "2026-10-19T03:27:49.991458Z",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "storage_reference": "sha256/08/08780c77865bdfc16ecb9dc9b00d50089a3e1db50f82e6ec634b18f192706eec",
+  "storage_scope": "local_only",
+  "title": "Nondriver Action original official PDF downloaded through browser",
+  "updated_at": null
+}

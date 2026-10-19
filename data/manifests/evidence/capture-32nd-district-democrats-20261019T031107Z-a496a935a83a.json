@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": null,
+  "id": "capture-32nd-district-democrats-20261019T031107Z-a496a935a83a",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://32democrats.org/",
+  "retrieved_at": "2026-10-19T03:11:07.078483Z",
+  "schema_version": "1.0",
+  "source_id": "32nd-district-democrats",
+  "title": null,
+  "unavailable_reason": "live collection failed: live collection exceeded 10 redirects",
+  "updated_at": null
+}

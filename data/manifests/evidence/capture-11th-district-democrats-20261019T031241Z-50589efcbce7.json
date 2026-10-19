@@ -1,0 +1,27 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 157211,
+  "canonical_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+  "capture_method": "static_html",
+  "content_sha256": "f1c958d77d704b784a410e3221254540e2dd67a6d78f0bf72b6adb67f0d6ac2d",
+  "http_status": 200,
+  "id": "capture-11th-district-democrats-20261019T031241Z-50589efcbce7",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [
+    "http://eepurl.com/wy80rI66PR",
+    "https://eepurl.com/wy80rI66PR",
+    "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41"
+  ],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source evidence retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "http://eepurl.com/wy80rI66PR",
+  "retrieved_at": "2026-10-19T03:12:41.851591Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/f1/f1c958d77d704b784a410e3221254540e2dd67a6d78f0bf72b6adb67f0d6ac2d",
+  "storage_scope": "local_only",
+  "title": "Official linked publication evidence",
+  "updated_at": null
+}

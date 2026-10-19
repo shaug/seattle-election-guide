@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 6276,
+  "canonical_url": "https://www.sierraclub.org/washington/2026-endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "5308b8a30f7ded3da7e7a2a94cc24ed1f362779dc0167ed6654cf095fdb0ea07",
+  "http_status": null,
+  "id": "capture-sierra-club-washington-20261019T042207Z-9a06073d0313",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Manually preserved complete rendered-text view supplied from the official page in an ordinary browser. Derived HTML, not original HTTP response HTML; no HTTP status or redirect assertion. Full text remains private. Evidence-import time recorded; original browser observation time not independently known. Human review pending.",
+  "requested_url": "https://www.sierraclub.org/washington/2026-endorsements",
+  "retrieved_at": "2026-10-19T04:22:07.273160Z",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "storage_reference": "sha256/53/5308b8a30f7ded3da7e7a2a94cc24ed1f362779dc0167ed6654cf095fdb0ea07",
+  "storage_scope": "local_only",
+  "title": "sierra-club-washington current endorsements — derived visible rendered text",
+  "updated_at": null
+}

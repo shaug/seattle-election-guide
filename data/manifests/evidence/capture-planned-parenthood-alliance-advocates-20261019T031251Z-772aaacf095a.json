@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 76176,
+  "canonical_url": "https://www.plannedparenthoodaction.org/uploads/filer_public_thumbnails/filer_public/03/f8/03f8db38-9b3e-49fa-a28d-3bd1241f5b6d/ppaa_washington_endorsed_badge_2026.png__600x600_crop_subsampling-2.png",
+  "capture_method": "image",
+  "content_sha256": "310220a779a4676cfd873ad696cb7f539f0344fdc4d57a35c308060f446983e7",
+  "http_status": 200,
+  "id": "capture-planned-parenthood-alliance-advocates-20261019T031251Z-772aaacf095a",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification research; no redistribution permission asserted.",
+  "requested_url": "https://www.plannedparenthoodaction.org/uploads/filer_public_thumbnails/filer_public/03/f8/03f8db38-9b3e-49fa-a28d-3bd1241f5b6d/ppaa_washington_endorsed_badge_2026.png__600x600_crop_subsampling-2.png",
+  "retrieved_at": "2026-10-19T03:12:51.396260Z",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "storage_reference": "sha256/31/310220a779a4676cfd873ad696cb7f539f0344fdc4d57a35c308060f446983e7",
+  "storage_scope": "local_only",
+  "title": "Planned Parenthood Alliance Advocates linked official publication",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 73960,
+  "canonical_url": "https://www.wabuildingtrades.org/candidates.html",
+  "capture_method": "static_html",
+  "content_sha256": "c8563d801e4082b8e199e7dabac746f02e43f8cdd73f02be502c8c8acf003fc7",
+  "http_status": 200,
+  "id": "capture-washington-state-building-trades-20261019T031059Z-7b321d82a650",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.wabuildingtrades.org/candidates.html",
+  "retrieved_at": "2026-10-19T03:10:59.889089Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-building-trades",
+  "storage_reference": "sha256/c8/c8563d801e4082b8e199e7dabac746f02e43f8cdd73f02be502c8c8acf003fc7",
+  "storage_scope": "local_only",
+  "title": "Washington State Building and Construction Trades Council current official publication",
+  "updated_at": null
+}

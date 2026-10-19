@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-10-19T03:13:06.726105Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "North Seattle Canvass — No On 001, 638, 645; October 10 event description, opening paragraphs and closing November voting instruction Official source: https://seattledsa.org/event/nseattlecanvass/. Captures: capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c; verified manual manual-seattle-democratic-socialists-20261019T031729Z-08bb955d86e2. Human approval: data/review/approvals/wa-2026-general-2026-10-18.json.",
+      "evidence_url": "https://seattledsa.org/event/nseattlecanvass/",
+      "race_id": "initiative-26-645",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Complete current source review: data/review/approvals/wa-2026-general-2026-10-18-verification.json; actual source captures capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c. Individual decisions retain their own exact publication locators, including earlier approved evidence. Metadata correction: data/review/provenance-corrections/wa-2026-general-2026-10-18.json.",
+  "review_note": "shaug approved the complete current source review at 2026-10-19T04:14:31.209146Z: data/review/approvals/wa-2026-general-2026-10-18-verification.json. The enumerated additions were separately approved at 2026-10-19T03:51:20.554554Z: data/review/approvals/wa-2026-general-2026-10-18.json. OpenAI Codex transcribed both approvals. This source block uses the actual current capture and complete source-review times; earlier source metadata is preserved verbatim in data/review/provenance-corrections/wa-2026-general-2026-10-18.json and the original approval prior_source_reviews. All decision dictionaries, original per-decision locators, prior source-label mappings and allocations are unchanged. Omissions do not establish withdrawals; preserve the earlier 11th District CD9 no-endorsement and the Times comparison-only treatment. No new human approval, baseline adoption or historical webpage access is asserted by the metadata correction.",
+  "reviewer": "shaug",
+  "source_id": "seattle-democratic-socialists"
+}

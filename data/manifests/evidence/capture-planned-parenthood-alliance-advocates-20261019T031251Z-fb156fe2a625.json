@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 153680,
+  "canonical_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-birk",
+  "capture_method": "static_html",
+  "content_sha256": "c3680be53df1e23bcd3828fdffb9b63bc4061fc737a441e37a9d7c66adf89b6e",
+  "http_status": 200,
+  "id": "capture-planned-parenthood-alliance-advocates-20261019T031251Z-fb156fe2a625",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification research; no redistribution permission asserted.",
+  "requested_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-birk",
+  "retrieved_at": "2026-10-19T03:12:51.521313Z",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "storage_reference": "sha256/c3/c3680be53df1e23bcd3828fdffb9b63bc4061fc737a441e37a9d7c66adf89b6e",
+  "storage_scope": "local_only",
+  "title": "Planned Parenthood Alliance Advocates linked official publication",
+  "updated_at": null
+}

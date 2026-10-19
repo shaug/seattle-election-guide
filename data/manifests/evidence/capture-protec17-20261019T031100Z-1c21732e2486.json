@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1565164,
+  "canonical_url": "https://www.protec17.org/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "64b6c915ac93478d63c15cadf6885bf1fd3b11d7b01bfbcb3d969bbf7c28aa8b",
+  "http_status": 200,
+  "id": "capture-protec17-20261019T031100Z-1c21732e2486",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.protec17.org/endorsements/",
+  "retrieved_at": "2026-10-19T03:11:00.098776Z",
+  "schema_version": "1.0",
+  "source_id": "protec17",
+  "storage_reference": "sha256/64/64b6c915ac93478d63c15cadf6885bf1fd3b11d7b01bfbcb3d969bbf7c28aa8b",
+  "storage_scope": "local_only",
+  "title": "PROTEC17 current official publication",
+  "updated_at": null
+}

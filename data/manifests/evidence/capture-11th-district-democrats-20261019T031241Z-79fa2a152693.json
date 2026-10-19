@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 214,
+  "canonical_url": "https://www.11thlddems.org/",
+  "capture_method": "manual_upload",
+  "content_sha256": "177c70a72ecd2c197ab8d6ec9e4f0acb998c0b777aa6bdd3bd883a7b93cef9f2",
+  "http_status": null,
+  "id": "capture-11th-district-democrats-20261019T031241Z-79fa2a152693",
+  "media_type": "text/plain; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source evidence retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://www.11thlddems.org/",
+  "retrieved_at": "2026-10-19T03:12:41.498385Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/17/177c70a72ecd2c197ab8d6ec9e4f0acb998c0b777aa6bdd3bd883a7b93cef9f2",
+  "storage_scope": "local_only",
+  "title": "Official page textual rendering via standard web open",
+  "updated_at": null
+}

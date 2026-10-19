@@ -602,7 +602,9 @@ sources:
     name: Washington State Stonewall Democrats
     code: wsto
     reporting_category_id: democratic_party
-    selection_category_ids: [democratic_party, rights_representation]
+    selection_category_ids:
+    - democratic_party
+    - rights_representation
     organization_url: https://www.stonewalldemocrats.us/washington
     geographic_kind: general
     panel_role: consensus
@@ -611,15 +613,19 @@ sources:
       kind: all_seattle_ballot_races
       rationale: Count only explicit official decisions matched to Seattle-ballot races.
     discovery:
-      status: access_restricted
-      checked_at: 2026-10-04T04:56:54Z
-      requested_url: https://www.facebook.com/stonewallwa/posts/1450344363801898/
-      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-stonewall-democrats-20261004T045654Z-72ae3a59634c.'
-      notes: 'Official Facebook response exposed no reconstructable post content; access-restricted disposition preserved.'
-
+      canonical_url: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide
+      checked_at: '2026-10-19T03:27:56.019153Z'
+      evidence_locator: Official chapter profile → official post → organization Google Site → embedded explicit 2026 GENERAL
+        ELECTION guide. Retained original browser witness capture-washington-stonewall-democrats-20261019T032756Z-67dc7c4682fd
+        and normalized factual capture-washington-stonewall-democrats-20261019T033145Z-22645d0f3006. data/review/approvals/wa-2026-general-2026-10-18.json.
+      media_type: text/html
+      notes: The current official general guide resolves the earlier primary-only/access limitation. shaug approved 29 Seattle
+        race decisions, including three No initiative choices and one equal Senate dual. Frozen eligibility, panel membership,
+        codes and scoring remain intact.
+      requested_url: https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide
+      status: published
     overlap_group_ids:
-      - democratic-party-network
-
+    - democratic-party-network
   - id: transit-riders-union
     name: Transit Riders Union
     code: trun

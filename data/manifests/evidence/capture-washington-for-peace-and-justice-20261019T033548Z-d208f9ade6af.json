@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 3908,
+  "canonical_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+  "capture_method": "manual_upload",
+  "content_sha256": "e6dd5442121ab61d53c41e796a9402cc14d7a55d45a5de5addde03e8501808a7",
+  "http_status": null,
+  "id": "capture-washington-for-peace-and-justice-20261019T033548Z-d208f9ade6af",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Agent-authored factual derivative of the retained12-slide normalized browser review; not original response HTML or image bytes. No HTTP status or redirect history asserted.",
+  "requested_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+  "retrieved_at": "2026-10-19T03:35:48.005184Z",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "storage_reference": "sha256/e6/e6dd5442121ab61d53c41e796a9402cc14d7a55d45a5de5addde03e8501808a7",
+  "storage_scope": "local_only",
+  "title": "WA4PJ normalized facts: factual derivative for pending manual review",
+  "updated_at": null
+}

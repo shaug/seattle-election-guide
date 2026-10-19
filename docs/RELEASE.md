@@ -77,6 +77,13 @@ Because compilation imports a manual extract rather than issuing an HTTP request
 capture manifests do not claim an HTTP status. Full third-party HTML, PDF, browser, and restricted
 captures remain outside Git.
 
+A decision may supply a reviewed `evidence_url` when its supporting publication differs from
+the registry's discovery page. The compiler groups that source's decisions by publication and
+creates a separate permitted factual extract for each group, so race receipts and exports open
+the supporting publication. Decisions without this field retain the registry URL and its
+publication metadata. An explicit URL does not inherit the discovery page's publication or
+update dates, and the compiler never infers URLs from free-text locators.
+
 Compile the ledger after an editorial change:
 
 ```bash

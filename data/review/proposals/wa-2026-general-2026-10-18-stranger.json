@@ -1,0 +1,1162 @@
+{
+  "alias_treatments": [
+    {
+      "ballot": "Noel C. Frame",
+      "race_id": "ld-36-state-senator",
+      "source": "Noel Frame",
+      "treatment": "Retain existing approved name mapping."
+    },
+    {
+      "ballot": "Jaime Michelle Hawk",
+      "race_id": "supreme-court-justice-3",
+      "source": "Jamie Michelle Hawk",
+      "treatment": "Retain explicit prior #508 approved identity mapping."
+    }
+  ],
+  "capture_reference": {
+    "byte_length": 827494,
+    "content_sha256": "2f1b85b3e68f7e56bcf3f307ecff4a91f9c3b158c91b615614b77ee334b40546",
+    "id": "capture-the-stranger-20261019T043508Z-ede36174bf25",
+    "manifest_path": "data/manifests/evidence/capture-the-stranger-20261019T043508Z-ede36174bf25.json",
+    "manifest_sha256": "a270d7f5f5a160c526ad003375341990df023a3f447939462ec441c1b38f0127"
+  },
+  "completeness_limits": [
+    "This review certifies only the complete supplied image, not the current live webpage or whether other image versions/article text have been published.",
+    "The official source URL is user reported. Original page publication/update time and HTTP status were not observed. The evidence timestamp is actual local image import time.",
+    "Browser security policy blocks the official URL. No alternate browser, client, tool, same-outcome URL or workaround was used.",
+    "The LD31 conflicting office wording and source spellings on outside-inventory rows are documented as printed; no new out-of-inventory ballot normalization was attempted."
+  ],
+  "election_id": "wa-2026-general",
+  "evidence_scope": "Only the user-supplied local image. No live-page read or fetch through any client/tool/URL was attempted.",
+  "human_approval": "pending",
+  "image_integrity": {
+    "dimensions": [
+      695,
+      2520
+    ],
+    "original_byte_length": 827494,
+    "original_sha256": "2f1b85b3e68f7e56bcf3f307ecff4a91f9c3b158c91b615614b77ee334b40546",
+    "preserved_unmodified": true
+  },
+  "in_inventory_rows": [
+    {
+      "allocation": {
+        "us-house-7--pramila-jayapal": "1"
+      },
+      "ballot_choice_names": [
+        "Pramila Jayapal"
+      ],
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > Federal > row 2: United States Representative, Congressional District 7",
+      "image_row": 2,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Pramila Jayapal",
+      "printed_office_or_measure": "United States Representative, Congressional District 7",
+      "prior_approved_aliases": [],
+      "race_id": "us-house-7",
+      "section": "Federal",
+      "section_row": 2,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "us-house-9--adam-smith": "1"
+      },
+      "ballot_choice_names": [
+        "Adam Smith"
+      ],
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > Federal > row 4: United States Representative, Congressional District 9",
+      "image_row": 4,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Adam Smith",
+      "printed_office_or_measure": "United States Representative, Congressional District 9",
+      "prior_approved_aliases": [],
+      "race_id": "us-house-9",
+      "section": "Federal",
+      "section_row": 4,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-11-state-representative-1--ashley-fedan": "1"
+      },
+      "ballot_choice_names": [
+        "Ashley Fedan"
+      ],
+      "candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 3: Legislative District No. 11, State Representative Position No. 1",
+      "image_row": 7,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Ashley Fedan",
+      "printed_office_or_measure": "Legislative District No. 11, State Representative Position No. 1",
+      "prior_approved_aliases": [],
+      "race_id": "ld-11-state-representative-1",
+      "section": "State",
+      "section_row": 3,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-representative-1--keith-scully": "1"
+      },
+      "ballot_choice_names": [
+        "Keith Scully"
+      ],
+      "candidate_ids": [
+        "ld-32-state-representative-1--keith-scully"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 10: Legislative District No. 32, State Representative Position No. 1",
+      "image_row": 14,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Keith Scully",
+      "printed_office_or_measure": "Legislative District No. 32, State Representative Position No. 1",
+      "prior_approved_aliases": [],
+      "race_id": "ld-32-state-representative-1",
+      "section": "State",
+      "section_row": 10,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-senator--cindy-ryu": "1"
+      },
+      "ballot_choice_names": [
+        "Cindy Ryu"
+      ],
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 11: Legislative District No. 32, State Senator",
+      "image_row": 15,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Cindy Ryu",
+      "printed_office_or_measure": "Legislative District No. 32, State Senator",
+      "prior_approved_aliases": [],
+      "race_id": "ld-32-state-senator",
+      "section": "State",
+      "section_row": 11,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-representative-2--imraan-siddiqi": "1"
+      },
+      "ballot_choice_names": [
+        "Imraan Siddiqi"
+      ],
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 12: Legislative District No. 32, State Representative Position No. 2",
+      "image_row": 16,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Imraan Siddiqi",
+      "printed_office_or_measure": "Legislative District No. 32, State Representative Position No. 2",
+      "prior_approved_aliases": [],
+      "race_id": "ld-32-state-representative-2",
+      "section": "State",
+      "section_row": 12,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-34-state-representative-2--joe-fitzgibbon": "1"
+      },
+      "ballot_choice_names": [
+        "Joe Fitzgibbon"
+      ],
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 15: Legislative District No. 34, State Representative Position No. 2",
+      "image_row": 19,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Joe Fitzgibbon",
+      "printed_office_or_measure": "Legislative District No. 34, State Representative Position No. 2",
+      "prior_approved_aliases": [],
+      "race_id": "ld-34-state-representative-2",
+      "section": "State",
+      "section_row": 15,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-36-state-senator--noel-c-frame": "1"
+      },
+      "ballot_choice_names": [
+        "Noel C. Frame"
+      ],
+      "candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 16: Legislative District No. 36, State Senator",
+      "image_row": 20,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Noel Frame",
+      "printed_office_or_measure": "Legislative District No. 36, State Senator",
+      "prior_approved_aliases": [
+        {
+          "existing_approved_ballot_name": "Noel C. Frame",
+          "printed_name": "Noel Frame",
+          "reason": "Existing approved source-name/identity mapping retained; no new correction."
+        }
+      ],
+      "race_id": "ld-36-state-senator",
+      "section": "State",
+      "section_row": 16,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-senator--chipalo-street": "1"
+      },
+      "ballot_choice_names": [
+        "Chipalo Street"
+      ],
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 17: Legislative District No. 37, State Senator",
+      "image_row": 21,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Chipalo Street",
+      "printed_office_or_measure": "Legislative District No. 37, State Senator",
+      "prior_approved_aliases": [],
+      "race_id": "ld-37-state-senator",
+      "section": "State",
+      "section_row": 17,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-1--kelabe-tewolde": "1"
+      },
+      "ballot_choice_names": [
+        "Kelabe Tewolde"
+      ],
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 18: Legislative District No. 37, State Representative Position No. 1",
+      "image_row": 22,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Kelabe Tewolde",
+      "printed_office_or_measure": "Legislative District No. 37, State Representative Position No. 1",
+      "prior_approved_aliases": [],
+      "race_id": "ld-37-state-representative-1",
+      "section": "State",
+      "section_row": 18,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "ballot_choice_names": [
+        "Jaelynn Scott"
+      ],
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 19: Legislative District No. 37, State Representative Position No. 2",
+      "image_row": 23,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Jaelynn Scott",
+      "printed_office_or_measure": "Legislative District No. 37, State Representative Position No. 2",
+      "prior_approved_aliases": [],
+      "race_id": "ld-37-state-representative-2",
+      "section": "State",
+      "section_row": 19,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-senator--jamie-pedersen": "1"
+      },
+      "ballot_choice_names": [
+        "Jamie Pedersen"
+      ],
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 22: Legislative District No. 43, State Senator",
+      "image_row": 26,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Jamie Pedersen",
+      "printed_office_or_measure": "Legislative District No. 43, State Senator",
+      "prior_approved_aliases": [],
+      "race_id": "ld-43-state-senator",
+      "section": "State",
+      "section_row": 22,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-representative-1--nicole-macri": "1"
+      },
+      "ballot_choice_names": [
+        "Nicole Macri"
+      ],
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 23: Legislative District No. 43, State Representative Position No. 1",
+      "image_row": 27,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Nicole Macri",
+      "printed_office_or_measure": "Legislative District No. 43, State Representative Position No. 1",
+      "prior_approved_aliases": [],
+      "race_id": "ld-43-state-representative-1",
+      "section": "State",
+      "section_row": 23,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-46-state-senator--javier-valdez": "1"
+      },
+      "ballot_choice_names": [
+        "Javier Valdez"
+      ],
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 26: Legislative District No. 46, State Senator",
+      "image_row": 30,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Javier Valdez",
+      "printed_office_or_measure": "Legislative District No. 46, State Senator",
+      "prior_approved_aliases": [],
+      "race_id": "ld-46-state-senator",
+      "section": "State",
+      "section_row": 26,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-46-state-representative-1--will-dreher": "1"
+      },
+      "ballot_choice_names": [
+        "Will Dreher"
+      ],
+      "candidate_ids": [
+        "ld-46-state-representative-1--will-dreher"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State > row 1: Legislative District No. 46, State Representative Position No. 1",
+      "image_row": 31,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Will Dreher",
+      "printed_office_or_measure": "Legislative District No. 46, State Representative Position No. 1",
+      "prior_approved_aliases": [],
+      "race_id": "ld-46-state-representative-1",
+      "section": "State",
+      "section_row": 1,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-46-state-representative-2--darya-farivar": "1"
+      },
+      "ballot_choice_names": [
+        "Darya Farivar"
+      ],
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State > row 2: Legislative District No. 46, State Representative Position No. 2",
+      "image_row": 32,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Darya Farivar",
+      "printed_office_or_measure": "Legislative District No. 46, State Representative Position No. 2",
+      "prior_approved_aliases": [],
+      "race_id": "ld-46-state-representative-2",
+      "section": "State",
+      "section_row": 2,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-assessor--rob-foxcurran": "1"
+      },
+      "ballot_choice_names": [
+        "Rob Foxcurran"
+      ],
+      "candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > County > row 1: Assessor",
+      "image_row": 38,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Rob Foxcurran",
+      "printed_office_or_measure": "Assessor",
+      "prior_approved_aliases": [],
+      "race_id": "king-county-assessor",
+      "section": "County",
+      "section_row": 1,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-2--rebecca-saldana": "1"
+      },
+      "ballot_choice_names": [
+        "Rebecca Saldaña"
+      ],
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > County > row 2: Metropolitan King County, Council District No. 2",
+      "image_row": 39,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Rebecca Saldaña",
+      "printed_office_or_measure": "Metropolitan King County, Council District No. 2",
+      "prior_approved_aliases": [],
+      "race_id": "king-county-council-2",
+      "section": "County",
+      "section_row": 2,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-8--teresa-mosqueda": "1"
+      },
+      "ballot_choice_names": [
+        "Teresa Mosqueda"
+      ],
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > County > row 3: Metropolitan King County, Council District No. 8",
+      "image_row": 40,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Teresa Mosqueda",
+      "printed_office_or_measure": "Metropolitan King County, Council District No. 8",
+      "prior_approved_aliases": [],
+      "race_id": "king-county-council-8",
+      "section": "County",
+      "section_row": 3,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-1--colleen-melody": "1"
+      },
+      "ballot_choice_names": [
+        "Colleen Melody"
+      ],
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State Supreme Court > row 1: Supreme Court, Justice Position No. 1",
+      "image_row": 41,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Colleen Melody",
+      "printed_office_or_measure": "Supreme Court, Justice Position No. 1",
+      "prior_approved_aliases": [],
+      "race_id": "supreme-court-justice-1",
+      "section": "State Supreme Court",
+      "section_row": 1,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-3--jaime-michelle-hawk": "1"
+      },
+      "ballot_choice_names": [
+        "Jaime Michelle Hawk"
+      ],
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State Supreme Court > row 2: Supreme Court, Justice Position No. 3",
+      "image_row": 42,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "Prior #508 approved mapping from source Jamie Michelle Hawk to ballot Jaime Michelle Hawk is retained.",
+      "printed_choice": "Jamie Michelle Hawk",
+      "printed_office_or_measure": "Supreme Court, Justice Position No. 3",
+      "prior_approved_aliases": [
+        {
+          "existing_approved_ballot_name": "Jaime Michelle Hawk",
+          "printed_name": "Jamie Michelle Hawk",
+          "reason": "Existing approved source-name/identity mapping retained; no new correction."
+        }
+      ],
+      "race_id": "supreme-court-justice-3",
+      "section": "State Supreme Court",
+      "section_row": 2,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-4--ian-birk": "1"
+      },
+      "ballot_choice_names": [
+        "Ian Birk"
+      ],
+      "candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State Supreme Court > row 3: Supreme Court, Justice Position No. 4",
+      "image_row": 43,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Ian Birk",
+      "printed_office_or_measure": "Supreme Court, Justice Position No. 4",
+      "prior_approved_aliases": [],
+      "race_id": "supreme-court-justice-4",
+      "section": "State Supreme Court",
+      "section_row": 3,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-5--theo-angelis": "1"
+      },
+      "ballot_choice_names": [
+        "Theo Angelis"
+      ],
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State Supreme Court > row 4: Supreme Court, Justice Position No. 5",
+      "image_row": 44,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Theo Angelis",
+      "printed_office_or_measure": "Supreme Court, Justice Position No. 5",
+      "prior_approved_aliases": [],
+      "race_id": "supreme-court-justice-5",
+      "section": "State Supreme Court",
+      "section_row": 4,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-7--debra-l-stephens": "1"
+      },
+      "ballot_choice_names": [
+        "Debra L. Stephens"
+      ],
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State Supreme Court > row 5: Supreme Court, Justice Position No. 7",
+      "image_row": 45,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Debra L. Stephens",
+      "printed_office_or_measure": "Supreme Court, Justice Position No. 7",
+      "prior_approved_aliases": [],
+      "race_id": "supreme-court-justice-7",
+      "section": "State Supreme Court",
+      "section_row": 5,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-district-court-west-judge-1--bardi-martin": "1"
+      },
+      "ballot_choice_names": [
+        "Bardi Martin"
+      ],
+      "candidate_ids": [
+        "king-county-district-court-west-judge-1--bardi-martin"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > District Court > row 1: West Electoral District Judge Position No. 1",
+      "image_row": 46,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Bardi Martin",
+      "printed_office_or_measure": "West Electoral District Judge Position No. 1",
+      "prior_approved_aliases": [],
+      "race_id": "king-county-district-court-west-judge-1",
+      "section": "District Court",
+      "section_row": 1,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "ballot_choice_names": [
+        "Nilu Jenks"
+      ],
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > City > row 1: City of Seattle, Council District No. 5",
+      "image_row": 51,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Nilu Jenks",
+      "printed_office_or_measure": "City of Seattle, Council District No. 5",
+      "prior_approved_aliases": [],
+      "race_id": "seattle-city-council-5",
+      "section": "City",
+      "section_row": 1,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-municipal-court-judge-5--gabe-rothstein": "1"
+      },
+      "ballot_choice_names": [
+        "Gabe Rothstein"
+      ],
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > City > row 2: City of Seattle, Municipal Court Judge Position No. 5",
+      "image_row": 52,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Gabe Rothstein",
+      "printed_office_or_measure": "City of Seattle, Municipal Court Judge Position No. 5",
+      "prior_approved_aliases": [],
+      "race_id": "seattle-municipal-court-judge-5",
+      "section": "City",
+      "section_row": 2,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-001--no": "1"
+      },
+      "ballot_choice_names": [
+        "No"
+      ],
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > Initiatives > row 1: Initiative-001; Resurrecting the Parent’s Bill of Rights",
+      "image_row": 53,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Vote No",
+      "printed_office_or_measure": "Initiative-001; Resurrecting the Parent’s Bill of Rights",
+      "prior_approved_aliases": [],
+      "race_id": "initiative-26-001",
+      "section": "Initiatives",
+      "section_row": 1,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-638--no": "1"
+      },
+      "ballot_choice_names": [
+        "No"
+      ],
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > Initiatives > row 2: Initiative-638; Banning trans girls from sports",
+      "image_row": 54,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Vote No",
+      "printed_office_or_measure": "Initiative-638; Banning trans girls from sports",
+      "prior_approved_aliases": [],
+      "race_id": "initiative-26-638",
+      "section": "Initiatives",
+      "section_row": 2,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-645--no": "1"
+      },
+      "ballot_choice_names": [
+        "No"
+      ],
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > Initiatives > row 3: Initiative-645; Repealing the Millionaires Tax",
+      "image_row": 55,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Vote No",
+      "printed_office_or_measure": "Initiative-645; Repealing the Millionaires Tax",
+      "prior_approved_aliases": [],
+      "race_id": "initiative-26-645",
+      "section": "Initiatives",
+      "section_row": 3,
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-proposition-1-transit--yes": "1"
+      },
+      "ballot_choice_names": [
+        "Yes"
+      ],
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "classification": "in_frozen_inventory_unchanged",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > Initiatives > row 4: Seattle Prop. 1; Seattle Transit Measure",
+      "image_row": 56,
+      "matches_approved_choices_office_status_allocation": true,
+      "note": "",
+      "printed_choice": "Vote Yes",
+      "printed_office_or_measure": "Seattle Prop. 1; Seattle Transit Measure",
+      "prior_approved_aliases": [],
+      "race_id": "seattle-proposition-1-transit",
+      "section": "Initiatives",
+      "section_row": 4,
+      "status": "endorsed"
+    }
+  ],
+  "input_bindings": {
+    "approved_ledger_sha256": "617f9d3b893ba46aca7c0824e02050491d6416952d294654150b70343137422f",
+    "canonical_dataset_sha256": "d5be8b31912ef904187e26d232d9f3678c65998269cdd5dcd413a80e3cf9898a"
+  },
+  "no_historical_reviews_backdated": true,
+  "no_new_ledger_changes": true,
+  "observations": [
+    "Both columns are fully legible and were manually read, including the State continuation at top right and all four initiative/measure recommendations at bottom right.",
+    "All 31 existing Stranger decisions match choice, jurisdiction, office/district/position, endorsement status and allocation 1. There are no in-inventory dual endorsements, acceptable-choice sets, rankings, declined-to-endorse instructions or skip instructions in this image.",
+    "The broad top note does not identify specific omitted races and does not authorize invented per-race no_endorsement or zero-point decisions. Unprinted races remain unprinted; no prior approved row is missing.",
+    "Twenty-five other recommendations are outside the frozen inventory: two congressional, nineteen state-legislative and four non-West district-court choices. They are fully transcribed and excluded from the Seattle guide comparison.",
+    "Outside-inventory source spellings Shelly Kloba and Chris Sterns are preserved. The LD31 Tamara Stramel row prints State Representative State Senator; this conflicting office wording remains explicitly unresolved outside scope and is not silently repaired.",
+    "No endorsement ambiguity affects an in-inventory row. Existing Noel Frame and Jamie Michelle Hawk aliases remain prior-approved treatments, not new identity inferences."
+  ],
+  "outside_inventory_rows": [
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > Federal > row 1: United States Representative, Congressional District 1",
+      "image_row": 1,
+      "note": "",
+      "printed_choice": "Suzan DelBene",
+      "printed_office_or_measure": "United States Representative, Congressional District 1",
+      "race_id": "us-house-1",
+      "section": "Federal",
+      "section_row": 1
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > Federal > row 3: United States Representative, Congressional District 8",
+      "image_row": 3,
+      "note": "",
+      "printed_choice": "Kim Schrier",
+      "printed_office_or_measure": "United States Representative, Congressional District 8",
+      "race_id": "us-house-8",
+      "section": "Federal",
+      "section_row": 3
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 1: Legislative District No. 1, State Representative Position No. 1",
+      "image_row": 5,
+      "note": "",
+      "printed_choice": "Davina Duerr",
+      "printed_office_or_measure": "Legislative District No. 1, State Representative Position No. 1",
+      "race_id": "ld-1-state-representative-1",
+      "section": "State",
+      "section_row": 1
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 2: Legislative District No. 1, State Representative Position No. 2",
+      "image_row": 6,
+      "note": "Source spells Shelly; outside the frozen Seattle inventory, no identity correction proposed.",
+      "printed_choice": "Shelly Kloba",
+      "printed_office_or_measure": "Legislative District No. 1, State Representative Position No. 2",
+      "race_id": "ld-1-state-representative-2",
+      "section": "State",
+      "section_row": 2
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 4: Legislative District No. 30, State Senator",
+      "image_row": 8,
+      "note": "",
+      "printed_choice": "Claire Wilson",
+      "printed_office_or_measure": "Legislative District No. 30, State Senator",
+      "race_id": "ld-30-state-senator",
+      "section": "State",
+      "section_row": 4
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 5: Legislative District No. 30, State Representative Position No. 1",
+      "image_row": 9,
+      "note": "",
+      "printed_choice": "Jamila E. Taylor",
+      "printed_office_or_measure": "Legislative District No. 30, State Representative Position No. 1",
+      "race_id": "ld-30-state-representative-1",
+      "section": "State",
+      "section_row": 5
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 6: Legislative District No. 30, State Representative Position No. 2",
+      "image_row": 10,
+      "note": "",
+      "printed_choice": "Kristine Reeves",
+      "printed_office_or_measure": "Legislative District No. 30, State Representative Position No. 2",
+      "race_id": "ld-30-state-representative-2",
+      "section": "State",
+      "section_row": 6
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 7: Legislative District No. 31, State Representative State Senator",
+      "image_row": 11,
+      "note": "Office label is printed with both State Representative and State Senator. LD31 is outside the frozen inventory; no office correction or candidate inference is made.",
+      "printed_choice": "Tamara Stramel",
+      "printed_office_or_measure": "Legislative District No. 31, State Representative State Senator",
+      "race_id": null,
+      "section": "State",
+      "section_row": 7
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 8: Legislative District No. 31, State Representative Position No. 1",
+      "image_row": 12,
+      "note": "",
+      "printed_choice": "Stephen Szczurko-Walton",
+      "printed_office_or_measure": "Legislative District No. 31, State Representative Position No. 1",
+      "race_id": "ld-31-state-representative-1",
+      "section": "State",
+      "section_row": 8
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 9: Legislative District No. 31, State Representative Position No. 2",
+      "image_row": 13,
+      "note": "",
+      "printed_choice": "John Bielka",
+      "printed_office_or_measure": "Legislative District No. 31, State Representative Position No. 2",
+      "race_id": "ld-31-state-representative-2",
+      "section": "State",
+      "section_row": 9
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 13: Legislative District No. 33, State Representative Position No. 1",
+      "image_row": 17,
+      "note": "",
+      "printed_choice": "Edwin Obras",
+      "printed_office_or_measure": "Legislative District No. 33, State Representative Position No. 1",
+      "race_id": "ld-33-state-representative-1",
+      "section": "State",
+      "section_row": 13
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 14: Legislative District No. 33, State Representative Position No. 2",
+      "image_row": 18,
+      "note": "",
+      "printed_choice": "Mia Su-Ling Gregerson",
+      "printed_office_or_measure": "Legislative District No. 33, State Representative Position No. 2",
+      "race_id": "ld-33-state-representative-2",
+      "section": "State",
+      "section_row": 14
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 20: Legislative District No. 41, State Representative Position No. 1",
+      "image_row": 24,
+      "note": "",
+      "printed_choice": "Janice Zahn",
+      "printed_office_or_measure": "Legislative District No. 41, State Representative Position No. 1",
+      "race_id": "ld-41-state-representative-1",
+      "section": "State",
+      "section_row": 20
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 21: Legislative District No. 41, State Representative Position No. 2",
+      "image_row": 25,
+      "note": "",
+      "printed_choice": "My-Linh Thai",
+      "printed_office_or_measure": "Legislative District No. 41, State Representative Position No. 2",
+      "race_id": "ld-41-state-representative-2",
+      "section": "State",
+      "section_row": 21
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 24: Legislative District No. 45, State Representative Position No. 1",
+      "image_row": 28,
+      "note": "",
+      "printed_choice": "Roger Goodman",
+      "printed_office_or_measure": "Legislative District No. 45, State Representative Position No. 1",
+      "race_id": "ld-45-state-representative-1",
+      "section": "State",
+      "section_row": 24
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "left",
+      "evidence_locator": "Supplied image > left column > State > row 25: Legislative District No. 45, State Representative Position No. 2",
+      "image_row": 29,
+      "note": "",
+      "printed_choice": "Vanessa Kritzer",
+      "printed_office_or_measure": "Legislative District No. 45, State Representative Position No. 2",
+      "race_id": "ld-45-state-representative-2",
+      "section": "State",
+      "section_row": 25
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State > row 3: Legislative District No. 47, State Senator",
+      "image_row": 33,
+      "note": "",
+      "printed_choice": "Claudia Kauffman",
+      "printed_office_or_measure": "Legislative District No. 47, State Senator",
+      "race_id": "ld-47-state-senator",
+      "section": "State",
+      "section_row": 3
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State > row 4: Legislative District No. 47, State Representative Position No. 1",
+      "image_row": 34,
+      "note": "",
+      "printed_choice": "Debra Jean Entenman",
+      "printed_office_or_measure": "Legislative District No. 47, State Representative Position No. 1",
+      "race_id": "ld-47-state-representative-1",
+      "section": "State",
+      "section_row": 4
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State > row 5: Legislative District No. 47, State Representative Position No. 2",
+      "image_row": 35,
+      "note": "Preserved exact printed Sterns spelling; LD47 is outside the frozen inventory, no correction proposed.",
+      "printed_choice": "Chris Sterns",
+      "printed_office_or_measure": "Legislative District No. 47, State Representative Position No. 2",
+      "race_id": "ld-47-state-representative-2",
+      "section": "State",
+      "section_row": 5
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State > row 6: Legislative District No. 48, State Representative Position No. 1",
+      "image_row": 36,
+      "note": "",
+      "printed_choice": "Osman Salahuddin",
+      "printed_office_or_measure": "Legislative District No. 48, State Representative Position No. 1",
+      "race_id": "ld-48-state-representative-1",
+      "section": "State",
+      "section_row": 6
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > State > row 7: Legislative District No. 48, State Representative Position No. 2",
+      "image_row": 37,
+      "note": "",
+      "printed_choice": "Jessica Forsythe",
+      "printed_office_or_measure": "Legislative District No. 48, State Representative Position No. 2",
+      "race_id": "ld-48-state-representative-2",
+      "section": "State",
+      "section_row": 7
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > District Court > row 2: Southeast Electoral District Judge Position No. 5",
+      "image_row": 47,
+      "note": "",
+      "printed_choice": "Heather Barker",
+      "printed_office_or_measure": "Southeast Electoral District Judge Position No. 5",
+      "race_id": "king-county-district-court-southeast-judge-5",
+      "section": "District Court",
+      "section_row": 2
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > District Court > row 3: Northeast Electoral District Judge Position No. 1",
+      "image_row": 48,
+      "note": "",
+      "printed_choice": "Jan Trasen",
+      "printed_office_or_measure": "Northeast Electoral District Judge Position No. 1",
+      "race_id": "king-county-district-court-northeast-judge-1",
+      "section": "District Court",
+      "section_row": 3
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > District Court > row 4: Southwest Electoral District Judge Position No. 4",
+      "image_row": 49,
+      "note": "",
+      "printed_choice": "Harry Steinmetz",
+      "printed_office_or_measure": "Southwest Electoral District Judge Position No. 4",
+      "race_id": "king-county-district-court-southwest-judge-4",
+      "section": "District Court",
+      "section_row": 4
+    },
+    {
+      "classification": "outside_frozen_inventory",
+      "column": "right",
+      "evidence_locator": "Supplied image > right column > District Court > row 5: Southwest Electoral District Judge Position No. 5",
+      "image_row": 50,
+      "note": "",
+      "printed_choice": "Noel Merfeld",
+      "printed_office_or_measure": "Southwest Electoral District Judge Position No. 5",
+      "race_id": "king-county-district-court-southwest-judge-5",
+      "section": "District Court",
+      "section_row": 5
+    }
+  ],
+  "pending_manual_reference": {
+    "id": "manual-the-stranger-20261019T043508Z-86564fd1f058",
+    "path": "data/review/manual/manual-the-stranger-20261019T043508Z-86564fd1f058.json",
+    "review_status": "pending",
+    "sha256": "3aff178039a4b2019d9f520da98942ca7cd98816df4cc249450275d692e73cae",
+    "transcription_characters": 2122
+  },
+  "prepared_at": "2026-10-19T04:35:46.742651Z",
+  "prepared_by": "OpenAI Codex",
+  "prior_october16_acknowledgement_preserved": true,
+  "private_research_sha256": "283a4647f23cd2adaafb1b4b5b6d6819fe812a906049ff0f8d1846fc82627a53",
+  "record_type": "supplied_image_manual_review_proposal",
+  "scheduled_dates": [
+    "2026-10-17",
+    "2026-10-18"
+  ],
+  "schema_version": "1.0",
+  "scope_issues": [
+    545,
+    560,
+    567
+  ],
+  "section_counts": {
+    "City": 2,
+    "County": 3,
+    "District Court": 5,
+    "Federal": 4,
+    "Initiatives": 4,
+    "State": 33,
+    "State Supreme Court": 5
+  },
+  "source_id": "the-stranger",
+  "summary": {
+    "changed_allocations": 0,
+    "changed_choices": 0,
+    "changed_races": 0,
+    "changed_statuses": 0,
+    "in_inventory_choices_unchanged": 31,
+    "in_inventory_decisions_unchanged": 31,
+    "missing_previously_approved_choices": 0,
+    "new_capture_manifests": 1,
+    "new_in_inventory_choices": 0,
+    "outside_frozen_inventory_recommendations": 25,
+    "pending_manual_records": 1,
+    "total_printed_recommendations": 56
+  },
+  "user_reported_official_source_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/"
+}

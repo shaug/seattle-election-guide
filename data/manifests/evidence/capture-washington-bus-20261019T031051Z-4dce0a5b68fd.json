@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 689810,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/f371d7d8-7001-4138-8a59-84611d98d123/2.png",
+  "capture_method": "image",
+  "content_sha256": "9e053500215b837485f9135f275ac40d8b13e626b7d9db81820389b7bd1e68e0",
+  "http_status": 200,
+  "id": "capture-washington-bus-20261019T031051Z-4dce0a5b68fd",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official public-source response retained privately by content hash for October 16–18 verification review; no redistribution permission asserted.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/f371d7d8-7001-4138-8a59-84611d98d123/2.png",
+  "retrieved_at": "2026-10-19T03:10:51.036238Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/9e/9e053500215b837485f9135f275ac40d8b13e626b7d9db81820389b7bd1e68e0",
+  "storage_scope": "local_only",
+  "title": "The Washington Bus current official publication",
+  "updated_at": null
+}
