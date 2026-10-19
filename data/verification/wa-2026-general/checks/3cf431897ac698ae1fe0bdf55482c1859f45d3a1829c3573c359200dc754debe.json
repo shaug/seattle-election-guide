@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-19T14:47:14.537881Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex / oct19_labor_rights_sources (explicit maintainer delegation; no personal human read asserted): data/review/rechecks/wa-2026-general-2026-10-19-manual.json SHA256 41b2356a7738f5bcf47e27200c6d375ebc32942f0fd1b5c488a819f34dbe9f6f; source_id washington-housing-alliance; complete identified public publication set reviewed with all stated limits. Scope authority and legacy mode are documented in docs/GENERAL_VERIFICATION_2026-10-19.md. This manual research does not approve an endorsement ledger edit.",
+  "mode": "human",
+  "scheduled_for": "2026-10-19",
+  "source_id": "washington-housing-alliance",
+  "status": "manual"
+}

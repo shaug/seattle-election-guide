@@ -1,0 +1,6 @@
+{
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-automatic.json SHA256 e190c48224c100bea3db1ff0b98a52a9ddb0a51a454fbc70ec66fc45cf515168; exact authenticated existing original and full publication compared by two actual Codex reviewers under the direct scoped delegation in docs/GENERAL_VERIFICATION_2026-10-19.md. No personal human source read, new ledger choice, operator-archive promotion or scheduled success is asserted by this baseline attestation.",
+  "reviewed_at": "2026-10-19T14:58:53.572247Z",
+  "reviewer": "OpenAI Codex / root (explicit maintainer delegation; independent Codex source review)",
+  "snapshot_id": "extraction-seattle-gay-news-20261019T085357Z-a7c05214be1a"
+}

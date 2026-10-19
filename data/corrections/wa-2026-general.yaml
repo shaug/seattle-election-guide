@@ -2,6 +2,22 @@ schema_version: "1.0"
 election_id: wa-2026-general
 entries:
   - corrected_on: 2026-10-19
+    headline: "Added the 46th District Democrats’ Seattle transit endorsement."
+    body: >-
+      The 46th District Democrats’ current official publication endorses Yes on
+      Seattle Proposition 1, the Seattle Transit Measure. That decision is now
+      included, bringing the guide to 915 decisions across the same 46 publishers.
+      The organization’s evidence links now open its current candidates and
+      positions page; all 914 previously recorded decisions are retained. The
+      linked review describes the October 19 checks and remaining access gaps.
+    provenance:
+      - label: "Seattle Transit Proposition 1"
+        url: /e/wa-2026-general/races/seattle-proposition-1-transit/
+      - label: "46th District Democrats’ official endorsements"
+        url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_positions
+      - label: "October 19 review and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.19/docs/GENERAL_VERIFICATION_2026-10-19.md
+  - corrected_on: 2026-10-19
     headline: "Added 34 source decisions from four publishers."
     body: >-
       Stonewall Democrats’ general-election guide adds 29 decisions, including
