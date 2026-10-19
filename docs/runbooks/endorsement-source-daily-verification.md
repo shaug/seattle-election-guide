@@ -242,6 +242,20 @@ proposed sections without GitHub writes and permits an uncommitted local exercis
 
 For the current October 19 transaction, the maintainer directly delegated source checks and necessary endorsement changes to Codex without a separate approval prompt. The [transaction record](../GENERAL_VERIFICATION_2026-10-19.md) describes this scoped exception to the usual separate human spot-check and identifies the actual delegated reviewers. The existing manual commands retain their legacy `human` mode; evidence must explicitly name the Codex reviewer and delegation rather than asserting a new personal human source read. This does not authorize future unattended judgments, acknowledge inaccessible publications, approve fixtures, or convert an operator recovery into scheduled adoption evidence.
 
+### Delegated completion of #497
+
+The maintainer's same delivery instruction also covers the actual source reviews
+needed to finish this finite #497 adoption transaction, including the new complete
+WFP and UFCW baselines captured after these collector corrections deploy. Record
+the actual Codex reviewer, review time, exact live snapshot and official-source
+evidence; do not assert a personal maintainer read. This delegation ends with
+this delivery transaction and grants no recurring unattended interpretation or
+approval of later endorsement changes.
+
+Keep the normal cadence and immutable history intact. A fixture, operator check,
+or no-due run cannot stand in for the required independent scheduled execution.
+Inaccessible originals and incomplete live evidence remain open obligations.
+
 ### October 19 WFP complete-publication correction (#497)
 
 WFP's initial page exposes only five of the ten approved in-inventory choices.
