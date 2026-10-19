@@ -23,6 +23,8 @@ are present.
 ## Canonical bundle
 
 - `consensus.json`: the revalidated exact scoring result.
+- `sensitivity.json`: the complete exact exclusion audit under policy `source-panel-sensitivity-v1`.
+- `sensitivity_scenarios.csv`: one row per tested race/scenario, including full snapshots and deltas.
 - `publication_view_model.json`: the presentation-neutral input the renderer reads.
 - `race_summary.csv`: one row per published race and its displayed scoring values.
 - `endorsement_records.csv`: effective normalized decisions with allocations and evidence links.
@@ -38,9 +40,12 @@ JSON uses canonical sorted serialization and exact rational strings such as `"3/
 registry and inventory order, explicit field order, UTF-8, and Unix newlines. Identical inputs,
 build timestamp, and Git revision therefore produce identical bytes.
 
-`publication_view_model.json` uses schema `1.7`; this version retains the `1.6` public capture,
-publication, update, title, and redistribution metadata on evidence-linked source cells and adds the
-authoritative-inventory-derived `is_contested` race field.
+`publication_view_model.json` uses schema `1.15`. It requires per-race sensitivity
+summaries/details, the approved methodology policy, and a sensitivity report hash.
+Schemas `1.9`, `1.13` and `1.14` remain readable without those fields and cannot
+declare sensitivity claims. Evidence-linked source cells retain public capture,
+publication, update, title and redistribution metadata; `is_contested` remains
+derived from the authoritative inventory.
 Those fields support audit exports and traceability; the voter-facing race panel intentionally centers
 source, decision, agreement, and evidence link rather than displaying the full metadata record. The
 model also retains per-source participation counts, candidate-centric affirmative endorsement groups,
@@ -57,6 +62,31 @@ cells. The voter-facing guide uses the consensus share and source count rather t
 the audit grade. Methodology also publishes source categories and possible-overlap groups. It
 identifies `source_level` as the default aggregation view and `not_computed` as the deduplicated-view
 status, so a consumer cannot silently substitute coalition grouping for raw source-level consensus.
+
+Sensitivity report schema `1.0` carries one baseline per publication race and a full
+canonical result for each independent exclusion, including all official choice
+vectors, population IDs, signed counts/points/shares, changed fields, ID differences,
+grade changes and material reasons. Null shares/deltas remain null. Scenario order
+is source, category, overlap, then lexical target ID; choices retain ballot order.
+Skipped category/group entries are validated as strictly as tested scenarios.
+
+The CSV's fixed header is present for empty suites. Scalar missing shares/deltas
+are blank and exact zero is `0`; canonical JSON cells `baseline`, `after` and
+`delta` retain the complete structured data, including explicit nulls and warnings.
+`race_summary.csv` adds `sensitivity_policy_id`, `sensitivity_classification`,
+`sensitivity_tested_count`, `sensitivity_material_count` and `sensitivity_affected_kinds`.
+The view model contains compact preformatted display rows rather than raw snapshots;
+the guide's browser payload contains only a nullable warning and its full detail link.
+
+The report binds dataset, complete registry, stable panel, publication scope,
+canonical scoring configuration, consensus bytes, approved full policy/hash,
+explicit computation timestamp and publication revision. Both sidecars enter the
+build/release manifest hashes; the policy hash enters configuration provenance.
+The new-format release verifier requires both sidecars even if artifact inventories
+are rewritten, and recomputes the report from bundled canonical inputs before
+reconciling CSV and view-model projections. Historical release bytes are unchanged.
+Newly staged sites publish the two verified downloads under each election's `data/`
+directory; race-page details link to them and to the public methodology.
 Each published race also carries `is_contested`, derived solely from whether the authoritative ballot
 inventory contains more than one official choice. Endorsement coverage never influences that flag.
 

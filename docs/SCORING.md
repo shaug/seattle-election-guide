@@ -90,12 +90,34 @@ validate merely by rewriting its public hashes.
 Consensus report schema `1.1` adds per-race possible-overlap group details. It is intentionally a
 new wire version because a `1.0` consumer cannot validate those required fields.
 
-## Proposed source sensitivity analysis
+## Source sensitivity analysis
 
 Issue [#65](https://github.com/shaug/seattle-election-guide/issues/65) has a
-[proposed methodology](superpowers/specs/2026-10-18-source-panel-sensitivity-methodology-design.md)
+[preregistered methodology](superpowers/specs/2026-10-18-source-panel-sensitivity-methodology-design.md)
 for deterministic source, reporting-category, and disclosed-group exclusions.
 It defines the scenario set, material-change thresholds, classifications, and
-audit outputs before examining real-data scenario results. The proposal is
-pending review and implementation; the canonical scoring rules above remain
-unchanged.
+audit outputs before examining real-data scenario results. Policy
+`source-panel-sensitivity-v1` implements that contract through the same prepared
+canonical scorer. `consensus.json` is unchanged; every publication race has a
+separate `sensitivity.json` result, including unopposed races omitted from the overview.
+
+Individual scenarios remove every affirmative eligible source in turn. Category
+scenarios remove all eligible members of a reporting category when at least two
+categories contribute. Disclosed groups use their directly registered eligible
+members, with at least two members and one contributor; membership never expands
+transitively. Non-endorsers and missing members leave with their category/group.
+Every exclusion starts from the baseline, and skipped categories/groups record
+fixed reasons. Comparison-only and ineligible sources never enter an exclusion.
+
+Exact leader, recommendation-state, or recommendation-choice changes are material.
+So are crossing strictly above one half and a leading-share change of at least
+`1/10`. Ordinary grade changes alone remain audit data. Classification precedence
+is source-sensitive, category-sensitive, overlap-sensitive, tied, insufficient,
+narrow-but-stable (lead margin at most `1/10`), then stable. All material scenario
+IDs and affected kinds survive that primary classification. No-support shares
+and their numeric deltas remain null; reporting zero-fills official choices
+without creating artificial ties. The canonical review gate runs before exclusions.
+
+`validate_sensitivity_report` recomputes the entire report from the original
+dataset, consensus and approved policy, including skips, deltas, wording and
+provenance. Rewritten self-hashes do not authorize a changed result or policy.
