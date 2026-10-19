@@ -246,10 +246,10 @@ uv run election-guide analytics export --archive-dir /tmp/election-guide-analyti
 
 An optional `--date YYYY-MM-DD` limits the export to one complete UTC day. The exporter still
 excludes visitor-identifying dimensions and refuses to rewrite a stored day with different bytes.
-Use a new directory for an investigation rather than appending to the retired history. A later
-block of days would create an unexplained hole in the committed archive once the intervening
-history ages out. Any proposal to resume committing exports needs its own issue and an explicit
-way to record irrecoverable gaps; the existing no-gaps check must not be weakened.
+Use a new directory for an investigation rather than appending to the retired history. Reuse that
+investigation directory to continue the same question later. Any proposal to resume committing
+exports to the retired history still needs its own issue; gap evidence does not change the
+retirement policy or restore automatic collection.
 
 The retired GitHub App is no longer used by a workflow. Its credential inventory is preserved
 until the maintainer revokes any remaining credentials; no new App installation is needed.
@@ -273,13 +273,34 @@ positive would have skipped the day, left a hole, and tripped the no-gaps check 
 workflow's own pre-commit gate — stopping the archive from advancing at all. Structure, not
 pattern-matching, is what keeps visitor data out.
 
-### Known manual-export limitations
+### Continuing an investigation after a long pause (#397)
 
-The saved historical archive remains contiguous. New exports belong in a separate directory.
-Resuming the old archive after more than thirty days would create irrecoverable gaps that its
-no-gaps check correctly rejects (#397). An empty answer for the newest complete day can also be
-recorded as a permanent zero before Cloudflare has settled that aggregation (#398). Both issues
-remain open; retirement of the schedule does not claim to fix the exporter.
+A manual export still saves every missing complete UTC day inside its configured thirty-day
+window. If an investigation resumes after a longer pause, missing dates between its first and
+last saved days that are older than `window_floor(as_of)` cannot be recovered by this exporter.
+The run records them separately under the chosen directory's `gaps/`, in immutable JSON files
+named for the observation date and the first and last dates they explain. The CLI reports the
+new record's path. It performs no Git operations; retain these files alongside the investigation's
+daily files if saving or sharing the investigation.
+
+Each record lists **every exact missing date**, the reason (`outside the retention window;
+traffic could not be recovered`), the observation's `as_of` date, and its `window_floor`. A reader
+should conclude that those days were unavailable, not that the site received zero traffic. No
+placeholder daily rollup is written, and no claim is made about dates before the investigation
+began. An empty response within the configured window is ambiguous and does not earn a gap
+explanation. A genuinely quiet day with older readable data still becomes a real zero.
+
+The continuity check used by `test_committed_archive_has_no_gaps` accepts only dates covered by
+valid expiry records. Removing a date from its explanation leaves a failing hole. Invalid JSON,
+a missing reason, an inconsistent window floor, or a date still inside the window at observation
+time fails validation. Re-running the exporter preserves all saved daily and gap bytes; a later
+pause can add a new record. The committed historical archive remains contiguous and unchanged;
+new investigations continue to use separate directories.
+
+### Known manual-export limitation
+
+An empty answer for the newest complete day can still be recorded as a permanent zero before
+Cloudflare has settled that aggregation (#398). Gap recording does not change this behavior.
 
 ## Client-side beacon (O10)
 
