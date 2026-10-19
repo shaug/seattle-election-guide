@@ -7,9 +7,9 @@ Three halves, deliberately separable (issue #381):
   credential.
 - `storage` writes the committed archive. The only part that touches the tree.
 
-The scheduled run and the one-time backfill are the same operation over that
-trio — ask what is missing, fetch it, write it — which is what makes a missed
-schedule self-healing instead of a permanent hole.
+Manual investigations ask what is missing, fetch it, and write it to a separate
+output directory. Expired interior holes are explained under gaps/, without
+changing daily rollups or restoring the retired collection schedule (#512).
 """
 
 from election_guide.analytics.cloudflare import (
@@ -22,6 +22,7 @@ from election_guide.analytics.cloudflare import (
     CloudflareZone,
     open_analytics_zone,
 )
+from election_guide.analytics.gaps import record_expired_gaps, unexplained_dates
 from election_guide.analytics.models import (
     SOURCE_ADAPTIVE,
     SOURCE_DAILY,
@@ -60,6 +61,8 @@ __all__ = [
     "missing_dates",
     "newest_complete_day",
     "open_analytics_zone",
+    "record_expired_gaps",
+    "unexplained_dates",
     "window_floor",
     "write_rollup",
 ]
