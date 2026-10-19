@@ -7,6 +7,7 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 import zipfile
 from datetime import datetime
 from pathlib import Path, PurePosixPath
@@ -274,45 +275,46 @@ def _artifact_available(reference: ArtifactRef) -> bool:
 
 
 def _download_artifact(reference: ArtifactRef, destination: Path) -> None:
-    wrapper = destination.with_suffix(".zip")
-    download_gh(
-        [
-            "gh",
-            "api",
-            f"repos/{reference.producer.repository}/actions/artifacts/{reference.id}/zip",
-        ],
-        wrapper,
-        "could not download captured Actions artifact",
-    )
-    content = wrapper.read_bytes()
-    if (
-        FileDigest(sha256=hashlib.sha256(content).hexdigest(), size=len(content))
-        != reference.digest
-    ):
-        raise ValueError("artifact download differs from captured wrapper digest")
-    try:
-        with zipfile.ZipFile(wrapper) as archive:
-            names = archive.namelist()
-            if len(names) != len(set(names)):
-                raise ValueError("artifact wrapper contains duplicate members")
-            for name in names:
-                path = PurePosixPath(name)
-                if (
-                    not name
-                    or path.is_absolute()
-                    or ".." in path.parts
-                    or "\\" in name
-                    or path.as_posix() != name.rstrip("/")
-                ):
-                    raise ValueError("artifact wrapper contains invalid members")
-                target = destination / name
-                if name.endswith("/"):
-                    target.mkdir(parents=True, exist_ok=True)
-                else:
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    target.write_bytes(archive.read(name))
-    except (zipfile.BadZipFile, RuntimeError, NotImplementedError) as error:
-        raise ValueError("artifact wrapper is unreadable") from error
+    with tempfile.TemporaryDirectory(prefix="actions-artifact-") as temporary:
+        wrapper = Path(temporary) / "artifact.zip"
+        download_gh(
+            [
+                "gh",
+                "api",
+                f"repos/{reference.producer.repository}/actions/artifacts/{reference.id}/zip",
+            ],
+            wrapper,
+            "could not download captured Actions artifact",
+        )
+        content = wrapper.read_bytes()
+        if (
+            FileDigest(sha256=hashlib.sha256(content).hexdigest(), size=len(content))
+            != reference.digest
+        ):
+            raise ValueError("artifact download differs from captured wrapper digest")
+        try:
+            with zipfile.ZipFile(wrapper) as archive:
+                names = archive.namelist()
+                if len(names) != len(set(names)):
+                    raise ValueError("artifact wrapper contains duplicate members")
+                for name in names:
+                    path = PurePosixPath(name)
+                    if (
+                        not name
+                        or path.is_absolute()
+                        or ".." in path.parts
+                        or "\\" in name
+                        or path.as_posix() != name.rstrip("/")
+                    ):
+                        raise ValueError("artifact wrapper contains invalid members")
+                    target = destination / name
+                    if name.endswith("/"):
+                        target.mkdir(parents=True, exist_ok=True)
+                    else:
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        target.write_bytes(archive.read(name))
+        except (zipfile.BadZipFile, RuntimeError, NotImplementedError) as error:
+            raise ValueError("artifact wrapper is unreadable") from error
 
 
 def verify_actions_artifact(reference: ArtifactRef) -> None:

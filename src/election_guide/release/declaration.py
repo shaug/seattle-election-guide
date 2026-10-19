@@ -127,18 +127,33 @@ def _version_number(version: str, election_id: str) -> int:
     return int(match[1])
 
 
-def require_ancestor(previous_release_sha: str, *, repository: Path) -> None:
+def require_ancestor(
+    previous_release_sha: str, *, repository: Path, source_sha: str | None = None
+) -> None:
     """Reject shorthand, absent objects, and unrelated release boundaries."""
     if re.fullmatch(r"[0-9a-f]{40}", previous_release_sha) is None:
         raise ValueError("previous release commit must be a full lowercase Git SHA")
+    if source_sha is not None and re.fullmatch(r"[0-9a-f]{40}", source_sha) is None:
+        raise ValueError("ancestor boundary must be a full lowercase Git SHA")
     result = subprocess.run(
-        ["git", "merge-base", "--is-ancestor", previous_release_sha, "HEAD"],
+        ["git", "merge-base", "--is-ancestor", previous_release_sha, source_sha or "HEAD"],
         cwd=repository,
         capture_output=True,
         check=False,
     )
     if result.returncode != 0:
-        raise ValueError("previous release commit must be an ancestor of HEAD")
+        raise ValueError("previous release commit must be an ancestor of the selected source")
+
+
+def validate_unpublished_predecessor(base: SiteManifest, previous: SiteManifest) -> None:
+    """The recorded source must declare an earlier release of the same election."""
+    selected, predecessor = base.elections[0], previous.elections[0]
+    if selected.election_id != predecessor.election_id:
+        raise ValueError("unpublished base predecessor belongs to a different election")
+    if _version_number(predecessor.release_version, selected.election_id) >= _version_number(
+        selected.release_version, selected.election_id
+    ):
+        raise ValueError("unpublished base predecessor requires a lower release version")
 
 
 def prepare_release(
@@ -236,6 +251,7 @@ def validate_release_request(
     *,
     base: SiteManifest,
     changed_paths: tuple[str, ...],
+    verified_unpublished_base_sha: str | None = None,
 ) -> bool:
     """Fail closed on stale byte bindings and unreviewed release-affecting changes."""
     request = current.current.publication_request
@@ -258,7 +274,18 @@ def validate_release_request(
         raise ValueError(
             "publication request requires a release version increment; prepare it again"
         )
-    if base_current.publication_request == request:
+    if verified_unpublished_base_sha is not None:
+        prior_request = base_current.publication_request
+        if (
+            prior_request is None
+            or prior_request.issue_number != request.issue_number
+            or prior_request.previous_release_sha != verified_unpublished_base_sha
+            or request.previous_release_sha != verified_unpublished_base_sha
+        ):
+            raise ValueError(
+                "unpublished base recovery requires the same owner and published boundary"
+            )
+    if base_current.publication_request == request and verified_unpublished_base_sha is None:
         raise ValueError("release-affecting changes require a fresh publication request")
     if (
         base_current.git_commit is not None
