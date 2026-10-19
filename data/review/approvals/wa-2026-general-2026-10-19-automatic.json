@@ -1,0 +1,29 @@
+{
+  "applied_at": "2026-10-19T14:58:53.572247+00:00",
+  "authority_reference": "data/review/approvals/wa-2026-general-2026-10-19-transit.json#human_authorization",
+  "issue": 578,
+  "native_first_tranche_adoption_asserted": false,
+  "new_baseline_attestations": [
+    {
+      "path": "data/verification/wa-2026-general/approvals/extraction-sage-leaders-20261019T085357Z-5e27b5b18425.json",
+      "sha256": "5b15351db9bab9e1690032e1d5ae5565ffeb98c7bf8d518ce556426ecc4a3165"
+    },
+    {
+      "path": "data/verification/wa-2026-general/approvals/extraction-seattle-gay-news-20261019T085357Z-a7c05214be1a.json",
+      "sha256": "3fa6875fb2946b6327667c8ca17b00b7b2a6292ef31df9ec163404cdf64b5da6"
+    },
+    {
+      "path": "data/verification/wa-2026-general/approvals/extraction-ufcw-3000-20261019T085357Z-99023c4c5d63.json",
+      "sha256": "91b5fecb6b3accb3edb8b1cf8afad229d44201d297bc33c8da79347fddd8e620"
+    }
+  ],
+  "new_live_operator_checks": 0,
+  "new_operator_archive_records": 0,
+  "no_ledger_changes_from_automatic_research": true,
+  "operator_is_scheduled_run": false,
+  "personal_human_source_read_asserted": false,
+  "record_type": "delegated_exact_existing_baseline_review_application",
+  "research_record": "data/review/rechecks/wa-2026-general-2026-10-19-automatic.json",
+  "research_record_sha256": "e190c48224c100bea3db1ff0b98a52a9ddb0a51a454fbc70ec66fc45cf515168",
+  "schema_version": "1.0"
+}

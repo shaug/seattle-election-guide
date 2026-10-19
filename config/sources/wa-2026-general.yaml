@@ -576,7 +576,8 @@ sources:
     name: 46th Legislative District Democrats
     code: ld46
     reporting_category_id: democratic_party
-    selection_category_ids: [democratic_party]
+    selection_category_ids:
+    - democratic_party
     organization_url: https://www.46dems.org/
     geographic_kind: legislative_district
     panel_role: consensus
@@ -584,20 +585,24 @@ sources:
     eligibility:
       kind: seattle_ballot_races_except_other_legislative_districts
       jurisdiction_ids:
-        - legislative-district-46
+      - legislative-district-46
       rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-10-04T04:56:54Z
-      requested_url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_campaigns
-      canonical_url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_campaigns
-      media_type: text/html
-      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-46th-district-democrats-20261004T045654Z-9105db21d8ac.'
-      notes: 'Current official capture retains the prior publication decision text.'
-
+      checked_at: '2026-10-19T14:36:53.724038Z'
+      requested_url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_positions
+      canonical_url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_positions
+      media_type: text/html; charset=utf-8
+      evidence_locator: Official 2026 Endorsed Candidates and Positions; City of Seattle Campaigns; Proposition No. 1 -
+        Seattle Transit Measure; Vote Yes. Capture capture-46th-district-democrats-20261019T143653Z-3eb526091a72. The page
+        identifies its May primary and September general endorsement meetings; this is the explicitly named Seattle transit
+        measure, not the August library levy.
+      notes: Official current endorsed-candidates-and-positions replacement page. Original registered candidates_campaigns
+        URL returned404; this new URL was found through the official site, not inferred as a redirect. One explicit Seattle
+        transit Yes addition; all prior choices retained.
+      redirect_chain: []
     overlap_group_ids:
-      - democratic-party-network
-
+    - democratic-party-network
   - id: washington-stonewall-democrats
     name: Washington State Stonewall Democrats
     code: wsto

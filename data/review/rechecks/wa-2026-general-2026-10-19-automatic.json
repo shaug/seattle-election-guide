@@ -1,0 +1,664 @@
+{
+  "actual_operator_code_revision": "7e3f08b8f04603132d3e3145c18766648fe5af7c",
+  "authorization_reference": "data/review/approvals/wa-2026-general-2026-10-19-transit.json#human_authorization",
+  "date_pacific": "2026-10-19",
+  "election_id": "wa-2026-general",
+  "existing_archive_originals_authenticated": 88,
+  "existing_changed_snapshot_ids_reviewed": [
+    "extraction-sage-leaders-20261019T085357Z-5e27b5b18425",
+    "extraction-seattle-gay-news-20261019T085357Z-a7c05214be1a",
+    "extraction-ufcw-3000-20261019T085357Z-99023c4c5d63"
+  ],
+  "expanded_wfp_browser_facts": {
+    "button": "View Less",
+    "heading": "WASHINGTON",
+    "http_status": null,
+    "method": "Normal public IAB; Filter by State Washington; click View More; observed View Less and all17table rows via current DOM-backed read. Exact returned facts in tool trace.",
+    "not_a_ledger_or_baseline_approval": true,
+    "not_original_response_html": true,
+    "observed_at": "2026-10-19T14:47:32.524Z",
+    "observer": "OpenAI Codex / root",
+    "record_type": "derived_factual_browser_observation",
+    "rows": [
+      [
+        "Pramila Jayapal",
+        "U.S. House of Representatives, District 7"
+      ],
+      [
+        "Jorge Baron",
+        "King County Council, District 4"
+      ],
+      [
+        "Teresa Mosqueda",
+        "King County Council, District 8"
+      ],
+      [
+        "Nilu Jenks",
+        "Seattle City Council, District 5"
+      ],
+      [
+        "Danny Tarkenton",
+        "Spokane County Prosecutor"
+      ],
+      [
+        "Kelabe Tewolde",
+        "State House, District 37, Position 1"
+      ],
+      [
+        "Natasha Hill",
+        "Washington State House, District 3, Position 1"
+      ],
+      [
+        "Luc Jasmin III",
+        "Washington State House, District 3, Position 2"
+      ],
+      [
+        "Chelsea Dimas",
+        "Washington State House, District 14, Position 1"
+      ],
+      [
+        "Edwin Obras",
+        "Washington State House, District 33, Position 1"
+      ],
+      [
+        "Mia Gregerson",
+        "Washington State House, District 33, Position 2"
+      ],
+      [
+        "Jaelynn Scott",
+        "Washington State House, District 37, Position 2"
+      ],
+      [
+        "Shaun Scott",
+        "Washington State House, District 43, Position 2"
+      ],
+      [
+        "Darya Farivar",
+        "Washington State House, District 46, Position 2"
+      ],
+      [
+        "Jessica Forsythe",
+        "Washington State House, District 48, Position 2"
+      ],
+      [
+        "Noel Frame",
+        "Washington State Senate, District 36"
+      ],
+      [
+        "Hannah Sabio-Howell",
+        "Washington State Senate, District 43"
+      ]
+    ],
+    "source_id": "washington-working-families-party",
+    "url": "https://workingfamilies.org/candidates/"
+  },
+  "independent_research_report_sha256": "8a7e5d785c7c3ce530aaaa429154b876ce3c0b6f9b935a97ca9cb05cff30ba95",
+  "issue": 578,
+  "native_scheduled_run": {
+    "code_revision": "04f51487bcaf4929c62fa516ce5eccad77d96cef",
+    "report_path": "data/verification/runs/45e11c7c12b6f3d169cdbfdf5cc9797716b1b7e89597a6b7e652ea578b47c864.json",
+    "url": "https://github.com/shaug/seattle-election-guide/actions/runs/39226019349"
+  },
+  "operator_capture_promotion": {
+    "new_operational_check_records": 0,
+    "new_operator_baseline_approvals": 0,
+    "new_vault_records": 0,
+    "published_to_verification_archive": false,
+    "reason": "The workstation is locked and the existing private backup key cannot currently be read for additional encryption. Actual later operator captures are retained in persistent private custody and research only; no unsealed archive record or synthetic scheduled success is published."
+  },
+  "operator_is_scheduled_run": false,
+  "operator_research_index_sha256": "0c66584cc0b7dd88812a7dbf90b0a565f133d9f4dd8f66fde5555e33cb8a8ec7",
+  "personal_human_source_read_asserted": false,
+  "prepared_at": "2026-10-19T14:58:53.570584+00:00",
+  "prior_native_failures_preserved": true,
+  "record_type": "delegated_complete_source_research_and_existing_archive_review",
+  "schema_version": "1.0",
+  "scope_note": "Complete manual publication review is distinguished from fixed adapter coverage. Only the three already-published, authenticated, exact changed scheduled snapshots receive scoped delegated attestations. All later operator events remain research-only. Native failures and historical run flags are immutable.",
+  "sources": [
+    {
+      "actual_researchers": [
+        "OpenAI Codex / root",
+        "OpenAI Codex / oct19_political_sources (independent source-fact review)"
+      ],
+      "approved_races_outside_fixed_mapping": [
+        "ld-36-state-senator",
+        "ld-37-state-representative-2",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "ld-46-state-representative-2"
+      ],
+      "current_extraction_sha256": "ba4556af3f55e408f39697576ade196baab25d0fabfe7ef67110d9e5589122a5",
+      "current_mapped_decisions": 5,
+      "current_original_sha256": "add4b4aa02c6deb568d9a251f513c3e97ab8a441076e7cdbaf9c35a0d33d51e6",
+      "limits": [
+        "Original current HTTP capture and automatic extraction do not include expanded rows. Expanded evidence is actual-time derived public-browser factual data; no original AJAX response is asserted."
+      ],
+      "notes": [
+        "All10 approved decisions are in the17 Washington rows; seven other Washington rows are outside frozen inventory. No new candidate or measure decision found.",
+        "Current static original has exactly10 Washington rows and five eligible decisions. Five other approved decisions appear only after expansion: Jaelynn Scott, Shaun Scott, Darya Farivar, Noel Frame, Hannah Sabio-Howell.",
+        "The actual ViewMore script POSTs action more_candidates with state and count and appends returned rows. The7 additional rows are not hidden inside the stored129913-byte static original; they depend on a separate public dynamic response.",
+        "Current operator check is byte-identical to the immutable Oct17 static capture. That equality supports only first10-row static continuity; the separate actual14:47 browser facts support today’s entire17-row Washington list.",
+        "Current-cycle index semantics apply; this is not described as a separate general slate."
+      ],
+      "official_url": "https://workingfamilies.org/candidates/",
+      "operator_event_published_to_verification_archive": false,
+      "operator_research": {
+        "completed_at": "2026-10-19T14:36:56.481992+00:00",
+        "event": {
+          "capture_id": "capture-washington-working-families-party-20261017T084504Z-756bb2993ef5",
+          "checked_at": "2026-10-19T14:36:55.671375Z",
+          "content_changed": false,
+          "diff": [],
+          "error": null,
+          "id": "refresh-washington-working-families-party-20261019T143655Z-adfa6bcec17b",
+          "previous_snapshot_id": "extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c",
+          "schema_version": "1.0",
+          "snapshot_id": "extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c",
+          "source_id": "washington-working-families-party",
+          "status": "unchanged"
+        },
+        "operation": "human-delegated operator research; direct current-source refresh on private archive copy; not a scheduled run, no production check or approval mutation",
+        "source_id": "washington-working-families-party",
+        "started_at": "2026-10-19T14:36:55.671375+00:00"
+      },
+      "original_snapshot_comparisons": [
+        {
+          "capture_id": "capture-washington-working-families-party-20261017T084504Z-756bb2993ef5",
+          "extracted_decision_count": 5,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "ba4556af3f55e408f39697576ade196baab25d0fabfe7ef67110d9e5589122a5",
+          "original_sha256": "add4b4aa02c6deb568d9a251f513c3e97ab8a441076e7cdbaf9c35a0d33d51e6",
+          "raw_bytes_equal_current": true,
+          "retrieved_at": "2026-10-17T08:45:04Z",
+          "snapshot_id": "extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c",
+          "source_id": "washington-working-families-party",
+          "version": "scheduled",
+          "whole_visible_text_equal_current": true
+        },
+        {
+          "capture_id": "capture-washington-working-families-party-20261017T084504Z-756bb2993ef5",
+          "extracted_decision_count": 5,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "ba4556af3f55e408f39697576ade196baab25d0fabfe7ef67110d9e5589122a5",
+          "original_sha256": "add4b4aa02c6deb568d9a251f513c3e97ab8a441076e7cdbaf9c35a0d33d51e6",
+          "raw_bytes_equal_current": true,
+          "retrieved_at": "2026-10-17T08:45:04Z",
+          "snapshot_id": "extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c",
+          "source_id": "washington-working-families-party",
+          "version": "scheduled_previous",
+          "whole_visible_text_equal_current": true
+        }
+      ],
+      "personal_human_source_read_asserted": false,
+      "prior_approved_decisions": 10,
+      "research_completed_at": "2026-10-19T14:54:10.062134+00:00",
+      "scheduled_observation": {
+        "baseline_reviewed": false,
+        "capture_id": "capture-washington-working-families-party-20261017T084504Z-756bb2993ef5",
+        "checked_at": "2026-10-19T08:53:57Z",
+        "consecutive_failures": 0,
+        "content_changed": false,
+        "diff": [],
+        "election_id": "wa-2026-general",
+        "error": null,
+        "escalated": false,
+        "id": "refresh-washington-working-families-party-20261019T085357Z-862435e8590c",
+        "previous_snapshot_id": "extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c",
+        "schema_version": "1.0",
+        "snapshot_id": "extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c",
+        "source_id": "washington-working-families-party",
+        "status": "unchanged"
+      },
+      "scope": "Current official2026 national candidate index; Washington static first10 rows and current public browser Washington+ViewMore expanded17 rows, with ViewLess visible; public AJAX script independently read.",
+      "source_id": "washington-working-families-party"
+    },
+    {
+      "actual_researchers": [
+        "OpenAI Codex / root",
+        "OpenAI Codex / oct19_political_sources (independent source-fact review)"
+      ],
+      "approved_races_outside_fixed_mapping": [],
+      "current_extraction_sha256": "b5531fc27f341f355cccab25e8d566ce0505f9480160800f4a298f97bc212411",
+      "current_mapped_decisions": 13,
+      "current_original_sha256": "e8bdd962a8d814dba7f26774c8f7aad18e1efba627065a650d9db8bf237d85ee",
+      "limits": [],
+      "notes": [
+        "Current2026 list retains both Chipalo Street and Tatiana Brown for LD37 Senate without ranking. Imraan Sidiqqi and Julia Reed are existing publisher spelling/name variants.",
+        "Primary-process closure/contact dates are introductory process text; the current roster is headed2026 Endorsements, remains live after the primary, and is treated as a current-cycle index, not a separate general slate.",
+        "The exact changed scheduled snapshot and Oct18 predecessor have the same entire visible page text and13 decisions as the current captured publication."
+      ],
+      "official_url": "https://www.sageleaders.org/2026-endorsements",
+      "operator_event_published_to_verification_archive": false,
+      "operator_research": {
+        "completed_at": "2026-10-19T14:36:54.185427+00:00",
+        "event": {
+          "capture_id": "capture-sage-leaders-20261019T143652Z-86c0262bb822",
+          "checked_at": "2026-10-19T14:36:52.914412Z",
+          "content_changed": true,
+          "diff": [],
+          "error": null,
+          "id": "refresh-sage-leaders-20261019T143652Z-1ece535ae8bf",
+          "previous_snapshot_id": "extraction-sage-leaders-20261019T085357Z-5e27b5b18425",
+          "schema_version": "1.0",
+          "snapshot_id": "extraction-sage-leaders-20261019T143652Z-25b7f04b91ca",
+          "source_id": "sage-leaders",
+          "status": "updated"
+        },
+        "operation": "human-delegated operator research; direct current-source refresh on private archive copy; not a scheduled run, no production check or approval mutation",
+        "source_id": "sage-leaders",
+        "started_at": "2026-10-19T14:36:52.914412+00:00"
+      },
+      "original_snapshot_comparisons": [
+        {
+          "capture_id": "capture-sage-leaders-20261019T085357Z-bf1a87dc5309",
+          "extracted_decision_count": 13,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "d0cfd1ab1ea30ab875e9e12a6ef9eddf624ea8a4db9218060e5db0a20f24d911",
+          "original_sha256": "2a290c7f78d322efdbd9cb1a3aee82f3759a2712a4f401fa8455bda47b0f19bf",
+          "raw_bytes_equal_current": false,
+          "retrieved_at": "2026-10-19T08:53:57Z",
+          "snapshot_id": "extraction-sage-leaders-20261019T085357Z-5e27b5b18425",
+          "source_id": "sage-leaders",
+          "version": "scheduled",
+          "whole_visible_text_equal_current": true
+        },
+        {
+          "capture_id": "capture-sage-leaders-20261018T084551Z-ec5177b91380",
+          "extracted_decision_count": 13,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "b52b4e95d2799d5175ca6f199280bae549fc0ea3b6db978edd192dc2338535bf",
+          "original_sha256": "6b2a0cd033cedbccd672041e892a57f1369410587b1974fefca758a3d763598e",
+          "raw_bytes_equal_current": false,
+          "retrieved_at": "2026-10-18T08:45:51Z",
+          "snapshot_id": "extraction-sage-leaders-20261018T084551Z-514e2bfe9835",
+          "source_id": "sage-leaders",
+          "version": "scheduled_previous",
+          "whole_visible_text_equal_current": true
+        }
+      ],
+      "personal_human_source_read_asserted": false,
+      "prior_approved_decisions": 13,
+      "research_completed_at": "2026-10-19T14:54:10.062134+00:00",
+      "scheduled_observation": {
+        "baseline_reviewed": false,
+        "capture_id": "capture-sage-leaders-20261019T085357Z-bf1a87dc5309",
+        "checked_at": "2026-10-19T08:53:57Z",
+        "consecutive_failures": 0,
+        "content_changed": true,
+        "diff": [],
+        "election_id": "wa-2026-general",
+        "error": null,
+        "escalated": false,
+        "id": "refresh-sage-leaders-20261019T085357Z-962ba0dae787",
+        "previous_snapshot_id": "extraction-sage-leaders-20261018T084551Z-514e2bfe9835",
+        "schema_version": "1.0",
+        "snapshot_id": "extraction-sage-leaders-20261019T085357Z-5e27b5b18425",
+        "source_id": "sage-leaders",
+        "status": "updated"
+      },
+      "scope": "Complete2026 list before Our Past Endorsements; all counties read; archived2025–2021 lists separately excluded.",
+      "source_id": "sage-leaders"
+    },
+    {
+      "actual_researchers": [
+        "OpenAI Codex / root",
+        "OpenAI Codex / oct19_political_sources (independent source-fact review)"
+      ],
+      "approved_races_outside_fixed_mapping": [],
+      "current_extraction_sha256": "e773a443ff14dfc82766bae1bb1acfa8e530783961767bbc3d1ba9a27bd0c69b",
+      "current_mapped_decisions": 8,
+      "current_original_sha256": "612c175135eb6159b6daf1cd84fd89ab685dda641c9d9f3d571de706709f79c0",
+      "limits": [],
+      "notes": [
+        "The publication expressly identifies the complete endorsed list on the November general ballot. Council2 retains Toshiko Grace Hasegawa and Rebecca Saldaña without rank.",
+        "Gabe Rothstein’s publication office is generic Seattle Municipal Court Judge; the established frozen-inventory match remains Position5.",
+        "Scheduled08:53 failed; the actual14:36 current operator capture succeeds. This research does not rewrite that scheduled failure."
+      ],
+      "official_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+      "operator_event_published_to_verification_archive": false,
+      "operator_research": {
+        "completed_at": "2026-10-19T14:36:52.902776+00:00",
+        "event": {
+          "capture_id": "capture-transit-riders-union-20261019T143651Z-60b2eb21a9b5",
+          "checked_at": "2026-10-19T14:36:51.488077Z",
+          "content_changed": true,
+          "diff": [],
+          "error": null,
+          "id": "refresh-transit-riders-union-20261019T143651Z-d31c79d70bf4",
+          "previous_snapshot_id": "extraction-transit-riders-union-20261016T150136Z-76cb0dd8b335",
+          "schema_version": "1.0",
+          "snapshot_id": "extraction-transit-riders-union-20261019T143651Z-5b0ab5cc5790",
+          "source_id": "transit-riders-union",
+          "status": "updated"
+        },
+        "operation": "human-delegated operator research; direct current-source refresh on private archive copy; not a scheduled run, no production check or approval mutation",
+        "source_id": "transit-riders-union",
+        "started_at": "2026-10-19T14:36:51.488077+00:00"
+      },
+      "original_snapshot_comparisons": [
+        {
+          "capture_id": "capture-transit-riders-union-20261016T150136Z-6945a2e7403e",
+          "extracted_decision_count": 8,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "ea4af66d2a765ca862ecc35c34696b39aefcd32969dc097ad9b79c6286ae8b4a",
+          "original_sha256": "04356a81d5e103b535b474b0f72be1b60ea038f1a4ac19e0d9cd2bad792770b4",
+          "raw_bytes_equal_current": false,
+          "retrieved_at": "2026-10-16T15:01:36.094004Z",
+          "snapshot_id": "extraction-transit-riders-union-20261016T150136Z-76cb0dd8b335",
+          "source_id": "transit-riders-union",
+          "version": "scheduled_previous",
+          "whole_visible_text_equal_current": true
+        }
+      ],
+      "personal_human_source_read_asserted": false,
+      "prior_approved_decisions": 8,
+      "research_completed_at": "2026-10-19T14:54:10.062134+00:00",
+      "scheduled_observation": {
+        "baseline_reviewed": false,
+        "capture_id": null,
+        "checked_at": "2026-10-19T08:53:57Z",
+        "consecutive_failures": 3,
+        "content_changed": null,
+        "diff": [],
+        "election_id": "wa-2026-general",
+        "error": "Source check failed (ValueError); inspect official access and adapter.",
+        "escalated": true,
+        "id": "refresh-transit-riders-union-20261019T085357Z-b05b6e439b0f",
+        "previous_snapshot_id": "extraction-transit-riders-union-20261016T150136Z-76cb0dd8b335",
+        "schema_version": "1.0",
+        "snapshot_id": null,
+        "source_id": "transit-riders-union",
+        "status": "failed"
+      },
+      "scope": "Entire September30 current general-election publication; its eight race decisions and both Council2 candidates. Original asset inventory contains only logos; no linked additional slate.",
+      "source_id": "transit-riders-union"
+    },
+    {
+      "actual_researchers": [
+        "OpenAI Codex / root",
+        "OpenAI Codex / oct19_political_sources (independent source-fact review)"
+      ],
+      "approved_races_outside_fixed_mapping": [],
+      "current_extraction_sha256": "671bdcdad0a2be57891af97a52d46f55a133dc0797f4405b302ca5b039dfc8b8",
+      "current_mapped_decisions": 7,
+      "current_original_sha256": "5b6e5ca8bc2dfc4558ce527af728793e1cc8f249e20233b8d21b1d0476fbe654",
+      "limits": [
+        "Discovery is bounded to current Seattle news indexes through the reviewed oldest current-cycle article, not an exhaustive all-channel/all-year SGN archive search.",
+        "Some candidate portraits and donation QR graphics are referenced in article HTML; explicit editorial decisions were reviewed in complete article text, not inferred from images."
+      ],
+      "notes": [
+        "All7 approved in-inventory candidate choices remain explicit opening endorsements and closing Vote instructions; discussions/praise of other candidates do not create coendorsements.",
+        "All10 current article bodies independently reconstructed from original HTML match both scheduled08:53 and Oct18 bodies; root readable derivatives also match. No added/retracted/changed current endorsement found.",
+        "The four current indexes expose exactly10 endorsement-story links through the reviewed boundary: no newer endorsement link in the first two pages, seven on start20, three on start30.",
+        "Sawant is absent from the frozen CD9 general ballot; Erin Chapman-Smith is for LD29 outside Seattle inventory; the explicit Yes Proposition1 article is the Library Levy, distinct from November transit. They remain excluded.",
+        "Candidate statements about anti-LGBTQ initiatives and historical Jayapal endorsements of mayoral candidates are reporting/attributed views, not additional SGN measure or current-cycle mayoral endorsements.",
+        "Generated964-byte article-heading comparison is a derived artifact with null HTTP status. Real original article and index responses remain separately linked; equality of comparison headings alone is not treated as body review."
+      ],
+      "official_url": "https://www.sgn.org/ch/News/Seattle",
+      "operator_event_published_to_verification_archive": false,
+      "operator_research": {
+        "completed_at": "2026-10-19T14:37:01.017049+00:00",
+        "event": {
+          "capture_id": "capture-seattle-gay-news-20261019T143656Z-5cb2ec2df137",
+          "checked_at": "2026-10-19T14:36:56.482165Z",
+          "content_changed": true,
+          "diff": [],
+          "error": null,
+          "id": "refresh-seattle-gay-news-20261019T143656Z-3b09bad913a4",
+          "previous_snapshot_id": "extraction-seattle-gay-news-20261019T085357Z-a7c05214be1a",
+          "schema_version": "1.0",
+          "snapshot_id": "extraction-seattle-gay-news-20261019T143656Z-0036170f25ab",
+          "source_id": "seattle-gay-news",
+          "status": "updated"
+        },
+        "operation": "human-delegated operator research; direct current-source refresh on private archive copy; not a scheduled run, no production check or approval mutation",
+        "source_id": "seattle-gay-news",
+        "started_at": "2026-10-19T14:36:56.482165+00:00"
+      },
+      "original_snapshot_comparisons": [
+        {
+          "capture_id": "capture-seattle-gay-news-20261019T085357Z-52b62db6a94c",
+          "extracted_decision_count": 7,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "2f5800d7153a1d78d52da1d23d60fcde5c284a46feb08dd1756720af9f3f4531",
+          "original_sha256": "106ab195fa64cb8f10a790fdf674666b9ed9c614fc7d8e5e418a271a63fb0099",
+          "raw_bytes_equal_current": false,
+          "retrieved_at": "2026-10-19T08:53:57Z",
+          "snapshot_id": "extraction-seattle-gay-news-20261019T085357Z-a7c05214be1a",
+          "source_id": "seattle-gay-news",
+          "version": "scheduled",
+          "whole_visible_text_equal_current": true
+        },
+        {
+          "capture_id": "capture-seattle-gay-news-20261018T084551Z-bff391144189",
+          "extracted_decision_count": 7,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "3acf0c14f33400c971b35c811ec397ae59e05b136b8c763b900d50fcd43f6f38",
+          "original_sha256": "cd3fbf409b40241ec479942c6b4f06cf733af0c78ad6c17b291cbf7b5bf23f25",
+          "raw_bytes_equal_current": false,
+          "retrieved_at": "2026-10-18T08:45:51Z",
+          "snapshot_id": "extraction-seattle-gay-news-20261018T084551Z-d8e1ec3a96de",
+          "source_id": "seattle-gay-news",
+          "version": "scheduled_previous",
+          "whole_visible_text_equal_current": true
+        }
+      ],
+      "personal_human_source_read_asserted": false,
+      "prior_approved_decisions": 7,
+      "research_completed_at": "2026-10-19T14:54:10.062134+00:00",
+      "scheduled_observation": {
+        "baseline_reviewed": false,
+        "capture_id": "capture-seattle-gay-news-20261019T085357Z-52b62db6a94c",
+        "checked_at": "2026-10-19T08:53:57Z",
+        "consecutive_failures": 0,
+        "content_changed": true,
+        "diff": [],
+        "election_id": "wa-2026-general",
+        "error": null,
+        "escalated": false,
+        "id": "refresh-seattle-gay-news-20261019T085357Z-76cd8c5b9d9a",
+        "previous_snapshot_id": "extraction-seattle-gay-news-20261018T084551Z-d8e1ec3a96de",
+        "schema_version": "1.0",
+        "snapshot_id": "extraction-seattle-gay-news-20261019T085357Z-a7c05214be1a",
+        "source_id": "seattle-gay-news",
+        "status": "updated"
+      },
+      "scope": "Four complete current Seattle news-index originals through oldest reviewed endorsement168513; all10 current listed endorsement article originals and complete entry-content bodies; exact Oct18 and Oct19 morning bodies also read and compared.",
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "actual_researchers": [
+        "OpenAI Codex / root",
+        "OpenAI Codex / oct19_political_sources (independent source-fact review)"
+      ],
+      "approved_races_outside_fixed_mapping": [
+        "king-county-council-4",
+        "ld-32-state-representative-1",
+        "ld-37-state-representative-1"
+      ],
+      "current_extraction_sha256": "c59b7a08424ce578713c57ac803d9a942af7bc25926d537fd6bc084ddc1239ec",
+      "current_mapped_decisions": 29,
+      "current_original_sha256": "9cc2bb605b7a6d42e8eebcedd0399ce27983392f7869f8cd31e8b730e1b91661",
+      "limits": [
+        "Five alternate-language page links were inventoried but not independently fetched; this review covers the configured English publication and its complete Washington section."
+      ],
+      "notes": [
+        "All32 approved race decisions supported. LD37House1 explicitly says both Sharon Tomiko Santos and Kelabe Tewolde earned endorsement; preserve equal dual.",
+        "Danica Noble LD32House1, LD37House1 dual and Jorge L.Baron Council4 appear in current full original but are absent from the29-rule extraction. No ledger addition is needed; the fixed adapter covers29 of32 approved decisions.",
+        "Current Washington has four Supreme Court choices (Positions1,3,4,5); no Position7 endorsement is inferred. Current King County Council labels Pos.2/4/8 are mapped to the established districts.",
+        "Scheduled08:53 failed; actual14:36 current operator capture succeeds. The scheduled failure remains a separate historical event."
+      ],
+      "official_url": "https://seiu775.org/2026endorsements/",
+      "operator_event_published_to_verification_archive": false,
+      "operator_research": {
+        "completed_at": "2026-10-19T14:36:54.686395+00:00",
+        "event": {
+          "capture_id": "capture-seiu-775-20261019T143654Z-c80757a84407",
+          "checked_at": "2026-10-19T14:36:54.186304Z",
+          "content_changed": true,
+          "diff": [],
+          "error": null,
+          "id": "refresh-seiu-775-20261019T143654Z-8aee7f864b51",
+          "previous_snapshot_id": "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+          "schema_version": "1.0",
+          "snapshot_id": "extraction-seiu-775-20261019T143654Z-930a2e2224d0",
+          "source_id": "seiu-775",
+          "status": "updated"
+        },
+        "operation": "human-delegated operator research; direct current-source refresh on private archive copy; not a scheduled run, no production check or approval mutation",
+        "source_id": "seiu-775",
+        "started_at": "2026-10-19T14:36:54.186304+00:00"
+      },
+      "original_snapshot_comparisons": [
+        {
+          "capture_id": "capture-seiu-775-20261016T150136Z-8772d8cd8a06",
+          "extracted_decision_count": 29,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "a9aa41d2a5db922526e4379d6f57aa40dd3fb83a1d2ae3a761bfdaa1b671e8dd",
+          "original_sha256": "83a7883864b227b5f77d3e629f28dd02095788103da57eeca8df192071ad6ffe",
+          "raw_bytes_equal_current": false,
+          "retrieved_at": "2026-10-16T15:01:36.094004Z",
+          "snapshot_id": "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+          "source_id": "seiu-775",
+          "version": "scheduled_previous",
+          "whole_visible_text_equal_current": true
+        }
+      ],
+      "personal_human_source_read_asserted": false,
+      "prior_approved_decisions": 32,
+      "research_completed_at": "2026-10-19T14:54:10.062134+00:00",
+      "scheduled_observation": {
+        "baseline_reviewed": false,
+        "capture_id": null,
+        "checked_at": "2026-10-19T08:53:57Z",
+        "consecutive_failures": 3,
+        "content_changed": null,
+        "diff": [],
+        "election_id": "wa-2026-general",
+        "error": "Source check failed (ValueError); inspect official access and adapter.",
+        "escalated": true,
+        "id": "refresh-seiu-775-20261019T085357Z-27e4fba370b0",
+        "previous_snapshot_id": "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+        "schema_version": "1.0",
+        "snapshot_id": null,
+        "source_id": "seiu-775",
+        "status": "failed"
+      },
+      "scope": "Entire current English Washington section, all statewide, congressional, legislative and county/local rows; Alaska/Montana sections read as excluded geography. No endorsement-bearing PDF/image/iframe linked from this list; asset inventory contains logos/icons.",
+      "source_id": "seiu-775"
+    },
+    {
+      "actual_researchers": [
+        "OpenAI Codex / root",
+        "OpenAI Codex / oct19_political_sources (independent source-fact review)"
+      ],
+      "approved_races_outside_fixed_mapping": [
+        "initiative-26-001",
+        "initiative-26-638",
+        "initiative-26-645",
+        "ld-43-state-representative-2"
+      ],
+      "current_extraction_sha256": "4509c797946363c27598fedc1acdc27a14b92ed565699dd449e45e5884a4c826",
+      "current_mapped_decisions": 25,
+      "current_original_sha256": "78fef4afaab8d6e38db2eb1b61c074e34108ff14f28967cab72797736c5226a9",
+      "limits": [],
+      "notes": [
+        "All29 approved race decisions supported. LD32House2 explicitly retains Lauren Davis and Imraan Siddiqi as Dual.",
+        "Jamie Pederson (LD43 Senate), Julia Reed, Noel Frame, Jamie Hawk and other source spelling variants retain established approved mappings.",
+        "Current original clearly lists Shaun Scott for LD43House2. Two current linked Executive Board articles expressly reject001/638 and endorse No on645; these four approved race decisions are omitted by the25-rule extraction.",
+        "The three initiative Nos are explicit source choices, not inferred from policy positions or a campaign’s general platform.",
+        "The exact changed scheduled snapshot and Oct18 predecessor have the same visible page text and25 recognized decisions as current. Their full original pages already contain the Shaun Scott row and initiative headlines; equal extractor output cannot establish full publication coverage."
+      ],
+      "official_url": "https://ufcw3000.org/endorsements",
+      "operator_event_published_to_verification_archive": false,
+      "operator_research": {
+        "completed_at": "2026-10-19T14:36:55.671190+00:00",
+        "event": {
+          "capture_id": "capture-ufcw-3000-20261019T143654Z-793e6de1fdfe",
+          "checked_at": "2026-10-19T14:36:54.686553Z",
+          "content_changed": true,
+          "diff": [],
+          "error": null,
+          "id": "refresh-ufcw-3000-20261019T143654Z-0cdbd4e7ede5",
+          "previous_snapshot_id": "extraction-ufcw-3000-20261019T085357Z-99023c4c5d63",
+          "schema_version": "1.0",
+          "snapshot_id": "extraction-ufcw-3000-20261019T143654Z-ec9fedd0187d",
+          "source_id": "ufcw-3000",
+          "status": "updated"
+        },
+        "operation": "human-delegated operator research; direct current-source refresh on private archive copy; not a scheduled run, no production check or approval mutation",
+        "source_id": "ufcw-3000",
+        "started_at": "2026-10-19T14:36:54.686553+00:00"
+      },
+      "original_snapshot_comparisons": [
+        {
+          "capture_id": "capture-ufcw-3000-20261019T085357Z-3124a353d213",
+          "extracted_decision_count": 25,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "61ac387657462dc5b77913a50607967215d1930b51433de6c0623c2eb840e44c",
+          "original_sha256": "9f4f42af35fe5bddb37ef5e0d23592bbb19053dd6c4c2c90199b6e9d16986824",
+          "raw_bytes_equal_current": false,
+          "retrieved_at": "2026-10-19T08:53:57Z",
+          "snapshot_id": "extraction-ufcw-3000-20261019T085357Z-99023c4c5d63",
+          "source_id": "ufcw-3000",
+          "version": "scheduled",
+          "whole_visible_text_equal_current": true
+        },
+        {
+          "capture_id": "capture-ufcw-3000-20261018T084551Z-fbf8a7c7a18d",
+          "extracted_decision_count": 25,
+          "extracted_decisions_equal_current": true,
+          "extraction_sha256": "b2cda87719b3da309d15f61f711ed913c3c3478288f5060567de4fca8165102f",
+          "original_sha256": "5227d8cf11935287ebcbd80b743b4793ccc37f1a79ccd031b9f94aa80ad039d8",
+          "raw_bytes_equal_current": false,
+          "retrieved_at": "2026-10-18T08:45:51Z",
+          "snapshot_id": "extraction-ufcw-3000-20261018T084551Z-60f99c6a9a18",
+          "source_id": "ufcw-3000",
+          "version": "scheduled_previous",
+          "whole_visible_text_equal_current": true
+        }
+      ],
+      "personal_human_source_read_asserted": false,
+      "prior_approved_decisions": 29,
+      "research_completed_at": "2026-10-19T14:54:10.062134+00:00",
+      "scheduled_observation": {
+        "baseline_reviewed": false,
+        "capture_id": "capture-ufcw-3000-20261019T085357Z-3124a353d213",
+        "checked_at": "2026-10-19T08:53:57Z",
+        "consecutive_failures": 0,
+        "content_changed": true,
+        "diff": [],
+        "election_id": "wa-2026-general",
+        "error": null,
+        "escalated": false,
+        "id": "refresh-ufcw-3000-20261019T085357Z-5d4fd7d4bce2",
+        "previous_snapshot_id": "extraction-ufcw-3000-20261018T084551Z-60f99c6a9a18",
+        "schema_version": "1.0",
+        "snapshot_id": "extraction-ufcw-3000-20261019T085357Z-99023c4c5d63",
+        "source_id": "ufcw-3000",
+        "status": "updated"
+      },
+      "scope": "Entire general-election endorsement list through LD49 and both linked October15 Executive Board initiative articles; main page news headlines also checked.",
+      "source_id": "ufcw-3000"
+    }
+  ],
+  "summary": {
+    "added_decisions": 0,
+    "approved_decisions_outside_fixed_extraction": 12,
+    "changed_decisions": 0,
+    "changed_scheduled_source_facts_faithful_to_current": true,
+    "changed_scheduled_sources": [
+      "sage-leaders",
+      "ufcw-3000",
+      "seattle-gay-news"
+    ],
+    "current_automatic_extracted_decisions": 87,
+    "prior_approved_decisions": 99,
+    "removed_decisions": 0,
+    "restored_originals_independently_hash_verified": 88,
+    "retained_decisions": 99,
+    "sources": 6,
+    "unresolved_new_choices": 0,
+    "whole_publication_completeness_from_automatic_zero_diff_alone": false
+  }
+}

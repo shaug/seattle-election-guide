@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-46th-district-democrats-20261019T143653Z-3eb526091a72",
+  "entered_at": "2026-10-19T14:47:01.559556Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 Endorsed Candidates and Positions; City of Seattle Campaigns; Proposition No. 1 - Seattle Transit Measure; Vote Yes. Capture capture-46th-district-democrats-20261019T143653Z-3eb526091a72. The page identifies its May primary and September general endorsement meetings; this is the explicitly named Seattle transit measure, not the August library levy.",
+  "evidence_type": "web_page",
+  "id": "manual-46th-district-democrats-20261019T144701Z-482a8bb6471c",
+  "review_note": "Independent root read of the complete captured official publication, exact section and frozen race/option. The human explicitly delegated endorsement checks and necessary changes; this records the two actual Codex reviewers and does not assert a new personal human source read.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-19T14:47:01.559556Z",
+  "reviewed_by": "OpenAI Codex / root (explicit maintainer delegation)",
+  "reviewer": "OpenAI Codex / oct19_political_sources",
+  "schema_version": "1.0",
+  "source_id": "46th-district-democrats",
+  "transcription": "City of Seattle Campaigns\nProposition No. 1 - Seattle Transit Measure\nVote Yes"
+}

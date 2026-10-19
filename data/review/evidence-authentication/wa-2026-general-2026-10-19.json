@@ -1,0 +1,806 @@
+{
+  "schema_version": "1.0",
+  "record_type": "private_original_capture_authentication",
+  "issue": 578,
+  "archive_revision": "7e3f08b8f04603132d3e3145c18766648fe5af7c",
+  "authenticated_at": "2026-10-19T14:35:36.734011+00:00",
+  "authenticated_by": "OpenAI Codex",
+  "credential_source": "Existing maintainer private backup; original key never printed, persisted, replaced or committed.",
+  "restored_capture_count": 88,
+  "captures": [
+    {
+      "content_sha256": "04356a81d5e103b535b474b0f72be1b60ea038f1a4ac19e0d9cd2bad792770b4",
+      "byte_length": 50981,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/04/04356a81d5e103b535b474b0f72be1b60ea038f1a4ac19e0d9cd2bad792770b4.json",
+      "envelope_sha256": "144fc9e1a5d428440022e2ad1a49c233afbfbffe195f7c5ddb2ff09ed2d2f6b8",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "0ba29ab0ee3d59baa6914d52bc7a23c622e2542f9728128c2b5e48cffbdc96af",
+      "byte_length": 48704,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/0b/0ba29ab0ee3d59baa6914d52bc7a23c622e2542f9728128c2b5e48cffbdc96af.json",
+      "envelope_sha256": "6a1bfa6ba3f20e2aed04886e2a502803a8deefd127e4da121ada136da9e9faf9",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "0e1920eb2f7dcbb34d3ca014f1a810022049d6ccc4a1abced4ae523efccb4139",
+      "byte_length": 48704,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/0e/0e1920eb2f7dcbb34d3ca014f1a810022049d6ccc4a1abced4ae523efccb4139.json",
+      "envelope_sha256": "874fe6ae83578549964517c3f4e7be34c45aac9d09f3ecaea8486234dc65cfbc",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "106ab195fa64cb8f10a790fdf674666b9ed9c614fc7d8e5e418a271a63fb0099",
+      "byte_length": 964,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/10/106ab195fa64cb8f10a790fdf674666b9ed9c614fc7d8e5e418a271a63fb0099.json",
+      "envelope_sha256": "9a9999c9de6f32199c69f03785d0860a35f60086f7ed845bcf855c90ee006e7d",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "11e9f71f63ad0889d4524e77b27f10a29aa70d93ae09241b0d5cc2a90cf4a086",
+      "byte_length": 964,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/11/11e9f71f63ad0889d4524e77b27f10a29aa70d93ae09241b0d5cc2a90cf4a086.json",
+      "envelope_sha256": "fa52b09ccb5cbc081066e8c65180fe3a79a5e8179ccbee98c5d2ae38b4c44ba7",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "1321fa6801f3a4384a9965bd7a2f92efbd33731e0a969d98da313b46735614c6",
+      "byte_length": 47321,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/13/1321fa6801f3a4384a9965bd7a2f92efbd33731e0a969d98da313b46735614c6.json",
+      "envelope_sha256": "f6d2d123b647f8d67318cb7f217afd873c16375033ee1ea71671a3279d7e601d",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "13ba30ddaff3a2e0108fc7f3b8d8bb013e7d4d65a7c7a1f0ebc78b6518614c32",
+      "byte_length": 61283,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/13/13ba30ddaff3a2e0108fc7f3b8d8bb013e7d4d65a7c7a1f0ebc78b6518614c32.json",
+      "envelope_sha256": "a951d936cc670339aa71e5245e8da93a7a3005f82fe6ac21995f41cbec98f873",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "16785011f7659a99753102ff0e3bc241cac733cbd5dca294cbbaa838429743f2",
+      "byte_length": 50550,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/16/16785011f7659a99753102ff0e3bc241cac733cbd5dca294cbbaa838429743f2.json",
+      "envelope_sha256": "b6f5d31df281808246128351ec1b0356dce92299792972180c5659701a7c98bf",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "1df47787cbd30ac2ba537e87c4e45247683c2f8a3b82f1a032d7341d872a2256",
+      "byte_length": 222383,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/1d/1df47787cbd30ac2ba537e87c4e45247683c2f8a3b82f1a032d7341d872a2256.json",
+      "envelope_sha256": "78b7b73e9cc8ab9036bfc43f72c6a00b2260d5f34bf5e23a5dc19dd434582a8a",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "1f98276b019905c74a16ebbd151d84712f57f53b90fd92e3fa3158ebe90b7d67",
+      "byte_length": 47186,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/1f/1f98276b019905c74a16ebbd151d84712f57f53b90fd92e3fa3158ebe90b7d67.json",
+      "envelope_sha256": "b64d6b3a70f52fb7278ac3b58e5f496393619c60125568ad6482ee34e9b6af22",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "20d217dc5db4e07b7d9f2e6fc098fa63783b8c235c181d3ecc1c5a77ae12dd53",
+      "byte_length": 50844,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/20/20d217dc5db4e07b7d9f2e6fc098fa63783b8c235c181d3ecc1c5a77ae12dd53.json",
+      "envelope_sha256": "ded46f576966f0e5abdb05765b647fe25cd6f7123e31986a6c1fb5a048621892",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "21fd609c6aaf721e25221e3562c2dc980096ecf0af15edaa262b4c992a97a2f2",
+      "byte_length": 60930,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/21/21fd609c6aaf721e25221e3562c2dc980096ecf0af15edaa262b4c992a97a2f2.json",
+      "envelope_sha256": "142098716f16d99f4e74b75d2c9067f17ed2df79347929d517d32bdea3169e7c",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "2370bca38a11d0ed60d667b4158f3686b81a7da88c723b5972ea9ffcd04f5db3",
+      "byte_length": 49153,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/23/2370bca38a11d0ed60d667b4158f3686b81a7da88c723b5972ea9ffcd04f5db3.json",
+      "envelope_sha256": "3bea7e65ea6647e6e7b54153bdf5d5171ec42820f4936d35336eb05f9406fbb3",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "269e55772680da8aab9465deb275ca4295e56c85bbc7bb5c1e11aad5a2dd3803",
+      "byte_length": 50550,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/26/269e55772680da8aab9465deb275ca4295e56c85bbc7bb5c1e11aad5a2dd3803.json",
+      "envelope_sha256": "01fa2e49032216f74c20971a22835e454b6df4e22deb436bafa3ff43212f7737",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "2a008c2ad74799123af26e6257ca519d5be2e0066d19087867e7387246cd7335",
+      "byte_length": 61105,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/2a/2a008c2ad74799123af26e6257ca519d5be2e0066d19087867e7387246cd7335.json",
+      "envelope_sha256": "6bc4526826737f7f738c0769d0160b5c94555d04a87b38184331f17b485327e4",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "2a290c7f78d322efdbd9cb1a3aee82f3759a2712a4f401fa8455bda47b0f19bf",
+      "byte_length": 148203,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/2a/2a290c7f78d322efdbd9cb1a3aee82f3759a2712a4f401fa8455bda47b0f19bf.json",
+      "envelope_sha256": "8f542c6b139a0d6b3ae276efb315033ac6c6a8b407da402f67d8af4c770f3df7",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "2a77bb5a02903f70cb8374e698553f59c42b89f183eb38c8d6de4246032ff052",
+      "byte_length": 148203,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/2a/2a77bb5a02903f70cb8374e698553f59c42b89f183eb38c8d6de4246032ff052.json",
+      "envelope_sha256": "584e4820159e03c457044005de720222ac33927b8b70837f278ccfa003d0460c",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "2a9e0fb0ffdad335eb7ba11f3b68f53a1f9916b248ffcbde71b5944f6ff0a643",
+      "byte_length": 60850,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/2a/2a9e0fb0ffdad335eb7ba11f3b68f53a1f9916b248ffcbde71b5944f6ff0a643.json",
+      "envelope_sha256": "165e0e7cb0b49af8dbf54047f4071677c216deff612fe4fa4f5134231f19bbaa",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "2b0e5e060a286e33239ea543383d1ee0e8641b8952e9652d0a0183cdb89cbcf9",
+      "byte_length": 49153,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/2b/2b0e5e060a286e33239ea543383d1ee0e8641b8952e9652d0a0183cdb89cbcf9.json",
+      "envelope_sha256": "3a591e37a777160f90cebf6a9c3830c4b4f8197e3058950b0618808d41deb86e",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "2d117bc6d6965c774a461e4f2d1ae7d7cc52bc3f992c251fcfc6180f7b833356",
+      "byte_length": 50550,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/2d/2d117bc6d6965c774a461e4f2d1ae7d7cc52bc3f992c251fcfc6180f7b833356.json",
+      "envelope_sha256": "c9465f11b32d4a9e8f79378dcaf1f79caf8671cc7a29cfab805368af67953ea3",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "2dda1ac736fc3d97bed6fafd6d103785dbfbc634f77f7b296a5e007d6feda56e",
+      "byte_length": 50416,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/2d/2dda1ac736fc3d97bed6fafd6d103785dbfbc634f77f7b296a5e007d6feda56e.json",
+      "envelope_sha256": "f55432db33a0bf6ad32a7d0939319710326e0507bbad804465d737e22381d464",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "2e1b5aaa1aa5b10c03b44486136adaba885068697637f1ab73be187c49976e84",
+      "byte_length": 48965,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/2e/2e1b5aaa1aa5b10c03b44486136adaba885068697637f1ab73be187c49976e84.json",
+      "envelope_sha256": "5a22d3b7cc11b91e4752f9d91de09c6b847d789931469f1c2fdd0de0811e94e9",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "33b759ae70eee5255defb4360f115367d186ed06dc243f23ee2ab0f5959d90de",
+      "byte_length": 148203,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/33/33b759ae70eee5255defb4360f115367d186ed06dc243f23ee2ab0f5959d90de.json",
+      "envelope_sha256": "2db43c24671a4889170ee97c3b1a7bda883dd1b48356a494b0441300b3015fdf",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "36065c8dfc388b3b24bb3c0ca53796ea9a08b6be5f521f725d0d46f4ebdbde5e",
+      "byte_length": 60850,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/36/36065c8dfc388b3b24bb3c0ca53796ea9a08b6be5f521f725d0d46f4ebdbde5e.json",
+      "envelope_sha256": "0d1649143cf543c6d99b28dc33d7ff79745bc1085739a4e279ce6bf7c98b31ca",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "36cd75a4ec5cbdf79f5b274ad115fb27f010958bb51f58daa73df030c7cf5272",
+      "byte_length": 46550,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/36/36cd75a4ec5cbdf79f5b274ad115fb27f010958bb51f58daa73df030c7cf5272.json",
+      "envelope_sha256": "429e84b013dafd8f763c7cd78d09550dc30fb75ebf5dd23e748f46696ccc11d6",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "39debc8b6155726a00a8a92d41c28a938dc05410be229d477cb23793c20b4b6d",
+      "byte_length": 61316,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/39/39debc8b6155726a00a8a92d41c28a938dc05410be229d477cb23793c20b4b6d.json",
+      "envelope_sha256": "91d829712c3ce4375585662de47f18549016ec597e07a6f7d0af0f2729a228e9",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "4024a8c3b43b21db5af82668133f60ddae6f16c5fba2eccd836f7631f282f5d2",
+      "byte_length": 48704,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/40/4024a8c3b43b21db5af82668133f60ddae6f16c5fba2eccd836f7631f282f5d2.json",
+      "envelope_sha256": "c43bb248542bea4b9582fbb41b3f5b9bdf89a7f508b6371be6b51de46bd6e4d6",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "42410c22d0428b7ee08fedbbe069b5ad130ec93f86290df71e26507c1489cbcd",
+      "byte_length": 47323,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/42/42410c22d0428b7ee08fedbbe069b5ad130ec93f86290df71e26507c1489cbcd.json",
+      "envelope_sha256": "f0e9efddca5e0dbef176c23334e7be8a49a934b2cacdc25b916d8012e3e03846",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "4375dbb2ecbed4fef847a8c0075ca688930fea4aa4b2c572e5d9aa49ad58cc50",
+      "byte_length": 46550,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/43/4375dbb2ecbed4fef847a8c0075ca688930fea4aa4b2c572e5d9aa49ad58cc50.json",
+      "envelope_sha256": "743bfb0fd8861ab955bd319a94e5df4c3e6d61ea87f3233648d83cd81278bbc1",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "44df3f8f116775e101e06458cf93258182facfcfb032d3ecde7d839e28d7c38a",
+      "byte_length": 46550,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/44/44df3f8f116775e101e06458cf93258182facfcfb032d3ecde7d839e28d7c38a.json",
+      "envelope_sha256": "d86ef0dc7d6be200a39b281dd6eb39a750c9ec853328ff5f90da2cd88a948ecd",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "498bce1f10c7f75fa165a6cd9a2b56d84f8dbf088e8f8ff55f7f7c591e0763d7",
+      "byte_length": 50550,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/49/498bce1f10c7f75fa165a6cd9a2b56d84f8dbf088e8f8ff55f7f7c591e0763d7.json",
+      "envelope_sha256": "efec22631c6e7d471137e27633376fe504b82c2ba659050140bdf53a3e453c8b",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "49f3fc7d13b867dbf003cd854b4f65c9a44d29a91f23b163aeaf6357ff8582b9",
+      "byte_length": 47186,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/49/49f3fc7d13b867dbf003cd854b4f65c9a44d29a91f23b163aeaf6357ff8582b9.json",
+      "envelope_sha256": "156441dc4ae20ca921b7721003886ecd5a397a3b95749f4638885c3700b211bb",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "5227d8cf11935287ebcbd80b743b4793ccc37f1a79ccd031b9f94aa80ad039d8",
+      "byte_length": 222383,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/52/5227d8cf11935287ebcbd80b743b4793ccc37f1a79ccd031b9f94aa80ad039d8.json",
+      "envelope_sha256": "4ef6ba8bafca4b4bdff1e59a9138711108a6c3756adb54e2893f9615d5cee47c",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "5259a0075b172e9055b948d4f700e869bf64fc62d15401bfb02eb007628e9ce0",
+      "byte_length": 50552,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/52/5259a0075b172e9055b948d4f700e869bf64fc62d15401bfb02eb007628e9ce0.json",
+      "envelope_sha256": "af8e409b251d7c9cf0a4d5925910469f0c0b37fbdc3b08b803dfb6c6b424c2a6",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "5699c87e04f46a35c2a15ca2c492bc470675753da069d6255a68e2eb1c3cf733",
+      "byte_length": 50550,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/56/5699c87e04f46a35c2a15ca2c492bc470675753da069d6255a68e2eb1c3cf733.json",
+      "envelope_sha256": "a5233ddb49e1128b4f4f93510cc275ece3508e785d771df0eb7a6bcdb5099684",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "5cbe89dbb2ebd961e5c084ea5cb6661d787c8f7b44b89c60638d1e5e0cd769a9",
+      "byte_length": 48965,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/5c/5cbe89dbb2ebd961e5c084ea5cb6661d787c8f7b44b89c60638d1e5e0cd769a9.json",
+      "envelope_sha256": "890303fe004dd4efdfeb159d9fdf4d582a1b612bc3cca4f000a25d09b53081ea",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "5ceac36ab16cf168c3971c4cbd21bdd1830b04381e5b14102bc42218a6bd0921",
+      "byte_length": 222383,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/5c/5ceac36ab16cf168c3971c4cbd21bdd1830b04381e5b14102bc42218a6bd0921.json",
+      "envelope_sha256": "f74b249db4d8d58daf51ebc8b69cf4c4ca56c04cf7d1324cd1aff0b7f39a985a",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "5e1f0920558dcfed90196db854fa139cf47a3a624881a3c01cc5a0ebddf24ed5",
+      "byte_length": 61259,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/5e/5e1f0920558dcfed90196db854fa139cf47a3a624881a3c01cc5a0ebddf24ed5.json",
+      "envelope_sha256": "59f381013225a902f1eafb17988128e95deb268a8a232d926ad3ff677e299325",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "5f3ca4dc6b22add8ddf18d43655afa9f02df5e09aa0699909c260e407b4889aa",
+      "byte_length": 50981,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/5f/5f3ca4dc6b22add8ddf18d43655afa9f02df5e09aa0699909c260e407b4889aa.json",
+      "envelope_sha256": "2de6594a07d9b277bb1ec13e70c26f88267261f34cc9418da2c20b3596363a79",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "5faa62da6b7bd5ac93ca7a4face0895878cddb054ff0c4d0f55d7199a264569c",
+      "byte_length": 50416,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/5f/5faa62da6b7bd5ac93ca7a4face0895878cddb054ff0c4d0f55d7199a264569c.json",
+      "envelope_sha256": "1b79367a054cd08d669fb4f7d82a35997cbf3819175e715fe4802d3aee5f2bc6",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "6027f2b5ce534ff7efa6e88d022ded7314c80a9097f7273edf4fb5f697ad0c45",
+      "byte_length": 60850,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/60/6027f2b5ce534ff7efa6e88d022ded7314c80a9097f7273edf4fb5f697ad0c45.json",
+      "envelope_sha256": "4b25aaef98ae0e167f100698e61770e0a399ee7c5106f23dc8f6def72aa16ef4",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "66f0be05ca7cd40cc0cfb1fb550fee6864f97efc819d6814ce74882280fa7fcf",
+      "byte_length": 48706,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/66/66f0be05ca7cd40cc0cfb1fb550fee6864f97efc819d6814ce74882280fa7fcf.json",
+      "envelope_sha256": "52e19654c6ca95a600f2717ea03834d37837ba326488afa6c65e58ab18d26307",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "691c53f0a7d563c6ef43ce327eb60e49d8ce4a8b6480f4a0cd57dcd9c2426e6f",
+      "byte_length": 47188,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/69/691c53f0a7d563c6ef43ce327eb60e49d8ce4a8b6480f4a0cd57dcd9c2426e6f.json",
+      "envelope_sha256": "8c2d59fbd53680710f2751196ff6405890e79a4186b8997fb07a57d446b5e8af",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "6b2a0cd033cedbccd672041e892a57f1369410587b1974fefca758a3d763598e",
+      "byte_length": 148203,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/6b/6b2a0cd033cedbccd672041e892a57f1369410587b1974fefca758a3d763598e.json",
+      "envelope_sha256": "8dd8115633c7efb285ba6f0c36ec06b9dccf07bfccc0b6904d8afcf0648c67ea",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "6ce4df6d80bbc3eea8a3f2bd6917cb2bde6a61159e8a88a778ecc57e8661c7d0",
+      "byte_length": 61188,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/6c/6ce4df6d80bbc3eea8a3f2bd6917cb2bde6a61159e8a88a778ecc57e8661c7d0.json",
+      "envelope_sha256": "cc942ff8ad194134c48ecf5c22567ddca05509a3599c136baaffd95fcb9fbd4f",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "71e11ca3076ec1cffc0c563ae5006ff19fced788451dbb2d6920d420a1c66a9d",
+      "byte_length": 222383,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/71/71e11ca3076ec1cffc0c563ae5006ff19fced788451dbb2d6920d420a1c66a9d.json",
+      "envelope_sha256": "94282d292d335854ee81870ff4e88dc7334cd9603434ab1b8041fd3a3466c437",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "71eb01f615d6561e370313e8650c4e65bbbb0e833c4da7e507004433786a2af7",
+      "byte_length": 48967,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/71/71eb01f615d6561e370313e8650c4e65bbbb0e833c4da7e507004433786a2af7.json",
+      "envelope_sha256": "a7f9bbed7a0ab3394d07954698080605ecb939b938b6b59f3ea263660f20767d",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "7cbee1ba1ee935868cd17befa42af6382f5456f43c0928e7a74393e69f7f46bf",
+      "byte_length": 61105,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/7c/7cbee1ba1ee935868cd17befa42af6382f5456f43c0928e7a74393e69f7f46bf.json",
+      "envelope_sha256": "c6dba775525f13f7041cf1787256914da82d3a7754169fe010828f9cb5f8293e",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "83a7883864b227b5f77d3e629f28dd02095788103da57eeca8df192071ad6ffe",
+      "byte_length": 92070,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/83/83a7883864b227b5f77d3e629f28dd02095788103da57eeca8df192071ad6ffe.json",
+      "envelope_sha256": "5ff6c0ef1d53a08830ddbde6742aa66803440c9be69d53e2ecafee73c3c6b53c",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "8da6477e9033cc2c560c3c4290b5fa4f2ef7d078d6a86f0bfa7d0b518418cef5",
+      "byte_length": 964,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/8d/8da6477e9033cc2c560c3c4290b5fa4f2ef7d078d6a86f0bfa7d0b518418cef5.json",
+      "envelope_sha256": "e9c5eda837f006876d8362574068d655a03f58e1648b26109658314dd688ddef",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "8e81012cd2cd23ef5ea2a64d59d8a1a9c84c54fc4ffe285fbc58c8e094946567",
+      "byte_length": 61314,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/8e/8e81012cd2cd23ef5ea2a64d59d8a1a9c84c54fc4ffe285fbc58c8e094946567.json",
+      "envelope_sha256": "1ef3b36e02152fe3a58d8074b047185d369895f015e5937fb08b809a7be388ab",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "947d92cbb384d20eff292b5fd434677f14aa7122f25572b117af5581c1e0de2a",
+      "byte_length": 47321,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/94/947d92cbb384d20eff292b5fd434677f14aa7122f25572b117af5581c1e0de2a.json",
+      "envelope_sha256": "b40f921eb8617be1e90d6aed6fe65afd70ceea5ba16c303ae7e77de3ca78ee1b",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "9a35b4590f29f079ed7264fb9d47ec7dc7e14685b8dd7fb62f3daa321074e0f4",
+      "byte_length": 61283,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/9a/9a35b4590f29f079ed7264fb9d47ec7dc7e14685b8dd7fb62f3daa321074e0f4.json",
+      "envelope_sha256": "f47c3f0e2361eeecda60bb9f1aba8f83f1f3fa7cccc0f5aab384f956aff88439",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "9f4f42af35fe5bddb37ef5e0d23592bbb19053dd6c4c2c90199b6e9d16986824",
+      "byte_length": 222383,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/9f/9f4f42af35fe5bddb37ef5e0d23592bbb19053dd6c4c2c90199b6e9d16986824.json",
+      "envelope_sha256": "375c890c4be44cf5423f8042001d31617e294db2a414eef946131f93be2548d9",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "a198546bd2f1436cf0d6efd41a412d39664bc4619deef841426eba24917fbc9e",
+      "byte_length": 60928,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/a1/a198546bd2f1436cf0d6efd41a412d39664bc4619deef841426eba24917fbc9e.json",
+      "envelope_sha256": "510dedee61d6999f3ba092b836671c44ae554d7973bfd27c924b711c338a855c",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "a1aa3586f87f5856e1bba75d8d43248036b22a086582477f201b4bfb6f0c1fbf",
+      "byte_length": 50981,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/a1/a1aa3586f87f5856e1bba75d8d43248036b22a086582477f201b4bfb6f0c1fbf.json",
+      "envelope_sha256": "121af5b0f978e3ccef2172cc6d3bd120b23999eda494dc61423cefaa40858dae",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "a382a3929e36b597eddd2e4d00e70afcb58c49b4c9d7fa7e9315ac5eabf2eaeb",
+      "byte_length": 46552,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/a3/a382a3929e36b597eddd2e4d00e70afcb58c49b4c9d7fa7e9315ac5eabf2eaeb.json",
+      "envelope_sha256": "f2895661241efc0db23078bcc781ae3641f25eac213ed4a2aa36b794bd03dee5",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "a9dff638914d2e4282be0f8566a54de880a81e98d2147c0addd2d091094f05f6",
+      "byte_length": 49155,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/a9/a9dff638914d2e4282be0f8566a54de880a81e98d2147c0addd2d091094f05f6.json",
+      "envelope_sha256": "2aca5960e8a71a4b8371c72b420de990398a483277f91480b3e4713863eea7e8",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "ada00ab79639cca7877fddf57e2aa06e0d47ae8e85276ae18f81c03fec712259",
+      "byte_length": 49153,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/ad/ada00ab79639cca7877fddf57e2aa06e0d47ae8e85276ae18f81c03fec712259.json",
+      "envelope_sha256": "ec50fedeb781492eb518ff5af20b093e29160604382de94db20c7310a29635cb",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "add4b4aa02c6deb568d9a251f513c3e97ab8a441076e7cdbaf9c35a0d33d51e6",
+      "byte_length": 129913,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/ad/add4b4aa02c6deb568d9a251f513c3e97ab8a441076e7cdbaf9c35a0d33d51e6.json",
+      "envelope_sha256": "afc96d40187c7001fe07a5b2250e0890642e00d4c74324862d89203cea9cc05f",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "b28508114f7f491c20f9531b5d8be063a2df08c9359e4140f7805eb12b1c0ea2",
+      "byte_length": 50846,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/b2/b28508114f7f491c20f9531b5d8be063a2df08c9359e4140f7805eb12b1c0ea2.json",
+      "envelope_sha256": "215bc0a63e9a6fcb3444b51bd9cd97b9aa86e132a875f3f13eced30f10267d8c",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "b8e487126958b84ac857fcabc1c31ec12bf39f5399efae05287ea5ad481a934c",
+      "byte_length": 148203,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/b8/b8e487126958b84ac857fcabc1c31ec12bf39f5399efae05287ea5ad481a934c.json",
+      "envelope_sha256": "10ec13da9483e067e8f409fe30baf3fbfa2650cab8351dbc6a636e6773c31164",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "bb99a26d065f77f21c2aad9680345ce7dc1abb1b3d1bdd00e0ce29e41ee3438b",
+      "byte_length": 61283,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/bb/bb99a26d065f77f21c2aad9680345ce7dc1abb1b3d1bdd00e0ce29e41ee3438b.json",
+      "envelope_sha256": "de28637a6772f7e6531e07a1497023f70abeab442d2367e8701394a70099f769",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "bbd52330efc953e2a79fe3a8bdaf309f442d0fd0f1c0f12f263af1417acf872f",
+      "byte_length": 60917,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/bb/bbd52330efc953e2a79fe3a8bdaf309f442d0fd0f1c0f12f263af1417acf872f.json",
+      "envelope_sha256": "fb4996421f027c11e6c13009f2f73152baaa66a4707a335a38b256a53ba8998c",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "bc050fb3b5dbbe7ba34646710b1252c81c5dbdbcafb879ffbb11ea3a1b1f1344",
+      "byte_length": 61259,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/bc/bc050fb3b5dbbe7ba34646710b1252c81c5dbdbcafb879ffbb11ea3a1b1f1344.json",
+      "envelope_sha256": "5183380155d4f9d38c63ccd9acb67719e188f1b0a5bb095d231ca358eb471750",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "c12cee2c1ef0e25e130d14b72aebecd2def871443f9abd953adafac71f5d8a23",
+      "byte_length": 148203,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/c1/c12cee2c1ef0e25e130d14b72aebecd2def871443f9abd953adafac71f5d8a23.json",
+      "envelope_sha256": "407f31a886cdfebac01abed37abc05ead642bd3bb9f52c06553e6198e389065e",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "c25101f7b98b72c8ea45c8020f432ed798fedd42ddf1ae9603d06d2050abeb55",
+      "byte_length": 50844,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/c2/c25101f7b98b72c8ea45c8020f432ed798fedd42ddf1ae9603d06d2050abeb55.json",
+      "envelope_sha256": "2413f90cdba065f53c920e9735510a3fe8499a67a2c34a092112543b8e6d6fe8",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "c532a55b66409bf26590bfc791930529bd359fa42f7b7e5956dade7831cc5a4a",
+      "byte_length": 60919,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/c5/c532a55b66409bf26590bfc791930529bd359fa42f7b7e5956dade7831cc5a4a.json",
+      "envelope_sha256": "6630bbf6ed3c26f839b8ea491d985980834fe5605dcb389be23daf3b362a4a41",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "c7dd1ce7132fa4caeadb4b25a190715e95491daa4694c6575a150d2b6537b4b3",
+      "byte_length": 47186,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/c7/c7dd1ce7132fa4caeadb4b25a190715e95491daa4694c6575a150d2b6537b4b3.json",
+      "envelope_sha256": "768e95c31411822bc9785ee5f8d66129d698e35bcde4d4ea27883cb794db05e5",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "c99439dea91f14cb130c492c2a0e13bfcb806b9d934ed909fe33ca55c347a95d",
+      "byte_length": 222383,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/c9/c99439dea91f14cb130c492c2a0e13bfcb806b9d934ed909fe33ca55c347a95d.json",
+      "envelope_sha256": "94dd60388f2097c95da8b90cefcbd569ffcf46fd1fd0328500eeb00138de7238",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "cb79d0a6e61229bd469899a764270e8d3b9ac507732218bfd0adcd3c151876d5",
+      "byte_length": 48175,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/cb/cb79d0a6e61229bd469899a764270e8d3b9ac507732218bfd0adcd3c151876d5.json",
+      "envelope_sha256": "945f6746ad9a4c009897d64613c6aebe1d218f889c44b720bb24474b0bac0179",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "cd3fbf409b40241ec479942c6b4f06cf733af0c78ad6c17b291cbf7b5bf23f25",
+      "byte_length": 964,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/cd/cd3fbf409b40241ec479942c6b4f06cf733af0c78ad6c17b291cbf7b5bf23f25.json",
+      "envelope_sha256": "13af4d9c4edf82f9d8c311392110d909d7d406dec4f15ca9dc66cfe95c004017",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "cd587dca040a37aa2031da66f5f8bbf784e618e503505e48f2c56524e1fdeccd",
+      "byte_length": 61259,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/cd/cd587dca040a37aa2031da66f5f8bbf784e618e503505e48f2c56524e1fdeccd.json",
+      "envelope_sha256": "e67fdf79b733f51fa430389663d1dba6220195b1f077cf529564138e14d1091e",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "d04839cf75837d07d05ec565c3972765dc1a24d4cedd0884c0f0468087590850",
+      "byte_length": 48175,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/d0/d04839cf75837d07d05ec565c3972765dc1a24d4cedd0884c0f0468087590850.json",
+      "envelope_sha256": "f65cf297e597e7afd7aa01458e3b1d9e6fb255b56ae4f0abaf2c0e3f97967cd4",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "d55ea7f811a88977d57cf5a15ff6837c8e85b362897fb6136220d8f1264982c2",
+      "byte_length": 61188,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/d5/d55ea7f811a88977d57cf5a15ff6837c8e85b362897fb6136220d8f1264982c2.json",
+      "envelope_sha256": "7bfd09f9e812fa56c28c41e397295248ac8f13e15be9c97b4d3f45d8fc145c77",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "dbf72a6b345593db47f33b4c3f825639c1caf4d8b6226d4f008df0fcdc07e1e6",
+      "byte_length": 48175,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/db/dbf72a6b345593db47f33b4c3f825639c1caf4d8b6226d4f008df0fcdc07e1e6.json",
+      "envelope_sha256": "659b665d5c27bb57f76931c8cecfd8ad06d780f07ff75e08955007bde6921d80",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "e2ba52160a933cfce93e65bf1bf11e4e856f06612b0b5c14e85d7e18233ae357",
+      "byte_length": 129913,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/e2/e2ba52160a933cfce93e65bf1bf11e4e856f06612b0b5c14e85d7e18233ae357.json",
+      "envelope_sha256": "049dd02099d9e24142ba9c6dd1ddf0248a2e9eb699d001f0ebb2cd14e40411d9",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "e2ea16591a01cd7744a6f2b25121c3bf3edaee9dd864c9f69c01474b21f6d564",
+      "byte_length": 48177,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/e2/e2ea16591a01cd7744a6f2b25121c3bf3edaee9dd864c9f69c01474b21f6d564.json",
+      "envelope_sha256": "e18e25a5bdf02148ab578185169f893ec60a4e5f910d6f59974168c5d39e3928",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "e6b7c516273fddd774c278caf7cee2ce4d28539e805c6f701365ab8424ea4b7d",
+      "byte_length": 61190,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/e6/e6b7c516273fddd774c278caf7cee2ce4d28539e805c6f701365ab8424ea4b7d.json",
+      "envelope_sha256": "e1ef11b0eaf1b69b523be4ad6fa59caa513b7ba4d5ba922a888776e8c2792329",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "eb94d82dcf33288590438f8b636d25beff2b396a3bfb5be7fb2ed09f20268d3b",
+      "byte_length": 60928,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/eb/eb94d82dcf33288590438f8b636d25beff2b396a3bfb5be7fb2ed09f20268d3b.json",
+      "envelope_sha256": "d5a0f14b73dab7393dfe3bd86a4e9ceb5bcca830622bb6e5513bb68ce5bac914",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "ed89774a2449e3cc583dd007d7397b01ad014ce5b0500be04e1705cfb280b92a",
+      "byte_length": 50416,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/ed/ed89774a2449e3cc583dd007d7397b01ad014ce5b0500be04e1705cfb280b92a.json",
+      "envelope_sha256": "f26cf82bc9fe06d82447cfdf76cca0db8bbf1360fd26a4bf52bb777195b5ca46",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "efd2f2e0c2daefecb9a9a641052d20c04ca2ce4f42763f2a8067d03f6322c6fa",
+      "byte_length": 61105,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/ef/efd2f2e0c2daefecb9a9a641052d20c04ca2ce4f42763f2a8067d03f6322c6fa.json",
+      "envelope_sha256": "0762da4db347958480e781ab9b763137ef42cb1aa74c6b623141ca739a706cc2",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "f6119b4c05de3858e7c7b3728f8184c56bc0f4b2e6ea1c74de88b7141625a635",
+      "byte_length": 50844,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/f6/f6119b4c05de3858e7c7b3728f8184c56bc0f4b2e6ea1c74de88b7141625a635.json",
+      "envelope_sha256": "6c2b2b244c499de8725f92a9c261c755f8a5621634146930f95c1045c6e041c0",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "f66c30a217d53badc41e1c8db4df8d75c56c9f74c99f60d558f71408a2d91a7a",
+      "byte_length": 50418,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/f6/f66c30a217d53badc41e1c8db4df8d75c56c9f74c99f60d558f71408a2d91a7a.json",
+      "envelope_sha256": "ea21a43753a1e0b51a98cf8a13717f6992df4d824a7ef0c87eb6b7b91d52fde0",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "f7ae7b5115956f5f3a2ebe01c4727f071f7c0b46f7aada3370f57e76c7fdedeb",
+      "byte_length": 48965,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/f7/f7ae7b5115956f5f3a2ebe01c4727f071f7c0b46f7aada3370f57e76c7fdedeb.json",
+      "envelope_sha256": "d09798a4ecfad34142fd7777dc8f302175bb49831144be9d6a9934a3523588a4",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "fbd416dcf1073c60519ab170dcf1ae536f91493edb7b71a08c28664686255b37",
+      "byte_length": 61314,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/fb/fbd416dcf1073c60519ab170dcf1ae536f91493edb7b71a08c28664686255b37.json",
+      "envelope_sha256": "8b76113c607b6b31a50afc36214dc704a2df0238e3ff0d6fd0a9cf62e7d33a68",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "fdd5f137bac72a3b73af2b43d90eee0887fc2a651a7ad6157ee386e46fffd92d",
+      "byte_length": 60917,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/fd/fdd5f137bac72a3b73af2b43d90eee0887fc2a651a7ad6157ee386e46fffd92d.json",
+      "envelope_sha256": "f6077752d2daff1b238a91b0500c548740dcddfd5ecd904e5eb416b34f067765",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    },
+    {
+      "content_sha256": "ff4614b856f752d0d3c1a67ba0e42370ccc01601f513814bbb5febc5e11ae233",
+      "byte_length": 47321,
+      "vault_path": "data/verification/wa-2026-general/vault/sha256/ff/ff4614b856f752d0d3c1a67ba0e42370ccc01601f513814bbb5febc5e11ae233.json",
+      "envelope_sha256": "952caaa1ad41bef4e2b60385feb39f629c48514e0596dc36d2c22034a00191df",
+      "aes_gcm_authentication": "passed",
+      "plaintext_sha256": "passed",
+      "byte_length_check": "passed"
+    }
+  ],
+  "human_baseline_approvals_recorded": 0,
+  "no_human_spot_check_asserted": true
+}
