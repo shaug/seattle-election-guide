@@ -29,7 +29,12 @@ def _page(deployments: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _run_teardown(
-    tmp_path: Path, pages: Sequence[object], *, failed_page: int = 0, delete_fails: bool = False
+    tmp_path: Path,
+    pages: Sequence[object],
+    *,
+    failed_page: int = 0,
+    delete_fails: bool = False,
+    reject_page_size: bool = False,
 ) -> tuple[subprocess.CompletedProcess[str], list[dict[str, Any]]]:
     workflow = yaml.load(
         (PROJECT_ROOT / ".github/workflows/deploy-pr-preview.yml").read_text(encoding="utf-8"),
@@ -58,12 +63,17 @@ def record(**entry):
         stream.write(json.dumps(entry) + "\\n")
 if pathlib.Path(sys.argv[0]).name == "curl":
     query = [args[i + 1] for i, arg in enumerate(args) if arg == "--data-urlencode"]
-    assert "env=preview" in query and "per_page=100" in query
+    assert "env=preview" in query
     assert "Authorization: Bearer fixture-token" in args
     assert ("https://api.cloudflare.com/client/v4/accounts/fixture-account/"
             "pages/projects/seattle-elections/deployments") in args
     page = int(next(value.split("=")[1] for value in query if value.startswith("page=")))
     record(action="list", page=page)
+    if os.environ["REJECT_PAGE_SIZE"] == "true" and any(
+        value.startswith("per_page=") for value in query
+    ):
+        print("curl: (22) The requested URL returned error: 400", file=sys.stderr)
+        sys.exit(22)
     if page == int(os.environ["FAILED_PAGE"]):
         sys.exit(22)
     payload = pages[page - 1]
@@ -96,6 +106,7 @@ else:
             "CALLS": str(calls),
             "FAILED_PAGE": str(failed_page),
             "DELETE_FAILS": str(delete_fails).lower(),
+            "REJECT_PAGE_SIZE": str(reject_page_size).lower(),
             "CLOUDFLARE_ACCOUNT_ID": "fixture-account",
             "CLOUDFLARE_API_TOKEN": "fixture-token",
             "PREVIEW_BRANCH": "pr-269",
@@ -124,6 +135,7 @@ def test_teardown_finds_all_matches_after_a_full_page_without_matches(tmp_path: 
                 _deployment("other-branch", "pr-2690"),
             ]
         ),
+        _page([]),
     ]
     result, calls = _run_teardown(tmp_path, pages)
 
@@ -132,6 +144,7 @@ def test_teardown_finds_all_matches_after_a_full_page_without_matches(tmp_path: 
         {"action": "list", "page": 1},
         {"action": "list", "page": 2},
         {"action": "list", "page": 3},
+        {"action": "list", "page": 4},
         *[{"action": "delete", "id": f"target-{index}"} for index in range(100)],
         {"action": "delete", "id": "oldest"},
     ]
@@ -181,8 +194,55 @@ def test_teardown_fails_when_a_later_http_request_fails(tmp_path: Path) -> None:
 
 def test_teardown_propagates_deletion_failure(tmp_path: Path) -> None:
     result, calls = _run_teardown(
-        tmp_path, [_page([_deployment("target", "pr-269")])], delete_fails=True
+        tmp_path, [_page([_deployment("target", "pr-269")]), _page([])], delete_fails=True
     )
 
     assert result.returncode != 0
-    assert calls == [{"action": "list", "page": 1}, {"action": "delete", "id": "target"}]
+    assert calls == [
+        {"action": "list", "page": 1},
+        {"action": "list", "page": 2},
+        {"action": "delete", "id": "target"},
+    ]
+
+
+def test_teardown_enumerates_server_sized_pages_until_empty(tmp_path: Path) -> None:
+    # Cloudflare's SDK advances until an empty page; a short nonempty page is
+    # not evidence that every deployment has been enumerated.
+    pages = [
+        _page([_deployment("other-first-page", "pr-270")]),
+        _page([_deployment("target-later-page", "pr-269")]),
+        _page(
+            [
+                _deployment("target-oldest", "pr-269"),
+                _deployment("production", "pr-269", "production"),
+                _deployment("branch-prefix", "pr-2690"),
+            ]
+        ),
+        _page([]),
+    ]
+    result, calls = _run_teardown(tmp_path, pages)
+
+    assert result.returncode == 0, result.stderr
+    assert calls == [
+        {"action": "list", "page": 1},
+        {"action": "list", "page": 2},
+        {"action": "list", "page": 3},
+        {"action": "list", "page": 4},
+        {"action": "delete", "id": "target-later-page"},
+        {"action": "delete", "id": "target-oldest"},
+    ]
+
+
+def test_teardown_works_when_server_rejects_a_page_size_override(tmp_path: Path) -> None:
+    result, calls = _run_teardown(
+        tmp_path,
+        [_page([_deployment("target", "pr-269")]), _page([])],
+        reject_page_size=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert calls == [
+        {"action": "list", "page": 1},
+        {"action": "list", "page": 2},
+        {"action": "delete", "id": "target"},
+    ]
