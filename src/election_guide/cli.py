@@ -28,6 +28,7 @@ from election_guide.analytics import (
     missing_dates,
     newest_complete_day,
     open_analytics_zone,
+    record_expired_gaps,
     window_floor,
     write_rollup,
 )
@@ -77,6 +78,12 @@ from election_guide.hosting import (
 from election_guide.hosting.production_check import render_summary_lines
 from election_guide.hosting.production_probe import run_production_check
 from election_guide.hosting.production_wait import wait_for_production
+from election_guide.hosting.updates import (
+    build_updates_snapshot,
+    check_updates,
+    compare_updates_snapshots,
+)
+from election_guide.hosting.updates_baseline import resolve_production_snapshot
 from election_guide.initialization import initialize_election, read_election_configuration
 from election_guide.inventory.importer import (
     extract_public_inputs,
@@ -280,6 +287,57 @@ def hosting_verify(
         f"Pages site: verified ({len(result.elections)} elections; "
         f"current {result.current_election_id}; {len(result.assets)} assets)"
     )
+
+
+@hosting_app.command("check-updates")
+def hosting_check_updates(
+    site_dir: Annotated[Path, typer.Argument(exists=True, file_okay=False, readable=True)],
+    baseline_site_dir: Annotated[
+        Path | None,
+        typer.Option(
+            help="Use a retained production artifact for an offline diagnostic comparison."
+        ),
+    ] = None,
+    output_path: Annotated[Path, typer.Option(file_okay=True, dir_okay=False)] = Path(
+        "dist/updates-check.json"
+    ),
+) -> None:
+    """Require new served Updates entries for changes since successful production."""
+    report: dict[str, Any]
+    try:
+        if baseline_site_dir is not None:
+            report = check_updates(baseline_site_dir, site_dir)
+            report["baseline"] = {"local_site_dir": str(baseline_site_dir)}
+        else:
+            with tempfile.TemporaryDirectory(prefix="updates-baseline-") as temporary:
+                baseline, receipt = resolve_production_snapshot(Path(temporary) / "site")
+                report = compare_updates_snapshots(baseline, build_updates_snapshot(site_dir))
+                report["baseline"] = receipt
+        report["candidate_manifest_sha256"] = hashlib.sha256(
+            (site_dir / "deployment-manifest.json").read_bytes()
+        ).hexdigest()
+    except (
+        OSError,
+        UnicodeError,
+        ValueError,
+        KeyError,
+        TypeError,
+        subprocess.SubprocessError,
+    ) as error:
+        report = {"schema_version": "1.0", "result": "fail", "error": str(error)}
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_bytes(canonical_json_bytes(report))
+    if report["result"] != "pass":
+        typer.echo("Updates check failed", err=True)
+        if "error" in report:
+            typer.echo(report["error"], err=True)
+        for election, result in report.get("elections", {}).items():
+            if result["result"] != "pass":
+                typer.echo(f"{election}: add a new entry to {result['updates_path']}", err=True)
+                for page in result["changed_pages"]:
+                    typer.echo(f"  {page}", err=True)
+        raise typer.Exit(code=1)
+    typer.echo(f"Updates: verified ({len(report['elections'])} elections; {output_path})")
 
 
 @hosting_app.command("bundle-hash")
@@ -2018,10 +2076,9 @@ def analytics_export(
 ) -> None:
     """Archive every in-window UTC day that is not archived yet (O9 follow-up, #381).
 
-    One command rather than a backfill and a scheduler, because they are the
-    same operation: ask which days are missing, fetch those, write them. That
-    is what makes the schedule self-healing — a run that never fired leaves a
-    gap the next run fills on its own — and it is why re-running is free.
+    Manual investigations use a separate --archive-dir from the retired
+    repository history (docs/MONITORING.md). Missed in-window days are fetched;
+    expired interior dates are explained separately under that directory's gaps/.
 
     An already-archived day is never re-fetched. Byte-identity across runs is
     then a property of not asking again, rather than a bet that Cloudflare
@@ -2044,10 +2101,6 @@ def analytics_export(
     except ValueError as error:
         typer.echo(f"analytics export failed: {error}", err=True)
         raise typer.Exit(code=1) from error
-
-    if not pending:
-        typer.echo(f"analytics export: 0 archived, {len(already)} already present")
-        return
 
     written: list[Path] = []
     # An empty answer is ambiguous: it is what a day outside the retention
@@ -2076,8 +2129,9 @@ def analytics_export(
         # Resolved before the first fetch and before any write, so a missing
         # or unscoped credential fails with an empty archive, never a partial
         # one.
-        zone = open_analytics_zone()
+        zone = open_analytics_zone() if pending else None
         for candidate in pending:
+            assert zone is not None
             rollup = zone.archive_day(candidate, as_of=today)
             if rollup is None:
                 if oldest_with_data is None or oldest_with_data >= candidate:
@@ -2088,6 +2142,7 @@ def analytics_export(
             elif oldest_with_data is None or candidate < oldest_with_data:
                 oldest_with_data = candidate
             written.append(write_rollup(archive_dir, rollup))
+        gap_path = record_expired_gaps(archive_dir, as_of=today)
     except (OSError, ValidationError, ValueError) as error:
         # The credential is named on every failure, not only the ones this
         # process can attribute to it: the operator's next move is the same
@@ -2100,8 +2155,11 @@ def analytics_export(
         )
         raise typer.Exit(code=1) from error
 
+    if gap_path is not None:
+        typer.echo(f"analytics export: expired gap dates recorded -> {gap_path}")
+
     # An operator who named one date gets an exit code about that date; a
-    # scheduled sweep reports and carries on, because one day past the window
+    # full sweep reports and carries on, because one day past the window
     # is not a reason to abandon the other twenty-nine.
     for candidate in aged_out:
         typer.echo(

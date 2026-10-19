@@ -276,6 +276,13 @@ release status/manifest to its declaration, requires the exact declared asset se
 every asset hash. `deployment-manifest.json` is the documented sole exclusion from its own asset
 hash map.
 
+New staged sites also contain `updates-snapshot.json`, a manifest-hashed summary of the served
+aggregate/position pages and Updates entry identities. Independent verification recomputes it
+from the actual staged pages and rejects a stale snapshot even when its file hash was updated.
+The required publication lane and serialized deployment both run `make check-updates` against
+the last successful production baseline before uploading changed election content. See
+[the Updates gate](RELEASE.md#public-update-log) for scope, normalization, and failure recovery.
+
 Preview the staged directory with Wrangler:
 
 ```bash
@@ -318,8 +325,10 @@ Four rules govern when a preview exists:
 - **Closing tears the preview down.** Closing or merging the pull request deletes its deployments.
   Teardown is not label-gated, so a preview whose label was removed before the pull request closed
   is still cleaned up. It enumerates every page of the Cloudflare deployments API with
-  `env=preview`, then deletes only entries whose raw `deployment_trigger.metadata.branch` equals
-  `pr-<number>` and whose `environment` is `preview`. Enumeration finishes before deletion so
+  `env=preview` and Cloudflare's default page size, continuing until an empty page as in
+  [Cloudflare's SDK pagination](https://github.com/cloudflare/cloudflare-typescript/blob/main/src/core/pagination.ts).
+  A short nonempty page does not end enumeration. Teardown then deletes only entries whose raw
+  `deployment_trigger.metadata.branch` equals `pr-<number>` and whose `environment` is `preview`. Enumeration finishes before deletion so
   removing entries cannot shift unread pages. HTTP errors, unsuccessful API responses, and
   malformed deployment records fail the job; only a complete listing with no matches is a no-op.
 - **`CLOUDFLARE_PAGES_ENABLED` still applies.** Previews respect the same publication switch as

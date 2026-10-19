@@ -13,6 +13,7 @@ name: CI
 permissions:
   contents: read
   actions: read
+  deployments: read
   pull-requests: read
   issues: read
 env:
@@ -258,6 +259,18 @@ jobs:
     - name: Independently verify staged site
       run: uv run election-guide hosting verify config/hosting/site.yaml dist/cloudflare-site --expected-git-commit
         "$RELEASE_SOURCE_SHA"
+    - name: Require published Updates for changed election pages
+      run: make check-updates
+      env:
+        GH_TOKEN: ${{ github.token }}
+    - name: Preserve publication Updates check
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: updates-check-publication-${{ github.run_id }}-${{ github.run_attempt }}
+        path: dist/updates-check.json
+        if-no-files-found: ignore
+        retention-days: 7
     - name: Preserve candidate-review
       uses: actions/upload-artifact@v4
       with:
@@ -432,6 +445,18 @@ jobs:
       id: admission
       env:
         CLOUDFLARE_PAGES_ENABLED: ${{ vars.CLOUDFLARE_PAGES_ENABLED }}
+    - name: Recheck published Updates against production
+      run: make check-updates
+      env:
+        GH_TOKEN: ${{ github.token }}
+    - name: Preserve deployment Updates check
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: updates-check-deployment-${{ github.run_id }}-${{ github.run_attempt }}
+        path: dist/updates-check.json
+        if-no-files-found: ignore
+        retention-days: 7
     - name: Create owned production deployment
       run: uv run election-guide release automation create-deployment --publication dist/publication.json --output
         dist/upload/deployment.json

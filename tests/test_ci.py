@@ -23,6 +23,36 @@ PARALLEL_JOBS = ("python", "client", "contracts", "tests", "publication")
 SHARED_CONTRACT_COMMAND = "make check-election-contracts"
 
 
+def test_updates_gate_is_required_in_publication_and_serialized_deployment() -> None:
+    workflow = yaml.load(
+        (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(), Loader=yaml.BaseLoader
+    )
+    jobs = workflow["jobs"]
+    for job_id in ("publication", "deploy"):
+        steps = jobs[job_id]["steps"]
+        gate = next(step for step in steps if step.get("run") == "make check-updates")
+        assert "if" not in gate
+        assert gate["env"]["GH_TOKEN"] == "${{ github.token }}"
+        after_gate = steps[steps.index(gate) + 1 :]
+        assert any(
+            step.get("if") == "always()" and "upload-artifact@" in step.get("uses", "")
+            for step in after_gate
+        )
+    deploy_steps = jobs["deploy"]["steps"]
+    deploy = next(step for step in deploy_steps if step.get("name") == "Deploy production site")
+    assert deploy_steps.index(
+        next(s for s in deploy_steps if s.get("run") == "make check-updates")
+    ) < deploy_steps.index(deploy)
+    assert workflow["concurrency"]["cancel-in-progress"] == "false"
+    assert jobs["deploy"]["permissions"]["actions"] == "read"
+    assert workflow["permissions"]["actions"] == "read"
+    assert workflow["permissions"]["deployments"] == "read"
+    assert "publication" in jobs["check"]["needs"]
+    command = _make_dry_run("check-updates")
+    assert command.returncode == 0
+    assert "hosting check-updates dist/cloudflare-site" in command.stdout
+
+
 def _assert_contracts_lane_uses_shared_target(workflow_text: str) -> None:
     """Reject a contracts lane that reconstructs the election list itself."""
     workflow = yaml.load(workflow_text, Loader=yaml.BaseLoader)

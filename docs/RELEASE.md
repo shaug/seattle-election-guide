@@ -23,6 +23,50 @@ The update log ships with the release that publishes the changes. Keep historica
 immutable release bundles intact. An update's date does not assert when a source announced its
 endorsement.
 
+`make check-updates` enforces this policy after staging. It compares both elections' aggregate
+and position pages with the last successful production deployment, including the archived
+election's pages rendered by current code. It runs in the required Publication build lane and
+again before the serialized production upload. Its JSON report lists changed pages and the new
+entries actually present in each affected election's served `/updates/` page. Editing repository
+YAML that is absent from an immutable archived bundle does not satisfy the gate: publish a new
+archive containing the entry and update its reviewed pins.
+
+Each staged site carries `updates-snapshot.json`, protected by the deployment manifest's asset
+hash. It records content fingerprints and dated/headlined entry identities, so the next check
+does not depend on short-lived Actions artifacts. The served source and manifest hash must match
+the last verified automatic-release upload. Before the first snapshot is deployed, the
+gate downloads and verifies the legacy `cloudflare-site` artifact for the successful production
+revision, or the exact promotion artifact bound to a verified automatic-release receipt. A
+successful job that skipped uploading cannot replace that baseline. Missing or expired bootstrap
+evidence, unavailable production, a hash mismatch, or a
+different served revision blocks publication; none falls back to a release tag or newer main.
+
+The comparison includes rendered markup, CSS, client payloads, bundled code and referenced local
+script/stylesheets. Only HTML comments/formatting whitespace, the footer's site-build stamp,
+the data-cutoff date and input-hash labels, and the client's top-level `data_version` are
+normalized. Actual source/panel identities, counts, shares, evidence, results, and behavior remain
+compared, including visible word separators, non-breaking spaces, and preformatted text.
+CSS and code comparisons are conservative: a change to their shipped bytes may need
+an entry even when the initial visible text stays the same. An unchanged refresh needs none.
+The Updates page itself is excluded, so correcting history does not require a recursive entry.
+
+A changed election requires an additional dated/headlined entry while retaining existing entry
+identities. Editing a body, replacing an old entry, or adding an entry to another election cannot
+satisfy it. Correct historical dates/headlines separately from a content change so those repairs
+cannot masquerade as its new entry. Review still verifies that the prose and linked batch record
+explain every change; the mechanical gate enforces presence and election scope.
+
+For an offline diagnostic against a retained production artifact:
+
+```bash
+uv run election-guide hosting check-updates dist/cloudflare-site \
+  --baseline-site-dir dist/retained-production-site \
+  --output-path dist/updates-check.json
+```
+
+CI and production always resolve the baseline from production; they do not use the diagnostic
+override. `make check` remains offline and exercises the gate with fixtures.
+
 ## Audited inputs
 
 `data/releases/wa-2026-general/source-decisions.yaml` contains reviewed structured transcriptions,
