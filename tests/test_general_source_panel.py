@@ -210,7 +210,7 @@ def test_general_additions_preserve_verified_choices_and_coendorsement_allocatio
     tech = by_key["tech-4-taxes", "initiative-26-645"]
     assert tech["candidate_ids"] == ["initiative-26-645--no"]
     assert tech["allocation"] == {"initiative-26-645--no": "1"}
-    assert len(dataset["endorsements"]) == 914
+    assert len(dataset["endorsements"]) == 915
     assert not {"king-county-republican-party", "progressive-voters-guide"} & {
         row["source_id"] for row in dataset["endorsements"]
     }
@@ -246,6 +246,13 @@ def test_october18_additions_do_not_inherit_earlier_source_provenance() -> None:
 @pytest.mark.parametrize(
     ("source_id", "race_id", "publication_url", "retained_race_id", "retained_url"),
     [
+        (
+            "46th-district-democrats",
+            "seattle-proposition-1-transit",
+            "https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_positions",
+            "us-house-7",
+            "https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_positions",
+        ),
         (
             "11th-district-democrats",
             "king-county-director-of-elections",
@@ -288,7 +295,7 @@ def test_new_endorsement_receipts_open_the_approved_publication(
     report = score_dataset(
         dataset,
         read_scoring_configuration(PROJECT_ROOT / "config/scoring/default.yaml"),
-        computed_at=datetime(2026, 10, 19, 5, tzinfo=UTC),
+        computed_at=max(row.reviewed_at for row in dataset.endorsements if row.reviewed_at),
     )
     bundle = build_publication_bundle(
         dataset, report, git_commit="receipt-regression", snapshot_root=GENERAL_SNAPSHOT_ROOT

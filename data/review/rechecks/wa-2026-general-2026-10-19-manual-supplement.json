@@ -1,0 +1,45 @@
+{
+  "actual_successful_publication_url": "https://wadems.org/2026-campaign-resources/",
+  "derived_fact_record_sha256": "be72b88be7b4c272f63e62e608a771ad52ed101aad4e6945421bea27fa1747d4",
+  "derived_factual_browser_observation": {
+    "access_limitations": "No login or challenge encountered in normal browser; optional donation popup not an endorsement source.",
+    "decisions": [
+      {
+        "href": "https://no645.com/",
+        "source_wording": "No on I-645"
+      },
+      {
+        "href": "https://nohateinwastate.org/",
+        "source_wording": "No on I-001"
+      },
+      {
+        "href": "https://nohateinwastate.org/",
+        "source_wording": "No on I-638"
+      }
+    ],
+    "heading": "2026 Campaign Resources",
+    "http_status": null,
+    "initiative_heading": "Vote No on Statewide Initiatives",
+    "method": "normal public IAB navigation and accessibility tree read; tool trace includes exact current content",
+    "no_new_candidate_endorsement_on_this_page": true,
+    "not_original_response_html": true,
+    "observed_at": "2026-10-19T14:38:58.358397+00:00",
+    "observer": "OpenAI Codex (root)",
+    "record_type": "derived_factual_browser_observation",
+    "related_visualizer_review": "separate; not inferred from link",
+    "related_visualizer_url": "https://washingtonsupremecourt.org/",
+    "source_id": "washington-state-democrats",
+    "url": "https://wadems.org/2026-campaign-resources/"
+  },
+  "http_status_for_browser_observation": null,
+  "issue": 578,
+  "linked_visualizer_disposition": "Root followed the exact linked Washington State Supreme Court Visualizer. It explicitly credits Northwest Progressive Institute & Foundation; its third-party matrix is not a State Democrats endorsement. No judicial choices are inferred.",
+  "no_new_decision_or_review_approval": true,
+  "prepared_at": "2026-10-19T15:00:44.455506+00:00",
+  "reason": "The consolidated source record retains direct HTTP403 plus official-home HTTP200 and describes the separate successful root browser read. This adds that browser observation and its exact private-custody hash; it does not relabel the failed HTTP response.",
+  "record_type": "manual_research_source_reference_supplement",
+  "schema_version": "1.0",
+  "source_id": "washington-state-democrats",
+  "supplements_path": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json",
+  "supplements_sha256": "41b2356a7738f5bcf47e27200c6d375ebc32942f0fd1b5c488a819f34dbe9f6f"
+}

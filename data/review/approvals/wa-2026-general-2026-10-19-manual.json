@@ -1,0 +1,173 @@
+{
+  "schema_version": "1.0",
+  "record_type": "delegated_manual_review_application",
+  "issue": 578,
+  "applied_at": "2026-10-19T14:52:13.309385+00:00",
+  "authorization_reference": "data/review/approvals/wa-2026-general-2026-10-19-transit.json#human_authorization",
+  "source_research_record": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json",
+  "source_research_sha256": "41b2356a7738f5bcf47e27200c6d375ebc32942f0fd1b5c488a819f34dbe9f6f",
+  "legacy_check_mode": "human",
+  "actual_reviewer_identity_in_each_evidence_field": true,
+  "personal_human_source_read_asserted": false,
+  "records": [
+    {
+      "path": "data/verification/wa-2026-general/checks/0481e690e942ad2e0707ad8b813bd84b5530bbcf22b3f754a787e2a0ec9a4ba6.json",
+      "sha256": "0481e690e942ad2e0707ad8b813bd84b5530bbcf22b3f754a787e2a0ec9a4ba6"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/1314997bad22f130f0d1043874bd597a412652e74e2b04909c87f0d0aa124231.json",
+      "sha256": "1314997bad22f130f0d1043874bd597a412652e74e2b04909c87f0d0aa124231"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/13744094225fcb6be142368047f6770b5734adb3f9a9c8c514b2b766902d568c.json",
+      "sha256": "13744094225fcb6be142368047f6770b5734adb3f9a9c8c514b2b766902d568c"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/17940c29ae3a9687d464bcc98c37e2a69a432e13dbd4e853d8e19c2a3e26e786.json",
+      "sha256": "17940c29ae3a9687d464bcc98c37e2a69a432e13dbd4e853d8e19c2a3e26e786"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/19cf258f2f5d6801ddc99504ade50c5ce3a84fc231eb05a6494209b7a36abdff.json",
+      "sha256": "19cf258f2f5d6801ddc99504ade50c5ce3a84fc231eb05a6494209b7a36abdff"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/2054fd53cd043b0f80217c4c1226cd31a7b2c48b2e3f33fbc69706d922bbdf57.json",
+      "sha256": "2054fd53cd043b0f80217c4c1226cd31a7b2c48b2e3f33fbc69706d922bbdf57"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/20bb28dff92f16e7e5f8fc5e7c005426d2e6e4a3e09763ef2d7faa78569bf021.json",
+      "sha256": "20bb28dff92f16e7e5f8fc5e7c005426d2e6e4a3e09763ef2d7faa78569bf021"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/283b6f153113a72492ddb1c97c505baf9f9e47f573a621dd3bc14d7402644fa8.json",
+      "sha256": "283b6f153113a72492ddb1c97c505baf9f9e47f573a621dd3bc14d7402644fa8"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/29e853ba14d3f63ad3466146b6b149c45c93c9f3b8b361b935648840026c36a0.json",
+      "sha256": "29e853ba14d3f63ad3466146b6b149c45c93c9f3b8b361b935648840026c36a0"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/2c7bcf1bb6406f59e93904bb197939d47efe14f81f14b626e98848d76afb063b.json",
+      "sha256": "2c7bcf1bb6406f59e93904bb197939d47efe14f81f14b626e98848d76afb063b"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/2cd12c686fefadc3e449a22c0b1a89852e3d05d94ac870f28c4a5de4ab377567.json",
+      "sha256": "2cd12c686fefadc3e449a22c0b1a89852e3d05d94ac870f28c4a5de4ab377567"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/33bb8429924026115e14f8d35468cedee6fd15f01dced0bf4a0a6de751a4825c.json",
+      "sha256": "33bb8429924026115e14f8d35468cedee6fd15f01dced0bf4a0a6de751a4825c"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/3cf431897ac698ae1fe0bdf55482c1859f45d3a1829c3573c359200dc754debe.json",
+      "sha256": "3cf431897ac698ae1fe0bdf55482c1859f45d3a1829c3573c359200dc754debe"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/3dc6378c2342dd57f0f0fb7f5b060c57cfa62307a2cd2f7001c30601ebefa4a7.json",
+      "sha256": "3dc6378c2342dd57f0f0fb7f5b060c57cfa62307a2cd2f7001c30601ebefa4a7"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/3e03b6a87878ec3ddf0715d5f3caac39bac2096b50ca29c403bd1d6c9a5b7d6a.json",
+      "sha256": "3e03b6a87878ec3ddf0715d5f3caac39bac2096b50ca29c403bd1d6c9a5b7d6a"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/3ee65f0487e1a598baa6cffc9c782de7ef9ec46824d148f198f8bbc8b07a99e3.json",
+      "sha256": "3ee65f0487e1a598baa6cffc9c782de7ef9ec46824d148f198f8bbc8b07a99e3"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/4f2bdda31180e99a49f1daa748de10639adc4f85f428879b7ad1a51e3f1fd5bf.json",
+      "sha256": "4f2bdda31180e99a49f1daa748de10639adc4f85f428879b7ad1a51e3f1fd5bf"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/53143b4d1ae4d22c86ecae5f1d4e6c71e035584e5b04e2f6cffa19dd81542a05.json",
+      "sha256": "53143b4d1ae4d22c86ecae5f1d4e6c71e035584e5b04e2f6cffa19dd81542a05"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/564cefbf1ccafa25d5e15b36b4bce61b8c62e69f7b6a1fcea34f535ccd8e7bde.json",
+      "sha256": "564cefbf1ccafa25d5e15b36b4bce61b8c62e69f7b6a1fcea34f535ccd8e7bde"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/57b644144bb7637f578817bccf28987f47f53d681cd4a6cf92ddf899fbca0e8a.json",
+      "sha256": "57b644144bb7637f578817bccf28987f47f53d681cd4a6cf92ddf899fbca0e8a"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/582e0764f0acecb4e1b6b0b0a5b170cabe3a82d06fe12d5e87f9556fce1471a7.json",
+      "sha256": "582e0764f0acecb4e1b6b0b0a5b170cabe3a82d06fe12d5e87f9556fce1471a7"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5a08a190b856085723be9238db57c2ba98ae55a46c4e38a5c4f2a513d6e5bd86.json",
+      "sha256": "5a08a190b856085723be9238db57c2ba98ae55a46c4e38a5c4f2a513d6e5bd86"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/5d38ff47f38dfd6f55f9d6fb020c583053f612dd45e64992f250e51700a53130.json",
+      "sha256": "5d38ff47f38dfd6f55f9d6fb020c583053f612dd45e64992f250e51700a53130"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/60445c00af327ca657e53ea9e0c012b36fb105c5f6c5eddcc88ba54effa26b3e.json",
+      "sha256": "60445c00af327ca657e53ea9e0c012b36fb105c5f6c5eddcc88ba54effa26b3e"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/701d836d93bd2b397b1ecf581d0867707fb95c770dfa7fb05c2c674911ecb159.json",
+      "sha256": "701d836d93bd2b397b1ecf581d0867707fb95c770dfa7fb05c2c674911ecb159"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/8dc3eb5aa0052ec2c2c1799f9b6c190cff1b29cc9cae5fd43baead43a6763f96.json",
+      "sha256": "8dc3eb5aa0052ec2c2c1799f9b6c190cff1b29cc9cae5fd43baead43a6763f96"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/8fa89faa31f337c42c25c1b44304e2511cef1449219d9c7911d896fd4a8c1a4f.json",
+      "sha256": "8fa89faa31f337c42c25c1b44304e2511cef1449219d9c7911d896fd4a8c1a4f"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/a23f82ada31cdc2ed57139b8b573fdc3d2279d96af78b5f346dad7c513bedc7b.json",
+      "sha256": "a23f82ada31cdc2ed57139b8b573fdc3d2279d96af78b5f346dad7c513bedc7b"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/a7b754d5bacf8f1a1e4bea5b4fcbc1bcf3df81a893b63971dee3e9f67ab60cda.json",
+      "sha256": "a7b754d5bacf8f1a1e4bea5b4fcbc1bcf3df81a893b63971dee3e9f67ab60cda"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/b0a3f44315bd35c56d68e52bf550c47995bb491ac727e3d5537c7b7f0d4cdcfa.json",
+      "sha256": "b0a3f44315bd35c56d68e52bf550c47995bb491ac727e3d5537c7b7f0d4cdcfa"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/b268c3606a71ebbb02a6a363adc3c664a67e42cb5b523b83392802ba4b213468.json",
+      "sha256": "b268c3606a71ebbb02a6a363adc3c664a67e42cb5b523b83392802ba4b213468"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/c1c2f2958e2db65b5b91149e7a8de20e30996e1c947944a1925148cad0c3979a.json",
+      "sha256": "c1c2f2958e2db65b5b91149e7a8de20e30996e1c947944a1925148cad0c3979a"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/e009cef981faf1838e25f3d755bdbcbe62a173f51469f5c6d19f307dc8109a07.json",
+      "sha256": "e009cef981faf1838e25f3d755bdbcbe62a173f51469f5c6d19f307dc8109a07"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/e036015c526c67cc0349c452cfb4107ea7dfd3c91973c2f7d9aa2caed41ac03c.json",
+      "sha256": "e036015c526c67cc0349c452cfb4107ea7dfd3c91973c2f7d9aa2caed41ac03c"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/e2ab7c2028e971860b1130e8e183453bf70e61d0846b9ce4d6ee74581cff61a2.json",
+      "sha256": "e2ab7c2028e971860b1130e8e183453bf70e61d0846b9ce4d6ee74581cff61a2"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/e5904b969d5205016a2ac708b429b4aab51d1b7f51c086a4dcd7f3a1146f7a0c.json",
+      "sha256": "e5904b969d5205016a2ac708b429b4aab51d1b7f51c086a4dcd7f3a1146f7a0c"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/f08776680c1d269f9c8cd4e2ca0acf0968206c96452be7a9a14b5aad6401b13b.json",
+      "sha256": "f08776680c1d269f9c8cd4e2ca0acf0968206c96452be7a9a14b5aad6401b13b"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/f7b81693ea3224e2a194ba9f21c18eeb21a219bd271cd525abb01acdfb437e4a.json",
+      "sha256": "f7b81693ea3224e2a194ba9f21c18eeb21a219bd271cd525abb01acdfb437e4a"
+    },
+    {
+      "path": "data/verification/wa-2026-general/checks/f7d83a4ea0873a229158ca7e28045fd4ca9c295c888a4ed3e97416997e6afb1d.json",
+      "sha256": "f7d83a4ea0873a229158ca7e28045fd4ca9c295c888a4ed3e97416997e6afb1d"
+    }
+  ],
+  "unacknowledged_source_ids": [
+    "seattle-times-editorial-board"
+  ]
+}

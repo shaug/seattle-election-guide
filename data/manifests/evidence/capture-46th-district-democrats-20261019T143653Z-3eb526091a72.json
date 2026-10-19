@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 38149,
+  "canonical_url": "https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_positions",
+  "capture_method": "static_html",
+  "content_sha256": "3668680706f1ab4525b277d4b775da4e85bdf8797d9718259a4434c3fb0c0c74",
+  "http_status": 200,
+  "id": "capture-46th-district-democrats-20261019T143653Z-3eb526091a72",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Complete original retained in the primary persistent private capture store; only provenance and the verified short factual excerpt are public.",
+  "requested_url": "https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_positions",
+  "retrieved_at": "2026-10-19T14:36:53.724038Z",
+  "schema_version": "1.0",
+  "source_id": "46th-district-democrats",
+  "storage_reference": "sha256/36/3668680706f1ab4525b277d4b775da4e85bdf8797d9718259a4434c3fb0c0c74",
+  "storage_scope": "local_only",
+  "title": "2026 46th District Dems Endorsed Candidates and Positions",
+  "updated_at": null
+}

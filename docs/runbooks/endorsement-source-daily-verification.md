@@ -219,6 +219,10 @@ proposed sections without GitHub writes and permits an uncommitted local exercis
 
 ## Adoption evidence and postmortem notes
 
+### October 19 explicit delegation
+
+For the current October 19 transaction, the maintainer directly delegated source checks and necessary endorsement changes to Codex without a separate approval prompt. The [transaction record](../GENERAL_VERIFICATION_2026-10-19.md) describes this scoped exception to the usual separate human spot-check and identifies the actual delegated reviewers. The existing manual commands retain their legacy `human` mode; evidence must explicitly name the Codex reviewer and delegation rather than asserting a new personal human source read. This does not authorize future unattended judgments, acknowledge inaccessible publications, approve fixtures, or convert an operator recovery into scheduled adoption evidence.
+
 The first live run on October 15 exposed publication-layout gaps (#542): SGN's
 article headline is an `h2.mb-3.font-weight-bold`, and WFP's national index now
 groups candidates under a Washington section. The adapters also recognize
