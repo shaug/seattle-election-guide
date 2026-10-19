@@ -142,6 +142,13 @@ def _fetch_body(
         return Observation(error=str(error)), None
 
 
+def fetch_asset_body(
+    base_url: str, path: str, *, timeout: float
+) -> tuple[Observation, bytes | None]:
+    """Read a first-party asset using the same unfollowed production probe transport."""
+    return _fetch_body(base_url, path, timeout=timeout)
+
+
 def run_production_check(
     base_url: str,
     *,

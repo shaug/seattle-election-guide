@@ -18,6 +18,11 @@ from election_guide.hosting.models import (
     SiteManifest,
 )
 from election_guide.hosting.releases import materialize_released_bundle
+from election_guide.hosting.updates import (
+    UPDATES_SNAPSHOT,
+    build_updates_snapshot,
+    verify_updates_snapshot,
+)
 from election_guide.publication.calendar_feed import build_calendar_feed
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
@@ -254,7 +259,7 @@ def stage_pages_site(
         public_paths.add(f"/{CALENDAR_FEED_NAME}")
 
         (stage / "_headers").write_text(PAGES_HEADERS, encoding="utf-8")
-        public_paths.add("/deployment-manifest.json")
+        public_paths.update({"/deployment-manifest.json", f"/{UPDATES_SNAPSHOT}"})
         (stage / "_worker.js").write_text(
             _pages_worker(
                 site_manifest,
@@ -269,6 +274,7 @@ def stage_pages_site(
             ),
             encoding="utf-8",
         )
+        deployment_assets = _artifact_hashes(stage)
         deployment_manifest = {
             "schema_version": "2.0",
             "canonical_origin": site_manifest.canonical_origin,
@@ -290,8 +296,13 @@ def stage_pages_site(
                 }
                 for bundle in verified
             ],
-            "assets": _artifact_hashes(stage),
+            "assets": deployment_assets,
         }
+        (stage / "deployment-manifest.json").write_bytes(canonical_json_bytes(deployment_manifest))
+        (stage / UPDATES_SNAPSHOT).write_bytes(
+            canonical_json_bytes(build_updates_snapshot(stage).model_dump(mode="json"))
+        )
+        deployment_assets[UPDATES_SNAPSHOT] = _sha256(stage / UPDATES_SNAPSHOT)
         (stage / "deployment-manifest.json").write_bytes(canonical_json_bytes(deployment_manifest))
         _verify_staged_pages_site(
             stage,
@@ -434,6 +445,8 @@ def _verify_staged_pages_site(
     for relative in sorted(deployment.assets):
         if relative.endswith(".html"):
             _verify_meter_markup(site_dir / relative)
+    if UPDATES_SNAPSHOT in deployment.assets:
+        verify_updates_snapshot(site_dir)
     return deployment
 
 
