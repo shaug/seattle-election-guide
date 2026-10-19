@@ -186,18 +186,17 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           # Wrangler lists only one page. Read the raw API through the final
-          # short page, even when earlier pages contain no matching branch.
+          # empty page, even when earlier pages contain no matching branch.
+          # Use Cloudflare's default page size rather than a custom override.
           # Finish enumeration before deleting: deletion would shift later
           # pages, and a failed listing must never look like an empty result.
           page=1
-          per_page=100
           : > deployment-ids.txt
           while true; do
             curl --fail --silent --show-error --get \
               "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/seattle-elections/deployments" \
               --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
               --data-urlencode "env=preview" \
-              --data-urlencode "per_page=$per_page" \
               --data-urlencode "page=$page" \
               --output deployments.json
             if ! jq -e '
@@ -214,7 +213,7 @@ jobs:
               '.result[] | select(.environment == "preview" and .deployment_trigger.metadata.branch == $branch) | .id' \
               deployments.json >> deployment-ids.txt
             count="$(jq '.result | length' deployments.json)"
-            if [ "$count" -lt "$per_page" ]; then
+            if [ "$count" -eq 0 ]; then
               break
             fi
             page=$((page + 1))
