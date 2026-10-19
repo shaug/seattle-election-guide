@@ -207,3 +207,30 @@ def test_general_additions_preserve_verified_choices_and_coendorsement_allocatio
     assert not {"king-county-republican-party", "progressive-voters-guide"} & {
         row["source_id"] for row in dataset["endorsements"]
     }
+
+
+def test_october18_additions_do_not_inherit_earlier_source_provenance() -> None:
+    approval = json.loads(
+        (PROJECT_ROOT / "data/review/approvals/wa-2026-general-2026-10-18.json").read_text()
+    )
+    dataset = json.loads(GENERAL_DATASET_PATH.read_text())
+    by_key = {(row["source_id"], row["race_id"]): row for row in dataset["endorsements"]}
+    approved_at = datetime.fromisoformat(approval["reviewed_at"])
+
+    for decision in approval["approved_decisions"]:
+        key = (decision["source_id"], decision["race_id"])
+        row = by_key[key]
+        assert datetime.fromisoformat(row["reviewed_at"]) >= approved_at, key
+        if not approval["prior_source_reviews"].get(decision["source_id"]):
+            continue
+        original = json.loads(
+            (
+                PROJECT_ROOT / "data/manifests/evidence" / f"{decision['capture_id']}.json"
+            ).read_text()
+        )
+        compiled = json.loads(
+            (GENERAL_MANIFEST_DIR / f"{row['source_capture_id']}.json").read_text()
+        )
+        assert datetime.fromisoformat(compiled["retrieved_at"]) >= datetime.fromisoformat(
+            original["retrieved_at"]
+        ), key

@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-10-16T15:04:11.581148Z",
+  "captured_at": "2026-10-19T03:13:06.726105Z",
   "decisions": [
     {
       "candidate_ids": [
@@ -38,8 +38,8 @@
       "status": "endorsed"
     }
   ],
-  "evidence_locator": "October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
-  "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Related-event widget changed; Jaelynn Scott endorsement text unchanged. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle official endorsement; shaug verified the wording, general-ballot match, and current-cycle treatment. October 18 targeted update: shaug approved the enumerated additions for this source in data/review/approvals/wa-2026-general-2026-10-18.json. Prior choices, statuses, allocations and review times remain intact; no new whole-publication or daily/baseline attestation.",
+  "evidence_locator": "Complete current source review: data/review/approvals/wa-2026-general-2026-10-18-verification.json; actual source captures capture-seattle-democratic-socialists-20261019T031306Z-4c7d863c169c. Individual decisions retain their own exact publication locators, including earlier approved evidence. Metadata correction: data/review/provenance-corrections/wa-2026-general-2026-10-18.json.",
+  "review_note": "shaug approved the complete current source review at 2026-10-19T04:14:31.209146Z: data/review/approvals/wa-2026-general-2026-10-18-verification.json. The enumerated additions were separately approved at 2026-10-19T03:51:20.554554Z: data/review/approvals/wa-2026-general-2026-10-18.json. OpenAI Codex transcribed both approvals. This source block uses the actual current capture and complete source-review times; earlier source metadata is preserved verbatim in data/review/provenance-corrections/wa-2026-general-2026-10-18.json and the original approval prior_source_reviews. All decision dictionaries, original per-decision locators, prior source-label mappings and allocations are unchanged. Omissions do not establish withdrawals; preserve the earlier 11th District CD9 no-endorsement and the Times comparison-only treatment. No new human approval, baseline adoption or historical webpage access is asserted by the metadata correction.",
   "reviewer": "shaug",
   "source_id": "seattle-democratic-socialists"
 }
