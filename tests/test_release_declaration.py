@@ -232,6 +232,7 @@ def test_cli_preparation_reads_all_remote_names(
     remote_main.elections[0].release_version = "2026-general.20"
     remote_main.elections[0].bundle_id = "wa-2026-general-2026-general.20"
     sha = git(repository, "rev-parse", "HEAD")
+    git(repository, "tag", "2026-general.20", sha)
 
     def remote(command: list[str], failure: str) -> str:
         endpoint = command[2]
@@ -444,6 +445,110 @@ def commit_fixture(repo: Path, message: str) -> str:
     git(repo, "add", ".")
     git(repo, "-c", "user.name=Test", "-c", "user.email=test@example.org", "commit", "-m", message)
     return git(repo, "rev-parse", "HEAD")
+
+
+@pytest.fixture(params=[False, True], ids=["lightweight", "annotated"])
+def published_boundary(
+    repository: Path, monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+) -> tuple[Path, str]:
+    """Authenticate a published declaration while its named tag is absent locally."""
+    prepare(repository)
+    source_sha = commit_fixture(repository, "fixture: published release")
+    version = "2026-general.9"
+    tag_args = ["-a", "-m", "Published release"] if request.param else []
+    git(
+        repository,
+        "-c",
+        "user.name=Test",
+        "-c",
+        "user.email=test@example.org",
+        "tag",
+        *tag_args,
+        version,
+    )
+    tag_sha = git(repository, "rev-parse", f"refs/tags/{version}")
+    git(repository, "tag", "unrelated-tag")
+    origin = repository.parent / f"{repository.name}-origin.git"
+    git(repository, "clone", "--bare", str(repository), str(origin))
+    git(repository, "remote", "add", "origin", str(origin))
+    git(repository, "tag", "-d", version, "unrelated-tag")
+    main_bytes = (repository / SITE).read_text()
+
+    def remote(command: list[str], failure: str) -> str:
+        endpoint = command[2]
+        if endpoint.endswith("/git/ref/heads/main"):
+            return json.dumps({"object": {"sha": source_sha, "type": "commit"}})
+        if "/contents/" in endpoint:
+            assert endpoint.endswith(f"?ref={source_sha}")
+            return main_bytes
+        if endpoint.endswith(f"/git/ref/tags/{version}"):
+            return json.dumps(
+                {"object": {"sha": tag_sha, "type": "tag" if request.param else "commit"}}
+            )
+        if request.param and endpoint.endswith(f"/git/tags/{tag_sha}"):
+            return json.dumps({"object": {"sha": source_sha, "type": "commit"}})
+        assert "--paginate" in command and "--slurp" in command
+        if "/tags?" in endpoint:
+            return json.dumps([[{"name": version}, {"name": "unrelated-tag"}]])
+        if "/releases?" in endpoint:
+            return json.dumps(
+                [[{"id": 9, "tag_name": version, "draft": False, "prerelease": False}]]
+            )
+        raise AssertionError((command, failure))
+
+    monkeypatch.chdir(repository)
+    monkeypatch.setattr("election_guide.release.automation_cli.run_gh", remote)
+    monkeypatch.setattr("election_guide.release.publication.run_gh", remote)
+    return origin, source_sha
+
+
+def test_cli_prepare_commit_admit_bootstraps_missing_published_tag(
+    repository: Path, published_boundary: tuple[Path, str]
+) -> None:
+    _, base_sha = published_boundary
+    assert git(repository, "cat-file", "-t", base_sha) == "commit"
+    assert git(repository, "tag", "--list") == ""
+
+    prepared = CliRunner().invoke(app, ["release", "automation", "prepare", "--issue", "550"])
+    assert prepared.exit_code == 0, prepared.output
+    commit_fixture(repository, "fix: next release request")
+    admitted = CliRunner().invoke(
+        app, ["release", "automation", "validate-request", "--base-sha", base_sha]
+    )
+    assert admitted.exit_code == 0, admitted.output
+    assert json.loads(admitted.stdout) == {"requests_release": True}
+    resolved = resolve_release(SITE, repository=repository)
+    assert resolved.current.release_version == "2026-general.10"
+    assert resolved.current.publication_request is not None
+    assert resolved.current.publication_request.previous_release_sha == base_sha
+    assert git(repository, "tag", "--list") == "2026-general.9"
+
+
+@pytest.mark.parametrize("conflict", ["local", "remote-moved"])
+def test_cli_preparation_rejects_tag_conflict_without_rewriting(
+    repository: Path, published_boundary: tuple[Path, str], conflict: str
+) -> None:
+    origin, _ = published_boundary
+    (repository / "README.md").write_text("A later source is not the published boundary.\n")
+    later_sha = commit_fixture(repository, "fixture: later source")
+    version = "2026-general.9"
+    if conflict == "local":
+        git(repository, "tag", version, later_sha)
+    else:
+        # The API authenticated the old tag; the Git remote moves before fetch.
+        git(origin, "fetch", "--no-tags", str(repository), later_sha)
+        git(origin, "update-ref", f"refs/tags/{version}", later_sha)
+    before = (repository / SITE).read_bytes()
+
+    result = CliRunner().invoke(app, ["release", "automation", "prepare", "--issue", "550"])
+
+    assert result.exit_code == 1, result.output
+    assert "tag" in result.output
+    assert (repository / SITE).read_bytes() == before
+    assert git(repository, "rev-parse", f"refs/tags/{version}^{{commit}}") == later_sha
+    assert git(origin, "rev-parse", f"refs/tags/{version}^{{commit}}") == (
+        later_sha if conflict == "remote-moved" else published_boundary[1]
+    )
 
 
 @pytest.mark.parametrize("command", ["prepare", "validate-request", "admit", "preflight"])
