@@ -185,6 +185,38 @@ def test_build_provenance_and_noop_refresh_need_no_entry(sites: tuple[Path, Path
     assert check_updates(baseline, candidate)["result"] == "pass"
 
 
+@pytest.mark.parametrize(
+    "before,after",
+    [
+        ("<strong>A</strong> B", "<strong>A</strong>B"),
+        ("A <strong>B</strong>", "A<strong>B</strong>"),
+        ("<span>A</span> <span>B</span>", "<span>A</span><span>B</span>"),
+        ("A&nbsp;B", "A B"),
+        ("<pre>A B</pre>", "<pre>A  B</pre>"),
+    ],
+)
+def test_visible_word_spacing_changes_require_an_entry(
+    sites: tuple[Path, Path], before: str, after: str
+) -> None:
+    baseline, candidate = sites
+    path = f"e/{GENERAL}/index.html"
+    _write(baseline, path, _page(before))
+    _write(candidate, path, _page(after))
+    for site in sites:
+        _seal(site)
+
+    assert check_updates(baseline, candidate)["result"] == "fail"
+
+
+def test_indentation_between_block_elements_needs_no_entry(sites: tuple[Path, Path]) -> None:
+    baseline, candidate = sites
+    indented = _page().replace("<main>", "<main>\n  ").replace("</p>", "</p>\n")
+    _write(candidate, f"e/{GENERAL}/index.html", indented)
+    _seal(candidate)
+
+    assert check_updates(baseline, candidate)["result"] == "pass"
+
+
 def test_referenced_client_asset_changes_require_an_entry(sites: tuple[Path, Path]) -> None:
     baseline, candidate = sites
     for site in sites:

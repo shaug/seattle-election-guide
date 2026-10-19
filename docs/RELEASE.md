@@ -44,7 +44,8 @@ The comparison includes rendered markup, CSS, client payloads, bundled code and 
 script/stylesheets. Only HTML comments/formatting whitespace, the footer's site-build stamp,
 the data-cutoff date and input-hash labels, and the client's top-level `data_version` are
 normalized. Actual source/panel identities, counts, shares, evidence, results, and behavior remain
-compared. CSS and code comparisons are conservative: a change to their shipped bytes may need
+compared, including visible word separators, non-breaking spaces, and preformatted text.
+CSS and code comparisons are conservative: a change to their shipped bytes may need
 an entry even when the initial visible text stays the same. An unchanged refresh needs none.
 The Updates page itself is excluded, so correcting history does not require a recursive entry.
 

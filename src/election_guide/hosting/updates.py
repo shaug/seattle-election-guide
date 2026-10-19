@@ -29,6 +29,50 @@ _VOID = frozenset(
         "wbr",
     ]
 )
+_BLOCK = frozenset(
+    [
+        "address",
+        "article",
+        "aside",
+        "blockquote",
+        "body",
+        "br",
+        "dd",
+        "div",
+        "dl",
+        "dt",
+        "fieldset",
+        "figcaption",
+        "figure",
+        "footer",
+        "form",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "head",
+        "header",
+        "hr",
+        "html",
+        "li",
+        "main",
+        "nav",
+        "ol",
+        "p",
+        "pre",
+        "section",
+        "table",
+        "tbody",
+        "td",
+        "tfoot",
+        "th",
+        "thead",
+        "tr",
+        "ul",
+    ]
+)
 UPDATES_SNAPSHOT = "updates-snapshot.json"
 
 
@@ -113,6 +157,9 @@ class _PageContent(HTMLParser):
     def handle_data(self, data: str) -> None:
         if self._inside("audit-site"):
             return
+        if any(element in {"pre", "textarea"} for element, _ in self.stack):
+            self.tokens.append(("literal-text", data))
+            return
         tag, attrs = self.stack[-1] if self.stack else ("", {})
         if tag == "script" and "data-client-payload" in attrs:
             payload = json.loads(data)
@@ -122,13 +169,35 @@ class _PageContent(HTMLParser):
             self.tokens.append(("payload", payload))
             return
         if tag not in {"script", "style"}:
-            data = " ".join(data.split())
+            # HTML collapses ASCII whitespace, but a word boundary at an inline
+            # tag and a non-breaking space can both change the displayed text.
+            data = re.sub(r"[ \t\r\n\f]+", " ", data)
             if self._inside("audit-data"):
                 data = re.sub(r"\bData updated \d{4}-\d{2}-\d{2}\b", "Data updated BUILD", data)
                 if re.fullmatch(r"[0-9a-f]{12}", data):
                     data = "DATA_VERSION"
         if data:
             self.tokens.append(("text", data))
+
+
+def _block_boundary(token: Any) -> bool:
+    return token[0] in {"start", "end"} and token[1] in _BLOCK
+
+
+def _without_layout_whitespace(tokens: list[Any]) -> list[Any]:
+    normalized: list[Any] = []
+    for index, token in enumerate(tokens):
+        if token[0] == "text":
+            value = token[1]
+            if index == 0 or _block_boundary(tokens[index - 1]):
+                value = value.lstrip(" ")
+            if index == len(tokens) - 1 or _block_boundary(tokens[index + 1]):
+                value = value.rstrip(" ")
+            if not value:
+                continue
+            token = ("text", value)
+        normalized.append(token)
+    return normalized
 
 
 def _page_content(site: Path, name: str, manifest: DeploymentManifest) -> bytes:
@@ -144,7 +213,7 @@ def _page_content(site: Path, name: str, manifest: DeploymentManifest) -> bytes:
         ):
             raise ValueError(f"unverifiable client asset on {name}: {reference}")
         parser.tokens.append(("client-asset", reference, manifest.assets[asset]))
-    return canonical_json_bytes(parser.tokens)
+    return canonical_json_bytes(_without_layout_whitespace(parser.tokens))
 
 
 class _Entries(HTMLParser):
