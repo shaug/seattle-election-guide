@@ -127,6 +127,7 @@ def test_insufficient_measured_leader_has_no_recommendation(tmp_path: Path) -> N
     assert race.baseline.recommendation_candidate_ids == []
     assert race.baseline.leading_margin == "1"
     assert race.scenarios[0].after.leading_margin is None
+    assert race.warning == "No measured leading choice without Synthetic source 0."
 
 
 def test_tied_classification_does_not_claim_stability(tmp_path: Path) -> None:
@@ -317,3 +318,31 @@ def test_district_eligibility_and_comparison_role_cannot_expand_in_scenarios(
     assert all(
         COMPARISON_SOURCE_ID not in s.excluded_source_ids for r in report.races for s in r.scenarios
     )
+
+
+def test_added_leader_ids_retain_ballot_order_in_exact_deltas(tmp_path: Path) -> None:
+    choices = _candidate_ids()
+    dataset = _dataset(
+        tmp_path,
+        [
+            (CONSENSUS_SOURCE_IDS[0], "endorsed", choices[:1]),
+            (CONSENSUS_SOURCE_IDS[1], "endorsed", choices[:1]),
+            (CONSENSUS_SOURCE_IDS[2], "endorsed", choices[1:2]),
+            (CONSENSUS_SOURCE_IDS[3], "endorsed", choices[2:3]),
+        ],
+        overlap_group_source_ids=(CONSENSUS_SOURCE_IDS[0], CONSENSUS_SOURCE_IDS[1]),
+    )
+    payload = dataset.model_dump(mode="json")
+    expected = sorted(choices[1:3], reverse=True)
+    race = next(r for r in payload["inventory"]["races"] if r["id"] == RACE_ID)
+    order = {candidate: i for i, candidate in enumerate([choices[0], *expected, *choices[3:]], 1)}
+    for choice in race["choices"]:
+        choice["ballot_order"] = order[choice["id"]]
+    dataset = CanonicalDataset.model_validate(payload)
+    consensus = score_dataset(dataset, _configuration(), computed_at=NOW)
+    report = build_sensitivity_report(dataset, consensus, git_commit="fixture")
+    result = next(r for r in report.races if r.race_id == RACE_ID)
+    scenario = next(s for s in result.scenarios if s.kind == "overlap")
+    assert scenario.after.score.winner_candidate_ids == expected
+    assert scenario.delta.identifiers["leader_candidate_ids"].added == expected
+    assert scenario.delta.identifiers["recommendation_candidate_ids"].added == expected

@@ -230,7 +230,8 @@ def _delta(before: SensitivitySnapshot, after: SensitivitySnapshot) -> Sensitivi
         ],
         identifiers={
             k: IdDelta(
-                added=sorted(set(after_ids[k]) - set(v)), removed=sorted(set(v) - set(after_ids[k]))
+                added=[identifier for identifier in after_ids[k] if identifier not in v],
+                removed=[identifier for identifier in v if identifier not in after_ids[k]],
             )
             for k, v in sorted(before_ids.items())
         },
@@ -379,7 +380,11 @@ def _warning(baseline: SensitivitySnapshot, scenario: SensitivityScenario) -> st
             "recommended": "A single choice is recommended",
         }[after.recommendation_state]
     elif "recommendation_choices_changed" in reasons or "leaders_changed" in reasons:
-        text = "Leading choice changes"
+        text = (
+            "Leading choice changes"
+            if after.score.winner_candidate_ids
+            else "No measured leading choice"
+        )
     elif "majority_boundary_crossed" in reasons:
         text = (
             "No majority"
