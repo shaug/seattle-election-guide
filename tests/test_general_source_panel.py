@@ -260,6 +260,21 @@ def test_october18_additions_do_not_inherit_earlier_source_provenance() -> None:
             "ld-37-state-representative-2",
             "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
         ),
+        *[
+            (
+                "seattle-times-editorial-board",
+                race_id,
+                "https://www.seattletimes.com/opinion/editorials/"
+                "unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/",
+                "ld-37-state-representative-2",
+                "https://www.seattletimes.com/opinion/editorials/",
+            )
+            for race_id in (
+                "ld-36-state-senator",
+                "ld-37-state-senator",
+                "ld-46-state-senator",
+            )
+        ],
     ],
 )
 def test_new_endorsement_receipts_open_the_approved_publication(

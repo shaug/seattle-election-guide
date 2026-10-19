@@ -1190,6 +1190,7 @@ sources:
   - race_id: ld-36-state-senator
     candidate_ids: []
     status: no_endorsement
+    evidence_url: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/
     evidence_locator: 'October 18 editorial introduction identifying races where neither candidate earned the board seal,
       followed by section 36th District, Senate Official source: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/.
       Captures: capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97; verified manual manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3.
@@ -1197,6 +1198,7 @@ sources:
   - race_id: ld-37-state-senator
     candidate_ids: []
     status: no_endorsement
+    evidence_url: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/
     evidence_locator: 'October 18 editorial introduction identifying races where neither candidate earned the board seal,
       followed by section 37th District, House, Senate Official source: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/.
       Captures: capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97; verified manual manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3.
@@ -1204,6 +1206,7 @@ sources:
   - race_id: ld-46-state-senator
     candidate_ids: []
     status: no_endorsement
+    evidence_url: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/
     evidence_locator: 'October 18 editorial introduction identifying races where neither candidate earned the board seal,
       followed by section 46th District, Senate Official source: https://www.seattletimes.com/opinion/editorials/unendorseables-these-lawmakers-once-received-times-endorsements-not-this-time/.
       Captures: capture-seattle-times-editorial-board-20261019T031153Z-48e25f653e97; verified manual manual-seattle-times-editorial-board-20261019T031729Z-23b1415e24b3.

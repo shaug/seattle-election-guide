@@ -12,8 +12,8 @@ elections:
     issue_number: 567
     previous_release_sha: 99b26a2deb48cb533370fc7354bfe15fe5f4f795
     inputs:
-      ledger_sha256: 85e8200fea2f0968865b99881b19f878517cef3d88fb5a50024dcc28aaff6400
-      dataset_sha256: af335aa62353ea21617d2ce04f5d428d881ec43f5ec0fb4e3e1be2110d45cb6b
+      ledger_sha256: 0176318d6781c78e477318aa86134d5a1296fb1c09daca7f6e461b17d2612ede
+      dataset_sha256: 6d20abaed0f9acc9f09c9ff63993af8a1b45225a3d61e18245406ce9b1973873
       registry_sha256: a62fbc937a44ab170f8c827513896c2626c641a6a95003263b16061bc1fbc26e
   git_commit: null
   release_manifest_sha256: null
