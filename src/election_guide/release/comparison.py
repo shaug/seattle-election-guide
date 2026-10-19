@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication.models import PublicationViewModel
@@ -92,9 +93,13 @@ def _verify_sensitivity(bundle_dir: Path, hashed: set[str]) -> None:
     view_path = bundle_dir / "data/publication_view_model.json"
     if not view_path.is_file():
         return
-    view = PublicationViewModel.model_validate(read_json(view_path))
-    if view.schema_version != "1.15":
+    raw: object = read_json(view_path)
+    if not isinstance(raw, dict):
+        raise ValueError("publication view model must be a JSON object")
+    payload = cast(dict[str, object], raw)
+    if payload.get("schema_version") != "1.15":
         return
+    view = PublicationViewModel.model_validate(payload)
     if not {"data/sensitivity.json", "data/sensitivity_scenarios.csv"} <= hashed:
         raise ValueError("schema 1.15 requires sensitivity artifacts in the hashed manifest")
     dataset = CanonicalDataset.model_validate(read_json(bundle_dir / "data/canonical-dataset.json"))
