@@ -217,6 +217,52 @@ def test_indentation_between_block_elements_needs_no_entry(sites: tuple[Path, Pa
     assert check_updates(baseline, candidate)["result"] == "pass"
 
 
+@pytest.mark.parametrize("remove_comment", [False, True])
+@pytest.mark.parametrize(
+    "plain,commented",
+    [
+        ("A B", "A<!-- maintenance --> B"),
+        ("A B", "A <!-- maintenance --> B"),
+        ("A&nbsp;B", "A<!-- maintenance -->&nbsp;B"),
+        ("<pre>A  B</pre>", "<pre>A<!-- maintenance -->  B</pre>"),
+    ],
+)
+def test_comments_inside_text_need_no_entry(
+    sites: tuple[Path, Path], plain: str, commented: str, remove_comment: bool
+) -> None:
+    before, after = (commented, plain) if remove_comment else (plain, commented)
+    for site, content in zip(sites, (before, after), strict=True):
+        _write(site, f"e/{GENERAL}/index.html", _page(content))
+        _seal(site)
+
+    assert check_updates(*sites)["result"] == "pass"
+
+
+@pytest.mark.parametrize("remove_comment", [False, True])
+def test_shared_shell_comments_need_no_entry(
+    sites: tuple[Path, Path], remove_comment: bool
+) -> None:
+    plain = _page().replace("<body>", '<body><a href="#main">Skip to recommendations</a>')
+    commented = plain.replace("Skip to", "Skip<!-- maintenance --> to")
+    before, after = (commented, plain) if remove_comment else (plain, commented)
+    for site, content in zip(sites, (before, after), strict=True):
+        for election in (GENERAL, PRIMARY):
+            for route in ("index.html", "races/race-1/index.html"):
+                _write(site, f"e/{election}/{route}", content)
+        _seal(site)
+
+    assert check_updates(*sites)["result"] == "pass"
+
+
+def test_textarea_comment_syntax_remains_visible_content(sites: tuple[Path, Path]) -> None:
+    before, after = "<textarea></textarea>", "<textarea><!-- visible text --></textarea>"
+    for site, content in zip(sites, (before, after), strict=True):
+        _write(site, f"e/{GENERAL}/index.html", _page(content))
+        _seal(site)
+
+    assert check_updates(*sites)["result"] == "fail"
+
+
 def test_referenced_client_asset_changes_require_an_entry(sites: tuple[Path, Path]) -> None:
     baseline, candidate = sites
     for site in sites:

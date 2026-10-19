@@ -154,11 +154,17 @@ class _PageContent(HTMLParser):
                 del self.stack[index:]
                 break
 
+    def _append_text(self, kind: str, data: str) -> None:
+        if self.tokens and self.tokens[-1][0] == kind:
+            self.tokens[-1] = (kind, self.tokens[-1][1] + data)
+        else:
+            self.tokens.append((kind, data))
+
     def handle_data(self, data: str) -> None:
         if self._inside("audit-site"):
             return
         if any(element in {"pre", "textarea"} for element, _ in self.stack):
-            self.tokens.append(("literal-text", data))
+            self._append_text("literal-text", data)
             return
         tag, attrs = self.stack[-1] if self.stack else ("", {})
         if tag == "script" and "data-client-payload" in attrs:
@@ -168,16 +174,10 @@ class _PageContent(HTMLParser):
             payload.pop("data_version", None)
             self.tokens.append(("payload", payload))
             return
-        if tag not in {"script", "style"}:
-            # HTML collapses ASCII whitespace, but a word boundary at an inline
-            # tag and a non-breaking space can both change the displayed text.
-            data = re.sub(r"[ \t\r\n\f]+", " ", data)
-            if self._inside("audit-data"):
-                data = re.sub(r"\bData updated \d{4}-\d{2}-\d{2}\b", "Data updated BUILD", data)
-                if re.fullmatch(r"[0-9a-f]{12}", data):
-                    data = "DATA_VERSION"
-        if data:
-            self.tokens.append(("text", data))
+        if tag in {"script", "style"}:
+            self._append_text("literal-text", data)
+        elif data:
+            self._append_text("audit-data-text" if self._inside("audit-data") else "text", data)
 
 
 def _block_boundary(token: Any) -> bool:
@@ -187,8 +187,14 @@ def _block_boundary(token: Any) -> bool:
 def _without_layout_whitespace(tokens: list[Any]) -> list[Any]:
     normalized: list[Any] = []
     for index, token in enumerate(tokens):
-        if token[0] == "text":
-            value = token[1]
+        if token[0] in {"text", "audit-data-text"}:
+            # Comments can split a text node into callbacks. Collapse whitespace
+            # only after joining those fragments, preserving visible boundaries.
+            value = re.sub(r"[ \t\r\n\f]+", " ", token[1])
+            if token[0] == "audit-data-text":
+                value = re.sub(r"\bData updated \d{4}-\d{2}-\d{2}\b", "Data updated BUILD", value)
+                if re.fullmatch(r"[0-9a-f]{12}", value):
+                    value = "DATA_VERSION"
             if index == 0 or _block_boundary(tokens[index - 1]):
                 value = value.lstrip(" ")
             if index == len(tokens) - 1 or _block_boundary(tokens[index + 1]):
