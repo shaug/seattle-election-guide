@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 import re
@@ -20,7 +21,10 @@ from election_guide.hosting import (
     verify_staged_pages_site,
 )
 from election_guide.hosting.models import PublishedElection, SiteManifest
-from election_guide.hosting.pages import _about_html  # pyright: ignore[reportPrivateUsage]
+from election_guide.hosting.pages import (
+    _about_html,  # pyright: ignore[reportPrivateUsage]
+    _stage_sensitivity_downloads,  # pyright: ignore[reportPrivateUsage]
+)
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import (
@@ -42,6 +46,26 @@ from tests.test_rendering import (  # pyright: ignore[reportPrivateUsage]
 # site-wide documents, brand assets, calendar feed, headers, worker and
 # deployment manifest.
 SITE_WIDE_ASSET_COUNT = 17
+
+
+def test_sensitivity_downloads_preserve_exact_exports_and_repeatable_bytes(tmp_path: Path) -> None:
+    source = tmp_path / "exports"
+    source.mkdir()
+    expected = {
+        "sensitivity.json": b'{"schema_version":"1.0"}\n',
+        "sensitivity_scenarios.csv": b'race_id,delta\nassessor,"1/10"\n',
+    }
+    for name, content in expected.items():
+        (source / name).write_bytes(content)
+    first, second = tmp_path / "first", tmp_path / "second"
+    names = _stage_sensitivity_downloads(source, first)
+    assert names == ["sensitivity.json.gz", "sensitivity_scenarios.csv.gz"]
+    assert _stage_sensitivity_downloads(source, second) == names
+    for name, content in expected.items():
+        compressed = (first / f"{name}.gz").read_bytes()
+        assert compressed == (second / f"{name}.gz").read_bytes()
+        assert gzip.decompress(compressed) == content
+        assert compressed[4:8] == bytes(4), "gzip must not read the clock"
 
 
 def _staged_race_asset_count(site_dir: Path) -> int:

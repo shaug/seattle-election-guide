@@ -352,6 +352,12 @@ Direct Upload still has upload limits, including file count and a 25 MiB per-fil
 does not change those limits. This decision uses the Cloudflare documentation checked on
 October 13, 2026; recheck it if Cloudflare introduces a deployment quota.
 
+Source-check downloads use deterministic gzip under each election's `data/` path.
+The complete JSON/CSV exports stay in the release bundle; their website copies
+use `.json.gz` and `.csv.gz` so a full scenario audit fits the per-file limit.
+Staging compresses the verified bytes with an empty filename and zero timestamp;
+the deployment manifest hashes those exact downloads like every other asset.
+
 ## Publication-day production probe
 
 After a deployment completes, use the read-only production checker. Supply the full deployed

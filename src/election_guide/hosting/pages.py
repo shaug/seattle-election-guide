@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import gzip
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -592,10 +594,9 @@ def _stage_verified_bundles(
 
         root_path = f"/e/{bundle.declaration.election_id}/"
         if bundle.view_model.schema_version == "1.15":
-            audit_dir = election_root / "data"
-            audit_dir.mkdir()
-            for name in ("sensitivity.json", "sensitivity_scenarios.csv"):
-                shutil.copy2(bundle.directory / "data" / name, audit_dir / name)
+            for name in _stage_sensitivity_downloads(
+                bundle.directory / "data", election_root / "data"
+            ):
                 public_paths.add(f"{root_path}data/{name}")
         public_paths.update({root_path, f"{root_path}index.html"})
         public_paths.update({f"{root_path}sources/", f"{root_path}sources/index.html"})
@@ -621,6 +622,20 @@ def _stage_verified_bundles(
             public_paths.update({f"{root_path}updates/", f"{root_path}updates/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
     return public_paths
+
+
+def _stage_sensitivity_downloads(source: Path, destination: Path) -> list[str]:
+    """Publish lossless downloads below Pages' per-file limit, without clock metadata."""
+    destination.mkdir()
+    names: list[str] = []
+    for name in ("sensitivity.json", "sensitivity_scenarios.csv"):
+        stream = io.BytesIO()
+        with gzip.GzipFile(fileobj=stream, mode="wb", filename="", mtime=0) as compressed:
+            compressed.write((source / name).read_bytes())
+        download = f"{name}.gz"
+        (destination / download).write_bytes(stream.getvalue())
+        names.append(download)
+    return names
 
 
 def _stage_race_pages(

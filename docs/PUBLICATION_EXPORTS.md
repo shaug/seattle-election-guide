@@ -85,8 +85,12 @@ build/release manifest hashes; the policy hash enters configuration provenance.
 The new-format release verifier requires both sidecars even if artifact inventories
 are rewritten, and recomputes the report from bundled canonical inputs before
 reconciling CSV and view-model projections. Historical release bytes are unchanged.
-Newly staged sites publish the two verified downloads under each election's `data/`
-directory; race-page details link to them and to the public methodology.
+Newly staged sites publish deterministic gzip downloads under each election's `data/`
+directory (`sensitivity.json.gz`, `sensitivity_scenarios.csv.gz`), because the complete
+CSV can exceed Pages' 25 MiB per-file limit. Decompression recovers the exact verified
+export bytes; gzip headers contain no clock or filename metadata. The release bundle
+retains the uncompressed exports. Race-page details link to both downloads and the
+public methodology.
 Each published race also carries `is_contested`, derived solely from whether the authoritative ballot
 inventory contains more than one official choice. Endorsement coverage never influences that flag.
 
