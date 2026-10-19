@@ -78,7 +78,9 @@ cannot disappear or be replaced with an older mainline baseline.
 - `checks/`: scheduled slot, actual check time, mode, result, event reference.
 - `refreshes/`, `extractions/`, `manifests/`: existing collection records.
 - `vault/sha256/<prefix>/<digest>.json`: AES-256-GCM encrypted original bytes.
-- `discovery/`: index/article capture links, known/listed articles, derived hash.
+- `discovery/`: successful index/article capture links, known/listed articles, derived hash.
+- `discovery-obligations/`: validated newly learned UFCW URLs and their original
+  landing capture; retained even when required article collection fails.
 - `approvals/`: explicit human attestations bound to a live snapshot.
 
 `data/verification/runs/` records the exact producing revision, due coverage,
@@ -118,7 +120,12 @@ UFCW 3000 scans only its endorsements landing page for relevant current-year
 news article links, then revisits every retained article URL, including both
 known October 15 initiative publications when their links are absent. It does
 not follow news feeds, pagination, unrelated news, or historical article links.
-The discovery records persist article membership across runners. A maximum of
+Successful discovery records and separate immutable discovery obligations persist
+article membership across runners. Obligations are written after bounded official
+URL validation, before required articles are fetched, and link to the encrypted
+original landing capture. A failed fetch or parse therefore cannot erase newly
+learned URLs when landing links rotate off. An obligation asserts neither a
+successful complete comparison nor baseline approval. A maximum of
 100 articles and 64 MiB of total response bytes bounds each check; the existing
 per-request GET safeguards remain in effect. Required article fetch or parsing
 failure records a failed check and retains the prior comparison baseline.

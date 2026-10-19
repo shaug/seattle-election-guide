@@ -226,7 +226,11 @@ its relevant current-year official news articles, including the two October 15
 initiative publications. The finite landing-page scan follows endorsement links;
 it does not traverse the news feed or historical archive. Previously discovered
 articles and the two known publications remain required after links rotate away.
-The existing discovery records retain these URLs across independent runners.
+Successful discovery records retain these URLs across independent runners. Newly
+validated links also receive immutable `discovery-obligations/` records bound to
+their original landing-page capture before any required article fetch. These
+obligations survive failed article fetches or parsing and later link rotation;
+they assert required membership, never a complete comparison or approved baseline.
 At most 100 articles and 64 MiB of total HTML are accepted, with the existing
 bounded public-peer HTTP checks on every request. Unsafe article identities,
 inaccessible required articles, and missing article heading/body structure fail

@@ -8,6 +8,7 @@ import re
 from datetime import date, datetime
 from html.parser import HTMLParser
 from pathlib import Path
+from typing import Literal
 from urllib.parse import unquote, urljoin, urlsplit
 
 from pydantic import AwareDatetime, Field, model_validator
@@ -15,8 +16,10 @@ from pydantic import AwareDatetime, Field, model_validator
 from election_guide.collection.http import fetch_http
 from election_guide.collection.verification import SourcePolicy, VerificationModel
 from election_guide.evidence.models import (
+    CAPTURE_ID_PATTERN,
     SHA256_PATTERN,
     SOURCE_ID_PATTERN,
+    CapturedManifest,
     CaptureRequest,
     evidence_fingerprint,
 )
@@ -80,6 +83,48 @@ class DiscoveryAudit(VerificationModel):
         ):
             raise ValueError("discovery audit has contradictory article membership")
         return self
+
+
+class UfcwDiscoveryObligation(VerificationModel):
+    """Validated landing-page membership, independent of collection success."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    source_id: Literal["ufcw-3000"] = "ufcw-3000"
+    checked_at: AwareDatetime
+    articles: list[str] = Field(min_length=1, max_length=100)
+    capture_id: str = Field(pattern=CAPTURE_ID_PATTERN)
+
+    @model_validator(mode="after")
+    def validate_articles(self) -> UfcwDiscoveryObligation:
+        for url in self.articles:
+            validate_ufcw_article(url)
+            if int(urlsplit(url).path.split("/")[2]) != self.checked_at.year:
+                raise ValueError("UFCW discovery obligations require current-year articles")
+        if len(set(self.articles)) != len(self.articles):
+            raise ValueError("UFCW discovery obligations require unique articles")
+        return self
+
+
+def read_ufcw_discovery_obligation(path: Path) -> UfcwDiscoveryObligation:
+    record = read_json(path)
+    obligation = UfcwDiscoveryObligation.model_validate(record)
+    if path.stem != evidence_fingerprint(record):
+        raise ValueError("UFCW discovery obligation identity contradicts its content")
+    manifest = read_capture_manifest(
+        path.parent.parent / "manifests" / f"{obligation.capture_id}.json"
+    )
+    if (
+        not isinstance(manifest, CapturedManifest)
+        or manifest.source_id != obligation.source_id
+        or manifest.requested_url != UFCW_INDEX
+        or manifest.capture_method != "static_html"
+        or manifest.retrieved_at != obligation.checked_at
+        or manifest.redistribution != "restricted"
+        or urlsplit(manifest.canonical_url).scheme != "https"
+        or urlsplit(manifest.canonical_url).netloc != "ufcw3000.org"
+    ):
+        raise ValueError("UFCW discovery obligation lacks its original official landing capture")
+    return obligation
 
 
 class PublicationParser(HTMLParser):
@@ -351,9 +396,23 @@ def discover_ufcw_publication(root: Path, storage: Path, checked_at: datetime) -
         if record["source_id"] == "ufcw-3000":
             audit = DiscoveryAudit.model_validate(record)
             known.update(audit.articles)
+    for path in root.glob("discovery-obligations/*.json"):
+        known.update(read_ufcw_discovery_obligation(path).articles)
     articles = sorted(known | listed)
     if len(articles) > 100:
         raise ValueError("UFCW discovery exceeds its 100-article bound")
+    # Learning membership does not assert that any article was collected or
+    # compared. The transaction seals its original index even if collection
+    # below fails, so a later runner must retry these URLs after link rotation.
+    newly_listed = sorted(listed - known)
+    if newly_listed:
+        obligation = UfcwDiscoveryObligation(
+            checked_at=checked_at, articles=newly_listed, capture_id=collector.captures[0]
+        ).model_dump(mode="json")
+        write_immutable_record(
+            root / "discovery-obligations" / f"{evidence_fingerprint(obligation)}.json",
+            canonical_json_bytes(obligation),
+        )
     hashes: dict[str, str] = {}
     for url in articles:
         validate_ufcw_article(url)
