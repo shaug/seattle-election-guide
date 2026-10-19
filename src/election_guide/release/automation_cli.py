@@ -186,7 +186,17 @@ def _remote_main(
     if selected.git_commit is not None and previous_sha != selected.git_commit:
         raise ValueError("selected published release tag differs from its pinned commit")
     _ensure_commit(repository, previous_sha)
-    require_ancestor(previous_sha, repository=repository)
+    tag_ref = f"refs/tags/{selected.release_version}"
+    present = subprocess.run(
+        ["git", "show-ref", "--verify", "--quiet", tag_ref],
+        cwd=repository,
+        capture_output=True,
+        check=False,
+    )
+    if present.returncode != 0:
+        _git(repository, "fetch", "--no-tags", "origin", f"{tag_ref}:{tag_ref}")
+    if _published_sha(repository, main) != previous_sha:
+        raise ValueError("local published release tag differs from its authenticated source")
     return main, previous_sha
 
 
