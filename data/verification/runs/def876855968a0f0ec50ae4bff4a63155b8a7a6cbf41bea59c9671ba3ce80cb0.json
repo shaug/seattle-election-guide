@@ -1,0 +1,861 @@
+{
+  "automatic": [
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-seattle-gay-news-20261020T085058Z-59ebacfd49e2",
+      "checked_at": "2026-10-20T08:50:58Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-seattle-gay-news-20261020T085058Z-51380f7edaa8",
+      "previous_snapshot_id": "extraction-seattle-gay-news-20261019T085357Z-a7c05214be1a",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-seattle-gay-news-20261020T085058Z-d3c67a19ac87",
+      "source_id": "seattle-gay-news",
+      "status": "updated"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-washington-working-families-party-20261020T085058Z-1ce412d131a5",
+      "checked_at": "2026-10-20T08:50:58Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-36-state-senator--noel-c-frame"
+            ],
+            "evidence_excerpt": "Noel Frame Washington State Senate, District 36",
+            "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-36-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-36-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-37-state-representative-2--jaelynn-scott"
+            ],
+            "evidence_excerpt": "Jaelynn Scott Washington State House, District 37, Position 2",
+            "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-37-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-37-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-43-state-representative-2--shaun-scott"
+            ],
+            "evidence_excerpt": "Shaun Scott Washington State House, District 43, Position 2",
+            "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-43-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-43-state-representative-2"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-43-state-senator--hannah-sabio-howell"
+            ],
+            "evidence_excerpt": "Hannah Sabio-Howell Washington State Senate, District 43",
+            "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-43-state-senator",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "after": {
+            "candidate_ids": [
+              "ld-46-state-representative-2--darya-farivar"
+            ],
+            "evidence_excerpt": "Darya Farivar Washington State House, District 46, Position 2",
+            "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+            "extraction_confidence": "0.99",
+            "race_id": "ld-46-state-representative-2",
+            "requires_review": true,
+            "status": "endorsed"
+          },
+          "before": null,
+          "kind": "added",
+          "race_id": "ld-46-state-representative-2"
+        }
+      ],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-washington-working-families-party-20261020T085058Z-5142e1116e4d",
+      "previous_snapshot_id": "extraction-washington-working-families-party-20261017T084504Z-ee632cc63c3c",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-washington-working-families-party-20261020T085058Z-27e58e61bbe6",
+      "source_id": "washington-working-families-party",
+      "status": "updated"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-sage-leaders-20261020T085058Z-a345f300959b",
+      "checked_at": "2026-10-20T08:50:58Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-sage-leaders-20261020T085058Z-8dd2111c9be7",
+      "previous_snapshot_id": "extraction-sage-leaders-20261019T085357Z-5e27b5b18425",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-sage-leaders-20261020T085058Z-16ecd5f45c9d",
+      "source_id": "sage-leaders",
+      "status": "updated"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-transit-riders-union-20261020T085058Z-2fec121fdc42",
+      "checked_at": "2026-10-20T08:50:58Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-transit-riders-union-20261020T085058Z-33c061fc20fc",
+      "previous_snapshot_id": "extraction-transit-riders-union-20261016T150136Z-76cb0dd8b335",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-transit-riders-union-20261020T085058Z-fb793986a0b7",
+      "source_id": "transit-riders-union",
+      "status": "updated"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": null,
+      "checked_at": "2026-10-20T08:50:58Z",
+      "consecutive_failures": 4,
+      "content_changed": null,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": "Source check failed (ValueError); inspect official access and adapter.",
+      "escalated": true,
+      "id": "refresh-seiu-775-20261020T085058Z-cc7045273f4e",
+      "previous_snapshot_id": "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+      "schema_version": "1.0",
+      "snapshot_id": null,
+      "source_id": "seiu-775",
+      "status": "failed"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-ufcw-3000-20261020T085058Z-fd7c24ec5c7b",
+      "checked_at": "2026-10-20T08:50:58Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-ufcw-3000-20261020T085058Z-a0217bdd375e",
+      "previous_snapshot_id": "extraction-ufcw-3000-20261019T085357Z-99023c4c5d63",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-ufcw-3000-20261020T085058Z-f0ac660e3007",
+      "source_id": "ufcw-3000",
+      "status": "updated"
+    }
+  ],
+  "checked_at": "2026-10-20T08:50:58+00:00",
+  "coverage": {
+    "as_of": "2026-10-20",
+    "elections": [
+      {
+        "cadence": "daily",
+        "coverage": [
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317571Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "the-stranger"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317757Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "the-urbanist"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317777Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "fuse-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676885Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "seattle-democratic-socialists"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317790Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "tech-4-housing"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317803Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "tech-4-taxes"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317832Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-for-peace-and-justice"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317845Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-community-action-network"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-19T08:53:57Z",
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. Exact live baseline approved October 18; see docs/GENERAL_BASELINES_2026-10-18.md.",
+            "next_due": "2026-10-21",
+            "source_id": "seattle-gay-news"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-19T08:53:57Z",
+            "limitation": "Complete public Washington response covers all ten existing approved decisions; seven reviewed rows are outside the frozen inventory. Every changed response requires review. The complete response needs its own live baseline approval and independent scheduled reuse; October 18 approval covers only the historical initial page.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-working-families-party"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676913Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-bus"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-19T08:53:57Z",
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. Exact live baseline approved October 18; see docs/GENERAL_BASELINES_2026-10-18.md.",
+            "next_due": "2026-10-21",
+            "source_id": "sage-leaders"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676921Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-state-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676927Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "king-county-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676935Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "11th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676944Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "32nd-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676955Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "34th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676963Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "36th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676967Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "37th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676971Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "43rd-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676975Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "46th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676981Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-stonewall-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-16T15:01:36.094004Z",
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. Exact live baseline approved October 18. HTTPS transport now uses the correct default port; previous bounded self-redirect failures remain in history. Independent scheduled reuse remains adoption work.",
+            "next_due": "2026-10-21",
+            "source_id": "transit-riders-union"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317865Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-bikes"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317900Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "seattle-subway"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317923Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-conservation-action"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317944Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "sierra-club-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317960Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "environmental-climate-caucus-wa-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "mlk-labor"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-state-labor-council"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-16T15:01:36.094004Z",
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. Exact live baseline approved October 18; see docs/GENERAL_BASELINES_2026-10-18.md.",
+            "next_due": "2026-10-21",
+            "source_id": "seiu-775"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "seiu-925"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-19T08:53:57Z",
+            "limitation": "Conservative reviewed fact mappings; complete landing page and relevant official articles require human review. The expanded composite needs exact baseline review; the October 18 approval covers the earlier landing page. Independent scheduled reuse remains adoption work.",
+            "next_due": "2026-10-21",
+            "source_id": "ufcw-3000"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "aft-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-education-association"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-state-building-trades"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "protec17"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "planned-parenthood-alliance-advocates"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "oneamerica-votes"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "alliance-for-gun-responsibility"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "washington-housing-alliance"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "nwpc-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T04:14:31.209146Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "seattle-times-editorial-board"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:40.676985Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "young-democrats-of-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:45:54.317990Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "nondriver-action"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-19T14:47:14.537881Z",
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-21",
+            "source_id": "citizens-against-aipac-corruption"
+          }
+        ],
+        "election_id": "wa-2026-general"
+      }
+    ],
+    "missed": []
+  },
+  "manual": [
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "the-stranger"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "the-urbanist"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "fuse-washington"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seattle-democratic-socialists"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-community-action-network"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-bus"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-state-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "king-county-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "11th-district-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "32nd-district-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "34th-district-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "36th-district-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "37th-district-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "43rd-district-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "46th-district-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-bikes"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seattle-subway"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-conservation-action"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "sierra-club-washington"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "environmental-climate-caucus-wa-democrats"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "mlk-labor"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-state-labor-council"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seiu-925"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "aft-washington"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-education-association"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-state-building-trades"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "protec17"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "planned-parenthood-alliance-advocates"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "oneamerica-votes"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "alliance-for-gun-responsibility"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-housing-alliance"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "nwpc-washington"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seattle-times-editorial-board"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "nondriver-action"
+    },
+    {
+      "due": "2026-10-20",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "citizens-against-aipac-corruption"
+    }
+  ],
+  "missed": [],
+  "mode": "live",
+  "policy_fingerprint": "bcce443613da8551bb8a4ba6c836ca804bba91f8273f03264f87ba1e927ef690",
+  "revision": "a238fba27bb7f47ba7aaf358b604a3fea289c32d",
+  "source_tree_dirty": false
+}

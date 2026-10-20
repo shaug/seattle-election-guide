@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 50981,
+  "canonical_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "d7f21aaea66ed8d1b7701ebb6af911f11dc5220aaab4ec5d62d6a03bff28df99",
+  "http_status": 200,
+  "id": "capture-transit-riders-union-20261020T085058Z-2fec121fdc42",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Original bytes retained in the committed encrypted vault.",
+  "requested_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+  "retrieved_at": "2026-10-20T08:50:58Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "storage_reference": "sha256/d7/d7f21aaea66ed8d1b7701ebb6af911f11dc5220aaab4ec5d62d6a03bff28df99",
+  "storage_scope": "local_only",
+  "title": "Official wa-2026-general endorsement publication",
+  "updated_at": null
+}

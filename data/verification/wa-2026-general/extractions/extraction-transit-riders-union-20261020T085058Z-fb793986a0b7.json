@@ -1,0 +1,103 @@
+{
+  "adapter_fingerprint": "745d3b594d9818757524150abffe72af9a300a969205087f72cea8a0a235409f",
+  "adapter_kind": "static_html",
+  "capture_id": "capture-transit-riders-union-20261020T085058Z-2fec121fdc42",
+  "content_sha256": "d7f21aaea66ed8d1b7701ebb6af911f11dc5220aaab4ec5d62d6a03bff28df99",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "king-county-council-2--toshiko-grace-hasegawa",
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": "King County Council District 2: Toshiko Grace Hasegawa and Rebecca Saldaña",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "king-county-council-2",
+      "requires_review": true,
+      "status": "dual_endorsement"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "evidence_excerpt": "32nd Legislative District, Washington State House Position 1: Danica Noble",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-32-state-representative-1",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "evidence_excerpt": "32nd Legislative District, Washington State House Position 2: Imraan Siddiqi",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-32-state-representative-2",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": "37th Legislative District, Washington State House Position 1: Kelabe Tewolde",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-37-state-representative-1",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "evidence_excerpt": "37th Legislative District, Washington State Senate: Tatiana Brown",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-37-state-senator",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": "43rd Legislative District, Washington State Senate: Hannah Sabio-Howell",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-43-state-senator",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": "Seattle City Council District 5: Nilu Jenks",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "seattle-city-council-5",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "evidence_excerpt": "Seattle Municipal Court Judge: Gabe Rothstein",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "seattle-municipal-court-judge-5",
+      "requires_review": true,
+      "status": "endorsed"
+    }
+  ],
+  "extracted_at": "2026-10-20T08:50:58Z",
+  "extraction_fingerprint": "cec2392e7a651c5e2972303ae9269295f6103d7c70f37e0e8fad549fc5e25ba7",
+  "extractor_version": "1.0.0",
+  "id": "extraction-transit-riders-union-20261020T085058Z-fb793986a0b7",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union"
+}
