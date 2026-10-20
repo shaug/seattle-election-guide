@@ -1,0 +1,124 @@
+{
+  "adapter_fingerprint": "64f3671593bc6f34fd324c21862dc34a29ac6eef6148d6d83d2cd0e975b4c635",
+  "adapter_kind": "dynamic_html",
+  "capture_id": "capture-washington-working-families-party-20261020T085058Z-1ce412d131a5",
+  "content_sha256": "193b7dbe1a1e2883513cc49a6c434ab19689a377623774295d7c4fc994890574",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "king-county-council-4--jorge-l-baron"
+      ],
+      "evidence_excerpt": "Jorge Baron King County Council, District 4",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "king-county-council-4",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": "Teresa Mosqueda King County Council, District 8",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "king-county-council-8",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "evidence_excerpt": "Noel Frame Washington State Senate, District 36",
+      "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-36-state-senator",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": "Kelabe Tewolde State House, District 37, Position 1",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-37-state-representative-1",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": "Jaelynn Scott Washington State House, District 37, Position 2",
+      "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-37-state-representative-2",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-representative-2--shaun-scott"
+      ],
+      "evidence_excerpt": "Shaun Scott Washington State House, District 43, Position 2",
+      "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-43-state-representative-2",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": "Hannah Sabio-Howell Washington State Senate, District 43",
+      "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-43-state-senator",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "evidence_excerpt": "Darya Farivar Washington State House, District 46, Position 2",
+      "evidence_locator": "Complete official Washington candidate response; existing approved ledger mapping reviewed October 19 for #497. Changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-46-state-representative-2",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": "Nilu Jenks Seattle City Council, District 5",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "seattle-city-council-5",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": "Pramila Jayapal U.S. House of Representatives, District 7",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "us-house-7",
+      "requires_review": true,
+      "status": "endorsed"
+    }
+  ],
+  "extracted_at": "2026-10-20T08:50:58Z",
+  "extraction_fingerprint": "f836b18a0baafb26796e472c6b146fd43ed90fd1e3c7d5a393c79f5e0a98f813",
+  "extractor_version": "1.1.0",
+  "id": "extraction-washington-working-families-party-20261020T085058Z-27e58e61bbe6",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party"
+}

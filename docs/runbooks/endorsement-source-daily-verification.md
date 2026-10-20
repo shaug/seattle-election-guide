@@ -263,6 +263,17 @@ Keep the normal cadence and immutable history intact. A fixture, operator check,
 or no-due run cannot stand in for the required independent scheduled execution.
 Inaccessible originals and incomplete live evidence remain open obligations.
 
+### October 20 delegated daily reviews
+
+The same finite delivery instruction covers the October 20 manual-source checks
+and their actual-time acknowledgements. The [dated review record](../GENERAL_MANUAL_REVIEWS_2026-10-20.md)
+names the actual delegated Codex reviewers and distinguishes completed publication
+reviews, held omissions, prior approved interpretations and inaccessible sources.
+This scoped exception to a separate human prompt asserts no personal maintainer
+source read or future unattended interpretation authority. Keep failed requests,
+private originals and the later native adoption requirement intact; the October 19
+Times override supplies no October 20 success or general failure policy.
+
 ### October 19 WFP complete-publication correction (#497)
 
 WFP's initial page exposes only five of the ten approved in-inventory choices.

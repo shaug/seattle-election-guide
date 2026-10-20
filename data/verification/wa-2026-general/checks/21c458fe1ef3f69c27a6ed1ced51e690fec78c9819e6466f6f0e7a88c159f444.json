@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-20T10:51:07.668967Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/diagnose_591_seiu_oct20; OpenAI Codex /root; recorded by /root under finite maintainer delegation: docs/GENERAL_MANUAL_REVIEWS_2026-10-20.md; data/review/rechecks/wa-2026-general-2026-10-20-manual.json source_id=planned-parenthood-alliance-advocates; completed current publication review with the source-specific limits recorded there; no new endorsement approval or native scheduled success asserted",
+  "mode": "human",
+  "scheduled_for": "2026-10-20",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "status": "manual"
+}
