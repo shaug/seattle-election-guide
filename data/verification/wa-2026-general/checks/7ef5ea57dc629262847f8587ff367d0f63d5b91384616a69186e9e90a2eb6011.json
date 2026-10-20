@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-20T11:39:15.837406Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/review_497_wfp_oct20; recorded by /root under finite maintainer delegation: docs/GENERAL_MANUAL_REVIEWS_2026-10-20.md; data/review/rechecks/wa-2026-general-2026-10-20-manual.json source_id=seattle-times-editorial-board; completed current publication review with the source-specific limits recorded there; no new endorsement approval or native scheduled success asserted",
+  "mode": "human",
+  "scheduled_for": "2026-10-20",
+  "source_id": "seattle-times-editorial-board",
+  "status": "manual"
+}
