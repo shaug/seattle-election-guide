@@ -3,17 +3,17 @@ canonical_origin: https://seattleelections.guide
 current_election_id: wa-2026-general
 elections:
 - election_id: wa-2026-general
-  bundle_id: wa-2026-general-2026-general.24
-  release_version: 2026-general.24
+  bundle_id: wa-2026-general-2026-general.25
+  release_version: 2026-general.25
   source_panel_id: wa-2026-general-default-sources-v2
   source_panel_hash: 5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569
   source_registry_hash: d9c0bfbad3bd963d11b24ee45d1ae3bfe8f2b16a6b489fd80e6cf463efdc1f27
   publication_request:
     issue_number: 593
-    previous_release_sha: d3a063d8504e9aaaace8d6e320e4659146c0bad9
+    previous_release_sha: c6d11756dfbb0f88e90a6ce5e41e3b47470120c5
     inputs:
-      ledger_sha256: 53b8e44d3f2defb0e350acdb95c466c1658c2705e0ac1e0e25c27b083f7882f2
-      dataset_sha256: 513307323d9cd873cb4d0ee8574d61112836fbbae8f522f96cfac9d507412aa6
+      ledger_sha256: b7ef01eae817e582998cf3d80a1b5de31e9a20737a6f6c4dd25323b95a002988
+      dataset_sha256: 37d7b3d6fa73e12e2150aae7b1ca9c191b60d1926e4e8165fd3c1d1e1cfa0582
       registry_sha256: 0429669e05341808c4e4332ba50784eb20de88e27670a93e747737fd02a90913
   git_commit: null
   release_manifest_sha256: null

@@ -22,7 +22,7 @@ entries:
       - label: "TRU’s October general-election endorsements"
         url: https://transitriders.org/2026-general-election-endorsements/
       - label: "Complete October 21 TRU review and limitations"
-        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_RECHECK_2026-10-21_TRU.md
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.25/docs/GENERAL_RECHECK_2026-10-21_TRU.md
   - corrected_on: 2026-10-21
     headline: "Added Washington Bus’s three No initiative recommendations."
     body: >-
