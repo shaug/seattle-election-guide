@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-10-11T01:07:23.755424Z",
+  "captured_at": "2026-10-21T10:37:21.842746Z",
   "decisions": [
     {
       "candidate_ids": [
@@ -65,8 +65,8 @@
       "status": "endorsed"
     }
   ],
-  "evidence_locator": "Approved October 10 packet, issue #508; data/review/approvals/wa-2026-general-2026-10-10.json.",
-  "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
-  "reviewer": "shaug",
+  "evidence_locator": "Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e; linked from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50. Prior locator: Approved October 10 packet, issue #508; data/review/approvals/wa-2026-general-2026-10-10.json.",
+  "review_note": "Issue #593: OpenAI Codex /root/review_593_political reviewed the current complete 15-image general-election gallery; root independently viewed the original initiative image and verified three explicit No additions under the maintainer's finite delivery delegation. All seven prior decision dictionaries and their original label corrections remain unchanged. No personal maintainer read is asserted. See data/review/approvals/wa-2026-general-2026-10-21-bus.json. Prior source review: Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+  "reviewer": "OpenAI Codex /root under finite maintainer delegation",
   "source_id": "washington-bus"
 }

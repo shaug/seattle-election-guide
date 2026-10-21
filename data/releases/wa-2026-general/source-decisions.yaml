@@ -1,6 +1,6 @@
 schema_version: '1.0'
 election_id: wa-2026-general
-data_as_of: '2026-10-19T14:47:01.559556Z'
+data_as_of: '2026-10-21T10:43:12.788345Z'
 reviewer: OpenAI Codex / root (explicit maintainer delegation)
 review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured 21
   new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every new or
@@ -26,7 +26,10 @@ review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex reche
   October 19 targeted update under explicit maintainer delegation: OpenAI Codex / oct19_political_sources and OpenAI Codex
   / root independently verified one 46th Democrats Seattle transit Yes addition. All 914 prior decision dictionaries and original
   approvals are preserved. This header identifies the current delegated operator; each retained source and decision preserves
-  its own historical reviewer. No new personal human source read is asserted. See data/review/approvals/wa-2026-general-2026-10-19-transit.json.'
+  its own historical reviewer. No new personal human source read is asserted. See data/review/approvals/wa-2026-general-2026-10-19-transit.json.
+  October 21 targeted update under the same finite delivery delegation: three explicit Washington Bus No initiative decisions,
+  independently checked by the actual Codex researcher and root; all 915 prior decision dictionaries and approvals retained.
+  See data/review/approvals/wa-2026-general-2026-10-21-bus.json.'
 sources:
 - source_id: washington-community-action-network
   captured_at: '2026-10-11T01:07:23.909422Z'
@@ -3264,13 +3267,20 @@ sources:
       Yes. Captures: capture-the-stranger-20261011T010722Z-a5226d3f00e5, capture-the-stranger-20261011T010722Z-df2465eb47ac;
       verified manual records: manual-the-stranger-20261011T011018Z-949d132192b0.'
 - source_id: washington-bus
-  captured_at: '2026-10-11T01:07:23.755424Z'
-  reviewed_at: '2026-10-11T01:24:53Z'
-  reviewer: shaug
-  review_note: 'Issue #508: shaug replied "approved" to the concrete October 10 reconciliation packet in this Codex session,
-    confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription;
-    shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.'
-  evidence_locator: 'Approved October 10 packet, issue #508; data/review/approvals/wa-2026-general-2026-10-10.json.'
+  captured_at: '2026-10-21T10:37:21.842746Z'
+  reviewed_at: '2026-10-21T10:43:12.788345Z'
+  reviewer: OpenAI Codex /root under finite maintainer delegation
+  review_note: 'Issue #593: OpenAI Codex /root/review_593_political reviewed the current complete 15-image general-election
+    gallery; root independently viewed the original initiative image and verified three explicit No additions under the maintainer''s
+    finite delivery delegation. All seven prior decision dictionaries and their original label corrections remain unchanged.
+    No personal maintainer read is asserted. See data/review/approvals/wa-2026-general-2026-10-21-bus.json. Prior source review:
+    Issue #508: shaug replied "approved" to the concrete October 10 reconciliation packet in this Codex session, confirming
+    its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug
+    is the human verifier. This is a targeted review, not a new whole-panel sweep.'
+  evidence_locator: 'Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON
+    ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e; linked
+    from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50. Prior locator: Approved October 10 packet, issue
+    #508; data/review/approvals/wa-2026-general-2026-10-10.json.'
   decisions:
   - race_id: ld-43-state-senator
     candidate_ids:
@@ -3316,6 +3326,30 @@ sources:
       See attached position-label correction when applicable. Target: Legislative District 37 State Representative — Position
       2; Jaelynn Scott. Captures: capture-washington-bus-20261011T010723Z-f55404f17b9c; verified manual records: manual-washington-bus-20261011T011018Z-05ceadea452a.
       Explicit label mapping approved; see #508 approval record.'
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+    evidence_excerpt: VOTE NO ON ALL 3 INITIATIVES
+    evidence_locator: Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON
+      ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e;
+      linked from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50. Verified manual record manual-washington-bus-20261021T104312Z-f2a24008634b.
+    evidence_url: https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+    evidence_excerpt: VOTE NO ON ALL 3 INITIATIVES
+    evidence_locator: Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON
+      ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e;
+      linked from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50. Verified manual record manual-washington-bus-20261021T104312Z-f2a24008634b.
+    evidence_url: https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+    evidence_excerpt: VOTE NO ON ALL 3 INITIATIVES
+    evidence_locator: Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON
+      ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e;
+      linked from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50. Verified manual record manual-washington-bus-20261021T104312Z-f2a24008634b.
+    evidence_url: https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png
 - source_id: young-democrats-of-washington
   captured_at: '2026-10-11T15:41:56.877970Z'
   reviewed_at: '2026-10-12T16:24:42Z'

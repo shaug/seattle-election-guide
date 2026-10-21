@@ -1,0 +1,45 @@
+{
+  "articles": [
+    "https://www.sgn.org/story/168513/",
+    "https://www.sgn.org/story/168554/",
+    "https://www.sgn.org/story/168558/",
+    "https://www.sgn.org/story/168630/",
+    "https://www.sgn.org/story/168637/",
+    "https://www.sgn.org/story/168638/",
+    "https://www.sgn.org/story/168738/",
+    "https://www.sgn.org/story/168742/",
+    "https://www.sgn.org/story/168779/",
+    "https://www.sgn.org/story/168782/"
+  ],
+  "captures": [
+    "capture-seattle-gay-news-20261021T085144Z-e2695282f469",
+    "capture-seattle-gay-news-20261021T085144Z-295e5277e725",
+    "capture-seattle-gay-news-20261021T085144Z-1991055cf7fb",
+    "capture-seattle-gay-news-20261021T085144Z-95e15a96f731",
+    "capture-seattle-gay-news-20261021T085144Z-5a63a67c35fc",
+    "capture-seattle-gay-news-20261021T085144Z-6e37139f6cad",
+    "capture-seattle-gay-news-20261021T085144Z-4133b2a94414",
+    "capture-seattle-gay-news-20261021T085144Z-6183578d5f2d",
+    "capture-seattle-gay-news-20261021T085144Z-f46e3276185b",
+    "capture-seattle-gay-news-20261021T085144Z-1e00e62de902",
+    "capture-seattle-gay-news-20261021T085144Z-13f3c3174928",
+    "capture-seattle-gay-news-20261021T085144Z-6168d07c1778",
+    "capture-seattle-gay-news-20261021T085144Z-34227aacfb27",
+    "capture-seattle-gay-news-20261021T085144Z-25c30d448749"
+  ],
+  "checked_at": "2026-10-21T08:51:44+00:00",
+  "comparison_sha256": "2d182c1f6f40b1454dc7ff22fdbb8e1d18ed23890ac69bb15400c738cf9deba6",
+  "listed": [
+    "https://www.sgn.org/story/168513/",
+    "https://www.sgn.org/story/168554/",
+    "https://www.sgn.org/story/168558/",
+    "https://www.sgn.org/story/168630/",
+    "https://www.sgn.org/story/168637/",
+    "https://www.sgn.org/story/168638/",
+    "https://www.sgn.org/story/168738/",
+    "https://www.sgn.org/story/168742/",
+    "https://www.sgn.org/story/168779/",
+    "https://www.sgn.org/story/168782/"
+  ],
+  "source_id": "seattle-gay-news"
+}

@@ -35,7 +35,8 @@ elections:
     limitation: Complete public Washington response covers all ten existing approved decisions;
       seven reviewed rows are outside the frozen inventory. Every changed response requires review.
       The exact complete October 20 response received a delegated baseline review;
-      see docs/GENERAL_BASELINE_2026-10-20_WFP.md. Independent scheduled reuse remains pending;
+      see docs/GENERAL_BASELINE_2026-10-20_WFP.md. Independent native scheduled reuse succeeded October 21;
+      see docs/GENERAL_BASELINE_REUSE_2026-10-21_WFP.md. Other source adoption remains incomplete;
       October 18 approval covers only the historical initial page.
   - source_id: seattle-gay-news
     adapter: config/adapters/wa-2026-general/seattle-gay-news.yaml

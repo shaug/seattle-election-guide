@@ -274,6 +274,25 @@ source read or future unattended interpretation authority. Keep failed requests,
 private originals and the later native adoption requirement intact; the October 19
 Times override supplies no October 20 success or general failure policy.
 
+### October 21 delegated daily reviews and WFP reuse
+
+The finite delivery instruction also covers the actual October 21 source checks
+in [#593](https://github.com/shaug/seattle-election-guide/issues/593), including
+necessary explicit endorsement additions through the ordinary evidence/manual
+adapter and versioned release. Name each actual Codex researcher and verifier;
+retain prior decisions, interpretations and failed access observations. This is
+no personal maintainer source read or recurring unattended approval authority.
+An inaccessible publication receives no successful acknowledgement.
+
+WFP's [October 21 independent native scheduled reuse](../GENERAL_BASELINE_REUSE_2026-10-21_WFP.md)
+now supplies that source's later-use evidence after its exact October 20 review.
+It does not adopt the six-source system: changed unapproved originals, source
+failures, complete manual coverage and other source-specific acceptance remain
+open. TRU's separate ordinary October 21 diagnostic observed a registered-page
+404 and an official-home maintenance notice. Preserve its native failure; do not
+claim a parser defect, scheduled recovery or permission to alter cadence from
+that separate observation.
+
 ### October 19 WFP complete-publication correction (#497)
 
 WFP's initial page exposes only five of the ten approved in-inventory choices.
