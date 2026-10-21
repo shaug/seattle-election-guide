@@ -1,0 +1,95 @@
+{
+  "automatic_baseline_approval_asserted": false,
+  "captures": [
+    {
+      "id": "capture-washington-bus-20261021T103550Z-36b481c8eb50",
+      "manifest_sha256": "beda6969c9170cfce8b2beb9df0fd37c101793f4b30a9c50ef851b9caaae6160",
+      "original_bytes": 777968,
+      "original_sha256": "5b9f671a1692054de4e7c912142334bbfc0bbb99a77eb3649bc08603b78cfd8e",
+      "path": "data/manifests/evidence/capture-washington-bus-20261021T103550Z-36b481c8eb50.json"
+    },
+    {
+      "id": "capture-washington-bus-20261021T103721Z-8afb5efda11e",
+      "manifest_sha256": "721196080d31d59d8b378768c88b6755bee52e8d115e7a2a5b1d8afb9295f3ce",
+      "original_bytes": 75933,
+      "original_sha256": "491332977280738a6ffba0215613435566c3dfed061afc8a9fe967a5f46d02b3",
+      "path": "data/manifests/evidence/capture-washington-bus-20261021T103721Z-8afb5efda11e.json"
+    }
+  ],
+  "election_id": "wa-2026-general",
+  "evidence_scope": "The official current general-election gallery links the exact original initiative image; both named Codex reviewers actually viewed it. Numbers identify the three frozen statewide measures, with explicit No wording. The seven prior Bus decisions and their approved LD37 label corrections are retained. No new interpretation or source membership change.",
+  "human_authorization": {
+    "authorized_scope_quote": "you have clearance to make any bugfixes, endorsement checks, or similar changes as long as you don't introduce new UI in the process",
+    "by": "shaug",
+    "kind": "direct standing delegation in the active Codex conversation",
+    "scope_applied": "Three verified explicit Washington Bus No initiative additions through actual Codex research and independent original-image review, normal evidence/manual adapter, reviewed PR and automatic immutable publication. No new interpretation, source membership or discretionary UI.",
+    "source_message_id": "01a15326-fb88-7553-a1f7-f0111838dc8c",
+    "source_thread_id": "01a145fa-3e0a-7542-be42-4e0844a5a582",
+    "source_turn_id": "01a15326-fb37-79f2-95e4-135071dd0219"
+  },
+  "independent_verifier": "OpenAI Codex /root under finite maintainer delegation",
+  "issue": 593,
+  "ledger_after_sha256": "53b8e44d3f2defb0e350acdb95c466c1658c2705e0ac1e0e25c27b083f7882f2",
+  "ledger_before_sha256": "148177700743253f1aa857496fc2ba5721cda6d99bb3b28ede13ff865f20a1d0",
+  "manual_record": {
+    "path": "data/review/manual/manual-washington-bus-20261021T104312Z-f2a24008634b.json",
+    "sha256": "2679afcf24fbbbe9082c65445d675236fa5e55ca282ce843d00e3704455c6fb2"
+  },
+  "new_decision_count": 3,
+  "new_values": [
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": "VOTE NO ON ALL 3 INITIATIVES",
+      "evidence_locator": "Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e; linked from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50. Verified manual record manual-washington-bus-20261021T104312Z-f2a24008634b.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png",
+      "race_id": "initiative-26-001"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": "VOTE NO ON ALL 3 INITIATIVES",
+      "evidence_locator": "Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e; linked from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50. Verified manual record manual-washington-bus-20261021T104312Z-f2a24008634b.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png",
+      "race_id": "initiative-26-638"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": "VOTE NO ON ALL 3 INITIATIVES",
+      "evidence_locator": "Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e; linked from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50. Verified manual record manual-washington-bus-20261021T104312Z-f2a24008634b.",
+      "evidence_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png",
+      "race_id": "initiative-26-645"
+    }
+  ],
+  "operation": "add",
+  "personal_human_source_review_asserted": false,
+  "preserved_prior_decision_count": 915,
+  "prior_value": null,
+  "publication_approved": false,
+  "record_type": "explicitly_delegated_endorsement_review",
+  "research_reviewer": "OpenAI Codex /root/review_593_political",
+  "resulting_decision_count": 918,
+  "reviewed_at": "2026-10-21T10:43:12.788345Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "source_metadata_after": {
+    "captured_at": "2026-10-21T10:37:21.842746Z",
+    "evidence_locator": "Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e; linked from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50. Prior locator: Approved October 10 packet, issue #508; data/review/approvals/wa-2026-general-2026-10-10.json.",
+    "review_note": "Issue #593: OpenAI Codex /root/review_593_political reviewed the current complete 15-image general-election gallery; root independently viewed the original initiative image and verified three explicit No additions under the maintainer's finite delivery delegation. All seven prior decision dictionaries and their original label corrections remain unchanged. No personal maintainer read is asserted. See data/review/approvals/wa-2026-general-2026-10-21-bus.json. Prior source review: Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+    "reviewed_at": "2026-10-21T10:43:12.788345Z",
+    "reviewer": "OpenAI Codex /root under finite maintainer delegation",
+    "source_id": "washington-bus"
+  },
+  "source_metadata_before": {
+    "captured_at": "2026-10-11T01:07:23.755424Z",
+    "evidence_locator": "Approved October 10 packet, issue #508; data/review/approvals/wa-2026-general-2026-10-10.json.",
+    "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+    "reviewed_at": "2026-10-11T01:24:53Z",
+    "reviewer": "shaug",
+    "source_id": "washington-bus"
+  }
+}

@@ -1,6 +1,25 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
+  - corrected_on: 2026-10-21
+    headline: "Added Washington Bus’s three No initiative recommendations."
+    body: >-
+      Washington Bus’s current general-election gallery explicitly asks voters
+      to vote No on I-001, I-638 and I-645. Those three recommendations are now
+      included, bringing the guide to 918 decisions across the same 46 publishers.
+      All 915 previously recorded decisions are retained. The linked review
+      identifies the original image and the October 21 checks and access limits.
+    provenance:
+      - label: "IL26-001"
+        url: /e/wa-2026-general/races/initiative-26-001/
+      - label: "IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "IP26-645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "Washington Bus’s official general-election endorsements"
+        url: https://www.washingtonbus.org/endorsements
+      - label: "October 21 review and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.24/docs/GENERAL_VERIFICATION_2026-10-21.md
   - corrected_on: 2026-10-19
     headline: "Added the 46th District Democrats’ Seattle transit endorsement."
     body: >-

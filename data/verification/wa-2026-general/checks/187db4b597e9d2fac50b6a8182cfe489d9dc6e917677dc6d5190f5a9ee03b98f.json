@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-21T10:47:14.734324Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex researcher /root/review_593_political; recorded by /root under finite maintainer delegation: data/review/rechecks/wa-2026-general-2026-10-21-manual.json; source 37th-district-democrats; docs/GENERAL_MANUAL_REVIEWS_2026-10-21.md. Actual Codex researcher named; finite maintainer delegation; held omissions and prior interpretations remain distinct; no personal maintainer source read or automatic baseline approval asserted.",
+  "mode": "human",
+  "scheduled_for": "2026-10-21",
+  "source_id": "37th-district-democrats",
+  "status": "manual"
+}

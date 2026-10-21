@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 3672,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png",
+  "capture_method": "manual_upload",
+  "content_sha256": "c697dec23b919ea0ebaf3100eefa23a8737e169a3865f9f9006bafb2a6a9bea0",
+  "http_status": null,
+  "id": "capture-washington-bus-20261021T103721Z-95131de36d88",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png",
+  "retrieved_at": "2026-10-21T10:37:21.842746Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/c6/c697dec23b919ea0ebaf3100eefa23a8737e169a3865f9f9006bafb2a6a9bea0",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: The Washington Bus",
+  "updated_at": null
+}

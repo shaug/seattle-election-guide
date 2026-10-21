@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 777968,
+  "canonical_url": "https://www.washingtonbus.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "5b9f671a1692054de4e7c912142334bbfc0bbb99a77eb3649bc08603b78cfd8e",
+  "http_status": 200,
+  "id": "capture-washington-bus-20261021T103550Z-36b481c8eb50",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official source bytes retained privately; public records contain only provenance, short factual transcription and reviewed mappings. No redistribution permission inferred.",
+  "requested_url": "https://www.washingtonbus.org/endorsements",
+  "retrieved_at": "2026-10-21T10:35:50.505886Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/5b/5b9f671a1692054de4e7c912142334bbfc0bbb99a77eb3649bc08603b78cfd8e",
+  "storage_scope": "local_only",
+  "title": "Washington Bus 2026 General Election Endorsements",
+  "updated_at": null
+}

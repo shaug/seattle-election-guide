@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 75933,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png",
+  "capture_method": "image",
+  "content_sha256": "491332977280738a6ffba0215613435566c3dfed061afc8a9fe967a5f46d02b3",
+  "http_status": 200,
+  "id": "capture-washington-bus-20261021T103721Z-8afb5efda11e",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official source bytes retained privately; public records contain only provenance, short factual transcription and reviewed mappings. No redistribution permission inferred.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png",
+  "retrieved_at": "2026-10-21T10:37:21.842746Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/49/491332977280738a6ffba0215613435566c3dfed061afc8a9fe967a5f46d02b3",
+  "storage_scope": "local_only",
+  "title": "Washington Bus: Vote No on All Three 2026 Initiatives",
+  "updated_at": null
+}

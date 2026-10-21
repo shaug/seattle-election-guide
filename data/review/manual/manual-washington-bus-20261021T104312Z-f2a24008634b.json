@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-bus-20261021T103721Z-8afb5efda11e",
+  "entered_at": "2026-10-21T10:43:12.788345Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 GENERAL ELECTION ENDORSEMENTS gallery; final initiative image visibly states VOTE NO ON ALL 3 INITIATIVES and names I-001, I-638, I-645. Image capture capture-washington-bus-20261021T103721Z-8afb5efda11e; linked from page capture capture-washington-bus-20261021T103550Z-36b481c8eb50.",
+  "evidence_type": "image",
+  "id": "manual-washington-bus-20261021T104312Z-f2a24008634b",
+  "review_note": "Issue #593: political researcher and root each actually viewed the original linked general-election image. The three explicit No recommendations match the frozen statewide initiative IDs. Root independently checked page ownership/link, image bytes, initiative numbers, choices and election context. No personal maintainer source read is asserted.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-21T10:43:12.788345Z",
+  "reviewed_by": "OpenAI Codex /root under finite maintainer delegation",
+  "reviewer": "OpenAI Codex /root/review_593_political; entry recorded by /root",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "transcription": "The Washington Bus asks voters to VOTE NO ON ALL 3 INITIATIVES: I-001, I-638, I-645."
+}
