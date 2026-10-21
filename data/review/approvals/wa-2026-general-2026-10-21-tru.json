@@ -1,0 +1,142 @@
+{
+  "automatic_baseline_approval_asserted": false,
+  "captures": [
+    {
+      "id": "capture-transit-riders-union-20261021T174627Z-a8c8fba75da1",
+      "manifest_sha256": "523629d090eec2b53712d7789c6d2e3faa49b3a7dff139e3b18fae615a552bd4",
+      "original_bytes": 102955,
+      "original_sha256": "d5078572a80af83d1dc046b56acbbd20a6117702b7b2e67e852602b6763422cc",
+      "path": "data/manifests/evidence/capture-transit-riders-union-20261021T174627Z-a8c8fba75da1.json"
+    },
+    {
+      "id": "capture-transit-riders-union-20261021T174851Z-7a505719dd3c",
+      "manifest_sha256": "7eb27d19f25f4254f258c3da6e7a19d75eaef547c09d6c28d379395e73936672",
+      "original_bytes": 63238,
+      "original_sha256": "5569c7275260494235dd1b8fff5eb964f9a59503c274cbdf9a6e8f48ff07df3b",
+      "path": "data/manifests/evidence/capture-transit-riders-union-20261021T174851Z-7a505719dd3c.json"
+    },
+    {
+      "id": "capture-transit-riders-union-20261021T174852Z-157183293da2",
+      "manifest_sha256": "0eefb07ac01e95bb0aee5c954054a767c5d2825ba10b660256a13c50dc377b4a",
+      "original_bytes": 50981,
+      "original_sha256": "1a2e2fe749d8534da295b3236a8e3b65147622aba85bd6b84a2d3a98800ce1f9",
+      "path": "data/manifests/evidence/capture-transit-riders-union-20261021T174852Z-157183293da2.json"
+    },
+    {
+      "id": "capture-transit-riders-union-20261021T183345Z-517b2668c8f8",
+      "manifest_sha256": "c5a256897fa2b2594d0fd0b00d29c4af4adda2974e920a509d38f09a5694ead1",
+      "original_bytes": 124600,
+      "original_sha256": "f2098de7c78a04884437437fa2cbe38c10598f65dfbe336cc4ca9f3d34ee5b32",
+      "path": "data/manifests/evidence/capture-transit-riders-union-20261021T183345Z-517b2668c8f8.json"
+    }
+  ],
+  "caveats": [
+    "October graphic omits both Council2 dual names; both article lists explicitly retain them. No withdrawal or allocation change inferred.",
+    "Kelabe Tewolde is not visibly underlined in graphic, but both current article lists expressly endorse him. Prior approved decision retained; classification discrepancy held and documented, no fresh unqualified whole-TRU attestation.",
+    "October20 exact encrypted baseline and October21 genuine failed scheduled check remain unresolved; current operator originals do not replace them.",
+    "Ten process-qualified candidate recommendations remain separate; eight in scope held, two LD48 excluded. No new methodology or UI."
+  ],
+  "election_id": "wa-2026-general",
+  "evidence_scope": "Only four agreeing explicit formal measure positions in the October article and graphic. Literal IP26-001/IP26-638 source labels map to unique frozen IL numbers/subjects and graphic I001/I638; no blanket alias. All eight previously approved TRU decisions are retained, including the equal Council 2 pair and Kelabe. Graphic omissions/classification discrepancies and eight in-scope qualified recommendations remain held.",
+  "held_recommendations": [
+    "Cindy Ryu LD32 Senate",
+    "Joe Fitzgibbon LD34 House2",
+    "Noel Frame / Noel C. Frame LD36 Senate",
+    "Jaelynn Scott LD37 House2",
+    "Nicole Macri LD43 House1",
+    "Javier Valdez LD46 Senate",
+    "Darya Farivar LD46 House2",
+    "Teresa Mosqueda King County Council8"
+  ],
+  "human_authorization": {
+    "authorized_scope_quote": "you have clearance to make any bugfixes, endorsement checks, or similar changes as long as you don't introduce new UI in the process",
+    "by": "shaug",
+    "kind": "direct standing delegation in the active Codex conversation",
+    "scope_applied": "Four explicit formal TRU measure additions after actual article and linked-image research by the named peer and root, under standing finite delivery delegation. Normal reviewed publication remains separate; no new interpretation, source membership or discretionary UI.",
+    "source_message_id": "01a15326-fb88-7553-a1f7-f0111838dc8c",
+    "source_thread_id": "01a145fa-3e0a-7542-be42-4e0844a5a582",
+    "source_turn_id": "01a15326-fb37-79f2-95e4-135071dd0219"
+  },
+  "independent_verifier": "OpenAI Codex /root under finite maintainer delegation",
+  "issue": 593,
+  "ledger_after_sha256": "b7ef01eae817e582998cf3d80a1b5de31e9a20737a6f6c4dd25323b95a002988",
+  "ledger_before_sha256": "53b8e44d3f2defb0e350acdb95c466c1658c2705e0ac1e0e25c27b083f7882f2",
+  "manual_record": {
+    "path": "data/review/manual/manual-transit-riders-union-20261021T184241Z-8b735e794580.json",
+    "sha256": "eb898f4863fd4b25e1651e45e46c50617ca21475001bf1e595fe537bfcd4e317"
+  },
+  "native_scheduled_recovery_or_adoption_asserted": false,
+  "new_decision_count": 4,
+  "new_values": [
+    {
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "evidence_excerpt": "Yes on City of Seattle Proposition 1 (Seattle Transit Measure renewal)",
+      "evidence_locator": "October 15 general-election article, modified October 17; formal list: Yes on City of Seattle Proposition 1 (Seattle Transit Measure renewal). Seattle transit renewal; not the primary library levy. Article capture capture-transit-riders-union-20261021T174851Z-7a505719dd3c; graphic capture capture-transit-riders-union-20261021T183345Z-517b2668c8f8; verified manual manual-transit-riders-union-20261021T184241Z-8b735e794580. Four-only approval data/review/approvals/wa-2026-general-2026-10-21-tru.json.",
+      "evidence_url": "https://transitriders.org/2026-general-election-endorsements/",
+      "race_id": "seattle-proposition-1-transit"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": "No on/Reject IP26-645 (repeal of Millionaires Tax)",
+      "evidence_locator": "October 15 general-election article, modified October 17; formal list: No on/Reject IP26-645 (repeal of Millionaires Tax). Explicit initiative number and repeal subject identify IP26-645. Article capture capture-transit-riders-union-20261021T174851Z-7a505719dd3c; graphic capture capture-transit-riders-union-20261021T183345Z-517b2668c8f8; verified manual manual-transit-riders-union-20261021T184241Z-8b735e794580. Four-only approval data/review/approvals/wa-2026-general-2026-10-21-tru.json.",
+      "evidence_url": "https://transitriders.org/2026-general-election-endorsements/",
+      "race_id": "initiative-26-645"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": "No on IP26-001 (Force schools to out trans children)",
+      "evidence_locator": "October 15 general-election article, modified October 17; formal list: No on IP26-001 (Force schools to out trans children). Literal publisher IP26-001; inventory IL26-001 uniquely matches number 001 and school parental-rights subject; graphic I001 agrees. This fixed mapping is not a blanket IP/IL alias. Article capture capture-transit-riders-union-20261021T174851Z-7a505719dd3c; graphic capture capture-transit-riders-union-20261021T183345Z-517b2668c8f8; verified manual manual-transit-riders-union-20261021T184241Z-8b735e794580. Four-only approval data/review/approvals/wa-2026-general-2026-10-21-tru.json.",
+      "evidence_url": "https://transitriders.org/2026-general-election-endorsements/",
+      "race_id": "initiative-26-001"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": "No on IP26-638 (Force women into genital exams to play sports)",
+      "evidence_locator": "October 15 general-election article, modified October 17; formal list: No on IP26-638 (Force women into genital exams to play sports). Literal publisher IP26-638; inventory IL26-638 uniquely matches number 638 and school-athletics subject; graphic I638 agrees. This fixed mapping is not a blanket IP/IL alias. Article capture capture-transit-riders-union-20261021T174851Z-7a505719dd3c; graphic capture capture-transit-riders-union-20261021T183345Z-517b2668c8f8; verified manual manual-transit-riders-union-20261021T184241Z-8b735e794580. Four-only approval data/review/approvals/wa-2026-general-2026-10-21-tru.json.",
+      "evidence_url": "https://transitriders.org/2026-general-election-endorsements/",
+      "race_id": "initiative-26-638"
+    }
+  ],
+  "operation": "add",
+  "out_of_inventory": [
+    "Osman Salahuddin LD48 House1",
+    "Jessica Forsythe LD48 House2"
+  ],
+  "personal_human_source_review_asserted": false,
+  "preserved_prior_decision_count": 918,
+  "preserved_prior_tru_decision_count": 8,
+  "prior_value": null,
+  "publication_approved": false,
+  "record_type": "explicitly_delegated_endorsement_review",
+  "related_issue": 497,
+  "research_reviewer": "OpenAI Codex /root/review_tru_oct21_recovery",
+  "resulting_decision_count": 922,
+  "reviewed_at": "2026-10-21T18:42:41.511686Z",
+  "root_finite_admission_sha256": "575b536097f36978ec5a1ad86f4bc3f4df0cc9c15ede1d059b63738366bf82fd",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "source_metadata_after": {
+    "captured_at": "2026-10-21T17:48:51.975083Z",
+    "evidence_locator": "Official September 30 general-election endorsement list. Capture capture-transit-riders-union-20261004T045654Z-a94f0424cdd3.",
+    "review_note": "Issue #593 / #497: October 21 delegated admission applies ONLY to four explicit formal measure additions, after actual root and named peer article/graphic review. Eight prior decisions retain their existing approvals and original locators. The eight in-inventory process-qualified candidate recommendations remain held; two LD48 recommendations are outside inventory. Council 2 dual names are absent from the graphic but affirmed in both articles; Kelabe is not visibly underlined but formally endorsed in both articles. No withdrawal inferred. No personal human source read, exact October 20 approval, automatic whole-TRU baseline approval or native recovery asserted. See data/review/approvals/wa-2026-general-2026-10-21-tru.json. Prior source review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the September 30 general-election list; shaug verified every decision, the dual Council 2 endorsement, and the unique Gabe Rothstein Position 5 mapping despite the source omitting the position.",
+    "reviewed_at": "2026-10-21T18:42:41.511686Z",
+    "reviewer": "OpenAI Codex /root under finite maintainer delegation",
+    "source_id": "transit-riders-union"
+  },
+  "source_metadata_before": {
+    "captured_at": "2026-10-04T04:56:54Z",
+    "evidence_locator": "Official September 30 general-election endorsement list. Capture capture-transit-riders-union-20261004T045654Z-a94f0424cdd3.",
+    "review_note": "Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the September 30 general-election list; shaug verified every decision, the dual Council 2 endorsement, and the unique Gabe Rothstein Position 5 mapping despite the source omitting the position.",
+    "reviewed_at": "2026-10-04T05:30:06Z",
+    "reviewer": "shaug",
+    "source_id": "transit-riders-union"
+  }
+}

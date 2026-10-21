@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 50981,
+  "canonical_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "1a2e2fe749d8534da295b3236a8e3b65147622aba85bd6b84a2d3a98800ce1f9",
+  "http_status": 200,
+  "id": "capture-transit-riders-union-20261021T174852Z-157183293da2",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": "2026-09-30",
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official publisher HTML retained privately; public manifests, factual decisions and short review locators only.",
+  "requested_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+  "retrieved_at": "2026-10-21T17:48:52.983589Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "storage_reference": "sha256/1a/1a2e2fe749d8534da295b3236a8e3b65147622aba85bd6b84a2d3a98800ce1f9",
+  "storage_scope": "local_only",
+  "title": "Transit Riders Union 2026 General Election Endorsements",
+  "updated_at": null
+}

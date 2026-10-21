@@ -1,6 +1,6 @@
 schema_version: '1.0'
 election_id: wa-2026-general
-data_as_of: '2026-10-21T10:43:12.788345Z'
+data_as_of: '2026-10-21T18:42:41.511686Z'
 reviewer: OpenAI Codex / root (explicit maintainer delegation)
 review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured 21
   new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every new or
@@ -744,13 +744,19 @@ sources:
     candidate_ids:
     - initiative-26-645--no
 - source_id: transit-riders-union
-  captured_at: '2026-10-04T04:56:54Z'
-  reviewed_at: '2026-10-04T05:30:06Z'
-  reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
-    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
-    Codex transcribed the September 30 general-election list; shaug verified every decision, the dual Council 2 endorsement,
-    and the unique Gabe Rothstein Position 5 mapping despite the source omitting the position.'
+  captured_at: '2026-10-21T17:48:51.975083Z'
+  reviewed_at: '2026-10-21T18:42:41.511686Z'
+  reviewer: OpenAI Codex /root under finite maintainer delegation
+  review_note: 'Issue #593 / #497: October 21 delegated admission applies ONLY to four explicit formal measure additions,
+    after actual root and named peer article/graphic review. Eight prior decisions retain their existing approvals and original
+    locators. The eight in-inventory process-qualified candidate recommendations remain held; two LD48 recommendations are
+    outside inventory. Council 2 dual names are absent from the graphic but affirmed in both articles; Kelabe is not visibly
+    underlined but formally endorsed in both articles. No withdrawal inferred. No personal human source read, exact October
+    20 approval, automatic whole-TRU baseline approval or native recovery asserted. See data/review/approvals/wa-2026-general-2026-10-21-tru.json.
+    Prior source review: Issue #474: shaug verified the complete source-by-source review packet, including this source and
+    all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue
+    #453: OpenAI Codex transcribed the September 30 general-election list; shaug verified every decision, the dual Council
+    2 endorsement, and the unique Gabe Rothstein Position 5 mapping despite the source omitting the position.'
   evidence_locator: Official September 30 general-election endorsement list. Capture capture-transit-riders-union-20261004T045654Z-a94f0424cdd3.
   decisions:
   - race_id: ld-32-state-representative-1
@@ -778,6 +784,44 @@ sources:
   - race_id: seattle-municipal-court-judge-5
     candidate_ids:
     - seattle-municipal-court-judge-5--gabe-rothstein
+  - race_id: seattle-proposition-1-transit
+    candidate_ids:
+    - seattle-proposition-1-transit--yes
+    evidence_url: https://transitriders.org/2026-general-election-endorsements/
+    evidence_excerpt: Yes on City of Seattle Proposition 1 (Seattle Transit Measure renewal)
+    evidence_locator: 'October 15 general-election article, modified October 17; formal list: Yes on City of Seattle Proposition
+      1 (Seattle Transit Measure renewal). Seattle transit renewal; not the primary library levy. Article capture capture-transit-riders-union-20261021T174851Z-7a505719dd3c;
+      graphic capture capture-transit-riders-union-20261021T183345Z-517b2668c8f8; verified manual manual-transit-riders-union-20261021T184241Z-8b735e794580.
+      Four-only approval data/review/approvals/wa-2026-general-2026-10-21-tru.json.'
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+    evidence_url: https://transitriders.org/2026-general-election-endorsements/
+    evidence_excerpt: No on/Reject IP26-645 (repeal of Millionaires Tax)
+    evidence_locator: 'October 15 general-election article, modified October 17; formal list: No on/Reject IP26-645 (repeal
+      of Millionaires Tax). Explicit initiative number and repeal subject identify IP26-645. Article capture capture-transit-riders-union-20261021T174851Z-7a505719dd3c;
+      graphic capture capture-transit-riders-union-20261021T183345Z-517b2668c8f8; verified manual manual-transit-riders-union-20261021T184241Z-8b735e794580.
+      Four-only approval data/review/approvals/wa-2026-general-2026-10-21-tru.json.'
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+    evidence_url: https://transitriders.org/2026-general-election-endorsements/
+    evidence_excerpt: No on IP26-001 (Force schools to out trans children)
+    evidence_locator: 'October 15 general-election article, modified October 17; formal list: No on IP26-001 (Force schools
+      to out trans children). Literal publisher IP26-001; inventory IL26-001 uniquely matches number 001 and school parental-rights
+      subject; graphic I001 agrees. This fixed mapping is not a blanket IP/IL alias. Article capture capture-transit-riders-union-20261021T174851Z-7a505719dd3c;
+      graphic capture capture-transit-riders-union-20261021T183345Z-517b2668c8f8; verified manual manual-transit-riders-union-20261021T184241Z-8b735e794580.
+      Four-only approval data/review/approvals/wa-2026-general-2026-10-21-tru.json.'
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+    evidence_url: https://transitriders.org/2026-general-election-endorsements/
+    evidence_excerpt: No on IP26-638 (Force women into genital exams to play sports)
+    evidence_locator: 'October 15 general-election article, modified October 17; formal list: No on IP26-638 (Force women
+      into genital exams to play sports). Literal publisher IP26-638; inventory IL26-638 uniquely matches number 638 and school-athletics
+      subject; graphic I638 agrees. This fixed mapping is not a blanket IP/IL alias. Article capture capture-transit-riders-union-20261021T174851Z-7a505719dd3c;
+      graphic capture capture-transit-riders-union-20261021T183345Z-517b2668c8f8; verified manual manual-transit-riders-union-20261021T184241Z-8b735e794580.
+      Four-only approval data/review/approvals/wa-2026-general-2026-10-21-tru.json.'
 - source_id: washington-bikes
   captured_at: '2026-10-16T14:59:57.863784Z'
   reviewed_at: '2026-10-16T15:48:50.280092Z'

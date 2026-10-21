@@ -13,7 +13,7 @@ from urllib.parse import unquote, urljoin, urlsplit
 
 from pydantic import AwareDatetime, Field, model_validator
 
-from election_guide.collection.http import fetch_http
+from election_guide.collection.http import HttpArtifact, fetch_http
 from election_guide.collection.verification import SourcePolicy, VerificationModel
 from election_guide.evidence.models import (
     CAPTURE_ID_PATTERN,
@@ -60,13 +60,25 @@ class DiscoveryAudit(VerificationModel):
     listed: list[str] = Field(max_length=100)
     captures: list[str] = Field(min_length=1, max_length=140)
     comparison_sha256: str = Field(pattern=SHA256_PATTERN)
+    assets: list[str] = Field(default_factory=list, max_length=1)
 
     @model_validator(mode="after")
     def validate_articles(self) -> DiscoveryAudit:
+        if self.assets:
+            from election_guide.collection.tru_discovery import TRU_IMAGE
+
+            if self.source_id != "transit-riders-union" or self.assets != [TRU_IMAGE]:
+                raise ValueError("only the exact reviewed TRU image is supported")
+        if self.source_id == "transit-riders-union" and not self.assets:
+            raise ValueError("TRU discovery requires its meaningful image")
         for url in [*self.articles, *self.listed]:
             parsed = urlsplit(url)
             if self.source_id == "ufcw-3000":
                 validate_ufcw_article(url)
+            elif self.source_id == "transit-riders-union":
+                from election_guide.collection.tru_discovery import validate_tru_article
+
+                validate_tru_article(url)
             elif (
                 self.source_id != "seattle-gay-news"
                 or parsed.scheme != "https"
@@ -196,10 +208,28 @@ class PublicationCollector:
             or urlsplit(artifact.canonical_url).scheme != "https"
         ):
             raise ValueError("index response leaves the official host")
+        if self.source_id == "transit-riders-union" and (
+            artifact.canonical_url != url or artifact.status != 200
+        ):
+            raise ValueError(
+                "TRU response changes the requested identity or complete-response status"
+            )
         if self.source_id == "ufcw-3000" and url != UFCW_INDEX:
             validate_ufcw_article(artifact.canonical_url)
         if artifact.media_type.split(";", 1)[0] not in {"text/html", "application/xhtml+xml"}:
             raise ValueError("index or article is not HTML")
+        self.retain(url, artifact, "static_html")
+        parser = parser or PublicationParser()
+        parser.feed(artifact.content.decode("utf-8"))
+        parser.close()
+        return artifact.content, parser
+
+    def retain(
+        self, url: str, artifact: HttpArtifact, method: Literal["static_html", "image"]
+    ) -> None:
+        """Retain one real bounded response; assets share the publication budgets."""
+        if len(self.captures) >= 140:
+            raise ValueError("publication discovery exceeds its combined capture bound")
         self.total += len(artifact.content)
         if self.total > 64 * 1024 * 1024:
             raise ValueError("publication discovery exceeds its total byte bound")
@@ -212,7 +242,7 @@ class PublicationCollector:
             title="Official endorsement discovery input",
             retrieved_at=self.checked_at,
             media_type=artifact.media_type,
-            capture_method="static_html",
+            capture_method=method,
             http_status=artifact.status,
             redirect_chain=artifact.redirect_chain,
             redistribution="restricted",
@@ -222,10 +252,6 @@ class PublicationCollector:
             record_capture(request, path, self.storage, self.root / "manifests")
         )
         self.captures.append(manifest.id)
-        parser = parser or PublicationParser()
-        parser.feed(artifact.content.decode("utf-8"))
-        parser.close()
-        return artifact.content, parser
 
 
 def discover_publication(
@@ -397,7 +423,8 @@ def discover_ufcw_publication(root: Path, storage: Path, checked_at: datetime) -
             audit = DiscoveryAudit.model_validate(record)
             known.update(audit.articles)
     for path in root.glob("discovery-obligations/*.json"):
-        known.update(read_ufcw_discovery_obligation(path).articles)
+        if read_json(path)["source_id"] == "ufcw-3000":
+            known.update(read_ufcw_discovery_obligation(path).articles)
     articles = sorted(known | listed)
     if len(articles) > 100:
         raise ValueError("UFCW discovery exceeds its 100-article bound")

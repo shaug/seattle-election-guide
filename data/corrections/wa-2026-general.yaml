@@ -2,6 +2,28 @@ schema_version: "1.0"
 election_id: wa-2026-general
 entries:
   - corrected_on: 2026-10-21
+    headline: "Added Transit Riders Union’s four formal measure endorsements."
+    body: >-
+      Transit Riders Union’s October general-election article endorses Yes on
+      Seattle’s transit Proposition 1 and No on initiatives 26-645, 26-001 and
+      26-638. Those four decisions are now included, bringing the guide to 922
+      decisions across the same 46 publishers. All 918 prior decisions remain.
+      The linked review records the original article and graphic, literal source
+      labels, and candidate recommendations still held for review.
+    provenance:
+      - label: "Seattle Transit Proposition 1"
+        url: /e/wa-2026-general/races/seattle-proposition-1-transit/
+      - label: "IP26-645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "IL26-001"
+        url: /e/wa-2026-general/races/initiative-26-001/
+      - label: "IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "TRU’s October general-election endorsements"
+        url: https://transitriders.org/2026-general-election-endorsements/
+      - label: "Complete October 21 TRU review and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_RECHECK_2026-10-21_TRU.md
+  - corrected_on: 2026-10-21
     headline: "Added Washington Bus’s three No initiative recommendations."
     body: >-
       Washington Bus’s current general-election gallery explicitly asks voters

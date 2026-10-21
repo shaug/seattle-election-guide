@@ -37,7 +37,7 @@ The first general-election tranche is:
 
 | Source | Automatic publication check | Limitation |
 |---|---|---|
-| Transit Riders Union | Current general endorsement page | Prior self-redirect failures are preserved. October 18 diagnosis found the TLS transport serialized the wrong default Host port; corrected HTTPS transport recovers the official page with the same redirect limit. Independent scheduled reuse remains adoption work. |
+| Transit Riders Union | Official WordPress archive through the September 30 boundary, both known and learned current-general articles, exact linked October graphic | Twelve fixed formal mappings from the designated October article; qualified recommendations held. Full original HTML/image hashes drive review. Exact expanded baseline approval and later independent native scheduled reuse remain pending; historical failures and exact October 20 obligations remain intact. |
 | Sage Leaders | Current 2026 section, excluding past-year sections | Fixed, reviewed factual mappings; changed bytes require review. |
 | SEIU 775 | Washington section | Fixed, reviewed factual mappings; changed bytes require review. |
 | UFCW 3000 | Complete endorsements landing page plus known/new relevant official articles | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. The expanded composite requires review of its exact new baseline. |
@@ -50,9 +50,9 @@ reviewed in #474. They contain names and offices, not full third-party pages or
 editorial prose. They do not approve the first automatic live baseline.
 
 The six stay in the automatic-attempt lane, including an inaccessible source;
-failures do not silently reduce coverage. TRU's access limitation prevents a
-claim that all six have successful live coverage or that this runbook is adopted.
-Resolve that limitation and verify the resulting live baseline before adoption.
+failures do not silently reduce coverage. Current operator research and fixture tests
+do not establish native scheduled recovery or adoption. Complete exact-baseline
+reviews and later independent native scheduled evidence remain required for the six.
 
 All other eligible panel sources use manual review, including not-found,
 restricted, social, dynamic, PDF, and image publications without an installed
@@ -360,3 +360,39 @@ These results do not mark the runbook adopted. An independent scheduled cycle
 must still prove approved baseline reuse through the deployed workflow. Current
 remaining source obligations and publication status are tracked in the
 [October 18 closeout](../GENERAL_VERIFICATION_CLOSEOUT_2026-10-18.md).
+
+## October 21 TRU publication coverage correction
+
+The [finite TRU packet](../GENERAL_RECHECK_2026-10-21_TRU.md) adds four separately
+admitted formal measure facts and corrects automatic discovery under #593/#497.
+TRU checks fetch complete official WordPress archives until the reviewed September
+30 article appears, at most 40 archive pages, 100 required articles, 140 combined
+original captures and 64 MiB total. Pagination accepts the official root and clean
+increasing `/page/N/` identities only. The two known general articles, successful
+prior memberships and valid durable learned obligations are revisited every check.
+New valid links are recorded with their actual archive capture before later
+pagination or any required article can fail. Invalid pending evidence is rejected
+by public archive validation before a runner changes state.
+
+The designated October article must still link the exact reviewed
+`TRU_November_2026_General_Endorsements-1024x581.jpg` on the source-owned CDN.
+That exact image is fetched through the same bounded transport on every check,
+retained as an image original and hashed in full. A removed or unrecognized
+replacement asset, unsafe/canonical identity, maintenance layout, malformed HTML,
+missing boundary or failed required input fails the check and retains the prior
+snapshot and already learned article obligations. There is no OCR, automatic
+image interpretation or expansion to other CDN assets.
+
+Only the designated October article supplies the twelve supported formal facts;
+older/home duplicates never enter extraction. The separate qualified candidate
+recommendations remain full hashed context, with no endorsed-status conversion.
+All archive/article/image hashes and sorted membership bind the derived comparison.
+An image-only or unrecognized text edit therefore creates review work with an empty
+semantic diff. Originals retain actual HTTP provenance and encrypted custody; the
+comparison is a derived manual upload without an invented HTTP response.
+
+This correction approves neither the exact October 20 original nor a new complete
+automatic TRU baseline. An expanded live snapshot requires its own actual full
+source review and exact snapshot attestation, then later independent native
+scheduled reuse/recovery evidence. The October 21 failed native check remains
+unchanged. This runbook stays proposed; neither parent issue closes here.

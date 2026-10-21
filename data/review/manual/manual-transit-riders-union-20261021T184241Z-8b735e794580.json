@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-transit-riders-union-20261021T174851Z-7a505719dd3c",
+  "entered_at": "2026-10-21T18:42:41.511686Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official October15 general-election article, modified October17, four opening formal measure positions: Seattle transit Proposition1 Yes; IP26-645 No; IP26-001 No; IP26-638 No. Article capture capture-transit-riders-union-20261021T174851Z-7a505719dd3c; independently viewed exact linked graphic capture-transit-riders-union-20261021T183345Z-517b2668c8f8. Inventory labels 001/638 as IL; explicit numbers and subjects preserve the reviewed mapping.",
+  "evidence_type": "web_page",
+  "id": "manual-transit-riders-union-20261021T184241Z-8b735e794580",
+  "review_note": "Issue #593 / #497: named researcher and root independently read actual official articles and viewed the original linked graphic. Only four agreeing explicit formal measure directions are approved under standing delivery delegation. Eight prior TRU decisions retain their existing approvals; eight in-scope qualified candidate recommendations are held, two LD48 rows excluded. Council2 graphic omission and Kelabe underline discrepancy remain explicit; no withdrawal inferred. No personal maintainer source read, whole-panel attestation or scheduled baseline approval is asserted.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-21T18:42:41.511686Z",
+  "reviewed_by": "OpenAI Codex /root under finite maintainer delegation",
+  "reviewer": "OpenAI Codex /root/review_tru_oct21_recovery; entry recorded by /root",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "transcription": "Four explicit formal measure positions: Yes on Seattle transit Proposition1; No on IP26-645 (tax limits), IP26-001 (school parental-rights measure), and IP26-638 (school athletics measure). The separate process-qualified candidate recommendations are held; none are transcribed as endorsements."
+}

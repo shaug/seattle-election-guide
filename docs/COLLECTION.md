@@ -252,3 +252,18 @@ The new verification vault stores authenticated ciphertext in Git, with a key
 outside Git, so independent runners can restore and verify prior raw captures.
 This is the SOURCE_POLICY.md encrypted-custody exception; it does not change
 historical capture IDs, permit public raw pages, or relax live HTTP safeguards.
+
+TRU monitoring (#593/#497) now uses a narrow WordPress archive collector, described
+in the [finite October 21 packet](GENERAL_RECHECK_2026-10-21_TRU.md). It traverses
+only designated next archive pages to the reviewed September boundary, revisits
+both known general articles and retained learned links, and records newly learned
+membership before later collection can fail. The complete designated October
+article supplies the twelve reviewed formal facts once. Complete archive/article
+hashes and the exact linked meaningful JPEG hash drive deterministic comparison;
+qualified recommendation text stays context. The known image is required on each
+check, with no automatic OCR or replacement-asset discovery. The existing
+40-page/100-article/140-capture/64-MiB bounds and HTTP safeguards remain in force.
+Real HTML/image responses receive original manifests and encrypted custody; the
+derived comparison has manual-upload provenance and no invented HTTP status.
+Exact expanded baseline approval and independent native scheduled acceptance
+remain separate outstanding work.

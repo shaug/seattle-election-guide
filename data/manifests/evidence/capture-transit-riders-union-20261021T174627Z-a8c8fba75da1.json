@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 102955,
+  "canonical_url": "https://transitriders.org/",
+  "capture_method": "static_html",
+  "content_sha256": "d5078572a80af83d1dc046b56acbbd20a6117702b7b2e67e852602b6763422cc",
+  "http_status": 200,
+  "id": "capture-transit-riders-union-20261021T174627Z-a8c8fba75da1",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official publisher HTML retained privately; public manifests, factual decisions and short review locators only.",
+  "requested_url": "https://transitriders.org/",
+  "retrieved_at": "2026-10-21T17:46:27.462298Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "storage_reference": "sha256/d5/d5078572a80af83d1dc046b56acbbd20a6117702b7b2e67e852602b6763422cc",
+  "storage_scope": "local_only",
+  "title": "Transit Riders Union",
+  "updated_at": null
+}
