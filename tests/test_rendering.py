@@ -4465,6 +4465,61 @@ def test_candidate_meter_closing_split_border_follows_rounded_tip(tmp_path: Path
         assert closing_edge != seam, (closing_edge, seam, geometry, screenshot_path)
 
 
+@pytest.mark.parametrize("candidate", ("cindy-ryu", "jesse-salomon"))
+def test_single_split_block_keeps_both_curved_seams(tmp_path: Path, candidate: str) -> None:
+    """One split carrying both tongue flags retains both borders in either candidate view."""
+    html_path = _write_race_html(tmp_path, published_view_model(), "ld-32-state-senator")
+    screenshot_path = tmp_path / f"one-block-{candidate}.png"
+    selector = f'[data-meter-candidate-id$="--{candidate}"]'
+
+    def capture(cdp: _CdpSocket, session_id: str) -> None:
+        cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    f"document.querySelector({json.dumps(selector)})"
+                    ".scrollIntoView({block:'center'})"
+                )
+            },
+            session_id=session_id,
+        )
+        screenshot = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session_id)
+        screenshot_path.write_bytes(base64.b64decode(cast(str, screenshot["data"])))
+
+    geometry = _evaluate_in_chrome(
+        html_path,
+        f"""(() => {{
+          const meter = document.querySelector({json.dumps(selector)});
+          const block = meter.querySelector('.meter-tongue-start.meter-tongue-end');
+          const rect = (element) => {{
+            const box = element.getBoundingClientRect();
+            return {{ left: box.left, top: box.top, right: box.right, bottom: box.bottom }};
+          }};
+          return JSON.stringify({{
+            block: rect(block),
+            lower: rect(block.querySelector('.meter-half-bottom')),
+            upper: rect(block.querySelector('.meter-half-top')),
+            seam: getComputedStyle(block.querySelector('.meter-half-bottom')).borderTopColor,
+          }});
+        }})()""",
+        viewport=(1440, 1000),
+        interact=capture,
+    )
+    with Image.open(screenshot_path) as opened:
+        screenshot = opened.convert("RGB")
+        left = round(geometry["block"]["left"])
+        right = round(geometry["block"]["right"])
+        opening_y = round(geometry["lower"]["top"])
+        closing_y = round(geometry["upper"]["bottom"])
+        seam = tuple(int(part) for part in re.findall(r"\d+", geometry["seam"]))
+        opening_interior = screenshot.getpixel((left + 10, opening_y))
+        closing_interior = screenshot.getpixel((right - 10, closing_y))
+        assert opening_interior == seam, (candidate, opening_interior, seam, screenshot_path)
+        assert closing_interior == seam, (candidate, closing_interior, seam, screenshot_path)
+        assert screenshot.getpixel((left + 2, opening_y)) != seam
+        assert screenshot.getpixel((right - 3, closing_y)) != seam
+
+
 def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
     tmp_path: Path,
 ) -> None:

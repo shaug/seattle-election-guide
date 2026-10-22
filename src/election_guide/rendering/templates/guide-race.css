@@ -141,6 +141,15 @@
    split seam onto the rounded upper half instead. */
 .meter-block-split.meter-tongue-end .meter-half-top { border-bottom: 1px solid var(--meter-splitline-rest, transparent); transition: border-bottom-color .15s ease; }
 .meter-block-split.meter-tongue-end .meter-half-bottom { border-top-width: 0; }
+/* A one-block band has both corners. Its two halves cannot each own a full
+   horizontal border: either straight edge would cross the other tip. Draw
+   the opening and closing seam as short, joined overlays instead. */
+.meter-block-split.meter-tongue-start.meter-tongue-end { --meter-single-seam: var(--meter-splitline-rest, transparent); }
+.meter-block-split.meter-tongue-start.meter-tongue-end .meter-half-top { border-bottom-width: 0; }
+.meter-block-split.meter-tongue-start.meter-tongue-end::before,
+.meter-block-split.meter-tongue-start.meter-tongue-end::after { position: absolute; z-index: 1; height: .25rem; content: ""; pointer-events: none; transition: border-color .15s ease; }
+.meter-block-split.meter-tongue-start.meter-tongue-end::before { top: 50%; right: .25rem; left: 0; border-top: 1px solid var(--meter-single-seam); border-radius: .25rem 0 0 0; }
+.meter-block-split.meter-tongue-start.meter-tongue-end::after { top: calc(50% - .25rem); right: 0; width: .3rem; border-bottom: 1px solid var(--meter-single-seam); border-radius: 0 0 .25rem 0; }
 /* Minimum block width (docs/METER_V2.md, Edge states): below the shared
    `_METER_DEGRADE_MAX_BLOCKS` floor, seams drop everywhere and the meter reads
    as plain candidate runs — the color change at a run boundary is still the
@@ -169,13 +178,15 @@
   .screen-meter:not(.meter-touch):hover .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
   .screen-meter:not(.meter-touch):hover .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
   .screen-meter:not(.meter-touch):hover .meter-tongue-end .meter-half-top { border-bottom-color: var(--meter-splitline-hover, transparent); }
+  .screen-meter:not(.meter-touch):hover .meter-tongue-start.meter-tongue-end { --meter-single-seam: var(--meter-splitline-hover, transparent); }
 }
 .screen-meter:not(.screen-meter-na):is(:focus-visible, .meter-inspecting) strong { opacity: 0; }
 .screen-meter:is(:focus-visible, .meter-inspecting) .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
 .screen-meter:is(:focus-visible, .meter-inspecting) .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
 .screen-meter:is(:focus-visible, .meter-inspecting) .meter-tongue-end .meter-half-top { border-bottom-color: var(--meter-splitline-hover, transparent); }
+.screen-meter:is(:focus-visible, .meter-inspecting) .meter-tongue-start.meter-tongue-end { --meter-single-seam: var(--meter-splitline-hover, transparent); }
 @media (prefers-reduced-motion: reduce) {
-  .meter-block, .meter-half-bottom, .meter-tongue-end .meter-half-top, .screen-meter strong { transition: none; }
+  .meter-block, .meter-half-bottom, .meter-tongue-end .meter-half-top, .meter-tongue-start.meter-tongue-end::before, .meter-tongue-start.meter-tongue-end::after, .screen-meter strong { transition: none; }
 }
 /* The per-block tooltip (`meter-tooltip.mjs`): one shared, fixed-position
    element the whole page's meters use, never a live region — the meter's own
@@ -259,4 +270,5 @@
   .meter-block { border-left-color: var(--meter-seam-hover-color, transparent) !important; border-image-source: var(--meter-seam-hover-image, none) !important; }
   .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent) !important; }
   .meter-tongue-end .meter-half-top { border-bottom-color: var(--meter-splitline-hover, transparent) !important; }
+  .meter-tongue-start.meter-tongue-end { --meter-single-seam: var(--meter-splitline-hover, transparent) !important; }
 }
