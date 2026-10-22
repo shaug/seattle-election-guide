@@ -14,8 +14,10 @@ editing repository YAML alone cannot change the served primary Updates page.
    request. Verify the automatic general release and production deployment. The
    primary remains pinned to its existing archive at this stage.
 2. From that exact clean merged source, build the next unused primary version
-   twice with `election-guide release build`, the primary ledger, and the source's
-   commit timestamp. Compare the bundles with `release compare`. Inspect notes,
+   twice with the existing `release.builder.build_release` API, the primary ledger,
+   and the source's commit timestamp. Supply its `software_history` input from
+   `release.history.generate_software_history`, bounded by the previous published
+   primary source and this exact source. Compare the bundles with `release compare`. Inspect notes,
    validation reports, both screenshots, frozen inputs and retained Updates
    identities. Preflight complete remote tag/release/asset state, publish without
    replacing any existing asset, download the published archive, and verify its
