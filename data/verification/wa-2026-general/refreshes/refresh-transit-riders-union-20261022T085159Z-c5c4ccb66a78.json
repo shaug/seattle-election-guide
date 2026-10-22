@@ -1,0 +1,78 @@
+{
+  "capture_id": "capture-transit-riders-union-20261022T085159Z-ef6f8a20f6ab",
+  "checked_at": "2026-10-22T08:51:59Z",
+  "content_changed": true,
+  "diff": [
+    {
+      "after": {
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "evidence_excerpt": "No on IP26-001 (Force schools to out trans children)",
+        "evidence_locator": "October article formal list: No on IP26-001 (Force schools to out trans children). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+        "extraction_confidence": "0.99",
+        "race_id": "initiative-26-001",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "initiative-26-001"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "evidence_excerpt": "No on IP26-638 (Force women into genital exams to play sports)",
+        "evidence_locator": "October article formal list: No on IP26-638 (Force women into genital exams to play sports). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+        "extraction_confidence": "0.99",
+        "race_id": "initiative-26-638",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "initiative-26-638"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_excerpt": "No on/Reject IP26-645 (repeal of Millionaires Tax)",
+        "evidence_locator": "October article formal list: No on/Reject IP26-645 (repeal of Millionaires Tax). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+        "extraction_confidence": "0.99",
+        "race_id": "initiative-26-645",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "initiative-26-645"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "seattle-proposition-1-transit--yes"
+        ],
+        "evidence_excerpt": "Yes on City of Seattle Proposition 1 (Seattle Transit Measure renewal)",
+        "evidence_locator": "October article formal list: Yes on City of Seattle Proposition 1 (Seattle Transit Measure renewal). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+        "extraction_confidence": "0.99",
+        "race_id": "seattle-proposition-1-transit",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "seattle-proposition-1-transit"
+    }
+  ],
+  "error": null,
+  "id": "refresh-transit-riders-union-20261022T085159Z-c5c4ccb66a78",
+  "previous_snapshot_id": "extraction-transit-riders-union-20261020T085058Z-fb793986a0b7",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-transit-riders-union-20261022T085159Z-1384972b2bd9",
+  "source_id": "transit-riders-union",
+  "status": "updated"
+}
