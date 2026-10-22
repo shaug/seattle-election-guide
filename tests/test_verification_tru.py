@@ -595,6 +595,84 @@ def test_tru_audit_requires_actual_current_original_inputs(
     assert {p: p.read_bytes() for p in state.rglob("*.json")} == before
 
 
+@pytest.mark.parametrize(
+    ("original_size", "expected_status"),
+    [
+        pytest.param(25 * 1024 * 1024 - 71, "updated", id="comparison-at-limit"),
+        pytest.param(25 * 1024 * 1024 - 70, "failed", id="comparison-one-byte-over"),
+        pytest.param(25 * 1024 * 1024, "failed", id="original-at-limit"),
+    ],
+)
+def test_tru_derived_size_boundary_preserves_recoverable_archive(
+    tmp_path: Path,
+    publication: tuple[Path, dict[str, Any]],
+    original_size: int,
+    expected_status: str,
+) -> None:
+    policy, pages = publication
+    state = tmp_path / "state"
+    baseline = run(policy, state, 19)
+    history = {p.relative_to(state): p.read_bytes() for p in state.rglob("*.json")}
+    designated = pages[CURRENT]
+    pages[HOME] = archive(extra=entry(NEW))
+    pages[NEW] = article()
+    # The derived comparison adds a 64-digit hash inside a seven-byte HTML comment.
+    pages[CURRENT] = designated + b"<!--" + b"x" * (original_size - len(designated) - 7) + b"-->"
+    assert len(pages[CURRENT]) == original_size
+    observed = run(policy, state, 20)
+    assert observed["status"] == expected_status
+    assert observed["previous_snapshot_id"] == baseline["snapshot_id"]
+    assert any(
+        json.loads(p.read_text())["articles"] == [NEW]
+        for p in state.rglob("discovery-obligations/*.json")
+    )
+    manifests = [json.loads(p.read_text()) for p in state.rglob("manifests/*.json")]
+    originals = [
+        m
+        for m in manifests
+        if m["retrieved_at"].startswith("2026-10-20") and m["capture_method"] != "manual_upload"
+    ]
+    assert {m["requested_url"] for m in originals} == {HOME, CURRENT, OLD, NEW, IMAGE}
+    for manifest in originals:
+        assert manifest["http_status"] == 200
+        assert (
+            manifest["content_sha256"]
+            == hashlib.sha256(pages[manifest["requested_url"]]).hexdigest()
+        )
+        assert list(state.rglob(f"vault/sha256/*/{manifest['content_sha256']}.json"))
+    validate(policy, state)
+    if expected_status == "failed":
+        assert len(list(state.rglob("extractions/*.json"))) == 1
+        assert len(list(state.rglob("discovery/*.json"))) == 1
+        assert not any(
+            m["retrieved_at"].startswith("2026-10-20") and m["capture_method"] == "manual_upload"
+            for m in manifests
+        )
+        previous_snapshot = baseline["snapshot_id"]
+    else:
+        composite = next(m for m in manifests if m["id"] == observed["capture_id"])
+        assert composite["byte_length"] == 25 * 1024 * 1024
+        assert composite["capture_method"] == "manual_upload"
+        assert composite["http_status"] is None
+        previous_snapshot = observed["snapshot_id"]
+
+    independent = tmp_path / "independent"
+    shutil.copytree(state, independent)
+    pages[CURRENT] = designated
+    pages[HOME] = archive()
+    pages[NEW] = OSError("learned article unavailable after archive link rotates")
+    assert run(policy, independent, 21)["status"] == "failed"
+    validate(policy, independent)
+    pages[NEW] = article("Recovered publication")
+    recovered = run(policy, independent, 22)
+    assert recovered["status"] == "updated" and recovered["baseline_reviewed"] is False
+    assert recovered["previous_snapshot_id"] == previous_snapshot
+    assert run(policy, independent, 23)["status"] == "unchanged"
+    for relative, raw in history.items():
+        assert (independent / relative).read_bytes() == raw
+    validate(policy, independent)
+
+
 def test_tru_total_original_byte_bound_preserves_previous_snapshot(
     tmp_path: Path,
     publication: tuple[Path, dict[str, Any]],

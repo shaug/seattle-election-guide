@@ -332,6 +332,8 @@ def discover_tru_publication(root: Path, storage: Path, checked_at: datetime) ->
     if designated is None:
         raise ValueError("TRU designated extraction publication is missing")
     body = designated + f"<!--{evidence_fingerprint(comparison)}-->".encode()
+    if len(body) > 25 * 1024 * 1024:
+        raise ValueError("TRU derived comparison exceeds the 25 MiB artifact limit")
     audit = DiscoveryAudit(
         source_id="transit-riders-union",
         checked_at=checked_at,
