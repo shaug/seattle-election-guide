@@ -122,6 +122,73 @@ def setup_publication(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[
     return publication, resolved, record, archive, bundle, root
 
 
+@pytest.mark.parametrize(
+    "case",
+    [
+        "wrong-tag",
+        "missing-tag",
+        "draft",
+        "prerelease",
+        "invalid-id",
+        "missing-id",
+        "malformed",
+        "missing",
+        "read-error",
+        "wrong-source",
+    ],
+)
+def test_published_predecessor_rejects_invalid_exact_release(
+    monkeypatch: pytest.MonkeyPatch, case: str
+) -> None:
+    from election_guide.release import publication
+
+    source = "a" * 40
+    release: Any = {"id": 8, "tag_name": "2026-general.8", "draft": False, "prerelease": False}
+    if case == "wrong-tag":
+        release["tag_name"] = "2026-general.7"
+    elif case == "missing-tag":
+        del release["tag_name"]
+    elif case == "draft":
+        release["draft"] = True
+    elif case == "prerelease":
+        release["prerelease"] = True
+    elif case == "invalid-id":
+        release["id"] = 0
+    elif case == "missing-id":
+        del release["id"]
+    elif case == "malformed":
+        release = []
+
+    def remote(command: list[str], failure: str) -> str:
+        endpoint = command[2]
+        if endpoint.endswith("/releases/tags/2026-general.8"):
+            if case in {"missing", "read-error"}:
+                raise ValueError("HTTP 404" if case == "missing" else "HTTP 503")
+            return json.dumps(release)
+        if endpoint.endswith("/tags?per_page=100"):
+            return json.dumps([[{"name": "2026-general.8"}]])
+        if endpoint.endswith("/git/ref/tags/2026-general.8"):
+            return json.dumps(
+                {
+                    "object": {
+                        "sha": "b" * 40 if case == "wrong-source" else source,
+                        "type": "commit",
+                    }
+                }
+            )
+        if endpoint.endswith("/releases?per_page=100"):
+            return json.dumps(
+                [[{"id": 8, "tag_name": "2026-general.8", "draft": False, "prerelease": False}]]
+            )
+        raise AssertionError((command, failure))
+
+    monkeypatch.setattr(publication, "run_gh", remote)
+    with pytest.raises(ValueError):
+        publication.verify_published_release_source(
+            "repos/owner/repository", "2026-general.8", source
+        )
+
+
 class GitHub:
     """Fields follow official Releases/Actions REST response fixtures."""
 

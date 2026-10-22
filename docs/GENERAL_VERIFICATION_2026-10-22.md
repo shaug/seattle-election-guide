@@ -6,9 +6,13 @@ actual Codex source research, explicit endorsement additions and normal reviewed
 publication. It does not assert a personal source read by shaug or approve
 unread automatic originals.
 
-The normal release preparation selected `2026-general.26` under #596, with
-published source `852c4d5f070e799f903c634eb87378eb3f63a2dd` as its predecessor.
-The existing `.25` archive and archived primary are preserved.
+The initial preparation selected `2026-general.26` under #596. Its main CI run
+failed during source admission before publication or upload. Corrective work in
+[#597](https://github.com/shaug/seattle-election-guide/issues/597) prepared
+`2026-general.27` through the normal unpublished-base recovery path, retaining
+#596 and published source `852c4d5f070e799f903c634eb87378eb3f63a2dd` as its predecessor.
+The 923 reviewed decisions, existing `.25` archive and archived primary are preserved.
+This preparation does not establish publication or production acceptance for `.27`.
 
 ## WashingtonCAN's LD37 Senate endorsement
 

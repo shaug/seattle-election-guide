@@ -555,6 +555,15 @@ def test_preflight_waits_for_ci_before_claiming_publication_eligibility(
 
     def published_base(command: list[str], failure: str) -> str:
         endpoint = command[2]
+        if endpoint.endswith("/releases/tags/2026-primary.2"):
+            return json.dumps(
+                {
+                    "id": 20,
+                    "tag_name": "2026-primary.2",
+                    "draft": False,
+                    "prerelease": False,
+                }
+            )
         if endpoint.endswith("/tags?per_page=100"):
             return json.dumps([[{"name": "2026-primary.2"}]])
         if endpoint.endswith("/releases?per_page=100"):
