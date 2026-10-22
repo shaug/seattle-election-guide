@@ -248,6 +248,7 @@
    media state or source order. */
 .screen-meter-section .meter-block { border-left-color: var(--row-separator) !important; border-image-source: none !important; }
 .screen-meter-section .meter-half-bottom { border-top-color: var(--row-separator) !important; }
+.screen-meter-section .meter-tongue-end .meter-half-top { border-bottom-color: var(--row-separator) !important; }
 .race-detail-outcome-unverified { border-left-color: var(--red); }
 .race-detail-outcome-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem .75rem; background: var(--tone-neutral-bg); }
 .race-detail-outcome-heading h4 { margin: 0; color: var(--navy); font-size: .86rem; }
