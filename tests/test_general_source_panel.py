@@ -210,7 +210,7 @@ def test_general_additions_preserve_verified_choices_and_coendorsement_allocatio
     tech = by_key["tech-4-taxes", "initiative-26-645"]
     assert tech["candidate_ids"] == ["initiative-26-645--no"]
     assert tech["allocation"] == {"initiative-26-645--no": "1"}
-    assert len(dataset["endorsements"]) == 918
+    assert len(dataset["endorsements"]) == 922
     assert not {"king-county-republican-party", "progressive-voters-guide"} & {
         row["source_id"] for row in dataset["endorsements"]
     }
@@ -267,6 +267,21 @@ def test_october18_additions_do_not_inherit_earlier_source_provenance() -> None:
             "ld-37-state-representative-2",
             "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
         ),
+        *[
+            (
+                "transit-riders-union",
+                race_id,
+                "https://transitriders.org/2026-general-election-endorsements/",
+                "king-county-council-2",
+                "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+            )
+            for race_id in (
+                "seattle-proposition-1-transit",
+                "initiative-26-645",
+                "initiative-26-001",
+                "initiative-26-638",
+            )
+        ],
         *[
             (
                 "seattle-times-editorial-board",

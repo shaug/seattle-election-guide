@@ -2,9 +2,9 @@
 schema_version: '1.0'
 source_id: transit-riders-union
 adapter_kind: static_html
-extractor_version: 1.0.0
+extractor_version: 1.1.0
 complete: true
-decision_pattern: (?:^32nd\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+1:\s+Danica\s+Noble$|^32nd\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+2:\s+Imraan\s+Siddiqi$|^37th\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+1:\s+Kelabe\s+Tewolde$|^37th\s+Legislative\s+District,\s+Washington\s+State\s+Senate:\s+Tatiana\s+Brown$|^43rd\s+Legislative\s+District,\s+Washington\s+State\s+Senate:\s+Hannah\s+Sabio\-Howell$|^King\s+County\s+Council\s+District\s+2:\s+Toshiko\s+Grace\s+Hasegawa\s+and\s+Rebecca\s+Saldaña$|^Seattle\s+City\s+Council\s+District\s+5:\s+Nilu\s+Jenks$|^Seattle\s+Municipal\s+Court\s+Judge:\s+Gabe\s+Rothstein$)
+decision_pattern: (?:^32nd\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+1:\s+Danica\s+Noble$|^32nd\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+2:\s+Imraan\s+Siddiqi$|^37th\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+1:\s+Kelabe\s+Tewolde$|^37th\s+Legislative\s+District,\s+Washington\s+State\s+Senate:\s+Tatiana\s+Brown$|^43rd\s+Legislative\s+District,\s+Washington\s+State\s+Senate:\s+Hannah\s+Sabio\-Howell$|^King\s+County\s+Council\s+District\s+2:\s+Toshiko\s+Grace\s+Hasegawa\s+and\s+Rebecca\s+Saldaña$|^Seattle\s+City\s+Council\s+District\s+5:\s+Nilu\s+Jenks$|^Seattle\s+Municipal\s+Court\s+Judge:\s+Gabe\s+Rothstein$|^Yes\s+on\s+City\s+of\s+Seattle\s+Proposition\s+1\s+\(Seattle\s+Transit\s+Measure\s+renewal\)$|^No\s+on/Reject\s+IP26-645\s+\(repeal\s+of\s+Millionaires\s+Tax\)$|^No\s+on\s+IP26-001\s+\(Force\s+schools\s+to\s+out\s+trans\s+children\)$|^No\s+on\s+IP26-638\s+\(Force\s+women\s+into\s+genital\s+exams\s+to\s+play\s+sports\)$)
 rules:
 - race_id: ld-32-state-representative-1
   pattern: ^32nd\s+Legislative\s+District,\s+Washington\s+State\s+House\s+Position\s+1:\s+Danica\s+Noble$
@@ -63,3 +63,33 @@ rules:
   - seattle-municipal-court-judge-5--gabe-rothstein
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
+- race_id: seattle-proposition-1-transit
+  pattern: ^Yes\s+on\s+City\s+of\s+Seattle\s+Proposition\s+1\s+\(Seattle\s+Transit\s+Measure\s+renewal\)$
+  status: endorsed
+  candidate_ids:
+  - seattle-proposition-1-transit--yes
+  evidence_locator: 'October article formal list: Yes on City of Seattle Proposition 1 (Seattle Transit Measure
+    renewal). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held
+    recommendation conversion.'
+- race_id: initiative-26-645
+  pattern: ^No\s+on/Reject\s+IP26-645\s+\(repeal\s+of\s+Millionaires\s+Tax\)$
+  status: endorsed
+  candidate_ids:
+  - initiative-26-645--no
+  evidence_locator: 'October article formal list: No on/Reject IP26-645 (repeal of Millionaires Tax). Four-only
+    delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.'
+- race_id: initiative-26-001
+  pattern: ^No\s+on\s+IP26-001\s+\(Force\s+schools\s+to\s+out\s+trans\s+children\)$
+  status: endorsed
+  candidate_ids:
+  - initiative-26-001--no
+  evidence_locator: 'October article formal list: No on IP26-001 (Force schools to out trans children). Four-only
+    delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.'
+- race_id: initiative-26-638
+  pattern: ^No\s+on\s+IP26-638\s+\(Force\s+women\s+into\s+genital\s+exams\s+to\s+play\s+sports\)$
+  status: endorsed
+  candidate_ids:
+  - initiative-26-638--no
+  evidence_locator: 'October article formal list: No on IP26-638 (Force women into genital exams to play sports).
+    Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation
+    conversion.'

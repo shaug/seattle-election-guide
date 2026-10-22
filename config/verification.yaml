@@ -7,9 +7,14 @@ elections:
   sources:
   - source_id: transit-riders-union
     adapter: config/adapters/wa-2026-general/transit-riders-union.yaml
-    limitation: Conservative reviewed fact mappings; every changed publication requires human review.
-      Exact live baseline approved October 18. HTTPS transport now uses the correct default port;
-      previous bounded self-redirect failures remain in history. Independent scheduled reuse remains adoption work.
+    limitation: Complete official WordPress archives to the reviewed September boundary, both known
+      and newly learned current-general articles, and the exact linked October graphic are captured.
+      Learned article obligations survive failed checks and link rotation. Only twelve reviewed formal
+      facts are mapped from the designated October article; qualified recommendations stay held.
+      Full HTML/image changes require review. The expanded composite requires its own exact live
+      baseline approval and later independent native scheduled reuse; neither is asserted here.
+      Prior failures and the unresolved exact October 20 baseline remain intact. See
+      docs/GENERAL_RECHECK_2026-10-21_TRU.md.
   - source_id: sage-leaders
     adapter: config/adapters/wa-2026-general/sage-leaders.yaml
     limitation: Conservative reviewed fact mappings; every changed publication requires human review.

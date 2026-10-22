@@ -5,6 +5,10 @@ from pathlib import Path
 
 from election_guide.collection.discovery import DiscoveryAudit, read_ufcw_discovery_obligation
 from election_guide.collection.refresh import read_extraction_snapshot, read_refresh_event
+from election_guide.collection.tru_discovery import (
+    read_tru_discovery_obligation,
+    validate_tru_audit,
+)
 from election_guide.collection.vault import SealedCapture
 from election_guide.collection.verification import (
     Activation,
@@ -142,19 +146,25 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
                 raise ValueError("fixture baseline cannot receive live approval")
             count += 1
         for path in directory.glob("discovery-obligations/*.json"):
-            obligation = read_ufcw_discovery_obligation(path)
+            obligation = (
+                read_tru_discovery_obligation(path)
+                if read_json(path).get("source_id") == "transit-riders-union"
+                else read_ufcw_discovery_obligation(path)
+            )
             if obligation.source_id not in sources or obligation.capture_id not in manifests:
                 raise ValueError("UFCW discovery obligation lacks durable source evidence")
             count += 1
         for path in directory.glob("discovery/*.json"):
             record = read_json(path)
-            DiscoveryAudit.model_validate(record)
+            audit = DiscoveryAudit.model_validate(record)
             if (
                 path.stem != evidence_fingerprint(record)
                 or record["source_id"] not in sources
                 or any(identifier not in manifests for identifier in record["captures"])
             ):
                 raise ValueError("discovery record lacks its immutable original inputs")
+            if audit.source_id == "transit-riders-union":
+                validate_tru_audit(audit, manifests)
             count += 1
     for path in root.glob("runs/*.json"):
         RunAudit.model_validate(read_json(path))

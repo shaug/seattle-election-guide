@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-10-04T04:56:54Z",
+  "captured_at": "2026-10-21T17:48:51.975083Z",
   "decisions": [
     {
       "candidate_ids": [
@@ -76,7 +76,7 @@
     }
   ],
   "evidence_locator": "Official September 30 general-election endorsement list. Capture capture-transit-riders-union-20261004T045654Z-a94f0424cdd3.",
-  "review_note": "Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the September 30 general-election list; shaug verified every decision, the dual Council 2 endorsement, and the unique Gabe Rothstein Position 5 mapping despite the source omitting the position.",
-  "reviewer": "shaug",
+  "review_note": "Issue #593 / #497: October 21 delegated admission applies ONLY to four explicit formal measure additions, after actual root and named peer article/graphic review. Eight prior decisions retain their existing approvals and original locators. The eight in-inventory process-qualified candidate recommendations remain held; two LD48 recommendations are outside inventory. Council 2 dual names are absent from the graphic but affirmed in both articles; Kelabe is not visibly underlined but formally endorsed in both articles. No withdrawal inferred. No personal human source read, exact October 20 approval, automatic whole-TRU baseline approval or native recovery asserted. See data/review/approvals/wa-2026-general-2026-10-21-tru.json. Prior source review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the September 30 general-election list; shaug verified every decision, the dual Council 2 endorsement, and the unique Gabe Rothstein Position 5 mapping despite the source omitting the position.",
+  "reviewer": "OpenAI Codex /root under finite maintainer delegation",
   "source_id": "transit-riders-union"
 }
