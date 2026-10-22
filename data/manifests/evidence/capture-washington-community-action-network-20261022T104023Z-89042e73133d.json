@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1416014,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1792627705502-J169R49TRDEJT8J14A2N/WA+37+Chipalo+Street.png",
+  "capture_method": "image",
+  "content_sha256": "28c7f3044df63f285e6ec677babcc479a0548996a865382cdfa1e20f8575178a",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261022T104023Z-89042e73133d",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private current official-source research for issue596 under finite maintainer delegation. Actual HTTP metadata serialized before ingestion; third-party originals retained privately.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1792627705502-J169R49TRDEJT8J14A2N/WA+37+Chipalo+Street.png",
+  "retrieved_at": "2026-10-22T10:40:23.741826Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/28/28c7f3044df63f285e6ec677babcc479a0548996a865382cdfa1e20f8575178a",
+  "storage_scope": "local_only",
+  "title": "WA 37 Chipalo Street.png",
+  "updated_at": null
+}
