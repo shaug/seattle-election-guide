@@ -1,0 +1,79 @@
+{
+  "automatic_baseline_approval_asserted": false,
+  "captures": [
+    {
+      "id": "capture-washington-community-action-network-20261022T103730Z-64c4739dbea8",
+      "manifest_sha256": "c0899c9399a9baa6a2c2f06d081c119bdcc2894119dbab5e48134ecabbf99343",
+      "original_bytes": 173578,
+      "original_sha256": "b3a75611875b5a4018f456966914ea060078d7fb5ee0e066e988cf075aae4323",
+      "path": "data/manifests/evidence/capture-washington-community-action-network-20261022T103730Z-64c4739dbea8.json"
+    },
+    {
+      "id": "capture-washington-community-action-network-20261022T104023Z-89042e73133d",
+      "manifest_sha256": "eb5024bdae4476e2ea12647b5d472681e9e0fc2428b050ea2d32418d8ef98eca",
+      "original_bytes": 1416014,
+      "original_sha256": "28c7f3044df63f285e6ec677babcc479a0548996a865382cdfa1e20f8575178a",
+      "path": "data/manifests/evidence/capture-washington-community-action-network-20261022T104023Z-89042e73133d.json"
+    }
+  ],
+  "election_id": "wa-2026-general",
+  "human_authorization": {
+    "authorized_scope_quote": "you have clearance to make any bugfixes, endorsement checks, or similar changes as long as you don't introduce new UI in the process",
+    "by": "shaug",
+    "kind": "direct standing delegation in the active Codex conversation",
+    "scope_applied": "One verified explicit WashingtonCAN Chipalo Street LD37 Senate endorsement through actual Codex research and independent original-image review, normal evidence/manual adapter, reviewed PR and automatic immutable publication. No new interpretation, source membership or discretionary UI.",
+    "source_message_id": "01a15326-fb88-7553-a1f7-f0111838dc8c",
+    "source_thread_id": "01a145fa-3e0a-7542-be42-4e0844a5a582",
+    "source_turn_id": "01a15326-fb37-79f2-95e4-135071dd0219"
+  },
+  "independent_verifier": "OpenAI Codex /root under finite maintainer delegation",
+  "issue": 596,
+  "ledger_after_sha256": "9b34605d215483851c68c8a11af00c7fdf88848816f9944883480cb8ead4c881",
+  "ledger_before_sha256": "b7ef01eae817e582998cf3d80a1b5de31e9a20737a6f6c4dd25323b95a002988",
+  "limits": [
+    "Manka Dhingra LD45 Senate is outside the frozen ballot and is not added.",
+    "Complete automatic original baseline reviews and actual later scheduled reuse remain separate requirements under #497.",
+    "This finite source addition does not close daily issue #596."
+  ],
+  "manual_record": {
+    "path": "data/review/manual/manual-washington-community-action-network-20261022T114039Z-b51e19e75336.json",
+    "sha256": "dcb2d718c72b556ffe115efcc79c0d8ab12beb88836825888b9539e4e755384f"
+  },
+  "new_decision_count": 1,
+  "new_value": {
+    "candidate_ids": [
+      "ld-37-state-senator--chipalo-street"
+    ],
+    "evidence_excerpt": "ENDORSED; WASHINGTON STATE SENATOR; CHIPALO STREET; DISTRICT 37",
+    "evidence_locator": "Official current 2026 Midterm Election endorsement gallery; original Chipalo Street graphic visibly says ENDORSED, WASHINGTON STATE SENATOR and DISTRICT 37. Image capture capture-washington-community-action-network-20261022T104023Z-89042e73133d; linked from page capture capture-washington-community-action-network-20261022T103730Z-64c4739dbea8. Verified manual record manual-washington-community-action-network-20261022T114039Z-b51e19e75336.",
+    "evidence_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1792627705502-J169R49TRDEJT8J14A2N/WA+37+Chipalo+Street.png",
+    "race_id": "ld-37-state-senator"
+  },
+  "operation": "add",
+  "personal_human_source_review_asserted": false,
+  "preserved_prior_decision_count": 922,
+  "prior_value": null,
+  "publication_approved": false,
+  "record_type": "explicitly_delegated_endorsement_review",
+  "research_reviewer": "OpenAI Codex /root/review_596_civic",
+  "resulting_decision_count": 923,
+  "reviewed_at": "2026-10-22T11:40:39.596080Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "source_metadata_after": {
+    "captured_at": "2026-10-22T10:40:23.741826Z",
+    "evidence_locator": "Official current 2026 Midterm Election endorsement gallery; original Chipalo Street graphic visibly says ENDORSED, WASHINGTON STATE SENATOR and DISTRICT 37. Image capture capture-washington-community-action-network-20261022T104023Z-89042e73133d; linked from page capture capture-washington-community-action-network-20261022T103730Z-64c4739dbea8. Prior locator: October 10 targeted refresh; data/review/approvals/wa-2026-general-2026-10-10.json. Prior locator: Official 2026 Midterm Election image-gallery alt text in the captured HTML. Capture capture-washington-community-action-network-20261004T045652Z-fdad3f223455.",
+    "review_note": "Issue #596: OpenAI Codex /root/review_596_civic reviewed the current complete 2026 official gallery; root independently viewed the original Chipalo Street graphic and checked its official page link and frozen LD37 Senate ballot match. Add this one explicit endorsement under the finite delivery delegation. All seven prior decision dictionaries and original approvals remain unchanged. No personal maintainer read or automatic baseline approval is asserted. See data/review/approvals/wa-2026-general-2026-10-22-wacan.json. Prior source review: Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Verified material delta: No on IL26-001, IL26-638, IP26-645. Two existing candidate decisions preserved. Image text, rather than the erroneous 648 filename, supplies the 645 mapping. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.",
+    "reviewed_at": "2026-10-22T11:40:39.596080Z",
+    "reviewer": "OpenAI Codex /root under finite maintainer delegation",
+    "source_id": "washington-community-action-network"
+  },
+  "source_metadata_before": {
+    "captured_at": "2026-10-11T01:07:23.909422Z",
+    "evidence_locator": "October 10 targeted refresh; data/review/approvals/wa-2026-general-2026-10-10.json. Prior locator: Official 2026 Midterm Election image-gallery alt text in the captured HTML. Capture capture-washington-community-action-network-20261004T045652Z-fdad3f223455.",
+    "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep. Only the added or changed decisions carry this approval. Retained decisions were verified by shaug at 2026-10-04T05:30:06Z. Prior review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Verified material delta: No on IL26-001, IL26-638, IP26-645. Two existing candidate decisions preserved. Image text, rather than the erroneous 648 filename, supplies the 645 mapping. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.",
+    "reviewed_at": "2026-10-11T01:24:53Z",
+    "reviewer": "shaug",
+    "source_id": "washington-community-action-network"
+  }
+}

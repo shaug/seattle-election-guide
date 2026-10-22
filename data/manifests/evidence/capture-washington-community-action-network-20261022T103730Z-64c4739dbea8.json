@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 173578,
+  "canonical_url": "https://www.washingtoncan.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "b3a75611875b5a4018f456966914ea060078d7fb5ee0e066e988cf075aae4323",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261022T103730Z-64c4739dbea8",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Private current official-source research for issue596 under finite maintainer delegation. Actual HTTP metadata serialized before ingestion; third-party originals retained privately.",
+  "requested_url": "https://www.washingtoncan.org/endorsements",
+  "retrieved_at": "2026-10-22T10:37:30.329999Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/b3/b3a75611875b5a4018f456966914ea060078d7fb5ee0e066e988cf075aae4323",
+  "storage_scope": "local_only",
+  "title": "registered current official publication",
+  "updated_at": null
+}

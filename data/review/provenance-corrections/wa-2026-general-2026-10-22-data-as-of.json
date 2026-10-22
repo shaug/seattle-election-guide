@@ -1,0 +1,16 @@
+{
+  "all_decisions_and_source_metadata_unchanged": true,
+  "approval_preserved": "data/review/approvals/wa-2026-general-2026-10-22-wacan.json",
+  "author": "OpenAI Codex /root under finite maintainer delegation",
+  "field": "data_as_of",
+  "issue": 596,
+  "ledger_after_sha256": "8012b01164793d2d1096d3741d7050e60369116ea3b2bca6fc98761c8675451e",
+  "ledger_before_sha256": "9b34605d215483851c68c8a11af00c7fdf88848816f9944883480cb8ead4c881",
+  "new_value": "2026-10-22T11:40:39.596080Z",
+  "path": "data/releases/wa-2026-general/source-decisions.yaml",
+  "prior_value": "2026-10-22T10:40:23.741826Z",
+  "reason": "During uncommitted candidate preparation the normal compiler correctly rejected data_as_of set to capture time before the actual source review. Set the aggregate timestamp to that actual review time. No source capture/review time, decision, evidence, prior approval or gate is changed. Preserve the initial finite endorsement record and its intermediate ledger binding.",
+  "record_type": "release_timestamp_correction",
+  "recorded_at": "2026-10-22T11:42:00.189858+00:00",
+  "schema_version": "1.0"
+}

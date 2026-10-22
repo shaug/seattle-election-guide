@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-community-action-network-20261022T104023Z-89042e73133d",
+  "entered_at": "2026-10-22T11:40:39.596080Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official current 2026 Midterm Election endorsement gallery; original Chipalo Street graphic visibly says ENDORSED, WASHINGTON STATE SENATOR and DISTRICT 37. Image capture capture-washington-community-action-network-20261022T104023Z-89042e73133d; linked from page capture capture-washington-community-action-network-20261022T103730Z-64c4739dbea8.",
+  "evidence_type": "image",
+  "id": "manual-washington-community-action-network-20261022T114039Z-b51e19e75336",
+  "review_note": "Both actual Codex reviewers viewed the original graphic. Root independently read the current official page, verified its original image link under the 2026 section before the 2025 heading, and checked office, district and choice against the frozen general ballot. Explicit formal endorsement; no policy interpretation. No personal source read by shaug or automatic baseline approval is asserted.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-22T11:40:39.596080Z",
+  "reviewed_by": "OpenAI Codex /root under finite maintainer delegation",
+  "reviewer": "OpenAI Codex /root/review_596_civic",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "transcription": "ENDORSED; WASHINGTON STATE SENATOR; CHIPALO STREET; DISTRICT 37."
+}

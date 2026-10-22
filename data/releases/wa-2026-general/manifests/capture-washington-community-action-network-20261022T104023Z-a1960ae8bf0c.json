@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 3303,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1792627705502-J169R49TRDEJT8J14A2N/WA+37+Chipalo+Street.png",
+  "capture_method": "manual_upload",
+  "content_sha256": "926bff14738ce0ae2a5132897b91ab5a94e23d043f12ac20939a8456b40f9be2",
+  "http_status": null,
+  "id": "capture-washington-community-action-network-20261022T104023Z-a1960ae8bf0c",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1792627705502-J169R49TRDEJT8J14A2N/WA+37+Chipalo+Street.png",
+  "retrieved_at": "2026-10-22T10:40:23.741826Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/92/926bff14738ce0ae2a5132897b91ab5a94e23d043f12ac20939a8456b40f9be2",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington Community Action Network",
+  "updated_at": null
+}
