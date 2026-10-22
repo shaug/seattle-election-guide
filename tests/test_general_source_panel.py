@@ -111,6 +111,7 @@ def test_compiled_general_guide_includes_washingtoncan_initiative_recommendation
         "initiative-26-645": ["initiative-26-645--no"],
         "king-county-council-2": ["king-county-council-2--rebecca-saldana"],
         "king-county-council-8": ["king-county-council-8--teresa-mosqueda"],
+        "ld-37-state-senator": ["ld-37-state-senator--chipalo-street"],
     }
 
 
@@ -210,7 +211,7 @@ def test_general_additions_preserve_verified_choices_and_coendorsement_allocatio
     tech = by_key["tech-4-taxes", "initiative-26-645"]
     assert tech["candidate_ids"] == ["initiative-26-645--no"]
     assert tech["allocation"] == {"initiative-26-645--no": "1"}
-    assert len(dataset["endorsements"]) == 922
+    assert len(dataset["endorsements"]) == 923
     assert not {"king-county-republican-party", "progressive-voters-guide"} & {
         row["source_id"] for row in dataset["endorsements"]
     }
