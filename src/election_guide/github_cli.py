@@ -26,6 +26,15 @@ from typing import Any, cast
 ISSUE_QUERY_LIMIT = 10000
 
 
+class GitHubCliError(ValueError):
+    """A nonzero gh process, with the exit details needed by admission."""
+
+    def __init__(self, message: str, *, returncode: int, stderr: str) -> None:
+        super().__init__(message)
+        self.returncode = returncode
+        self.stderr = stderr
+
+
 def run_gh(command: list[str], failure: str) -> str:
     """Run one `gh` invocation, raising `ValueError` uniformly on failure."""
     try:
@@ -37,7 +46,9 @@ def run_gh(command: list[str], failure: str) -> str:
         ) from error
     if completed.returncode != 0:
         detail = completed.stderr.strip() or completed.stdout.strip()
-        raise ValueError(f"{failure}: {detail}")
+        raise GitHubCliError(
+            f"{failure}: {detail}", returncode=completed.returncode, stderr=completed.stderr.strip()
+        )
     return completed.stdout
 
 

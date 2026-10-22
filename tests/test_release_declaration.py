@@ -252,6 +252,15 @@ def test_cli_preparation_reads_all_remote_names(
             )
         if endpoint.endswith("/git/tags/" + "a" * 40):
             return json.dumps({"object": {"sha": sha, "type": "commit"}})
+        if endpoint.endswith("/releases/tags/2026-general.20"):
+            return json.dumps(
+                {
+                    "id": 20,
+                    "tag_name": "2026-general.20",
+                    "draft": False,
+                    "prerelease": False,
+                }
+            )
         assert "--paginate" in command and "--slurp" in command
         if "/tags?" in endpoint:
             return json.dumps(
@@ -447,6 +456,58 @@ def commit_fixture(repo: Path, message: str) -> str:
     return git(repo, "rev-parse", "HEAD")
 
 
+def test_prepare_verifies_published_predecessor_by_exact_tag_after_complete_names(
+    repository: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from election_guide.release import automation_cli, publication
+
+    prior_sha = git(repository, "rev-parse", "HEAD")
+    failed = prepare(repository)
+    failed_sha = commit_fixture(repository, "fixture: unpublished selection")
+    monkeypatch.chdir(repository)
+    release_lists = 0
+    exact_reads = 0
+
+    def remote(command: list[str], failure: str) -> str:
+        nonlocal release_lists, exact_reads
+        endpoint = command[2]
+        if endpoint.endswith("/git/ref/heads/main"):
+            return json.dumps({"object": {"sha": failed_sha, "type": "commit"}})
+        if "/contents/" in endpoint:
+            assert endpoint.endswith(f"?ref={failed_sha}")
+            return failed.site.model_dump_json()
+        if endpoint.endswith("/tags?per_page=100"):
+            assert command[3:] == ["--paginate", "--slurp"]
+            return json.dumps([[{"name": "2026-general.8"}]])
+        if endpoint.endswith("/releases?per_page=100"):
+            assert command[3:] == ["--paginate", "--slurp"]
+            release_lists += 1
+            return json.dumps(
+                [[{"id": 8, "tag_name": "2026-general.8", "draft": False, "prerelease": False}]]
+                if release_lists == 1
+                else [[]]
+            )
+        if endpoint.endswith("/releases/tags/2026-general.8"):
+            exact_reads += 1
+            return json.dumps(
+                {"id": 8, "tag_name": "2026-general.8", "draft": False, "prerelease": False}
+            )
+        if endpoint.endswith("/git/ref/tags/2026-general.8"):
+            return json.dumps({"object": {"sha": prior_sha, "type": "commit"}})
+        raise AssertionError((command, failure))
+
+    monkeypatch.setattr(automation_cli, "run_gh", remote)
+    monkeypatch.setattr(publication, "run_gh", remote)
+    result = CliRunner().invoke(automation_cli.app, ["prepare", "--issue", "550"])
+    assert result.exit_code == 0, result.output
+    assert release_lists == 1
+    assert exact_reads == 1
+    recovered = resolve_release(SITE, repository=repository)
+    assert recovered.current.release_version == "2026-general.10"
+    assert recovered.current.publication_request is not None
+    assert recovered.current.publication_request.previous_release_sha == prior_sha
+
+
 @pytest.fixture(params=[False, True], ids=["lightweight", "annotated"])
 def published_boundary(
     repository: Path, monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
@@ -487,6 +548,8 @@ def published_boundary(
             )
         if request.param and endpoint.endswith(f"/git/tags/{tag_sha}"):
             return json.dumps({"object": {"sha": source_sha, "type": "commit"}})
+        if endpoint.endswith(f"/releases/tags/{version}"):
+            return json.dumps({"id": 9, "tag_name": version, "draft": False, "prerelease": False})
         assert "--paginate" in command and "--slurp" in command
         if "/tags?" in endpoint:
             return json.dumps([[{"name": version}, {"name": "unrelated-tag"}]])
@@ -704,6 +767,10 @@ def test_cli_failed_main_recovery_requires_verified_unpublished_base(
             if case == "partial-pages":
                 return json.dumps([tags, {"message": "second page denied"}])
             return json.dumps([tags if "/tags?" in endpoint else releases])
+        if endpoint.endswith("/releases/tags/2026-general.8"):
+            return json.dumps(releases[0]) if releases else '{"message":"Not Found"}'
+        if endpoint.endswith(f"/releases/tags/{version}") and case == "published-base":
+            return json.dumps(releases[-1])
         if "/git/ref/tags/" in endpoint:
             tag = endpoint.rsplit("/", 1)[1]
             if tag == "2026-general.8":

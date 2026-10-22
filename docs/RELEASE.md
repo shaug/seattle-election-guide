@@ -177,8 +177,10 @@ successful remote tag and release enumeration proving that the failed version ha
 a tag nor any release reservation, including drafts. A missing local tag, failed API request,
 or malformed or partial enumeration does not establish absence. The recorded source's exact
 Git declaration must select the same election at a lower numeric version. That version must
-have an actual published, non-prerelease GitHub Release, and its peeled remote tag must equal
-the recorded full source SHA and any declaration source pin. The recorded source must be an
+have an actual published, non-prerelease GitHub Release, verified by the exact release-by-tag
+resource with a matching tag name and positive release ID. Complete tag and release lists still
+establish occupied names, draft reservations, and absence. Its peeled remote tag must equal the
+recorded full source SHA and any declaration source pin. The recorded source must be an
 ancestor of the exact captured main or comparison-base revision; ancestry only to a later
 corrective checkout is insufficient.
 
@@ -253,6 +255,11 @@ The five independent CI lanes feed the stable `check` status. A reviewed release
 main then runs `publish`, `publication-evidence`, `deploy`, and `finalize`. The tag, archive,
 staged current bundle, uploaded commit, and expected production commit all identify the same
 full merged `source_sha`. Documentation/test-only main commits run CI without another release.
+The merged-source and lane admission reads enumerate every GitHub API page before their respective
+validation. If `gh` exits with `unexpected end of JSON input` during one of these read-only paginated
+GETs, admission retries the entire listing up to three attempts. A failed attempt's partial
+response is discarded; exhausted reads and malformed pages stop admission. Ambiguous PR matches
+and invalid lineage prevent source and producer records from being captured.
 
 All non-PR CI runs and verification-only recovery dispatches share `verified-release-mainline`,
 `queue: max`, and `cancel-in-progress: false`, serializing their durable evidence writes.

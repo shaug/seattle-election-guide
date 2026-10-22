@@ -17,7 +17,7 @@ entries:
       - label: "WashingtonCAN’s official endorsements"
         url: https://www.washingtoncan.org/endorsements
       - label: "October 22 review and limitations"
-        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.26/docs/GENERAL_VERIFICATION_2026-10-22.md
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.27/docs/GENERAL_VERIFICATION_2026-10-22.md
   - corrected_on: 2026-10-21
     headline: "Added Transit Riders Union’s four formal measure endorsements."
     body: >-

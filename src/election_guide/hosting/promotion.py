@@ -7,13 +7,15 @@ import json
 import os
 import re
 import subprocess
+import sys
 import tempfile
+import time
 import zipfile
 from datetime import datetime
 from pathlib import Path, PurePosixPath
 from typing import Any, cast
 
-from election_guide.github_cli import download_gh, parse_paginated_objects, run_gh
+from election_guide.github_cli import GitHubCliError, download_gh, parse_paginated_objects, run_gh
 from election_guide.hosting.models import SiteManifest
 from election_guide.release.automation_models import (
     ArtifactRef,
@@ -72,11 +74,28 @@ def _mapping(value: Any, context: str) -> dict[str, Any]:
 
 
 def _pages(endpoint: str, key: str | None = None) -> list[dict[str, Any]]:
+    # This read-only GET must return every page. A failed gh invocation may
+    # contain only a prefix on stdout, so restart pagination from page one.
+    command = ["gh", "api", endpoint, "--paginate", "--slurp"]
+    payload = ""
+    for attempt in range(1, 4):
+        try:
+            payload = run_gh(command, "could not read complete release admission")
+            break
+        except GitHubCliError as error:
+            if error.stderr != "unexpected end of JSON input" or attempt == 3:
+                raise ValueError(
+                    f"could not read complete release admission: {endpoint} "
+                    f"attempt {attempt}/3 exit {error.returncode}: {error.stderr}"
+                ) from error
+            print(
+                f"release admission read retry: {endpoint} "
+                f"attempt {attempt}/3 exit {error.returncode}: {error.stderr}",
+                file=sys.stderr,
+            )
+            time.sleep(0.25)
     return parse_paginated_objects(
-        run_gh(
-            ["gh", "api", endpoint, "--paginate", "--slurp"],
-            "could not read complete release admission",
-        ),
+        payload,
         context="GitHub admission",
         key=key,
     )

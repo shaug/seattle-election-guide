@@ -124,10 +124,10 @@ def _release(base: str, version: str) -> dict[str, Any] | None:
 
 
 def verify_published_release_source(base: str, version: str, source_sha: str) -> None:
-    """Authenticate a published predecessor using complete release and tag metadata."""
-    release = _release(base, version)
+    """Authenticate a published predecessor by its exact release and peeled tag."""
+    release = _read(base + f"/releases/tags/{version}")
     if (
-        release is None
+        release.get("tag_name") != version
         or release.get("draft") is not False
         or release.get("prerelease") is not False
     ):
