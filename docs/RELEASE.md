@@ -249,6 +249,13 @@ The archived primary uses the canonical `2026-primary.4` source, manifest, and w
 pins from that publication. Preserve these archives and all earlier manual releases unchanged;
 preparation chooses the next unused general version from current remote metadata.
 
+An archived-election refresh needs a new immutable archive built from a clean merged
+source, followed by a protected PR recording pins from its downloaded published asset.
+The [primary meter refresh sequence](PRIMARY_METER_REFRESH_2026-10-22.md) records the
+staged Updates preparation and activation required when current code renders an
+archive's race pages while its overview and Updates remain frozen in that archive.
+It does not change the automatic current-general publication path.
+
 ## Automatic delivery and evidence
 
 The five independent CI lanes feed the stable `check` status. A reviewed release request on
