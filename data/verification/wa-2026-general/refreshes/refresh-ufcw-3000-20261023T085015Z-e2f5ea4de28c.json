@@ -1,0 +1,46 @@
+{
+  "capture_id": "capture-ufcw-3000-20261023T085015Z-9f5f21d06cca",
+  "checked_at": "2026-10-23T08:50:15Z",
+  "content_changed": true,
+  "diff": [
+    {
+      "after": null,
+      "before": {
+        "candidate_ids": [
+          "ld-11-state-representative-1--david-hackney"
+        ],
+        "evidence_excerpt": "David Hackney, State Representative Pos 1",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-11-state-representative-1",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "kind": "removed",
+      "race_id": "ld-11-state-representative-1"
+    },
+    {
+      "after": null,
+      "before": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "evidence_excerpt": "Jamie Hawk, Position 3",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-3",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "kind": "removed",
+      "race_id": "supreme-court-justice-3"
+    }
+  ],
+  "error": null,
+  "id": "refresh-ufcw-3000-20261023T085015Z-e2f5ea4de28c",
+  "previous_snapshot_id": "extraction-ufcw-3000-20261022T085159Z-64758e873871",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-ufcw-3000-20261023T085015Z-db27d5918934",
+  "source_id": "ufcw-3000",
+  "status": "updated"
+}

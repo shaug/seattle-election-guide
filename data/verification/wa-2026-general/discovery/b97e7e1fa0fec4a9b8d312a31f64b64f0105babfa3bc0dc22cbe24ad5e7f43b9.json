@@ -1,0 +1,48 @@
+{
+  "articles": [
+    "https://www.sgn.org/story/168513/",
+    "https://www.sgn.org/story/168554/",
+    "https://www.sgn.org/story/168558/",
+    "https://www.sgn.org/story/168630/",
+    "https://www.sgn.org/story/168637/",
+    "https://www.sgn.org/story/168638/",
+    "https://www.sgn.org/story/168738/",
+    "https://www.sgn.org/story/168742/",
+    "https://www.sgn.org/story/168779/",
+    "https://www.sgn.org/story/168782/",
+    "https://www.sgn.org/story/171425/"
+  ],
+  "captures": [
+    "capture-seattle-gay-news-20261023T085015Z-761aa1f33db8",
+    "capture-seattle-gay-news-20261023T085015Z-a87d7d3cbf9f",
+    "capture-seattle-gay-news-20261023T085015Z-1576dff367f2",
+    "capture-seattle-gay-news-20261023T085015Z-9d667c86f266",
+    "capture-seattle-gay-news-20261023T085015Z-a5b01199d2f7",
+    "capture-seattle-gay-news-20261023T085015Z-436347f2f105",
+    "capture-seattle-gay-news-20261023T085015Z-35f174b90a01",
+    "capture-seattle-gay-news-20261023T085015Z-38ed026a607f",
+    "capture-seattle-gay-news-20261023T085015Z-ce9f80554c7c",
+    "capture-seattle-gay-news-20261023T085015Z-f94eedf9fe51",
+    "capture-seattle-gay-news-20261023T085015Z-8e4bfab84c8a",
+    "capture-seattle-gay-news-20261023T085015Z-d5539b51a4a2",
+    "capture-seattle-gay-news-20261023T085015Z-9b8ac7aaa1fe",
+    "capture-seattle-gay-news-20261023T085015Z-5188ad120e65",
+    "capture-seattle-gay-news-20261023T085015Z-626d09490393"
+  ],
+  "checked_at": "2026-10-23T08:50:15+00:00",
+  "comparison_sha256": "dcdcdc9398c6e0d825cb7df4b38b2e1102097a4f7b50097349e35bec1186dd59",
+  "listed": [
+    "https://www.sgn.org/story/168513/",
+    "https://www.sgn.org/story/168554/",
+    "https://www.sgn.org/story/168558/",
+    "https://www.sgn.org/story/168630/",
+    "https://www.sgn.org/story/168637/",
+    "https://www.sgn.org/story/168638/",
+    "https://www.sgn.org/story/168738/",
+    "https://www.sgn.org/story/168742/",
+    "https://www.sgn.org/story/168779/",
+    "https://www.sgn.org/story/168782/",
+    "https://www.sgn.org/story/171425/"
+  ],
+  "source_id": "seattle-gay-news"
+}

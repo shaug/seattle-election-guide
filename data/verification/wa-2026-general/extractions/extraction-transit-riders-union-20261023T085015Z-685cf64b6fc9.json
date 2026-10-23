@@ -1,0 +1,147 @@
+{
+  "adapter_fingerprint": "271c6ea43ddcf6f02379bb2f0c9cad95fb4d83ff47d42b0face7f6be60cab54d",
+  "adapter_kind": "static_html",
+  "capture_id": "capture-transit-riders-union-20261023T085015Z-f8f2ff1f7956",
+  "content_sha256": "5ee727ab7b849f3a9abbf4951b8cf50256968470748f4e3fe5b610c428505069",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": "No on IP26-001 (Force schools to out trans children)",
+      "evidence_locator": "October article formal list: No on IP26-001 (Force schools to out trans children). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+      "extraction_confidence": "0.99",
+      "race_id": "initiative-26-001",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": "No on IP26-638 (Force women into genital exams to play sports)",
+      "evidence_locator": "October article formal list: No on IP26-638 (Force women into genital exams to play sports). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+      "extraction_confidence": "0.99",
+      "race_id": "initiative-26-638",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": "No on/Reject IP26-645 (repeal of Millionaires Tax)",
+      "evidence_locator": "October article formal list: No on/Reject IP26-645 (repeal of Millionaires Tax). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+      "extraction_confidence": "0.99",
+      "race_id": "initiative-26-645",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--toshiko-grace-hasegawa",
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": "King County Council District 2: Toshiko Grace Hasegawa and Rebecca Saldaña",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "king-county-council-2",
+      "requires_review": true,
+      "status": "dual_endorsement"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "evidence_excerpt": "32nd Legislative District, Washington State House Position 1: Danica Noble",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-32-state-representative-1",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "evidence_excerpt": "32nd Legislative District, Washington State House Position 2: Imraan Siddiqi",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-32-state-representative-2",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": "37th Legislative District, Washington State House Position 1: Kelabe Tewolde",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-37-state-representative-1",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "evidence_excerpt": "37th Legislative District, Washington State Senate: Tatiana Brown",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-37-state-senator",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": "43rd Legislative District, Washington State Senate: Hannah Sabio-Howell",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-43-state-senator",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": "Seattle City Council District 5: Nilu Jenks",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "seattle-city-council-5",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "evidence_excerpt": "Seattle Municipal Court Judge: Gabe Rothstein",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "seattle-municipal-court-judge-5",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "evidence_excerpt": "Yes on City of Seattle Proposition 1 (Seattle Transit Measure renewal)",
+      "evidence_locator": "October article formal list: Yes on City of Seattle Proposition 1 (Seattle Transit Measure renewal). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+      "extraction_confidence": "0.99",
+      "race_id": "seattle-proposition-1-transit",
+      "requires_review": true,
+      "status": "endorsed"
+    }
+  ],
+  "extracted_at": "2026-10-23T08:50:15Z",
+  "extraction_fingerprint": "ce77432e2f19527b279f08914c7f030ec6a55491fcc419ce029d78f84296aa54",
+  "extractor_version": "1.1.0",
+  "id": "extraction-transit-riders-union-20261023T085015Z-685cf64b6fc9",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union"
+}
