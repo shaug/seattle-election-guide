@@ -1,6 +1,18 @@
 schema_version: '1.0'
 election_id: wa-2026-primary
 entries:
+- corrected_on: 2026-10-23
+  headline: Rounded split borders on the archived primary overview.
+  body: >-
+    The refreshed archived overview shows borders that follow the rounded
+    opening and closing transitions of partial-endorsement meters. Its earlier
+    archive was built before the closing-border correction. Recorded endorsements,
+    counts, colors, allocations and certified results are unchanged.
+  provenance:
+  - label: Primary guide
+    url: /e/wa-2026-primary/
+  - label: Split-border correction
+    url: https://github.com/shaug/seattle-election-guide/issues/598
 - corrected_on: 2026-10-22
   headline: Updated primary race-page meter borders and touch inspection.
   body: >-

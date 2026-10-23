@@ -1,6 +1,18 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
+  - corrected_on: 2026-10-23
+    headline: "Rounded the closing border of split endorsement meters."
+    body: >-
+      On race pages, the border now follows the curved transition at both ends
+      of a partial-endorsement run. The straight line that crossed the closing
+      split is gone. The opening split, full endorsements, meter sizes, colors,
+      counts and percentages are unchanged.
+    provenance:
+      - label: "Race-page border correction"
+        url: https://github.com/shaug/seattle-election-guide/issues/598
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
   - corrected_on: 2026-10-22
     headline: "Added WashingtonCAN’s LD37 Senate endorsement."
     body: >-
