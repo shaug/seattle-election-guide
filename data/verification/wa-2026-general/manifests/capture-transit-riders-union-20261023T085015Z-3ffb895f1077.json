@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 124600,
+  "canonical_url": "https://transitriders.sfo3.digitaloceanspaces.com/transitriders.org/wp-content/uploads/2026/10/17022007/TRU_November_2026_General_Endorsements-1024x581.jpg",
+  "capture_method": "image",
+  "content_sha256": "f2098de7c78a04884437437fa2cbe38c10598f65dfbe336cc4ca9f3d34ee5b32",
+  "http_status": 200,
+  "id": "capture-transit-riders-union-20261023T085015Z-3ffb895f1077",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Committed only as authenticated ciphertext.",
+  "requested_url": "https://transitriders.sfo3.digitaloceanspaces.com/transitriders.org/wp-content/uploads/2026/10/17022007/TRU_November_2026_General_Endorsements-1024x581.jpg",
+  "retrieved_at": "2026-10-23T08:50:15Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "storage_reference": "sha256/f2/f2098de7c78a04884437437fa2cbe38c10598f65dfbe336cc4ca9f3d34ee5b32",
+  "storage_scope": "local_only",
+  "title": "Official endorsement discovery input",
+  "updated_at": null
+}
