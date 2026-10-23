@@ -656,13 +656,15 @@
       "template",
       "stylesheet",
       "client",
-      "python"
+      "python",
+      "test"
     ],
     "meter-tongue-start": [
       "template",
       "stylesheet",
       "client",
-      "python"
+      "python",
+      "test"
     ],
     "meter-tooltip": [
       "stylesheet",

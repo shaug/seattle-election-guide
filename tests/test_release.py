@@ -606,7 +606,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         snapshots,
         tmp_path,
         tmp_path / "primary-release",
-        release_version="2026-primary.4",
+        release_version=declared["elections"][1]["release_version"],
     )
     general_release = build_release(
         ledger_path=PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml",
