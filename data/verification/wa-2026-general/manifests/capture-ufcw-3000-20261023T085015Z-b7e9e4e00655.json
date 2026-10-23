@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 318389,
+  "canonical_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote",
+  "capture_method": "static_html",
+  "content_sha256": "5d8d0557fab5b52875b67eb094d9226198ad576b0aa7008a67e2e90b5eb881ec",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20261023T085015Z-b7e9e4e00655",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Committed only as authenticated ciphertext.",
+  "requested_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote",
+  "retrieved_at": "2026-10-23T08:50:15Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "storage_reference": "sha256/5d/5d8d0557fab5b52875b67eb094d9226198ad576b0aa7008a67e2e90b5eb881ec",
+  "storage_scope": "local_only",
+  "title": "Official endorsement discovery input",
+  "updated_at": null
+}
