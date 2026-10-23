@@ -230,8 +230,8 @@ def task_sections(
                         "marker": marker,
                         "body": (
                             "No verification activation or check records exist for the "
-                            "current active window. Check workflow enablement, App permissions, "
-                            "and evidence key. Current obligations need execution; no historical "
+                            "current active window. Check workflow enablement and App permissions. "
+                            "Current obligations need execution; no historical "
                             f"checks are claimed.\n\n{marker}"
                         ),
                         "escalated": False,
@@ -308,7 +308,7 @@ def reconcile_tasks(sections: list[dict[str, Any]], repository: str) -> list[str
                 section["escalated"] = True
                 section["body"] = section["body"].removesuffix(section["marker"]) + (
                     "Escalation: three observed days without verification startup. "
-                    f"Restore the workflow and its evidence key.\n\n{section['marker']}"
+                    f"Restore workflow execution and repository access.\n\n{section['marker']}"
                 )
         marker = f"{TASK_PREFIX} {section['election_id']}/{section['day']}"
         existing = tasks.get(marker, [])

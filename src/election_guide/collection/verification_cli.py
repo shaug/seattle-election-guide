@@ -18,7 +18,7 @@ from election_guide.collection.verification_tasks import (
     task_sections,
 )
 
-app = typer.Typer(help="Check endorsement sources and retain encrypted evidence in Git.")
+app = typer.Typer(help="Check endorsement sources and retain public facts and observations in Git.")
 
 
 @app.command("run")

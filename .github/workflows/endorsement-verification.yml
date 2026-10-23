@@ -63,11 +63,9 @@ jobs:
             --checked-at "$checked_at" --live \
             > "$RUNNER_TEMP/endorsement-verification-report.json"
           uv run election-guide verification validate config/verification.yaml
-        env:
-          ENDORSEMENT_EVIDENCE_KEY: ${{ secrets.ENDORSEMENT_EVIDENCE_KEY }}
       - name: Validate before proposing an archive diff
         run: make check
-      - name: Commit only public JSON records and encrypted captures
+      - name: Commit only public JSON facts and observations
         id: archive
         run: |
           git config user.name "github-actions[bot]"

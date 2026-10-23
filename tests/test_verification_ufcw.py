@@ -1,6 +1,5 @@
 """Full UFCW publications remain observable through durable scheduled checks."""
 
-import base64
 import hashlib
 import json
 import shutil
@@ -36,7 +35,7 @@ def article(body: str = "Authored fixture position.") -> bytes:
 
 @pytest.fixture
 def publication(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, dict[str, Any]]:
-    monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(bytes(range(32))).decode())
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
     policy = cast(dict[str, Any], yaml.safe_load((ROOT / "config/verification.yaml").read_text()))
     policy["elections"][0]["sources"] = [
         item for item in policy["elections"][0]["sources"] if item["source_id"] == "ufcw-3000"
@@ -123,6 +122,8 @@ def test_ufcw_body_edit_and_independent_persisted_reuse_reach_review_tasks(
     assert any(
         item["content_sha256"] == hashlib.sha256(pages[KNOWN[0]]).hexdigest() for item in manifests
     )
+    assert all(item["availability"] == "observed" for item in manifests)
+    assert not list(state.rglob("vault/**/*.json"))
     comparison = next(item for item in manifests if item["id"] == changed["capture_id"])
     assert comparison["capture_method"] == "manual_upload" and comparison["http_status"] is None
     assert not any(b"Changed or withdrawn" in path.read_bytes() for path in state.rglob("*.*"))
@@ -374,3 +375,51 @@ def test_ufcw_retained_obligations_reject_invalid_archive_and_runtime_state(
     assert {path: path.read_bytes() for path in state.rglob("*.json")} == before
     assert len(list(state.rglob("extractions/*.json"))) == 1
     assert next(state.rglob("extractions/*.json")).stem == baseline["snapshot_id"]
+
+
+@pytest.mark.parametrize("corruption", ["source", "time", "composite", "missing-article", "hash"])
+def test_ufcw_discovery_binds_public_inputs_and_comparison(
+    tmp_path: Path, publication: tuple[Path, dict[str, Any]], corruption: str
+) -> None:
+    from election_guide.evidence.models import CaptureRequest
+    from election_guide.evidence.storage import record_observation
+
+    policy, _ = publication
+    state = tmp_path / "state"
+    first = run(policy, state, 19)
+    path = next(state.rglob("discovery/*.json"))
+    audit = json.loads(path.read_text())
+    root = path.parent.parent
+    if corruption in {"source", "time"}:
+        manifest = json.loads((root / "manifests" / f"{audit['captures'][0]}.json").read_text())
+        request = CaptureRequest.model_validate(
+            {
+                k: v
+                for k, v in manifest.items()
+                if k not in {"id", "availability", "content_sha256", "byte_length"}
+            }
+        )
+        request = request.model_copy(
+            update={
+                "source_id": "sage-leaders" if corruption == "source" else request.source_id,
+                "retrieved_at": datetime.fromisoformat("2026-10-18T18:00:00+00:00")
+                if corruption == "time"
+                else request.retrieved_at,
+            }
+        )
+        raw = tmp_path / "authored.html"
+        raw.write_bytes(b"<p>Authored input with different attribution.</p>")
+        observed = record_observation(request, raw, root / "manifests")
+        audit["captures"][0] = observed.stem
+    elif corruption == "composite":
+        audit["captures"][0] = first["capture_id"]
+    elif corruption == "missing-article":
+        audit["captures"].pop()
+    else:
+        audit["comparison_sha256"] = "0" * 64
+    path.unlink()
+    path.with_name(f"{evidence_fingerprint(audit)}.json").write_text(json.dumps(audit))
+    result = CliRunner().invoke(
+        app, ["verification", "validate", str(policy), "--state-root", str(state)]
+    )
+    assert result.exit_code != 0, result.output

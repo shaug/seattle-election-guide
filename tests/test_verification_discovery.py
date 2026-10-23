@@ -1,6 +1,5 @@
 """An official index is traversed and known articles are independently rechecked."""
 
-import base64
 import json
 import re
 from datetime import datetime
@@ -41,7 +40,7 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     expect_fetch: bool,
     headline: str,
 ) -> None:
-    monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(bytes(range(32))).decode())
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
     policy = cast(dict[str, Any], yaml.safe_load((ROOT / "config/verification.yaml").read_text()))
     election = policy["elections"][0]
     election["sources"] = [
@@ -175,6 +174,11 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     assert not any(
         b"Changed authored wording" in path.read_bytes() for path in state.rglob("*.json")
     )
+    assert not list(state.rglob("vault/**/*.json"))
+    assert all(
+        json.loads(p.read_text())["availability"] == "observed"
+        for p in state.rglob("manifests/*.json")
+    )
     # Losing the reviewed boundary is an explicit failure rather than a
     # truncated check of the first page.
     pages["https://www.sgn.org/ch/News/Seattle?start=10"] = b"<p>Parser changed.</p>"
@@ -194,3 +198,170 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     assert fourth.exit_code == 0, fourth.output
     event = json.loads(fourth.output)["automatic"][0]
     assert event["status"] == "failed" and event["previous_snapshot_id"] is not None
+
+
+@pytest.mark.parametrize("failure", ["fetch", "heading", "decode", "pagination"])
+def test_sgn_failed_learning_survives_rotation_on_fresh_runner(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure: str
+) -> None:
+    import shutil
+
+    from election_guide.collection.verification import read_policy
+    from election_guide.collection.verification_runtime import run_verification
+    from election_guide.collection.verification_state import validate_state
+
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
+    policy = read_policy(ROOT / "config/verification.yaml")
+    election = policy.elections[0]
+    policy = policy.model_copy(
+        update={
+            "elections": [
+                election.model_copy(
+                    update={
+                        "sources": [
+                            s for s in election.sources if s.source_id == "seattle-gay-news"
+                        ]
+                    }
+                )
+            ]
+        }
+    )
+    index = "https://www.sgn.org/ch/News/Seattle"
+    new = "https://www.sgn.org/story/199999/"
+    titles = re.findall(
+        r"<p>(.*?)</p>", (ROOT / "tests/fixtures/verification/seattle-gay-news.html").read_text()
+    )
+    pages: dict[str, bytes | Exception] = {
+        f"https://www.sgn.org/story/{168513 + i}/": f"<h1>{title}</h1>".encode()
+        for i, title in enumerate(titles)
+    }
+    original_index = "".join(
+        f'<a href="/story/{168513 + i}/News/Seattle/SGN%20Endorsements">Story</a>'
+        for i in range(len(titles))
+    ).encode()
+    pages[index] = original_index
+    calls: list[str] = []
+
+    def fetch(url: str) -> HttpArtifact:
+        calls.append(url)
+        value = pages[url]
+        if isinstance(value, Exception):
+            raise value
+        return HttpArtifact(value, 200, url, [], "text/html")
+
+    monkeypatch.setattr("election_guide.collection.discovery.fetch_http", fetch)
+    state = tmp_path / "state"
+
+    def run(root: Path, day: int) -> dict[str, Any]:
+        report = run_verification(
+            policy,
+            root,
+            datetime.fromisoformat(f"2026-10-{day:02d}T18:00:00+00:00"),
+            live=True,
+            fixtures=None,
+        )
+        validate_state(policy, root)
+        return report["automatic"][0]
+
+    baseline = run(state, 19)
+    assert baseline["status"] == "created"
+    broken = {
+        "fetch": OSError("authored unavailable fixture"),
+        "heading": b"<h1>Unclassified article</h1>",
+        "decode": b"\xff",
+        "pagination": OSError("still unavailable after pagination recovers"),
+    }[failure]
+    pages[new] = broken
+    learned_index = original_index + b'<a href="/story/199999/">SGN Endorsements New</a>'
+    if failure == "pagination":
+        learned_index = learned_index.replace(
+            b"/story/168513/News/Seattle/SGN%20Endorsements", b"/unrelated/"
+        )
+    pages[index] = learned_index
+    first_failure = run(state, 20)
+    assert first_failure["status"] == "failed"
+    assert first_failure["previous_snapshot_id"] == baseline["snapshot_id"]
+    assert any(
+        new in json.loads(p.read_text())["articles"]
+        for p in state.rglob("discovery-obligations/*.json")
+    )
+    history = {p.relative_to(state): p.read_bytes() for p in state.rglob("*.json")}
+    independent = tmp_path / "independent"
+    shutil.copytree(state, independent)
+    pages[index] = original_index
+    calls.clear()
+    second_failure = run(independent, 21)
+    assert new in calls
+    assert second_failure["status"] == "failed"
+    assert second_failure["previous_snapshot_id"] == baseline["snapshot_id"]
+    pages[new] = b"<h1>SGN Endorsements New</h1><p>Recovered authored article.</p>"
+    recovered = run(independent, 22)
+    assert recovered["status"] == "updated" and recovered["baseline_reviewed"] is False
+    assert run(independent, 23)["status"] == "unchanged"
+    for relative, raw in history.items():
+        assert (independent / relative).read_bytes() == raw
+    assert not list(independent.rglob("vault/**/*.json"))
+    assert not any(
+        b"Recovered authored article" in p.read_bytes() for p in independent.rglob("*.json")
+    )
+
+
+@pytest.mark.parametrize(
+    "corruption",
+    ["url", "duplicate", "bound", "capture", "source", "time", "method", "index", "identity"],
+)
+def test_sgn_obligation_reader_rejects_invalid_public_evidence(
+    tmp_path: Path, corruption: str
+) -> None:
+    from election_guide.collection.discovery import (
+        SgnDiscoveryObligation,
+        read_sgn_discovery_obligation,
+    )
+    from election_guide.evidence.models import CaptureRequest, evidence_fingerprint
+    from election_guide.evidence.storage import record_observation
+
+    checked_at = datetime.fromisoformat("2026-10-20T18:00:00+00:00")
+    body = tmp_path / "input.html"
+    body.write_bytes(b'<a href="/story/199999/">SGN Endorsements New</a>')
+    manifest = record_observation(
+        CaptureRequest(
+            source_id="sage-leaders" if corruption == "source" else "seattle-gay-news",
+            requested_url="https://www.sgn.org/story/199999/"
+            if corruption == "index"
+            else "https://www.sgn.org/ch/News/Seattle",
+            canonical_url="https://www.sgn.org/story/199999/"
+            if corruption == "index"
+            else "https://www.sgn.org/ch/News/Seattle",
+            title="Authored fixture index",
+            retrieved_at=checked_at,
+            media_type="text/html",
+            capture_method="manual_upload" if corruption == "method" else "static_html",
+            http_status=None if corruption == "method" else 200,
+            redistribution="restricted",
+            redistribution_note="Public fixture metadata only.",
+        ),
+        body,
+        tmp_path / "manifests",
+    )
+    record = SgnDiscoveryObligation(
+        checked_at=checked_at,
+        articles=["https://www.sgn.org/story/199999/"],
+        capture_id=manifest.stem,
+    ).model_dump(mode="json")
+    if corruption == "url":
+        record["articles"] = ["https://evil.example/story/199999/"]
+    elif corruption == "duplicate":
+        record["articles"] *= 2
+    elif corruption == "bound":
+        record["articles"] = [f"https://www.sgn.org/story/{i}/" for i in range(101)]
+    elif corruption == "capture":
+        record["capture_id"] = "capture-seattle-gay-news-20261020T180000Z-000000000000"
+    elif corruption == "time":
+        record["checked_at"] = "2026-10-21T18:00:00Z"
+    directory = tmp_path / "discovery-obligations"
+    directory.mkdir()
+    identity = "0" * 64 if corruption == "identity" else evidence_fingerprint(record)
+    path = directory / f"{identity}.json"
+    path.write_text(json.dumps(record))
+    with pytest.raises((ValueError, OSError)):
+        read_sgn_discovery_obligation(path)

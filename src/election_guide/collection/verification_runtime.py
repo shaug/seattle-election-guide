@@ -1,4 +1,4 @@
-"""Execute due source checks, retaining encrypted captures and immutable observations."""
+"""Execute due source checks, retaining public facts and immutable observations."""
 
 from __future__ import annotations
 
@@ -25,7 +25,6 @@ from election_guide.collection.refresh import (
     refresh_source,
 )
 from election_guide.collection.tru_discovery import TRU_HOME, discover_tru_publication
-from election_guide.collection.vault import read_key, restore_store, seal_store
 from election_guide.collection.verification import (
     CheckRecord,
     ElectionPolicy,
@@ -120,7 +119,6 @@ def run_verification(
             "mode": "live" if live else "fixture",
             "coverage": plan.model_dump(mode="json"),
         }
-    key = read_key()
     policies = {item.election_id: item for item in policy.elections}
     for election_plan in plan.elections:
         root = state_root / election_plan.election_id
@@ -129,8 +127,8 @@ def run_verification(
         due = [item for item in election_plan.coverage if item.due]
         if not due:
             continue
-        # A private transaction keeps interrupted checks from publishing an
-        # extraction whose original bytes have not been sealed successfully.
+        # Current response bodies stay private and transient. Only immutable
+        # facts and observation metadata leave this transaction.
         with tempfile.TemporaryDirectory(prefix="endorsement-verification-") as temporary:
             private = Path(temporary)
             working = private / "state"
@@ -138,7 +136,6 @@ def run_verification(
                 shutil.copytree(root, working)
             working.mkdir(parents=True, exist_ok=True)
             storage = private / "captures"
-            restore_store(working / "vault", storage, key)
             activation = working / "activation.json"
             if not activation.exists():
                 write_immutable_record(
@@ -217,7 +214,6 @@ def run_verification(
                         "escalated": failures >= 3,
                     }
                 )
-            seal_store(storage, working / "vault", key)
             # Immutable bytes first, observations last. Git publishes the
             # resulting set as one commit; a partial local set is never success.
             for path in sorted(
@@ -254,11 +250,17 @@ def _refresh(
                     TRU_HOME if source.id == "transit-riders-union" else UFCW_INDEX
                 )
                 if source.id == "transit-riders-union":
-                    raw = discover_tru_publication(root, storage, checked_at)
+                    raw = discover_tru_publication(
+                        root, storage, checked_at, retention="facts_only"
+                    )
                 elif source.id == "ufcw-3000":
-                    raw = discover_ufcw_publication(root, storage, checked_at)
+                    raw = discover_ufcw_publication(
+                        root, storage, checked_at, retention="facts_only"
+                    )
                 else:
-                    raw = discover_publication(policy, root, storage, checked_at)
+                    raw = discover_publication(
+                        policy, root, storage, checked_at, retention="facts_only"
+                    )
 
                 request = CaptureRequest(
                     source_id=source.id,
@@ -276,7 +278,7 @@ def _refresh(
                     capture_method="manual_upload",
                     redistribution="restricted",
                     redistribution_note=(
-                        "Generated comparison; original HTTP inputs are committed encrypted."
+                        "Generated comparison; public observations identify transient HTTP inputs."
                     ),
                 )
             else:
@@ -297,7 +299,7 @@ def _refresh(
                     redirect_chain=artifact.redirect_chain,
                     redistribution="restricted",
                     redistribution_note=(
-                        "Original bytes retained in the committed encrypted vault."
+                        "Public response observed; original bytes are transient."
                         + (
                             " Public POST; application/x-www-form-urlencoded; "
                             f"{urlencode(policy.request.form)}. "
@@ -333,6 +335,7 @@ def _refresh(
             manifest_dir=root / "manifests",
             extraction_dir=root / "extractions",
             refresh_dir=root / "refreshes",
+            retention="facts_only",
         )
     except (OSError, ValueError) as error:
         # Filesystem paths and response bodies are private. Public failures name

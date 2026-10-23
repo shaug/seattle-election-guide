@@ -105,3 +105,17 @@ def test_calendar_restores_selected_committed_state(
         }
     monkeypatch.chdir(repo)
     require_committed_state(state_root, revision)
+
+
+def test_scheduled_job_uses_repository_auth_without_an_evidence_secret() -> None:
+    workflow = yaml.safe_load(
+        (PROJECT_ROOT / ".github/workflows/endorsement-verification.yml").read_text()
+    )
+    assert "ENDORSEMENT_EVIDENCE_KEY" not in workflow.get("env", {})
+    job = workflow["jobs"]["verify"]
+    assert "ENDORSEMENT_EVIDENCE_KEY" not in job.get("env", {})
+    assert all("ENDORSEMENT_EVIDENCE_KEY" not in step.get("env", {}) for step in job["steps"])
+    app = next(step for step in job["steps"] if step.get("id") == "app-token")
+    assert app["with"]["permission-contents"] == "write"
+    assert app["with"]["permission-pull-requests"] == "write"
+    assert workflow["concurrency"] == {"group": "election-maintenance", "cancel-in-progress": False}

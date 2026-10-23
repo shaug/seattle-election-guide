@@ -1,6 +1,5 @@
 """Scheduled runs demonstrate durable baselines, failure retention, and honest coverage."""
 
-import base64
 import json
 from pathlib import Path
 from typing import Any, cast
@@ -18,7 +17,7 @@ runner = CliRunner()
 def setup_verification_fixture(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> tuple[Path, Path, Path]:
-    monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(bytes(range(32))).decode())
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
     adapter = tmp_path / "adapter.yaml"
     adapter.write_text(
         yaml.safe_dump(
@@ -206,3 +205,142 @@ def test_fixture_baseline_cannot_be_human_approved_and_manual_review_is_explicit
         ]
         is None
     )
+
+
+def test_legacy_mixed_history_reuses_exact_review_without_restored_pages(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import shutil
+    from datetime import date, datetime
+
+    from election_guide.collection.refresh import read_adapter_spec, refresh_source
+    from election_guide.collection.vault import seal_store
+    from election_guide.collection.verification import CheckRecord, read_policy
+    from election_guide.collection.verification_review import approve_baseline
+    from election_guide.collection.verification_runtime import record_check
+    from election_guide.collection.verification_state import validate_state
+    from election_guide.evidence.models import CaptureRequest
+
+    policy_path, state, fixtures = setup_verification_fixture(tmp_path, monkeypatch)
+    policy = read_policy(policy_path)
+    root = state / "wa-2026-general"
+    storage = tmp_path / "legacy-private"
+    event = refresh_source(
+        read_adapter_spec(tmp_path / "adapter.yaml"),
+        CaptureRequest(
+            source_id="transit-riders-union",
+            requested_url="https://transitriders.org/",
+            canonical_url="https://transitriders.org/",
+            title="Authored legacy fixture",
+            retrieved_at=datetime.fromisoformat("2026-10-05T18:00:00+00:00"),
+            media_type="text/html",
+            capture_method="static_html",
+            http_status=200,
+            redistribution="restricted",
+            redistribution_note="Synthetic legacy ciphertext.",
+        ),
+        fixtures / "transit-riders-union.html",
+        storage_root=storage,
+        manifest_dir=root / "manifests",
+        extraction_dir=root / "extractions",
+        refresh_dir=root / "refreshes",
+    )
+    seal_store(storage, root / "vault", bytes(range(32)))
+    record_check(
+        root,
+        CheckRecord(
+            source_id=event.source_id,
+            scheduled_for=date(2026, 10, 5),
+            checked_at=event.checked_at,
+            status=event.status,
+            event_id=event.id,
+            mode="live",
+        ),
+    )
+    assert event.snapshot_id is not None
+    approve_baseline(
+        root,
+        event.snapshot_id,
+        "Named fixture reviewer",
+        datetime.fromisoformat("2026-10-05T19:00:00+00:00"),
+        "Authored HTTP fixture only; not actual official-source approval.",
+    )
+    history = {p.relative_to(state): p.read_bytes() for p in state.rglob("*.json")}
+    approval = json.loads((root / "approvals" / f"{event.snapshot_id}.json").read_text())
+    assert approval["reviewer"] == "Named fixture reviewer"
+    assert approval["reviewed_at"] == "2026-10-05T19:00:00Z"
+    shutil.rmtree(storage)
+    independent = tmp_path / "independent"
+    shutil.copytree(state, independent)
+    second = run_fixture(policy_path, independent, fixtures, "2026-10-06")["automatic"][0]
+    assert second["status"] == "unchanged" and second["baseline_reviewed"] is True
+    assert second["snapshot_id"] == event.snapshot_id and second["capture_id"] != event.capture_id
+    assert len(list(independent.rglob("approvals/*.json"))) == 1
+    for relative, raw in history.items():
+        assert (independent / relative).read_bytes() == raw
+    assert set(p.relative_to(independent) for p in independent.rglob("vault/**/*.json")) == {
+        p for p in history if "vault" in p.parts
+    }
+    validate_state(policy, independent)
+    (fixtures / "transit-riders-union.html").write_text(
+        "<p>Seattle City Council District 5: Nilu Jenks</p><p>Authored new wording.</p>"
+    )
+    changed = run_fixture(policy_path, independent, fixtures, "2026-10-07")["automatic"][0]
+    assert changed["status"] == "updated" and changed["baseline_reviewed"] is False
+    unchanged = run_fixture(policy_path, independent, fixtures, "2026-10-08")["automatic"][0]
+    assert unchanged["status"] == "unchanged" and unchanged["baseline_reviewed"] is False
+    assert unchanged["snapshot_id"] == changed["snapshot_id"]
+    assert len(list(independent.rglob("approvals/*.json"))) == 1
+    validate_state(policy, independent)
+
+
+@pytest.mark.parametrize("corruption", ["source", "hash", "time"])
+def test_current_observation_must_match_successful_event_and_reused_facts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, corruption: str
+) -> None:
+    from datetime import datetime
+
+    from election_guide.collection.verification import read_policy
+    from election_guide.collection.verification_state import validate_state
+    from election_guide.evidence.models import CaptureRequest, evidence_fingerprint
+    from election_guide.evidence.storage import record_observation
+
+    policy, state, fixtures = setup_verification_fixture(tmp_path, monkeypatch)
+    run_fixture(policy, state, fixtures, "2026-10-05")
+    event = run_fixture(policy, state, fixtures, "2026-10-06")["automatic"][0]
+    root = state / "wa-2026-general"
+    observed = json.loads((root / "manifests" / f"{event['capture_id']}.json").read_text())
+    request = CaptureRequest.model_validate(
+        {
+            k: v
+            for k, v in observed.items()
+            if k not in {"id", "availability", "content_sha256", "byte_length"}
+        }
+    )
+    if corruption == "source":
+        request = request.model_copy(update={"source_id": "sage-leaders"})
+    elif corruption == "time":
+        request = request.model_copy(
+            update={"retrieved_at": datetime.fromisoformat("2026-10-07T18:00:00+00:00")}
+        )
+    body = tmp_path / "input.html"
+    body.write_bytes(
+        b"<p>Different authored content.</p>"
+        if corruption == "hash"
+        else (fixtures / "transit-riders-union.html").read_bytes()
+    )
+    observation = record_observation(request, body, root / "manifests")
+    path = root / "refreshes" / f"{event['id']}.json"
+    record = json.loads(path.read_text())
+    record["capture_id"] = observation.stem
+    payload = {k: v for k, v in record.items() if k != "id"}
+    record["id"] = record["id"].rsplit("-", 1)[0] + "-" + evidence_fingerprint(payload)[:12]
+    path.unlink()
+    path.with_name(f"{record['id']}.json").write_text(json.dumps(record))
+    message = {
+        "source": "observation belongs to another source",
+        "hash": "matching observation",
+        "time": "observation time",
+    }[corruption]
+    with pytest.raises(ValueError, match=message):
+        validate_state(read_policy(policy), state)
