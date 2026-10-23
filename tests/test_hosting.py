@@ -1730,18 +1730,18 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         "source_registry_hash": "d9c0bfbad3bd963d11b24ee45d1ae3bfe8f2b16a6b489fd80e6cf463efdc1f27",
     }
     historical = site_manifest["elections"][1]
-    assert historical["bundle_id"] == "wa-2026-primary-2026-primary.5"
+    assert historical["bundle_id"] == "wa-2026-primary-2026-primary.6"
     assert historical["source_registry_hash"] == (
         "76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8"
     )
     assert historical["publication_request"] is None
     assert historical["comparison_route_preview"] is False
-    assert historical["git_commit"] == "bea5e4edc5c50c985932b8ae5e123a39a0b51449"
+    assert historical["git_commit"] == "c27e432d9bc477289d54ee9136746845a92696d0"
     assert historical["release_manifest_sha256"] == (
-        "cd7e5e8ed414d902f5892b4cf199991290ab5b096a0c0c1bee0daad26c7410c9"
+        "701c956310cad5e5374a291beb2cd54389a5f15087fc40a40c3a6707345c594d"
     )
     assert historical["bundle_sha256"] == (
-        "ef881727c52374610e383fbad42271bdaf2bef4abdab84b592c03744a4d5e6c3"
+        "daa492dc72d526de6178281292ef660a8b3885a7194cbcd8e7d51fb9b450ea07"
     )
     assert current_election["bundle_id"] == f"wa-2026-general-{current_election['release_version']}"
     assert SiteManifest.model_validate(site_manifest).elections[0].publication_request is not None
