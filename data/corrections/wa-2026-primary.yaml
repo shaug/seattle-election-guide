@@ -1,6 +1,21 @@
 schema_version: '1.0'
 election_id: wa-2026-primary
 entries:
+- corrected_on: 2026-10-22
+  headline: Updated primary race-page meter borders and touch inspection.
+  body: >-
+    Split-endorsement borders on individual race pages follow their rounded opening
+    and closing transitions. Rebuilding the archived overview also brings its touch
+    meters into line with the current guide: percentages remain visible until a
+    press-and-hold reveals individual endorsements. Counts, colors, allocations and
+    certified results are unchanged.
+  provenance:
+  - label: Primary race pages
+    url: /e/wa-2026-primary/races/ld-32-state-representative-1/
+  - label: Split-border correction
+    url: https://github.com/shaug/seattle-election-guide/issues/598
+  - label: Shared touch-meter behavior
+    url: https://github.com/shaug/seattle-election-guide/pull/562
 - corrected_on: 2026-10-16
   headline: Named sparse-race leaders in customized primary views.
   body: >-
