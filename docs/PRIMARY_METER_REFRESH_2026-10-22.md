@@ -55,7 +55,7 @@ add the entry appropriate to the stage that actually changes its pages. Confirm
 the entries' Pacific dates against actual publication before publishing an archive.
 Do not reserve later versions or invent pins in advance.
 
-The source file for primary Updates carries a second October 22 entry for the
+The source file for primary Updates carries a second October 23 entry for the
 later overview activation. Primary `.5` freezes only the first new entry, so the
 second entry is not served with this pin. Confirm or correct its Pacific date
 against the actual later archive publication before that archive is published.

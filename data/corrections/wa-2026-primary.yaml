@@ -1,7 +1,7 @@
 schema_version: '1.0'
 election_id: wa-2026-primary
 entries:
-- corrected_on: 2026-10-22
+- corrected_on: 2026-10-23
   headline: Rounded split borders on the archived primary overview.
   body: >-
     The refreshed archived overview shows borders that follow the rounded
