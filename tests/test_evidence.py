@@ -1,4 +1,5 @@
 import errno
+import hashlib
 import json
 import shutil
 import subprocess
@@ -1204,3 +1205,80 @@ def _manual_draft_path(
     output.write_text(yaml.safe_dump(raw, sort_keys=False), encoding="utf-8")
     assert read_manual_draft(output).capture_id == capture_id
     return output
+
+
+def test_observation_records_only_identified_public_metadata(tmp_path: Path) -> None:
+    source = tmp_path / "private.html"
+    source.write_bytes(b"<p>Private original page</p>")
+    request = _capture_request(redistribution="restricted")
+    manifests = tmp_path / "public"
+    path = evidence_storage.record_observation(request, source, manifests)
+    original_bytes = path.read_bytes()
+    manifest = read_capture_manifest(path)
+    raw = json.loads(original_bytes)
+    assert manifest.availability == "observed"
+    assert raw["source_id"] == request.source_id
+    assert raw["canonical_url"] == request.canonical_url
+    assert raw["retrieved_at"] == "2026-07-19T12:00:00Z"
+    assert raw["content_sha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
+    assert raw["byte_length"] == 28
+    assert "storage_reference" not in raw and "storage_scope" not in raw
+    assert b"Private original page" not in original_bytes
+    source.unlink()
+    assert set(tmp_path.rglob("*")) == {manifests, path}
+    assert path.read_bytes() == original_bytes
+    with pytest.raises(ValueError, match=r"observed.*retained original"):
+        verify_capture(manifest, tmp_path / "missing")
+    draft_path = _manual_draft_path(tmp_path, manifest.id)
+    with pytest.raises(ValueError, match=r"observed.*retained original"):
+        validate_manual_draft(read_manual_draft(draft_path), manifests, tmp_path / "missing")
+
+
+@pytest.mark.parametrize(
+    "change", ["missing_id", "unsafe_source", "unsafe_url", "time", "hash", "size", "storage"]
+)
+def test_observation_reader_rejects_invalid_or_tampered_identity(
+    tmp_path: Path, change: str
+) -> None:
+    path = evidence_storage.record_observation(
+        _capture_request(), FIXTURES / "static.html", tmp_path
+    )
+    raw = json.loads(path.read_bytes())
+    if change == "missing_id":
+        raw.pop("id")
+    elif change == "unsafe_source":
+        raw["source_id"] = "../escape"
+    elif change == "unsafe_url":
+        raw["requested_url"] = "https://example.com/?token=secret"
+    elif change == "time":
+        raw["retrieved_at"] = "2026-07-20T12:00:00Z"
+    elif change == "hash":
+        raw["content_sha256"] = "a" * 64
+    elif change == "size":
+        raw["byte_length"] += 1
+    else:
+        raw["storage_reference"] = "sha256/aa/" + "a" * 64
+    path.write_text(json.dumps(raw))
+    with pytest.raises(ValueError):
+        read_capture_manifest(path)
+
+
+def test_observation_does_not_change_retained_manifest_bytes(tmp_path: Path) -> None:
+    request = _capture_request()
+    path = record_capture(
+        request, FIXTURES / "static.html", tmp_path / "store", tmp_path / "manifests"
+    )
+    original = path.read_bytes()
+    assert path.stem == "capture-the-stranger-20260719T120000Z-907bfb3cc905"
+    assert hashlib.sha256(original).hexdigest() == (
+        "d24379ba324947d604658925ca1f13c7f328d5f5bc7caf76646200135200aca9"
+    )
+    evidence_storage.record_observation(request, FIXTURES / "static.html", tmp_path / "manifests")
+    assert path.read_bytes() == original
+    assert (
+        record_capture(
+            request, FIXTURES / "static.html", tmp_path / "store", tmp_path / "manifests"
+        )
+        == path
+    )
+    assert isinstance(read_capture_manifest(path), CapturedManifest)

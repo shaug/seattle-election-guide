@@ -13,6 +13,7 @@ from pydantic import ValidationError
 from election_guide.evidence.models import (
     ManualEntry,
     ManualEntryDraft,
+    ObservedManifest,
     UnavailableManifest,
 )
 from election_guide.evidence.storage import (
@@ -45,6 +46,10 @@ def validate_manual_draft(
         raise ValueError(
             f"manual entry capture ID {draft.capture_id!r} does not match manifest "
             f"identity {manifest.id!r}"
+        )
+    if isinstance(manifest, ObservedManifest):
+        raise ValueError(
+            "observed evidence cannot supply a retained original for manual transcription"
         )
     if isinstance(manifest, UnavailableManifest):
         raise ValueError("manual transcription requires captured evidence, not unavailable status")
