@@ -259,6 +259,10 @@ commit that attestation with the actual actor/time. Neither command approves an 
 before publishing links. `--watch` adds missing checks; `--dry-run` prints the
 proposed sections without GitHub writes and permits an uncommitted local exercise.
 
+Failed checks can report a fixed operation stage and failure category, with a validated
+HTTP status where available. These bounded diagnostics retain no arbitrary exception
+text and do not by themselves establish a cause, recovery or source approval.
+
 ## Legacy encrypted custody
 
 Historical `verification seal` and `verification restore` utilities remain documented in
