@@ -101,5 +101,13 @@ Each runbook's autonomy level is declared in the runbook itself — its single o
 | `runbooks/results-capture-election-night.md`  | `results_capture_election_night`     |
 | `runbooks/results-certified-ingest.md`        | `results_capture_post_certification` |
 | `runbooks/endorsement-discovery-sweep.md`     | `collection_opens` → `refresh`       |
-| `runbooks/endorsement-source-daily-verification.md` | calendar-derived weekly/daily source checks; implementation awaiting adoption evidence |
+| `runbooks/endorsement-source-daily-verification.md` | calendar-derived weekly/daily source checks; proposed; real scheduled execution and later independent approved-baseline reuse pending |
 | `runbooks/production-rollback.md`             | condition: production is serving a wrong, broken, or stale build |
+
+The endorsement-verification runbook remains **proposed** under #497. The October 23
+factual-evidence decision removes historical-page reconstruction and evidence-key recovery
+from normal operation. Code delivery, fixtures, operator dispatches and no-due workflows do
+not adopt it: all six sources, 46 honest coverage lanes/manual tasks, real due-source scheduled
+execution and later independent normal scheduled reuse must have durable reviewed evidence.
+See the [accepted design](superpowers/specs/2026-10-23-secret-free-endorsement-verification-design.md)
+and [implementation record](superpowers/plans/2026-10-23-secret-free-endorsement-verification.md).

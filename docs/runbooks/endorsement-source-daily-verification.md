@@ -1,9 +1,11 @@
 # Runbook: endorsement source daily verification
 
 **Status: proposed, implementation awaiting adoption evidence (#497).** Keep this
-status until the first live scheduled cycle, six human baseline spot-checks, and
-independent baseline reuse have durable evidence. Fixture execution proves the
-mechanism, not live publisher access or human approval.
+status until real due-source native scheduled execution, six exact official-source baseline
+reviews, and later independent normal scheduled reuse have durable evidence. Fixture execution
+proves the mechanism, not live publisher access or source approval. Operator dispatches and
+no-due successes cannot substitute. Resolve genuine SEIU 775 failures or obtain an explicit
+reviewed coverage decision without silently removing it from the six-source tranche.
 
 ## Trigger and boundaries
 
@@ -20,28 +22,29 @@ becomes daily on September 18, not domestic mailing on October 16. SGN uses
 then follows the original calendar cadence; it creates no historical backlog.
 Missed checks after activation remain reportable after election day.
 
-Every eligible source appears in the coverage record. Adding another election
-requires its own frozen registry, inventory, and reviewed adapters in the policy;
+All 46 eligible current-general frozen-panel sources appear in the coverage record.
+Adding another election requires its own frozen registry, inventory, and reviewed adapters in the policy;
 never copy primary or previous-cycle candidate mappings into a new ballot.
 Policy validation rejects duplicate elections/sources, wrong-election inputs,
 unknown or ineligible sources, invalid adapters, and contradictory anchors.
 
 ## Autonomy and coverage
 
-Level 2 (Watched): capture, compare, preserve, and report. Human review retains
-interpretation, transcription approval, baseline approval, ledger edits, PR
-review, releases, and production approval. The detector does not modify the
-published source decisions, source panel, scoring, or historical releases.
+Level 2 (Watched): observe, compare, preserve facts, and report. Actual source reviewers
+retain interpretation, transcription approval, baseline approval and ledger decisions under
+existing maintainer authority. Repository review and existing automatic release/publication
+controls remain in force; this detector grants no release authority. The detector does not
+modify the published source decisions, source panel, scoring, or historical releases.
 
 The first general-election tranche is:
 
 | Source | Automatic publication check | Limitation |
 |---|---|---|
-| Transit Riders Union | Official WordPress archive through the September 30 boundary, both known and learned current-general articles, exact linked October graphic | Twelve fixed formal mappings from the designated October article; qualified recommendations held. Full original HTML/image hashes drive review. Exact expanded baseline approval and later independent native scheduled reuse remain pending; historical failures and exact October 20 obligations remain intact. |
+| Transit Riders Union | Official WordPress archive through the September 30 boundary, both known and learned current-general articles, exact linked October graphic | Twelve fixed formal mappings from the designated October article; qualified recommendations held. Complete HTML/image fingerprints drive review. Exact expanded baseline approval and later independent native scheduled reuse remain pending; historical failures and exact October 20 obligations remain intact. |
 | Sage Leaders | Current 2026 section, excluding past-year sections | Fixed, reviewed factual mappings; changed bytes require review. |
 | SEIU 775 | Washington section | Fixed, reviewed factual mappings; changed bytes require review. |
 | UFCW 3000 | Complete endorsements landing page plus known/new relevant official articles | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. The expanded composite requires review of its exact new baseline. |
-| Washington Working Families Party | Our Candidates section | Fixed, reviewed factual mappings; changed bytes require review. |
+| Washington Working Families Party | Complete Washington candidate table from the reviewed public POST endpoint | Fixed, reviewed factual mappings; changed bytes require review. |
 | Seattle Gay News | Current Seattle index plus known/new articles | Daily from collection opening. Traverse pagination to the reviewed oldest current-cycle article, then revisit every known article. |
 
 These checks use `config/adapters/wa-2026-general/`; the older primary TRU adapter
@@ -51,17 +54,19 @@ editorial prose. They do not approve the first automatic live baseline.
 
 The six stay in the automatic-attempt lane, including an inaccessible source;
 failures do not silently reduce coverage. Current operator research and fixture tests
-do not establish native scheduled recovery or adoption. Complete exact-baseline
-reviews and later independent native scheduled evidence remain required for the six.
+do not establish native scheduled recovery or adoption. Preserve accepted exact-baseline
+reviews and native reuse, including WFP's dated review/reuse.
+Complete outstanding exact-baseline reviews and later independent native scheduled evidence;
+the deployed secret-free process still needs its own revised acceptance packet.
 
 All other eligible panel sources use manual review, including not-found,
 restricted, social, dynamic, PDF, and image publications without an installed
 adapter. Every scheduled manual obligation receives its due date in that day's
-finite task. It does not count as successful verification until a human records
-the review time and durable evidence reference. Comprehensive sweeps (#491,
+finite task. It does not count as successful verification until the actual reviewer records
+the review time and durable evidence reference under existing authority. Comprehensive sweeps (#491,
 #472, and later calendar checkpoints) retain their separate scope.
 
-`verification plan` returns each lane, cadence, last successful human-verified
+`verification plan` returns each lane, cadence, last successful reviewer-verified
 check, next due date, and limitation. Unapproved captures and fixture runs do not
 populate the successful verification date.
 
@@ -76,42 +81,47 @@ cannot disappear or be replaced with an older mainline baseline.
 
 - `activation.json`: actual activation date and producing revision.
 - `checks/`: scheduled slot, actual check time, mode, result, event reference.
-- `refreshes/`, `extractions/`, `manifests/`: existing collection records.
-- `vault/sha256/<prefix>/<digest>.json`: AES-256-GCM encrypted original bytes.
+- `refreshes/`, `extractions/`: factual comparison snapshots and immutable events.
+- `manifests/`: current observed-only provenance, hashes and byte lengths with no storage reference.
+- `vault/sha256/<prefix>/<digest>.json`: unchanged legacy ciphertext, never new normal-run output.
 - `discovery/`: successful index/article capture links, known/listed articles, derived hash.
-- `discovery-obligations/`: validated newly learned UFCW URLs and their original
-  landing capture; retained even when required article collection fails.
-- `approvals/`: explicit human attestations bound to a live snapshot.
+- `discovery-obligations/`: validated newly learned UFCW, TRU and SGN URLs bound to
+  their actual observed index/landing manifest before later pagination/article work can fail.
+- `approvals/`: explicit actual-reviewer attestations bound to a live factual snapshot.
 
 `data/verification/runs/` records the exact producing revision, due coverage,
 actual results, policy fingerprint, and fixture/live mode. `source_tree_dirty`
 identifies a local exercise with uncommitted source; it cannot prove a deployed
 revision. Git commits preserve the whole record set;
 tasks link to the full committed SHA, not a moving branch or expiring artifact.
-Public validation checks record identities, references, and encrypted envelopes.
-The keyed runner also authenticates and hashes every restored original capture.
+Public validation checks record identities,
+source/hash/time/reference joins, factual snapshots and approvals, plus legacy envelope metadata.
+No normal path decrypts historical pages or reads an evidence key.
 
-The base64-encoded random 32-byte `ENDORSEMENT_EVIDENCE_KEY` is an Actions secret.
-Keep a private recoverable copy under the maintainer's credential procedures.
-Neither the key nor decrypted pages belong in Git, logs, or uploaded artifacts.
-The workflow reuses the repository's archive GitHub App credentials for branch
-and PR writes; its ordinary job token owns issue writes. No external evidence
-service is used. Full restricted content is committed only as authenticated
-ciphertext; public manifests, hashes, short factual excerpts, and review records
-remain readable alongside the rest of the data.
+A public factual baseline consists of endorsement facts, official URL, actual check timestamp,
+actual reviewer and review timestamp. This is sufficient durable evidence; full-page reconstruction
+is not required. An observed-only manifest establishes metadata/facts provenance, not retained
+original bytes or publisher authorship. Every successful fetch, including unchanged bytes,
+preserves its current actual URL, time and HTTP metadata. Unchanged checks reference the exact
+prior factual snapshot/approval through validated source/hash links; they do not claim the
+reviewer personally re-read the source on the new check date. First, changed and unapproved
+baselines still require official-source review. Parse failures retain any available observations
+without promoting a new baseline.
 
-Captures are decrypted only into a private temporary directory and removed at
-transaction end. Changed bytes are sealed before their observation is published;
-unchanged originals retain the existing ciphertext. Existing manifest IDs and
-`storage_scope` semantics remain unchanged: the original raw capture is
-`local_only`, while the verification vault is its separately validated encrypted
-custody record. Restore reconstructs the same relative SHA-256 addresses.
+Current source responses remain transient/private and are discarded at transaction end. Normal
+verification, validation, factual approval, reconciliation and independent reuse require no evidence key,
+restored pages, new full-page plaintext/ciphertext or replacement service. The archive App and
+ordinary GitHub issue/deployment authentication retain their existing roles. Migration preserves
+all historical IDs, records, ciphertext, exact factual approvals, failures/counters and releases
+unchanged; it grants no new approval, fresh source read or backdated check.
 
 SGN's comparison artifact contains article headings and original-body hashes.
 It is explicitly marked as derived/manual-upload, with no invented HTTP status.
-Every actual HTTP index and article response has its own encrypted original and
-observed HTTP manifest. Article URLs use stable story IDs; a title edit cannot
-turn one article into two identities. Missing boundary, ambiguous/looping
+Every actual HTTP index and article response has its own current observed-only
+HTTP manifest and content fingerprint. SGN records newly learned canonical story obligations
+against the current observed index before later pagination or article collection can fail,
+then revisits them across independent runners and link rotation. Article URLs use stable
+story IDs; a title edit cannot turn one article into two identities. Missing boundary, ambiguous/looping
 pagination, inaccessible article, or exceeded bounds fails the check. Discovery
 allows at most 40 index pages, 100 articles, and 64 MiB total response bytes;
 each HTTP fetch retains the existing public-peer, redirect, time, and size limits.
@@ -122,19 +132,20 @@ known October 15 initiative publications when their links are absent. It does
 not follow news feeds, pagination, unrelated news, or historical article links.
 Successful discovery records and separate immutable discovery obligations persist
 article membership across runners. Obligations are written after bounded official
-URL validation, before required articles are fetched, and link to the encrypted
-original landing capture. A failed fetch or parse therefore cannot erase newly
+URL validation, before required articles are fetched, and link to the current
+observed landing manifest. A failed fetch or parse therefore cannot erase newly
 learned URLs when landing links rotate off. An obligation asserts neither a
 successful complete comparison nor baseline approval. A maximum of
 100 articles and 64 MiB of total response bytes bounds each check; the existing
 per-request GET safeguards remain in effect. Required article fetch or parsing
 failure records a failed check and retains the prior comparison baseline.
 
-Its derived comparison preserves the landing page for the existing factual
-extractor and binds all complete original article URLs and content hashes.
+Its derived comparison transiently supplies the landing page to the existing factual
+extractor and binds all complete original article URLs and content hashes; only the
+facts, fingerprints and provenance survive the private temporary transaction.
 Article-only edits, including corrections and withdrawals, therefore produce a
 changed-byte review lead even with zero recognized decision changes. Each actual
-HTTP response remains a separate encrypted original with observed metadata;
+HTTP response has a separate observed-only manifest with actual metadata;
 the composite has derived/manual-upload provenance and no HTTP status. Review
 the entire expanded publication and exact new snapshot before approving this
 baseline. The October 18 landing-page approval cannot approve the new composite.
@@ -159,13 +170,13 @@ new work arrives. Human-authored bodies and comments are preserved.
 
 | Result | Action |
 |---|---|
-| First baseline or unapproved zero diff | Human spot-check of the entire publication and mappings. |
+| First baseline or unapproved zero diff | Official-source review of the entire publication and mappings by the actual authorized reviewer. |
 | Identical bytes with approved live snapshot | Retain a successful check; no source review section. |
 | Added/changed/removed decisions | Include canonical IDs and immutable event/capture references. |
 | Changed bytes with zero recognized decision diff | Review wording, new/unrecognized decisions, article body, and parser coverage. Never silently trust it. |
 | Fetch or parser failure | Retain the prior comparison snapshot; append the failure. |
 | Missing scheduled event | Independent watcher reports the missing slot, even when the source job produced nothing. |
-| Manual obligation | Review due on the explicit date; record human evidence when complete. |
+| Manual obligation | Review due on the explicit date; record the actual authorized reviewer and evidence when complete. |
 
 Fixed mappings do not guess a newly named candidate. Byte changes always require
 review, including when the semantic extractor cannot recognize a new decision.
@@ -178,7 +189,7 @@ and an explicit diagnosis request. Multiple attempts in one slot count once;
 a successful slot breaks the streak. First startup without any committed state
 produces a current-day startup task, with no invented past checks. Three
 consecutive observed startup days also escalate using the watcher’s existing
-issue markers; a missing key cannot suppress the startup alert indefinitely.
+issue markers; absence of a source-job record cannot suppress the startup alert indefinitely.
 
 Resolve each observation through a reviewed adapter correction or endorsement
 change, linking the merged PR and applicable release/publication evidence. Close
@@ -194,11 +205,9 @@ check that changes no published content needs no entry. Follow the
 
 ## Operator procedure and recovery
 
-Before enabling the schedule, configure the evidence key and confirm the archive
-App has contents, PR, and workflow permissions. A missing or mismatched key
-fails loudly. Do not replace the key to make a failure pass: historical ciphertext
-requires the original key. Key rotation requires a separately reviewed migration;
-never overwrite immutable captures. Losing every key copy loses recoverability.
+Before enabling the schedule, confirm the archive App's existing contents, PR and workflow
+permissions and ordinary issue-write credentials. Review the public factual baseline and its
+actual approvals. There is no evidence key setup or historical-page recovery prerequisite.
 
 Inspect coverage without fetching:
 
@@ -207,10 +216,13 @@ uv run election-guide verification plan config/verification.yaml --as-of 2026-10
 uv run election-guide verification validate config/verification.yaml
 ```
 
-Run a controlled offline exercise with the factual fixtures, a temporary test
-key, and a separate state root. Never seed production state with fixture checks.
+Run a controlled offline exercise with the factual fixtures, no evidence key,
+and a separate state root. Never seed production state with fixture checks.
 Run the same state again on the next scheduled date and inspect baseline reuse,
 then use `reconcile --dry-run` to inspect task sections without issue mutation.
+Record the exact revision and `source_tree_dirty`, controlled clock/due set, first/fresh-runner
+public baseline reuse, manual queue, failed/missing-slot results and routing. State fixture mode
+honestly: fixture baselines remain unapproved and are not native scheduled acceptance.
 The CLI requires `--live` or `--fixtures` explicitly; ordinary tests never fetch.
 
 For a real run, use the scheduled workflow or dispatch it. A failed source is
@@ -222,10 +234,14 @@ If the archive branch is accidentally removed, restore its latest verified commi
 from the evidence PR/mainline before resuming. Preserve pending captures and
 attestations; do not restart from an older baseline.
 
-For human baseline review, check out the current archive branch, restore its vault
-to an external private directory with `verification restore`, authenticate the
-capture, and compare the entire official publication against its extraction.
-Record the review, then commit the attestation through normal PR review:
+For factual baseline review, check out the current archive branch and validate its public
+records. Compare the exact snapshot's facts and complete supported mappings against the current
+official publication, including new/unrecognized wording, article membership and required images.
+Use legitimate source access; a blocked fetch, failed parser or missing required article is a
+failure/limitation, never a successful acknowledgement. Review/fix normal source-fetch errors
+within the existing public-peer, redirect, time and size bounds. No old page restoration is needed.
+Record the actual reviewer (human or explicitly delegated), actual time and official-source
+review reference, then commit the attestation through normal PR review:
 
 ```bash
 uv run election-guide verification approve-baseline data/verification/wa-2026-general \
@@ -236,14 +252,33 @@ uv run election-guide verification approve-baseline data/verification/wa-2026-ge
 Fixture snapshots cannot receive live approval. For manual obligations use
 `verification acknowledge-manual` with election root, `--source-id`,
 `--scheduled-for`, `--reviewer`, `--reviewed-at`, and `--evidence`, then review and
-commit that attestation. Neither command approves an endorsement ledger edit.
+commit that attestation with the actual actor/time. Neither command approves an endorsement ledger edit.
 
 `verification reconcile` requires `--repository`, exact `--revision`, and
 `--as-of`. Mutation verifies that local archive bytes exactly match that commit
 before publishing links. `--watch` adds missing checks; `--dry-run` prints the
 proposed sections without GitHub writes and permits an uncommitted local exercise.
 
+## Legacy encrypted custody
+
+Historical `verification seal` and `verification restore` utilities remain documented in
+[EVIDENCE_CAPTURE.md](../EVIDENCE_CAPTURE.md#legacy-encrypted-custody-497). They operate only
+on the retained legacy custody records with the original private key; they are not normal
+verification, review, validation, reconciliation, migration or adoption prerequisites. Preserve
+legacy ciphertext and keys; this implementation does not rotate, replace or delete them.
+
 ## Adoption evidence and postmortem notes
+
+The dated notes below retain the original encrypted-custody facts, failures, instructions and
+then-pending acceptance exactly as recorded. Their old vault/restoration steps are historical,
+superseded for current/future operation by the October 23 factual contract above. Previously
+accepted WFP factual review and native reuse remain accepted progress; they neither fabricate a
+new source read nor establish the deployed secret-free six-source process. No historical full-page
+reconstruction or forensic original-page audit is promised. Complete #497 only with the full
+revised live evidence, including later independent normal scheduled reuse, honest manual queue,
+genuine source recovery/approved coverage decision and applicable reviewed delivery verification.
+See the [accepted design](../superpowers/specs/2026-10-23-secret-free-endorsement-verification-design.md)
+and [implementation record](../superpowers/plans/2026-10-23-secret-free-endorsement-verification.md).
 
 ### October 19 explicit delegation
 

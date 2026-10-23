@@ -15,7 +15,9 @@ Search snippets and third-party reporting are discovery leads, not endorsement e
 
 Each capture record includes the organization, requested and canonical URLs, title, retrieval
 time, publication or update date when available, media type, capture method, content hash,
-storage reference, and redistribution note.
+storage reference when original bytes are retained, and redistribution note. An observed-only
+manifest instead records `availability: observed`, content SHA-256 and byte length without a
+storage reference; it describes a successful observation, not retained original bytes.
 
 Each extracted claim includes an evidence locator such as a heading, selector, table row, PDF
 page, screenshot reference, or short excerpt.
@@ -33,14 +35,29 @@ tokens. Record a clean official URL and keep credential-bearing retrieval detail
 Restricted captures may be stored locally or in a separately controlled evidence store. Their
 manifests must still permit authorized reviewers to verify integrity.
 
-Recurring verification (#497) uses Git-backed encrypted custody instead of an external evidence
-service: full publicly accessible source responses may be committed only as authenticated
-AES-256-GCM ciphertext under `data/verification/<election>/vault/`. The random encryption key is
-kept outside Git in an Actions secret and private maintainer custody. Plaintext stays in private
-temporary storage; credentials, private personal data, browser profiles, and access-controlled
-material remain excluded even from this vault. This exception does not authorize redistribution,
-access-control bypass, public raw-content logs, or uploaded decrypted artifacts. Public manifests
-and extracted facts remain separate. See the daily-verification runbook for recovery and review.
+Recurring verification (#497) retains endorsement facts, official URLs, actual check timestamps,
+and the actual reviewer and review timestamp as sufficient durable evidence. Current responses
+are fetched and parsed in private temporary storage, then discarded. New recurring records contain
+public factual snapshots, observed-only metadata, hashes, checks and review attestations; they
+contain no full-page plaintext or ciphertext. Full-page reconstruction is not required or promised.
+A hash and observed-only manifest provide metadata/facts provenance and comparison integrity;
+they cannot prove retained original bytes or publisher authorship.
+
+Normal verification, validation, factual baseline review, reconciliation and independent reuse
+require no evidence key, restored historical pages or replacement evidence service. Every first,
+changed or unapproved baseline requires official-source review. An unchanged automated check
+references the existing exact factual approval and its actual reviewer/date; it does not assert a
+new personal source read. Existing approvals retain their precise facts, actor and date. Migration
+grants no approval, fresh check, backdated observation or reset of recorded failures.
+
+Legacy recurring-verification ciphertext under `data/verification/<election>/vault/` remains
+unchanged, along with historical records, IDs, approvals, failures and releases. The former
+AES-256-GCM custody exception permitted full publicly accessible responses only as authenticated
+ciphertext with a separate key. Explicit legacy seal/restore commands remain available for that
+history; they are not prerequisites for normal operation or migration. They do not authorize
+redistribution, access-control bypass, public raw-content logs, credentials, private personal data,
+browser profiles, access-controlled material or uploaded decrypted artifacts. See
+[the evidence documentation](docs/EVIDENCE_CAPTURE.md#legacy-encrypted-custody-497).
 
 The default implementation stores artifact bytes by SHA-256 beneath the Git-ignored
 `data/snapshots/` directory and writes metadata-only manifests beneath
@@ -65,4 +82,5 @@ explicit no-endorsement claim.
 ## Changes and history
 
 Never overwrite historical captures. A refresh creates a new capture and a semantic diff.
-Removed or changed endorsements remain auditable through prior manifests.
+Removed or changed endorsements remain auditable through prior manifests and factual snapshots.
+For observed-only history, this preserves the recorded facts and provenance rather than an old page.

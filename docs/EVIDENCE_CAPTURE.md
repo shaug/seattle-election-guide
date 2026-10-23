@@ -232,25 +232,48 @@ write-once JSON under `data/review/manual/`. A metadata-only unavailable record 
 manual transcription; capture the reviewer-visible screenshot, image, PDF, or permitted extract
 first.
 
-## Encrypted recurring-verification custody (#497)
+## Observed-only recurring verification (#497)
 
-The two roots above describe **plaintext** capture storage. Recurring verification
-adds `data/verification/<election>/vault/sha256/<prefix>/<digest>.json` for
-AES-256-GCM ciphertext, not raw artifact bytes. SOURCE_POLICY.md authorizes this
-specific encrypted Git custody for publicly accessible responses. Keys stay in
-private maintainer custody and the `ENDORSEMENT_EVIDENCE_KEY` Actions secret.
+The retained-original capture/manual-entry commands above keep their byte-verification contract.
+Normal recurring verification instead explicitly selects `facts_only`. Its `ObservedManifest`
+records `availability: observed`, clean requested/canonical official URLs, actual retrieval time
+and HTTP metadata when observed, content SHA-256, byte length and record identity, without a
+`storage_reference` or retained artifact. Current responses are parsed in private temporary storage
+and discarded. Every successful fetch writes its current observation, even when content is
+unchanged; the check may reference an older exact factual snapshot and approval. Derived
+comparisons have manual-upload provenance with no invented HTTP status. A successful fetch
+followed by parser failure retains available observation metadata without promoting a baseline.
 
-`verification seal` preserves the original content address, authenticates existing
-envelopes, and reuses unchanged ciphertext. `verification restore` authenticates
-all envelopes before writing original bytes into an external/private or ignored
-local directory. Neither command outputs the raw page. The runner uses private
-temporary directories, seals captures before publishing observations, and removes
-plaintext at transaction end. Archive validation checks public record identities,
-capture/snapshot/check links, and envelope sizes without needing a PR secret.
-Keyed runs additionally verify decrypted hashes. The original manifest's
-`local_only` scope remains truthful about the raw capture; the vault supplies its
-separate durable encrypted custody without rewriting provenance IDs.
+Endorsement facts, official URL, actual check timestamp and actual reviewer/review timestamp are
+sufficient durable evidence. Observed-only metadata and hashes provide metadata/facts provenance,
+not proof of retained original bytes or publisher authorship; full-page reconstruction is not
+required. Normal verification, validation, factual baseline approval, reconciliation and independent
+reuse need no evidence key or restored old pages. First/changed/unapproved facts still require
+actual official-source review. An automated unchanged check reuses that precise approval and
+its actual actor/date; it does not claim a new personal source read. Existing approvals and failure
+history survive migration unchanged; migration supplies no new approval or backdated check.
 
-Use the [verification runbook](runbooks/endorsement-source-daily-verification.md)
-for first-baseline review, the Git archive branch, key recovery, and failure
-reporting. Do not commit keys or upload decrypted captures.
+Observed-only and unavailable manifests cannot support the retained-original manual-entry adapter:
+it must verify actual artifact bytes. Official-authority captures still require committed originals.
+No access controls, HTTP bounds or redistribution restrictions change. See the
+[verification runbook](runbooks/endorsement-source-daily-verification.md) for normal operation.
+
+## Legacy encrypted custody (#497)
+
+Before the October 23 factual-evidence decision, recurring verification retained authenticated
+AES-256-GCM ciphertext at `data/verification/<election>/vault/sha256/<prefix>/<digest>.json`.
+Keep those ciphertext bytes, IDs, manifests, approvals, failures and releases unchanged. The
+original manifests' `local_only` scope remains truthful about their raw capture; the vault records
+separate historical encrypted custody. Public archive validation checks legacy identities,
+source/hash/reference links and envelope metadata without decryption. This does not authenticate
+or reconstruct old plaintext.
+
+The explicit `verification seal` and `verification restore` utilities remain for historical use.
+They require the original base64-encoded 32-byte `ENDORSEMENT_EVIDENCE_KEY` in private custody.
+`verification seal` authenticates existing envelopes and reuses unchanged ciphertext;
+`verification restore` authenticates every envelope before writing original bytes to an external
+private or ignored local directory. Neither command outputs raw pages. Do not print/commit keys,
+upload decrypted captures, replace a key to pass an authentication failure, or overwrite history.
+Loss or mismatch of the legacy key affects that optional historical recovery only. Normal
+operation and migration require no key recovery, rotation, replacement secret or evidence service.
+These utilities are not steps of baseline review or scheduled verification.

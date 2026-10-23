@@ -105,7 +105,8 @@ and append its snapshot.
 
 ## Immutable outputs
 
-Each successful changed refresh creates three linked records:
+The default retained-original refresh (`retain_original`) creates three linked records
+on a successful changed refresh:
 
 - a content-addressed raw capture under the local snapshot root and its public provenance manifest;
 - an immutable extraction snapshot containing stable canonical decisions;
@@ -186,15 +187,15 @@ match their manifest are `corrupt` under either scope.
 `config/verification.yaml` binds the current frozen election inputs to the six
 adapters under `config/adapters/wa-2026-general/`. Other eligible sources receive
 finite manual-review obligations. `verification plan`, `run`, `validate`, and
-`reconcile` own scheduling, encrypted Git custody, archive integrity, and daily
+`reconcile` own scheduling, public factual provenance, archive integrity, and daily
 review tasks. See [the runbook](runbooks/endorsement-source-daily-verification.md)
 for the implemented boundaries, actual limitations, and adoption evidence.
 
 A reviewed `section_pattern` may select exactly one visible publication section
 with one capture group. General adapters use reviewed factual passages from #474;
-they make no candidate inference. Recurring verification requires human review of
+they make no candidate inference. Recurring verification requires official-source review of
 every changed byte set, even when its known-fact semantic diff is empty. First
-live baselines require explicit human attestations, bound to their snapshots;
+live baselines require explicit reviewer attestations, bound to their snapshots;
 fixture runs and unapproved baselines do not count as successful verification.
 
 WFP monitoring collects the complete Washington candidate table directly from
@@ -203,8 +204,9 @@ POST parameters `action=more_candidates`, `state=25`, `count=0`. The reviewed
 policy permits only this WFP request; ordinary callers remain GET. POST redirects
 are refused, and the existing public DNS/peer, TLS, deadline and size limits apply.
 Capture manifests identify the actual endpoint, status, method and form parameters;
-the registry retains the human-facing candidate discovery URL. Original response
-bytes follow the same encrypted capture/refresh/snapshot pipeline.
+the registry retains the human-facing candidate discovery URL. Current response
+bytes are parsed privately and discarded after facts-only refresh; observed metadata and
+content fingerprints remain public.
 
 The October 19 complete response has 17 Washington rows: ten existing approved
 in-inventory decisions and seven explicit exclusions outside the frozen inventory.
@@ -212,15 +214,20 @@ The source-specific row check preserves adjacent cell whitespace as one row;
 unknown rows or malformed shapes fail visibly. Explicitly hidden rows or cells
 also fail the complete response check before decision matching. Changed response
 bytes always require review. Historical initial-page snapshots and approvals remain
-immutable; the complete response needs its own live baseline review and independent
-scheduled reuse before adoption can be claimed. Authored fixtures prove parsing and archive
+immutable; neither approves the complete response. WFP's exact October 20 factual review
+and October 21 native scheduled reuse remain accepted progress. New or changed complete
+snapshots still require their own official-source review; the deployed secret-free six-source
+process requires its revised scheduled acceptance evidence before adoption can be claimed. Authored fixtures prove parsing and archive
 behavior, not live adoption or a new endorsement approval.
 
 SGN discovery recognizes endorsement link text as well as title-bearing URLs,
 so short canonical story links are fetched and revisited. Every fetched index
 page's content hash participates in the comparison. An index change that the
 link matcher cannot classify therefore remains a human-review lead, including
-after the prior baseline was approved.
+after the prior baseline was approved. Newly learned canonical story URLs are recorded
+against the current observed index before later pagination or article work can fail.
+They remain required across independent runners and link rotation; these obligations
+assert neither a complete successful comparison nor baseline approval.
 
 UFCW 3000 monitoring (#584) captures the complete endorsements landing page and
 its relevant current-year official news articles, including the two October 15
@@ -229,7 +236,7 @@ it does not traverse the news feed or historical archive. Previously discovered
 articles and the two known publications remain required after links rotate away.
 Successful discovery records retain these URLs across independent runners. Newly
 validated links also receive immutable `discovery-obligations/` records bound to
-their original landing-page capture before any required article fetch. These
+their current observed landing-page manifest before any required article fetch. These
 obligations survive failed article fetches or parsing and later link rotation;
 they assert required membership, never a complete comparison or approved baseline.
 At most 100 articles and 64 MiB of total HTML are accepted, with the existing
@@ -240,18 +247,30 @@ the check while preserving the prior comparison baseline.
 The derived UFCW comparison binds the landing-page bytes and every original
 article URL/hash. An article-only correction or withdrawal therefore requires
 review even when the landing page and recognized factual mappings are unchanged.
-Original HTTP captures retain their observed status and redirect metadata;
+Current HTTP observations retain their actual status and redirect metadata;
 the derived comparison is a manual upload without an invented HTTP response.
 The reviewed factual mappings remain unchanged. This expanded composite needs
 review of its exact new baseline; the earlier landing-page approval does not
 approve the new snapshot. Fixture-controlled reuse proves durable mechanics,
 not live independent scheduled adoption or completion of #497.
 
-Full third-party plaintext retains the existing private-storage restrictions.
-The new verification vault stores authenticated ciphertext in Git, with a key
-outside Git, so independent runners can restore and verify prior raw captures.
-This is the SOURCE_POLICY.md encrypted-custody exception; it does not change
-historical capture IDs, permit public raw pages, or relax live HTTP safeguards.
+Normal recurring collectors explicitly select `facts_only`; unrelated `collect refresh` callers
+still default to `retain_original`. Every successful fetch, even unchanged bytes, creates a current
+`availability: observed` manifest with official URL, actual retrieval/HTTP metadata, SHA-256 and
+byte length but no storage reference. Derived composites have manual-upload provenance without
+invented HTTP responses. A parse failure retains available observation metadata without promoting
+a baseline. Unchanged checks reuse the prior factual snapshot/approval and validate the common
+source/content-hash link while referencing the new observation.
+
+Endorsement facts, official URL, actual check time and actual reviewer/review time are sufficient
+durable evidence. An automated unchanged check does not claim the reviewer re-read the source.
+Observed-only manifests establish metadata/facts provenance, not retained original bytes or
+publisher authorship; full-page reconstruction is not promised. Private temporary responses are
+discarded; normal verification, validation, factual approval, reconciliation and independent reuse
+need no evidence key, restored pages, new ciphertext or replacement service. Historical IDs,
+records, ciphertext, precise factual approvals, failures and releases remain unchanged. Migration
+grants no new approval or fresh source read. Explicit legacy custody commands are documented
+separately in [EVIDENCE_CAPTURE.md](EVIDENCE_CAPTURE.md#legacy-encrypted-custody-497).
 
 TRU monitoring (#593/#497) now uses a narrow WordPress archive collector, described
 in the [finite October 21 packet](GENERAL_RECHECK_2026-10-21_TRU.md). It traverses
@@ -263,7 +282,7 @@ hashes and the exact linked meaningful JPEG hash drive deterministic comparison;
 qualified recommendation text stays context. The known image is required on each
 check, with no automatic OCR or replacement-asset discovery. The existing
 40-page/100-article/140-capture/64-MiB bounds and HTTP safeguards remain in force.
-Real HTML/image responses receive original manifests and encrypted custody; the
+Real HTML/image responses receive observed-only manifests and complete fingerprints; the
 derived comparison has manual-upload provenance and no invented HTTP status.
 Exact expanded baseline approval and independent native scheduled acceptance
 remain separate outstanding work.
