@@ -2,9 +2,9 @@
 schema_version: '1.0'
 source_id: ufcw-3000
 adapter_kind: static_html
-extractor_version: 1.0.0
+extractor_version: 1.0.1
 complete: true
-decision_pattern: (?:^Rob\s+Foxcurran,\s+County\s+Assessor$|^Leesa\s+Manion,\s+County\s+Prosecuting\s+Attorney$|^Rebecca\s+Saldana,\s+County\s+Council\s+District\s+2$|^Jorge\s+Baron,\s+County\s+Council\s+District\s+4$|^Teresa\s+Mosqueda,\s+County\s+Council\s+District\s+8$|^Nilu\s+Jenks,\s+District\s+5$|^Colleen\s+Melody,\s+Position\s+1$|^Jamie\s+Hawk,\s+Position\s+3$|^David\s+Hackney,\s+State\s+Representative\s+Pos\s+1$|^Danica\s+Noble,\s+State\s+Representative\s+Pos\s+1$|^Lauren\s+Davis,\s+State\s+Representative\s+Pos\s+2\s+\(Dual\)\s+Imraan\s+Siddiqi,\s+State\s+Representative\s+Pos\s+2\s+\(Dual\)$|^Jesse\s+Salomon,\s+State\s+Senate$|^Emily\s+Alvarado,\s+State\s+Senate$|^Brianna\s+Thomas,\s+State\s+Representative\s+Pos\s+1$|^Joe\s+Fitzgibbon,\s+State\s+Representative\s+Pos\s+2$|^Noel\s+Frame,\s+State\s+Senate$|^Julia\s+Reed,\s+State\s+Representative\s+Pos\s+1$|^Liz\s+Berry,\s+State\s+Representative\s+Pos\s+2$|^Chipalo\s+Street,\s+State\s+Senate$|^Jaelynn\s+Scott,\s+State\s+Representative\s+Pos\s+2$|^Jamie\s+Pederson,\s+State\s+Senate$|^Nicole\s+Macri,\s+State\s+Representative\s+Pos\s+1$|^Javier\s+Valdez,\s+State\s+Senate$|^Gerry\s+Pollet,\s+State\s+Representative\s+Pos\s+1$|^Darya\s+Farivar,\s+State\s+Representative\s+Pos\s+2$)
+decision_pattern: (?:^Rob\s+Foxcurran,\s+County\s+Assessor$|^Leesa\s+Manion,\s+County\s+Prosecuting\s+Attorney$|^Rebecca\s+Saldana,\s+County\s+Council\s+District\s+2$|^Jorge\s+Baron,\s+County\s+Council\s+District\s+4$|^Teresa\s+Mosqueda,\s+County\s+Council\s+District\s+8$|^Nilu\s+Jenks,\s+District\s+5$|^Colleen\s+Melody,\s+Position\s+1$|^(?:Jamie|Jaime)\s+Hawk,\s+Position\s+3$|^David\s+Hackney,\s+State\s+Representative\s+Pos\s+1$|^Danica\s+Noble,\s+State\s+Representative\s+Pos\s+1$|^Lauren\s+Davis,\s+State\s+Representative\s+Pos\s+2\s+\(Dual\)\s+Imraan\s+Siddiqi,\s+State\s+Representative\s+Pos\s+2\s+\(Dual\)$|^Jesse\s+Salomon,\s+State\s+Senate$|^Emily\s+Alvarado,\s+State\s+Senate$|^Brianna\s+Thomas,\s+State\s+Representative\s+Pos\s+1$|^Joe\s+Fitzgibbon,\s+State\s+Representative\s+Pos\s+2$|^Noel\s+Frame,\s+State\s+Senate$|^Julia\s+Reed,\s+State\s+Representative\s+Pos\s+1$|^Liz\s+Berry,\s+State\s+Representative\s+Pos\s+2$|^Chipalo\s+Street,\s+State\s+Senate$|^Jaelynn\s+Scott,\s+State\s+Representative\s+Pos\s+2$|^Jamie\s+Pederson,\s+State\s+Senate$|^Nicole\s+Macri,\s+State\s+Representative\s+Pos\s+1$|^Javier\s+Valdez,\s+State\s+Senate$|^Gerry\s+Pollet,\s+State\s+Representative\s+Pos\s+1$|^Darya\s+Farivar,\s+State\s+Representative\s+Pos\s+2$|^Shaun\s+Scott,\s+State\s+Representative\s+Pos\s+2$|^Vote\s+NO\s+on\s+I-645\s+—\s+Protect\s+Tax\s+Relief\s+for\s+Working\s+People$|^Vote\s+NO\s+on\s+I-638\s+and\s+I-001\s+—\s+Protect\s+Kids\.\s+Reject\s+Hate\.$|^Kelabe\s+Tewolde,\s+State\s+Representative\s+Pos\.\s+1\s+\(Dual\)\s+Sharon\s+Tomiko\s+Santos,\s+State\s+Representative\s+Pos\.\s+1\s+\(Dual\)$)
 rules:
 - race_id: king-county-assessor
   pattern: ^Rob\s+Foxcurran,\s+County\s+Assessor$
@@ -56,7 +56,7 @@ rules:
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
 - race_id: supreme-court-justice-3
-  pattern: ^Jamie\s+Hawk,\s+Position\s+3$
+  pattern: ^(?:Jamie|Jaime)\s+Hawk,\s+Position\s+3$
   status: endorsed
   candidate_ids:
   - supreme-court-justice-3--jaime-michelle-hawk
@@ -182,3 +182,34 @@ rules:
   - ld-46-state-representative-2--darya-farivar
   evidence_locator: 'Current official publication; mapping reviewed in #474. Full changed bytes require
     renewed review.'
+- race_id: ld-43-state-representative-2
+  pattern: ^Shaun\s+Scott,\s+State\s+Representative\s+Pos\s+2$
+  status: endorsed
+  candidate_ids:
+  - ld-43-state-representative-2--shaun-scott
+  evidence_locator: 'Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.'
+- race_id: initiative-26-645
+  pattern: ^Vote\s+NO\s+on\s+I-645\s+—\s+Protect\s+Tax\s+Relief\s+for\s+Working\s+People$
+  status: endorsed
+  candidate_ids:
+  - initiative-26-645--no
+  evidence_locator: 'Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.'
+- race_id: initiative-26-638
+  pattern: ^Vote\s+NO\s+on\s+I-638\s+and\s+I-001\s+—\s+Protect\s+Kids\.\s+Reject\s+Hate\.$
+  status: endorsed
+  candidate_ids:
+  - initiative-26-638--no
+  evidence_locator: 'Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.'
+- race_id: initiative-26-001
+  pattern: ^Vote\s+NO\s+on\s+I-638\s+and\s+I-001\s+—\s+Protect\s+Kids\.\s+Reject\s+Hate\.$
+  status: endorsed
+  candidate_ids:
+  - initiative-26-001--no
+  evidence_locator: 'Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.'
+- race_id: ld-37-state-representative-1
+  pattern: ^Kelabe\s+Tewolde,\s+State\s+Representative\s+Pos\.\s+1\s+\(Dual\)\s+Sharon\s+Tomiko\s+Santos,\s+State\s+Representative\s+Pos\.\s+1\s+\(Dual\)$
+  status: dual_endorsement
+  candidate_ids:
+  - ld-37-state-representative-1--kelabe-tewolde
+  - ld-37-state-representative-1--sharon-tomiko-santos
+  evidence_locator: 'Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.'

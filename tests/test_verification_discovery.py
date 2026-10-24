@@ -57,6 +57,9 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
         )
         for i, title in enumerate(titles)
     }
+    articles["https://www.sgn.org/story/171425/"] = headline.format(
+        "SGN Endorsements: Adam Smith (US House of Representatives, 9th District)"
+    ).encode()
     first_links = [
         f'<a href="/story/{168513 + i}/News/Seattle/SGN%20Endorsements">Article</a>'
         for i in range(1, len(titles))
@@ -99,7 +102,7 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     assert first.exit_code == 0, first.output
     event = json.loads(first.output)["automatic"][0]
     assert event["status"] == "created", event
-    assert len(event["diff"]) == 7
+    assert len(event["diff"]) == 8
     assert "https://www.sgn.org/ch/News/Seattle?start=10" in calls
     # A changed article body with the same heading is still review work.
     articles["https://www.sgn.org/story/168514/"] += b"<p>Changed authored wording.</p>"
@@ -235,6 +238,9 @@ def test_sgn_failed_learning_survives_rotation_on_fresh_runner(
         f"https://www.sgn.org/story/{168513 + i}/": f"<h1>{title}</h1>".encode()
         for i, title in enumerate(titles)
     }
+    pages["https://www.sgn.org/story/171425/"] = (
+        b"<h1>SGN Endorsements: Adam Smith (US House of Representatives, 9th District)</h1>"
+    )
     original_index = "".join(
         f'<a href="/story/{168513 + i}/News/Seattle/SGN%20Endorsements">Story</a>'
         for i in range(len(titles))
