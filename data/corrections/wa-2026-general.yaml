@@ -2,6 +2,29 @@ schema_version: "1.0"
 election_id: wa-2026-general
 entries:
   - corrected_on: 2026-10-23
+    headline: "Added SGN’s Adam Smith endorsement and UFCW’s LD37 dual."
+    body: >-
+      Seattle Gay News’s October 22 editorial endorses Adam Smith for U.S.
+      House District 9. UFCW 3000’s current list explicitly gives a dual
+      endorsement to Kelabe Tewolde and Sharon Tomiko Santos for LD37 House
+      Position 1, with one half point each. Both decisions are now included,
+      bringing the guide to 925 decisions across the same 46 publishers.
+      All 923 prior decisions remain. The dated checkpoint records 42 complete
+      source reviews and four access-limited publishers.
+    provenance:
+      - label: "U.S. House District 9"
+        url: /e/wa-2026-general/races/us-house-9/
+      - label: "LD37 House Position 1"
+        url: /e/wa-2026-general/races/ld-37-state-representative-1/
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "SGN’s official Adam Smith editorial"
+        url: https://www.sgn.org/story/171425/
+      - label: "UFCW 3000’s official endorsements"
+        url: https://ufcw3000.org/endorsements
+      - label: "October 23 checkpoint and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_VERIFICATION_2026-10-23.md
+  - corrected_on: 2026-10-23
     headline: "Rounded the closing border of split endorsement meters."
     body: >-
       On race pages, the border now follows the curved transition at both ends

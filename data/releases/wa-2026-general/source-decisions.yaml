@@ -1,6 +1,6 @@
 schema_version: '1.0'
 election_id: wa-2026-general
-data_as_of: '2026-10-22T11:40:39.596080Z'
+data_as_of: '2026-10-23T08:37:27.623952Z'
 reviewer: OpenAI Codex / root (explicit maintainer delegation)
 review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured 21
   new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every new or
@@ -1465,14 +1465,23 @@ sources:
       2026 Primary section as general evidence. Target: Seattle Proposition 1 — Seattle Transit Measure; Yes. Captures: capture-tech-4-housing-20261011T010723Z-5922ff5e6774;
       verified manual records: manual-tech-4-housing-20261011T011018Z-23212114ba7a.'
 - source_id: seattle-gay-news
-  captured_at: '2026-10-04T04:56:56Z'
-  reviewed_at: '2026-10-04T05:30:06Z'
-  reviewer: shaug
-  review_note: 'Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior
-    review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI
-    Codex transcribed the current-cycle editorial endorsement index; shaug verified all seven general-ballot matches and the
-    omissions of Kshama Sawant and the out-of-inventory library levy.'
-  evidence_locator: Official Seattle news index listing the editorial board's 2026 endorsement articles. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.
+  captured_at: '2026-10-23T07:52:53.734282Z'
+  reviewed_at: '2026-10-23T08:37:27.623952Z'
+  reviewer: OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23
+  review_note: 'Issue #472: OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23 independently
+    reviewed the complete source block and its retained October 23 official originals at 2026-10-23T08:37:27.623952Z;
+    initial research by OpenAI Codex /root/review_472_political_oct23. Seven prior July current-cycle SGN decisions
+    remain qualified as live after the primary, not a separate general-election slate; add only the October 22 Adam
+    Smith editorial. All prior decision dictionaries and historical approvals preserved. Actual review and two-claim
+    admission: data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. No personal shaug source read or
+    native baseline approval asserted. Prior source review: Issue #474: shaug verified the complete source-by-source
+    review packet, including this source and all prior review treatments. Current official capture retains the prior
+    publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle editorial endorsement
+    index; shaug verified all seven general-ballot matches and the omissions of Kshama Sawant and the out-of-inventory
+    library levy.'
+  evidence_locator: 'October 23 whole-source-block review and exact official locators: data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json;
+    data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. Prior locator: Official Seattle news index
+    listing the editorial board''s 2026 endorsement articles. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.'
   decisions:
   - race_id: us-house-7
     candidate_ids:
@@ -1495,6 +1504,15 @@ sources:
   - race_id: seattle-city-council-5
     candidate_ids:
     - seattle-city-council-5--nilu-jenks
+  - race_id: us-house-9
+    candidate_ids:
+    - us-house-9--adam-smith
+    evidence_url: https://www.sgn.org/story/171425/
+    evidence_excerpt: Vote Smith.
+    evidence_locator: Official SGN Editorial Board October 22, 2026 endorsement article, title names U.S. House 9th
+      District and final bold Vote Smith instruction; current article original SHA-256 a9380cbc6d99ce99af0675543a2759912964439ef28dfed9c32c115a489eadf3,
+      numbered text lines 38-40 and 58-59. Capture capture-seattle-gay-news-20261023T075253Z-440582633817; verified
+      manual record manual-seattle-gay-news-20261023T075841Z-d1aebd1111a4.
 - source_id: tech-4-taxes
   captured_at: '2026-10-12T16:13:32Z'
   reviewed_at: '2026-10-12T16:24:42Z'
@@ -2344,21 +2362,30 @@ sources:
     candidate_ids:
     - initiative-26-645--no
 - source_id: ufcw-3000
-  captured_at: '2026-10-16T15:00:38.075557Z'
-  reviewed_at: '2026-10-16T15:48:50.280092Z'
-  reviewer: shaug
-  review_note: 'Issue #545: shaug explicitly approved the concrete October 16 packet: "approved. let''s apply the 114 additions
-    and the replacement to the guide". shaug then approved the five enumerated ECC changes: "Include the ECC changes" (Jayapal,
-    Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug
-    is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json.
+  captured_at: '2026-10-23T07:52:14.572474Z'
+  reviewed_at: '2026-10-23T08:37:27.623952Z'
+  reviewer: OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23
+  review_note: 'Issue #472: OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23 independently
+    reviewed the complete source block and its retained October 23 official originals at 2026-10-23T08:37:27.623952Z;
+    initial research by OpenAI Codex /root/review_472_political_oct23. Retain David Hackney LD11 House Position
+    1 as a held omission, not withdrawal. Both existing LD32 Position 2 and new LD37 Position 1 explicit duals receive
+    one equally split source point; first appearance of the new dual is unknown. All prior decision dictionaries
+    and historical approvals preserved. Actual review and two-claim admission: data/review/approvals/wa-2026-general-2026-10-23-confirmed.json.
+    No personal shaug source read or native baseline approval asserted. Prior source review: Issue #545: shaug explicitly
+    approved the concrete October 16 packet: "approved. let''s apply the 114 additions and the replacement to the
+    guide". shaug then approved the five enumerated ECC changes: "Include the ECC changes" (Jayapal, Smith, Anito
+    and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is
+    the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json.
     Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter
-    baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior review
-    note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review
-    treatments. Member-story widget changed; endorsement list unchanged. Prior review: Issue #453: OpenAI Codex rechecked
-    the current official publication and found no decision changes; shaug compared the current page with the existing source
-    block and confirmed it remains accurate, including all prior review treatments.'
-  evidence_locator: 'October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision
-    evidence locators and prior source reviews remain bound by that record.'
+    baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior
+    review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and
+    all prior review treatments. Member-story widget changed; endorsement list unchanged. Prior review: Issue #453:
+    OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current
+    page with the existing source block and confirmed it remains accurate, including all prior review treatments.'
+  evidence_locator: 'October 23 whole-source-block review and exact official locators: data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json;
+    data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. Prior locator: October 16 targeted approval:
+    data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source
+    reviews remain bound by that record.'
   decisions:
   - race_id: king-county-assessor
     candidate_ids:
@@ -2460,6 +2487,17 @@ sources:
     evidence_locator: 'October15 article body opening H2: Executive Board unanimously rejects Initiative645 and endorses a
       NO vote; next paragraph identifies Millionaires Tax repeal Official source: https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote.
       Capture capture-ufcw-3000-20261016T150038Z-3a20e73a371a; verified manual manual-ufcw-3000-20261016T154850Z-6cbbb72fb435.'
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--kelabe-tewolde
+    - ld-37-state-representative-1--sharon-tomiko-santos
+    evidence_url: https://ufcw3000.org/endorsements
+    evidence_excerpt: Kelabe Tewolde, State Representative Pos. 1 (Dual); Sharon Tomiko Santos, State Representative
+      Pos. 1 (Dual)
+    evidence_locator: Official current UFCW 3000 endorsements page, General Election Day November 3 context at numbered
+      lines 104-120, candidate endorsement heading line 147, and 37th Legislative District list lines 232-236; original
+      SHA-256 aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563. Capture capture-ufcw-3000-20261023T075214Z-412a6e1d5f49;
+      verified manual record manual-ufcw-3000-20261023T075841Z-d9d4a822c8c6.
 - source_id: washington-education-association
   captured_at: '2026-10-16T18:24:08.172096Z'
   reviewed_at: '2026-10-16T18:26:39.551180Z'

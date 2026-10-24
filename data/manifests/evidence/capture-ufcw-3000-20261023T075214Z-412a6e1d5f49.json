@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 220730,
+  "canonical_url": "https://ufcw3000.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Existing October 23 official original retained privately by content hash; metadata-only public admission for issue #472. No new source request.",
+  "requested_url": "https://ufcw3000.org/endorsements",
+  "retrieved_at": "2026-10-23T07:52:14.572474Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "storage_reference": "sha256/af/aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+  "storage_scope": "local_only",
+  "title": "ufcw-3000-registry",
+  "updated_at": null
+}

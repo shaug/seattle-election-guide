@@ -1,0 +1,13 @@
+{
+  "capture_id": null,
+  "checked_at": "2026-10-24T01:42:41.237684Z",
+  "content_changed": null,
+  "diff": [],
+  "error": "restricted artifact storage inside the repository must be Git-ignored",
+  "id": "refresh-sage-leaders-20261024T014241Z-2b1d090c3f43",
+  "previous_snapshot_id": null,
+  "schema_version": "1.0",
+  "snapshot_id": null,
+  "source_id": "sage-leaders",
+  "status": "failed"
+}

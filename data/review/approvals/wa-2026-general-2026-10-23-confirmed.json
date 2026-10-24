@@ -1,0 +1,1612 @@
+{
+  "automatic_baseline_approval_asserted": false,
+  "baseline_revision": "b07f48fe44a57981ff37569c7615002c5bca5318",
+  "changes": [
+    {
+      "capture_ids": [
+        "capture-seattle-gay-news-20261023T075214Z-2389b246321b",
+        "capture-seattle-gay-news-20261023T075253Z-b4e8ab0e5707",
+        "capture-seattle-gay-news-20261023T075214Z-73ccc01db35d",
+        "capture-seattle-gay-news-20261023T075253Z-a74d6f2e595d",
+        "capture-seattle-gay-news-20261023T075253Z-c8ee16d3fa7e",
+        "capture-seattle-gay-news-20261023T075253Z-53ef77d976ca",
+        "capture-seattle-gay-news-20261023T075253Z-7f5bce2e58d2",
+        "capture-seattle-gay-news-20261023T075253Z-83d46bc426de",
+        "capture-seattle-gay-news-20261023T075253Z-0f6a03f39f7e",
+        "capture-seattle-gay-news-20261023T075253Z-5e488688e58a",
+        "capture-seattle-gay-news-20261023T075253Z-346d3743f833",
+        "capture-seattle-gay-news-20261023T075253Z-ab0b6ee8b113",
+        "capture-seattle-gay-news-20261023T075253Z-779a43443ca2",
+        "capture-seattle-gay-news-20261023T075253Z-5a6daa8da211",
+        "capture-seattle-gay-news-20261023T075253Z-440582633817"
+      ],
+      "manual_record": {
+        "actual_transcription_at": "2026-10-23T07:58:41.895551Z",
+        "id": "manual-seattle-gay-news-20261023T075841Z-d1aebd1111a4",
+        "materialized_at": "2026-10-24T03:44:46.050729+00:00",
+        "path": "data/review/manual/manual-seattle-gay-news-20261023T075841Z-d1aebd1111a4.json",
+        "sha256": "584bdb441e682e83b16e918c70676a6dd66cd51719368b7a0e8f095766d4713b"
+      },
+      "new_value": {
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "evidence_excerpt": "Vote Smith.",
+        "evidence_locator": "Official SGN Editorial Board October 22, 2026 endorsement article, title names U.S. House 9th District and final bold Vote Smith instruction; current article original SHA-256 a9380cbc6d99ce99af0675543a2759912964439ef28dfed9c32c115a489eadf3, numbered text lines 38-40 and 58-59. Capture capture-seattle-gay-news-20261023T075253Z-440582633817; verified manual record manual-seattle-gay-news-20261023T075841Z-d1aebd1111a4.",
+        "evidence_url": "https://www.sgn.org/story/171425/",
+        "race_id": "us-house-9"
+      },
+      "operation": "add",
+      "prior_value": null,
+      "qualification": "October 22, 2026 article follows the primary and directly endorses a frozen November general-ballot candidate; the article says Kshama Sawant is out of the race, but no SGN CD9 ledger row is overwritten.",
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "capture_ids": [
+        "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49",
+        "capture-ufcw-3000-20261023T075215Z-7581e0010856",
+        "capture-ufcw-3000-20261023T075215Z-d9a3e6e744fb"
+      ],
+      "manual_record": {
+        "actual_transcription_at": "2026-10-23T07:58:41.895557Z",
+        "id": "manual-ufcw-3000-20261023T075841Z-d9d4a822c8c6",
+        "materialized_at": "2026-10-24T03:44:46.701977+00:00",
+        "path": "data/review/manual/manual-ufcw-3000-20261023T075841Z-d9d4a822c8c6.json",
+        "sha256": "8cd13c7dda6e3b8909ec48639f1253eb42869e652b051357ef81346c69978002"
+      },
+      "new_value": {
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde",
+          "ld-37-state-representative-1--sharon-tomiko-santos"
+        ],
+        "evidence_excerpt": "Kelabe Tewolde, State Representative Pos. 1 (Dual); Sharon Tomiko Santos, State Representative Pos. 1 (Dual)",
+        "evidence_locator": "Official current UFCW 3000 endorsements page, General Election Day November 3 context at numbered lines 104-120, candidate endorsement heading line 147, and 37th Legislative District list lines 232-236; original SHA-256 aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563. Capture capture-ufcw-3000-20261023T075214Z-412a6e1d5f49; verified manual record manual-ufcw-3000-20261023T075841Z-d9d4a822c8c6.",
+        "evidence_url": "https://ufcw3000.org/endorsements",
+        "race_id": "ld-37-state-representative-1"
+      },
+      "operation": "add",
+      "prior_value": null,
+      "qualification": "The live official landing page includes November 3 General Election Day and October 2026 linked initiative articles. No primary-only label applies to the candidate list. The date on which the dual wording first appeared is unknown and is not asserted.",
+      "source_id": "ufcw-3000"
+    }
+  ],
+  "election_id": "wa-2026-general",
+  "human_authorization": {
+    "actual_statement_at": "2026-10-24T03:24:10Z",
+    "by": "shaug",
+    "quote": "yes, if the endorsements have been confirmed, then the resulting effect on the site is approved\n\nwhat i need to validate is UI changes that take effect when the data is the same",
+    "scope": "Two independently confirmed endorsement additions and their resulting data-driven counts/meters; no same-data UI change."
+  },
+  "issue": 472,
+  "ledger_after_sha256": "2021030783a481a5ea18edd2233fa3b283ac8da999288ca23ebdaed0acc83dc5",
+  "ledger_before_sha256": "8012b01164793d2d1096d3741d7050e60369116ea3b2bca6fc98761c8675451e",
+  "limits": [
+    "This records existing October 23 delegated reviews and later human data-effect authorization, without claiming a new personal source read.",
+    "Four access-incomplete publishers retain all 81 prior decisions.",
+    "No native baseline approval, scheduled reuse, same-data UI change, immutable release, production acceptance, or issue closure.",
+    "UFCW Hackney remains a held omission; SGN retained July articles remain current-cycle qualifications; the new UFCW dual first appearance is unknown."
+  ],
+  "named_multi_candidate_dispositions": [
+    {
+      "action": "approve",
+      "author": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "candidate_ids": [
+        "ld-32-state-representative-2--lauren-davis",
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "equal_allocation": {
+        "ld-32-state-representative-2--imraan-siddiqi": "1/2",
+        "ld-32-state-representative-2--lauren-davis": "1/2"
+      },
+      "race_id": "ld-32-state-representative-2",
+      "reason": "I read the current official LD32 list: Lauren Davis and Imraan Siddiqi each are State Representative Position 2 (Dual); retain the already-approved one-point equal split.",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "scope": "Actual independent whole-source-block review. A later candidate must bind this actual named reviewer in its source block and generated linked high-severity approval; no shaug review of a new row is claimed.",
+      "status": "dual_endorsement"
+    },
+    {
+      "action": "approve",
+      "author": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde",
+        "ld-37-state-representative-1--sharon-tomiko-santos"
+      ],
+      "equal_allocation": {
+        "ld-37-state-representative-1--kelabe-tewolde": "1/2",
+        "ld-37-state-representative-1--sharon-tomiko-santos": "1/2"
+      },
+      "race_id": "ld-37-state-representative-1",
+      "reason": "I read the current official LD37 list: Kelabe Tewolde and Sharon Tomiko Santos each are State Representative Position 1 (Dual); approve one new one-point equal split.",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "scope": "Actual independent whole-source-block review. A later candidate must bind this actual named reviewer in its source block and generated linked high-severity approval; no shaug review of a new row is claimed.",
+      "status": "dual_endorsement"
+    }
+  ],
+  "new_decision_count": 2,
+  "personal_human_source_review_asserted": false,
+  "preserved_prior_decision_count": 923,
+  "prior_rows": [
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-779a43443ca2"
+          ],
+          "capture_label": "sgn-story-168779",
+          "end_line": 40,
+          "excerpt_sha256": "781c4fbfdf0532ade4f5af321e5d29715dae9504f67e0d16c0a54b7f6a1b4d1f",
+          "final_url": "https://www.sgn.org/story/168779/",
+          "note": "Official editorial title, office/district, byline and date.",
+          "original_sha256": "ce26eabee6c939ac59787ac1c80f5769229ba589f1f0484c2b819015e23feec7",
+          "requested_url": "https://www.sgn.org/story/168779/",
+          "start_line": 38
+        },
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-779a43443ca2"
+          ],
+          "capture_label": "sgn-story-168779",
+          "end_line": 54,
+          "excerpt_sha256": "0a0af3acde1f17caee8a71d98295ca4a2a45d57bffffd38705ff6b51b85a169e",
+          "final_url": "https://www.sgn.org/story/168779/",
+          "note": "Explicit concluding vote instruction.",
+          "original_sha256": "ce26eabee6c939ac59787ac1c80f5769229ba589f1f0484c2b819015e23feec7",
+          "requested_url": "https://www.sgn.org/story/168779/",
+          "start_line": 54
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "aaf5bdeb8719ffd5d0b4ab730d671912b9fdf3e5b1e64be84bc980eea24c2674",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "race_id": "us-house-7"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "race_id": "us-house-7"
+      },
+      "qualification": "July current-cycle SGN endorsement article remains live in the October official index after the primary and is not labeled primary-only; candidate is on the frozen general ballot. Preserve earlier approval, without calling it a separately issued general slate.",
+      "race_id": "us-house-7",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-ab0b6ee8b113"
+          ],
+          "capture_label": "sgn-story-168742",
+          "end_line": 40,
+          "excerpt_sha256": "c6b8f20a45995f982daf208fb97c36357f0cb9aac5aaf211868a8c4bea6aac73",
+          "final_url": "https://www.sgn.org/story/168742/",
+          "note": "Official editorial title, office/district, byline and date.",
+          "original_sha256": "26ad4de627ecaaf385cf98c961fd5600b73e45ae1119e820b94ba824742ff4a7",
+          "requested_url": "https://www.sgn.org/story/168742/",
+          "start_line": 38
+        },
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-ab0b6ee8b113"
+          ],
+          "capture_label": "sgn-story-168742",
+          "end_line": 64,
+          "excerpt_sha256": "936491f3f15cde186e055bfb3bdb881b569870a3a59013d5e587f47ae9169004",
+          "final_url": "https://www.sgn.org/story/168742/",
+          "note": "Explicit concluding vote instruction.",
+          "original_sha256": "26ad4de627ecaaf385cf98c961fd5600b73e45ae1119e820b94ba824742ff4a7",
+          "requested_url": "https://www.sgn.org/story/168742/",
+          "start_line": 64
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "be5f3116510c187aee54ee619964e93acf2d4c8e3e5eb43ace893d39cc1827b6",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-37-state-senator--tatiana-brown"
+        ],
+        "race_id": "ld-37-state-senator"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-37-state-senator--tatiana-brown"
+        ],
+        "race_id": "ld-37-state-senator"
+      },
+      "qualification": "July current-cycle SGN endorsement article remains live in the October official index after the primary and is not labeled primary-only; candidate is on the frozen general ballot. Preserve earlier approval, without calling it a separately issued general slate.",
+      "race_id": "ld-37-state-senator",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-c8ee16d3fa7e"
+          ],
+          "capture_label": "sgn-story-168513",
+          "end_line": 40,
+          "excerpt_sha256": "376f72c8d6872b39b01ad8840ad7d1dfc0307177303daff2fd9ae5ea7b883d4a",
+          "final_url": "https://www.sgn.org/story/168513/",
+          "note": "Official editorial title, office/district, byline and date.",
+          "original_sha256": "e1b43f8beb807b324fe1edc68ecd09b4f4af3cb5ad59b62adaec6d1d7bfe8a22",
+          "requested_url": "https://www.sgn.org/story/168513/",
+          "start_line": 38
+        },
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-c8ee16d3fa7e"
+          ],
+          "capture_label": "sgn-story-168513",
+          "end_line": 71,
+          "excerpt_sha256": "49980ff081f4d0e78d6ae40ba9b2690eb5623c24bf890a12bf1fbd6ab0959df1",
+          "final_url": "https://www.sgn.org/story/168513/",
+          "note": "Explicit concluding vote instruction.",
+          "original_sha256": "e1b43f8beb807b324fe1edc68ecd09b4f4af3cb5ad59b62adaec6d1d7bfe8a22",
+          "requested_url": "https://www.sgn.org/story/168513/",
+          "start_line": 71
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "10713787d1c272f18e07b708d83ad836fa2bb2fdb32f12a9c1c3a38058b72c5a",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "race_id": "ld-37-state-representative-1"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "race_id": "ld-37-state-representative-1"
+      },
+      "qualification": "July current-cycle SGN endorsement article remains live in the October official index after the primary and is not labeled primary-only; candidate is on the frozen general ballot. Preserve earlier approval, without calling it a separately issued general slate.",
+      "race_id": "ld-37-state-representative-1",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-0f6a03f39f7e"
+          ],
+          "capture_label": "sgn-story-168637",
+          "end_line": 40,
+          "excerpt_sha256": "ec28d8057216c8ba5b15ee8d7ff0432b15f939be3607f4c1d5df98f105428876",
+          "final_url": "https://www.sgn.org/story/168637/",
+          "note": "Official editorial title, office/district, byline and date.",
+          "original_sha256": "1adee3ecde683449239565e6480bace9c7629e49919cf0e4eed3ba9c504b5eb8",
+          "requested_url": "https://www.sgn.org/story/168637/",
+          "start_line": 38
+        },
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-0f6a03f39f7e"
+          ],
+          "capture_label": "sgn-story-168637",
+          "end_line": 48,
+          "excerpt_sha256": "0575487b1caf4a8ef7fc53eec89786dc7e2f43fa8329399707e9890d2c28a59a",
+          "final_url": "https://www.sgn.org/story/168637/",
+          "note": "Explicit concluding vote instruction.",
+          "original_sha256": "1adee3ecde683449239565e6480bace9c7629e49919cf0e4eed3ba9c504b5eb8",
+          "requested_url": "https://www.sgn.org/story/168637/",
+          "start_line": 48
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "f6116efedc303afa7ecab35176eeb9f41f0ebd892422f02644ea9400f407150b",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "race_id": "ld-37-state-representative-2"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "race_id": "ld-37-state-representative-2"
+      },
+      "qualification": "July current-cycle SGN endorsement article remains live in the October official index after the primary and is not labeled primary-only; candidate is on the frozen general ballot. Preserve earlier approval, without calling it a separately issued general slate.",
+      "race_id": "ld-37-state-representative-2",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-346d3743f833"
+          ],
+          "capture_label": "sgn-story-168738",
+          "end_line": 40,
+          "excerpt_sha256": "4ad66dc5da4a4cbb5fd9438373dcff958923b49b3d39b95022c0b608e432e539",
+          "final_url": "https://www.sgn.org/story/168738/",
+          "note": "Official editorial title, office/district, byline and date.",
+          "original_sha256": "3b81be8754dcc757200e9053f4e1b3fba443b29a4a21bea70a8ca2e5f32dd8c5",
+          "requested_url": "https://www.sgn.org/story/168738/",
+          "start_line": 38
+        },
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-346d3743f833"
+          ],
+          "capture_label": "sgn-story-168738",
+          "end_line": 58,
+          "excerpt_sha256": "4b053ab30ce59afab227dc9045b25619138a1351b04013cb809de138506fe5af",
+          "final_url": "https://www.sgn.org/story/168738/",
+          "note": "Explicit concluding vote instruction.",
+          "original_sha256": "3b81be8754dcc757200e9053f4e1b3fba443b29a4a21bea70a8ca2e5f32dd8c5",
+          "requested_url": "https://www.sgn.org/story/168738/",
+          "start_line": 58
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "06943a4a02781f9f07c01a8006f1f08820aec4cc4aa5d2ec9874c1fcdaa9a072",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-43-state-senator--hannah-sabio-howell"
+        ],
+        "race_id": "ld-43-state-senator"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-43-state-senator--hannah-sabio-howell"
+        ],
+        "race_id": "ld-43-state-senator"
+      },
+      "qualification": "July current-cycle SGN endorsement article remains live in the October official index after the primary and is not labeled primary-only; candidate is on the frozen general ballot. Preserve earlier approval, without calling it a separately issued general slate.",
+      "race_id": "ld-43-state-senator",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-83d46bc426de"
+          ],
+          "capture_label": "sgn-story-168630",
+          "end_line": 40,
+          "excerpt_sha256": "42f45c488dbe3707c2814be5484f5ed184dd3c067bdc4389a71344ac6ffe52d4",
+          "final_url": "https://www.sgn.org/story/168630/",
+          "note": "Official editorial title, office/district, byline and date.",
+          "original_sha256": "39f68d8f0bddf42a620acbc4460b1cc71b69aef573fba564162998627be1ba3e",
+          "requested_url": "https://www.sgn.org/story/168630/",
+          "start_line": 38
+        },
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-83d46bc426de"
+          ],
+          "capture_label": "sgn-story-168630",
+          "end_line": 56,
+          "excerpt_sha256": "f0fccdbc6790e946c60a235b66f63c2103d9a8e49d2ab249910ee63f059025af",
+          "final_url": "https://www.sgn.org/story/168630/",
+          "note": "Explicit concluding vote instruction.",
+          "original_sha256": "39f68d8f0bddf42a620acbc4460b1cc71b69aef573fba564162998627be1ba3e",
+          "requested_url": "https://www.sgn.org/story/168630/",
+          "start_line": 56
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "2b10e034e8e0b4562699342435fad49aadcf185e9aa449eb2f693301c46f6fe0",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "race_id": "king-county-council-2"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "race_id": "king-county-council-2"
+      },
+      "qualification": "July current-cycle SGN endorsement article remains live in the October official index after the primary and is not labeled primary-only; candidate is on the frozen general ballot. Preserve earlier approval, without calling it a separately issued general slate.",
+      "race_id": "king-county-council-2",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-7f5bce2e58d2"
+          ],
+          "capture_label": "sgn-story-168558",
+          "end_line": 40,
+          "excerpt_sha256": "9513bcbe97ee373541915d2fb3381e4df7e8890068d345b573b2c02c8ec792eb",
+          "final_url": "https://www.sgn.org/story/168558/",
+          "note": "Official editorial title, office/district, byline and date.",
+          "original_sha256": "e258680468f5db6d932f02d840f8b28cc08d11bf6a4063058e0f67e7dd1bac9d",
+          "requested_url": "https://www.sgn.org/story/168558/",
+          "start_line": 38
+        },
+        {
+          "capture_ids": [
+            "capture-seattle-gay-news-20261023T075253Z-7f5bce2e58d2"
+          ],
+          "capture_label": "sgn-story-168558",
+          "end_line": 55,
+          "excerpt_sha256": "84f802b6b093d3c6475da2771a7f8d99b7087cd45513985d530275ea39f9ec24",
+          "final_url": "https://www.sgn.org/story/168558/",
+          "note": "Explicit concluding vote instruction.",
+          "original_sha256": "e258680468f5db6d932f02d840f8b28cc08d11bf6a4063058e0f67e7dd1bac9d",
+          "requested_url": "https://www.sgn.org/story/168558/",
+          "start_line": 55
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "cb1250dbdfca11d8ccbf39babfcb607fbca5bedd323d1ad67e07285c08b8fb03",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "race_id": "seattle-city-council-5"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "race_id": "seattle-city-council-5"
+      },
+      "qualification": "July current-cycle SGN endorsement article remains live in the October official index after the primary and is not labeled primary-only; candidate is on the frozen general ballot. Preserve earlier approval, without calling it a separately issued general slate.",
+      "race_id": "seattle-city-council-5",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 154,
+          "excerpt_sha256": "0595d912a6ab2db2e46deb958c132c14930192e40c5605b0ca3aee8c23e93952",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "King County section and exact office entry.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 148
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "48ddd5d86cd6295d1cb5b27daa006e8e096e45e1e6f76c873e5bc093501a3b83",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "king-county-assessor--rob-foxcurran"
+        ],
+        "race_id": "king-county-assessor"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "king-county-assessor--rob-foxcurran"
+        ],
+        "race_id": "king-county-assessor"
+      },
+      "qualification": null,
+      "race_id": "king-county-assessor",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 153,
+          "excerpt_sha256": "78f39cb0d092d2db5bf1bb9d667ca0130cc944ca0e1fd7cef3521adaa4f98404",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "King County section and exact office entry.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 148
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "da1b738f156e6d9dee232cb80fccd0e59705489abb263d91e93197bb82de9daa",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "king-county-prosecuting-attorney--leesa-manion"
+        ],
+        "race_id": "king-county-prosecuting-attorney"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "king-county-prosecuting-attorney--leesa-manion"
+        ],
+        "race_id": "king-county-prosecuting-attorney"
+      },
+      "qualification": null,
+      "race_id": "king-county-prosecuting-attorney",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 149,
+          "excerpt_sha256": "318d18473afbdd35cf3cb2deb3e22dc8b1130b3257b8fd4da06ed3ce648b54ab",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "King County section and exact candidate/district entry.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 148
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "2b10e034e8e0b4562699342435fad49aadcf185e9aa449eb2f693301c46f6fe0",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "race_id": "king-county-council-2"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "race_id": "king-county-council-2"
+      },
+      "qualification": "Current page prints a shorter, unaccented or variant candidate name. Retain the earlier approved ballot-identity mapping; current office/district context matches, and no silent source-spelling correction is asserted.",
+      "race_id": "king-county-council-2",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 150,
+          "excerpt_sha256": "2acff718251d4213cc2a70f1757fb8615eaa2e43049dbb203c2ad6fa3ba440c2",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "King County section and exact candidate/district entry.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 148
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "30fccb2efc1af7c2e81681fd86e294c4064ea80dc0bbd004a1db0175900a5c3b",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "king-county-council-4--jorge-l-baron"
+        ],
+        "race_id": "king-county-council-4"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "king-county-council-4--jorge-l-baron"
+        ],
+        "race_id": "king-county-council-4"
+      },
+      "qualification": "Current page prints a shorter, unaccented or variant candidate name. Retain the earlier approved ballot-identity mapping; current office/district context matches, and no silent source-spelling correction is asserted.",
+      "race_id": "king-county-council-4",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 152,
+          "excerpt_sha256": "b7c3c17801e84eee8a95cec1a9562bd2224e07f80585a8e1f97ca6d2d1555728",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "King County section and exact candidate/district entry.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 148
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "7dfc3cf18c0f3396abca52b185c0e370c010e57a0c988cee985b106c5addbd2a",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "race_id": "king-county-council-8"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "race_id": "king-county-council-8"
+      },
+      "qualification": null,
+      "race_id": "king-county-council-8",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 156,
+          "excerpt_sha256": "6d58d1f90e39c25e40b0b5885fe75a6fd20251fe948430de9f7315ee16a78813",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Seattle City Council section and District 5 entry.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 155
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "cb1250dbdfca11d8ccbf39babfcb607fbca5bedd323d1ad67e07285c08b8fb03",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "race_id": "seattle-city-council-5"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "race_id": "seattle-city-council-5"
+      },
+      "qualification": null,
+      "race_id": "seattle-city-council-5",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 158,
+          "excerpt_sha256": "ea6f046ae01b2331f8015e18f7052992600f6887710b0a603d41d31eb9b2ce6e",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "State Supreme Court section and numbered position entry.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 157
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "debd04c55cdd7a5afc56fa14dd108bf6eab352d52ef8d993d11a0da32495ee9e",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "race_id": "supreme-court-justice-1"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "race_id": "supreme-court-justice-1"
+      },
+      "qualification": null,
+      "race_id": "supreme-court-justice-1",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 159,
+          "excerpt_sha256": "c1ba35a517cf95bcd4532178cfc648df374227b62778c334d8a988e5c227f5ec",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "State Supreme Court section and numbered position entry.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 157
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "e00090f4d2fddd99815a7ff5d2760891ed312b50ceffbc059dc1f49107e98106",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "race_id": "supreme-court-justice-3"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "race_id": "supreme-court-justice-3"
+      },
+      "qualification": "Current page prints a shorter, unaccented or variant candidate name. Retain the earlier approved ballot-identity mapping; current office/district context matches, and no silent source-spelling correction is asserted.",
+      "race_id": "supreme-court-justice-3",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 171,
+          "excerpt_sha256": "cc3c0cff3ce78baec2ea4c86422e78db56f05a065c3f7852cb67235c99e79500",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Complete candidate-list start and first legislative heading show no LD11 entry; full current landing and both linked articles were searched.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 147
+        }
+      ],
+      "disposition": "held-prior-omission",
+      "exact_main_decision_sha256": "6fb99bffc501c7db1b25f6a4b19168d46968b81b8ceda98d4bf1299e28a5d8cb",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-11-state-representative-1--david-hackney"
+        ],
+        "race_id": "ld-11-state-representative-1"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-11-state-representative-1--david-hackney"
+        ],
+        "race_id": "ld-11-state-representative-1"
+      },
+      "qualification": "Held omission: original shaug-approved David Hackney LD11 House Position 1 decision remains unchanged; current silence is not an explicit withdrawal or no-endorsement.",
+      "race_id": "ld-11-state-representative-1",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 213,
+          "excerpt_sha256": "ddd43a8db3c4de881d40d4f42b412e62c95c218676580262abb13ffc23e08f2b",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 212
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "3d6c7a9f102f6d98a758b970b45ed5e6263d006ba5bda946741992dcb60203b8",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-32-state-representative-1--danica-noble"
+        ],
+        "race_id": "ld-32-state-representative-1"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-32-state-representative-1--danica-noble"
+        ],
+        "race_id": "ld-32-state-representative-1"
+      },
+      "qualification": null,
+      "race_id": "ld-32-state-representative-1",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 215,
+          "excerpt_sha256": "685dee7cba2e09ffab291ad53490efedd9ddd666b2c3f953098daf6f5f710411",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 212
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "21e6cd8acb73f8a8d9d54bbc14abc43a4b6e64c37081287881d44b484ab9a0db",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-32-state-representative-2--lauren-davis",
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "race_id": "ld-32-state-representative-2"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-32-state-representative-2--lauren-davis",
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
+        "race_id": "ld-32-state-representative-2"
+      },
+      "qualification": "Existing shaug-approved equal dual remains one source decision; both current entries explicitly say Dual and Position 2. This independent review expressly approves its unchanged equal allocation.",
+      "race_id": "ld-32-state-representative-2",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 216,
+          "excerpt_sha256": "57e5c5ba83c7d942de5e5a5e1af1296e5fdabb6b70cca284b25087205ac661be",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 212
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "0d8e44acf1ce96fb4be93b447a8de63deb3b03227f87a4b140a1f0cf5bfeee01",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-32-state-senator--jesse-salomon"
+        ],
+        "race_id": "ld-32-state-senator"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-32-state-senator--jesse-salomon"
+        ],
+        "race_id": "ld-32-state-senator"
+      },
+      "qualification": null,
+      "race_id": "ld-32-state-senator",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 223,
+          "excerpt_sha256": "2dc05d18418df8585effdbe919aaa160fde63415d20b83358daf08d56f17d4b4",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 220
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "0b4ae818b8a1712cf7341c7e5309f556ca81be59d86488376821b9dfabf115fc",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
+        "race_id": "ld-34-state-senator"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
+        "race_id": "ld-34-state-senator"
+      },
+      "qualification": null,
+      "race_id": "ld-34-state-senator",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 221,
+          "excerpt_sha256": "a16efa4471c65eaf6c4608ecf469874067340ae9a8ddaab132e9c7cc789012f4",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 220
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "769cfd11042d5fb651f0ecc789dc62ee8ac38cdd7cb1d27c01d3a6f211ff57a5",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
+        "race_id": "ld-34-state-representative-1"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
+        "race_id": "ld-34-state-representative-1"
+      },
+      "qualification": "Current page prints a shorter, unaccented or variant candidate name. Retain the earlier approved ballot-identity mapping; current office/district context matches, and no silent source-spelling correction is asserted.",
+      "race_id": "ld-34-state-representative-1",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 222,
+          "excerpt_sha256": "3d28952d4f161d064f0664c1132df94f8b586ae8c90706a1246857959e1bd52a",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 220
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "4dabb408dc9ac002f5ee90c449b7a733a3e524d043faab1650c683ad1ef17898",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "race_id": "ld-34-state-representative-2"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "race_id": "ld-34-state-representative-2"
+      },
+      "qualification": null,
+      "race_id": "ld-34-state-representative-2",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 231,
+          "excerpt_sha256": "059d03f352388b0857f822f67de6484c2a6b0e7d266c1e020cb6196fcb168be6",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 228
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "fcc233b0bc0da69d6fbc9fc10c571f20c4f41d12c89692daf6aa7868230448bd",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "race_id": "ld-36-state-senator"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "race_id": "ld-36-state-senator"
+      },
+      "qualification": "Current page prints a shorter, unaccented or variant candidate name. Retain the earlier approved ballot-identity mapping; current office/district context matches, and no silent source-spelling correction is asserted.",
+      "race_id": "ld-36-state-senator",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 229,
+          "excerpt_sha256": "b8983415c8f6b8f4c9cfd37f84b57093ff9f06414dbbb091bc17097918a5cbe4",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 228
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "2742b78710cf095e15b11fd762f7ba4443f950eea3825cb6fecabf7e76393cf2",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
+        "race_id": "ld-36-state-representative-1"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
+        "race_id": "ld-36-state-representative-1"
+      },
+      "qualification": "Current page prints a shorter, unaccented or variant candidate name. Retain the earlier approved ballot-identity mapping; current office/district context matches, and no silent source-spelling correction is asserted.",
+      "race_id": "ld-36-state-representative-1",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 230,
+          "excerpt_sha256": "5ca00bfb8e1945ac80a257a85d30aacf622b32d6b780fdb41103f2dee9683940",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 228
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "21bb9761841b8080070bfe5b7d5b25c3a006eb71f3dc9aca4092a292256967f1",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
+        "race_id": "ld-36-state-representative-2"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
+        "race_id": "ld-36-state-representative-2"
+      },
+      "qualification": null,
+      "race_id": "ld-36-state-representative-2",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 236,
+          "excerpt_sha256": "dc262ecdeb03aa7f004385055808536214cfa31ceacdf7e71b4ea9e4218efbb7",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 232
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "c3d28db58bf769b19a93df5155be8eefd372245c3d9457d7f7944cdea5701b76",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "race_id": "ld-37-state-senator"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "race_id": "ld-37-state-senator"
+      },
+      "qualification": null,
+      "race_id": "ld-37-state-senator",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 235,
+          "excerpt_sha256": "dbad4bcaceb4909713fc4fb7cbe799666843759b35ea57874560be204b663900",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 232
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "f6116efedc303afa7ecab35176eeb9f41f0ebd892422f02644ea9400f407150b",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "race_id": "ld-37-state-representative-2"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "race_id": "ld-37-state-representative-2"
+      },
+      "qualification": null,
+      "race_id": "ld-37-state-representative-2",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 249,
+          "excerpt_sha256": "15c79cb260fb54119798d516469ef261d150315f2cf13c072a1a8b6f2ef82106",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 246
+        }
+      ],
+      "disposition": "retained-direct-current-with-prior-qualification",
+      "exact_main_decision_sha256": "fe2ae09b7668bedcd1cd81c0c17592495f3e5df41644a09bbd38d338d47855b6",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "race_id": "ld-43-state-senator"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "race_id": "ld-43-state-senator"
+      },
+      "qualification": "Current page prints a shorter, unaccented or variant candidate name. Retain the earlier approved ballot-identity mapping; current office/district context matches, and no silent source-spelling correction is asserted.",
+      "race_id": "ld-43-state-senator",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 247,
+          "excerpt_sha256": "740b0ea1bf035aa37ddf2c76fe0bc3e479cba11909bd212ec65151034ab48bde",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 246
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "c2190a2942c0986ffe66f4e85870f0c4a21064098c27dee16dbba4be14fd7fbc",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "race_id": "ld-43-state-representative-1"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "race_id": "ld-43-state-representative-1"
+      },
+      "qualification": null,
+      "race_id": "ld-43-state-representative-1",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 260,
+          "excerpt_sha256": "70725a0d04d29fd56f0d12c614845c581c96d0cb926e1ec4998a903f31c5919b",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 257
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "f5876db3175443c3a65149e27be2a6a8d8e14612bd00d4a90902078d5e7e07d2",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "race_id": "ld-46-state-senator"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "race_id": "ld-46-state-senator"
+      },
+      "qualification": null,
+      "race_id": "ld-46-state-senator",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 258,
+          "excerpt_sha256": "50349685ce1e9f05b1f7df2a5c04eaedbdbe4d9f210b29a42cf50b4817242981",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 257
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "48ffa527024d5f652107e1b955fb08b88c5afa61b7f906ab6a8738d437544928",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "race_id": "ld-46-state-representative-1"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "race_id": "ld-46-state-representative-1"
+      },
+      "qualification": null,
+      "race_id": "ld-46-state-representative-1",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 259,
+          "excerpt_sha256": "f78ddc40223afc94a0a159ec115c23cebc7f784e8677cad39e88ecec2be5c303",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 257
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "974cf8fff98a9ce938c1134151c87dd1306647db5e642d93e46d1bfdad223170",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "race_id": "ld-46-state-representative-2"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "race_id": "ld-46-state-representative-2"
+      },
+      "qualification": null,
+      "race_id": "ld-46-state-representative-2",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 248,
+          "excerpt_sha256": "f7ef357521db8a186c04071e618ba27e4f9bb4471eb2ac05d1c739b98f022626",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Official district heading and exact candidate office/position entries.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 246
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "effbe117c40d06438504411fa76692cc4215fd1f0025a27ce557c9dc06d2052f",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "ld-43-state-representative-2--shaun-scott"
+        ],
+        "evidence_locator": "Current candidate slate > 43rd Legislative District > Shaun Scott, State Representative Pos2 Official source: https://ufcw3000.org/endorsements. Capture capture-ufcw-3000-20261016T145942Z-bc8de541bd79; verified manual manual-ufcw-3000-20261016T154850Z-1872b1abd17a.",
+        "race_id": "ld-43-state-representative-2"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "ld-43-state-representative-2--shaun-scott"
+        ],
+        "evidence_locator": "Current candidate slate > 43rd Legislative District > Shaun Scott, State Representative Pos2 Official source: https://ufcw3000.org/endorsements. Capture capture-ufcw-3000-20261016T145942Z-bc8de541bd79; verified manual manual-ufcw-3000-20261016T154850Z-1872b1abd17a.",
+        "race_id": "ld-43-state-representative-2"
+      },
+      "qualification": null,
+      "race_id": "ld-43-state-representative-2",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 132,
+          "excerpt_sha256": "838351a09fd3176afad99bb2f2decaa29bfba906b47c88e998010b14aa2853e2",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Current ballot-measures section says Vote NO on both initiatives.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 121
+        },
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075215Z-7581e0010856"
+          ],
+          "capture_label": "ufcw-article-638-001",
+          "end_line": 308,
+          "excerpt_sha256": "eb07d5749ef3b67865d4b9f7780793083423cef067adca54ac70c9cd38b9fa8b",
+          "final_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+          "note": "October 15 member-led Executive Board rejection and November vote-down context.",
+          "original_sha256": "b14b2bcfdb0f5112cb62ae4be34bbef4bea547c0d1f1c64580d5f68e66ac24db",
+          "requested_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+          "start_line": 290
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "5265257b40aa60d72919b570d9c3475f7bdcc8c9e1d3d4d94014a4d76b4e8031",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "evidence_locator": "October15 article body; opening paragraph: Executive Board unanimously rejects Initiatives638 and001 and endorses No Hate campaign Official source: https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign. Capture capture-ufcw-3000-20261016T150038Z-072bf2c5e1ec; verified manual manual-ufcw-3000-20261016T154850Z-9e5033ca9312.",
+        "race_id": "initiative-26-001"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "evidence_locator": "October15 article body; opening paragraph: Executive Board unanimously rejects Initiatives638 and001 and endorses No Hate campaign Official source: https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign. Capture capture-ufcw-3000-20261016T150038Z-072bf2c5e1ec; verified manual manual-ufcw-3000-20261016T154850Z-9e5033ca9312.",
+        "race_id": "initiative-26-001"
+      },
+      "qualification": null,
+      "race_id": "initiative-26-001",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 132,
+          "excerpt_sha256": "838351a09fd3176afad99bb2f2decaa29bfba906b47c88e998010b14aa2853e2",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Current ballot-measures section says Vote NO on both initiatives.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 121
+        },
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075215Z-7581e0010856"
+          ],
+          "capture_label": "ufcw-article-638-001",
+          "end_line": 308,
+          "excerpt_sha256": "eb07d5749ef3b67865d4b9f7780793083423cef067adca54ac70c9cd38b9fa8b",
+          "final_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+          "note": "October 15 member-led Executive Board rejection and November vote-down context.",
+          "original_sha256": "b14b2bcfdb0f5112cb62ae4be34bbef4bea547c0d1f1c64580d5f68e66ac24db",
+          "requested_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+          "start_line": 290
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "7bd399df137634ed713e0b4928b3a71e8303ce4c1e487fc2b2fa8c7f9a8f6e39",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "evidence_locator": "October15 article body; opening paragraph: Executive Board unanimously rejects Initiatives638 and001 and endorses No Hate campaign Official source: https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign. Capture capture-ufcw-3000-20261016T150038Z-072bf2c5e1ec; verified manual manual-ufcw-3000-20261016T154850Z-9e5033ca9312.",
+        "race_id": "initiative-26-638"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "evidence_locator": "October15 article body; opening paragraph: Executive Board unanimously rejects Initiatives638 and001 and endorses No Hate campaign Official source: https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign. Capture capture-ufcw-3000-20261016T150038Z-072bf2c5e1ec; verified manual manual-ufcw-3000-20261016T154850Z-9e5033ca9312.",
+        "race_id": "initiative-26-638"
+      },
+      "qualification": null,
+      "race_id": "initiative-26-638",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    },
+    {
+      "current_evidence": [
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075214Z-412a6e1d5f49"
+          ],
+          "capture_label": "ufcw-3000-registry",
+          "end_line": 140,
+          "excerpt_sha256": "d7cb836a13db850bd9874b857484226beefc5d67d611b7b7b6a20199ccb0f04d",
+          "final_url": "https://ufcw3000.org/endorsements",
+          "note": "Current ballot-measures section says Vote NO on I-645.",
+          "original_sha256": "aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "start_line": 121
+        },
+        {
+          "capture_ids": [
+            "capture-ufcw-3000-20261023T075215Z-d9a3e6e744fb"
+          ],
+          "capture_label": "ufcw-article-645",
+          "end_line": 296,
+          "excerpt_sha256": "43f8881416ed6a9b834f3512e15dec273423f4fe0805d88f442b2d8313ef602e",
+          "final_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote",
+          "note": "October 15 member-led Executive Board expressly endorses a No vote.",
+          "original_sha256": "5d8d0557fab5b52875b67eb094d9226198ad576b0aa7008a67e2e90b5eb881ec",
+          "requested_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote",
+          "start_line": 290
+        }
+      ],
+      "disposition": "retained-direct-current",
+      "exact_main_decision_sha256": "741ab20f74be869e8ad9868f6e1cee323dd6c066e6ddc6b4c02481b0241c06b9",
+      "independent_reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "prior_decision": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_locator": "October15 article body opening H2: Executive Board unanimously rejects Initiative645 and endorses a NO vote; next paragraph identifies Millionaires Tax repeal Official source: https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote. Capture capture-ufcw-3000-20261016T150038Z-3a20e73a371a; verified manual manual-ufcw-3000-20261016T154850Z-6cbbb72fb435.",
+        "race_id": "initiative-26-645"
+      },
+      "proposed_decision": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_locator": "October15 article body opening H2: Executive Board unanimously rejects Initiative645 and endorses a NO vote; next paragraph identifies Millionaires Tax repeal Official source: https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote. Capture capture-ufcw-3000-20261016T150038Z-3a20e73a371a; verified manual manual-ufcw-3000-20261016T154850Z-6cbbb72fb435.",
+        "race_id": "initiative-26-645"
+      },
+      "qualification": null,
+      "race_id": "initiative-26-645",
+      "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+      "source_id": "ufcw-3000"
+    }
+  ],
+  "publication_approved": false,
+  "record_type": "explicitly_delegated_endorsement_review",
+  "recorded_at": "2026-10-24T03:44:46.846583+00:00",
+  "research_completed_at": "2026-10-23T07:58:41.895661Z",
+  "research_reviewer": "OpenAI Codex /root/review_472_political_oct23",
+  "resulting_decision_count": 925,
+  "reviewed_at": "2026-10-23T08:37:27.623952+00:00",
+  "reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+  "schema_version": "1.0",
+  "source_metadata_after": {
+    "seattle-gay-news": {
+      "captured_at": "2026-10-23T07:52:53.734282Z",
+      "evidence_locator": "October 23 whole-source-block review and exact official locators: data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json; data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. Prior locator: Official Seattle news index listing the editorial board's 2026 endorsement articles. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.",
+      "review_note": "Issue #472: OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23 independently reviewed the complete source block and its retained October 23 official originals at 2026-10-23T08:37:27.623952Z; initial research by OpenAI Codex /root/review_472_political_oct23. Seven prior July current-cycle SGN decisions remain qualified as live after the primary, not a separate general-election slate; add only the October 22 Adam Smith editorial. All prior decision dictionaries and historical approvals preserved. Actual review and two-claim admission: data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. No personal shaug source read or native baseline approval asserted. Prior source review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle editorial endorsement index; shaug verified all seven general-ballot matches and the omissions of Kshama Sawant and the out-of-inventory library levy.",
+      "reviewed_at": "2026-10-23T08:37:27.623952Z",
+      "reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "source_id": "seattle-gay-news"
+    },
+    "ufcw-3000": {
+      "captured_at": "2026-10-23T07:52:14.572474Z",
+      "evidence_locator": "October 23 whole-source-block review and exact official locators: data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json; data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. Prior locator: October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
+      "review_note": "Issue #472: OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23 independently reviewed the complete source block and its retained October 23 official originals at 2026-10-23T08:37:27.623952Z; initial research by OpenAI Codex /root/review_472_political_oct23. Retain David Hackney LD11 House Position 1 as a held omission, not withdrawal. Both existing LD32 Position 2 and new LD37 Position 1 explicit duals receive one equally split source point; first appearance of the new dual is unknown. All prior decision dictionaries and historical approvals preserved. Actual review and two-claim admission: data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. No personal shaug source read or native baseline approval asserted. Prior source review: Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Member-story widget changed; endorsement list unchanged. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.",
+      "reviewed_at": "2026-10-23T08:37:27.623952Z",
+      "reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+      "source_id": "ufcw-3000"
+    }
+  },
+  "source_metadata_before": {
+    "seattle-gay-news": {
+      "captured_at": "2026-10-04T04:56:56Z",
+      "evidence_locator": "Official Seattle news index listing the editorial board's 2026 endorsement articles. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.",
+      "review_note": "Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle editorial endorsement index; shaug verified all seven general-ballot matches and the omissions of Kshama Sawant and the out-of-inventory library levy.",
+      "reviewed_at": "2026-10-04T05:30:06Z",
+      "reviewer": "shaug",
+      "source_id": "seattle-gay-news"
+    },
+    "ufcw-3000": {
+      "captured_at": "2026-10-16T15:00:38.075557Z",
+      "evidence_locator": "October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
+      "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Member-story widget changed; endorsement list unchanged. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.",
+      "reviewed_at": "2026-10-16T15:48:50.280092Z",
+      "reviewer": "shaug",
+      "source_id": "ufcw-3000"
+    }
+  },
+  "whole_source_block_scope": "Full combined October 23 source blocks: SGN seven prior plus one new; UFCW 29 prior plus one new, including the prior Hackney held omission."
+}

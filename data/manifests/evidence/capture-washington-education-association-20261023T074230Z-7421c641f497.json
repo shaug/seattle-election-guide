@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": 200,
+  "id": "capture-washington-education-association-20261023T074230Z-7421c641f497",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Metadata-only disposition of the actual original observation; no retry or new source request.",
+  "requested_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+  "retrieved_at": "2026-10-23T07:42:30.235234Z",
+  "schema_version": "1.0",
+  "source_id": "washington-education-association",
+  "title": null,
+  "unavailable_reason": "Only a member-gated public surface was delivered. HTTP 200 is not complete endorsement-publication access; all 20 prior decisions retained without a current complete review.",
+  "updated_at": null
+}

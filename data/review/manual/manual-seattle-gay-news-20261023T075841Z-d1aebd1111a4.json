@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-gay-news-20261023T075253Z-440582633817",
+  "entered_at": "2026-10-23T07:58:41.895551Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official SGN Editorial Board October 22, 2026 endorsement article, title names U.S. House 9th District and final bold Vote Smith instruction; current article original SHA-256 a9380cbc6d99ce99af0675543a2759912964439ef28dfed9c32c115a489eadf3, numbered text lines 38-40 and 58-59.",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-gay-news-20261023T075841Z-d1aebd1111a4",
+  "review_note": "Materializes the existing October 23 research transcription and actual independent material review at 08:16:19.272736Z, expanded to the complete source block at 08:37:27.623952Z. Retained official original verified by the normal adapter; no new personal source read or backdated approval. See data/review/approvals/wa-2026-general-2026-10-23-confirmed.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-23T08:37:27.623952Z",
+  "reviewed_by": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+  "reviewer": "OpenAI Codex /root/review_472_political_oct23",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "transcription": "Vote Smith."
+}

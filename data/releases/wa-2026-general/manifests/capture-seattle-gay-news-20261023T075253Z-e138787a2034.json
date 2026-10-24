@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 3345,
+  "canonical_url": "https://www.sgn.org/ch/News/Seattle?start=20",
+  "capture_method": "manual_upload",
+  "content_sha256": "117ded0ee3a65711db8e55175cc453fea0f02659f9f78462d413b3475c2adb14",
+  "http_status": null,
+  "id": "capture-seattle-gay-news-20261023T075253Z-e138787a2034",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.sgn.org/ch/News/Seattle?start=20",
+  "retrieved_at": "2026-10-23T07:52:53.734282Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "storage_reference": "sha256/11/117ded0ee3a65711db8e55175cc453fea0f02659f9f78462d413b3475c2adb14",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Seattle Gay News Editorial Board",
+  "updated_at": null
+}

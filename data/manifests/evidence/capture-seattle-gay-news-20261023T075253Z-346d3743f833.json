@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 50844,
+  "canonical_url": "https://www.sgn.org/story/168738/",
+  "capture_method": "static_html",
+  "content_sha256": "3b81be8754dcc757200e9053f4e1b3fba443b29a4a21bea70a8ca2e5f32dd8c5",
+  "http_status": 200,
+  "id": "capture-seattle-gay-news-20261023T075253Z-346d3743f833",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Existing October 23 official original retained privately by content hash; metadata-only public admission for issue #472. No new source request.",
+  "requested_url": "https://www.sgn.org/story/168738/",
+  "retrieved_at": "2026-10-23T07:52:53.403660Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "storage_reference": "sha256/3b/3b81be8754dcc757200e9053f4e1b3fba443b29a4a21bea70a8ca2e5f32dd8c5",
+  "storage_scope": "local_only",
+  "title": "sgn-story-168738",
+  "updated_at": null
+}
