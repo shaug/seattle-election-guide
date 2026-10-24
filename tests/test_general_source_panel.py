@@ -211,7 +211,17 @@ def test_general_additions_preserve_verified_choices_and_coendorsement_allocatio
     tech = by_key["tech-4-taxes", "initiative-26-645"]
     assert tech["candidate_ids"] == ["initiative-26-645--no"]
     assert tech["allocation"] == {"initiative-26-645--no": "1"}
-    assert len(dataset["endorsements"]) == 925
+    for race_id, candidate_id in {
+        "us-house-7": "us-house-7--pramila-jayapal",
+        "us-house-9": "us-house-9--adam-smith",
+        "supreme-court-justice-4": "supreme-court-justice-4--ian-birk",
+        "supreme-court-justice-5": "supreme-court-justice-5--theo-angelis",
+    }.items():
+        row = by_key["ufcw-3000", race_id]
+        assert row["status"] == "endorsed"
+        assert row["candidate_ids"] == [candidate_id]
+        assert row["allocation"] == {candidate_id: "1"}
+    assert len(dataset["endorsements"]) == 929
     assert not {"king-county-republican-party", "progressive-voters-guide"} & {
         row["source_id"] for row in dataset["endorsements"]
     }
