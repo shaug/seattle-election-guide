@@ -7,6 +7,7 @@ import json
 import re
 import shutil
 import subprocess
+from dataclasses import replace
 from pathlib import Path
 from typing import NamedTuple, cast
 
@@ -20,7 +21,12 @@ from election_guide.hosting import (
     verify_staged_pages_site,
 )
 from election_guide.hosting.models import PublishedElection, SiteManifest
-from election_guide.hosting.pages import _about_html  # pyright: ignore[reportPrivateUsage]
+from election_guide.hosting.pages import (
+    _about_html,  # pyright: ignore[reportPrivateUsage]
+    _stage_race_pages,  # pyright: ignore[reportPrivateUsage]
+    _verify_bundle,  # pyright: ignore[reportPrivateUsage]
+    read_site_manifest,
+)
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import (
@@ -510,6 +516,41 @@ def test_stage_publishes_one_page_and_one_card_for_every_race(tmp_path: Path) ->
     assert _tree_bytes(output / "e" / OLDER_ID / "races") == _tree_bytes(
         second / "e" / OLDER_ID / "races"
     )
+
+
+def test_general_race_staging_omits_uncontested_pages_cards_and_routes(tmp_path: Path) -> None:
+    current, _ = _write_archive_bundles(tmp_path)
+    manifest = read_site_manifest(_write_site_manifest(tmp_path, current_first=True))
+    declaration = next(item for item in manifest.elections if item.election_id == CURRENT_ID)
+    bundle = _verify_bundle(declaration, current)
+    view = bundle.view_model
+    hidden_id = view.sections[0].races[0].id
+    sections = [
+        section.model_copy(
+            update={
+                "races": [
+                    race.model_copy(update={"is_contested": race.id != hidden_id})
+                    for race in section.races
+                ]
+            }
+        )
+        for section in view.sections
+    ]
+    view = view.model_copy(
+        update={
+            "metadata": view.metadata.model_copy(update={"election_type": "general"}),
+            "sections": sections,
+        }
+    )
+    election_root = tmp_path / "staged-election"
+    election_root.mkdir()
+    routes = _stage_race_pages(
+        replace(bundle, view_model=view), election_root, "https://seattleelections.guide"
+    )
+    assert not (election_root / "races" / hidden_id).exists()
+    assert all(f"/races/{hidden_id}/" not in route for route in routes)
+    expected_ids = {race.id for section in view.guide_sections for race in section.races}
+    assert {path.name for path in (election_root / "races").iterdir()} == expected_ids
 
 
 def test_verify_rejects_a_race_page_without_its_social_card(tmp_path: Path) -> None:

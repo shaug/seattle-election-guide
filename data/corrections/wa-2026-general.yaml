@@ -2,6 +2,20 @@ schema_version: "1.0"
 election_id: wa-2026-general
 entries:
   - corrected_on: 2026-10-23
+    headline: "Removed uncontested races from the general-election guide."
+    body: >-
+      Races with only one official choice no longer appear in Endorsements,
+      Comparisons, or individual race pages, even when organizations have
+      endorsed that choice. The guide now shows the 31 contested races and
+      measures. Source endorsement totals count these visible races only.
+      The full records for all 52 races remain available in the audit downloads.
+      The published primary archive is unchanged.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Race visibility policy and implementation"
+        url: https://github.com/shaug/seattle-election-guide/issues/607
+  - corrected_on: 2026-10-23
     headline: "Rounded the closing border of split endorsement meters."
     body: >-
       On race pages, the border now follows the curved transition at both ends

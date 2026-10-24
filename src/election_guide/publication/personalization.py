@@ -267,7 +267,7 @@ class PersonalizationContract(PersonalizationModel):
     retired_codes: list[PersonalizationRetiredCode] = Field(
         default_factory=list[PersonalizationRetiredCode]
     )
-    races: list[PersonalizationRace] = Field(min_length=1)
+    races: list[PersonalizationRace]
 
     @model_validator(mode="after")
     def validate_contract(self) -> PersonalizationContract:
