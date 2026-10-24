@@ -72,7 +72,9 @@ Stage B restores only the two approved CSS files to their exact bytes at
 functions while preserving the other 140 and #602 diagnostics, and selects only
 the actual downloaded archive 1 pins. The normal automation prepared the local
 `2026-general.38` request for #598 against the accepted Stage A source.
-Preparation publishes or reserves no version.
+Preparation publishes or reserves no version. The existing hosting test now
+expects the four verified archive 1 identity values; every deployment assertion
+and gate remains in place.
 
 New general and primary source Updates entries are dated October 24, 2026.
 At Stage B delivery the general guide and general/primary race pages receive
