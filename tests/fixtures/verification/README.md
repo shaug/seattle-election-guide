@@ -24,3 +24,15 @@ between adjacent `td` cells and leading office whitespace; the alternate layout
 minifies the same authored rows. `-initial-page.html` preserves the earlier five
 mapped facts to catch accidental fallback to the unchanged discovery page. None
 of these snippets reproduces the private original markup.
+
+UFCW's separate October 24 `-current-layout.html` fixture is an authored factual
+snippet of all 88 candidate rows and four measure positions checked by OpenAI
+Codex `/root/verify_497_ufcw_current33` at 2026-10-24T09:55:41.998064Z under finite
+maintainer delegation for #497. Its `-current-decisions.yaml` records the 33
+independently verified in-inventory decisions (30 candidate races and three
+measures). The remaining 56 candidate rows and distinct Tacoma measure are
+outside the frozen ballot. Both duals remain explicit. David Hackney is absent
+from this current snippet; the published prior decision remains held separately.
+The four newly mapped choices have unknown first appearance dates. The earlier
+UFCW fixture/expected facts above remain dated and unchanged. No fixture grants
+live access, a native baseline approval or scheduled-adoption evidence.
