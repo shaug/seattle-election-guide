@@ -65,35 +65,50 @@ Stage A's first CI attempt retained two Chrome startup failures before page
 execution. The supported recovery passed at the unchanged source in attempt 2;
 the original startup cause remains unknown.
 
-## Stage B candidate; protected delivery pending
+## Accepted Stage B and archive 2; Stage C prepared
 
-Stage B restores only the two approved CSS files to their exact bytes at
-`bea5e4edc5c50c985932b8ae5e123a39a0b51449`, transfers the two focused browser-test
-functions while preserving the other 140 and #602 diagnostics, and selects only
+Stage B restored only the two approved CSS files to their exact bytes at
+`bea5e4edc5c50c985932b8ae5e123a39a0b51449`, transferred the two focused browser-test
+functions while preserving the other 140 and #602 diagnostics, and selected only
 the actual downloaded archive 1 pins. The normal automation prepared the local
 `2026-general.38` request for #598 against the accepted Stage A source.
-Preparation publishes or reserves no version. The existing hosting test now
-expects the four verified archive 1 identity values; every deployment assertion
-and gate remains in place.
+Preparation publishes or reserves no version. Stage B refreshed the four existing hosting-test identity literals to archive 1;
+Stage C refreshes those same four to the verified archive 2 values. Every
+deployment assertion and gate remains in place.
 
-New general and primary source Updates entries are dated October 24, 2026.
-At Stage B delivery the general guide and general/primary race pages receive
+The general and primary source Updates entries are dated October 24, 2026.
+At Stage B delivery the general guide and general/primary race pages received
 the restored CSS. The served primary Updates come from archive 1 and include
-Stage A's preparation entry. The new primary Stage B source entry is retained
-for archive 2 and is **unserved at B**. The copied primary overview still comes
-from archive 1 and **does not yet contain the restoration**.
+Stage A's preparation entry. The primary Stage B source entry was retained
+for archive 2 and is **unserved at B**. At B the copied primary overview came
+from archive 1 and **did not yet contain the restoration**.
 
 | Step | Status and remaining evidence |
 | --- | --- |
 | A | Accepted at `2307f1d8b8e79e30799a27ab91b7501382e78430` / `2026-general.37` with independent release and production evidence above. |
-| Archive 1 | Accepted published `2026-primary.7` from exact accepted A; actual downloaded pins above selected by the B candidate. |
-| B | Local restoration, Updates and normal current-general request prepared; exact candidate gates, canonical review, protected CI, merge and independent production acceptance precede delivery. |
-| Archive 2 | Pending exact accepted B merged SHA; two matching builds containing the restored overview, inspection, immutable publication, download and identity verification. |
-| C | Pending protected archive 2 activation and final independent production and visual acceptance. |
+| Archive 1 | Accepted published `2026-primary.7` from exact accepted A; actual downloaded pins above selected by Stage B. |
+| B | Accepted [PR #621](https://github.com/shaug/seattle-election-guide/pull/621), merged source `095bf8a5acd71146d6286d24197d032fb0d68e90` / `2026-general.38`; all 13 jobs in [automatic delivery](https://github.com/shaug/seattle-election-guide/actions/runs/40135078226/attempts/1), durable receipts, both strict production probe pairs, both elections and served Updates independently accepted. |
+| Archive 2 | Accepted published [2026-primary.8](https://github.com/shaug/seattle-election-guide/releases/tag/2026-primary.8) from exact accepted B on October 24, 2026; two matching builds, restored overview inspection, actual public download and identity verification complete. All 538 primary records and IDs, results, exports, source membership and 34 earlier Updates entries preserved. |
+| C | Only the actual downloaded archive 2 pins are selected; normal automation prepared `2026-general.39` for #598 against exact accepted B. Preparation publishes or reserves no version. Fresh candidate gates, reviews, protected CI, merge and final independent production and visual acceptance remain pending. |
 
 Final source entry dates must reflect actual Pacific publication dates. If dates
 change, reconcile through protected source updates while preserving immutable
 history. Each final candidate requires fresh full gates, canonical review,
 protected CI and independent production evidence. #598 stays open until Stage C
-production and visual acceptance. Stage B delivery, archive 2, final overview
-activation and overall visual completion are not claimed here.
+production and visual acceptance. Final overview activation and overall visual
+completion remain pending Stage C delivery.
+Stage B was published October 24, 2026 (Pacific); archive 2 was published at
+`2026-10-24T22:26:20Z`, also October 24 Pacific. Source Updates dates therefore
+remain exact. Archive 2 serves all 35 primary entries, including the Stage B
+entry and its separate-overview-step description and guide link; that entry was
+**unserved at B**. This protected C activation selects the rebuilt overview
+without rewriting historical Updates entries.
+
+| Archive 2 identity | Verified value |
+| --- | --- |
+| Source | `095bf8a5acd71146d6286d24197d032fb0d68e90` |
+| Release / asset IDs | `423015918` / `673466707` |
+| Published ZIP SHA-256 / bytes | `fd161ab8e4fd877fba131b7447898e4f79f46de59399cd7d10a6d3dbc5de6f4d` / `536338` |
+| Release manifest SHA-256 | `a661c19f43d9f9ae758b08d69ee79d88eb9c594c3ac1fa1ef9b4b098d201207b` |
+| Bundle SHA-256 | `a5eeb309d85ef474c752638a3dc72beab5a813e2ac6da87efb69f6b13e9cec8d` |
+| Acceptance record SHA-256 | `7cd4786b01d01482d656d217c4794ca80b340496fa6ffc57c1e744628c614abb` |
