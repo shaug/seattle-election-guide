@@ -13,6 +13,7 @@ import base64
 import json
 import os
 import shutil
+import stat
 import subprocess
 import tempfile
 import time
@@ -104,6 +105,7 @@ def render_screenshot(
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
     try:
         with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as errors:
+            launched_at = time.monotonic()
             process = subprocess.Popen(
                 [
                     str(chrome_path),
@@ -156,12 +158,14 @@ def render_screenshot(
                     width=width,
                     height=height,
                     expected_race_count=expected_race_count,
+                    launched_at=launched_at,
                 )
             except (OSError, ValueError, TimeoutError, WebSocketException) as error:
                 errors.seek(0)
                 detail = errors.read().strip()
                 suffix = f": {detail}" if detail else ""
-                raise ValueError(f"Chromium screenshot failed: {error}{suffix}") from error
+                notes = "".join(f"\n{note}" for note in getattr(error, "__notes__", ()))
+                raise ValueError(f"Chromium screenshot failed: {error}{suffix}{notes}") from error
             finally:
                 _terminate_process(process)
     finally:
@@ -178,6 +182,7 @@ def _capture_emulated_viewport(
     width: int,
     height: int,
     expected_race_count: int,
+    launched_at: float,
 ) -> None:
     """Capture an exact CSS viewport through Chrome DevTools Protocol.
 
@@ -185,7 +190,7 @@ def _capture_emulated_viewport(
     avoids silently cropping a wider layout when a narrower mobile screenshot is
     requested and uses the same path on Linux CI.
     """
-    port, browser_path = _wait_for_devtools_endpoint(process, profile)
+    port, browser_path = _wait_for_devtools_endpoint(process, profile, launched_at=launched_at)
     websocket = create_connection(
         f"ws://127.0.0.1:{port}{browser_path}",
         timeout=30,
@@ -473,18 +478,109 @@ def _settle(cdp: _CdpSocket, session_id: str) -> None:
         raise ValueError(f"page never settled before capture: {settled}")
 
 
-def _wait_for_devtools_endpoint(process: subprocess.Popen[bytes], profile: Path) -> tuple[int, str]:
+_STARTUP_TIMEOUT_SECONDS = 15
+_STARTUP_ENDPOINT_BYTES = 512
+
+
+def _startup_endpoint_facts(endpoint: Path) -> str:
+    """Read only a small regular file; never render its contents or path."""
+    unknown = "endpoint_bytes=unavailable numeric_port=unavailable second_line=unavailable"
+    try:
+        if not stat.S_ISREG(endpoint.lstat().st_mode):
+            return f"endpoint=nonregular {unknown}"
+        # A replaced FIFO must not block; a replaced symlink must not be followed.
+        descriptor = os.open(endpoint, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+        with os.fdopen(descriptor, "rb", buffering=0) as opened:
+            metadata = os.fstat(opened.fileno())
+            if not stat.S_ISREG(metadata.st_mode):
+                return f"endpoint=nonregular {unknown}"
+            content = opened.read(_STARTUP_ENDPOINT_BYTES + 1)
+    except FileNotFoundError:
+        return f"endpoint=missing {unknown}"
+    except Exception:
+        return f"endpoint=unreadable {unknown}"
+    oversized = metadata.st_size > _STARTUP_ENDPOINT_BYTES or len(content) > _STARTUP_ENDPOINT_BYTES
+    size = f">{_STARTUP_ENDPOINT_BYTES}" if oversized else str(len(content))
+    parts = content.splitlines()
+    numeric = bool(parts and parts[0].isdigit() and len(parts[0]) <= 5 and int(parts[0]) <= 65535)
+    second = len(parts) >= 2 and bool(parts[1])
+    try:
+        content.decode("utf-8")
+        utf8 = True
+    except UnicodeError:
+        utf8 = False
+    if oversized or not utf8:
+        state = "malformed"
+    elif len(parts) < 2:
+        state = "partial"
+    else:
+        state = "ready" if numeric and second else "malformed"
+    return (
+        f"endpoint={state} endpoint_bytes={size} "
+        f"numeric_port={str(numeric).lower()} second_line={str(second).lower()}"
+    )
+
+
+def _startup_diagnostics(
+    process: subprocess.Popen[bytes], profile: Path, launched_at: float
+) -> str:
+    """Best-effort local facts only, sampled before the caller cleans up Chrome."""
+
+    def probe(read: Callable[[], str]) -> str:
+        try:
+            return read()
+        except Exception:
+            return "unavailable"
+
+    def process_state() -> str:
+        code = process.poll()
+        return "running" if code is None else f"exited({code})"
+
+    def dbus_shape() -> str:
+        address = os.environ.get("DBUS_SESSION_BUS_ADDRESS")
+        if address is None:
+            return "unset"
+        if not address:
+            return "empty"
+        for transport in ("unix", "tcp", "nonce-tcp"):
+            if address.startswith(f"{transport}:"):
+                return f"{transport}-shape"
+        return "other-shape"
+
+    elapsed = probe(lambda: str(max(0, round((time.monotonic() - launched_at) * 1000))))
+    cpu = probe(lambda: str(os.cpu_count() or "unavailable"))
+    load = probe(lambda: ",".join(f"{value:.2f}" for value in os.getloadavg()))
+    return (
+        f"elapsed_ms={elapsed} process={probe(process_state)} "
+        f"{probe(lambda: _startup_endpoint_facts(profile / 'DevToolsActivePort'))} "
+        f"cpu_count={cpu} load={load} dbus_session={probe(dbus_shape)}"
+    )[:950]
+
+
+def _wait_for_devtools_endpoint(
+    process: subprocess.Popen[bytes], profile: Path, *, launched_at: float | None = None
+) -> tuple[int, str]:
     endpoint = profile / "DevToolsActivePort"
-    deadline = time.monotonic() + 15
-    while time.monotonic() < deadline:
-        if process.poll() is not None:
-            raise ValueError("Chrome exited before exposing its DevTools endpoint")
-        if endpoint.is_file():
-            parts = endpoint.read_text(encoding="utf-8").splitlines()
-            if len(parts) >= 2:
-                return int(parts[0]), parts[1]
-        time.sleep(0.05)
-    raise TimeoutError("Chrome did not expose its DevTools endpoint")
+    if launched_at is None:
+        launched_at = time.monotonic()
+    deadline = time.monotonic() + _STARTUP_TIMEOUT_SECONDS
+    try:
+        while time.monotonic() < deadline:
+            if process.poll() is not None:
+                raise ValueError("Chrome exited before exposing its DevTools endpoint")
+            if endpoint.is_file():
+                parts = endpoint.read_text(encoding="utf-8").splitlines()
+                if len(parts) >= 2:
+                    return int(parts[0]), parts[1]
+            time.sleep(0.05)
+        raise TimeoutError("Chrome did not expose its DevTools endpoint")
+    except Exception as error:
+        try:
+            diagnostic = _startup_diagnostics(process, profile, launched_at)
+        except Exception:
+            diagnostic = "unavailable"
+        error.add_note(f"Chrome startup diagnostics: {diagnostic}")
+        raise
 
 
 class _CdpSocket:
