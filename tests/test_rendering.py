@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from collections.abc import Callable
 from fractions import Fraction
 from html import escape, unescape
@@ -19,6 +20,7 @@ import pytest
 from PIL import Image, ImageDraw
 from pydantic import ValidationError
 from websocket import (
+    WebSocket,
     WebSocketException,
     create_connection,  # pyright: ignore[reportUnknownVariableType]
 )
@@ -41,6 +43,7 @@ from election_guide.publication.personalization import (
 )
 from election_guide.release.compiler import read_release_ledger
 from election_guide.rendering import (
+    browser,
     build_rendered_guide,
     context,
     read_rendering_configuration,
@@ -3916,6 +3919,7 @@ def _evaluate_in_chrome(
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
     try:
         with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as errors:
+            launched_at = time.monotonic()
             process = subprocess.Popen(
                 [
                     str(chrome_path),
@@ -3944,7 +3948,9 @@ def _evaluate_in_chrome(
                 stderr=errors,
             )
             try:
-                port, browser_path = _wait_for_devtools_endpoint(process, profile)
+                port, browser_path = _wait_for_devtools_endpoint(
+                    process, profile, launched_at=launched_at
+                )
                 websocket = create_connection(
                     f"ws://127.0.0.1:{port}{browser_path}",
                     timeout=30,
@@ -4017,11 +4023,314 @@ def _evaluate_in_chrome(
                 errors.seek(0)
                 detail = errors.read().strip()
                 suffix = f": {detail}" if detail else ""
-                raise ValueError(f"Chrome evaluation failed: {error}{suffix}") from error
+                notes = "".join(f"\n{note}" for note in getattr(error, "__notes__", ()))
+                raise ValueError(f"Chrome evaluation failed: {error}{suffix}{notes}") from error
             finally:
                 _terminate_process(process)
     finally:
         shutil.rmtree(profile, ignore_errors=True)
+
+
+def _fake_startup_chrome(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    endpoint: bytes | None = None,
+    exit_code: int | None = None,
+    nonregular: bool = False,
+) -> tuple[Path, Path, Path, list[subprocess.Popen[bytes]]]:
+    """Launch a real child, retaining enough external state to prove cleanup."""
+    chrome = tmp_path / "executable-secret-sentinel"
+    profile = tmp_path / "profile-secret-sentinel"
+    launches = tmp_path / "launches"
+    chrome.write_text(
+        f"#!{sys.executable}\n"
+        "import sys, time\nfrom pathlib import Path\n"
+        f"profile = Path({str(profile)!r})\n"
+        "print('fixture startup stderr', file=sys.stderr, flush=True)\n"
+        + (
+            f"(profile / 'DevToolsActivePort').write_bytes({endpoint!r})\n"
+            if endpoint is not None
+            else ""
+        )
+        + ("(profile / 'DevToolsActivePort').mkdir()\n" if nonregular else "")
+        + f"with Path({str(launches)!r}).open('a') as marker: marker.write('launch\\n')\n"
+        + (f"sys.exit({exit_code})\n" if exit_code is not None else "time.sleep(60)\n"),
+        encoding="utf-8",
+    )
+    chrome.chmod(0o755)
+    profile.mkdir()
+    monkeypatch.setenv("CHROME_PATH", str(chrome))
+    monkeypatch.setenv("DBUS_SESSION_BUS_ADDRESS", "unix:path=dbus-secret-sentinel")
+
+    def profile_directory(**_: Any) -> str:
+        return str(profile)
+
+    monkeypatch.setattr(tempfile, "mkdtemp", profile_directory)
+    monkeypatch.setattr(browser, "_STARTUP_TIMEOUT_SECONDS", 0.3, raising=False)
+    popen = subprocess.Popen
+
+    def launch(*args: Any, **kwargs: Any) -> subprocess.Popen[bytes]:
+        process = cast("subprocess.Popen[bytes]", popen(*args, **kwargs))
+        # Complete fixture setup before starting the short endpoint-wait deadline.
+        # The real child still owns all endpoint writes and its eventual exit.
+        deadline = time.monotonic() + 10
+        while not launches.exists() and process.poll() is None and time.monotonic() < deadline:
+            time.sleep(0.01)
+        if exit_code is not None:
+            process.wait(timeout=10)
+        return process
+
+    monkeypatch.setattr(subprocess, "Popen", launch)
+    terminated: list[subprocess.Popen[bytes]] = []
+    terminate_process = _terminate_process
+
+    def terminate(process: subprocess.Popen[bytes]) -> None:
+        assert profile.is_dir(), "the process must be stopped before removing its profile"
+        terminate_process(process)
+        terminated.append(process)
+
+    monkeypatch.setattr(browser, "_terminate_process", terminate)
+    monkeypatch.setitem(globals(), "_terminate_process", terminate)
+    return chrome, profile, launches, terminated
+
+
+def _startup_failure(tmp_path: Path, chrome: Path, *, screenshot: bool = False) -> ValueError:
+    with pytest.raises(ValueError) as caught:
+        if screenshot:
+            render_screenshot(
+                tmp_path / "page-secret-sentinel.html",
+                tmp_path / "output.png",
+                chrome,
+                width=390,
+                height=780,
+                expected_race_count=0,
+            )
+        else:
+            _evaluate_in_chrome(tmp_path / "page-secret-sentinel.html", "source-secret-sentinel")
+    return caught.value
+
+
+def _assert_startup_cleanup(
+    profile: Path, launches: Path, terminated: list[subprocess.Popen[bytes]]
+) -> None:
+    assert launches.read_text(encoding="utf-8") == "launch\n"
+    assert len(terminated) == 1
+    assert terminated[0].poll() is not None
+    assert not profile.exists()
+
+
+@pytest.mark.parametrize("screenshot", [False, True])
+@pytest.mark.parametrize("endpoint", [None, b"12345\n/devtools/browser/fixture\n"])
+def test_chrome_startup_early_exit_diagnostics_precede_cleanup(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, screenshot: bool, endpoint: bytes | None
+) -> None:
+    chrome, profile, launches, terminated = _fake_startup_chrome(
+        tmp_path, monkeypatch, exit_code=17, endpoint=endpoint
+    )
+    error = _startup_failure(tmp_path, chrome, screenshot=screenshot)
+    prefix = "Chromium screenshot failed" if screenshot else "Chrome evaluation failed"
+    assert str(error).startswith(f"{prefix}: Chrome exited before exposing its DevTools endpoint")
+    assert type(error.__cause__) is ValueError
+    assert str(error.__cause__) == "Chrome exited before exposing its DevTools endpoint"
+    assert "process=exited(17)" in str(error)
+    assert f"endpoint={'missing' if endpoint is None else 'ready'}" in str(error)
+    assert "fixture startup stderr" in str(error)
+    _assert_startup_cleanup(profile, launches, terminated)
+
+
+@pytest.mark.parametrize("screenshot", [False, True])
+@pytest.mark.parametrize(
+    ("endpoint", "nonregular", "state", "size", "numeric", "second"),
+    [
+        (None, False, "missing", "unavailable", "unavailable", "unavailable"),
+        (b"endpoint-secret-sentinel", False, "partial", "24", "false", "false"),
+        (b"0" * 2048, False, "malformed", ">512", "false", "false"),
+        (None, True, "nonregular", "unavailable", "unavailable", "unavailable"),
+    ],
+    ids=["missing", "partial", "oversize", "nonregular"],
+)
+def test_chrome_startup_timeout_diagnostics_are_bounded_and_precleanup(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    screenshot: bool,
+    endpoint: bytes | None,
+    nonregular: bool,
+    state: str,
+    size: str,
+    numeric: str,
+    second: str,
+) -> None:
+    chrome, profile, launches, terminated = _fake_startup_chrome(
+        tmp_path, monkeypatch, endpoint=endpoint, nonregular=nonregular
+    )
+    error = _startup_failure(tmp_path, chrome, screenshot=screenshot)
+    assert type(error.__cause__) is TimeoutError
+    assert str(error.__cause__) == "Chrome did not expose its DevTools endpoint"
+    (note,) = error.__cause__.__notes__
+    assert note in str(error)
+    assert len(note.encode("utf-8")) <= 1024
+    assert "process=running" in note
+    assert f"endpoint={state}" in note
+    assert f"endpoint_bytes={size}" in note
+    assert f"numeric_port={numeric}" in note
+    assert f"second_line={second}" in note
+    assert re.search(r"elapsed_ms=\d+", note)
+    assert "cpu_count=" in note and "load=" in note and "dbus_session=unix-shape" in note
+    assert "secret-sentinel" not in str(error)
+    _assert_startup_cleanup(profile, launches, terminated)
+
+
+@pytest.mark.parametrize("screenshot", [False, True])
+@pytest.mark.parametrize("diagnostic_read_fails", [False, True])
+def test_chrome_startup_unreadable_diagnostics_preserve_read_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    screenshot: bool,
+    diagnostic_read_fails: bool,
+) -> None:
+    chrome, profile, launches, terminated = _fake_startup_chrome(
+        tmp_path, monkeypatch, endpoint=b"12345\n/endpoint-secret-sentinel\n"
+    )
+    read_text = Path.read_text
+    original = PermissionError("fixture unreadable endpoint")
+
+    def unreadable(path: Path, *args: Any, **kwargs: Any) -> str:
+        if path.name == "DevToolsActivePort":
+            raise original
+        return read_text(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", unreadable)
+    open_file = browser.os.open
+
+    def unreadable_open(path: Any, *args: Any, **kwargs: Any) -> int:
+        if str(path).endswith("DevToolsActivePort"):
+            raise original
+        return open_file(path, *args, **kwargs)
+
+    if diagnostic_read_fails:
+        monkeypatch.setattr(browser.os, "open", unreadable_open)
+    error = _startup_failure(tmp_path, chrome, screenshot=screenshot)
+    assert error.__cause__ is original
+    assert f"endpoint={'unreadable' if diagnostic_read_fails else 'ready'}" in str(error)
+    assert "fixture unreadable endpoint" in str(error)
+    assert "secret-sentinel" not in str(error)
+    _assert_startup_cleanup(profile, launches, terminated)
+
+
+@pytest.mark.parametrize("screenshot", [False, True])
+@pytest.mark.parametrize(
+    ("endpoint", "cause_type", "numeric"),
+    [
+        (b"port-secret-sentinel\n/endpoint-secret-sentinel\n", ValueError, "false"),
+        (b"12345\n\xffendpoint-secret-sentinel\n", UnicodeDecodeError, "true"),
+    ],
+    ids=["malformed-port", "invalid-utf8"],
+)
+def test_chrome_startup_malformed_diagnostics_keep_original_parse_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    screenshot: bool,
+    endpoint: bytes,
+    cause_type: type[Exception],
+    numeric: str,
+) -> None:
+    chrome, profile, launches, terminated = _fake_startup_chrome(
+        tmp_path, monkeypatch, endpoint=endpoint
+    )
+    error = _startup_failure(tmp_path, chrome, screenshot=screenshot)
+    assert type(error.__cause__) is cause_type
+    assert error.__cause__ is not None
+    (note,) = error.__cause__.__notes__
+    assert "endpoint=malformed" in note
+    assert f"numeric_port={numeric}" in note
+    assert "second_line=true" in note
+    assert "secret-sentinel" not in note
+    assert len(note.encode("utf-8")) <= 1024
+    if cause_type is ValueError:
+        # The original int() message includes the bad port. Only added facts
+        # are redacted; changing the existing exception is outside issue #602.
+        assert (
+            str(error.__cause__) == "invalid literal for int() with base 10: 'port-secret-sentinel'"
+        )
+    _assert_startup_cleanup(profile, launches, terminated)
+
+
+@pytest.mark.parametrize("screenshot", [False, True])
+@pytest.mark.parametrize("whole_formatter", [False, True])
+def test_chrome_startup_diagnostic_probe_failure_preserves_original_and_cleanup(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    screenshot: bool,
+    whole_formatter: bool,
+) -> None:
+    chrome, profile, launches, terminated = _fake_startup_chrome(tmp_path, monkeypatch)
+
+    def unavailable(*args: Any, **kwargs: Any) -> str:
+        raise RuntimeError("probe-secret-sentinel")
+
+    if whole_formatter:
+        monkeypatch.setattr(browser, "_startup_diagnostics", unavailable, raising=False)
+    else:
+        monkeypatch.setattr(browser.os, "getloadavg", unavailable)
+    error = _startup_failure(tmp_path, chrome, screenshot=screenshot)
+    assert type(error.__cause__) is TimeoutError
+    assert str(error.__cause__) == "Chrome did not expose its DevTools endpoint"
+    assert "Chrome startup diagnostics:" in str(error)
+    assert ("unavailable" if whole_formatter else "load=unavailable") in str(error)
+    assert "secret-sentinel" not in str(error)
+    _assert_startup_cleanup(profile, launches, terminated)
+
+
+def test_chrome_endpoint_success_never_collects_startup_diagnostics(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    chrome, profile, launches, terminated = _fake_startup_chrome(
+        tmp_path, monkeypatch, endpoint=b"12345\n/devtools/browser/fixture\n"
+    )
+
+    def unexpected(*args: Any) -> str:
+        pytest.fail("successful startup must not collect diagnostics")
+
+    monkeypatch.setattr(browser, "_startup_diagnostics", unexpected, raising=False)
+    process = subprocess.Popen([str(chrome)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        assert _wait_for_devtools_endpoint(process, profile) == (12345, "/devtools/browser/fixture")
+    finally:
+        _terminate_process(process)
+        shutil.rmtree(profile)
+    _assert_startup_cleanup(profile, launches, terminated)
+
+
+@pytest.mark.parametrize("screenshot", [False, True])
+def test_chrome_page_failure_does_not_gain_startup_diagnostics(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, screenshot: bool
+) -> None:
+    chrome, profile, launches, terminated = _fake_startup_chrome(
+        tmp_path, monkeypatch, endpoint=b"12345\n/devtools/browser/fixture\n"
+    )
+    original = ValueError("fixture page command failed")
+
+    def page_failure(*args: Any, **kwargs: Any) -> None:
+        raise original
+
+    def connected(*args: Any, **kwargs: Any) -> WebSocket:
+        return WebSocket()
+
+    def unexpected(*args: Any) -> str:
+        pytest.fail("a page failure must not collect startup diagnostics")
+
+    # Keep startup/process cleanup real while isolating the subsequent CDP step.
+    monkeypatch.setattr(browser, "create_connection", connected)
+    monkeypatch.setitem(globals(), "create_connection", connected)
+    monkeypatch.setattr(_CdpSocket, "command", page_failure)
+    monkeypatch.setattr(browser, "_startup_diagnostics", unexpected)
+    error = _startup_failure(tmp_path, chrome, screenshot=screenshot)
+    assert error.__cause__ is original
+    assert "fixture page command failed" in str(error)
+    assert "Chrome startup diagnostics:" not in str(error)
+    assert not getattr(original, "__notes__", ())
+    _assert_startup_cleanup(profile, launches, terminated)
 
 
 def test_browser_evaluation_preserves_startup_diagnostics(
@@ -4040,11 +4349,13 @@ def test_browser_evaluation_preserves_startup_diagnostics(
         _evaluate_in_chrome(tmp_path / "unused.html", "JSON.stringify({})")
 
 
+@pytest.mark.parametrize("screenshot", [False, True])
 def test_browser_evaluation_preserves_connection_diagnostics(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    screenshot: bool,
 ) -> None:
-    """A failed DevTools handshake must retain Chrome's stderr too."""
+    """A failed DevTools handshake retains stderr without startup probes."""
     chrome = tmp_path / "failed-chrome-connection"
     chrome.write_text(
         f"#!{sys.executable}\n"
@@ -4075,8 +4386,15 @@ server.serve_forever()
     )
     chrome.chmod(0o755)
     monkeypatch.setenv("CHROME_PATH", str(chrome))
-    with pytest.raises(ValueError, match="fixture Chrome connection failure diagnostic"):
-        _evaluate_in_chrome(tmp_path / "unused.html", "JSON.stringify({})")
+
+    def unexpected(*args: Any) -> str:
+        pytest.fail("a failed handshake must not collect startup diagnostics")
+
+    monkeypatch.setattr(browser, "_startup_diagnostics", unexpected)
+    error = _startup_failure(tmp_path, chrome, screenshot=screenshot)
+    assert "fixture Chrome connection failure diagnostic" in str(error)
+    assert "Chrome startup diagnostics:" not in str(error)
+    assert not getattr(error.__cause__, "__notes__", ())
 
 
 @pytest.mark.parametrize("slow_transition", [False, True])
