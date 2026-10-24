@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 3495,
+  "canonical_url": "https://ufcw3000.org/endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "87761b7c5177d5b6b3c26f68d8257c6c9a24944218e1811a77ec6c063cf1354a",
+  "http_status": null,
+  "id": "capture-ufcw-3000-20261023T075214Z-34a6410f4024",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://ufcw3000.org/endorsements",
+  "retrieved_at": "2026-10-23T07:52:14.572474Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "storage_reference": "sha256/87/87761b7c5177d5b6b3c26f68d8257c6c9a24944218e1811a77ec6c063cf1354a",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: UFCW 3000",
+  "updated_at": null
+}

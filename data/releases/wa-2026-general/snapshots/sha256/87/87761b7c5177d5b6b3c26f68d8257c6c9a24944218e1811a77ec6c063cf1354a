@@ -1,0 +1,20 @@
+{
+  "captured_at": "2026-10-23T07:52:14.572474Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde",
+        "ld-37-state-representative-1--sharon-tomiko-santos"
+      ],
+      "evidence_excerpt": "Kelabe Tewolde, State Representative Pos. 1 (Dual); Sharon Tomiko Santos, State Representative Pos. 1 (Dual)",
+      "evidence_locator": "Official current UFCW 3000 endorsements page, General Election Day November 3 context at numbered lines 104-120, candidate endorsement heading line 147, and 37th Legislative District list lines 232-236; original SHA-256 aff546bf85d582c9801c8da101bdeefafd90f6c32b33c25067ef7f0fd4153563. Capture capture-ufcw-3000-20261023T075214Z-412a6e1d5f49; verified manual record manual-ufcw-3000-20261023T075841Z-d9d4a822c8c6.",
+      "evidence_url": "https://ufcw3000.org/endorsements",
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "October 23 whole-source-block review and exact official locators: data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json; data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. Prior locator: October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
+  "review_note": "Issue #472: OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23 independently reviewed the complete source block and its retained October 23 official originals at 2026-10-23T08:37:27.623952Z; initial research by OpenAI Codex /root/review_472_political_oct23. Retain David Hackney LD11 House Position 1 as a held omission, not withdrawal. Both existing LD32 Position 2 and new LD37 Position 1 explicit duals receive one equally split source point; first appearance of the new dual is unknown. All prior decision dictionaries and historical approvals preserved. Actual review and two-claim admission: data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. No personal shaug source read or native baseline approval asserted. Prior source review: Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Member-story widget changed; endorsement list unchanged. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.",
+  "reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+  "source_id": "ufcw-3000"
+}

@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-10-23T07:52:53.734282Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "evidence_excerpt": "Vote Smith.",
+      "evidence_locator": "Official SGN Editorial Board October 22, 2026 endorsement article, title names U.S. House 9th District and final bold Vote Smith instruction; current article original SHA-256 a9380cbc6d99ce99af0675543a2759912964439ef28dfed9c32c115a489eadf3, numbered text lines 38-40 and 58-59. Capture capture-seattle-gay-news-20261023T075253Z-440582633817; verified manual record manual-seattle-gay-news-20261023T075841Z-d1aebd1111a4.",
+      "evidence_url": "https://www.sgn.org/story/171425/",
+      "race_id": "us-house-9",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "October 23 whole-source-block review and exact official locators: data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json; data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. Prior locator: Official Seattle news index listing the editorial board's 2026 endorsement articles. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.",
+  "review_note": "Issue #472: OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23 independently reviewed the complete source block and its retained October 23 official originals at 2026-10-23T08:37:27.623952Z; initial research by OpenAI Codex /root/review_472_political_oct23. Seven prior July current-cycle SGN decisions remain qualified as live after the primary, not a separate general-election slate; add only the October 22 Adam Smith editorial. All prior decision dictionaries and historical approvals preserved. Actual review and two-claim admission: data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. No personal shaug source read or native baseline approval asserted. Prior source review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle editorial endorsement index; shaug verified all seven general-ballot matches and the omissions of Kshama Sawant and the out-of-inventory library levy.",
+  "reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
+  "source_id": "seattle-gay-news"
+}

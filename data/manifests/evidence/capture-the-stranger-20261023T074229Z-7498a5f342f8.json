@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": 403,
+  "id": "capture-the-stranger-20261023T074229Z-7498a5f342f8",
+  "media_type": null,
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "No original retained for this failed observation.",
+  "requested_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+  "retrieved_at": "2026-10-23T07:42:29.951104Z",
+  "schema_version": "1.0",
+  "source_id": "the-stranger",
+  "title": "Current official publication",
+  "unavailable_reason": "Actual ordinary October 23 HTTP 403; no access bypass or new retry. Prior facts retained.",
+  "updated_at": null
+}

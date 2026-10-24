@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 148194,
+  "canonical_url": "https://www.sageleaders.org/2026-endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "ab5188930579040a448340c4919c9f3a1cf38957c9f77b101f116cb9d79f38d6",
+  "http_status": null,
+  "id": "capture-sage-leaders-20261024T014849Z-1f2a5d39a231",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Raw source retained locally for audit; not redistributed.",
+  "requested_url": "https://www.sageleaders.org/2026-endorsements",
+  "retrieved_at": "2026-10-24T01:48:49.186151Z",
+  "schema_version": "1.0",
+  "source_id": "sage-leaders",
+  "storage_reference": "sha256/ab/ab5188930579040a448340c4919c9f3a1cf38957c9f77b101f116cb9d79f38d6",
+  "storage_scope": "local_only",
+  "title": "Sage Leaders",
+  "updated_at": null
+}
