@@ -32,6 +32,9 @@ from election_guide.evidence.storage import (
 )
 from election_guide.serialization import canonical_json_bytes, read_json
 
+# Exact reviewed current article; retain membership after index rotation.
+SGN_ARTICLES = ("https://www.sgn.org/story/171425/",)
+
 UFCW_INDEX = "https://ufcw3000.org/endorsements"
 UFCW_ARTICLES = (
     "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
@@ -350,7 +353,7 @@ def discover_publication(
     fetch = collector.fetch
     captures = collector.captures
 
-    known: set[str] = set()
+    known: set[str] = set(SGN_ARTICLES)
     for path in root.glob("discovery/*.json"):
         record = read_json(path)
         if record["source_id"] == policy.source_id:

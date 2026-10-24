@@ -174,7 +174,11 @@ def extract_decisions(
                 extraction_confidence=confidence,
             )
         )
-    if sorted(covered_excerpts) != sorted(rule_excerpts):
+    # One explicit source line can decide several races (for example, No on
+    # both I-638 and I-001). Count each detected occurrence once, while each
+    # rule still rejects repeated matches above. Duplicate detected excerpts
+    # remain in the left-hand list and therefore still fail coverage.
+    if sorted(covered_excerpts) != sorted(set(rule_excerpts)):
         raise ExtractionError(
             "complete adapter coverage does not match its configured decision rules "
             f"({len(covered_excerpts)} detected, {len(rule_excerpts)} configured)"

@@ -57,6 +57,9 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
         )
         for i, title in enumerate(titles)
     }
+    articles["https://www.sgn.org/story/171425/"] = headline.format(
+        "SGN Endorsements: Adam Smith (US House of Representatives, 9th District)"
+    ).encode()
     first_links = [
         f'<a href="/story/{168513 + i}/News/Seattle/SGN%20Endorsements">Article</a>'
         for i in range(1, len(titles))
@@ -99,7 +102,7 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     assert first.exit_code == 0, first.output
     event = json.loads(first.output)["automatic"][0]
     assert event["status"] == "created", event
-    assert len(event["diff"]) == 7
+    assert len(event["diff"]) == 8
     assert "https://www.sgn.org/ch/News/Seattle?start=10" in calls
     # A changed article body with the same heading is still review work.
     articles["https://www.sgn.org/story/168514/"] += b"<p>Changed authored wording.</p>"
@@ -235,6 +238,9 @@ def test_sgn_failed_learning_survives_rotation_on_fresh_runner(
         f"https://www.sgn.org/story/{168513 + i}/": f"<h1>{title}</h1>".encode()
         for i, title in enumerate(titles)
     }
+    pages["https://www.sgn.org/story/171425/"] = (
+        b"<h1>SGN Endorsements: Adam Smith (US House of Representatives, 9th District)</h1>"
+    )
     original_index = "".join(
         f'<a href="/story/{168513 + i}/News/Seattle/SGN%20Endorsements">Story</a>'
         for i in range(len(titles))
@@ -334,12 +340,20 @@ def test_sgn_escaped_heading_size_preserves_recoverable_archive(
     policy_path.write_text(yaml.safe_dump(policy.model_dump(mode="json")))
     index = "https://www.sgn.org/ch/News/Seattle"
     known = "https://www.sgn.org/story/168513/"
+    required = "https://www.sgn.org/story/171425/"
     new = "https://www.sgn.org/story/199999/"
     original_article = (
         b"<h1>SGN Endorsements Pramila Jayapal (US House of Representatives 7th District)</h1>"
     )
     original_index = b'<a href="/story/168513/News/Seattle/SGN%20Endorsements">Boundary</a>'
-    pages: dict[str, bytes | Exception] = {index: original_index, known: original_article}
+    required_article = (
+        b"<h1>SGN Endorsements: Adam Smith (US House of Representatives, 9th District)</h1>"
+    )
+    pages: dict[str, bytes | Exception] = {
+        index: original_index,
+        known: original_article,
+        required: required_article,
+    }
 
     def fetch(url: str) -> HttpArtifact:
         value = pages[url]
@@ -372,16 +386,18 @@ def test_sgn_escaped_heading_size_preserves_recoverable_archive(
     )
     history = {p.relative_to(state): p.read_bytes() for p in state.rglob("*.json")}
     # Each literal quote becomes six ASCII bytes (&quot;). Account independently
-    # for both paragraph wrappers, the 71-byte digest comment and the HTML shell.
+    # for all three paragraphs, the 71-byte digest comment and the HTML shell.
     fixed = (
-        b"<html><body><p>SGN Endorsements </p><p>SGN Endorsements New</p><!--"
-        + b"0" * 64
-        + b"--></body></html>"
+        b"<html><body><p>SGN Endorsements </p><p>SGN Endorsements Required Article</p>"
+        b"<p>SGN Endorsements New</p><!--" + b"0" * 64 + b"--></body></html>"
     )
     quotes, remainder = divmod(derived_size - len(fixed), 6)
     expanded_article = b"<h1>SGN Endorsements " + b'"' * quotes + b"x" * remainder + b"</h1>"
     assert len(expanded_article) < 25 * 1024 * 1024
     pages[known] = expanded_article
+    # Keep every heading unrecognized so the exact-limit case still exercises
+    # the existing no-decision failure after the bounded comparison is audited.
+    pages[required] = b"<h1>SGN Endorsements Required Article</h1>"
     pages[index] = original_index + b'<a href="/story/199999/">SGN Endorsements New</a>'
     pages[new] = b"<h1>SGN Endorsements New</h1>"
     failed = run(state, 20)
@@ -394,6 +410,7 @@ def test_sgn_escaped_heading_size_preserves_recoverable_archive(
     assert {m["requested_url"] for m in originals if m["capture_method"] == "static_html"} == {
         index,
         known,
+        required,
         new,
     }
     if derived_size == 25 * 1024 * 1024:
@@ -422,6 +439,7 @@ def test_sgn_escaped_heading_size_preserves_recoverable_archive(
         target.write_bytes(raw)
     pages[index] = original_index
     pages[known] = original_article
+    pages[required] = required_article
     pages[new] = OSError("learned article unavailable after link rotation")
     retry = run(independent, 21)
     assert retry["status"] == "failed" and retry["consecutive_failures"] == 2
