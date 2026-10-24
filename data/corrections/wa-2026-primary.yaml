@@ -1,6 +1,21 @@
 schema_version: '1.0'
 election_id: wa-2026-primary
 entries:
+- corrected_on: 2026-10-24
+  headline: Preview of earlier primary endorsement-meter borders.
+  body: >-
+    This inspection copy rebuilds the primary overview and race pages from the
+    current reviewed inputs with the earlier endorsement-meter borders. All 538
+    recorded decisions, counts, shares, colors, allocations, certified results
+    and touch inspection stay the same. Production still uses its published
+    primary archive; production restoration remains pending.
+  provenance:
+  - label: Primary guide
+    url: /e/wa-2026-primary/
+  - label: LD32 House Position 1
+    url: /e/wa-2026-primary/races/ld-32-state-representative-1/
+  - label: Meter-border restoration
+    url: https://github.com/shaug/seattle-election-guide/issues/598
 - corrected_on: 2026-10-23
   headline: Rounded split borders on the archived primary overview.
   body: >-

@@ -256,6 +256,15 @@ staged Updates preparation and activation required when current code renders an
 archive's race pages while its overview and Updates remain frozen in that archive.
 It does not change the automatic current-general publication path.
 
+An explicitly opted-in open same-repository draft PR may compose an unpublished inspection copy
+with both elections built at its exact clean head. This narrow [complete-preview path](HOSTING.md#previewing-a-rebuilt-primary-overview)
+uses primary identity `preview-pr-<PR>-primary-<fullHEAD>` and an ignored temporary hosting manifest
+whose hashes come from the actual local bundle. It omits publication-only software history and
+publishes no GitHub Release, archive, tag or reviewed pin. The original tracked declarations still
+pass their normal prepublication check, and both local bundles pass hosting staging and independent
+verification before a preview upload. This exception grants no production approval and does not
+alter the merged-source archive and protected pin activation sequence above.
+
 ## Automatic delivery and evidence
 
 The five independent CI lanes feed the stable `check` status. A reviewed release request on

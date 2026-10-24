@@ -30,6 +30,8 @@ jobs:
       github.event.pull_request.state == 'open' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       contains(github.event.pull_request.labels.*.name, 'deploy preview') &&
+      (!contains(github.event.pull_request.labels.*.name, 'preview primary from source') ||
+       github.event.pull_request.draft == true) &&
       vars.CLOUDFLARE_PAGES_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -89,11 +91,73 @@ jobs:
         run: uv run election-guide release automation build --source-sha "$HEAD_SHA" --output-dir dist
         env:
           GH_TOKEN: ${{ github.token }}
-      # Only the election built from source above is supplied locally. Any other
-      # declared election is resolved from the release that published it,
-      # exactly as CI stages it -- a historical bundle cannot be rebuilt
-      # (docs/HOSTING.md, Historical bundles).
+      # Draft-only preview, never a production archive: both elections are
+      # built at HEAD, and primary receives an explicitly unpublished identity.
+      - name: Build an unpublished primary preview at the pull request head
+        if: contains(github.event.pull_request.labels.*.name, 'preview primary from source')
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+            --release-version "preview-pr-${PR_NUMBER}-primary-${HEAD_SHA}" \
+            --generated-at "$(git show -s --format=%cI "$HEAD_SHA")" \
+            --git-commit "$HEAD_SHA" \
+            --output-dir dist/primary-preview
+      - name: Stage and verify both head-built preview bundles
+        if: contains(github.event.pull_request.labels.*.name, 'preview primary from source')
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          uv run python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          import yaml
+
+          from election_guide.hosting import bundle_hash, stage_pages_site
+
+          head = os.environ["HEAD_SHA"]
+          site = yaml.safe_load(Path("config/hosting/site.yaml").read_text())
+          primary = next(e for e in site["elections"] if e["election_id"] == "wa-2026-primary")
+          bundle = Path("dist/primary-preview/bundle")
+          status = json.loads((bundle / "release-status.json").read_text())
+          version = f"preview-pr-{os.environ['PR_NUMBER']}-primary-{head}"
+          if status["release_version"] != version:
+              raise ValueError("primary preview must use this PR head's unpublished identity")
+          primary.update(
+              bundle_id=f"wa-2026-primary-{status['release_version']}",
+              release_version=status["release_version"],
+              source_panel_id=status["source_panel_id"],
+              source_panel_hash=status["source_panel_hash"],
+              source_registry_hash=status.get("source_registry_hash"),
+              git_commit=head,
+              release_manifest_sha256=hashlib.sha256(
+                  (bundle / "release-manifest.json").read_bytes()
+              ).hexdigest(),
+              bundle_sha256=bundle_hash(bundle),
+          )
+          preview = Path("dist/preview-site.yaml")
+          preview.write_text(yaml.safe_dump(site, sort_keys=False))
+          stage_pages_site(
+              preview,
+              {
+                  site["elections"][0]["bundle_id"]: Path("dist/reproducibility-a/bundle"),
+                  primary["bundle_id"]: bundle,
+              },
+              Path("dist/cloudflare-site"),
+              expected_current_git_commit=head,
+          )
+          PY
+          uv run election-guide hosting verify \
+            dist/preview-site.yaml \
+            dist/cloudflare-site \
+            --expected-git-commit "$HEAD_SHA"
+      # Ordinary previews keep the published-primary path. The original tracked
+      # declaration was verified above, including for the draft-only composition.
       - name: Stage and verify the Pages site
+        if: "!contains(github.event.pull_request.labels.*.name, 'preview primary from source')"
         run: |
           uv run election-guide release automation stage \
             --bundle-dir dist/reproducibility-a/bundle \

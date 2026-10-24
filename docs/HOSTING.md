@@ -137,7 +137,7 @@ canonical host is a claim this project wants to publish. The rule lives in the w
 
 ## Published releases
 
-Every election the site serves is expected to have a published GitHub Release whose tag is the
+Every election served in production is expected to have a published GitHub Release whose tag is the
 `release_version` declared for it in `config/hosting/site.yaml`. That archive is the durable copy of
 the bundle: it is what a historical election is resolved from once it is no longer built from
 source, and what an audit compares a deployed guide against.
@@ -160,8 +160,8 @@ its reviewed declaration, reproducible bundle, and staged site. After merge, CI 
 publishes the verified archive and retains publication evidence before production upload.
 The sequence is described in [RELEASE.md](RELEASE.md).
 
-The one exception is prepublication staging of the manifest-declared current election. Automation
-may name that exact bundle once with `--candidate-bundle-id`; every historical election must still
+The production exception is prepublication staging of the manifest-declared current election.
+Automation may name that exact bundle once with `--candidate-bundle-id`; every historical election must still
 have a published, non-draft Release. A historical, undeclared, mismatched, or repeated candidate is
 rejected. Use one value for both the exception and the local bundle supplied to staging:
 
@@ -178,13 +178,13 @@ uv run election-guide hosting stage config/hosting/site.yaml \
 
 That mode changes only the remote-publication check; staging still verifies bundle identity,
 release metadata, canonical assets, hashes, and the current bundle's commit. It is legal only while
-preparing or previewing the current candidate. Before upload, deployment must run
+preparing or previewing the current candidate. Before production upload, deployment must run
 `hosting verify-releases` again with no candidate option, so an
 unpublished candidate can never cross the production boundary.
 
 ## Historical bundles
 
-Only the current election is built during staging. An older election is downloaded from its
+Ordinary staging builds only the current election. An older election is downloaded from its
 declared Release, because rebuilding an existing release identity with newer rendering code
 would violate its artifact hashes. To correct an archived guide, build and publish a new immutable
 release from merged mainline code and the completed election inputs, then update its version and
@@ -205,8 +205,10 @@ uv run election-guide hosting stage config/hosting/site.yaml \
 ```
 
 Each unresolved election's versioned ZIP is downloaded through the GitHub CLI, unpacked under that
-directory, and staged like any other bundle. Supplying every bundle locally downloads nothing; the
-supported two-election composition instead supplies the general locally and resolves the primary.
+directory, and staged like any other bundle. Supplying every bundle locally downloads nothing;
+ordinary two-election composition supplies the general locally and resolves the primary. The
+explicitly unpublished draft preview below may instead supply both elections built at the pull
+request head, under a distinct preview identity.
 
 An election resolved this way **must** declare `bundle_sha256`, and staging rejects it otherwise. A
 downloaded archive is remote input, and the release manifest travelling inside it cannot vouch for
@@ -340,6 +342,29 @@ because a preview is a copy of the site rather than a separate site.
 
 Production is unaffected. The `pages:deploy` script defaults to `--branch=main`; only the preview
 workflow overrides it, by setting `PAGES_BRANCH`.
+
+### Previewing a rebuilt primary overview
+
+For [#598](https://github.com/shaug/seattle-election-guide/issues/598), an open same-repository
+**draft** pull request may carry both **`deploy preview`** and **`preview primary from source`**.
+The additional label builds primary from the exact clean pull request head alongside the normal
+general build. Primary uses `preview-pr-<PR>-primary-<fullHEAD>` and the head commit's timestamp;
+it omits publication-only software history. Without the additional label, the ordinary preview
+continues to resolve the published primary. A non-draft request carrying it cannot deploy.
+
+The workflow first verifies the original tracked `config/hosting/site.yaml` declarations with the
+existing current-candidate exception. It then writes only ignored `dist/preview-site.yaml`, replacing
+primary's identity, source metadata, manifest hash and whole-bundle hash from the actual local
+bundle, with its expected source commit explicitly set to the pull request head. Both local bundles
+pass through normal hosting staging and independent verification before upload. Thus the primary
+overview is copied from the newly built bundle, and stale source identities, missing bundles or
+incorrect hashes fail before upload.
+
+This is an unpublished inspection copy under the existing `pr-<number>` alias, credentials,
+publication switch, noindex behavior and close teardown. It changes no tracked release declaration,
+published archive, tag or pin. It grants no production publication approval: archived-election
+refreshes still require a clean merged source, a new immutable published archive and protected pin
+activation as described in [RELEASE.md](RELEASE.md#latest-manual-publication-boundary).
 
 ### Preview retention and limits (decision for #269)
 

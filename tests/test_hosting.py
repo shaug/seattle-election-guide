@@ -1817,6 +1817,7 @@ STAGE_COMMANDS = (
     "release automation stage",
     "release automation build",
     "make check-release-reproducible",
+    "stage_pages_site(",
 )
 
 
@@ -1901,11 +1902,13 @@ def _workflow_staging_surfaces() -> list[_StagingSurface]:
 def test_every_staging_surface_resolves_released_bundles_the_same_way() -> None:
     """Issue 361: no staging surface may stay on the pre-215 single-bundle model.
 
-    Only the current election is built from source, so every other declared
+    Ordinary staging builds only the current election, so every other declared
     election has to be resolved from the release that published it. The option
     pair reached the three surfaces one ticket at a time -- 215 for CI, 271 for
     local, 361 for the preview -- so this discovers the invocations instead of
-    naming them, and a fourth surface is covered the day it is added.
+    naming them, and a fourth surface is covered the day it is added. The #598
+    unpublished draft-preview composition supplies both local bundles instead;
+    its actual composition and admission are exercised in test_preview_composition.
     """
     surfaces = _makefile_staging_surfaces() + _workflow_staging_surfaces()
 
@@ -1919,6 +1922,15 @@ def test_every_staging_surface_resolves_released_bundles_the_same_way() -> None:
         surface.surface for surface in surfaces
     }
     for surface in surfaces:
+        if "stage_pages_site(" in surface.command:
+            assert surface.surface == "deploy-pr-preview.yml"
+            assert surface.env == {"PR_NUMBER": "${{ github.event.pull_request.number }}"}
+            assert "dist/reproducibility-a/bundle" in surface.command
+            assert "dist/primary-preview/bundle" in surface.command
+            assert "expected_current_git_commit=head" in surface.command
+            assert "released_bundle_dir" not in surface.command
+            assert "hosting verify" in surface.command
+            continue
         assert any(command in surface.command for command in STAGE_COMMANDS[1:]), surface.surface
         assert "election-guide hosting stage" not in surface.command, surface.surface
         if "automation stage" in surface.command:

@@ -2,6 +2,21 @@ schema_version: "1.0"
 election_id: wa-2026-general
 entries:
   - corrected_on: 2026-10-24
+    headline: "Preview of earlier endorsement-meter borders."
+    body: >-
+      This inspection copy shows the approved earlier endorsement-meter borders
+      on the general guide and race pages. Production has not changed. All 929
+      recorded decisions, scores, shares, colors and touch, hover and keyboard
+      interactions stay the same. The linked rollback describes the separate
+      protected production sequence.
+    provenance:
+      - label: "General guide"
+        url: /e/wa-2026-general/
+      - label: "LD32 House Position 1"
+        url: /e/wa-2026-general/races/ld-32-state-representative-1/
+      - label: "Meter-border restoration"
+        url: https://github.com/shaug/seattle-election-guide/issues/598
+  - corrected_on: 2026-10-24
     headline: "Added UFCW’s Jayapal, Smith, Birk and Angelis endorsements."
     body: >-
       UFCW 3000’s current official list endorses Pramila Jayapal for U.S.
