@@ -1,0 +1,111 @@
+{
+  "capture_id": "capture-ufcw-3000-20261024T084655Z-9bc88b9e74ab",
+  "checked_at": "2026-10-24T08:46:55Z",
+  "content_changed": true,
+  "diff": [
+    {
+      "after": {
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "evidence_excerpt": "Vote NO on I-638 and I-001 — Protect Kids. Reject Hate.",
+        "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "initiative-26-001",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "initiative-26-001"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "evidence_excerpt": "Vote NO on I-638 and I-001 — Protect Kids. Reject Hate.",
+        "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "initiative-26-638",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "initiative-26-638"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "evidence_excerpt": "Vote NO on I-645 — Protect Tax Relief for Working People",
+        "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "initiative-26-645",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "initiative-26-645"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde",
+          "ld-37-state-representative-1--sharon-tomiko-santos"
+        ],
+        "evidence_excerpt": "Kelabe Tewolde, State Representative Pos. 1 (Dual) Sharon Tomiko Santos, State Representative Pos. 1 (Dual)",
+        "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-37-state-representative-1",
+        "requires_review": true,
+        "status": "dual_endorsement"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-37-state-representative-1"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "ld-43-state-representative-2--shaun-scott"
+        ],
+        "evidence_excerpt": "Shaun Scott, State Representative Pos 2",
+        "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "ld-43-state-representative-2",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "ld-43-state-representative-2"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "evidence_excerpt": "Jaime Hawk, Position 3",
+        "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-3",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-3"
+    }
+  ],
+  "error": null,
+  "id": "refresh-ufcw-3000-20261024T084655Z-28d0f4558139",
+  "previous_snapshot_id": "extraction-ufcw-3000-20261023T085015Z-db27d5918934",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-ufcw-3000-20261024T084655Z-6ddf00a0ba5d",
+  "source_id": "ufcw-3000",
+  "status": "updated"
+}

@@ -1,0 +1,13 @@
+{
+  "capture_id": "capture-transit-riders-union-20261024T084655Z-001d5372688b",
+  "checked_at": "2026-10-24T08:46:55Z",
+  "content_changed": true,
+  "diff": [],
+  "error": null,
+  "id": "refresh-transit-riders-union-20261024T084655Z-05573bd19f87",
+  "previous_snapshot_id": "extraction-transit-riders-union-20261023T085015Z-685cf64b6fc9",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-transit-riders-union-20261024T084655Z-c0aa504b9e09",
+  "source_id": "transit-riders-union",
+  "status": "updated"
+}

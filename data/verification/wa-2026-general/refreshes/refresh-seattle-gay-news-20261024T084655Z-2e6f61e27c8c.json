@@ -1,0 +1,30 @@
+{
+  "capture_id": "capture-seattle-gay-news-20261024T084655Z-af1376b2a312",
+  "checked_at": "2026-10-24T08:46:55Z",
+  "content_changed": true,
+  "diff": [
+    {
+      "after": {
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "evidence_excerpt": "SGN Endorsements: Adam Smith (US House of Representatives, 9th District)",
+        "evidence_locator": "Official current SGN story/171425 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "us-house-9",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "us-house-9"
+    }
+  ],
+  "error": null,
+  "id": "refresh-seattle-gay-news-20261024T084655Z-2e6f61e27c8c",
+  "previous_snapshot_id": "extraction-seattle-gay-news-20261023T085015Z-5b79c602d312",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-seattle-gay-news-20261024T084655Z-bf487b3756e1",
+  "source_id": "seattle-gay-news",
+  "status": "updated"
+}
