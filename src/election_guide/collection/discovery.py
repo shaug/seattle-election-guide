@@ -432,6 +432,8 @@ def discover_publication(
         + "".join(headings)
         + f"<!--{evidence_fingerprint(comparison)}--></body></html>"
     ).encode()
+    if len(body) > 25 * 1024 * 1024:
+        raise ValueError("SGN derived comparison exceeds the 25 MiB artifact limit")
     record = {
         "source_id": policy.source_id,
         "checked_at": checked_at.isoformat(),
@@ -560,6 +562,8 @@ def discover_ufcw_publication(
         "indexes": {UFCW_INDEX: hashlib.sha256(raw).hexdigest()},
     }
     body = raw + f"<!--{evidence_fingerprint(comparison)}-->".encode()
+    if len(body) > 25 * 1024 * 1024:
+        raise ValueError("UFCW derived comparison exceeds the 25 MiB artifact limit")
     record = {
         "source_id": "ufcw-3000",
         "checked_at": checked_at.isoformat(),

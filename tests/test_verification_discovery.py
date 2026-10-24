@@ -306,6 +306,156 @@ def test_sgn_failed_learning_survives_rotation_on_fresh_runner(
     )
 
 
+@pytest.mark.parametrize("derived_size", [25 * 1024 * 1024, 25 * 1024 * 1024 + 1])
+def test_sgn_escaped_heading_size_preserves_recoverable_archive(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, derived_size: int
+) -> None:
+    from election_guide.collection.verification import read_policy
+    from election_guide.collection.verification_runtime import run_verification
+    from election_guide.collection.verification_state import validate_state
+
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
+    policy = read_policy(ROOT / "config/verification.yaml")
+    election = policy.elections[0]
+    policy = policy.model_copy(
+        update={
+            "elections": [
+                election.model_copy(
+                    update={
+                        "sources": [
+                            s for s in election.sources if s.source_id == "seattle-gay-news"
+                        ]
+                    }
+                )
+            ]
+        }
+    )
+    policy_path = tmp_path / "policy.yaml"
+    policy_path.write_text(yaml.safe_dump(policy.model_dump(mode="json")))
+    index = "https://www.sgn.org/ch/News/Seattle"
+    known = "https://www.sgn.org/story/168513/"
+    new = "https://www.sgn.org/story/199999/"
+    original_article = (
+        b"<h1>SGN Endorsements Pramila Jayapal (US House of Representatives 7th District)</h1>"
+    )
+    original_index = b'<a href="/story/168513/News/Seattle/SGN%20Endorsements">Boundary</a>'
+    pages: dict[str, bytes | Exception] = {index: original_index, known: original_article}
+
+    def fetch(url: str) -> HttpArtifact:
+        value = pages[url]
+        if isinstance(value, Exception):
+            raise value
+        return HttpArtifact(value, 200, url, [], "text/html")
+
+    monkeypatch.setattr("election_guide.collection.discovery.fetch_http", fetch)
+
+    def run(root: Path, day: int) -> dict[str, Any]:
+        report = run_verification(
+            policy,
+            root,
+            datetime.fromisoformat(f"2026-10-{day:02d}T18:00:00+00:00"),
+            live=True,
+            fixtures=None,
+        )
+        validate_state(policy, root)
+        return report["automatic"][0]
+
+    state = tmp_path / "state"
+    baseline = run(state, 19)
+    assert baseline["status"] == "created"
+    approve_baseline(
+        state / "wa-2026-general",
+        baseline["snapshot_id"],
+        "Fixture reviewer",
+        datetime.fromisoformat("2026-10-19T19:00:00+00:00"),
+        "Authored fixture publication only; no actual source approval or live adoption.",
+    )
+    history = {p.relative_to(state): p.read_bytes() for p in state.rglob("*.json")}
+    # Each literal quote becomes six ASCII bytes (&quot;). Account independently
+    # for both paragraph wrappers, the 71-byte digest comment and the HTML shell.
+    fixed = (
+        b"<html><body><p>SGN Endorsements </p><p>SGN Endorsements New</p><!--"
+        + b"0" * 64
+        + b"--></body></html>"
+    )
+    quotes, remainder = divmod(derived_size - len(fixed), 6)
+    expanded_article = b"<h1>SGN Endorsements " + b'"' * quotes + b"x" * remainder + b"</h1>"
+    assert len(expanded_article) < 25 * 1024 * 1024
+    pages[known] = expanded_article
+    pages[index] = original_index + b'<a href="/story/199999/">SGN Endorsements New</a>'
+    pages[new] = b"<h1>SGN Endorsements New</h1>"
+    failed = run(state, 20)
+    assert failed["status"] == "failed" and failed["snapshot_id"] is None
+    assert failed["previous_snapshot_id"] == baseline["snapshot_id"]
+    assert failed["consecutive_failures"] == 1
+    assert len(list(state.rglob("extractions/*.json"))) == 1
+    manifests = [json.loads(p.read_text()) for p in state.rglob("manifests/*.json")]
+    originals = [m for m in manifests if m["retrieved_at"].startswith("2026-10-20")]
+    assert {m["requested_url"] for m in originals if m["capture_method"] == "static_html"} == {
+        index,
+        known,
+        new,
+    }
+    if derived_size == 25 * 1024 * 1024:
+        comparison = next(m for m in manifests if m["id"] == failed["capture_id"])
+        assert comparison["byte_length"] == derived_size
+        assert failed["error"] == "complete adapter detected no decision lines"
+        assert len(list(state.rglob("discovery/*.json"))) == 2
+    else:
+        assert failed["capture_id"] is None
+        assert len(list(state.rglob("discovery/*.json"))) == 1
+        assert all(m["capture_method"] == "static_html" for m in originals)
+    assert any(
+        new in json.loads(p.read_text())["articles"]
+        for p in state.rglob("discovery-obligations/*.json")
+    )
+    for relative, raw in history.items():
+        assert (state / relative).read_bytes() == raw
+    # Public records alone must preserve this failure and learned membership.
+    history = {p.relative_to(state): p.read_bytes() for p in state.rglob("*.json")}
+    independent = tmp_path / "independent"
+    assert all(p.suffix == ".json" for p in state.rglob("*") if p.is_file())
+    assert not list(state.rglob("vault/**/*.json"))
+    for relative, raw in history.items():
+        target = independent / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(raw)
+    pages[index] = original_index
+    pages[known] = original_article
+    pages[new] = OSError("learned article unavailable after link rotation")
+    retry = run(independent, 21)
+    assert retry["status"] == "failed" and retry["consecutive_failures"] == 2
+    assert retry["previous_snapshot_id"] == baseline["snapshot_id"]
+    pages[new] = b"<h1>SGN Endorsements New</h1><p>Recovered authored article.</p>"
+    recovered = run(independent, 22)
+    assert recovered["status"] == "updated" and recovered["baseline_reviewed"] is False
+    assert recovered["previous_snapshot_id"] == baseline["snapshot_id"]
+    assert recovered["consecutive_failures"] == 0 and recovered["escalated"] is False
+    assert run(independent, 23)["status"] == "unchanged"
+    for relative, raw in history.items():
+        assert (independent / relative).read_bytes() == raw
+    tasks = runner.invoke(
+        app,
+        [
+            "verification",
+            "reconcile",
+            str(policy_path),
+            "--state-root",
+            str(independent),
+            "--repository",
+            "example/guide",
+            "--revision",
+            "a" * 40,
+            "--as-of",
+            "2026-10-23",
+            "--dry-run",
+        ],
+    )
+    assert tasks.exit_code == 0, tasks.output
+    assert failed["id"] in tasks.output and retry["id"] in tasks.output
+    assert recovered["id"] in tasks.output and "**failed**" in tasks.output
+
+
 @pytest.mark.parametrize(
     "corruption",
     ["url", "duplicate", "bound", "capture", "source", "time", "method", "index", "identity"],

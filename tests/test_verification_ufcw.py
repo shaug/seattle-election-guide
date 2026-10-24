@@ -175,6 +175,125 @@ def test_ufcw_required_article_failure_preserves_baseline(
 
 
 @pytest.mark.parametrize(
+    ("original_size", "expected_status"),
+    [
+        pytest.param(25 * 1024 * 1024 - 71, "updated", id="comparison-at-limit"),
+        pytest.param(25 * 1024 * 1024 - 70, "failed", id="comparison-one-byte-over"),
+        pytest.param(25 * 1024 * 1024, "failed", id="original-at-limit"),
+    ],
+)
+def test_ufcw_derived_size_boundary_preserves_recoverable_archive(
+    tmp_path: Path,
+    publication: tuple[Path, dict[str, Any]],
+    original_size: int,
+    expected_status: str,
+) -> None:
+    policy, pages = publication
+    state = tmp_path / "state"
+    baseline = run(policy, state, 19)
+    approve_baseline(
+        state / "wa-2026-general",
+        baseline["snapshot_id"],
+        "Fixture reviewer",
+        datetime.fromisoformat("2026-10-19T19:00:00+00:00"),
+        "Authored HTTP fixture only; no live adoption or actual source approval.",
+    )
+    history = {p.relative_to(state): p.read_bytes() for p in state.rglob("*.json")}
+    original_landing = pages[INDEX]
+    landing = original_landing + f'<a href="{NEW}">New endorsements</a>'.encode()
+    # A 64-digit digest inside the seven-byte HTML comment adds exactly 71 bytes.
+    pages[INDEX] = landing + b"<!--" + b"x" * (original_size - len(landing) - 7) + b"-->"
+    pages[NEW] = article()
+    assert len(pages[INDEX]) == original_size
+    observed = run(policy, state, 20)
+    assert observed["status"] == expected_status
+    assert observed["previous_snapshot_id"] == baseline["snapshot_id"]
+    assert any(
+        json.loads(p.read_text())["articles"] == [NEW]
+        for p in state.rglob("discovery-obligations/*.json")
+    )
+    manifests = [json.loads(p.read_text()) for p in state.rglob("manifests/*.json")]
+    originals = [
+        m
+        for m in manifests
+        if m["retrieved_at"].startswith("2026-10-20") and m["capture_method"] == "static_html"
+    ]
+    assert {m["requested_url"] for m in originals} == {INDEX, *KNOWN, NEW}
+    for manifest in originals:
+        assert manifest["http_status"] == 200
+        assert (
+            manifest["content_sha256"]
+            == hashlib.sha256(pages[manifest["requested_url"]]).hexdigest()
+        )
+    assert all(m["availability"] == "observed" and "storage_reference" not in m for m in manifests)
+    validation = CliRunner().invoke(
+        app, ["verification", "validate", str(policy), "--state-root", str(state)]
+    )
+    assert validation.exit_code == 0, validation.output
+    if expected_status == "failed":
+        assert observed["snapshot_id"] is None and observed["capture_id"] is None
+        assert observed["consecutive_failures"] == 1 and observed["escalated"] is False
+        assert len(list(state.rglob("extractions/*.json"))) == 1
+        assert len(list(state.rglob("discovery/*.json"))) == 1
+        assert not any(
+            m["retrieved_at"].startswith("2026-10-20") and m["capture_method"] == "manual_upload"
+            for m in manifests
+        )
+        previous_snapshot = baseline["snapshot_id"]
+    else:
+        comparison = next(m for m in manifests if m["id"] == observed["capture_id"])
+        assert comparison["byte_length"] == 25 * 1024 * 1024
+        assert comparison["capture_method"] == "manual_upload" and comparison["http_status"] is None
+        previous_snapshot = observed["snapshot_id"]
+
+    # Restore only public records on a fresh runner, with no retained originals or key.
+    assert all(p.suffix == ".json" for p in state.rglob("*") if p.is_file())
+    assert not list(state.rglob("vault/**/*.json"))
+    independent = tmp_path / "independent"
+    for path in state.rglob("*.json"):
+        target = independent / path.relative_to(state)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(path.read_bytes())
+    pages[INDEX] = original_landing
+    pages[NEW] = OSError("learned article unavailable after landing link rotates")
+    retry = run(policy, independent, 21)
+    assert retry["status"] == "failed" and retry["previous_snapshot_id"] == previous_snapshot
+    assert retry["consecutive_failures"] == (2 if expected_status == "failed" else 1)
+    pages[NEW] = article("Publication recovered after link rotation.")
+    recovered = run(policy, independent, 22)
+    assert recovered["status"] == "updated" and recovered["baseline_reviewed"] is False
+    assert recovered["previous_snapshot_id"] == previous_snapshot
+    assert recovered["consecutive_failures"] == 0 and recovered["escalated"] is False
+    assert run(policy, independent, 23)["status"] == "unchanged"
+    for relative, raw in history.items():
+        assert (independent / relative).read_bytes() == raw
+    validation = CliRunner().invoke(
+        app, ["verification", "validate", str(policy), "--state-root", str(independent)]
+    )
+    assert validation.exit_code == 0, validation.output
+    reconciliation = CliRunner().invoke(
+        app,
+        [
+            "verification",
+            "reconcile",
+            str(policy),
+            "--state-root",
+            str(independent),
+            "--repository",
+            "example/guide",
+            "--revision",
+            "a" * 40,
+            "--as-of",
+            "2026-10-23",
+            "--dry-run",
+        ],
+    )
+    assert reconciliation.exit_code == 0, reconciliation.output
+    assert retry["id"] in reconciliation.output and "**failed**" in reconciliation.output
+    assert observed["id"] in reconciliation.output and recovered["id"] in reconciliation.output
+
+
+@pytest.mark.parametrize(
     "url",
     [
         "http://ufcw3000.org/news/2026/10/20/new-endorsements",
