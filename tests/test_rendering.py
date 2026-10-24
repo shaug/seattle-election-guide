@@ -4724,8 +4724,8 @@ def test_race_detail_split_meter_stays_statically_segmented(
     assert result["rest"]["splitBorder"] != result["rest"]["splitFill"]
 
 
-def test_candidate_meter_closing_split_border_follows_rounded_tip(tmp_path: Path) -> None:
-    """The visible midpoint seam curves at both ends of a partial run (#598)."""
+def test_candidate_meter_closing_split_border_uses_lower_half_seam(tmp_path: Path) -> None:
+    """The pre-#605 closing seam belongs to the lower half (#598 rollback)."""
     html_path = _write_race_html(tmp_path, published_view_model(), "ld-32-state-representative-1")
     screenshot_path = tmp_path / "candidate-split-tips.png"
 
@@ -4759,6 +4759,9 @@ def test_candidate_meter_closing_split_border_follows_rounded_tip(tmp_path: Path
             startBottom: rect(start.querySelector('.meter-half-bottom')),
             endTop: rect(end.querySelector('.meter-half-top')),
             splitBorderColor: getComputedStyle(lower).borderTopColor,
+            lowerBorderWidth: getComputedStyle(lower).borderTopWidth,
+            upperBorderWidth:
+              getComputedStyle(end.querySelector('.meter-half-top')).borderBottomWidth,
           });
         })()""",
         viewport=(1440, 1000),
@@ -4766,26 +4769,28 @@ def test_candidate_meter_closing_split_border_follows_rounded_tip(tmp_path: Path
     )
     with Image.open(screenshot_path) as opened:
         screenshot = opened.convert("RGB")
-        # The opening border curves at the left edge; the closing border must
-        # curve at the right edge. Its seam sits one pixel above the midpoint
-        # under the upper half, then bends upward near the rounded tip.
+        # The predecessor rounds the opening lower-half corner. At the
+        # closing transition the lower half keeps its straight top seam;
+        # the rounded upper half does not gain a second bottom border.
         start = geometry["startBottom"]
         end = geometry["endTop"]
         start_middle = round(start["top"])
         end_middle = round(end["bottom"])
         opening_edge = screenshot.getpixel((round(start["left"]) + 2, start_middle))
         opening_flat = screenshot.getpixel((round(start["left"]) + 10, start_middle))
-        closing_edge = screenshot.getpixel((round(end["right"]) - 3, end_middle - 1))
-        closing_flat = screenshot.getpixel((round(end["right"]) - 10, end_middle - 1))
-        seam = tuple(int(part) for part in re.findall(r"\d+", geometry["splitBorderColor"]))
+        closing_edge = screenshot.getpixel((round(end["right"]) - 3, end_middle))
+        closing_flat = screenshot.getpixel((round(end["right"]) - 10, end_middle))
+        assert geometry["lowerBorderWidth"] == "1px"
+        assert geometry["upperBorderWidth"] == "0px"
         assert opening_edge != opening_flat
-        assert closing_flat == seam, (closing_flat, seam, geometry, screenshot_path)
-        assert closing_edge != seam, (closing_edge, seam, geometry, screenshot_path)
+        assert closing_flat != screenshot.getpixel((round(end["right"]) - 10, end_middle + 3))
+        assert closing_flat != screenshot.getpixel((round(end["right"]) - 10, end_middle - 3))
+        assert closing_edge == closing_flat, (closing_edge, closing_flat, geometry, screenshot_path)
 
 
 @pytest.mark.parametrize("candidate", ("cindy-ryu", "jesse-salomon"))
-def test_single_split_block_keeps_both_curved_seams(tmp_path: Path, candidate: str) -> None:
-    """One split carrying both tongue flags retains both borders in either candidate view."""
+def test_single_split_block_uses_lower_half_seam(tmp_path: Path, candidate: str) -> None:
+    """Both one-block candidate contexts retain the predecessor seam without overlays."""
     html_path = _write_race_html(tmp_path, published_view_model(), "ld-32-state-senator")
     screenshot_path = tmp_path / f"one-block-{candidate}.png"
     selector = f'[data-meter-candidate-id$="--{candidate}"]'
@@ -4818,6 +4823,12 @@ def test_single_split_block_keeps_both_curved_seams(tmp_path: Path, candidate: s
             lower: rect(block.querySelector('.meter-half-bottom')),
             upper: rect(block.querySelector('.meter-half-top')),
             seam: getComputedStyle(block.querySelector('.meter-half-bottom')).borderTopColor,
+            lowerBorderWidth:
+              getComputedStyle(block.querySelector('.meter-half-bottom')).borderTopWidth,
+            upperBorderWidth:
+              getComputedStyle(block.querySelector('.meter-half-top')).borderBottomWidth,
+            beforeContent: getComputedStyle(block, '::before').content,
+            afterContent: getComputedStyle(block, '::after').content,
           }});
         }})()""",
         viewport=(1440, 1000),
@@ -4829,13 +4840,15 @@ def test_single_split_block_keeps_both_curved_seams(tmp_path: Path, candidate: s
         right = round(geometry["block"]["right"])
         opening_y = round(geometry["lower"]["top"])
         closing_y = round(geometry["upper"]["bottom"])
-        seam = tuple(int(part) for part in re.findall(r"\d+", geometry["seam"]))
         opening_interior = screenshot.getpixel((left + 10, opening_y))
         closing_interior = screenshot.getpixel((right - 10, closing_y))
-        assert opening_interior == seam, (candidate, opening_interior, seam, screenshot_path)
-        assert closing_interior == seam, (candidate, closing_interior, seam, screenshot_path)
-        assert screenshot.getpixel((left + 2, opening_y)) != seam
-        assert screenshot.getpixel((right - 3, closing_y)) != seam
+        assert geometry["lowerBorderWidth"] == "1px"
+        assert geometry["upperBorderWidth"] == "0px"
+        assert geometry["beforeContent"] == "none"
+        assert geometry["afterContent"] == "none"
+        assert opening_interior == closing_interior, (candidate, geometry, screenshot_path)
+        assert screenshot.getpixel((left + 2, opening_y)) != opening_interior
+        assert screenshot.getpixel((right - 3, closing_y)) == closing_interior
 
 
 def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
