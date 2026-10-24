@@ -49,6 +49,7 @@ def validate_rendered_guide(
     race_documents: Mapping[str, str],
 ) -> RenderingValidationReport:
     """Validate semantic parity and rendered responsive-capture safety."""
+    view_model = view_model.public_view()
     html = html_path.read_text(encoding="utf-8")
     parser = _GuideHTMLParser()
     parser.feed(html)
@@ -88,8 +89,7 @@ def validate_rendered_guide(
         # `_html_semantic_values`'s "share" role already checks.
         if parser.meter_block_counts.get(race.id, 0) != len(meter.blocks):
             mismatched_meter_structure.append(f"{race.id}/share-block-count")
-    # Individual race pages retain the complete ballot, including races the
-    # general-election overview omits. Audit all of their evidence and meters.
+    # Audit every public race page's evidence and meters.
     for race in expected_races:
         # The race page's own headline no longer draws a meter at all
         # (docs/METER_V2.md, Chrome geometry: "The headline meter's own

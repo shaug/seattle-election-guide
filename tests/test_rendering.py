@@ -69,6 +69,7 @@ from election_guide.rendering.context import (
     source_cell_group,
 )
 from election_guide.rendering.documents import (
+    render_comparison_document,
     render_race_document,
     render_sources_document,
     template_environment,
@@ -1166,7 +1167,7 @@ def _race_documents(view_model: PublicationViewModel) -> dict[str, str]:
     """Every race page of one election, as the release validator audits them."""
     return {
         race.id: _race_html(view_model, race.id)
-        for section in view_model.sections
+        for section in view_model.guide_sections
         for race in section.races
     }
 
@@ -3255,12 +3256,12 @@ def _coarse_visual_signature(path: Path) -> list[float]:
         ("general", False, None, "endorsed", False),
         ("general", False, CONSENSUS_SOURCE_IDS[0], "no_endorsement", False),
         ("general", True, None, "endorsed", True),
-        ("general", False, CONSENSUS_SOURCE_IDS[0], "endorsed", True),
-        ("general", False, COMPARISON_SOURCE_ID, "endorsed", True),
+        ("general", False, CONSENSUS_SOURCE_IDS[0], "endorsed", False),
+        ("general", False, COMPARISON_SOURCE_ID, "endorsed", False),
         ("primary", False, None, "endorsed", True),
     ],
 )
-def test_overview_omits_only_unopposed_general_races_without_endorsements(
+def test_public_views_omit_unopposed_general_races_regardless_of_endorsements(
     tmp_path: Path,
     election_type: str,
     contested: bool,
@@ -3298,6 +3299,7 @@ def test_overview_omits_only_unopposed_general_races_without_endorsements(
         snapshot_root=_snapshot_store(tmp_path, dataset),
     )
     view_model = bundle.view_model
+    PublicationViewModel.model_validate(view_model.public_view().model_dump(mode="json"))
     capture_url = "https://example.org/results/overview-fixture"
     if with_results:
         results = _valid_results(tmp_path / "results")
@@ -3323,24 +3325,36 @@ def test_overview_omits_only_unopposed_general_races_without_endorsements(
     payload = _client_payload(html)
 
     assert (f'data-publication-race-id="{RACE_ID}"' in html) is visible
-    # Retain payload identities so legacy #race-… links can still forward to
-    # the full race page even when the overview no longer has a card for it.
-    assert [race["race_id"] for race in payload["races"]] == [RACE_ID]
+    # Hidden races must not survive in legacy-link or personalization payloads.
+    assert [race["race_id"] for race in payload["races"]] == ([RACE_ID] if visible else [])
     assert ('data-filter-section="county"' in html) is visible
     assert ('<option value="county">' in html) is visible
     assert ('<option value="Countywide">' in html) is visible
     if not visible:
         assert payload["filter_scopes"] == [{"value": "all", "label": "All Seattle ballot races"}]
 
-    # The overview is a projection; canonical exports and direct links retain
-    # the full race even when there is no decision for the guide to summarize.
+    # Public views omit the race while canonical audit exports retain it.
     exported = json.loads(bundle.artifacts["publication_view_model.json"])
     assert exported["sections"][0]["races"][0]["id"] == RACE_ID
     race_documents = _race_documents(view_model)
-    assert RACE_ID in race_documents
+    assert (RACE_ID in race_documents) is visible
+    comparison_html = render_comparison_document(
+        view_model, public_site_url=configuration.public_site_url
+    )
+    comparison_payload = _client_payload(comparison_html)
+    assert [race["race_id"] for race in comparison_payload["comparisons"]["display_index"]] == (
+        [RACE_ID] if visible else []
+    )
+    assert [race["race_id"] for race in payload["personalization"]["races"]] == (
+        [RACE_ID] if visible else []
+    )
+    if not visible:
+        with pytest.raises(ValueError, match="has no race"):
+            _race_html(view_model, RACE_ID)
     if with_results:
         assert (f'href="{capture_url}"' in html) is visible
-        assert f'href="{capture_url}"' in race_documents[RACE_ID]
+        if visible:
+            assert f'href="{capture_url}"' in race_documents[RACE_ID]
     html_path = tmp_path / "guide.html"
     html_path.write_text(html, encoding="utf-8")
     screenshots = [
@@ -3364,6 +3378,40 @@ def test_overview_omits_only_unopposed_general_races_without_endorsements(
             height=configuration.screenshot_height,
             expected_race_count=int(visible),
         )
+
+
+@pytest.mark.parametrize("hide_first_section", [False, True])
+def test_public_comparisons_reindex_after_hiding_races(
+    tmp_path: Path, hide_first_section: bool
+) -> None:
+    view = _view_model(tmp_path)
+    sections = [
+        section.model_copy(
+            update={
+                "races": [
+                    race.model_copy(
+                        update={
+                            "is_contested": (
+                                section_order > 0 if hide_first_section else race_order > 0
+                            )
+                        }
+                    )
+                    for race_order, race in enumerate(section.races)
+                ]
+            }
+        )
+        for section_order, section in enumerate(view.sections)
+    ]
+    view = view.model_copy(
+        update={
+            "metadata": view.metadata.model_copy(update={"election_type": "general"}),
+            "sections": sections,
+        }
+    )
+    projected = view.public_view()
+    assert projected.comparisons.display_index
+    PublicationViewModel.model_validate(projected.model_dump(mode="json"))
+    render_comparison_document(view, public_site_url="https://seattleelections.guide")
 
 
 def _view_model(root: Path) -> PublicationViewModel:

@@ -11,14 +11,13 @@ request before viewing consensus results, so methodology cannot be tuned to an o
   must have evidence that its jurisdiction intersects Seattle.
 - The target publication date for the first release is July 25, 2026.
 - Incomplete coverage is acceptable when gaps are explicit. Untraceable claims are not.
-- The general-election Endorsements overview omits unopposed races with no verified
-  affirmative endorsements from the active consensus or comparison panel (issue
-  [#528](https://github.com/shaug/seattle-election-guide/issues/528)). The official ballot
-  determines whether a race is contested. A single current endorsement keeps an unopposed
-  race visible; contested races remain visible even with no endorsements. This overview
-  rule is independent of a reader's selected sources. The inventory, scoring, audit
-  exports, individual race pages, and Comparisons retain the complete publication scope;
-  primary-election rendering is unchanged.
+- General-election public views omit every uncontested race, even when it has
+  verified endorsements (issue [#607](https://github.com/shaug/seattle-election-guide/issues/607),
+  superseding #528). The official ballot determines whether a race is contested.
+  This applies to Endorsements, Comparisons, individual race pages, generated race
+  links, and their client payloads, independently of the reader's selected sources.
+  Empty sections and filter options are omitted. The inventory, scoring, and audit
+  exports retain the complete publication scope. Published primary archives remain unchanged.
 
 ## Collection and evidence
 

@@ -600,27 +600,72 @@ class PublicationViewModel(PublicationModel):
 
     @property
     def guide_sections(self) -> list[PublicationSection]:
-        """The general-election overview omits unendorsed, unopposed races.
-
-        Keep the full sections for exports, comparisons, race pages, and
-        legacy-link routing. Visibility uses the audited panel's affirmative
-        cells, including comparison sources, independently of a reader's lens.
-        """
+        """Contested general-election races, independent of endorsements."""
         if self.metadata.election_type != "general":
             return self.sections
-        sections: list[PublicationSection] = []
-        for section in self.sections:
-            races = [
-                race
-                for race in section.races
-                if race.is_contested
-                or any(
-                    cell.state in {"endorsement", "multi_endorsement"} for cell in race.source_cells
-                )
-            ]
-            if races:
-                sections.append(section.model_copy(update={"races": races}))
-        return sections
+        return [
+            section.model_copy(update={"races": races})
+            for section in self.sections
+            if (races := [race for race in section.races if race.is_contested])
+        ]
+
+    def public_view(self) -> PublicationViewModel:
+        """Project every public surface while retaining the complete audit model.
+
+        Published primary archives retain their historical scope (issue #607).
+        Filter the client contracts too, so links and personalized comparisons
+        cannot reintroduce a race omitted from the server-rendered pages.
+        """
+        if self.metadata.election_type != "general":
+            return self
+        sections = self.guide_sections
+        race_ids = {race.id for section in sections for race in section.races}
+        display_by_id = {race.race_id: race for race in self.comparisons.display_index}
+        cells = [
+            cell for section in sections for race in section.races for cell in race.source_cells
+        ]
+        return self.model_copy(
+            update={
+                "sections": sections,
+                "metadata": self.metadata.model_copy(
+                    update={"published_race_count": len(race_ids)}
+                ),
+                "sources": [
+                    source.model_copy(
+                        update={
+                            "endorsement_count": sum(
+                                cell.source_id == source.id
+                                and cell.state in {"endorsement", "multi_endorsement"}
+                                for cell in cells
+                            ),
+                            "split_endorsement_count": sum(
+                                cell.source_id == source.id and cell.state == "multi_endorsement"
+                                for cell in cells
+                            ),
+                        }
+                    )
+                    for source in self.sources
+                ],
+                "personalization": self.personalization.model_copy(
+                    update={
+                        "races": [
+                            race for race in self.personalization.races if race.race_id in race_ids
+                        ]
+                    }
+                ),
+                "comparisons": self.comparisons.model_copy(
+                    update={
+                        "display_index": [
+                            display_by_id[race.id].model_copy(
+                                update={"section_order": section_order, "race_order": race_order}
+                            )
+                            for section_order, section in enumerate(sections)
+                            for race_order, race in enumerate(section.races)
+                        ]
+                    }
+                ),
+            }
+        )
 
     @model_validator(mode="after")
     def validate_schema_fields(self) -> PublicationViewModel:
