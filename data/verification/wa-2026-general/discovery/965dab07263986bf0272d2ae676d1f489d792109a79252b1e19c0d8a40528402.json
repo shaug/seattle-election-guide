@@ -1,0 +1,22 @@
+{
+  "articles": [
+    "https://transitriders.org/2026-general-election-endorsements/",
+    "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/"
+  ],
+  "assets": [
+    "https://transitriders.sfo3.digitaloceanspaces.com/transitriders.org/wp-content/uploads/2026/10/17022007/TRU_November_2026_General_Endorsements-1024x581.jpg"
+  ],
+  "captures": [
+    "capture-transit-riders-union-20261024T084655Z-8a9fff3ed8e6",
+    "capture-transit-riders-union-20261024T084655Z-092f14cb13b3",
+    "capture-transit-riders-union-20261024T084655Z-fe130a956d19",
+    "capture-transit-riders-union-20261024T084655Z-871f25b74419"
+  ],
+  "checked_at": "2026-10-24T08:46:55Z",
+  "comparison_sha256": "bd0651a4e6f2ea2c416c76255929e845c9fe11c93523753d95dfdee77c958a35",
+  "listed": [
+    "https://transitriders.org/2026-general-election-endorsements/",
+    "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/"
+  ],
+  "source_id": "transit-riders-union"
+}
