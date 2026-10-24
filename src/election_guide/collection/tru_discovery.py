@@ -21,6 +21,7 @@ from election_guide.collection.verification import VerificationModel
 from election_guide.evidence.models import (
     CAPTURE_ID_PATTERN,
     CapturedManifest,
+    ObservedManifest,
     evidence_fingerprint,
 )
 from election_guide.evidence.storage import read_capture_manifest, write_immutable_record
@@ -215,7 +216,7 @@ def read_tru_discovery_obligation(path: Path) -> TruDiscoveryObligation:
         path.parent.parent / "manifests" / f"{obligation.capture_id}.json"
     )
     if (
-        not isinstance(manifest, CapturedManifest)
+        not isinstance(manifest, (CapturedManifest, ObservedManifest))
         or manifest.source_id != obligation.source_id
         or manifest.capture_method != "static_html"
         or manifest.retrieved_at != obligation.checked_at
@@ -230,12 +231,18 @@ def read_tru_discovery_obligation(path: Path) -> TruDiscoveryObligation:
     return obligation
 
 
-def discover_tru_publication(root: Path, storage: Path, checked_at: datetime) -> bytes:
+def discover_tru_publication(
+    root: Path,
+    storage: Path,
+    checked_at: datetime,
+    *,
+    retention: Literal["retain_original", "facts_only"] = "retain_original",
+) -> bytes:
     """Observe complete archives/articles/image; extract only the designated reviewed article."""
     if checked_at.year != 2026:
         raise ValueError("TRU discovery is bound to the reviewed 2026 general election")
     collector = PublicationCollector(
-        "transit-riders-union", "transitriders.org", root, storage, checked_at
+        "transit-riders-union", "transitriders.org", root, storage, checked_at, retention=retention
     )
     known = {TRU_CURRENT, TRU_BOUNDARY}
     for path in root.glob("discovery/*.json"):
@@ -349,7 +356,9 @@ def discover_tru_publication(root: Path, storage: Path, checked_at: datetime) ->
     return body
 
 
-def validate_tru_audit(audit: DiscoveryAudit, manifests: dict[str, CapturedManifest]) -> None:
+def validate_tru_audit(
+    audit: DiscoveryAudit, manifests: dict[str, CapturedManifest | ObservedManifest]
+) -> None:
     """Bind successful membership to real same-check originals and its derived comparison."""
     if (
         audit.checked_at.year != 2026
@@ -358,7 +367,7 @@ def validate_tru_audit(audit: DiscoveryAudit, manifests: dict[str, CapturedManif
         or len(set(audit.captures)) != len(audit.captures)
     ):
         raise ValueError("TRU audit has contradictory current-election membership")
-    originals: dict[str, CapturedManifest] = {}
+    originals: dict[str, CapturedManifest | ObservedManifest] = {}
     for identifier in audit.captures:
         manifest = manifests[identifier]
         if (

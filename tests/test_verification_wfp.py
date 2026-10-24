@@ -1,6 +1,5 @@
-"""WFP complete responses travel through the existing encrypted archive pipeline."""
+"""WFP complete responses retain public facts and truthful observation metadata."""
 
-import base64
 import hashlib
 import json
 from datetime import datetime
@@ -10,7 +9,6 @@ from typing import Any
 import pytest
 
 from election_guide.collection.http import HttpArtifact
-from election_guide.collection.vault import restore_store
 from election_guide.collection.verification import read_policy
 from election_guide.collection.verification_runtime import run_verification
 
@@ -32,8 +30,7 @@ FORM = {"action": "more_candidates", "state": "25", "count": "0"}
 def test_live_wfp_collects_complete_response_and_records_truthful_request(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, visible_attributes: bytes
 ) -> None:
-    key = bytes(range(32))
-    monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(key).decode())
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
     policy = read_policy(ROOT / "config/verification.yaml")
     election = policy.elections[0]
     source = next(s for s in election.sources if s.source_id == SOURCE)
@@ -80,9 +77,9 @@ def test_live_wfp_collects_complete_response_and_records_truthful_request(
     assert "POST" in manifest["redistribution_note"]
     assert "action=more_candidates&state=25&count=0" in manifest["redistribution_note"]
     assert manifest["content_sha256"] == hashlib.sha256(complete).hexdigest()
-    restored = tmp_path / "restored"
-    restore_store(root / "vault", restored, key)
-    assert any(p.read_bytes() == complete for p in restored.rglob("*") if p.is_file())
+    assert manifest["availability"] == "observed"
+    assert "storage_reference" not in manifest
+    assert not list(root.rglob("vault/**/*.json"))
     assert not list(state.rglob("*.html"))
     before = {p: p.read_bytes() for p in (root / "vault").rglob("*.json")}
     second = run_verification(
@@ -134,7 +131,7 @@ def test_live_wfp_collects_complete_response_and_records_truthful_request(
 def test_complete_fixture_reuses_baseline_and_expanded_only_break_keeps_it(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, replacement: bytes
 ) -> None:
-    monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(bytes(range(32))).decode())
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
     policy = read_policy(ROOT / "config/verification.yaml")
     election = policy.elections[0]
     source = next(s for s in election.sources if s.source_id == SOURCE)

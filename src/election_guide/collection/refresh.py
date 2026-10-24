@@ -9,7 +9,7 @@ import tempfile
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ValidationError
 
@@ -21,10 +21,16 @@ from election_guide.collection.models import (
     ExtractionSnapshot,
     RefreshEvent,
 )
-from election_guide.evidence.models import CapturedManifest, CaptureRequest, evidence_fingerprint
+from election_guide.evidence.models import (
+    CapturedManifest,
+    CaptureRequest,
+    ObservedManifest,
+    evidence_fingerprint,
+)
 from election_guide.evidence.storage import (
     read_capture_manifest,
     record_capture,
+    record_observation,
     verify_capture,
     write_immutable_record,
 )
@@ -64,8 +70,11 @@ def refresh_source(
     refresh_dir: Path,
     ocr_text: str | None = None,
     ocr_confidence: str | None = None,
+    retention: Literal["retain_original", "facts_only"] = "retain_original",
 ) -> RefreshEvent:
     """Refresh one source without replacing its last verified extraction."""
+    if retention not in {"retain_original", "facts_only"}:
+        raise ValueError("unknown refresh retention mode")
     if request.source_id != spec.source_id:
         raise ValueError("capture request source does not match adapter source")
     artifact = read_artifact(input_path)
@@ -81,6 +90,7 @@ def refresh_source(
             refresh_dir=refresh_dir,
             ocr_text=ocr_text,
             ocr_confidence=ocr_confidence,
+            retention=retention,
         )
 
 
@@ -96,6 +106,7 @@ def _refresh_source_locked(
     refresh_dir: Path,
     ocr_text: str | None,
     ocr_confidence: str | None,
+    retention: Literal["retain_original", "facts_only"],
 ) -> RefreshEvent:
     latest_event = _latest_event(spec.source_id, refresh_dir)
     _require_later_timestamp(request.retrieved_at, latest_event)
@@ -114,9 +125,33 @@ def _refresh_source_locked(
         }
     )
 
+    capture: CapturedManifest | ObservedManifest | None = None
+    if retention == "facts_only":
+        capture_path = record_observation(request, input_path, manifest_dir)
+        recorded = read_capture_manifest(capture_path)
+        if not isinstance(recorded, ObservedManifest):
+            raise ValueError("refresh observation unexpectedly recorded other evidence")
+        capture = recorded
+        if capture.content_sha256 != digest:
+            return _record_failure_locked(
+                spec.source_id,
+                request.retrieved_at,
+                "collection input changed while it was being observed",
+                refresh_dir,
+                previous=previous,
+                capture_id=capture.id,
+                content_changed=True,
+            )
+
     if previous is not None:
         try:
-            _verify_snapshot_capture(previous, manifest_dir, storage_root)
+            _verify_snapshot_capture(previous, manifest_dir, storage_root, retention=retention)
+            if (
+                retention == "facts_only"
+                and latest_event is not None
+                and latest_event.status != "failed"
+            ):
+                _verify_public_capture(latest_event.capture_id, previous, manifest_dir)
         except (OSError, ValueError) as error:
             return _record_failure_locked(
                 spec.source_id,
@@ -124,7 +159,7 @@ def _refresh_source_locked(
                 f"stored capture verification failed: {error}",
                 refresh_dir,
                 previous=previous,
-                capture_id=previous.capture_id,
+                capture_id=capture.id if capture is not None else previous.capture_id,
                 content_changed=previous.content_sha256 != digest,
             )
 
@@ -138,7 +173,7 @@ def _refresh_source_locked(
             checked_at=request.retrieved_at,
             status="unchanged",
             content_changed=False,
-            capture_id=previous.capture_id,
+            capture_id=capture.id if capture is not None else previous.capture_id,
             snapshot_id=previous.id,
             previous_snapshot_id=previous.id,
             diff=[],
@@ -156,37 +191,40 @@ def _refresh_source_locked(
             refresh_dir,
         )
 
-    try:
-        existing = _capture_for_content(spec.source_id, digest, manifest_dir, storage_root)
-    except (OSError, ValueError) as error:
-        return _record_failure_locked(
-            spec.source_id,
-            request.retrieved_at,
-            f"stored capture verification failed: {error}",
-            refresh_dir,
-            previous=previous,
-            content_changed=previous is None or previous.content_sha256 != digest,
-        )
-
-    capture: CapturedManifest
-    if existing is None:
-        capture_path = record_capture(request, input_path, storage_root, manifest_dir)
-        recorded = read_capture_manifest(capture_path)
-        if not isinstance(recorded, CapturedManifest):
-            raise ValueError("refresh capture unexpectedly recorded unavailable evidence")
-        capture = recorded
-        if capture.content_sha256 != digest:
+    if retention == "retain_original":
+        try:
+            existing = _capture_for_content(spec.source_id, digest, manifest_dir, storage_root)
+        except (OSError, ValueError) as error:
             return _record_failure_locked(
                 spec.source_id,
                 request.retrieved_at,
-                "collection input changed while it was being captured",
+                f"stored capture verification failed: {error}",
                 refresh_dir,
                 previous=previous,
-                capture_id=capture.id,
-                content_changed=True,
+                content_changed=previous is None or previous.content_sha256 != digest,
             )
-    else:
-        capture = existing
+
+        if existing is None:
+            capture_path = record_capture(request, input_path, storage_root, manifest_dir)
+            recorded = read_capture_manifest(capture_path)
+            if not isinstance(recorded, CapturedManifest):
+                raise ValueError("refresh capture unexpectedly recorded unavailable evidence")
+            capture = recorded
+            if capture.content_sha256 != digest:
+                return _record_failure_locked(
+                    spec.source_id,
+                    request.retrieved_at,
+                    "collection input changed while it was being captured",
+                    refresh_dir,
+                    previous=previous,
+                    capture_id=capture.id,
+                    content_changed=True,
+                )
+        else:
+            capture = existing
+
+    if capture is None:
+        raise ValueError("refresh did not record its source observation")
 
     try:
         decisions = extract_decisions(
@@ -356,17 +394,31 @@ def _require_later_timestamp(checked_at: datetime, latest_event: RefreshEvent | 
         )
 
 
-def _verify_snapshot_capture(
-    snapshot: ExtractionSnapshot, manifest_dir: Path, storage_root: Path
-) -> CapturedManifest:
-    manifest = read_capture_manifest(manifest_dir / f"{snapshot.capture_id}.json")
-    if not isinstance(manifest, CapturedManifest):
+def _verify_public_capture(
+    capture_id: str | None, snapshot: ExtractionSnapshot, manifest_dir: Path
+) -> CapturedManifest | ObservedManifest:
+    if capture_id is None:
+        raise ValueError("extraction refresh is missing its capture reference")
+    manifest = read_capture_manifest(manifest_dir / f"{capture_id}.json")
+    if not isinstance(manifest, (CapturedManifest, ObservedManifest)):
         raise ValueError("extraction snapshot references unavailable evidence")
     if manifest.source_id != snapshot.source_id:
         raise ValueError("extraction snapshot and capture sources differ")
     if manifest.content_sha256 != snapshot.content_sha256:
         raise ValueError("extraction snapshot and capture hashes differ")
-    verify_capture(manifest, storage_root)
+    return manifest
+
+
+def _verify_snapshot_capture(
+    snapshot: ExtractionSnapshot,
+    manifest_dir: Path,
+    storage_root: Path,
+    *,
+    retention: Literal["retain_original", "facts_only"] = "retain_original",
+) -> CapturedManifest | ObservedManifest:
+    manifest = _verify_public_capture(snapshot.capture_id, snapshot, manifest_dir)
+    if retention == "retain_original":
+        verify_capture(manifest, storage_root)
     return manifest
 
 

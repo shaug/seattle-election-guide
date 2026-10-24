@@ -35,6 +35,34 @@ record identifies the original capture, evidence type and locator, transcriber, 
 timestamp, status, and review note. Pending records may be retained for work tracking but cannot
 be treated as verified endorsement claims.
 
+## Recurring factual baseline review (#497)
+
+Endorsement facts, official URL, actual check timestamp, actual reviewer and actual review timestamp
+are sufficient durable evidence for recurring verification. Review every first, changed or
+unapproved factual baseline against the official current publication and the complete supported
+mappings, including changed wording that produced an empty semantic diff. Preserve explicit
+source-access, article discovery, completeness and interpretation limitations. Removal remains a
+review lead; detection grants no ledger or release approval.
+
+Observed-only manifests (`availability: observed`) retain successful fetch metadata, SHA-256 and
+byte length without a storage reference. They document metadata/facts provenance, not retained
+original bytes. Hashes cannot prove publisher authorship; full-page reconstruction is not required.
+Normal baseline approval, validation, reconciliation and reuse need no evidence key or restored
+historical page. The separate manual-entry adapter above still requires its retained, verified
+artifact and dual-review fields; an observed-only manifest cannot be used as that artifact.
+
+Check time and review time are separate. An unchanged automated check references the exact prior
+factual approval, its actual reviewer and review timestamp. It does not claim that reviewer
+personally re-read the source on the new check date. Name a human or an explicitly delegated
+reviewer truthfully under existing maintainer authority; never substitute the maintainer's name
+for delegated work. The commands' legacy `human` mode does not change the actual actor.
+
+Preserve historical IDs, ciphertext, approvals, failures and releases unchanged. Valid existing
+approvals apply only to the precise facts/snapshot reviewed. Migration supplies no new approval,
+fresh source read, backdated check, failure reset or authority for unattended interpretation.
+Fixtures cannot receive live baseline approval. Keep #497 and its runbook proposed until actual
+scheduled execution and later independent normal scheduled reuse have the required evidence.
+
 ## Recorded maintainer-approved measure interpretation
 
 The October 12, 2026 general update records one explicit exception: Tech 4 Taxes’

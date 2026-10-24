@@ -1,8 +1,11 @@
-"""Execute due source checks, retaining encrypted captures and immutable observations."""
+"""Execute due source checks, retaining public facts and immutable observations."""
 
 from __future__ import annotations
 
+import re
 import shutil
+import socket
+import ssl
 import subprocess
 import tempfile
 from datetime import date, datetime
@@ -17,7 +20,15 @@ from election_guide.collection.discovery import (
     discover_publication,
     discover_ufcw_publication,
 )
-from election_guide.collection.http import fetch_http
+from election_guide.collection.http import (
+    DEADLINE_EXCEEDED,
+    FAILURE_PREFIX,
+    HTTP_STATUS_PREFIX,
+    HTTPS_DOWNGRADE_REFUSED,
+    REDIRECT_LIMIT_EXCEEDED,
+    TOTAL_TIMEOUT_EXCEEDED,
+    fetch_http,
+)
 from election_guide.collection.models import RefreshEvent
 from election_guide.collection.refresh import (
     read_adapter_spec,
@@ -25,7 +36,6 @@ from election_guide.collection.refresh import (
     refresh_source,
 )
 from election_guide.collection.tru_discovery import TRU_HOME, discover_tru_publication
-from election_guide.collection.vault import read_key, restore_store, seal_store
 from election_guide.collection.verification import (
     CheckRecord,
     ElectionPolicy,
@@ -120,7 +130,6 @@ def run_verification(
             "mode": "live" if live else "fixture",
             "coverage": plan.model_dump(mode="json"),
         }
-    key = read_key()
     policies = {item.election_id: item for item in policy.elections}
     for election_plan in plan.elections:
         root = state_root / election_plan.election_id
@@ -129,8 +138,8 @@ def run_verification(
         due = [item for item in election_plan.coverage if item.due]
         if not due:
             continue
-        # A private transaction keeps interrupted checks from publishing an
-        # extraction whose original bytes have not been sealed successfully.
+        # Current response bodies stay private and transient. Only immutable
+        # facts and observation metadata leave this transaction.
         with tempfile.TemporaryDirectory(prefix="endorsement-verification-") as temporary:
             private = Path(temporary)
             working = private / "state"
@@ -138,7 +147,6 @@ def run_verification(
                 shutil.copytree(root, working)
             working.mkdir(parents=True, exist_ok=True)
             storage = private / "captures"
-            restore_store(working / "vault", storage, key)
             activation = working / "activation.json"
             if not activation.exists():
                 write_immutable_record(
@@ -217,7 +225,6 @@ def run_verification(
                         "escalated": failures >= 3,
                     }
                 )
-            seal_store(storage, working / "vault", key)
             # Immutable bytes first, observations last. Git publishes the
             # resulting set as one commit; a partial local set is never success.
             for path in sorted(
@@ -230,6 +237,62 @@ def run_verification(
         state_root / "runs" / f"{evidence_fingerprint(report)}.json", canonical_json_bytes(report)
     )
     return report
+
+
+def _http_failure_diagnostic(error: BaseException) -> str:
+    """Select fixed mechanics only; exception messages and causes stay private."""
+    seen: set[int] = set()
+    cause: BaseException | None = error
+    while cause is not None and id(cause) not in seen:
+        seen.add(id(cause))
+        message = str(cause).removeprefix(FAILURE_PREFIX)
+        status = re.fullmatch(re.escape(HTTP_STATUS_PREFIX) + r"([1-5][0-9]{2})", message)
+        if status is not None:
+            return f"category=http_status; status={int(status[1])}"
+        if message in {
+            DEADLINE_EXCEEDED,
+            DEADLINE_EXCEEDED + " during DNS resolution",
+            TOTAL_TIMEOUT_EXCEEDED.removeprefix(FAILURE_PREFIX),
+        } or isinstance(cause, TimeoutError):
+            return "category=deadline"
+        if message in {
+            REDIRECT_LIMIT_EXCEEDED,
+            HTTPS_DOWNGRADE_REFUSED,
+            "live collection refuses a POST redirect",
+            "redirect response has no Location header",
+        }:
+            return "category=redirect"
+        if message in {
+            "live artifact has an invalid Content-Length",
+            "live artifact exceeds the 25 MiB limit",
+            "live artifact is empty",
+        } or re.fullmatch(
+            r"live artifact was truncated: expected [0-9]+ bytes, got [0-9]+", message
+        ):
+            return "category=response_integrity"
+        if (
+            message.startswith(
+                (
+                    "live collection refuses non-public address ",
+                    "live collection peer has invalid address ",
+                )
+            )
+            or message == "live collection has no validated address to connect to"
+        ):
+            return "category=public_peer"
+        if isinstance(cause, socket.gaierror) or message.startswith(
+            (
+                "live collection DNS resolution failed for ",
+                "live collection DNS resolution returned no addresses for ",
+            )
+        ):
+            return "category=dns"
+        if isinstance(cause, ssl.SSLError):
+            return "category=tls"
+        if isinstance(cause, OSError):
+            return "category=network"
+        cause = cause.__cause__
+    return "category=unknown"
 
 
 def _refresh(
@@ -247,6 +310,7 @@ def _refresh(
         raise ValueError("automatic source has no adapter")
     registry, _ = read_panel(election)
     source = next(item for item in registry.sources if item.id == policy.source_id)
+    stage = "other"
     try:
         if live:
             if policy.index_url or source.id in {"ufcw-3000", "transit-riders-union"}:
@@ -254,11 +318,17 @@ def _refresh(
                     TRU_HOME if source.id == "transit-riders-union" else UFCW_INDEX
                 )
                 if source.id == "transit-riders-union":
-                    raw = discover_tru_publication(root, storage, checked_at)
+                    raw = discover_tru_publication(
+                        root, storage, checked_at, retention="facts_only"
+                    )
                 elif source.id == "ufcw-3000":
-                    raw = discover_ufcw_publication(root, storage, checked_at)
+                    raw = discover_ufcw_publication(
+                        root, storage, checked_at, retention="facts_only"
+                    )
                 else:
-                    raw = discover_publication(policy, root, storage, checked_at)
+                    raw = discover_publication(
+                        policy, root, storage, checked_at, retention="facts_only"
+                    )
 
                 request = CaptureRequest(
                     source_id=source.id,
@@ -276,14 +346,16 @@ def _refresh(
                     capture_method="manual_upload",
                     redistribution="restricted",
                     redistribution_note=(
-                        "Generated comparison; original HTTP inputs are committed encrypted."
+                        "Generated comparison; public observations identify transient HTTP inputs."
                     ),
                 )
             else:
                 url = policy.request.url if policy.request else source.discovery.requested_url
+                stage = "http_fetch"
                 artifact = (
                     fetch_http(url, form=policy.request.form) if policy.request else fetch_http(url)
                 )
+                stage = "post_fetch_preparation"
                 raw = artifact.content
                 request = CaptureRequest(
                     source_id=source.id,
@@ -297,7 +369,7 @@ def _refresh(
                     redirect_chain=artifact.redirect_chain,
                     redistribution="restricted",
                     redistribution_note=(
-                        "Original bytes retained in the committed encrypted vault."
+                        "Public response observed; original bytes are transient."
                         + (
                             " Public POST; application/x-www-form-urlencoded; "
                             f"{urlencode(policy.request.form)}. "
@@ -325,22 +397,28 @@ def _refresh(
             )
         input_path = private / "input.html"
         input_path.write_bytes(raw)
+        adapter = read_adapter_spec(policy.adapter)
+        stage = "refresh"
         return refresh_source(
-            read_adapter_spec(policy.adapter),
+            adapter,
             request,
             input_path,
             storage_root=storage,
             manifest_dir=root / "manifests",
             extraction_dir=root / "extractions",
             refresh_dir=root / "refreshes",
+            retention="facts_only",
         )
     except (OSError, ValueError) as error:
-        # Filesystem paths and response bodies are private. Public failures name
-        # the error category; detailed diagnosis remains a local operator step.
+        # Null capture alone cannot distinguish a fetch from later preparation.
+        # Only fixed stages/categories and validated status may leave this catch.
+        diagnostic = (
+            _http_failure_diagnostic(error) if stage == "http_fetch" else "category=unknown"
+        )
         return record_refresh_failure(
             source.id,
             checked_at,
-            f"Source check failed ({type(error).__name__}); inspect official access and adapter.",
+            f"Source check failed (stage={stage}; {diagnostic}).",
             root / "refreshes",
             extraction_dir=root / "extractions",
         )

@@ -1,8 +1,8 @@
 """The public runner checks the six current-election factual fixtures."""
 
-import base64
 import json
 import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -21,7 +21,7 @@ def test_current_publication_layout_preserves_reviewed_decisions(
     monkeypatch: pytest.MonkeyPatch,
     source_id: str,
 ) -> None:
-    monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(bytes(range(32))).decode())
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
     fixtures = tmp_path / "fixtures"
     shutil.copytree(ROOT / "tests/fixtures/verification", fixtures)
     (fixtures / f"{source_id}.html").write_bytes(
@@ -56,7 +56,7 @@ def test_six_general_sources_match_reviewed_facts_and_cover_all_eligible_sources
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(bytes(range(32))).decode())
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
     result = runner.invoke(
         app,
         [
@@ -84,6 +84,66 @@ def test_six_general_sources_match_reviewed_facts_and_cover_all_eligible_sources
         assert {d["race_id"]: set(d["after"]["candidate_ids"]) for d in event["diff"]} == {
             d["race_id"]: set(d["candidate_ids"]) for d in ledger["decisions"]
         }
+    state = tmp_path / "state"
+    history = {p.relative_to(state): p.read_bytes() for p in state.rglob("*.json")}
+    archive = tmp_path / "archive"
+    archive.mkdir()
+    shutil.copytree(state, archive / "data/verification")
+    for args in (
+        ["init", "-q"],
+        ["config", "user.name", "Fixture archive"],
+        ["config", "user.email", "fixture@example.invalid"],
+        ["add", "data/verification"],
+        ["commit", "-qm", "Fixture public records"],
+    ):
+        subprocess.run(["git", "-C", str(archive), *args], check=True, capture_output=True)
+    assert not subprocess.run(
+        ["git", "-C", str(archive), "status", "--porcelain"], check=True, capture_output=True
+    ).stdout
+    # Export only committed public records into a separate runner, never a capture store.
+    checkout = tmp_path / "independent"
+    subprocess.run(
+        ["git", "-C", str(archive), "checkout-index", "--all", f"--prefix={checkout}/"],
+        check=True,
+        capture_output=True,
+    )
+    independent = checkout / "data/verification"
+    second = runner.invoke(
+        app,
+        [
+            "verification",
+            "run",
+            "config/verification.yaml",
+            "--fixtures",
+            "tests/fixtures/verification",
+            "--state-root",
+            str(independent),
+            "--checked-at",
+            "2026-10-06T18:00:00Z",
+        ],
+    )
+    assert second.exit_code == 0, second.output
+    reused = json.loads(second.output)["automatic"]
+    assert len(reused) == 6
+    for event in reused:
+        original = next(e for e in report["automatic"] if e["source_id"] == event["source_id"])
+        assert event["status"] == "unchanged"
+        assert event["snapshot_id"] == original["snapshot_id"]
+        assert event["capture_id"] != original["capture_id"]
+        assert event["baseline_reviewed"] is False
+    for relative, raw in history.items():
+        assert (independent / relative).read_bytes() == raw
+    assert not list(independent.rglob("vault/**/*.json"))
+    assert all(p.suffix == ".json" for p in independent.rglob("*") if p.is_file())
+    assert all(
+        json.loads(p.read_text())["availability"] == "observed"
+        for p in independent.rglob("manifests/*.json")
+    )
+    validation = runner.invoke(
+        app,
+        ["verification", "validate", "config/verification.yaml", "--state-root", str(independent)],
+    )
+    assert validation.exit_code == 0, validation.output
     coverage = report["coverage"]["elections"][0]["coverage"]
     assert len(coverage) == 46
     assert {

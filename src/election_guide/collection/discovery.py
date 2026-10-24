@@ -21,11 +21,13 @@ from election_guide.evidence.models import (
     SOURCE_ID_PATTERN,
     CapturedManifest,
     CaptureRequest,
+    ObservedManifest,
     evidence_fingerprint,
 )
 from election_guide.evidence.storage import (
     read_capture_manifest,
     record_capture,
+    record_observation,
     write_immutable_record,
 )
 from election_guide.serialization import canonical_json_bytes, read_json
@@ -97,6 +99,62 @@ class DiscoveryAudit(VerificationModel):
         return self
 
 
+class SgnDiscoveryObligation(VerificationModel):
+    """Validated story membership, independent of pagination or article success."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    source_id: Literal["seattle-gay-news"] = "seattle-gay-news"
+    checked_at: AwareDatetime
+    articles: list[str] = Field(min_length=1, max_length=100)
+    capture_id: str = Field(pattern=CAPTURE_ID_PATTERN)
+
+    @model_validator(mode="after")
+    def validate_articles(self) -> SgnDiscoveryObligation:
+        for url in self.articles:
+            parsed = urlsplit(url)
+            if (
+                parsed.scheme != "https"
+                or parsed.netloc != "www.sgn.org"
+                or re.fullmatch(r"/story/[0-9]+/", parsed.path) is None
+                or parsed.query
+                or parsed.fragment
+            ):
+                raise ValueError("SGN obligations require clean official story identities")
+        if len(set(self.articles)) != len(self.articles):
+            raise ValueError("SGN obligations require unique articles")
+        return self
+
+
+def read_sgn_discovery_obligation(path: Path) -> SgnDiscoveryObligation:
+    record = read_json(path)
+    obligation = SgnDiscoveryObligation.model_validate(record)
+    if path.stem != evidence_fingerprint(record):
+        raise ValueError("SGN obligation identity contradicts its content")
+    manifest = read_capture_manifest(
+        path.parent.parent / "manifests" / f"{obligation.capture_id}.json"
+    )
+    requested = urlsplit(manifest.requested_url)
+    canonical = urlsplit(manifest.canonical_url or "")
+    if (
+        not isinstance(manifest, (CapturedManifest, ObservedManifest))
+        or manifest.source_id != obligation.source_id
+        or manifest.capture_method != "static_html"
+        or manifest.retrieved_at != obligation.checked_at
+        or manifest.redistribution != "restricted"
+        or requested.scheme != "https"
+        or requested.netloc != "www.sgn.org"
+        or requested.path != "/ch/News/Seattle"
+        or requested.fragment
+        or (requested.query and re.fullmatch(r"start=[0-9]+", requested.query) is None)
+        or canonical.scheme != "https"
+        or canonical.netloc != "www.sgn.org"
+        or not manifest.media_type
+        or manifest.media_type.split(";", 1)[0] not in {"text/html", "application/xhtml+xml"}
+    ):
+        raise ValueError("SGN obligation lacks its official index observation")
+    return obligation
+
+
 class UfcwDiscoveryObligation(VerificationModel):
     """Validated landing-page membership, independent of collection success."""
 
@@ -126,7 +184,7 @@ def read_ufcw_discovery_obligation(path: Path) -> UfcwDiscoveryObligation:
         path.parent.parent / "manifests" / f"{obligation.capture_id}.json"
     )
     if (
-        not isinstance(manifest, CapturedManifest)
+        not isinstance(manifest, (CapturedManifest, ObservedManifest))
         or manifest.source_id != obligation.source_id
         or manifest.requested_url != UFCW_INDEX
         or manifest.capture_method != "static_html"
@@ -187,8 +245,18 @@ class PublicationCollector:
     """Bounded HTML GETs with the original HTTP capture metadata and private bytes."""
 
     def __init__(
-        self, source_id: str, host: str, root: Path, storage: Path, checked_at: datetime
+        self,
+        source_id: str,
+        host: str,
+        root: Path,
+        storage: Path,
+        checked_at: datetime,
+        *,
+        retention: Literal["retain_original", "facts_only"] = "retain_original",
     ) -> None:
+        if retention not in {"retain_original", "facts_only"}:
+            raise ValueError("unknown publication retention mode")
+        self.retention = retention
         self.source_id = source_id
         self.host = host
         self.root = root
@@ -246,10 +314,16 @@ class PublicationCollector:
             http_status=artifact.status,
             redirect_chain=artifact.redirect_chain,
             redistribution="restricted",
-            redistribution_note="Committed only as authenticated ciphertext.",
+            redistribution_note=(
+                "Public observation; original response bytes are transient."
+                if self.retention == "facts_only"
+                else "Committed only as authenticated ciphertext."
+            ),
         )
         manifest = read_capture_manifest(
-            record_capture(request, path, self.storage, self.root / "manifests")
+            record_observation(request, path, self.root / "manifests")
+            if self.retention == "facts_only"
+            else record_capture(request, path, self.storage, self.root / "manifests")
         )
         self.captures.append(manifest.id)
 
@@ -259,6 +333,8 @@ def discover_publication(
     root: Path,
     storage: Path,
     checked_at: datetime,
+    *,
+    retention: Literal["retain_original", "facts_only"] = "retain_original",
 ) -> bytes:
     """Revisit known articles and discover every newer article up to a reviewed boundary.
 
@@ -268,7 +344,9 @@ def discover_publication(
     if not policy.index_url or not policy.article_pattern or not policy.index_boundary:
         raise ValueError("incomplete index policy")
     host = urlsplit(policy.index_url).netloc
-    collector = PublicationCollector(policy.source_id, host, root, storage, checked_at)
+    collector = PublicationCollector(
+        policy.source_id, host, root, storage, checked_at, retention=retention
+    )
     fetch = collector.fetch
     captures = collector.captures
 
@@ -276,7 +354,10 @@ def discover_publication(
     for path in root.glob("discovery/*.json"):
         record = read_json(path)
         if record["source_id"] == policy.source_id:
-            known.update(record["articles"])
+            known.update(DiscoveryAudit.model_validate(record).articles)
+    for path in root.glob("discovery-obligations/*.json"):
+        if read_json(path)["source_id"] == policy.source_id:
+            known.update(read_sgn_discovery_obligation(path).articles)
     discovered: set[str] = set()
     index_hashes: dict[str, str] = {}
     visited: set[str] = set()
@@ -293,13 +374,24 @@ def discover_publication(
             for item in links
             if re.search(policy.article_pattern, unquote(item), re.IGNORECASE)
         } | {urljoin(url, item) for item in page.endorsement_links}
-        for article in articles:
+        for article in sorted(articles):
             if urlsplit(article).netloc != host or urlsplit(article).scheme != "https":
                 raise ValueError("article discovery leaves the official HTTPS host")
             identifier = re.search(r"/story/[0-9]+/", article)
             if identifier is None:
                 raise ValueError("official article URL has no stable story identity")
-            discovered.add(f"https://{host}{identifier.group(0)}")
+            canonical = f"https://{host}{identifier.group(0)}"
+            if len(known | discovered | {canonical}) > 100:
+                raise ValueError("publication discovery exceeds its 100-article bound")
+            if canonical not in known | discovered:
+                obligation = SgnDiscoveryObligation(
+                    checked_at=checked_at, articles=[canonical], capture_id=captures[-1]
+                ).model_dump(mode="json")
+                write_immutable_record(
+                    root / "discovery-obligations" / f"{evidence_fingerprint(obligation)}.json",
+                    canonical_json_bytes(obligation),
+                )
+            discovered.add(canonical)
         if any(item.startswith(policy.index_boundary) for item in links):
             break
         next_pages = sorted(
@@ -328,8 +420,8 @@ def discover_publication(
             raise ValueError("known endorsement article no longer has an endorsement heading")
         headings.append(f"<p>{html.escape(title)}</p>")
         article_hashes[article] = hashlib.sha256(raw).hexdigest()
-    # This is an explicitly derived comparison artifact. Original HTTP bytes
-    # and response metadata remain in the separate encrypted captures above.
+    # This derived comparison binds article/body and index fingerprints to
+    # their independently identified HTTP observation metadata.
     comparison = {
         "articles": article_hashes,
         "listed": sorted(discovered),
@@ -340,6 +432,8 @@ def discover_publication(
         + "".join(headings)
         + f"<!--{evidence_fingerprint(comparison)}--></body></html>"
     ).encode()
+    if len(body) > 25 * 1024 * 1024:
+        raise ValueError("SGN derived comparison exceeds the 25 MiB artifact limit")
     record = {
         "source_id": policy.source_id,
         "checked_at": checked_at.isoformat(),
@@ -402,9 +496,17 @@ class UfcwParser(PublicationParser):
             self.content.append(data)
 
 
-def discover_ufcw_publication(root: Path, storage: Path, checked_at: datetime) -> bytes:
+def discover_ufcw_publication(
+    root: Path,
+    storage: Path,
+    checked_at: datetime,
+    *,
+    retention: Literal["retain_original", "facts_only"] = "retain_original",
+) -> bytes:
     """Capture the landing page and bounded current-cycle/previously known articles."""
-    collector = PublicationCollector("ufcw-3000", "ufcw3000.org", root, storage, checked_at)
+    collector = PublicationCollector(
+        "ufcw-3000", "ufcw3000.org", root, storage, checked_at, retention=retention
+    )
     page = UfcwParser()
     raw, _ = collector.fetch(UFCW_INDEX, page)
     listed: set[str] = set()
@@ -429,8 +531,8 @@ def discover_ufcw_publication(root: Path, storage: Path, checked_at: datetime) -
     if len(articles) > 100:
         raise ValueError("UFCW discovery exceeds its 100-article bound")
     # Learning membership does not assert that any article was collected or
-    # compared. The transaction seals its original index even if collection
-    # below fails, so a later runner must retry these URLs after link rotation.
+    # compared. Its index observation survives collection failure so a later
+    # runner must retry these URLs after link rotation.
     newly_listed = sorted(listed - known)
     if newly_listed:
         obligation = UfcwDiscoveryObligation(
@@ -460,6 +562,8 @@ def discover_ufcw_publication(root: Path, storage: Path, checked_at: datetime) -
         "indexes": {UFCW_INDEX: hashlib.sha256(raw).hexdigest()},
     }
     body = raw + f"<!--{evidence_fingerprint(comparison)}-->".encode()
+    if len(body) > 25 * 1024 * 1024:
+        raise ValueError("UFCW derived comparison exceeds the 25 MiB artifact limit")
     record = {
         "source_id": "ufcw-3000",
         "checked_at": checked_at.isoformat(),

@@ -3,7 +3,11 @@
 import base64
 from pathlib import Path
 
-from election_guide.collection.discovery import DiscoveryAudit, read_ufcw_discovery_obligation
+from election_guide.collection.discovery import (
+    DiscoveryAudit,
+    read_sgn_discovery_obligation,
+    read_ufcw_discovery_obligation,
+)
 from election_guide.collection.refresh import read_extraction_snapshot, read_refresh_event
 from election_guide.collection.tru_discovery import (
     read_tru_discovery_obligation,
@@ -18,7 +22,7 @@ from election_guide.collection.verification import (
     read_checks,
     read_panel,
 )
-from election_guide.evidence.models import CapturedManifest, evidence_fingerprint
+from election_guide.evidence.models import CapturedManifest, ObservedManifest, evidence_fingerprint
 from election_guide.evidence.storage import read_capture_manifest
 from election_guide.serialization import read_json
 
@@ -68,19 +72,25 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
                 raise ValueError("sealed capture size contradicts its envelope")
             envelopes[envelope.content_sha256] = envelope
             count += 1
-        manifests: dict[str, CapturedManifest] = {}
+        manifests: dict[str, CapturedManifest | ObservedManifest] = {}
         for path in directory.glob("manifests/*.json"):
             manifest = read_capture_manifest(path)
             if (
-                not isinstance(manifest, CapturedManifest)
+                not isinstance(manifest, (CapturedManifest, ObservedManifest))
                 or manifest.redistribution != "restricted"
             ):
-                raise ValueError("verification captures require encrypted restricted custody")
-            if manifest.source_id not in sources or manifest.content_sha256 not in envelopes:
+                raise ValueError(
+                    "verification evidence requires restricted capture or observation metadata"
+                )
+            if manifest.source_id not in sources:
+                raise ValueError("verification observation belongs to an unknown source")
+            if isinstance(manifest, CapturedManifest) and manifest.content_sha256 not in envelopes:
                 raise ValueError(
                     "verification capture lacks its source or committed encrypted bytes"
                 )
-            if envelopes[manifest.content_sha256].byte_length != manifest.byte_length:
+            if isinstance(manifest, CapturedManifest) and (
+                envelopes[manifest.content_sha256].byte_length != manifest.byte_length
+            ):
                 raise ValueError("verification capture and envelope lengths differ")
             manifests[manifest.id] = manifest
             count += 1
@@ -108,12 +118,28 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
                 raise ValueError("refresh belongs to an unknown source")
             if event.capture_id and event.capture_id not in manifests:
                 raise ValueError("refresh lacks its durable capture")
+            observation = manifests.get(event.capture_id) if event.capture_id else None
+            if observation and observation.source_id != event.source_id:
+                raise ValueError("refresh observation belongs to another source")
+            if (
+                isinstance(observation, ObservedManifest)
+                and observation.retrieved_at != event.checked_at
+            ):
+                raise ValueError("refresh observation time contradicts its check")
             for identifier in (event.snapshot_id, event.previous_snapshot_id):
                 if identifier and (
                     identifier not in snapshots
                     or snapshots[identifier].source_id != event.source_id
                 ):
                     raise ValueError("refresh lacks its source comparison baseline")
+            if event.status != "failed":
+                snapshot = snapshots.get(event.snapshot_id) if event.snapshot_id else None
+                if (
+                    not observation
+                    or not snapshot
+                    or (observation.content_sha256 != snapshot.content_sha256)
+                ):
+                    raise ValueError("successful refresh lacks matching observation and facts")
             count += 1
         checks = read_checks(directory)
         for check in checks:
@@ -146,13 +172,17 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
                 raise ValueError("fixture baseline cannot receive live approval")
             count += 1
         for path in directory.glob("discovery-obligations/*.json"):
-            obligation = (
-                read_tru_discovery_obligation(path)
-                if read_json(path).get("source_id") == "transit-riders-union"
-                else read_ufcw_discovery_obligation(path)
-            )
+            source_id = read_json(path).get("source_id")
+            if source_id == "transit-riders-union":
+                obligation = read_tru_discovery_obligation(path)
+            elif source_id == "ufcw-3000":
+                obligation = read_ufcw_discovery_obligation(path)
+            elif source_id == "seattle-gay-news":
+                obligation = read_sgn_discovery_obligation(path)
+            else:
+                raise ValueError("discovery obligation belongs to an unsupported source")
             if obligation.source_id not in sources or obligation.capture_id not in manifests:
-                raise ValueError("UFCW discovery obligation lacks durable source evidence")
+                raise ValueError("discovery obligation lacks durable source evidence")
             count += 1
         for path in directory.glob("discovery/*.json"):
             record = read_json(path)
@@ -165,6 +195,26 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
                 raise ValueError("discovery record lacks its immutable original inputs")
             if audit.source_id == "transit-riders-union":
                 validate_tru_audit(audit, manifests)
+            else:
+                inputs = [manifests[identifier] for identifier in audit.captures]
+                if len(set(audit.captures)) != len(audit.captures) or any(
+                    item.source_id != audit.source_id
+                    or item.retrieved_at != audit.checked_at
+                    or item.capture_method != "static_html"
+                    for item in inputs
+                ):
+                    raise ValueError("discovery input contradicts its source, time or method")
+                if not set(audit.articles) <= {item.requested_url for item in inputs}:
+                    raise ValueError("discovery lacks its required article observations")
+                if not any(
+                    item.source_id == audit.source_id
+                    and item.retrieved_at <= audit.checked_at
+                    and item.capture_method == "manual_upload"
+                    and item.http_status is None
+                    and item.content_sha256 == audit.comparison_sha256
+                    for item in manifests.values()
+                ):
+                    raise ValueError("discovery lacks its derived comparison provenance")
             count += 1
     for path in root.glob("runs/*.json"):
         RunAudit.model_validate(read_json(path))

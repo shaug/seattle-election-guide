@@ -180,6 +180,24 @@ class CapturedManifest(CaptureRequest):
         return self
 
 
+class ObservedManifest(CaptureRequest):
+    """Identified public metadata from a fetch whose original bytes are not retained."""
+
+    id: str = Field(pattern=CAPTURE_ID_PATTERN)
+    availability: Literal["observed"] = "observed"
+    content_sha256: str = Field(pattern=SHA256_PATTERN)
+    byte_length: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def validate_identity(self) -> ObservedManifest:
+        if not self.id.startswith(_capture_id_prefix(self.source_id, self.retrieved_at)):
+            raise ValueError("capture ID must encode its source and UTC retrieval time")
+        payload = self.model_dump(mode="json", exclude={"id", "availability"})
+        if not self.id.endswith(f"-{evidence_fingerprint(payload)[:12]}"):
+            raise ValueError("observed evidence ID must end with its record hash prefix")
+        return self
+
+
 class UnavailableManifest(UnavailableRequest):
     id: str = Field(pattern=CAPTURE_ID_PATTERN)
     availability: Literal["unavailable"] = "unavailable"
@@ -195,7 +213,7 @@ class UnavailableManifest(UnavailableRequest):
         return self
 
 
-CaptureManifest = CapturedManifest | UnavailableManifest
+CaptureManifest = CapturedManifest | ObservedManifest | UnavailableManifest
 CAPTURE_MANIFEST_ADAPTER: TypeAdapter[CaptureManifest] = TypeAdapter(CaptureManifest)
 
 

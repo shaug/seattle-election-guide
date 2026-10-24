@@ -95,6 +95,7 @@ def test_same_day_batch_retry_missing_events_and_escalation(
     reconcile("2026-10-06")
     reconcile("2026-10-07")
     assert len(issues) == 3 and "priority: high" in labels
+    assert "evidence key" not in json.dumps(issues) + json.dumps(comments)
     assert any("three observed days" in comment["body"] for comment in comments["3"])
     run_fixture(policy, state, fixtures, "2026-10-08")
     reconcile("2026-10-08")

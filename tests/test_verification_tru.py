@@ -1,6 +1,5 @@
 """TRU WordPress discovery observes full publications through the public runner."""
 
-import base64
 import hashlib
 import json
 import shutil
@@ -66,7 +65,7 @@ def article(body: str = "An authored correction.", *, image: bool = False) -> by
 
 @pytest.fixture
 def publication(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, dict[str, Any]]:
-    monkeypatch.setenv("ENDORSEMENT_EVIDENCE_KEY", base64.b64encode(bytes(range(32))).decode())
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
     policy = cast(dict[str, Any], yaml.safe_load((ROOT / "config/verification.yaml").read_text()))
     policy["elections"][0]["sources"] = [
         item
@@ -179,7 +178,9 @@ def test_tru_full_publication_custody_and_twelve_facts_once(
             manifest["content_sha256"]
             == hashlib.sha256(pages[manifest["requested_url"]]).hexdigest()
         )
-        assert list(state.rglob(f"vault/sha256/*/{manifest['content_sha256']}.json"))
+        assert manifest["availability"] == "observed"
+        assert "storage_reference" not in manifest
+        assert not list(state.rglob("vault/**/*.json"))
     image = next(m for m in originals if m["requested_url"] == IMAGE)
     assert image["capture_method"] == "image"
     composite = next(m for m in manifests if m["id"] == first["capture_id"])
@@ -430,7 +431,7 @@ def test_tru_incomplete_publications_preserve_previous_snapshot(
         "capture",
         "method",
         "time",
-        "vault",
+        "missing-observation",
     ],
 )
 def test_tru_corrupt_obligations_rejected_before_state_mutation(
@@ -462,7 +463,7 @@ def test_tru_corrupt_obligations_rejected_before_state_mutation(
         record["capture_id"] = "capture-transit-riders-union-20261020T180000Z-000000000000"
     elif corruption == "time":
         record["checked_at"] = "2026-10-21T18:00:00Z"
-    elif corruption in {"method", "vault"}:
+    elif corruption in {"method", "missing-observation"}:
         capture = next(p for p in state.rglob("manifests/*.json") if p.stem == record["capture_id"])
         manifest = json.loads(capture.read_text())
         if corruption == "method":
@@ -470,7 +471,7 @@ def test_tru_corrupt_obligations_rejected_before_state_mutation(
             manifest["http_status"] = None
             capture.write_text(json.dumps(manifest))
         else:
-            next(state.rglob(f"vault/sha256/*/{manifest['content_sha256']}.json")).unlink()
+            capture.unlink()
     path.unlink()
     path.with_name(
         ("0" * 64 if corruption == "identity" else evidence_fingerprint(record)) + ".json"
@@ -639,7 +640,9 @@ def test_tru_derived_size_boundary_preserves_recoverable_archive(
             manifest["content_sha256"]
             == hashlib.sha256(pages[manifest["requested_url"]]).hexdigest()
         )
-        assert list(state.rglob(f"vault/sha256/*/{manifest['content_sha256']}.json"))
+        assert manifest["availability"] == "observed"
+        assert "storage_reference" not in manifest
+        assert not list(state.rglob("vault/**/*.json"))
     validate(policy, state)
     if expected_status == "failed":
         assert len(list(state.rglob("extractions/*.json"))) == 1

@@ -10,7 +10,7 @@ normal build so identical captured inputs can be rebuilt deterministically.
 election and source configuration
               |
               v
-content-addressed evidence captures
+evidence captures or observed-only provenance
               |
               v
 extracted claims -> review decisions and overrides
@@ -39,15 +39,24 @@ Raw captures are addressed by content hash and governed by `SOURCE_POLICY.md`.
 - **Configuration:** elections, jurisdictions, sources, scoring, and rendering policy.
 - **Collection:** HTTPX for static content and Playwright only when browser rendering is
   necessary. Collection never runs as an implicit part of publication.
-- **Evidence storage:** Restricted plaintext artifacts are stored by SHA-256 outside Git. Recurring
-  verification retains authenticated encrypted captures alongside its immutable Git records;
-  the key is held separately. Permitted official-authority bytes are tracked directly. Immutable
-  JSON manifests preserve retrieval metadata and redistribution constraints; unavailable sources
-  remain explicit metadata-only records.
+- **Evidence storage:** Retained restricted plaintext artifacts are stored by SHA-256 outside Git.
+  Recurring verification explicitly selects `facts_only`: private temporary responses produce
+  observed-only manifests, factual snapshots, checks and approvals in Git, without new full-page
+  plaintext or ciphertext. Endorsement facts, official URL, actual check timestamp and actual
+  reviewer/review timestamp are sufficient durable evidence. Observed metadata and hashes cannot
+  prove retained original bytes or publisher authorship; full-page reconstruction is not promised.
+  Unrelated refresh callers default to `retain_original`; permitted official-authority bytes remain
+  tracked directly. Legacy records and ciphertext retain their IDs and bytes. Normal validation
+  checks public source/hash/time/reference integrity and legacy envelope metadata without
+  decryption or an evidence key. Failed or inaccessible sources remain explicit.
 - **Extraction:** source-specific adapters produce evidence-linked claims without deciding
   ambiguous matches silently.
 - **Review:** manual transcriptions, approvals, and overrides are append-only data with author,
-  reason, evidence locator, capture identity, and review status.
+  reason, evidence locator, capture identity, and review status. First/changed/unapproved factual
+  baselines require official-source review. Unchanged automated observations reuse the exact
+  prior approval without claiming a new personal source read; check and review times stay distinct.
+  Migration preserves existing approvals and failures and grants no new review. Retained-original
+  manual transcription still requires byte verification; observed-only approval uses factual records.
 - **Normalization:** race and candidate matching is constrained to the authoritative election
   inventory. Exact and normalized aliases precede race-scoped fuzzy matching; ambiguity produces
   an immutable review item rather than a guessed selection. Endorsement allocations use exact

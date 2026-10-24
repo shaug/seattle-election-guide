@@ -23,6 +23,7 @@ from election_guide.evidence.models import (
     CapturedManifest,
     CaptureManifest,
     CaptureRequest,
+    ObservedManifest,
     UnavailableManifest,
     UnavailableRequest,
     evidence_fingerprint,
@@ -89,6 +90,28 @@ def record_capture(
     return write_manifest(manifest, manifest_dir)
 
 
+def record_observation(request: CaptureRequest, input_path: Path, manifest_dir: Path) -> Path:
+    """Write canonical fetch metadata without copying or retaining the input bytes."""
+    if not input_path.is_file():
+        raise ValueError(f"observation input is not a file: {input_path}")
+    _validate_staged_artifact(request, input_path)
+    digest, byte_length = _hash_file(input_path)
+    payload = {
+        **request.model_dump(mode="json"),
+        "content_sha256": digest,
+        "byte_length": byte_length,
+    }
+    manifest = ObservedManifest.model_validate(
+        {
+            **payload,
+            "id": _capture_id(
+                request.source_id, request.retrieved_at, evidence_fingerprint(payload)
+            ),
+        }
+    )
+    return write_manifest(manifest, manifest_dir)
+
+
 def record_unavailable(request: UnavailableRequest, manifest_dir: Path) -> Path:
     """Write an auditable immutable record when no artifact can be captured."""
     fingerprint = hashlib.sha256(canonical_json_bytes(request.model_dump(mode="json"))).hexdigest()
@@ -135,6 +158,8 @@ def verify_capture(
     looked up in the wrong store by any caller that has not heard of the
     official store yet (issue #357).
     """
+    if isinstance(manifest, ObservedManifest):
+        raise ValueError("observed evidence has no retained original to verify")
     if isinstance(manifest, UnavailableManifest):
         return
     artifact = captured_artifact_path(

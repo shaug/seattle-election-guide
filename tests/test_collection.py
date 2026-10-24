@@ -1,6 +1,7 @@
 import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import TypedDict
 
 import pytest
 from PIL import Image
@@ -538,7 +539,14 @@ def _image_request(retrieved_at: datetime) -> CaptureRequest:
     )
 
 
-def _refresh_paths(tmp_path: Path) -> dict[str, Path]:
+class RefreshPaths(TypedDict):
+    storage_root: Path
+    manifest_dir: Path
+    extraction_dir: Path
+    refresh_dir: Path
+
+
+def _refresh_paths(tmp_path: Path) -> RefreshPaths:
     return {
         "storage_root": tmp_path / "snapshots",
         "manifest_dir": tmp_path / "manifests",
@@ -551,7 +559,7 @@ def _refresh(
     spec: AdapterSpec,
     request: CaptureRequest,
     source: Path,
-    paths: dict[str, Path],
+    paths: RefreshPaths,
 ) -> RefreshEvent:
     return refresh_source(
         spec,
@@ -562,3 +570,234 @@ def _refresh(
         extraction_dir=paths["extraction_dir"],
         refresh_dir=paths["refresh_dir"],
     )
+
+
+@pytest.fixture
+def no_historical_bytes(monkeypatch: pytest.MonkeyPatch) -> None:
+    import election_guide.collection.vault as vault
+
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
+
+    def forbidden(*args: object, **kwargs: object) -> None:
+        raise AssertionError("facts-only refresh attempted historical byte/key access")
+
+    monkeypatch.setattr(vault, "read_key", forbidden)
+    monkeypatch.setattr(vault, "restore_store", forbidden)
+    monkeypatch.setattr(vault, "seal_store", forbidden)
+    monkeypatch.setattr(vault, "_unseal", forbidden)
+    monkeypatch.setattr(collection_refresh, "verify_capture", forbidden)
+
+
+def test_facts_only_refresh_reuses_snapshot_with_fresh_fetch_metadata(
+    tmp_path: Path, no_historical_bytes: None
+) -> None:
+    from election_guide.evidence.storage import read_capture_manifest
+
+    paths = _refresh_paths(tmp_path)
+    source = tmp_path / "private.html"
+    source.write_text("<p>Fixture Candidate</p>")
+    spec = _spec("static_html", "Fixture Candidate")
+    first = refresh_source(spec, _request(CHECKED_AT), source, **paths, retention="facts_only")
+    request = _request(CHECKED_AT + timedelta(days=1)).model_copy(
+        update={
+            "canonical_url": "https://example.com/current",
+            "http_status": 203,
+            "redirect_chain": ["https://example.com/endorsements", "https://example.com/current"],
+        }
+    )
+    current = refresh_source(spec, request, source, **paths, retention="facts_only")
+    assert first.status == "created" and [item.kind for item in first.diff] == ["added"]
+    assert current.status == "unchanged" and current.diff == []
+    assert current.snapshot_id == first.snapshot_id
+    assert current.capture_id != first.capture_id
+    observed = read_capture_manifest(paths["manifest_dir"] / f"{current.capture_id}.json")
+    snapshot = read_extraction_snapshot(paths["extraction_dir"] / f"{current.snapshot_id}.json")
+    assert observed.availability == "observed"
+    assert observed.source_id == snapshot.source_id
+    assert observed.content_sha256 == snapshot.content_sha256
+    assert observed.canonical_url == "https://example.com/current" and observed.http_status == 203
+    assert observed.retrieved_at == request.retrieved_at
+    assert len(list(paths["manifest_dir"].glob("*.json"))) == 2
+    assert not paths["storage_root"].exists()
+
+
+def test_facts_only_refresh_tracks_semantics_and_extractor_changes(
+    tmp_path: Path, no_historical_bytes: None
+) -> None:
+    paths = _refresh_paths(tmp_path)
+    source = tmp_path / "private.html"
+    source.write_text("<p>Fixture Candidate</p>")
+    spec = _spec("static_html", "Fixture Candidate")
+    spec.decision_pattern = r"(?m)^.*Candidate$"
+    spec.rules.append(
+        spec.rules[0].model_copy(
+            update={
+                "race_id": "other-race",
+                "pattern": "Remaining Candidate",
+                "candidate_ids": ["other-candidate"],
+            }
+        )
+    )
+    source.write_text("<p>Fixture Candidate</p><p>Remaining Candidate</p>")
+    first = refresh_source(spec, _request(CHECKED_AT), source, **paths, retention="facts_only")
+    spec.extractor_version = "2.0.0"
+    second = refresh_source(
+        spec, _request(CHECKED_AT + timedelta(minutes=1)), source, **paths, retention="facts_only"
+    )
+    assert second.status == "updated" and second.diff == []
+    assert second.content_changed is False and second.snapshot_id != first.snapshot_id
+    spec.rules[0].candidate_ids = ["seattle-city-council-5--replacement"]
+    changed = refresh_source(
+        spec, _request(CHECKED_AT + timedelta(minutes=2)), source, **paths, retention="facts_only"
+    )
+    assert [item.kind for item in changed.diff] == ["changed"]
+    source.write_text("<p>Remaining Candidate</p>")
+    removed = refresh_source(
+        spec, _request(CHECKED_AT + timedelta(minutes=3)), source, **paths, retention="facts_only"
+    )
+    assert [item.kind for item in removed.diff] == ["removed"]
+    source.write_text("<p>Fixture Candidate</p><p>Remaining Candidate</p>")
+    added = refresh_source(
+        spec, _request(CHECKED_AT + timedelta(minutes=4)), source, **paths, retention="facts_only"
+    )
+    assert [item.kind for item in added.diff] == ["added"]
+    assert not paths["storage_root"].exists()
+
+
+def test_facts_only_refresh_keeps_observation_on_parse_failure(
+    tmp_path: Path, no_historical_bytes: None
+) -> None:
+    paths = _refresh_paths(tmp_path)
+    source = tmp_path / "private.html"
+    source.write_text("<p>Fixture Candidate</p>")
+    spec = _spec("static_html", "Fixture Candidate")
+    first = refresh_source(spec, _request(CHECKED_AT), source, **paths, retention="facts_only")
+    spec.decision_pattern = "Unconfigured Candidate"
+    source.write_text("<p>Unconfigured Candidate</p>")
+    failed = refresh_source(
+        spec, _request(CHECKED_AT + timedelta(minutes=1)), source, **paths, retention="facts_only"
+    )
+    assert failed.status == "failed" and failed.snapshot_id is None
+    assert (
+        failed.previous_snapshot_id == first.snapshot_id and failed.capture_id != first.capture_id
+    )
+    assert (paths["manifest_dir"] / f"{failed.capture_id}.json").is_file()
+    source.write_text("<p>Fixture Candidate</p>")
+    recovered = refresh_source(
+        _spec("static_html", "Fixture Candidate"),
+        _request(CHECKED_AT + timedelta(minutes=2)),
+        source,
+        **paths,
+        retention="facts_only",
+    )
+    assert recovered.status == "unchanged" and recovered.snapshot_id == first.snapshot_id
+    assert recovered.previous_snapshot_id == first.snapshot_id
+    assert recovered.capture_id not in {first.capture_id, failed.capture_id}
+
+
+@pytest.mark.parametrize(
+    "damage", ["missing", "tampered", "cross_source", "hash_mismatch", "latest_observation_missing"]
+)
+def test_facts_only_refresh_rejects_invalid_public_references(
+    tmp_path: Path, no_historical_bytes: None, damage: str
+) -> None:
+    from election_guide.evidence.models import evidence_fingerprint
+    from election_guide.serialization import canonical_json_bytes
+
+    paths = _refresh_paths(tmp_path)
+    source = tmp_path / "private.html"
+    source.write_text("<p>Fixture Candidate</p>")
+    spec = _spec("static_html", "Fixture Candidate")
+    first = refresh_source(spec, _request(CHECKED_AT), source, **paths, retention="facts_only")
+    latest = refresh_source(
+        spec, _request(CHECKED_AT + timedelta(minutes=1)), source, **paths, retention="facts_only"
+    )
+    manifest_path = paths["manifest_dir"] / f"{first.capture_id}.json"
+    if damage == "missing":
+        manifest_path.unlink()
+    elif damage == "latest_observation_missing":
+        (paths["manifest_dir"] / f"{latest.capture_id}.json").unlink()
+    else:
+        raw = json.loads(manifest_path.read_bytes())
+        if damage == "tampered":
+            raw["title"] = "Changed title"
+        else:
+            raw["source_id" if damage == "cross_source" else "content_sha256"] = (
+                "other-source" if damage == "cross_source" else "a" * 64
+            )
+            payload = {k: v for k, v in raw.items() if k not in {"id", "availability"}}
+            old_id = raw["id"]
+            raw["id"] = (
+                f"capture-{raw['source_id']}-20260720T070000Z-{evidence_fingerprint(payload)[:12]}"
+            )
+            manifest_path.unlink()
+            manifest_path = paths["manifest_dir"] / f"{raw['id']}.json"
+            # Rebind the snapshot and event with valid identified records to test joins, not hashes.
+            snapshot_path = paths["extraction_dir"] / f"{first.snapshot_id}.json"
+            snapshot_raw = json.loads(snapshot_path.read_bytes())
+            snapshot_raw["capture_id"] = raw["id"]
+            old_snapshot_id = snapshot_raw.pop("id")
+            snapshot_raw["id"] = (
+                f"extraction-transit-riders-union-20260720T070000Z-{evidence_fingerprint(snapshot_raw)[:12]}"
+            )
+            snapshot_path.unlink()
+            (paths["extraction_dir"] / f"{snapshot_raw['id']}.json").write_bytes(
+                canonical_json_bytes(snapshot_raw)
+            )
+            for event_path in paths["refresh_dir"].glob("*.json"):
+                event_raw = json.loads(event_path.read_bytes())
+                event_raw.pop("id")
+                for key in ["snapshot_id", "previous_snapshot_id"]:
+                    if event_raw[key] == old_snapshot_id:
+                        event_raw[key] = snapshot_raw["id"]
+                if event_raw["capture_id"] == old_id:
+                    event_raw["capture_id"] = raw["id"]
+                stamp = (
+                    "20260720T070000Z" if event_raw["status"] == "created" else "20260720T070100Z"
+                )
+                event_raw["id"] = (
+                    f"refresh-transit-riders-union-{stamp}-{evidence_fingerprint(event_raw)[:12]}"
+                )
+                event_path.unlink()
+                (paths["refresh_dir"] / f"{event_raw['id']}.json").write_bytes(
+                    canonical_json_bytes(event_raw)
+                )
+        manifest_path.write_bytes(canonical_json_bytes(raw))
+    event = refresh_source(
+        spec, _request(CHECKED_AT + timedelta(minutes=2)), source, **paths, retention="facts_only"
+    )
+    assert event.status == "failed" and event.snapshot_id is None
+    assert event.previous_snapshot_id is not None
+    assert len(list(paths["extraction_dir"].glob("*.json"))) == 1
+
+
+def test_facts_only_refresh_reuses_legacy_snapshot_without_raw_files(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import shutil
+
+    import election_guide.collection.vault as vault
+
+    paths = _refresh_paths(tmp_path)
+    source = tmp_path / "private.html"
+    source.write_text("<p>Fixture Candidate</p>")
+    spec = _spec("static_html", "Fixture Candidate")
+    first = refresh_source(spec, _request(CHECKED_AT), source, **paths)
+    legacy_path = paths["manifest_dir"] / f"{first.capture_id}.json"
+    legacy_bytes = legacy_path.read_bytes()
+    shutil.rmtree(paths["storage_root"])
+    monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
+
+    def forbidden(*args: object, **kwargs: object) -> None:
+        raise AssertionError("historical byte access")
+
+    monkeypatch.setattr(collection_refresh, "verify_capture", forbidden)
+    monkeypatch.setattr(vault, "read_key", forbidden)
+    monkeypatch.setattr(vault, "restore_store", forbidden)
+    event = refresh_source(
+        spec, _request(CHECKED_AT + timedelta(days=1)), source, **paths, retention="facts_only"
+    )
+    assert event.status == "unchanged" and event.snapshot_id == first.snapshot_id
+    assert event.capture_id != first.capture_id
+    assert legacy_path.read_bytes() == legacy_bytes
+    assert not paths["storage_root"].exists()

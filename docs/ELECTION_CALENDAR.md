@@ -448,4 +448,13 @@ This recurring capability creates neither one calendar milestone per day nor a
 public calendar feed entry for each check. Existing comprehensive refresh
 milestones retain their own work and authority. See
 [the runbook](runbooks/endorsement-source-daily-verification.md) for coverage,
-encrypted Git persistence, and pending adoption evidence.
+factual Git persistence, and pending adoption evidence. Recurring records retain
+endorsement facts, official URLs, actual check timestamps, and the actual reviewer
+and review timestamp, with observed-only metadata and hashes. Current responses
+are discarded after private temporary parsing; new records retain no full-page
+plaintext or ciphertext. Full-page reconstruction is not required, and normal
+operation requires no evidence key or external evidence service. Historical
+ciphertext, records, approvals and failures remain unchanged; migration grants
+no approval or fresh check. The separate manual-transcription, original-capture
+and official-authority election-results rules remain in
+[the source policy](../SOURCE_POLICY.md#public-repository-boundaries).
