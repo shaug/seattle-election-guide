@@ -28,9 +28,16 @@ request before viewing consensus results, so methodology cannot be tuned to an o
 - Source organizations are preregistered before scoring begins.
 - Plaintext full captures from paywalled, copyrighted, or access-controlled pages remain outside the
   public repository unless redistribution is clearly permitted.
-- Recurring endorsement verification retains publicly accessible full source responses as
-  authenticated encrypted Git records, with a separately held key (SOURCE_POLICY.md). It uses
-  no external evidence storage. Encryption does not authorize restricted access or publication.
+- Recurring endorsement verification (#497) retains endorsement facts, official URLs, actual
+  check timestamps, and the actual reviewer and review timestamp in Git (SOURCE_POLICY.md).
+  Responses are fetched and parsed in private temporary storage, then discarded; new records
+  contain factual snapshots and observed-only metadata, hashes, checks and review attestations,
+  with no full-page plaintext or ciphertext. Full-page reconstruction is not required, and
+  normal operation requires no evidence key or external evidence service. Existing ciphertext,
+  historical records, approvals and failures remain unchanged; migration grants no approval or
+  fresh check. The separate rules for manual transcriptions, retained original captures and
+  official-authority election results remain in SOURCE_POLICY.md. None of these paths permits
+  access-control bypass or unauthorized redistribution.
 
 ## Consensus eligibility
 

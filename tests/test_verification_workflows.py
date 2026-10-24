@@ -194,14 +194,19 @@ def test_active_runbook_requires_factual_review_and_real_scheduled_adoption() ->
     "document",
     [
         "SOURCE_POLICY.md",
+        "DECISIONS.md",
         "ARCHITECTURE.md",
         "REVIEW_GUIDE.md",
         "docs/COLLECTION.md",
         "docs/EVIDENCE_CAPTURE.md",
+        "docs/ELECTION_CALENDAR.md",
     ],
 )
 def test_evidence_authorities_distinguish_observed_facts_from_original_bytes(document: str) -> None:
-    text = " ".join((PROJECT_ROOT / document).read_text().lower().split())
+    text = (PROJECT_ROOT / document).read_text()
+    if document == "docs/ELECTION_CALENDAR.md":
+        text = text.split("## Recurring endorsement verification (#497)", 1)[1]
+    text = " ".join(text.lower().split())
     assert "observed" in text
     assert "actual reviewer" in text
     assert any(
