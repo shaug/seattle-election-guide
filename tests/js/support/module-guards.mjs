@@ -45,6 +45,7 @@ const PURITY_IDENTIFIERS = [
   'location',
   'history',
   'navigator',
+  'indexedDB',
   // network
   'fetch',
   'XMLHttpRequest',
@@ -66,6 +67,9 @@ const PURITY_IDENTIFIERS = [
  * this choice deliberately rather than arriving unguarded.
  */
 export const MODULE_KINDS = {
+  'ballot-membership.mjs': 'pure',
+  'ballot-profile-store.mjs': 'wiring',
+  'ballot-setup.mjs': 'wiring',
   'client-payload.mjs': 'wiring',
   'compare-client.mjs': 'wiring',
   'compare-entry.mjs': 'wiring',

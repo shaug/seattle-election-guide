@@ -12,6 +12,7 @@
 //     is handed and hands back; `lens-route.mjs` is what touches `location`
 //     (§ State and URLs).
 
+import { html, render } from 'lit-html';
 import { filterStatusParts } from './guide-format.mjs';
 
 /**
@@ -67,6 +68,7 @@ export function writeControlState(search, state) {
  * @property {(options?: { syncUrl?: boolean }) => void} apply Re-apply the
  *   controls' current state to the page.
  * @property {() => void} syncFromUrl Reload the controls from the address bar.
+ * @property {(state: import('./ballot-setup.mjs').BallotState) => void} setBallot
  * @property {() => void} showEveryRace Clear the filter so a linked race is
  *   reachable, and apply it.
  */
@@ -97,6 +99,8 @@ export function wireGuideFilters(payload, router) {
     ...document.querySelectorAll('[data-filter-section]'),
   ]);
 
+  /** @type {import('./ballot-setup.mjs').BallotState} */
+  let ballot = { active: false, membership: {}, complete: false };
   const scopeLabels = new Map(payload.filter_scopes.map((scope) => [scope.value, scope.label]));
   const knownScopes = new Set(scopeLabels.keys());
 
@@ -124,6 +128,17 @@ export function wireGuideFilters(payload, router) {
   /** @param {{ syncUrl?: boolean }} [options] */
   const apply = ({ syncUrl = true } = {}) => {
     const state = controlState();
+    if (ballot.active) {
+      state.scope = 'all';
+      state.raceSet = 'complete';
+      select.value = 'all';
+      completeFilter.checked = true;
+    }
+    select.disabled = ballot.active;
+    for (const input of raceSetInputs) {
+      input.disabled = ballot.active;
+      input.checked = input.value === state.raceSet;
+    }
     const contestedOnly = state.raceSet === 'contested';
     const compact = state.view === 'compact';
     let visible = 0;
@@ -134,7 +149,14 @@ export function wireGuideFilters(payload, router) {
         state.scope === 'all' ||
         JSON.parse(/** @type {string} */ (card.dataset.filterTokens)).includes(state.scope);
       const matchesContest = !contestedOnly || card.dataset.contested === 'true';
-      const matches = matchesScope && matchesContest;
+      const raceId = card.dataset.publicationRaceId ?? '';
+      const membership = ballot.membership[raceId] ?? 'unresolved';
+      const confirmation = card.querySelector('[data-ballot-confirmation]');
+      if (confirmation)
+        /** @type {HTMLElement} */ (confirmation).hidden =
+          !ballot.active || membership !== 'unresolved';
+      const matches =
+        matchesScope && matchesContest && (!ballot.active || membership !== 'inapplicable');
       card.hidden = !matches;
       if (matches) visible += 1;
     });
@@ -152,13 +174,9 @@ export function wireGuideFilters(payload, router) {
       // payload does not know, which the markup cannot produce.
       scopeLabel: scopeLabels.get(state.scope) ?? 'All Seattle ballot races',
     });
-    status.replaceChildren(
-      ...statusParts.map((part, index) => {
-        const chunk = document.createElement('span');
-        chunk.className = index === 0 ? 'filter-status-part' : 'filter-status-part visually-hidden';
-        chunk.textContent = index === 0 ? part : ` · ${part}`;
-        return chunk;
-      }),
+    render(
+      html`${statusParts.map((part, index) => html`<span class=${index === 0 ? 'filter-status-part' : 'filter-status-part visually-hidden'}>${index === 0 ? part : ` · ${part}`}</span>`)}`,
+      status,
     );
     if (syncUrl) router.replaceControlSearch(writeControlState(router.controlSearch(), state));
   };
@@ -172,6 +190,10 @@ export function wireGuideFilters(payload, router) {
 
   return {
     apply,
+    setBallot(state) {
+      ballot = state;
+      apply();
+    },
     syncFromUrl,
     showEveryRace() {
       select.value = 'all';

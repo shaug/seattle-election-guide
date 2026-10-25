@@ -427,3 +427,18 @@ Amend it in the pull request that changes the rule, as a dated decision.
 If shipped UI and this document disagree, one of them is wrong — fix
 whichever it is, deliberately. A design change isn't done until any new
 rule or rationale it produced lands here.
+
+## Your ballot (#608)
+
+Endorsements and Comparisons share a “Set up your ballot” disclosure before their
+list controls. Use native labeled district selects, independent yes/no questions
+where jurisdictions are not mutually exclusive, and explicit unknown answers.
+Starting setup enters Your ballot mode and shows every applicable or unresolved
+contest; retain “Browse all Seattle contests” and a clear-saved-districts action.
+The status distinguishes incomplete setup from complete district matching and
+explains the official ballot is the completeness reference. Mark unresolved
+contests “District needs confirmation.” Preserve this context in print.
+
+In Your ballot mode, section, contested-only, and differing-only restrictions are
+disabled. Full/Compact presentation remains available. Membership never assigns
+a section or changes relative contest order. Location lookup is a later feature.

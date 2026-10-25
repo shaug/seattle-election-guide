@@ -576,3 +576,33 @@ issue attached so the review is not silently missed: [Cloudflare API token rotat
 2027](https://github.com/shaug/seattle-election-guide/milestone/6), tracked by issue
 [#365](https://github.com/shaug/seattle-election-guide/issues/365). Closing that issue and rolling
 the milestone forward one year is part of completing the rotation.
+## Previewing both elections from current source
+
+For an unpublished inspection copy, an open same-repository **draft** may opt
+in with both `deploy preview` and `preview primary from source` labels. The
+ordinary single-label preview still builds general and resolves published primary.
+The dual-source path first verifies the original tracked declarations, including
+the published primary bundle's pinned source, manifest and complete bundle hash.
+The current general candidate may be unpublished; no general archive download is
+required for this path.
+
+Both elections are built twice from the exact clean PR head and commit timestamp,
+using the standard release builder and their reviewed inputs. Versions are
+`preview-pr-<PR>-general-<fullHEAD>` and `preview-pr-<PR>-primary-<fullHEAD>`.
+These are unpublished identities, not numeric releases; they omit publication-only
+software history in release notes. Existing Updates entries remain in each bundle,
+and truthful inspection-copy entries describe the new behavior in both elections.
+
+Only ignored `dist/preview-site.yaml` overrides both declarations with actual
+local artifact hashes and the same source head, with no publication request.
+Normal staging copies each newly built overview and renders its related routes;
+independent verification and the normal live Updates comparison must pass before
+upload. A missing or inconsistent production baseline blocks upload; it does not
+require the new general candidate itself to be published. The original tracked
+manifest, immutable releases, tags and primary pins remain unchanged.
+
+This path retains the existing credentials, feature flag, per-PR alias and
+concurrency, noncanonical `noindex`, and close-triggered teardown. Removing labels
+stops future opt-in builds; close the PR to remove deployed previews. Preview
+success grants no merge, archive publication, production delivery or visual
+approval. Production admission and archived-release activation remain unchanged.

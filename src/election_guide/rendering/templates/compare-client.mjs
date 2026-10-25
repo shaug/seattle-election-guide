@@ -24,7 +24,9 @@
 // re-renders it from the audited view model rather than putting the server's
 // markup back — `compare-markup-parity.test.mjs` is what makes those two the
 // same thing.
+
 import { render } from 'lit-html';
+import { wireBallotSetup } from './ballot-setup.mjs';
 import { readClientPayload } from './client-payload.mjs';
 import { migrateCompareState } from './compare-migrate.mjs';
 import { createCompareRouter } from './compare-route.mjs';
@@ -115,6 +117,8 @@ export function wireComparisons() {
   const sectionFilter = required('[data-comparison-section-filter]');
   /** @type {HTMLElement} */
   const stickyControls = required('[data-sticky-controls]');
+  /** @type {import('./ballot-setup.mjs').BallotState} */
+  let ballot = { active: false, membership: {}, complete: false };
   const contestedIds = new Set(payload.contested_race_ids);
   const races = new Map(personalization.races.map((race) => [race.race_id, race]));
   const categories = personalization.categories.filter((category) => category.selectable);
@@ -241,6 +245,7 @@ export function wireComparisons() {
   function showingAuditedDefault() {
     const audited = auditedDefault();
     return (
+      !ballot.active &&
       !state.differencesOnly &&
       !state.contestedOnly &&
       state.section === audited.section &&
@@ -617,8 +622,11 @@ export function wireComparisons() {
     let differCount = 0;
     let shown = 0;
     for (const display of comparisons.display_index) {
-      if (state.section !== 'all' && display.section_id !== state.section) continue;
-      if (state.contestedOnly && !contestedIds.has(display.race_id)) continue;
+      const membership = ballot.membership[display.race_id] ?? 'unresolved';
+      if (ballot.active && membership === 'inapplicable') continue;
+      if (!ballot.active && state.section !== 'all' && display.section_id !== state.section)
+        continue;
+      if (!ballot.active && state.contestedOnly && !contestedIds.has(display.race_id)) continue;
       total += 1;
       // Every display row names a published race: both come from the same
       // payload, and the comparison contract is built from `personalization`.
@@ -626,7 +634,7 @@ export function wireComparisons() {
       const configuredCells = state.columns.map((signal) => engine.resolveColumn(signal, race));
       const differs = rowDiffers(configuredCells);
       if (differs) differCount += 1;
-      if (state.differencesOnly && !differs) continue;
+      if (!ballot.active && state.differencesOnly && !differs) continue;
       let section = sections.get(display.section_id);
       if (section === undefined) {
         section = {
@@ -640,6 +648,10 @@ export function wireComparisons() {
       shown += 1;
       section.rows.push({
         raceId: display.race_id,
+        confirmationLabel:
+          ballot.active && membership === 'unresolved'
+            ? payload.ballot_membership?.confirmation_label
+            : null,
         raceLabel: display.race_label,
         raceHref: `../#race-${display.race_id}`,
         differs,
@@ -702,6 +714,14 @@ export function wireComparisons() {
     /** @type {HTMLInputElement} */ (document.querySelector(selector));
 
   function syncControls() {
+    sectionFilter.disabled = ballot.active;
+    for (const selector of [
+      '[data-comparison-full]',
+      '[data-comparison-differences]',
+      '[data-comparison-all-races]',
+      '[data-comparison-contested]',
+    ])
+      toggleInput(selector).disabled = ballot.active;
     sectionFilter.value = state.section;
     toggleInput('[data-comparison-full]').checked = !state.differencesOnly;
     toggleInput('[data-comparison-differences]').checked = state.differencesOnly;
@@ -714,6 +734,11 @@ export function wireComparisons() {
   // checkbox the reader clicked reports the state that survived, not the one
   // they asked for.
   function renderPage() {
+    if (ballot.active) {
+      state.section = 'all';
+      state.contestedOnly = false;
+      state.differencesOnly = false;
+    }
     const text = disclosure();
     notice.hidden = text === '';
     notice.textContent = text;
@@ -770,4 +795,14 @@ export function wireComparisons() {
 
   readAddress();
   renderPage();
+  wireBallotSetup(payload.ballot_membership, (next) => {
+    ballot = next;
+    if (ballot.active || ballot.resetRestrictions) {
+      state.section = 'all';
+      state.contestedOnly = false;
+      state.differencesOnly = false;
+    }
+    ballot = { ...ballot, resetRestrictions: false };
+    renderPage();
+  });
 }

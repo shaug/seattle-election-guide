@@ -176,14 +176,11 @@ purpose and watch the check fail.
     reviewer must keep each message derived from its module's resolved state.
     Retaining these small projections preserves accessibility without a shell
     ownership change.*
-  - *The `createElement` loop in `guide-filters.mjs`'s `apply`, which is a lit
-    template written by hand. **Accepted limitation (#297):** it replaces only
-    the filter status's child spans, never a focused control or the announcing
-    root. `guide-filters.test.mjs` checks the status text after real control and
-    URL changes. The residual risk is markup drift from its server counterpart;
-    there is no parity assertion for those spans. The loop is bounded to text
-    and two fixed classes, so retaining it is acceptable while a reviewer holds
-    that markup steady. This does not permit another imperative control tree.*
+  The guide's filter-status children now render through lit (#608), retiring
+  the former hand-built span loop. Its server-owned announcing root starts
+  empty; the status content has only a client renderer. `guide-filters.test.mjs`
+  covers control and URL changes, including the ballot-membership override.
+
 - **The server renders the complete audited baseline.** Every page stands
   alone for crawlers and readers without JavaScript. Client rendering takes a
   region over only when personalization or interaction requires it; the
@@ -384,10 +381,20 @@ purpose and watch the check fail.
 
 ## State and URLs
 
-- **The URL fragment is the only client persistence.** No `localStorage`, no
-  `sessionStorage`, no cookies. *Check: exists — the shared guard in
+- **Source selections persist only in the URL fragment.** No `localStorage`, no
+  `sessionStorage`, no cookies. The election-bound voter district profile is
+  remembered through the sole IndexedDB owner, `ballot-profile-store.mjs`; no
+  address, location, source selection, score, or ordering is stored there.
+  Failure to remember districts must leave the current in-memory selection
+  working and display a notice. *Check: exists — the shared guard in
   `tests/js/support/module-guards.mjs` asserts the absence of every storage
-  identifier in every module, page wiring included.*
+  identifier in every module, page wiring included.
+  `ballot-profile-store.test.mjs` additionally confines IndexedDB to its one
+  owner and tests unavailable storage; `ballot-setup.test.mjs` tests profile
+  admission, visible failures, and late-load protection. The browser integration
+  covers actual device storage. Profile-only contents are reviewer-applied: the
+  store accepts the typed versioned profile, and consumers must never pass
+  additional personal information.*
 - **Each page's codec module is the sole reader and writer of `location`.**
   One owner per fragment. No second script parses the hash by hand, and no
   handler edits `location` around the codec. A page whose codec is pure pairs
@@ -771,6 +778,15 @@ applies them.
   from the start rather than the dialog's imperative renderer ported and
   rewritten later. Reviewer-applied: this is a scheduling constraint on
   tickets, and the next one to write client rendering inherits the same rule.
+
+## Ballot membership
+
+Issue #608 adds a separate election-bound profile and reviewed applicability
+contract. `ballot-membership.mjs` is pure: no ordering, sections, endorsement
+coverage, or source preferences enter membership. The guide and comparisons
+apply this profile consistently, retaining unresolved contests with a visible
+label. Ballot mode overrides list restrictions; direct race pages remain
+reference destinations. Location lookup will populate this same profile later.
 
 ## Open questions
 

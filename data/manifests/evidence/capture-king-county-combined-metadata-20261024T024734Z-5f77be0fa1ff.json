@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 13570,
+  "canonical_url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/FindMyDistricts_March2026/FeatureServer/655?f=pjson",
+  "capture_method": "json",
+  "content_sha256": "432fa76cee2e6fe167a2c28b61374adc07656d04ff8d47ee75575a6b5bfe5000",
+  "http_status": 200,
+  "id": "capture-king-county-combined-metadata-20261024T024734Z-5f77be0fa1ff",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Raw public REST response retained locally only; committed CSV is a normalized geographic-fact extract with no individual voter records.",
+  "requested_url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/FindMyDistricts_March2026/FeatureServer/655?f=pjson",
+  "retrieved_at": "2026-10-24T02:47:34.934619Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-combined-metadata",
+  "storage_reference": "sha256/43/432fa76cee2e6fe167a2c28b61374adc07656d04ff8d47ee75575a6b5bfe5000",
+  "storage_scope": "local_only",
+  "title": "combined-metadata",
+  "updated_at": "2026-03-04"
+}

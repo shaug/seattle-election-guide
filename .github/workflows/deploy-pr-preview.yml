@@ -30,6 +30,8 @@ jobs:
       github.event.pull_request.state == 'open' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       contains(github.event.pull_request.labels.*.name, 'deploy preview') &&
+      (!contains(github.event.pull_request.labels.*.name, 'preview primary from source') ||
+       github.event.pull_request.draft == true) &&
       vars.CLOUDFLARE_PAGES_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -84,8 +86,137 @@ jobs:
             --candidate-bundle-id "$(jq -r .current.bundle_id dist/resolved.json)"
         env:
           GH_TOKEN: ${{ github.token }}
-      # Use the same declared current-release builder as CI and local staging.
+      - name: Verify original published primary pins
+        if: contains(github.event.pull_request.labels.*.name, 'preview primary from source')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          uv run python - <<'PYTHON'
+          import hashlib
+          import json
+          from pathlib import Path
+          from election_guide.hosting.pages import read_site_manifest
+          from election_guide.hosting.pages import _verify_bundle
+          from election_guide.hosting.releases import materialize_released_bundle
+
+          site = read_site_manifest(Path("config/hosting/site.yaml"))
+          primary = next(e for e in site.elections if e.election_id == "wa-2026-primary")
+          bundle = materialize_released_bundle(primary, Path("dist/original-primary"))
+          _verify_bundle(primary, bundle)
+          receipt = {
+              "original_site_sha256": hashlib.sha256(Path("config/hosting/site.yaml").read_bytes()).hexdigest(),
+              "verified_primary": primary.model_dump(mode="json"),
+          }
+          output = Path("dist/original-primary-verification.json")
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_text(json.dumps(receipt, indent=2) + "\n")
+          print(json.dumps(receipt))
+          PYTHON
+      - name: Build both unpublished preview elections at the pull request head
+        if: contains(github.event.pull_request.labels.*.name, 'preview primary from source')
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          test -z "$(git status --porcelain --untracked-files=normal)"
+          uv run python - <<'PYTHON'
+          import os
+          import subprocess
+          from datetime import datetime
+          from pathlib import Path
+          from election_guide.hosting import bundle_hash
+          from election_guide.hosting.pages import read_site_manifest
+          from election_guide.hosting.releases import extract_release_bundle
+          from election_guide.release.builder import build_release
+          from election_guide.release.comparison import compare_release_bundles, verify_release_bundle_artifacts
+
+          head = os.environ["HEAD_SHA"]
+          pr = os.environ["PR_NUMBER"]
+          if not pr.isdecimal() or int(pr) <= 0:
+              raise ValueError("preview needs the actual pull request number")
+          generated_at = datetime.fromisoformat(subprocess.check_output(
+              ["git", "show", "-s", "--format=%cI", head], text=True).strip())
+          site = read_site_manifest(Path("config/hosting/site.yaml"))
+          for short in ("general", "primary"):
+              election = f"wa-2026-{short}"
+              root = Path("data/releases") / election
+              version = f"preview-pr-{pr}-{short}-{head}"
+              builds = []
+              for suffix in ("a", "b"):
+                  builds.append(build_release(
+                      ledger_path=root / "source-decisions.yaml",
+                      inventory_path=Path(f"data/normalized/{election}-inventory.json"),
+                      registry_path=Path("config/sources") / ("default.yaml" if short == "primary" else f"{election}.yaml"),
+                      dataset_path=Path("data/normalized") / ("canonical-dataset.json" if short == "primary" else f"{election}-canonical-dataset.json"),
+                      snapshot_root=root / "snapshots",
+                      manifest_dir=root / "manifests",
+                      scoring_config_path=Path("config/scoring/default.yaml"),
+                      rendering_config_path=Path("config/rendering/guide.yaml"),
+                      output_dir=Path(f"dist/{short}-preview-{suffix}"),
+                      release_version=version, generated_at=generated_at, git_commit=head,
+                  ))
+              first, second = builds
+              compare_release_bundles(first.bundle_dir, second.bundle_dir)
+              for result in builds:
+                  verify_release_bundle_artifacts(result.bundle_dir)
+                  declaration = next(e for e in site.elections if e.election_id == election).model_copy(
+                      update={"bundle_id": f"{election}-{version}", "release_version": version})
+                  extracted = result.output_dir / "verified-archive"
+                  extract_release_bundle(result.archive_path, extracted, declaration)
+                  verify_release_bundle_artifacts(extracted)
+                  if bundle_hash(extracted) != bundle_hash(result.bundle_dir):
+                      raise ValueError("preview ZIP differs from its verified bundle")
+          PYTHON
+      - name: Stage and verify both head-built preview bundles
+        if: contains(github.event.pull_request.labels.*.name, 'preview primary from source')
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          uv run python - <<'PYTHON'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import yaml
+          from election_guide.hosting import bundle_hash, stage_pages_site
+
+          head = os.environ["HEAD_SHA"]
+          site = yaml.safe_load(Path("config/hosting/site.yaml").read_text())
+          assignments = {}
+          for short in ("general", "primary"):
+              election = f"wa-2026-{short}"
+              declaration = next(e for e in site["elections"] if e["election_id"] == election)
+              bundle = Path(f"dist/{short}-preview-a/bundle")
+              status = json.loads((bundle / "release-status.json").read_text())
+              version = f"preview-pr-{os.environ['PR_NUMBER']}-{short}-{head}"
+              if status["release_version"] != version:
+                  raise ValueError("preview must use this PR head's unpublished identity")
+              if status["git_commit"] != head:
+                  raise ValueError("preview Git commit differs from this PR head")
+              declaration.update(
+                  bundle_id=f"{election}-{version}", release_version=version,
+                  publication_request=None,
+                  source_panel_id=status["source_panel_id"], source_panel_hash=status["source_panel_hash"],
+                  source_registry_hash=status.get("source_registry_hash"), git_commit=head,
+                  release_manifest_sha256=hashlib.sha256((bundle / "release-manifest.json").read_bytes()).hexdigest(),
+                  bundle_sha256=bundle_hash(bundle),
+              )
+              assignments[declaration["bundle_id"]] = bundle
+          preview = Path("dist/preview-site.yaml")
+          preview.write_text(yaml.safe_dump(site, sort_keys=False))
+          stage_pages_site(preview, assignments, Path("dist/cloudflare-site"), expected_current_git_commit=head)
+          PYTHON
+          uv run election-guide hosting verify dist/preview-site.yaml dist/cloudflare-site --expected-git-commit "$HEAD_SHA"
+      - name: Check served preview Updates against production
+        if: contains(github.event.pull_request.labels.*.name, 'preview primary from source')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          uv run election-guide hosting check-updates dist/cloudflare-site --output-path dist/updates-check.json
+      # Ordinary previews keep the declared current-release builder.
       - name: Build the general release at the pull request head
+        if: "!contains(github.event.pull_request.labels.*.name, 'preview primary from source')"
         run: uv run election-guide release automation build --source-sha "$HEAD_SHA" --output-dir dist
         env:
           GH_TOKEN: ${{ github.token }}
@@ -94,6 +225,7 @@ jobs:
       # exactly as CI stages it -- a historical bundle cannot be rebuilt
       # (docs/HOSTING.md, Historical bundles).
       - name: Stage and verify the Pages site
+        if: "!contains(github.event.pull_request.labels.*.name, 'preview primary from source')"
         run: |
           uv run election-guide release automation stage \
             --bundle-dir dist/reproducibility-a/bundle \

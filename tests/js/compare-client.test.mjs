@@ -276,3 +276,47 @@ test('the next change that does take clears the explanation of the one that did 
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('compare-client.mjs');
 });
+
+test('ballot membership survives comparison presets and restores browse controls', () => {
+  const document = boot();
+  const payload = JSON.parse(document.querySelector('[data-client-payload]').textContent);
+  const contract = payload.ballot_membership;
+  const group = contract.groups.find((group) => group.mode === 'district');
+  const select = [...document.querySelectorAll('[data-ballot-setup] select')][
+    contract.groups.indexOf(group)
+  ];
+  const before = [...document.querySelectorAll('[data-comparison-race]')].map(
+    (row) => row.dataset.comparisonRace,
+  );
+  select.value = group.options[0].id;
+  select.dispatchEvent(new Event('change'));
+  const expected = before.filter((id) => {
+    const rule = contract.races[id];
+    return (
+      !rule.outside_target &&
+      (rule.shared || rule.group_id !== group.id || rule.jurisdiction_id === select.value)
+    );
+  });
+  document.querySelector('.comparison-presets a').click();
+  assert.deepEqual(
+    [...document.querySelectorAll('[data-comparison-race]')].map(
+      (row) => row.dataset.comparisonRace,
+    ),
+    expected,
+  );
+  assert.equal(document.querySelector('[data-comparison-section-filter]').disabled, true);
+  [...document.querySelectorAll('[data-ballot-setup] button')]
+    .find((button) => button.textContent.includes('Browse all'))
+    .click();
+  assert.deepEqual(
+    [...document.querySelectorAll('[data-comparison-race]')].map(
+      (row) => row.dataset.comparisonRace,
+    ),
+    before,
+  );
+  const section = document.querySelector('[data-comparison-section-filter]');
+  assert.equal(section.disabled, false);
+  section.value = section.options[1].value;
+  section.dispatchEvent(new Event('change'));
+  assert.equal(section.value, section.options[1].value);
+});

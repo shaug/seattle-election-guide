@@ -5,12 +5,13 @@
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {
-  readControlState,
-  writeControlState,
-} from '../../src/election_guide/rendering/templates/guide-filters.mjs';
 import { installDom } from './support/dom.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
+
+installDom();
+const { readControlState, writeControlState } = await import(
+  '../../src/election_guide/rendering/templates/guide-filters.mjs'
+);
 
 const SCOPES = new Set(['all', 'city', 'ld-43']);
 
@@ -157,4 +158,25 @@ test('showing every race clears the filter, so a linked race is reachable', asyn
 
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('guide-filters.mjs');
+});
+
+test('voter membership overrides legacy list restrictions and preserves card order', async () => {
+  const { document, filters } = await wire(`${GUIDE_URL}?filter=city&races=contested`);
+  const cards = [...document.querySelectorAll('[data-publication-race-id]')];
+  filters.setBallot({
+    active: true,
+    complete: false,
+    membership: { mayor: 'inapplicable', ld: 'unresolved' },
+  });
+  assert.equal(document.getElementById('race-mayor').hidden, true);
+  assert.equal(document.getElementById('race-ld').hidden, false);
+  assert.equal(document.querySelector('#race-filter').disabled, true);
+  filters.syncFromUrl();
+  filters.apply();
+  assert.equal(document.getElementById('race-ld').hidden, false);
+  assert.deepEqual([...document.querySelectorAll('[data-publication-race-id]')], cards);
+  filters.showEveryRace();
+  filters.setBallot({ active: false, complete: false, membership: {} });
+  assert.equal(document.getElementById('race-mayor').hidden, false);
+  assert.equal(document.querySelector('#race-filter').disabled, false);
 });

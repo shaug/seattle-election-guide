@@ -88,6 +88,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
  * @property {string} raceLabel
  * @property {string} raceHref
  * @property {boolean} differs
+ * @property {string|null} [confirmationLabel]
  * @property {ComparisonCellView[]} cells
  */
 
@@ -194,7 +195,7 @@ function rowTemplate(row) {
   return html`<tr data-comparison-race=${row.raceId} data-row-differs=${String(row.differs)}
   ><th scope="row" class="comparison-race"><a href=${row.raceHref}>${row.raceLabel}</a>${
     row.differs ? html`<span class="comparison-race-differs">Differs</span>` : nothing
-  }</th>${repeat(row.cells, (cell) => cell.signal, cellTemplate)}</tr>`;
+  }${row.confirmationLabel ? html`<span class="ballot-confirmation">${row.confirmationLabel}</span>` : nothing}</th>${repeat(row.cells, (cell) => cell.signal, cellTemplate)}</tr>`;
 }
 
 /**

@@ -49,6 +49,7 @@ interface GuidePayload {
   scoring: LensScoring;
   categories: LensCategory[];
   sources: LensSource[];
+  ballot_membership: BallotMembershipContract | null;
   races: RaceDisplay[];
   filter_scopes: FilterScope[];
   sources_page_path: string;
@@ -89,6 +90,32 @@ interface LensSource {
   name: string;
   panel_role: "consensus" | "comparison";
   selectable: boolean;
+}
+interface BallotMembershipContract {
+  confirmation_label: string;
+  election_id: string;
+  geography_hash: string | null;
+  inventory_notice: string | null;
+  groups: BallotGroup[];
+  races: {
+    [k: string]: BallotRaceRule;
+  };
+}
+interface BallotGroup {
+  id: string;
+  label: string;
+  mode: "district" | "membership";
+  options: BallotDistrict[];
+}
+interface BallotDistrict {
+  id: string;
+  label: string;
+}
+interface BallotRaceRule {
+  jurisdiction_id: string;
+  shared: boolean;
+  outside_target: boolean;
+  group_id: string | null;
 }
 /**
  * One race as the guide's own card renders it.
@@ -133,10 +160,7 @@ interface PersonalizationContract {
    */
   sources: [PersonalizationSource, ...PersonalizationSource[]];
   retired_codes: PersonalizationRetiredCode[];
-  /**
-   * @minItems 1
-   */
-  races: [PersonalizationRace, ...PersonalizationRace[]];
+  races: PersonalizationRace[];
 }
 /**
  * The release policy governing whether and how a lens may run.
@@ -358,6 +382,7 @@ interface SourcesTreeSource {
  * The Comparisons page's payload.
  */
 interface ComparisonsPayload {
+  ballot_membership: BallotMembershipContract | null;
   schema_version: "1.0";
   data_version: string;
   default_columns: string[];
@@ -378,10 +403,7 @@ interface ComparisonsPayload {
 interface ComparisonsContract {
   schema_version: "1.0";
   policy: ComparisonsPolicy;
-  /**
-   * @minItems 1
-   */
-  display_index: [ComparisonDisplayRace, ...ComparisonDisplayRace[]];
+  display_index: ComparisonDisplayRace[];
 }
 /**
  * The release switch governing publication of the comparisons page.

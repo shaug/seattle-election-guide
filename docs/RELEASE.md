@@ -413,3 +413,20 @@ The canonical JSON report exits with status 1 and records `result: fail` for inv
 ancestry, bundle integrity, or content drift. Preserve it for #450 and the #440 closeout evidence.
 This command verifies the general release bundle only; complete two-election route and deployment-
 manifest composition remains the separate `hosting verify` gate.
+
+## Unpublished dual-election inspection copies
+
+The draft-only dual-source PR preview described in [HOSTING.md](HOSTING.md#previewing-both-elections-from-current-source)
+builds both elections at one clean head with explicit `preview-pr-<PR>-<election>-<fullHEAD>`
+identities. It does not generate numeric publication software history or create
+release requests, tags or published archives. Both elections retain their Updates
+history and receive truthful inspection-copy entries for changed behavior. Normal
+live Updates coverage and artifact verification remain required before preview
+upload; an unavailable or inconsistent baseline fails closed. Original tracked
+declarations and historical primary pins are verified before temporary overrides.
+
+This inspection exception does not satisfy production admission. Source changes
+still need the ordinary reviewed numeric request before a merge can publish them;
+archived corrections still need the normal merged-source immutable release and
+protected pin activation. A never-merge preview draft can have a successful preview
+and blocked production publication checks; report both states without exemptions.

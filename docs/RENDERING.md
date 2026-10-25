@@ -74,11 +74,13 @@ Races follow the ballot's section order: Federal, State, County, State Supreme C
 The grouping follows the office's governing jurisdiction, so Seattle Municipal Court appears under
 City while Washington Supreme Court positions appear under State Supreme Court.
 
-For general elections, the Endorsements overview uses the publication model's
-`guide_sections` projection: unopposed races without current affirmative endorsements are
-omitted, along with empty sections and their filter options (DECISIONS.md, issue #528).
-Contested races and unopposed races with an endorsement remain. The complete race set stays
-available in audit exports, Comparisons, individual pages, and legacy-link routing.
+For general and primary elections, every public view uses the publication model's `public_view()`
+projection: uncontested races appear only when their full verified progressive-panel endorsement
+count meets the configured minimum. The shared `is_race_visible` selector applies independently
+of reader source selections. Empty sections and filter options are omitted (DECISIONS.md, issue #607). This covers Endorsements, Comparisons,
+individual pages, social cards, generated race links, and client payloads. Audit exports retain
+the complete race set. The copied primary overview adopts this policy only through a new
+immutable primary archive and protected pin activation; older archives remain unchanged.
 
 Printing suppresses the chrome a reader cannot use on paper — the brand band, the sticky filter
 controls, the lens banner, the footer's action cluster — flattens the screen surfaces onto white,
@@ -180,3 +182,16 @@ Browser and font rasterization can vary across operating-system and Chrome versi
 values are deterministic inputs; macOS and Linux therefore have separately approved coarse visual
 signatures under the same tight tolerance. Independent blank-image, dimension, and overflow checks
 remain strict. Human review remains required for every meaningful design change.
+
+## Voter ballot membership (#608)
+
+The server baseline uses the shared #607/#610 public-view projection. Ballot
+membership never overrides its full-panel confidence eligibility. The shared
+setup collects an election-bound district profile; the pure matcher reports
+applicable, inapplicable, or unresolved within that public contest universe.
+Endorsements and Comparisons exclude known geographically inapplicable contests
+and visibly identify unresolved ones. Public race detail pages remain reference
+destinations. Matching preserves the order each page receives; section placement
+belongs to #609. Public ballot rules follow the projected contest IDs, while
+reviewed district options remain selectable even without a visible contest.
+Canonical inventory and audit records retain the complete race set.

@@ -30,6 +30,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, RootModel
 from pydantic.json_schema import GenerateJsonSchema
 
+from election_guide.publication.ballot import BallotMembershipContract
 from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.models import PublicationSource, PublicationViewModel
 from election_guide.publication.personalization import PersonalizationContract
@@ -281,6 +282,7 @@ class LensPayload(ClientPayloadModel):
 class GuidePayload(LensPayload):
     """The endorsements guide's payload."""
 
+    ballot_membership: BallotMembershipContract | None
     races: list[RaceDisplay]
     filter_scopes: list[FilterScope]
     """Every Ballot-filter token the page offers, with the label the select
@@ -342,6 +344,8 @@ class SourcesPayload(LensPayload):
 
 class ComparisonsPayload(ClientPayloadModel):
     """The Comparisons page's payload."""
+
+    ballot_membership: BallotMembershipContract | None
 
     schema_version: Literal["1.0"]
     data_version: str
@@ -473,6 +477,7 @@ def guide_payload(
     than recomputing it.
     """
     return GuidePayload(
+        ballot_membership=view_model.ballot_membership,
         **_lens_fields(view_model, contributing_only=True),
         races=races,
         filter_scopes=filter_scopes,
@@ -607,6 +612,7 @@ def comparisons_payload(
     name_by_id = {source.id: source.name for source in view_model.sources}
     race_by_id = {race.id: race for section in view_model.sections for race in section.races}
     return ComparisonsPayload(
+        ballot_membership=view_model.ballot_membership,
         schema_version=CLIENT_PAYLOAD_SCHEMA_VERSION,
         data_version=view_model.metadata.data_version,
         default_columns=default_columns,

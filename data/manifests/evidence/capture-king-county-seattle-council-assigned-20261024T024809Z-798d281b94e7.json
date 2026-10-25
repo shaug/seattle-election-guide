@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 108126,
+  "canonical_url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/FindMyDistricts_March2026/FeatureServer/655/query?where=SCC+IN+%28%271%27%2C%272%27%2C%273%27%2C%274%27%2C%275%27%2C%276%27%2C%277%27%29&outFields=VOTDST%2CNAME%2CCONGDST%2CLEGDST%2CKCCDST%2CSCC&returnGeometry=false&f=json&resultRecordCount=2000",
+  "capture_method": "json",
+  "content_sha256": "64197ce988f426d8d0e4199d70a97ee04d778443ecef5c5d568bcd65b673d358",
+  "http_status": 200,
+  "id": "capture-king-county-seattle-council-assigned-20261024T024809Z-798d281b94e7",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Raw public REST response retained locally only; committed CSV is a normalized geographic-fact extract with no individual voter records.",
+  "requested_url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/FindMyDistricts_March2026/FeatureServer/655/query?where=SCC+IN+%28%271%27%2C%272%27%2C%273%27%2C%274%27%2C%275%27%2C%276%27%2C%277%27%29&outFields=VOTDST%2CNAME%2CCONGDST%2CLEGDST%2CKCCDST%2CSCC&returnGeometry=false&f=json&resultRecordCount=2000",
+  "retrieved_at": "2026-10-24T02:48:09.361075Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-seattle-council-assigned",
+  "storage_reference": "sha256/64/64197ce988f426d8d0e4199d70a97ee04d778443ecef5c5d568bcd65b673d358",
+  "storage_scope": "local_only",
+  "title": "seattle-council-assigned",
+  "updated_at": "2026-03-04"
+}

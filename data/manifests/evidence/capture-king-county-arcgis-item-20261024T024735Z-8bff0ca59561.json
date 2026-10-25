@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5597,
+  "canonical_url": "https://www.arcgis.com/sharing/rest/content/items/532208ddbedf4d2fa54ca7073987e83b?f=json",
+  "capture_method": "json",
+  "content_sha256": "fea2910c0260362e2ed357b73bd0eb2d81d71579ca7c1ed53783521b52908142",
+  "http_status": 200,
+  "id": "capture-king-county-arcgis-item-20261024T024735Z-8bff0ca59561",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Raw public REST response retained locally only; committed CSV is a normalized geographic-fact extract with no individual voter records.",
+  "requested_url": "https://www.arcgis.com/sharing/rest/content/items/532208ddbedf4d2fa54ca7073987e83b?f=json",
+  "retrieved_at": "2026-10-24T02:47:35.193168Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-arcgis-item",
+  "storage_reference": "sha256/fe/fea2910c0260362e2ed357b73bd0eb2d81d71579ca7c1ed53783521b52908142",
+  "storage_scope": "local_only",
+  "title": "arcgis-item",
+  "updated_at": null
+}

@@ -24,7 +24,12 @@
         </div>
       </div>
 
-      <div class="sticky-header" data-sticky-controls>
+      <div class="ballot-context">
+      <p data-ballot-status role="status" aria-live="polite">Browsing all Seattle contests. Check your official ballot for its complete list.</p>
+      <div data-ballot-setup><p>{% if guide.ballot_membership %}Enable JavaScript to set up your ballot by district.{% else %}District setup is unavailable for this archived guide.{% endif %}</p></div>
+    </div>
+
+    <div class="sticky-header" data-sticky-controls>
       {% call election_controls(
         'Comparison view and race filters', 'comparison-controls',
         'comparison-ballot-filter', 'data-comparison-section-filter', '',

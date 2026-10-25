@@ -18,6 +18,11 @@
     <div class="page-band-rule"></div>
     {{ election_day_banner | safe }}
 
+    <div class="ballot-context">
+      <p data-ballot-status role="status" aria-live="polite">Browsing all Seattle contests. Check your official ballot for its complete list.</p>
+      <div data-ballot-setup><p>{% if guide.ballot_membership %}Enable JavaScript to set up your ballot by district.{% else %}District setup is unavailable for this archived guide.{% endif %}</p></div>
+    </div>
+
     <div class="sticky-header">
       {% call election_controls(
         'Guide view and race filters', 'screen-controls',
@@ -88,6 +93,7 @@
                world still scrolls to this card for a reader without
                JavaScript; with JavaScript, `guide-client.mjs` forwards it to
                the page. #}
+            <p class="ballot-confirmation" data-ballot-confirmation hidden>{{ guide.ballot_membership.confirmation_label if guide.ballot_membership else '' }}</p>
             <a class="race-card-primary" href="{{ race_page_path(race.id) }}"
               aria-label="View endorsements for {{ race.race_label }}">
               <p class="race-office">

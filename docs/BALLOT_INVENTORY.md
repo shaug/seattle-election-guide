@@ -56,7 +56,8 @@ A contest is included when it is:
 4. a PCO contest whose exact precinct is mapped to Seattle in King County's official current
    precinct crosswalk.
 
-The intersecting major districts are:
+The original import used the following intersecting major districts (the later
+#608 reconciliation below corrects the personal-ballot projection):
 
 - Congressional Districts 7 and 9;
 - Legislative Districts 11, 32, 34, 36, 37, 43, and 46; and
@@ -112,3 +113,10 @@ Every election, jurisdiction, race, candidate, and ballot option cites at least 
 source. Race records keep district, office, position, display name, and official display aliases
 as separate fields so later endorsement matching does not depend on lossy string parsing. Race
 and ballot-choice records also retain exact CSV selectors and sample-ballot page locators.
+
+## Personal-ballot reconciliation
+
+The later [reviewed geography contract](BALLOT_GEOGRAPHY.md) establishes the full
+2026 manual district catalog independently of available contests. It reconciles
+County Council District 1 and LD 11 against explicit official Seattle precinct
+assignments while preserving the canonical inventory and its audit history.

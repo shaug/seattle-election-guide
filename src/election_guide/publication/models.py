@@ -9,6 +9,7 @@ from typing import Literal
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
 
 from election_guide.corrections.models import ElectionCorrections
+from election_guide.publication.ballot import BallotMembershipContract
 from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.personalization import PersonalizationContract
 from election_guide.results.models import ElectionResults
@@ -591,6 +592,8 @@ class PublicationViewModel(PublicationModel):
     and validating `data/results/` themselves. `#285`'s election-day banner
     was the first surface to render from it; `#286` (race cards, via each
     `PublicationRace.results`) is the second."""
+    ballot_membership: BallotMembershipContract | None = None
+    """Absent in historical artifacts; new builds publish reviewed applicability."""
     corrections: ElectionCorrections | None = None
     """This election's corrections-page entries, or `None` while the election
     carries no corrections (docs/RESULTS.md, "The corrections page"; issue
@@ -598,29 +601,96 @@ class PublicationViewModel(PublicationModel):
     `#290`'s corrections page, and every page's nav link to it, render only
     when this is not `None` and carries at least one entry."""
 
+    def is_race_visible(self, race: PublicationRace) -> bool:
+        """Shared all-view eligibility from the full verified panel (issue #607).
+
+        Reader source selections change displayed scores, never this race
+        universe. Geographic ballot matching consumes this universe separately.
+        New general and primary renderings share this policy; old immutable
+        archive files remain unchanged.
+        """
+        return (
+            race.is_contested
+            or race.explicit_endorsement_count
+            >= self.personalization.scoring.minimum_explicit_sources
+        )
+
     @property
     def guide_sections(self) -> list[PublicationSection]:
-        """The general-election overview omits unendorsed, unopposed races.
+        """Public races after the shared full-panel confidence selector."""
+        return [
+            section.model_copy(update={"races": races})
+            for section in self.sections
+            if (races := [race for race in section.races if self.is_race_visible(race)])
+        ]
 
-        Keep the full sections for exports, comparisons, race pages, and
-        legacy-link routing. Visibility uses the audited panel's affirmative
-        cells, including comparison sources, independently of a reader's lens.
+    def public_view(self) -> PublicationViewModel:
+        """Project every public surface while retaining the complete audit model.
+
+        Both elections use the same selector (issue #607); serving a revised
+        primary overview requires a replacement immutable primary archive.
+        Filter the client contracts too, so links and personalized comparisons
+        cannot reintroduce a race omitted from the server-rendered pages.
         """
-        if self.metadata.election_type != "general":
-            return self.sections
-        sections: list[PublicationSection] = []
-        for section in self.sections:
-            races = [
-                race
-                for race in section.races
-                if race.is_contested
-                or any(
-                    cell.state in {"endorsement", "multi_endorsement"} for cell in race.source_cells
+        sections = self.guide_sections
+        race_ids = {race.id for section in sections for race in section.races}
+        display_by_id = {race.race_id: race for race in self.comparisons.display_index}
+        cells = [
+            cell for section in sections for race in section.races for cell in race.source_cells
+        ]
+        return self.model_copy(
+            update={
+                "sections": sections,
+                "ballot_membership": self.ballot_membership.model_copy(
+                    update={
+                        "races": {
+                            race_id: rule
+                            for race_id, rule in self.ballot_membership.races.items()
+                            if race_id in race_ids
+                        }
+                    }
                 )
-            ]
-            if races:
-                sections.append(section.model_copy(update={"races": races}))
-        return sections
+                if self.ballot_membership is not None
+                else None,
+                "metadata": self.metadata.model_copy(
+                    update={"published_race_count": len(race_ids)}
+                ),
+                "sources": [
+                    source.model_copy(
+                        update={
+                            "endorsement_count": sum(
+                                cell.source_id == source.id
+                                and cell.state in {"endorsement", "multi_endorsement"}
+                                for cell in cells
+                            ),
+                            "split_endorsement_count": sum(
+                                cell.source_id == source.id and cell.state == "multi_endorsement"
+                                for cell in cells
+                            ),
+                        }
+                    )
+                    for source in self.sources
+                ],
+                "personalization": self.personalization.model_copy(
+                    update={
+                        "races": [
+                            race for race in self.personalization.races if race.race_id in race_ids
+                        ]
+                    }
+                ),
+                "comparisons": self.comparisons.model_copy(
+                    update={
+                        "display_index": [
+                            display_by_id[race.id].model_copy(
+                                update={"section_order": section_order, "race_order": race_order}
+                            )
+                            for section_order, section in enumerate(sections)
+                            for race_order, race in enumerate(section.races)
+                        ]
+                    }
+                ),
+            }
+        )
 
     @model_validator(mode="after")
     def validate_schema_fields(self) -> PublicationViewModel:
@@ -644,6 +714,14 @@ class PublicationViewModel(PublicationModel):
         races = [race for section in self.sections for race in section.races]
         if len({race.id for race in races}) != len(races):
             raise ValueError("publication race IDs must be unique")
+        if self.ballot_membership is not None:
+            if self.ballot_membership.election_id != self.metadata.election_id:
+                raise ValueError("ballot membership must belong to the publication election")
+            if set(self.ballot_membership.races) != {race.id for race in races}:
+                raise ValueError("ballot membership must cover exactly the published races")
+            for race in races:
+                if self.ballot_membership.races[race.id].jurisdiction_id != race.jurisdiction_id:
+                    raise ValueError("ballot membership must match each race jurisdiction")
         ordered_comparison_ids = [
             source.id for source in self.sources if source.panel_role == "comparison"
         ]

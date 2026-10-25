@@ -22,6 +22,7 @@
 // names a race, and it now names a page.
 
 import { html, nothing, render } from 'lit-html';
+import { wireBallotSetup } from './ballot-setup.mjs';
 import { wireGuideFilters } from './guide-filters.mjs';
 import { createGuideLens, lensCountingSummary } from './guide-lens.mjs';
 import { createLensRouter } from './lens-route.mjs';
@@ -77,7 +78,11 @@ export function wireGuide(payload) {
   // over or rewriting the address bar first would be work done on a page the
   // reader never sees.
   if (forwardToRacePage(payload, router)) return;
-  wireGuideFilters(payload, router);
+  const filters = wireGuideFilters(payload, router);
+  wireBallotSetup(payload.ballot_membership, (state) => {
+    if (state.resetRestrictions) filters.showEveryRace();
+    filters.setBallot(state);
+  });
 
   const personalization = payload.personalization;
   const context = lensContext(payload, payload.data_version);

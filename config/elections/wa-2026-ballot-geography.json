@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "election_ids": [
+    "wa-2026-primary",
+    "wa-2026-general"
+  ],
+  "assignment_path": "data/extracted/official/king-county-2026-seattle-major-districts.csv",
+  "assignment_sha256": "74eb1bcf058eb71b6e9843815b07b7cbbdea4e318b4cc49f5d00083c7aace9ef",
+  "city_crosswalk_path": "data/extracted/official/king-county-2026-seattle-precinct-crosswalk.csv",
+  "city_crosswalk_sha256": "3b6a14d4fd022d9b90c851296163485e1addbc8cfa0106b5c090698205963313",
+  "expected_district_codes": {
+    "congressional_district": [
+      "7",
+      "9"
+    ],
+    "legislative_district": [
+      "32",
+      "34",
+      "36",
+      "37",
+      "43",
+      "46"
+    ],
+    "county_council_district": [
+      "1",
+      "2",
+      "4",
+      "8"
+    ],
+    "city_council_district": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ]
+  },
+  "outside_target_jurisdiction_ids": [
+    "legislative-district-11"
+  ],
+  "review_record": "data/review/geography/wa-2026-seattle-20261023.json",
+  "inventory_notice": "LD 11 entries remain in the reference inventory. They are outside Seattle\u2019s reviewed 2026 precinct assignments and are omitted from Your ballot.",
+  "review_sha256": "b2cf009686913d4364f2946821eed36d7bf344dfd79b1bf6745a3e2955b231e2"
+}

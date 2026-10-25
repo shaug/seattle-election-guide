@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "review_date": "2026-10-23",
+  "issue": 608,
+  "reviewer": "Codex; independent review and human UI acceptance remain required",
+  "captures": [
+    {
+      "capture_id": "capture-king-county-combined-metadata-20261024T024734Z-5f77be0fa1ff",
+      "manifest": "data/manifests/evidence/capture-king-county-combined-metadata-20261024T024734Z-5f77be0fa1ff.json",
+      "source_id": "king-county-combined-metadata",
+      "content_sha256": "432fa76cee2e6fe167a2c28b61374adc07656d04ff8d47ee75575a6b5bfe5000",
+      "storage_reference": "sha256/43/432fa76cee2e6fe167a2c28b61374adc07656d04ff8d47ee75575a6b5bfe5000",
+      "method": "json",
+      "storage_scope": "local_only"
+    },
+    {
+      "capture_id": "capture-king-county-seattle-council-assigned-20261024T024809Z-798d281b94e7",
+      "manifest": "data/manifests/evidence/capture-king-county-seattle-council-assigned-20261024T024809Z-798d281b94e7.json",
+      "source_id": "king-county-seattle-council-assigned",
+      "content_sha256": "64197ce988f426d8d0e4199d70a97ee04d778443ecef5c5d568bcd65b673d358",
+      "storage_reference": "sha256/64/64197ce988f426d8d0e4199d70a97ee04d778443ecef5c5d568bcd65b673d358",
+      "method": "json",
+      "storage_scope": "local_only"
+    },
+    {
+      "capture_id": "capture-king-county-arcgis-item-20261024T024735Z-8bff0ca59561",
+      "manifest": "data/manifests/evidence/capture-king-county-arcgis-item-20261024T024735Z-8bff0ca59561.json",
+      "source_id": "king-county-arcgis-item",
+      "content_sha256": "fea2910c0260362e2ed357b73bd0eb2d81d71579ca7c1ed53783521b52908142",
+      "storage_reference": "sha256/fe/fea2910c0260362e2ed357b73bd0eb2d81d71579ca7c1ed53783521b52908142",
+      "method": "json",
+      "storage_scope": "local_only"
+    }
+  ],
+  "selector": "Seattle council assignment SCC in 1\u20137; exact join to retained official CityName=Seattle crosswalk, not a precinct-name prefix",
+  "join": {
+    "assignment_rows": 1020,
+    "distinct_precincts": 1020,
+    "city_crosswalk_rows": 1020,
+    "unmatched_assignments": 0,
+    "unmatched_city_rows": 0,
+    "council_assignment_mismatches": 0,
+    "normalized_assignment_sha256": "74eb1bcf058eb71b6e9843815b07b7cbbdea4e318b4cc49f5d00083c7aace9ef",
+    "retained_city_crosswalk_sha256": "3b6a14d4fd022d9b90c851296163485e1addbc8cfa0106b5c090698205963313"
+  },
+  "district_codes": {
+    "congressional_district": [
+      "7",
+      "9"
+    ],
+    "legislative_district": [
+      "32",
+      "34",
+      "36",
+      "37",
+      "43",
+      "46"
+    ],
+    "county_council_district": [
+      "1",
+      "2",
+      "4",
+      "8"
+    ],
+    "city_council_district": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ]
+  },
+  "county1": {
+    "seattle_precincts": 129,
+    "example": {
+      "VOTDST": "1279",
+      "NAME": "SEA 46-1279",
+      "CONGDST": "7",
+      "LEGDST": "46",
+      "KCCDST": "1",
+      "SCC": "4"
+    },
+    "current_election_contests_in_inventory": 0
+  },
+  "ld11": {
+    "seattle_precincts": 0,
+    "disposition": "Outside reviewed Seattle precinct electorate for this 2026 catalog. Existing canonical races, scoring, sources and audit records are preserved; only voter-ballot membership excludes them."
+  },
+  "corroboration": [
+    {
+      "url": "https://kingcounty.gov/en/dept/elections/maps",
+      "locator": "Current maps link to kcc1-2026.pdf and leg11-2026.pdf; separate historical maps section."
+    },
+    {
+      "url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/maps/current-maps/kcc-maps/kcc1-2026.pdf?hash=46BEA4B3ABE29A55536EF210D0B5CD12&rev=7e1e453b2f574471aa651aa527e8362f",
+      "locator": "Text extraction: March 2026; Cities legend includes Seattle; precinct SEA 46-1279 printed."
+    },
+    {
+      "url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/maps/current-maps/leg-maps/leg11-2026.pdf?hash=54954488F809A9B7341217E46417DF08&rev=be9ae968cc544eae91fded515161ba92",
+      "locator": "Text extraction: March 2026; Cities legend lists Tukwila, Renton and Kent. Not used as a visual-boundary interpretation."
+    }
+  ],
+  "limitations": [
+    "Fresh major-district workbook download returned HTTP 403; no access workaround attempted. Previously retained official Seattle crosswalk is hash-verified and matches the current 1020 assignments exactly.",
+    "Separate county electoral MapServer layers describe 2012/2013 boundaries; they were inspected but not used to certify this catalog.",
+    "PDF text was available via web retrieval, but local PDF downloads returned403 and the available viewer did not render a usable map. No visual-boundary verification is claimed.",
+    "This establishes the reviewed major-district universe, not an official complete ballot-style export or voter-registration lookup. Additional judicial membership remains an independent manual question.",
+    "Raw responses are local-only; normal publication and tests read the committed normalized extract and configuration offline."
+  ],
+  "capture_store_note": "Raw captures use the primary checkout durable local-only content-addressed store, not ephemeral linked-worktree storage."
+}

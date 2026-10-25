@@ -287,3 +287,13 @@ a { color: var(--blue); text-underline-offset: .15em; }
      stops being a tinted banner. */
   .election-day { padding: .04in 0 0; border-bottom: 0; background: none; color: var(--muted); font-size: 8pt; }
 }
+
+/* Shared voter context; the matcher never owns section placement. */
+.ballot-context { padding: 1rem clamp(1rem, 4vw, 3rem); border-bottom: 1px solid var(--line); }
+.ballot-context p { margin-block: .5rem; }
+.ballot-context summary { cursor: pointer; font-weight: 700; }
+.ballot-district { display: grid; gap: .3rem; margin-block: .75rem; max-width: 36rem; }
+.ballot-district select { max-width: 100%; min-height: 2.7rem; font: inherit; color: var(--ink); background: var(--white); }
+.ballot-context button { margin: .4rem .5rem .4rem 0; min-height: 2.7rem; padding: .4rem .75rem; font: inherit; }
+.ballot-confirmation { margin: .5rem; color: var(--muted); font-size: .85rem; }
+@media print { .ballot-context details { display: none; } .ballot-context { padding: 0; } }

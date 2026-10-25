@@ -49,6 +49,21 @@
       "client",
       "test"
     ],
+    "data-ballot-confirmation": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-ballot-setup": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-ballot-status": [
+      "template",
+      "client",
+      "test"
+    ],
     "data-cell-kind": [
       "template",
       "stylesheet",
@@ -131,7 +146,8 @@
     ],
     "data-comparison-section-filter": [
       "template",
-      "client"
+      "client",
+      "test"
     ],
     "data-comparison-status": [
       "template",
@@ -421,6 +437,16 @@
     ]
   },
   "class_names": {
+    "ballot-confirmation": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "ballot-district": [
+      "stylesheet",
+      "client"
+    ],
     "compact-ballot-mode": [
       "stylesheet",
       "client",

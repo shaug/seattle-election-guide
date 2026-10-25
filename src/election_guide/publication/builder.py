@@ -29,6 +29,7 @@ from election_guide.normalization.models import (
     ReviewItem,
 )
 from election_guide.normalization.semantics import EXPLICIT_STATUSES
+from election_guide.publication.ballot import build_ballot_membership
 from election_guide.publication.comparisons import (
     ComparisonBaseline,
     ComparisonDisplayRace,
@@ -507,6 +508,7 @@ def _build_view_model(
     coverage_gap_count = sum(source.contribution_status == "coverage_gap" for source in sources)
     snapshot = build_panel_snapshot(dataset.source_registry)
     return PublicationViewModel(
+        ballot_membership=build_ballot_membership(dataset.inventory),
         metadata=PublicationMetadata(
             election_id=dataset.inventory.election.id,
             election_name=dataset.inventory.election.name,

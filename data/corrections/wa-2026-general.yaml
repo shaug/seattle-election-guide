@@ -1,6 +1,28 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
+  - corrected_on: 2026-10-24
+    headline: Preview of manual district setup for your ballot.
+    body: >-
+      This inspection copy lets you set congressional, legislative, county council
+      and Seattle council districts, remembers those choices on this device, and
+      shows geographically applicable contests. Unknown districts retain possible
+      matches with an incomplete-setup notice. Shared contests stay available
+      under the same public visibility policy: uncontested races need verified
+      endorsements from at least two eligible progressive organizations in the
+      full verified panel. Choosing sources changes scores, not visibility or
+      geographic membership. You can change or clear the setup or browse all
+      Seattle contests. Location lookup and ballot ordering are separate work.
+      This feature has not been delivered to production or visually approved.
+      Recorded endorsements, evidence dates, source preferences, scores and
+      certified results are unchanged by district setup.
+    provenance:
+    - label: General inspection guide
+      url: /e/wa-2026-general/
+    - label: Comparisons
+      url: /e/wa-2026-general/comparisons/
+    - label: Manual ballot membership scope and limitations
+      url: https://github.com/shaug/seattle-election-guide/issues/608
   - corrected_on: 2026-10-25
     headline: "Added Cascade Bicycle Club’s No on IL26-638 in the Washington Bikes slot."
     body: >-
@@ -21,6 +43,20 @@ entries:
         url: https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638
       - label: "Reviewed addition and counting policy"
         url: https://github.com/shaug/seattle-election-guide/issues/624
+  - corrected_on: 2026-10-24
+    headline: "Uncontested races need enough verified endorsements to appear."
+    body: >-
+      Uncontested races appear in Endorsements, Comparisons, and individual
+      race pages only when at least two eligible progressive organizations
+      have verified endorsements. This uses the full set of verified sources;
+      choosing fewer sources changes the displayed scores, not race visibility.
+      Contested races remain available even without endorsements. The complete
+      audit records and published primary archive are preserved.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Race visibility policy and implementation"
+        url: https://github.com/shaug/seattle-election-guide/issues/607
   - corrected_on: 2026-10-24
     headline: "Restored earlier endorsement-meter borders."
     body: >-
