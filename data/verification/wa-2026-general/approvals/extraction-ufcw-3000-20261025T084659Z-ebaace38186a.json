@@ -1,0 +1,6 @@
+{
+  "evidence": "docs/GENERAL_BASELINES_2026-10-25.md#ufcw-3000; data/review/rechecks/wa-2026-general-2026-10-25-automatic.json; exact extraction-ufcw-3000-20261025T084659Z-ebaace38186a; completed factual review 2026-10-25T15:23:10.079571+00:00; preserve source-specific qualifications and separately timed official reads. Normal scheduled reuse remains separate.",
+  "reviewed_at": "2026-10-25T15:23:10.079571Z",
+  "reviewer": "OpenAI Codex /root/verify_497_ufcw_current33",
+  "snapshot_id": "extraction-ufcw-3000-20261025T084659Z-ebaace38186a"
+}
