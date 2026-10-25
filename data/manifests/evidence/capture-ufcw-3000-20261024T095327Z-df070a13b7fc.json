@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 220731,
+  "canonical_url": "https://ufcw3000.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "975aefa0a68470b95c7ceb785efc276696d11ec8ccbd21038725061b56f1a9c9",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20261024T095327Z-df070a13b7fc",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Actual independent official-source observation for #497. Title is a recorder description, not a claimed publisher HTML title. Original response bytes were transient and deleted after factual review; only metadata, normalized facts and short locators are retained. Hash and length do not prove publisher authorship or retained-original availability.",
+  "requested_url": "https://ufcw3000.org/endorsements",
+  "retrieved_at": "2026-10-24T09:53:27.428304Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "title": "UFCW 3000 official publication: independent factual observation for #497",
+  "updated_at": null
+}

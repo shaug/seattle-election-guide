@@ -542,3 +542,54 @@ def test_ufcw_discovery_binds_public_inputs_and_comparison(
         app, ["verification", "validate", str(policy), "--state-root", str(state)]
     )
     assert result.exit_code != 0, result.output
+
+
+def test_ufcw_current_publication_extracts_all_33_verified_decisions() -> None:
+    from election_guide.collection.adapters import extract_decisions, validate_adapter
+    from election_guide.collection.refresh import read_adapter_spec
+    from election_guide.inventory.importer import read_inventory
+    from election_guide.sources.registry import read_source_registry
+
+    spec = read_adapter_spec(ROOT / "config/adapters/wa-2026-general/ufcw-3000.yaml")
+    validate_adapter(
+        spec,
+        read_inventory(ROOT / "data/normalized/wa-2026-general-inventory.json"),
+        read_source_registry(ROOT / "config/sources/wa-2026-general.yaml"),
+    )
+    decisions = extract_decisions(
+        spec,
+        (ROOT / "tests/fixtures/verification/ufcw-3000-current-layout.html").read_bytes(),
+        media_type="text/html",
+    )
+    expected = yaml.safe_load(
+        (ROOT / "tests/fixtures/verification/ufcw-3000-current-decisions.yaml").read_text()
+    )["decisions"]
+    # The authored fixture includes all 88 current candidate rows, including
+    # 56 outside the frozen ballot, plus Tacoma's distinct measure.
+    assert len(decisions) == 33
+    assert {d.race_id: (d.status, d.candidate_ids) for d in decisions} == {
+        d["race_id"]: (d["status"], d["candidate_ids"]) for d in expected
+    }
+    assert "ld-11-state-representative-1" not in {d.race_id for d in decisions}
+    assert {d.race_id for d in decisions if d.status == "dual_endorsement"} == {
+        "ld-32-state-representative-2",
+        "ld-37-state-representative-1",
+    }
+
+
+def test_ufcw_current_factual_fixture_reaches_public_runner_without_approval(
+    tmp_path: Path, publication: tuple[Path, dict[str, Any]]
+) -> None:
+    policy, pages = publication
+    pages[INDEX] = (ROOT / "tests/fixtures/verification/ufcw-3000-current-layout.html").read_bytes()
+    state = tmp_path / "state"
+    result = run(policy, state, 24)
+    assert result["status"] == "created"
+    assert result["baseline_reviewed"] is False
+    expected = yaml.safe_load(
+        (ROOT / "tests/fixtures/verification/ufcw-3000-current-decisions.yaml").read_text()
+    )["decisions"]
+    assert {d["race_id"]: d["after"]["candidate_ids"] for d in result["diff"]} == {
+        d["race_id"]: d["candidate_ids"] for d in expected
+    }
+    assert not list(state.rglob("approvals/*.json"))

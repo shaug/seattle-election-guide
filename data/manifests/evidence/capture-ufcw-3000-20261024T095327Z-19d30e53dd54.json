@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 325864,
+  "canonical_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+  "capture_method": "static_html",
+  "content_sha256": "0d3f807fae48d2dd824587b3c9a52ee629e490d2ff9d46a80762728d2c0bae94",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20261024T095327Z-19d30e53dd54",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": "2026-10-15",
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Actual independent official-source observation for #497. Title is a recorder description, not a claimed publisher HTML title. Original response bytes were transient and deleted after factual review; only metadata, normalized facts and short locators are retained. Hash and length do not prove publisher authorship or retained-original availability.",
+  "requested_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+  "retrieved_at": "2026-10-24T09:53:27.914723Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "title": "UFCW 3000 official publication: independent factual observation for #497",
+  "updated_at": null
+}

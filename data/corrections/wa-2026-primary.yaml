@@ -1,6 +1,33 @@
 schema_version: '1.0'
 election_id: wa-2026-primary
 entries:
+- corrected_on: 2026-10-24
+  headline: Restored earlier borders on primary race pages.
+  body: >-
+    Earlier endorsement-meter borders returned to individual primary race pages.
+    The archived overview is updated in a separate step. Recorded endorsements,
+    counts, colors, allocations, certified results and touch inspection are unchanged.
+  provenance:
+  - label: Primary race pages
+    url: /e/wa-2026-primary/races/ld-32-state-representative-1/
+  - label: Primary guide
+    url: /e/wa-2026-primary/
+  - label: Meter-border restoration and delivery sequence
+    url: https://github.com/shaug/seattle-election-guide/issues/598
+- corrected_on: 2026-10-24
+  headline: Preparing to restore earlier primary meter borders.
+  body: >-
+    We are preparing to restore the earlier endorsement-meter borders on primary
+    race pages and the overview. The restoration has not reached the website yet.
+    Recorded endorsements, counts, colors, allocations, certified results and
+    touch inspection will stay the same.
+  provenance:
+  - label: Primary race pages
+    url: /e/wa-2026-primary/races/ld-32-state-representative-1/
+  - label: Primary guide
+    url: /e/wa-2026-primary/
+  - label: Meter-border restoration
+    url: https://github.com/shaug/seattle-election-guide/issues/598
 - corrected_on: 2026-10-23
   headline: Rounded split borders on the archived primary overview.
   body: >-

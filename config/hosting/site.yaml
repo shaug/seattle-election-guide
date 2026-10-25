@@ -3,29 +3,29 @@ canonical_origin: https://seattleelections.guide
 current_election_id: wa-2026-general
 elections:
 - election_id: wa-2026-general
-  bundle_id: wa-2026-general-2026-general.34
-  release_version: 2026-general.34
+  bundle_id: wa-2026-general-2026-general.40
+  release_version: 2026-general.40
   source_panel_id: wa-2026-general-default-sources-v2
   source_panel_hash: 5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569
   source_registry_hash: d9c0bfbad3bd963d11b24ee45d1ae3bfe8f2b16a6b489fd80e6cf463efdc1f27
   publication_request:
-    issue_number: 472
-    previous_release_sha: 0028bc4890b2401a4cacf977aed726182590d148
+    issue_number: 620
+    previous_release_sha: c843260d678fd001281b9dd976a2867f413e8edd
     inputs:
-      ledger_sha256: 2021030783a481a5ea18edd2233fa3b283ac8da999288ca23ebdaed0acc83dc5
-      dataset_sha256: dd753544c3e843fd9a711d2af03f05efaa6a83bea76acbcefbb7ac5682fc948e
+      ledger_sha256: cd2e9e777fb2218d463164af7e43ba8e2e940291f90a6ea0309d051d4eded39a
+      dataset_sha256: 7d209c8cee87155e386e8a35a17aee26e965ab27c1a726e1bb58f8018b7f517a
       registry_sha256: 0429669e05341808c4e4332ba50784eb20de88e27670a93e747737fd02a90913
   git_commit: null
   release_manifest_sha256: null
   bundle_sha256: null
 - election_id: wa-2026-primary
-  bundle_id: wa-2026-primary-2026-primary.6
-  release_version: 2026-primary.6
+  bundle_id: wa-2026-primary-2026-primary.8
+  release_version: 2026-primary.8
   source_panel_id: wa-2026-primary-default-sources-v4
   source_panel_hash: 389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5
   source_registry_hash: 76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8
   publication_request: null
   comparison_route_preview: false
-  git_commit: c27e432d9bc477289d54ee9136746845a92696d0
-  release_manifest_sha256: 701c956310cad5e5374a291beb2cd54389a5f15087fc40a40c3a6707345c594d
-  bundle_sha256: daa492dc72d526de6178281292ef660a8b3885a7194cbcd8e7d51fb9b450ea07
+  git_commit: 095bf8a5acd71146d6286d24197d032fb0d68e90
+  release_manifest_sha256: a661c19f43d9f9ae758b08d69ee79d88eb9c594c3ac1fa1ef9b4b098d201207b
+  bundle_sha256: a5eeb309d85ef474c752638a3dc72beab5a813e2ac6da87efb69f6b13e9cec8d

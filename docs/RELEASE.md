@@ -79,10 +79,36 @@ captures remain outside Git.
 
 A decision may supply a reviewed `evidence_url` when its supporting publication differs from
 the registry's discovery page. The compiler groups that source's decisions by publication and
-creates a separate permitted factual extract for each group, so race receipts and exports open
-the supporting publication. Decisions without this field retain the registry URL and its
-publication metadata. An explicit URL does not inherit the discovery page's publication or
+review provenance and creates a separate permitted factual extract for each group, so receipts
+and exports open the supporting publication. Decisions without this field retain the registry URL
+and its publication metadata. An explicit URL does not inherit the discovery page's publication or
 update dates, and the compiler never infers URLs from free-text locators.
+
+A decision may also supply all four provenance overrides: `captured_at`, `reviewed_at`, `reviewer`,
+and `review_note`. They must be either all supplied or all absent/null. A complete tuple requires
+an explicit valid `evidence_url` and nonblank `evidence_locator`; it cannot borrow these from the
+source block. Reviewer and note text must be nonblank and respect the source-level length limits.
+The decision tuple takes precedence over the source block. Without it, the existing source times
+and source reviewer/note apply, with the ledger reviewer/note filling absent source values.
+Omitted/null overrides serialize no new fields, preserving existing factual extracts and records.
+
+Check and review times remain separate: `captured_at` records the actual official-publication
+check, while `reviewed_at` records the named review, never an inferred publication date or extract
+assembly time. Both timestamps must include a timezone; review cannot predate check, and neither
+may exceed `data_as_of`. Every effective check must be at or after the registered discovery check.
+The source block's own timestamp validations still apply, including when all its decisions supply
+overrides. One source block per source and one decision per race within that block remain required.
+
+Within a source, the factual-extract grouping key is the explicit URL (or its absence), effective
+check time, and snapshot reviewer/note. Legacy snapshot reviewer/note retain their optional source
+values before ledger fallback; complete overrides supply their explicit values. Group and decision
+order follow their first appearance in the ledger. The snapshot header carries the group's check
+and review attribution; projected decisions retain their URL, locator and excerpt but omit the four
+override fields. Review time is excluded from the snapshot and retained on endorsements and, for
+multi-candidate decisions, approvals. Changing only review time therefore preserves capture and
+claim identity. Adding or changing a row within an existing identical group can change that
+extract and its peers' identities; distinct provenance groups remain independent. This capability
+does not add a counting source or change source-counting policy.
 
 Compile the ledger after an editorial change:
 
@@ -105,8 +131,10 @@ candidate allocation, and review provenance. It writes:
 - immutable public capture records under `data/releases/wa-2026-general/manifests/`.
 
 Multi-candidate decisions create a high-severity review item and a linked approval from the named
-ledger reviewer (or the source block's reviewer when supplied). The canonical dataset therefore
-preserves the ambiguity boundary without leaving publication-blocking work unresolved.
+effective reviewer (decision override, source block, then ledger fallback). Their review items use
+the effective check time; approvals and endorsements use the effective review time and note.
+The canonical dataset therefore preserves the ambiguity boundary without leaving
+publication-blocking work unresolved.
 
 Verify exact fresh-checkout reproducibility without changing tracked files:
 

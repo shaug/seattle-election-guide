@@ -6,6 +6,7 @@ import hashlib
 import os
 import shutil
 import tempfile
+from datetime import datetime
 from fractions import Fraction
 from pathlib import Path
 
@@ -37,6 +38,8 @@ from election_guide.release.models import ReleaseDecision, ReleaseLedger, Releas
 from election_guide.serialization import canonical_json_bytes, read_yaml
 from election_guide.sources.models import Source, SourceRegistry
 from election_guide.sources.registry import read_source_registry, validate_registry_inventory
+
+_PublicationKey = tuple[str | None, datetime, str | None, str | None]
 
 
 def read_release_ledger(path: Path) -> ReleaseLedger:
@@ -83,12 +86,13 @@ def compile_release_dataset(
                 source, source_extract, stage, stage_snapshots, stage_manifests
             )
             captures.extend(source_captures.values())
-            reviewed_at = source_extract.reviewed_at
-            reviewer = source_extract.reviewer or ledger.reviewer
-            review_note = source_extract.review_note or ledger.review_note
-
             for decision in source_extract.decisions:
-                capture = source_captures[decision.evidence_url]
+                captured_at, reviewed_at, reviewer, review_note = _effective_provenance(
+                    source_extract, decision
+                )
+                reviewer = reviewer or ledger.reviewer
+                review_note = review_note or ledger.review_note
+                capture = source_captures[_publication_key(source_extract, decision)]
                 race = race_by_id[decision.race_id]
                 status = _normalized_status(decision)
                 candidate_names = [
@@ -145,7 +149,7 @@ def compile_release_dataset(
                         raw_status_text=claim.raw_status_text,
                         evidence_excerpt=claim.evidence_excerpt,
                         evidence_locator=claim.evidence_locator,
-                        created_at=source_extract.captured_at,
+                        created_at=captured_at,
                     )
                     decision_record = new_review_decision(
                         review_item_id=review_item.id,
@@ -208,21 +212,54 @@ def compile_release_dataset(
         shutil.rmtree(stage, ignore_errors=True)
 
 
+def _effective_provenance(
+    source_extract: ReleaseSourceExtract, decision: ReleaseDecision
+) -> tuple[datetime, datetime, str | None, str | None]:
+    """Resolve decision overrides without promoting ledger fallback into snapshots."""
+    return (
+        decision.captured_at or source_extract.captured_at,
+        decision.reviewed_at or source_extract.reviewed_at,
+        decision.reviewer or source_extract.reviewer,
+        decision.review_note or source_extract.review_note,
+    )
+
+
+def _publication_key(
+    source_extract: ReleaseSourceExtract, decision: ReleaseDecision
+) -> _PublicationKey:
+    captured_at, _, reviewer, review_note = _effective_provenance(source_extract, decision)
+    return decision.evidence_url, captured_at, reviewer, review_note
+
+
 def _capture_source_publications(
     source: Source,
     source_extract: ReleaseSourceExtract,
     stage: Path,
     snapshot_root: Path,
     manifest_dir: Path,
-) -> dict[str | None, CaptureManifest]:
-    publications: dict[str | None, list[ReleaseDecision]] = {}
+) -> dict[_PublicationKey, CaptureManifest]:
+    publications: dict[_PublicationKey, list[ReleaseDecision]] = {}
     for decision in source_extract.decisions:
-        publications.setdefault(decision.evidence_url, []).append(decision)
-    captures: dict[str | None, CaptureManifest] = {}
+        publications.setdefault(_publication_key(source_extract, decision), []).append(decision)
+    captures: dict[_PublicationKey, CaptureManifest] = {}
     discovery = source.discovery
-    for index, (url, decisions) in enumerate(publications.items()):
-        extract = source_extract.model_copy(update={"decisions": decisions})
-        snapshot_data = extract.model_dump(mode="json", exclude={"reviewed_at"})
+    for index, (key, decisions) in enumerate(publications.items()):
+        url, captured_at, reviewer, review_note = key
+        extract = source_extract.model_copy(
+            update={
+                "decisions": decisions,
+                "captured_at": captured_at,
+                "reviewer": reviewer,
+                "review_note": review_note,
+            }
+        )
+        snapshot_data = extract.model_dump(
+            mode="json",
+            exclude={
+                "reviewed_at": True,
+                "decisions": {"__all__": {"captured_at", "reviewed_at", "reviewer", "review_note"}},
+            },
+        )
         if extract.reviewer is None:
             snapshot_data.pop("reviewer")
         if extract.review_note is None:
@@ -249,7 +286,7 @@ def _capture_source_publications(
             ),
         )
         manifest_path = record_capture(request, snapshot_input, snapshot_root, manifest_dir)
-        captures[url] = read_capture_manifest(manifest_path)
+        captures[key] = read_capture_manifest(manifest_path)
     return captures
 
 
@@ -299,6 +336,9 @@ def _validate_ledger_references(
             raise ValueError(f"release source {source.id!r} predates its discovery check")
         eligible = eligible_race_ids(source.id, inventory, registry)
         for decision in source_extract.decisions:
+            captured_at, _, _, _ = _effective_provenance(source_extract, decision)
+            if captured_at < source.discovery.checked_at:
+                raise ValueError(f"release decision {source.id!r} predates its discovery check")
             race = inventory_races.get(decision.race_id)
             if race is None:
                 raise ValueError(f"release ledger references unknown race {decision.race_id!r}")

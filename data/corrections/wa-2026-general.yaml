@@ -1,6 +1,45 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
+  - corrected_on: 2026-10-24
+    headline: "Restored earlier endorsement-meter borders."
+    body: >-
+      The general guide and individual race pages again use the earlier
+      endorsement-meter borders. Recorded endorsements, counts, colors,
+      allocations and touch inspection are unchanged.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "LD32 House Position 1"
+        url: /e/wa-2026-general/races/ld-32-state-representative-1/
+      - label: "Meter-border restoration"
+        url: https://github.com/shaug/seattle-election-guide/issues/598
+  - corrected_on: 2026-10-24
+    headline: "Added UFCW’s Jayapal, Smith, Birk and Angelis endorsements."
+    body: >-
+      UFCW 3000’s current official list endorses Pramila Jayapal for U.S.
+      House District 7, Adam Smith for District 9, Ian Birk for Supreme Court
+      Position 4 and Theo Angelis for Position 5. These four decisions bring
+      the guide to 929 decisions across the same 46 publishers. All 925 prior
+      decisions remain, including both UFCW dual endorsements and the held
+      David Hackney decision. The four endorsements’ first appearance dates
+      are unknown. The linked factual review distinguishes current source
+      coverage from the separate automatic verification work.
+    provenance:
+      - label: "U.S. House District 7"
+        url: /e/wa-2026-general/races/us-house-7/
+      - label: "U.S. House District 9"
+        url: /e/wa-2026-general/races/us-house-9/
+      - label: "Supreme Court Position 4"
+        url: /e/wa-2026-general/races/supreme-court-justice-4/
+      - label: "Supreme Court Position 5"
+        url: /e/wa-2026-general/races/supreme-court-justice-5/
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "UFCW 3000’s official endorsements"
+        url: https://ufcw3000.org/endorsements
+      - label: "October 24 factual review and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_UFCW_FACTS_2026-10-24.md
   - corrected_on: 2026-10-23
     headline: "Added SGN’s Adam Smith endorsement and UFCW’s LD37 dual."
     body: >-
