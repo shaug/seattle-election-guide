@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-10-25T02:38:21.010025Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": "Cascade Bicycle Club recommends voting NO on Initiatives 001 and 638",
+      "evidence_locator": "Cascade Bicycle Club, opening body paragraph: explicit No on initiative 638; prior official-source qualification maps the athletics measure to IL26-638. Original capture capture-cascade-bicycle-club-20261025T023821Z-d5f1103139e2; verified manual manual-cascade-bicycle-club-20261025T023947Z-8877db2e4bc5. Actual publisher is CBC; counted once in the existing Washington Bikes slot under maintainer-approved policy.",
+      "evidence_url": "https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638",
+      "race_id": "initiative-26-638",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
+  "review_note": "Issue #624: independent factual review of the retained CBC HTML fragment and prior official mapping confirms explicit No on IL26-638. Counted once under Washington Bikes by maintainer-approved policy; CBC remains the publisher. Original transcriber: OpenAI Codex /root/capture_624_cbc638_official. Only this new decision is approved: no old WB-row reapproval, duplicate 001, whole-WB freshness/manual-due acknowledgement, full-article retention, origin freshness or #497 scheduled adoption is asserted.",
+  "reviewer": "OpenAI Codex /root/review_624_cbc638_facts",
+  "source_id": "washington-bikes"
+}
