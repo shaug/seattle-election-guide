@@ -91,7 +91,7 @@ def build_rendered_guide(
                 public_site_url=configuration.public_site_url,
                 project_url=configuration.project_url,
             )
-            for section in view_model.sections
+            for section in view_model.guide_sections
             for race in section.races
         }
         validation_report = validate_rendered_guide(

@@ -72,6 +72,7 @@ from election_guide.rendering.context import (
     source_cell_group,
 )
 from election_guide.rendering.documents import (
+    render_comparison_document,
     render_race_document,
     render_sources_document,
     template_environment,
@@ -507,7 +508,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     bindings = _client_payload(html)
     assert gap_code not in {source["code"] for source in bindings["sources"]}
 
-    races = [race for section in view_model.sections for race in section.races]
+    races = [race for section in view_model.guide_sections for race in section.races]
     assert html.count('data-publication-race-id="') == len(races)
     assert all(f'data-publication-race-id="{race.id}"' in html for race in races)
     assert "@media print" in html
@@ -1169,7 +1170,7 @@ def _race_documents(view_model: PublicationViewModel) -> dict[str, str]:
     """Every race page of one election, as the release validator audits them."""
     return {
         race.id: _race_html(view_model, race.id)
-        for section in view_model.sections
+        for section in view_model.guide_sections
         for race in section.races
     }
 
@@ -1668,7 +1669,7 @@ def test_race_page_renders_the_whole_race_from_one_view_model(tmp_path: Path) ->
     differ between races are exactly where a renderer can go wrong.
     """
     view_model = _revalidated(_view_model(tmp_path))
-    races = [race for section in view_model.sections for race in section.races]
+    races = [race for section in view_model.guide_sections for race in section.races]
     source_by_id = {source.id: source for source in view_model.sources}
     source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
     category_label_by_key = {
@@ -2245,7 +2246,7 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     """docs/UI_POLISH.md round-4 items I39/H38/H34/H36/H37/I40/I41/I42."""
     view_model = _view_model(tmp_path)
     configuration = read_rendering_configuration(RENDERING_CONFIG)
-    races = [race for section in view_model.sections for race in section.races]
+    races = [race for section in view_model.guide_sections for race in section.races]
     source_by_id = {source.id: source for source in view_model.sources}
 
     # I41: below ~30% fill, the card meter's label guard renders after the
@@ -2967,7 +2968,7 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
         find_chrome(),
         width=768,
         height=1200,
-        expected_race_count=sum(len(section.races) for section in view_model.sections),
+        expected_race_count=sum(len(section.races) for section in view_model.guide_sections),
     )
 
 
@@ -3253,31 +3254,42 @@ def _coarse_visual_signature(path: Path) -> list[float]:
 
 @pytest.mark.parametrize("with_results", [False, True])
 @pytest.mark.parametrize(
-    ("election_type", "contested", "source_id", "status", "visible"),
+    ("election_type", "contested", "source_ids", "status", "minimum_sources", "visible"),
     [
-        ("general", False, None, "endorsed", False),
-        ("general", False, CONSENSUS_SOURCE_IDS[0], "no_endorsement", False),
-        ("general", True, None, "endorsed", True),
-        ("general", False, CONSENSUS_SOURCE_IDS[0], "endorsed", True),
-        ("general", False, COMPARISON_SOURCE_ID, "endorsed", True),
-        ("primary", False, None, "endorsed", True),
+        ("general", False, (), "endorsed", 2, False),
+        ("general", False, (CONSENSUS_SOURCE_IDS[0],), "no_endorsement", 2, False),
+        ("general", True, (), "endorsed", 2, True),
+        ("general", False, (CONSENSUS_SOURCE_IDS[0],), "endorsed", 2, False),
+        ("general", False, (COMPARISON_SOURCE_ID,), "endorsed", 2, False),
+        ("general", False, (CONSENSUS_SOURCE_IDS[0], COMPARISON_SOURCE_ID), "endorsed", 2, False),
+        ("general", False, tuple(CONSENSUS_SOURCE_IDS[:2]), "endorsed", 2, True),
+        ("general", False, tuple(CONSENSUS_SOURCE_IDS[:2]), "endorsed", 3, False),
+        ("general", False, tuple(CONSENSUS_SOURCE_IDS[:3]), "endorsed", 3, True),
+        ("primary", False, (), "endorsed", 2, False),
+        ("primary", True, (), "endorsed", 2, True),
+        ("primary", False, (CONSENSUS_SOURCE_IDS[0],), "endorsed", 2, False),
+        ("primary", False, (COMPARISON_SOURCE_ID,), "endorsed", 2, False),
+        ("primary", False, tuple(CONSENSUS_SOURCE_IDS[:2]), "endorsed", 2, True),
+        ("primary", False, tuple(CONSENSUS_SOURCE_IDS[:2]), "endorsed", 3, False),
+        ("primary", False, tuple(CONSENSUS_SOURCE_IDS[:3]), "endorsed", 3, True),
     ],
 )
-def test_overview_omits_only_unopposed_general_races_without_endorsements(
+def test_public_views_require_full_panel_confidence_for_uncontested_races(
     tmp_path: Path,
     election_type: str,
     contested: bool,
-    source_id: str | None,
+    source_ids: tuple[str, ...],
     status: EndorsementStatus,
+    minimum_sources: int,
     visible: bool,
     with_results: bool,
 ) -> None:
     # A single official race makes an omitted race's otherwise empty section
     # and filter options observable, without depending on the live election.
     candidate_ids = _candidate_ids()[:1] if status == "endorsed" else []
-    specs: list[tuple[str, EndorsementStatus, list[str]]] = (
-        [] if source_id is None else [(source_id, status, candidate_ids)]
-    )
+    specs: list[tuple[str, EndorsementStatus, list[str]]] = [
+        (source_id, status, candidate_ids) for source_id in source_ids
+    ]
     dataset = _dataset(tmp_path, specs)
     inventory = dataset.inventory.model_dump(mode="json")
     inventory["election"]["election_type"] = election_type
@@ -3293,7 +3305,11 @@ def test_overview_omits_only_unopposed_general_races_without_endorsements(
     dataset_payload = dataset.model_dump(mode="json")
     dataset_payload["inventory"] = inventory
     dataset = CanonicalDataset.model_validate(dataset_payload)
-    report = score_dataset(dataset, _configuration(), computed_at=NOW)
+    report = score_dataset(
+        dataset,
+        _configuration().model_copy(update={"minimum_explicit_sources": minimum_sources}),
+        computed_at=NOW,
+    )
     bundle = build_publication_bundle(
         dataset,
         report,
@@ -3301,6 +3317,7 @@ def test_overview_omits_only_unopposed_general_races_without_endorsements(
         snapshot_root=_snapshot_store(tmp_path, dataset),
     )
     view_model = bundle.view_model
+    PublicationViewModel.model_validate(view_model.public_view().model_dump(mode="json"))
     capture_url = "https://example.org/results/overview-fixture"
     if with_results:
         results = _valid_results(tmp_path / "results")
@@ -3326,24 +3343,36 @@ def test_overview_omits_only_unopposed_general_races_without_endorsements(
     payload = _client_payload(html)
 
     assert (f'data-publication-race-id="{RACE_ID}"' in html) is visible
-    # Retain payload identities so legacy #race-… links can still forward to
-    # the full race page even when the overview no longer has a card for it.
-    assert [race["race_id"] for race in payload["races"]] == [RACE_ID]
+    # Hidden races must not survive in legacy-link or personalization payloads.
+    assert [race["race_id"] for race in payload["races"]] == ([RACE_ID] if visible else [])
     assert ('data-filter-section="county"' in html) is visible
     assert ('<option value="county">' in html) is visible
     assert ('<option value="Countywide">' in html) is visible
     if not visible:
         assert payload["filter_scopes"] == [{"value": "all", "label": "All Seattle ballot races"}]
 
-    # The overview is a projection; canonical exports and direct links retain
-    # the full race even when there is no decision for the guide to summarize.
+    # Public views omit the race while canonical audit exports retain it.
     exported = json.loads(bundle.artifacts["publication_view_model.json"])
     assert exported["sections"][0]["races"][0]["id"] == RACE_ID
     race_documents = _race_documents(view_model)
-    assert RACE_ID in race_documents
+    assert (RACE_ID in race_documents) is visible
+    comparison_html = render_comparison_document(
+        view_model, public_site_url=configuration.public_site_url
+    )
+    comparison_payload = _client_payload(comparison_html)
+    assert [race["race_id"] for race in comparison_payload["comparisons"]["display_index"]] == (
+        [RACE_ID] if visible else []
+    )
+    assert [race["race_id"] for race in payload["personalization"]["races"]] == (
+        [RACE_ID] if visible else []
+    )
+    if not visible:
+        with pytest.raises(ValueError, match="has no race"):
+            _race_html(view_model, RACE_ID)
     if with_results:
         assert (f'href="{capture_url}"' in html) is visible
-        assert f'href="{capture_url}"' in race_documents[RACE_ID]
+        if visible:
+            assert f'href="{capture_url}"' in race_documents[RACE_ID]
     html_path = tmp_path / "guide.html"
     html_path.write_text(html, encoding="utf-8")
     screenshots = [
@@ -3368,13 +3397,72 @@ def test_overview_omits_only_unopposed_general_races_without_endorsements(
             expected_race_count=int(visible),
         )
 
+    if not contested and visible and not with_results:
+        selected_code = next(
+            source.code
+            for source in view_model.personalization.sources
+            if source.id == source_ids[0]
+        )
+        fragment = _lens_fragment(view_model, mode="s", source_codes=(selected_code,))
+        result = _evaluate_in_chrome(
+            html_path,
+            """
+            (() => {
+              const card = document.querySelector('[data-publication-race-id]');
+              return JSON.stringify({
+                visible: card !== null && !card.hidden && card.getClientRects().length > 0,
+                insufficient: card?.querySelector('.insufficient-note')?.textContent ?? '',
+              });
+            })()
+            """,
+            initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+        )
+        assert result["visible"] is True
+        assert "Too few endorsements" in result["insufficient"]
+        assert "selected sources" in result["insufficient"]
 
-def _view_model(root: Path) -> PublicationViewModel:
+
+@pytest.mark.parametrize("hide_first_section", [False, True])
+def test_public_comparisons_reindex_after_hiding_races(
+    tmp_path: Path, hide_first_section: bool
+) -> None:
+    # Keep unopposed fixture races below the configured confidence threshold.
+    view = _view_model(tmp_path, minimum_explicit_sources=99)
+    sections = [
+        section.model_copy(
+            update={
+                "races": [
+                    race.model_copy(
+                        update={
+                            "is_contested": (
+                                section_order > 0 if hide_first_section else race_order > 0
+                            )
+                        }
+                    )
+                    for race_order, race in enumerate(section.races)
+                ]
+            }
+        )
+        for section_order, section in enumerate(view.sections)
+    ]
+    view = view.model_copy(
+        update={
+            "metadata": view.metadata.model_copy(update={"election_type": "general"}),
+            "sections": sections,
+        }
+    )
+    projected = view.public_view()
+    assert projected.comparisons.display_index
+    PublicationViewModel.model_validate(projected.model_dump(mode="json"))
+    render_comparison_document(view, public_site_url="https://seattleelections.guide")
+
+
+def _view_model(root: Path, *, minimum_explicit_sources: int = 2) -> PublicationViewModel:
     dataset = _publication_dataset(root)
     snapshot_root = _snapshot_store(root, dataset)
     report = score_dataset(
         dataset,
-        _configuration(),
+        _configuration().model_copy(update={"minimum_explicit_sources": minimum_explicit_sources}),
         computed_at=NOW,
         allow_unresolved=True,
     )
@@ -4866,7 +4954,7 @@ def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
     )
-    expected_races = sum(len(section.races) for section in view_model.sections)
+    expected_races = sum(len(section.races) for section in view_model.guide_sections)
 
     result = _evaluate_in_chrome(
         html_path,
