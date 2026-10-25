@@ -1,0 +1,78 @@
+{
+  "capture_id": "capture-ufcw-3000-20261025T084659Z-c53f16126d3e",
+  "checked_at": "2026-10-25T08:46:59Z",
+  "content_changed": true,
+  "diff": [
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "evidence_excerpt": "Ian Birk, Position 4",
+        "evidence_locator": "Official current UFCW 3000 endorsements > Ian Birk, Position 4; complete current factual review by OpenAI Codex /root/verify_497_ufcw_current33 at 2026-10-24T09:55:41.998064Z for #497. First appearance unknown; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-4",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-4"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "evidence_excerpt": "Theo Angelis, Position 5",
+        "evidence_locator": "Official current UFCW 3000 endorsements > Theo Angelis, Position 5; complete current factual review by OpenAI Codex /root/verify_497_ufcw_current33 at 2026-10-24T09:55:41.998064Z for #497. First appearance unknown; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-5",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-5"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "evidence_excerpt": "Pramila Jayapal, Congressional District 7",
+        "evidence_locator": "Official current UFCW 3000 endorsements > Pramila Jayapal, Congressional District 7; complete current factual review by OpenAI Codex /root/verify_497_ufcw_current33 at 2026-10-24T09:55:41.998064Z for #497. First appearance unknown; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "us-house-7",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "us-house-7"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "evidence_excerpt": "Adam Smith, Congressional District 9",
+        "evidence_locator": "Official current UFCW 3000 endorsements > Adam Smith, Congressional District 9; complete current factual review by OpenAI Codex /root/verify_497_ufcw_current33 at 2026-10-24T09:55:41.998064Z for #497. First appearance unknown; this mapping grants no baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "us-house-9",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "us-house-9"
+    }
+  ],
+  "error": null,
+  "id": "refresh-ufcw-3000-20261025T084659Z-1af34fed5606",
+  "previous_snapshot_id": "extraction-ufcw-3000-20261024T084655Z-6ddf00a0ba5d",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-ufcw-3000-20261025T084659Z-ebaace38186a",
+  "source_id": "ufcw-3000",
+  "status": "updated"
+}
