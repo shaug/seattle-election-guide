@@ -1943,11 +1943,13 @@ def _workflow_staging_surfaces() -> list[_StagingSurface]:
 def test_every_staging_surface_resolves_released_bundles_the_same_way() -> None:
     """Issue 361: no staging surface may stay on the pre-215 single-bundle model.
 
-    Only the current election is built from source, so every other declared
+    Ordinary staging builds only the current election, so every other declared
     election has to be resolved from the release that published it. The option
     pair reached the three surfaces one ticket at a time -- 215 for CI, 271 for
     local, 361 for the preview -- so this discovers the invocations instead of
-    naming them, and a fourth surface is covered the day it is added.
+    naming them, and a fourth surface is covered the day it is added. The #608
+    inspection copy instead supplies both unpublished local bundles; its actual
+    source binding and admission are exercised in test_preview_composition.
     """
     surfaces = _makefile_staging_surfaces() + _workflow_staging_surfaces()
 
@@ -1961,6 +1963,29 @@ def test_every_staging_surface_resolves_released_bundles_the_same_way() -> None:
         surface.surface for surface in surfaces
     }
     for surface in surfaces:
+        if "stage_pages_site(" in surface.command:
+            assert surface.surface == "deploy-pr-preview.yml"
+            assert surface.env == {
+                "PR_NUMBER": "${{ github.event.pull_request.number }}",
+                "GH_TOKEN": "${{ github.token }}",
+            }
+            assert 'for short in ("general", "primary"):' in surface.command
+            assert 'bundle = Path(f"dist/{short}-preview-a/bundle")' in surface.command
+            assert "version = f\"preview-pr-{os.environ['PR_NUMBER']}-{short}-{head}\"" in (
+                surface.command
+            )
+            assert 'status["release_version"] != version' in surface.command
+            assert 'status["git_commit"] != head' in surface.command
+            assert 'source_panel_hash=status["source_panel_hash"]' in surface.command
+            assert 'source_registry_hash=status.get("source_registry_hash")' in surface.command
+            assert "release_manifest_sha256=hashlib.sha256(" in surface.command
+            assert "bundle_sha256=bundle_hash(bundle)" in surface.command
+            assert 'assignments[declaration["bundle_id"]] = bundle' in surface.command
+            assert "expected_current_git_commit=head" in surface.command
+            assert "released_bundle_dir" not in surface.command
+            assert "hosting verify dist/preview-site.yaml dist/cloudflare-site" in surface.command
+            assert '--expected-git-commit "$HEAD_SHA"' in surface.command
+            continue
         assert any(command in surface.command for command in STAGE_COMMANDS[1:]), surface.surface
         assert "election-guide hosting stage" not in surface.command, surface.surface
         if "automation stage" in surface.command:
