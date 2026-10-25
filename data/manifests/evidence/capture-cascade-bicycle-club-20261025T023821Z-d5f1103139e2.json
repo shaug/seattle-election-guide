@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 68,
+  "canonical_url": "https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638",
+  "capture_method": "static_html",
+  "content_sha256": "a4f49d50b125de8ec40576059546219c966c8f2298ce31b501f2c019db2ad28c",
+  "http_status": 200,
+  "id": "capture-cascade-bicycle-club-20261025T023821Z-d5f1103139e2",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Only an exact 11-word partial HTML text-node fragment of the observed response is retained for verification under SOURCE_POLICY.md. This artifact is not the full page; its content hash and byte length describe the fragment only. Complete-response hash and byte length are separate fetch metadata. No publication/update time or origin-cache bypass is asserted.",
+  "requested_url": "https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638",
+  "retrieved_at": "2026-10-25T02:38:21.010025Z",
+  "schema_version": "1.0",
+  "source_id": "cascade-bicycle-club",
+  "storage_reference": "sha256/a4/a4f49d50b125de8ec40576059546219c966c8f2298ce31b501f2c019db2ad28c",
+  "storage_scope": "local_only",
+  "title": "Partial recommendation fragment for the 2026 state ballot initiatives",
+  "updated_at": null
+}

@@ -1,6 +1,6 @@
 schema_version: '1.0'
 election_id: wa-2026-general
-data_as_of: '2026-10-24T09:55:41.998064Z'
+data_as_of: '2026-10-25T02:45:30Z'
 reviewer: OpenAI Codex / root (explicit maintainer delegation)
 review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured 21
   new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every new or
@@ -932,6 +932,23 @@ sources:
     evidence_locator: '2026 General Election Endorsements → Congress table; Adam Smith D9 US Representative. Official source:
       https://wabikes.org/index.php/advocacy/endorsements/. Capture capture-washington-bikes-20261016T145957Z-415e3b0b1a5d;
       verified manual manual-washington-bikes-20261016T154850Z-16a97652fd49.'
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+    evidence_url: https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638
+    evidence_locator: 'Cascade Bicycle Club, opening body paragraph: explicit No on initiative 638; prior official-source
+      qualification maps the athletics measure to IL26-638. Original capture capture-cascade-bicycle-club-20261025T023821Z-d5f1103139e2;
+      verified manual manual-cascade-bicycle-club-20261025T023947Z-8877db2e4bc5. Actual publisher is CBC; counted once in the
+      existing Washington Bikes slot under maintainer-approved policy.'
+    evidence_excerpt: Cascade Bicycle Club recommends voting NO on Initiatives 001 and 638
+    captured_at: '2026-10-25T02:38:21.010025Z'
+    reviewed_at: '2026-10-25T02:45:30Z'
+    reviewer: OpenAI Codex /root/review_624_cbc638_facts
+    review_note: 'Issue #624: independent factual review of the retained CBC HTML fragment and prior official mapping confirms
+      explicit No on IL26-638. Counted once under Washington Bikes by maintainer-approved policy; CBC remains the publisher.
+      Original transcriber: OpenAI Codex /root/capture_624_cbc638_official. Only this new decision is approved: no old WB-row
+      reapproval, duplicate 001, whole-WB freshness/manual-due acknowledgement, full-article retention, origin freshness or
+      #497 scheduled adoption is asserted.'
 - source_id: environmental-climate-caucus-wa-democrats
   captured_at: '2026-10-16T15:44:40.034601Z'
   reviewed_at: '2026-10-16T15:48:50.280092Z'

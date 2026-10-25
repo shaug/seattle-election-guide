@@ -306,6 +306,29 @@
     {
       "availability": "captured",
       "browser_required": false,
+      "byte_length": 1705,
+      "canonical_url": "https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638",
+      "capture_method": "manual_upload",
+      "content_sha256": "f543e8a293cd436c7c69ac7eaa23b32f7571b7832023d803e4ae2828ef48b14f",
+      "http_status": null,
+      "id": "capture-washington-bikes-20261025T023821Z-3c66da5a6eba",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638",
+      "retrieved_at": "2026-10-25T02:38:21.010025Z",
+      "schema_version": "1.0",
+      "source_id": "washington-bikes",
+      "storage_reference": "sha256/f5/f543e8a293cd436c7c69ac7eaa23b32f7571b7832023d803e4ae2828ef48b14f",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Washington Bikes",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
       "byte_length": 6891,
       "canonical_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
       "capture_method": "manual_upload",
@@ -4109,6 +4132,21 @@
       "raw_candidate_text": "Adam Smith",
       "raw_notes": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the official general-election list; shaug verified every decision, the dual LD32 Senate endorsement, and the unambiguous Saloman, Alvorado, Kalebe, and Nicole Marci typo mappings.",
       "raw_race_text": "U.S. Representative — Congressional District 9",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-bikes"
+    },
+    {
+      "capture_id": "capture-washington-bikes-20261025T023821Z-3c66da5a6eba",
+      "evidence_excerpt": "Cascade Bicycle Club recommends voting NO on Initiatives 001 and 638",
+      "evidence_locator": "Cascade Bicycle Club, opening body paragraph: explicit No on initiative 638; prior official-source qualification maps the athletics measure to IL26-638. Original capture capture-cascade-bicycle-club-20261025T023821Z-d5f1103139e2; verified manual manual-cascade-bicycle-club-20261025T023947Z-8877db2e4bc5. Actual publisher is CBC; counted once in the existing Washington Bikes slot under maintainer-approved policy.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-54931bf09e834433",
+      "raw_candidate_text": "No",
+      "raw_notes": "Issue #624: independent factual review of the retained CBC HTML fragment and prior official mapping confirms explicit No on IL26-638. Counted once under Washington Bikes by maintainer-approved policy; CBC remains the publisher. Original transcriber: OpenAI Codex /root/capture_624_cbc638_official. Only this new decision is approved: no old WB-row reapproval, duplicate 001, whole-WB freshness/manual-due acknowledgement, full-article retention, origin freshness or #497 scheduled adoption is asserted.",
+      "raw_race_text": "Initiative IL26-638 — Participation in K-12 School Athletics",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "washington-bikes"
@@ -19386,6 +19424,28 @@
       "reviewed_at": "2026-10-16T15:48:50.280092Z",
       "reviewer": "shaug",
       "source_capture_id": "capture-washington-bikes-20261016T145957Z-423c76cddbed",
+      "source_id": "washington-bikes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-638--no": "1"
+      },
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-54931bf09e834433",
+      "id": "endorsement-bc89996cbffb468e",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #624: independent factual review of the retained CBC HTML fragment and prior official mapping confirms explicit No on IL26-638. Counted once under Washington Bikes by maintainer-approved policy; CBC remains the publisher. Original transcriber: OpenAI Codex /root/capture_624_cbc638_official. Only this new decision is approved: no old WB-row reapproval, duplicate 001, whole-WB freshness/manual-due acknowledgement, full-article retention, origin freshness or #497 scheduled adoption is asserted.",
+      "published_at": null,
+      "race_id": "initiative-26-638",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-25T02:45:30Z",
+      "reviewer": "OpenAI Codex /root/review_624_cbc638_facts",
+      "source_capture_id": "capture-washington-bikes-20261025T023821Z-3c66da5a6eba",
       "source_id": "washington-bikes",
       "status": "endorsed"
     },
