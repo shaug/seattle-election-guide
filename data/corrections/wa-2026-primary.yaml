@@ -531,3 +531,20 @@ entries:
   provenance:
   - label: First primary release
     url: https://github.com/shaug/seattle-election-guide/releases/tag/2026-primary.1
+
+- corrected_on: 2026-10-25
+  headline: Preparing manual district setup and saved ballots.
+  body: >-
+    We are preparing a way to choose your districts, save those choices on this
+    device, and see which contests apply to you. This entry records preparation
+    only; the live guide does not yet offer the new district setup. Location
+    lookup and ballot ordering remain separate work. Recorded endorsements,
+    source choices, scores and certified results are unchanged. This is not a
+    new verification of endorsement sources.
+    The archived primary overview will need a separate update before it can
+    offer the new setup.
+  provenance:
+  - label: Primary guide
+    url: /e/wa-2026-primary/
+  - label: Manual ballot membership and delivery scope
+    url: https://github.com/shaug/seattle-election-guide/issues/608
