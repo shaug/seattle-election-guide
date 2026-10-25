@@ -376,3 +376,23 @@ entries:
       url: /e/wa-2026-general/
     - label: Manual ballot membership and delivery scope
       url: https://github.com/shaug/seattle-election-guide/issues/608
+  - corrected_on: 2026-10-25
+    headline: "Reviewed four current automatic-source factual baselines."
+    body: >-
+      Named delegated reviewers checked Transit Riders Union, Sage Leaders,
+      Seattle Gay News and UFCW 3000 against 66 facts from the October 25
+      scheduled check. The dated record preserves their actual source-read
+      and review times, dual endorsements, held omissions and other source
+      qualifications. Four exact baseline attestations are recorded without
+      changing endorsement choices, allocations or the 46-source panel.
+      Later independent normal scheduled reuse is still required; source
+      access failures and finite manual-review obligations remain explicit.
+    provenance:
+      - label: "October 25 factual reviews and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_BASELINES_2026-10-25.md
+      - label: "Exact reviewed facts and observation metadata"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/data/review/rechecks/wa-2026-general-2026-10-25-automatic.json
+      - label: "Normal scheduled verification run"
+        url: https://github.com/shaug/seattle-election-guide/actions/runs/40177971864
+      - label: "Recurring verification delivery"
+        url: https://github.com/shaug/seattle-election-guide/issues/497

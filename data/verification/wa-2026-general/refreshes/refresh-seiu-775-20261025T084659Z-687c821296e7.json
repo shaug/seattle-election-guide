@@ -1,0 +1,13 @@
+{
+  "capture_id": null,
+  "checked_at": "2026-10-25T08:46:59Z",
+  "content_changed": null,
+  "diff": [],
+  "error": "Source check failed (stage=http_fetch; category=http_status; status=403).",
+  "id": "refresh-seiu-775-20261025T084659Z-687c821296e7",
+  "previous_snapshot_id": "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+  "schema_version": "1.0",
+  "snapshot_id": null,
+  "source_id": "seiu-775",
+  "status": "failed"
+}

@@ -1,0 +1,6 @@
+{
+  "evidence": "docs/GENERAL_BASELINES_2026-10-25.md#sage-leaders; data/review/rechecks/wa-2026-general-2026-10-25-automatic.json; exact extraction-sage-leaders-20261025T084659Z-7c292933c09a; completed factual review 2026-10-25T15:19:41.855703Z; preserve source-specific qualifications and separately timed official reads. Normal scheduled reuse remains separate.",
+  "reviewed_at": "2026-10-25T15:19:41.855703Z",
+  "reviewer": "OpenAI Codex /root/review_497_tru_sage_native24",
+  "snapshot_id": "extraction-sage-leaders-20261025T084659Z-7c292933c09a"
+}
