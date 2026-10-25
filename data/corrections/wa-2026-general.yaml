@@ -1,6 +1,20 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
+  - corrected_on: 2026-10-24
+    headline: "Uncontested races need enough verified endorsements to appear."
+    body: >-
+      Uncontested races appear in Endorsements, Comparisons, and individual
+      race pages only when at least two eligible progressive organizations
+      have verified endorsements. This uses the full set of verified sources;
+      choosing fewer sources changes the displayed scores, not race visibility.
+      Contested races remain available even without endorsements. The complete
+      audit records and published primary archive are preserved.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Race visibility policy and implementation"
+        url: https://github.com/shaug/seattle-election-guide/issues/607
   - corrected_on: 2026-10-25
     headline: "Added Cascade Bicycle Club’s No on IL26-638 in the Washington Bikes slot."
     body: >-
