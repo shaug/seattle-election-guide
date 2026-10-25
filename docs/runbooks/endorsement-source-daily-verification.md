@@ -1,11 +1,12 @@
 # Runbook: endorsement source daily verification
 
 **Status: proposed, implementation awaiting adoption evidence (#497).** Keep this
-status until real due-source native scheduled execution, six exact official-source baseline
-reviews, and later independent normal scheduled reuse have durable evidence. Fixture execution
+status until real due-source native scheduled execution, complete current official factual
+baseline reviews for the other five automatic sources under the October 24 SEIU 775 coverage
+decision below, and later independent normal scheduled reuse have durable evidence. Fixture execution
 proves the mechanism, not live publisher access or source approval. Operator dispatches and
-no-due successes cannot substitute. Resolve genuine SEIU 775 failures or obtain an explicit
-reviewed coverage decision without silently removing it from the six-source tranche.
+no-due successes cannot substitute. The approved SEIU 775 exception changes only its adoption
+gate; its failed checks and unresolved access follow-up remain explicit in the six-source tranche.
 
 ## Trigger and boundaries
 
@@ -40,10 +41,10 @@ The first general-election tranche is:
 
 | Source | Automatic publication check | Limitation |
 |---|---|---|
-| Transit Riders Union | Official WordPress archive through the September 30 boundary, both known and learned current-general articles, exact linked October graphic | Twelve fixed formal mappings from the designated October article; qualified recommendations held. Complete HTML/image fingerprints drive review. Exact expanded baseline approval and later independent native scheduled reuse remain pending; historical failures and exact October 20 obligations remain intact. |
+| Transit Riders Union | Official WordPress archive through the September 30 boundary, both known and learned current-general articles, exact linked October graphic | Twelve fixed formal mappings from the designated October article; qualified recommendations held. Complete HTML/image fingerprints drive review. The exact expanded factual baseline was reviewed and delivered in [PR #629](https://github.com/shaug/seattle-election-guide/pull/629); later independent normal scheduled reuse remains pending. Historical failures and exact October 20 obligations remain intact. |
 | Sage Leaders | Current 2026 section, excluding past-year sections | Fixed, reviewed factual mappings; changed bytes require review. |
-| SEIU 775 | Washington section | Fixed, reviewed factual mappings; changed bytes require review. |
-| UFCW 3000 | Complete endorsements landing page plus known/new relevant official articles | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. The expanded composite requires review of its exact new baseline. |
+| SEIU 775 | Washington section | Persistent HTTP 403 remains a failed check. The October 24 adoption-only coverage exception below preserves normal daily attempts and unresolved access follow-up. Fixed factual mappings and prior approvals remain intact; changed bytes require review. |
+| UFCW 3000 | Complete endorsements landing page plus known/new relevant official articles | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. The complete 33-fact native October 25 baseline (mapping 1.0.2) was reviewed and delivered in [PR #629](https://github.com/shaug/seattle-election-guide/pull/629); later independent normal scheduled reuse remains pending. |
 | Washington Working Families Party | Complete Washington candidate table from the reviewed public POST endpoint | Fixed, reviewed factual mappings; changed bytes require review. |
 | Seattle Gay News | Current Seattle index plus known/new articles | Daily from collection opening. Traverse pagination to the reviewed oldest current-cycle article, then revisit every known article. |
 
@@ -57,7 +58,10 @@ failures do not silently reduce coverage. Current operator research and fixture 
 do not establish native scheduled recovery or adoption. Preserve accepted exact-baseline
 reviews and native reuse, including WFP's dated review/reuse.
 Complete outstanding exact-baseline reviews and later independent native scheduled evidence;
-the deployed secret-free process still needs its own revised acceptance packet.
+the October 24 decision below excepts SEIU 775 only from the adoption gate. The other five
+sources still require complete current official factual baselines, real normal due-source
+scheduled execution and later independent normal scheduled reuse. The deployed secret-free
+process still needs its own revised acceptance packet and applicable reviewed delivery verification.
 
 All other eligible panel sources use manual review, including not-found,
 restricted, social, dynamic, PDF, and image publications without an installed
@@ -283,6 +287,30 @@ revised live evidence, including later independent normal scheduled reuse, hones
 genuine source recovery/approved coverage decision and applicable reviewed delivery verification.
 See the [accepted design](../superpowers/specs/2026-10-23-secret-free-endorsement-verification-design.md)
 and [implementation record](../superpowers/plans/2026-10-23-secret-free-endorsement-verification.md).
+
+### October 24 SEIU 775 adoption-only coverage decision
+
+At **2026-10-24T13:55:08Z**, maintainer **Scott** directly approved allowing #497 adoption
+despite SEIU 775's persistent HTTP 403, provided the other five automatic sources have complete
+current official factual baselines, real normal due-source scheduled execution, later independent
+normal scheduled reuse of those reviewed baselines, and applicable reviewed delivery verification.
+This changes only SEIU 775's adoption gate. It does not establish source recovery, a new baseline
+approval, a successful check or completed adoption. #497 remains **open** and this runbook remains
+**proposed** until the complete remaining acceptance packet exists.
+
+All six sources stay in the automatic-attempt lane with ordinary daily retries, unchanged cadence
+and existing access safeguards. The [October 24 observation](https://github.com/shaug/seattle-election-guide/issues/616#issuecomment-6382513458)
+remains **failed**: HTTP 403, the eighth consecutive scheduled failure and an active escalation.
+Keep the prior usable 29-fact SEIU 775 baseline, provenance, failure counters and immutable history.
+The exception grants no source removal/reclassification, collector or adapter change, new source
+review, data change, access-control bypass or release authority.
+
+SEIU 775 access remains unresolved. Keep that follow-up explicit in the existing finite
+[October 24 task #616](https://github.com/shaug/seattle-election-guide/issues/616) and subsequent
+ordinary election/day failure tasks until supported recovery is verified. Adoption does not resolve
+those failed observations or permit closing a daily task with unresolved source obligations.
+Do not create a duplicate access task or permanent rolling maintenance queue. Earlier dated notes
+below retain the requirements and observations in force when they were written.
 
 ### October 19 explicit delegation
 
