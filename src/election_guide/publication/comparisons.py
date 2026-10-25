@@ -105,7 +105,7 @@ class ComparisonsContract(ComparisonsModel):
 
     schema_version: Literal["1.0"] = COMPARISONS_SCHEMA_VERSION
     policy: ComparisonsPolicy
-    display_index: list[ComparisonDisplayRace] = Field(min_length=1)
+    display_index: list[ComparisonDisplayRace]
 
     @model_validator(mode="after")
     def validate_display_index(self) -> ComparisonsContract:

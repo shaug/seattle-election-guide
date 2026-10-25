@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-cascade-bicycle-club-20261025T023821Z-d5f1103139e2",
+  "entered_at": "2026-10-25T02:39:47.849147Z",
+  "entry_method": "manual",
+  "evidence_locator": "Opening body paragraph; exact partial text-node fragment containing the institutional recommendation and both initiative numbers. The targeted claim is the state athletics initiative numbered 638, mapped by the prior official-source qualification to initiative-26-638 / initiative-26-638--no.",
+  "evidence_type": "web_page",
+  "id": "manual-cascade-bicycle-club-20261025T023947Z-8877db2e4bc5",
+  "review_note": "Issue #624: independent factual review confirms explicit institutional Cascade Bicycle Club No on initiative 638, mapped through retained official qualification to IL26-638. Maintainer-approved counting uses the existing Washington Bikes slot once; actual publisher is CBC. Only the retained short HTML text-node excerpt is verified, with prior official mapping context; no full article, origin freshness, whole-WB recheck, old-row approval or scheduled adoption is asserted.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-25T02:45:30Z",
+  "reviewed_by": "OpenAI Codex /root/review_624_cbc638_facts",
+  "reviewer": "OpenAI Codex /root/capture_624_cbc638_official",
+  "schema_version": "1.0",
+  "source_id": "cascade-bicycle-club",
+  "transcription": "Cascade Bicycle Club recommends voting NO on Initiatives 001 and 638"
+}

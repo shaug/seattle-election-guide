@@ -118,6 +118,7 @@ def render_html_document(
     configuration: RenderingConfiguration,
 ) -> str:
     """Render the guide's one HTML document, which also carries its print rules."""
+    view_model = view_model.public_view()
     environment = template_environment()
     template = environment.get_template("guide.html.j2")
     # One CSS entry per page, so the guide ships the shell, the rules it shares
@@ -224,6 +225,7 @@ def render_race_document(
     `rendering/validation.py` audit the very same rendering without the two
     having to share a file.
     """
+    view_model = view_model.public_view()
     race = next(
         (
             candidate
@@ -364,6 +366,7 @@ def render_sources_document(
     for source in view_model.sources:
         _require_web_url(source.evidence_url)
 
+    view_model = view_model.public_view()
     environment = template_environment()
     template = environment.get_template("sources.html.j2")
     stylesheet = page_stylesheet("sources")
@@ -420,6 +423,7 @@ def render_comparison_document(
     if not view_model.comparisons.policy.enabled:
         raise ValueError("comparison page cannot render while its release policy is disabled")
 
+    view_model = view_model.public_view()
     environment = template_environment()
     template = environment.get_template("compare.html.j2")
     stylesheet = page_stylesheet("compare")
@@ -504,6 +508,7 @@ def render_corrections_document(
         for link in entry.provenance:
             _require_web_url(link.url, allow_root_relative=True)
 
+    view_model = view_model.public_view()
     environment = template_environment()
     template = environment.get_template("corrections.html.j2")
     stylesheet = page_stylesheet("corrections")

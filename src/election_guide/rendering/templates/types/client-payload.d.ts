@@ -133,10 +133,7 @@ interface PersonalizationContract {
    */
   sources: [PersonalizationSource, ...PersonalizationSource[]];
   retired_codes: PersonalizationRetiredCode[];
-  /**
-   * @minItems 1
-   */
-  races: [PersonalizationRace, ...PersonalizationRace[]];
+  races: PersonalizationRace[];
 }
 /**
  * The release policy governing whether and how a lens may run.
@@ -378,10 +375,7 @@ interface ComparisonsPayload {
 interface ComparisonsContract {
   schema_version: "1.0";
   policy: ComparisonsPolicy;
-  /**
-   * @minItems 1
-   */
-  display_index: [ComparisonDisplayRace, ...ComparisonDisplayRace[]];
+  display_index: ComparisonDisplayRace[];
 }
 /**
  * The release switch governing publication of the comparisons page.

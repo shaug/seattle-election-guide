@@ -74,11 +74,13 @@ Races follow the ballot's section order: Federal, State, County, State Supreme C
 The grouping follows the office's governing jurisdiction, so Seattle Municipal Court appears under
 City while Washington Supreme Court positions appear under State Supreme Court.
 
-For general elections, the Endorsements overview uses the publication model's
-`guide_sections` projection: unopposed races without current affirmative endorsements are
-omitted, along with empty sections and their filter options (DECISIONS.md, issue #528).
-Contested races and unopposed races with an endorsement remain. The complete race set stays
-available in audit exports, Comparisons, individual pages, and legacy-link routing.
+For general and primary elections, every public view uses the publication model's `public_view()`
+projection: uncontested races appear only when their full verified progressive-panel endorsement
+count meets the configured minimum. The shared `is_race_visible` selector applies independently
+of reader source selections. Empty sections and filter options are omitted (DECISIONS.md, issue #607). This covers Endorsements, Comparisons,
+individual pages, social cards, generated race links, and client payloads. Audit exports retain
+the complete race set. The copied primary overview adopts this policy only through a new
+immutable primary archive and protected pin activation; older archives remain unchanged.
 
 Printing suppresses the chrome a reader cannot use on paper — the brand band, the sticky filter
 controls, the lens banner, the footer's action cluster — flattens the screen surfaces onto white,

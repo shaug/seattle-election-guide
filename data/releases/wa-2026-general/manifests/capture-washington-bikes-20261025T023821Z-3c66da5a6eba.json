@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1705,
+  "canonical_url": "https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638",
+  "capture_method": "manual_upload",
+  "content_sha256": "f543e8a293cd436c7c69ac7eaa23b32f7571b7832023d803e4ae2828ef48b14f",
+  "http_status": null,
+  "id": "capture-washington-bikes-20261025T023821Z-3c66da5a6eba",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638",
+  "retrieved_at": "2026-10-25T02:38:21.010025Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "storage_reference": "sha256/f5/f543e8a293cd436c7c69ac7eaa23b32f7571b7832023d803e4ae2828ef48b14f",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington Bikes",
+  "updated_at": null
+}

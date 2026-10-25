@@ -60,14 +60,22 @@ status, so a consumer cannot silently substitute coalition grouping for raw sour
 Each published race also carries `is_contested`, derived solely from whether the authoritative ballot
 inventory contains more than one official choice. Endorsement coverage never influences that flag.
 
-`PublicationViewModel.guide_sections` projects the general-election Endorsements overview from
-the complete `sections` record: an unopposed race appears only when an active consensus or
-comparison source cell has a verified `endorsement` or `multi_endorsement`. Empty sections are
-omitted. The guide's cards, filter options, screenshot counts, and semantic validation use this
-one projection. The serialized model, individual race pages, Comparisons, and embedded race
-identities retain the complete race set, so audit data and legacy `#race-…` links remain available.
-Source selection does not change this projection, and primary-election rendering uses the full
-sections unchanged (issue [#528](https://github.com/shaug/seattle-election-guide/issues/528)).
+`PublicationViewModel.is_race_visible(race)` is the shared all-view visibility selector.
+For general and primary elections it retains contested races and uncontested races whose audited
+`explicit_endorsement_count` meets `personalization.scoring.minimum_explicit_sources`.
+That count comes from the full verified progressive panel; comparison-only picks, missing
+coverage, no-endorsement decisions and reader source selections do not qualify a race.
+`guide_sections` applies this selector without changing supplied section or race order.
+Ballot membership consumers such as #608 further filter this public universe geographically;
+they must not reintroduce omitted audit races or recompute visibility from selected sources.
+`public_view()` applies that projection to every public page and its personalization and
+comparison contracts. Individual race pages, social cards, and generated race links are created
+only for those visible races. Reader-selected sources change displayed scores only; results
+do not change visibility.
+An election with no contested races has empty public personalization and comparison race lists;
+these contracts accept an empty list. Empty sections and filter options are omitted. The serialized
+audit model, inventory, consensus, and CSV exports retain the complete race set. Existing immutable primary archives remain unchanged; a newly built and verified
+replacement must be published and selected before its revised overview is served (issue [#607](https://github.com/shaug/seattle-election-guide/issues/607)).
 
 Every active source includes `endorsement_count` and `split_endorsement_count`. The first counts
 published races where its effective cell is `endorsement` or `multi_endorsement`; the second is the

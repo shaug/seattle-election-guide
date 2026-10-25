@@ -635,14 +635,11 @@ def _stage_race_pages(
     election_root: Path,
     canonical_origin: str,
 ) -> set[str]:
-    """One page and one social card per race in this election (issue #136).
+    """Stage pages, social cards, and routes only for publicly visible races.
 
-    Race detail is a page rather than a dialog over the guide, so every race in
-    every published election's inventory gets its own directory here — an
-    archived guide's races included, exactly as the archived guide itself keeps
-    its own address. Both files are rendered from the bundle's own verified view
-    model, so a historical election's pages are a function of the data it was
-    published with.
+    General and primary race pages use the shared full-panel visibility selector,
+    including qualifying uncontested races (issue #607). The copied primary
+    overview requires a replacement immutable archive to adopt that policy.
     """
     view_model = bundle.view_model
     election_id = bundle.declaration.election_id
@@ -660,7 +657,7 @@ def _stage_race_pages(
     races_root = election_root / "races"
     races_root.mkdir()
     public_paths: set[str] = set()
-    for section in view_model.sections:
+    for section in view_model.guide_sections:
         for race in section.races:
             directory = races_root / race.id
             directory.mkdir()

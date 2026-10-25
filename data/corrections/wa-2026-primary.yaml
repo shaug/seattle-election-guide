@@ -2,6 +2,20 @@ schema_version: '1.0'
 election_id: wa-2026-primary
 entries:
 - corrected_on: 2026-10-24
+  headline: Applying the verified-endorsement rule to primary races.
+  body: >-
+    Uncontested primary races use the same visibility rule as general-election
+    races: at least two of the guide's progressive sources must have verified
+    endorsements. The full verified source set determines visibility; choosing
+    fewer sources changes displayed scores only. All 32 current primary races
+    qualify, so the race list and recorded endorsements are unchanged. The
+    revised overview is delivered through a new immutable primary archive.
+  provenance:
+  - label: Primary guide
+    url: /e/wa-2026-primary/
+  - label: Shared race visibility policy
+    url: https://github.com/shaug/seattle-election-guide/issues/607
+- corrected_on: 2026-10-24
   headline: Restored earlier borders on primary race pages.
   body: >-
     Earlier endorsement-meter borders returned to individual primary race pages.

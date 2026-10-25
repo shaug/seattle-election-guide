@@ -2,6 +2,40 @@ schema_version: "1.0"
 election_id: wa-2026-general
 entries:
   - corrected_on: 2026-10-24
+    headline: "Uncontested races need enough verified endorsements to appear."
+    body: >-
+      Uncontested races appear in Endorsements, Comparisons, and individual
+      race pages only when at least two eligible progressive organizations
+      have verified endorsements. This uses the full set of verified sources;
+      choosing fewer sources changes the displayed scores, not race visibility.
+      Contested races remain available even without endorsements. The complete
+      audit records and published primary archive are preserved.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Race visibility policy and implementation"
+        url: https://github.com/shaug/seattle-election-guide/issues/607
+  - corrected_on: 2026-10-25
+    headline: "Added Cascade Bicycle Club’s No on IL26-638 in the Washington Bikes slot."
+    body: >-
+      Cascade Bicycle Club explicitly recommends No on the state K-12 athletics
+      initiative IL26-638. Under the approved source-counting policy, this adds
+      one Washington Bikes decision and one point for No, bringing the general
+      guide to 930 decisions across the same 46 publishers. The evidence link
+      identifies Cascade as the publisher. All 929 prior decisions remain,
+      including Washington Bikes’ existing No on IL26-001; no second Cascade
+      point is counted. This targeted review does not recheck the rest of the
+      Washington Bikes slate. The endorsement’s first appearance date is unknown.
+    provenance:
+      - label: "Initiative IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Cascade Bicycle Club’s official recommendation"
+        url: https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638
+      - label: "Reviewed addition and counting policy"
+        url: https://github.com/shaug/seattle-election-guide/issues/624
+  - corrected_on: 2026-10-24
     headline: "Restored earlier endorsement-meter borders."
     body: >-
       The general guide and individual race pages again use the earlier
