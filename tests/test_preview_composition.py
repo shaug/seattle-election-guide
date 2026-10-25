@@ -302,6 +302,7 @@ def test_original_primary_pin_check_executes_and_rejects_drift(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, fault: str | None
 ) -> None:
     from election_guide.hosting import releases
+    from election_guide.hosting.models import PublishedElection
 
     bundle = _write_release_bundle(
         tmp_path / "published",
@@ -329,7 +330,11 @@ def test_original_primary_pin_check_executes_and_rejects_drift(
     config.parent.mkdir(parents=True)
     config.write_text(yaml.safe_dump(site))
     original = config.read_bytes()
-    monkeypatch.setattr(releases, "materialize_released_bundle", lambda *_args: bundle)
+
+    def retained_bundle(_declaration: PublishedElection, _work_dir: Path) -> Path:
+        return bundle
+
+    monkeypatch.setattr(releases, "materialize_released_bundle", retained_bundle)
     step = next(
         step
         for step in _deploy_job()["steps"]
