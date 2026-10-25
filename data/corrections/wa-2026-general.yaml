@@ -361,3 +361,18 @@ entries:
         url: https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.1
       - label: "First website publication"
         url: https://github.com/shaug/seattle-election-guide/actions/runs/37111424774
+
+  - corrected_on: 2026-10-25
+    headline: Preparing manual district setup and saved ballots.
+    body: >-
+      We are preparing a way to choose your districts, save those choices on this
+      device, and see which contests apply to you. This entry records preparation
+      only; the live guide does not yet offer the new district setup. Location
+      lookup and ballot ordering remain separate work. Recorded endorsements,
+      source choices, scores and certified results are unchanged. This is not a
+      new verification of endorsement sources.
+    provenance:
+    - label: General guide
+      url: /e/wa-2026-general/
+    - label: Manual ballot membership and delivery scope
+      url: https://github.com/shaug/seattle-election-guide/issues/608
