@@ -303,6 +303,235 @@ def test_release_compiler_localizes_source_review_provenance(tmp_path: Path) -> 
     assert second.review_decisions[0].reason == second_source["review_note"]
 
 
+@pytest.mark.parametrize("source_review", [False, True])
+@pytest.mark.parametrize("same_url", [False, True])
+def test_release_compiler_per_decision_complete_provenance_preserves_legacy_peers(
+    tmp_path: Path, source_review: bool, same_url: bool
+) -> None:
+    payload = _ledger_payload()
+    source = payload["sources"][1]
+    if source_review:
+        source.update(reviewer="source-reviewer", review_note="Source-specific review.")
+    if same_url:
+        source["decisions"][0]["evidence_url"] = _decision_provenance()["evidence_url"]
+    first = _compile_ledger_payload(payload, tmp_path)
+    original_snapshots = _tree_bytes(tmp_path / "snapshots")
+    original_manifests = _tree_bytes(tmp_path / "manifests")
+    source["decisions"].append(
+        {
+            "race_id": "king-county-assessor",
+            "candidate_ids": ["king-county-assessor--rob-foxcurran"],
+            **_decision_provenance(),
+        }
+    )
+    second = _compile_ledger_payload(payload, tmp_path)
+
+    assert second.captures[:2] == first.captures
+    assert second.claims[:2] == first.claims
+    assert second.endorsements[:2] == first.endorsements
+    assert second.review_items == first.review_items
+    assert second.review_decisions == first.review_decisions
+    assert original_snapshots.items() <= _tree_bytes(tmp_path / "snapshots").items()
+    assert original_manifests.items() <= _tree_bytes(tmp_path / "manifests").items()
+    row = second.endorsements[-1]
+    claim = second.claims[-1]
+    capture = second.captures[-1]
+    assert row.reviewer == "decision-reviewer"
+    assert row.reviewed_at == datetime(2026, 7, 20, 9, 50, tzinfo=UTC)
+    assert row.notes == claim.raw_notes == "Checked the updated official publication."
+    assert row.source_capture_id == capture.id
+    assert capture.retrieved_at == datetime(2026, 7, 20, 9, 40, tzinfo=UTC)
+    assert capture.canonical_url == "https://www.kcdems.org/2026/updated-endorsements/"
+    assert capture.published_at is capture.updated_at is None
+    assert isinstance(capture, CapturedManifest)
+    snapshot = read_json(tmp_path / "snapshots" / capture.storage_reference)
+    assert snapshot["captured_at"] == "2026-07-20T09:40:00Z"
+    assert snapshot["reviewer"] == "decision-reviewer"
+    assert snapshot["review_note"] == "Checked the updated official publication."
+    assert "reviewed_at" not in snapshot
+    assert snapshot["decisions"] == [
+        {
+            "race_id": "king-county-assessor",
+            "status": "endorsed",
+            "candidate_ids": ["king-county-assessor--rob-foxcurran"],
+            "evidence_excerpt": None,
+            "evidence_locator": "Updated official publication, named office entry.",
+            "evidence_url": "https://www.kcdems.org/2026/updated-endorsements/",
+        }
+    ]
+    verified = verify_release_compilation(
+        tmp_path / "release-ledger.yaml",
+        INVENTORY,
+        REGISTRY,
+        tmp_path / "dataset.json",
+        tmp_path / "snapshots",
+        tmp_path / "manifests",
+    )
+    assert verified == second
+
+
+def test_release_ledger_per_decision_omitted_and_null_provenance_preserves_serialization(
+    tmp_path: Path,
+) -> None:
+    payload = _ledger_payload()
+    path = _write_ledger(tmp_path)
+    original = read_release_ledger(path).model_dump(mode="json")
+    for source in payload["sources"]:
+        for decision in source["decisions"]:
+            decision.update(captured_at=None, reviewed_at=None, reviewer=None, review_note=None)
+    path.write_text(yaml.safe_dump(payload, sort_keys=False))
+    serialized = read_release_ledger(path).model_dump(mode="json")
+    assert serialized == original
+    assert serialized["sources"][0]["decisions"][0] == {
+        "race_id": "king-county-assessor",
+        "status": "endorsed",
+        "candidate_ids": ["king-county-assessor--rob-foxcurran"],
+        "evidence_excerpt": None,
+        "evidence_locator": "Official guide, King County Assessor heading.",
+    }
+
+
+@pytest.mark.parametrize("missing", ["captured_at", "reviewed_at", "reviewer", "review_note"])
+def test_release_ledger_per_decision_rejects_partial_provenance(
+    tmp_path: Path,
+    missing: str,
+) -> None:
+    payload = _ledger_payload()
+    decision = payload["sources"][1]["decisions"][0]
+    decision.update(_decision_provenance())
+    path = _write_ledger(tmp_path)
+    path.write_text(yaml.safe_dump(payload, sort_keys=False))
+    read_release_ledger(path)
+    decision[missing] = None
+    path.write_text(yaml.safe_dump(payload, sort_keys=False))
+    with pytest.raises(ValueError, match="complete provenance"):
+        read_release_ledger(path)
+
+
+@pytest.mark.parametrize(
+    ("invalid", "message"),
+    [
+        ({"reviewer": "   "}, "blank"),
+        ({"review_note": "   "}, "blank"),
+        ({"reviewer": "r" * 201}, "at most 200"),
+        ({"review_note": "n" * 4001}, "at most 4000"),
+        ({"captured_at": "2026-07-20T09:40:00"}, "timezone"),
+        ({"reviewed_at": "2026-07-20T09:50:00"}, "timezone"),
+        ({"reviewed_at": "2026-07-20T09:39:00Z"}, "predate"),
+        ({"evidence_url": None}, "explicit evidence"),
+        ({"evidence_locator": None}, "explicit evidence"),
+        ({"evidence_locator": "   "}, "blank"),
+        ({"evidence_url": "file:///tmp/page"}, "HTTP"),
+        ({"evidence_url": "https://reader:password@example.org/"}, "credentials"),
+        ({"evidence_url": "https://example.org/?token=secret"}, "credential parameters"),
+        (
+            {"captured_at": "2026-07-20T10:01:00Z", "reviewed_at": "2026-07-20T10:02:00Z"},
+            "predate a decision extract",
+        ),
+        ({"reviewed_at": "2026-07-20T10:01:00Z"}, "predate a decision review"),
+    ],
+)
+def test_release_ledger_per_decision_rejects_invalid_complete_provenance(
+    tmp_path: Path,
+    invalid: dict[str, Any],
+    message: str,
+) -> None:
+    payload = _ledger_payload()
+    decision = payload["sources"][1]["decisions"][0]
+    decision.update(_decision_provenance())
+    path = _write_ledger(tmp_path)
+    path.write_text(yaml.safe_dump(payload, sort_keys=False))
+    read_release_ledger(path)
+    decision.update(invalid)
+    path.write_text(yaml.safe_dump(payload, sort_keys=False))
+    with pytest.raises(ValueError, match=message):
+        read_release_ledger(path)
+
+
+def test_release_compiler_per_decision_rejects_check_before_discovery(tmp_path: Path) -> None:
+    payload = _ledger_payload()
+    payload["sources"][1]["decisions"][0].update(
+        **(_decision_provenance() | {"captured_at": "2026-07-19T00:00:00Z"})
+    )
+    with pytest.raises(ValueError, match="predates its discovery check"):
+        _compile_ledger_payload(payload, tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("changed", "capture_count"),
+    [
+        ({}, 2),
+        ({"reviewed_at": "2026-07-20T09:55:00Z"}, 2),
+        ({"captured_at": "2026-07-20T09:41:00Z"}, 3),
+        ({"reviewer": "another-reviewer"}, 3),
+        ({"review_note": "A separate official review."}, 3),
+    ],
+)
+def test_release_compiler_per_decision_same_url_groups_effective_snapshot_provenance(
+    tmp_path: Path,
+    changed: dict[str, str],
+    capture_count: int,
+) -> None:
+    payload = _ledger_payload()
+    source = payload["sources"][1]
+    source["decisions"][0].update(_decision_provenance())
+    source["decisions"].append(
+        {
+            "race_id": "king-county-assessor",
+            "candidate_ids": ["king-county-assessor--rob-foxcurran"],
+            **_decision_provenance(),
+            **changed,
+        }
+    )
+    dataset = _compile_ledger_payload(payload, tmp_path)
+    assert len(dataset.captures) == capture_count
+    assert (
+        dataset.endorsements[1].source_capture_id == dataset.endorsements[2].source_capture_id
+    ) == (capture_count == 2)
+    if capture_count == 2:
+        capture = dataset.captures[1]
+        assert isinstance(capture, CapturedManifest)
+        snapshot = read_json(tmp_path / "snapshots" / capture.storage_reference)
+        assert [row["race_id"] for row in snapshot["decisions"]] == [
+            "ld-11-state-representative-1",
+            "king-county-assessor",
+        ]
+    assert dataset.endorsements[2].reviewed_at == datetime.fromisoformat(
+        changed.get("reviewed_at", "2026-07-20T09:50:00Z")
+    )
+
+
+def test_release_compiler_per_decision_multi_choice_review_time_only_preserves_capture_identity(
+    tmp_path: Path,
+) -> None:
+    payload = _ledger_payload()
+    decision = payload["sources"][1]["decisions"][0]
+    decision.update(_decision_provenance())
+    first = _compile_ledger_payload(payload, tmp_path)
+    snapshots = _tree_bytes(tmp_path / "snapshots")
+    manifests = _tree_bytes(tmp_path / "manifests")
+    item = first.review_items[0]
+    approval = first.review_decisions[0]
+    row = first.endorsements[1]
+    assert item.created_at == datetime(2026, 7, 20, 9, 40, tzinfo=UTC)
+    assert approval.created_at == row.reviewed_at == datetime(2026, 7, 20, 9, 50, tzinfo=UTC)
+    assert approval.author == row.reviewer == "decision-reviewer"
+    assert approval.reason == row.notes == "Checked the updated official publication."
+    assert approval.evidence == "Updated official publication, named office entry."
+    assert first.claims[1].raw_notes == row.notes
+    decision["reviewed_at"] = "2026-07-20T09:55:00Z"
+    second = _compile_ledger_payload(payload, tmp_path)
+    assert second.captures == first.captures
+    assert second.claims == first.claims
+    assert second.review_items == first.review_items
+    assert _tree_bytes(tmp_path / "snapshots") == snapshots
+    assert _tree_bytes(tmp_path / "manifests") == manifests
+    assert second.review_decisions[0].id != approval.id
+    assert second.endorsements[1].id != row.id
+    assert second.review_decisions[0].created_at == datetime(2026, 7, 20, 9, 55, tzinfo=UTC)
+    assert second.endorsements[1].reviewed_at == datetime(2026, 7, 20, 9, 55, tzinfo=UTC)
+
+
 def test_release_compiler_rejects_decisions_outside_source_eligibility(tmp_path: Path) -> None:
     ledger = _ledger_payload()
     source = ledger["sources"][0]
@@ -1421,6 +1650,30 @@ def _tree_bytes(root: Path) -> dict[str, bytes]:
         for path in sorted(root.rglob("*"))
         if path.is_file()
     }
+
+
+def _decision_provenance() -> dict[str, str]:
+    return {
+        "captured_at": "2026-07-20T09:40:00Z",
+        "reviewed_at": "2026-07-20T09:50:00Z",
+        "reviewer": "decision-reviewer",
+        "review_note": "Checked the updated official publication.",
+        "evidence_url": "https://www.kcdems.org/2026/updated-endorsements/",
+        "evidence_locator": "Updated official publication, named office entry.",
+    }
+
+
+def _compile_ledger_payload(payload: dict[str, Any], tmp_path: Path) -> CanonicalDataset:
+    path = tmp_path / "release-ledger.yaml"
+    path.write_text(yaml.safe_dump(payload, sort_keys=False))
+    return compile_release_dataset(
+        path,
+        INVENTORY,
+        REGISTRY,
+        tmp_path / "dataset.json",
+        tmp_path / "snapshots",
+        tmp_path / "manifests",
+    )
 
 
 def _ledger_payload() -> dict[str, Any]:

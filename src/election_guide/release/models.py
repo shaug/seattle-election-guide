@@ -138,12 +138,21 @@ class ReleaseDecision(ReleaseModel):
     evidence_locator: str | None = Field(default=None, min_length=1, max_length=1_000)
     evidence_url: str | None = Field(default=None, exclude_if=lambda value: value is None)
 
+    captured_at: AwareDatetime | None = Field(default=None, exclude_if=lambda value: value is None)
+    reviewed_at: AwareDatetime | None = Field(default=None, exclude_if=lambda value: value is None)
+    reviewer: str | None = Field(
+        default=None, min_length=1, max_length=200, exclude_if=lambda value: value is None
+    )
+    review_note: str | None = Field(
+        default=None, min_length=1, max_length=4_000, exclude_if=lambda value: value is None
+    )
+
     @field_validator("evidence_url")
     @classmethod
     def validate_evidence_url(cls, value: str | None) -> str | None:
         return None if value is None else validated_http_url(value)
 
-    @field_validator("evidence_excerpt", "evidence_locator")
+    @field_validator("evidence_excerpt", "evidence_locator", "reviewer", "review_note")
     @classmethod
     def strip_audit_text(cls, value: str | None) -> str | None:
         if value is None:
@@ -155,6 +164,18 @@ class ReleaseDecision(ReleaseModel):
 
     @model_validator(mode="after")
     def validate_decision(self) -> ReleaseDecision:
+        provenance = (self.captured_at, self.reviewed_at, self.reviewer, self.review_note)
+        if any(value is not None for value in provenance):
+            if any(value is None for value in provenance):
+                raise ValueError("release decision requires complete provenance overrides")
+            if self.evidence_url is None or self.evidence_locator is None:
+                raise ValueError("decision provenance requires explicit evidence URL and locator")
+        if (
+            self.captured_at is not None
+            and self.reviewed_at is not None
+            and self.reviewed_at < self.captured_at
+        ):
+            raise ValueError("decision review timestamp cannot predate its extract")
         if len(self.candidate_ids) != len(set(self.candidate_ids)):
             raise ValueError("release decision repeats a candidate")
         if self.status == "endorsed" and not self.candidate_ids:
@@ -218,6 +239,12 @@ class ReleaseLedger(ReleaseModel):
             raise ValueError("release data timestamp cannot predate a source extract")
         if any(source.reviewed_at > self.data_as_of for source in self.sources):
             raise ValueError("release data timestamp cannot predate a source review")
+        for source in self.sources:
+            for decision in source.decisions:
+                if (decision.captured_at or source.captured_at) > self.data_as_of:
+                    raise ValueError("release data timestamp cannot predate a decision extract")
+                if (decision.reviewed_at or source.reviewed_at) > self.data_as_of:
+                    raise ValueError("release data timestamp cannot predate a decision review")
         return self
 
 
