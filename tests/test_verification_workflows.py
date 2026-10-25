@@ -121,6 +121,26 @@ def test_scheduled_job_uses_repository_auth_without_an_evidence_secret() -> None
     assert workflow["concurrency"] == {"group": "election-maintenance", "cancel-in-progress": False}
 
 
+def test_scheduled_job_budget_preserves_validation_before_archive() -> None:
+    workflow = yaml.load(
+        (PROJECT_ROOT / ".github/workflows/endorsement-verification.yml").read_text(),
+        Loader=yaml.BaseLoader,
+    )
+    assert workflow["on"]["schedule"] == [{"cron": "37 2,8,14,20 * * *"}]
+    job = workflow["jobs"]["verify"]
+    assert job["timeout-minutes"] == "60"
+    steps = job["steps"]
+    names = [step.get("name") for step in steps]
+    validation_index = names.index("Validate before proposing an archive diff")
+    archive_index = names.index("Commit only public JSON facts and observations")
+    proposal_index = names.index("Open or retain the evidence review PR")
+    validation = steps[validation_index]
+    assert validation["run"] == "make check"
+    assert "if" not in validation
+    assert validation.get("continue-on-error", "false") == "false"
+    assert validation_index < archive_index < proposal_index
+
+
 @pytest.mark.parametrize("existing_pr", [False, True])
 def test_scheduled_pr_delivers_factual_evidence_contract(tmp_path: Path, existing_pr: bool) -> None:
     """Exercise the real PR step so the operator receives the current contract."""
