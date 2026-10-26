@@ -20,6 +20,7 @@ from election_guide.corrections.models import ElectionCorrections
 from election_guide.evidence.models import CapturedManifest, CaptureManifest
 from election_guide.evidence.storage import verify_capture
 from election_guide.inventory.models import Race
+from election_guide.inventory.precinct_ballot import CATALOG_PATH, read_precinct_catalog
 from election_guide.normalization.matching import eligible_race_ids
 from election_guide.normalization.models import (
     CanonicalDataset,
@@ -71,6 +72,7 @@ from election_guide.publication.personalization import (
     PersonalizationScoring,
     PersonalizationSource,
 )
+from election_guide.publication.precinct_ballot import build_precinct_ballot
 from election_guide.results.models import ElectionResults
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
 from election_guide.serialization import canonical_json_bytes
@@ -537,6 +539,13 @@ def _build_view_model(
         methodology=_methodology(dataset, consensus),
         personalization=_personalization(dataset, consensus, sources, sections, snapshot),
         comparisons=_comparisons(dataset, sections),
+        precinct_ballot=build_precinct_ballot(
+            dataset.inventory,
+            read_precinct_catalog(CATALOG_PATH, dataset.inventory)
+            if dataset.inventory.election.id == "wa-2026-general"
+            else None,
+            {race.id for section in sections for race in section.races},
+        ),
         results=results,
         corrections=corrections,
     )

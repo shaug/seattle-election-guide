@@ -24,6 +24,7 @@ CONTACT_HREF = "mailto:seattle-elections@dobravoda.dev"
 # repository's cited authority for the sample ballot, candidate filings, and
 # precinct maps (config/elections/*-inventory.yaml).
 HOW_TO_VOTE_HREF = "https://kingcounty.gov/en/dept/elections/how-to-vote"
+PRECINCT_LOOKUP_HREF = "https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a"
 # Same authority, its results hub instead of its how-to-vote page -- the
 # election-agnostic page listing every year's results, not the per-election
 # address `docs/EVIDENCE_CAPTURE.md` and `docs/runbooks/` capture as

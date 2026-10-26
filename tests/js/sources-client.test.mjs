@@ -263,3 +263,18 @@ test('a page with the lens switched off keeps the tree the server rendered', asy
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('sources-client.mjs');
 });
+
+test('only an admitted race-mode capability carries race mode through Sources', async () => {
+  for (const enabled of [false, true]) {
+    const pagePayload = enabled ? payload({ race_mode_query_enabled: true }) : payload();
+    assert.equal('race_mode_query_enabled' in pagePayload, enabled);
+    const document = await wire(`${SOURCES_URL}?precinct=all&races=all&unrelated=1`, pagePayload);
+    for (const action of ['save', 'cancel', 'page-reset']) {
+      const href = document.querySelector(`[data-sources-${action}]`).getAttribute('href');
+      assert.equal(
+        new URL(href, SOURCES_URL).search,
+        enabled ? '?precinct=all&races=all' : '?precinct=all',
+      );
+    }
+  }
+});

@@ -140,3 +140,24 @@ def test_the_client_understands_the_version_the_payload_carries() -> None:
     declared = re.search(r"CLIENT_PAYLOAD_SCHEMA_VERSION = '([^']+)';", module)
     assert declared is not None, f"{CLIENT_PAYLOAD_MODULE.name} no longer declares the version"
     assert declared.group(1) == CLIENT_PAYLOAD_SCHEMA_VERSION
+
+
+def test_sources_race_mode_capability_is_only_in_the_general_variant() -> None:
+    definitions = client_payload_json_schema()["$defs"]
+    legacy = definitions["SourcesPayload"]
+    assert set(legacy["properties"]) == {
+        "schema_version",
+        "data_version",
+        "panel_id",
+        "panel_hash",
+        "policy",
+        "scoring",
+        "categories",
+        "sources",
+        "guide_path",
+        "tree",
+    }
+    general = definitions["GeneralSourcesPayload"]
+    assert general["properties"]["race_mode_query_enabled"]["const"] is True
+    assert "race_mode_query_enabled" in general["required"]
+    assert general["additionalProperties"] is False

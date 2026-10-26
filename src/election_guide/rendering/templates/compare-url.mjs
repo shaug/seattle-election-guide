@@ -46,7 +46,7 @@ const MAX_COLUMNS = 3;
  * fragment is read and written against.
  *
  * @typedef {import('./fragment-codec.mjs').CodecContext
- *   & { sectionIds: Set<string>, defaultColumns: string[], resultsAvailable: boolean }
+ *   & { sectionIds: Set<string>, defaultColumns: string[], resultsAvailable: boolean, queryRaceMode: boolean }
  * } CompareContext
  */
 
@@ -107,6 +107,7 @@ const MAX_COLUMNS = 3;
  * @param {ComparisonsContract} comparisons
  * @param {string[]} [defaultColumns]
  * @param {boolean} [resultsAvailable]
+ * @param {boolean} [queryRaceMode] General list race mode lives in its shared query.
  * @returns {CompareContext}
  */
 export function compareContext(
@@ -115,6 +116,7 @@ export function compareContext(
   comparisons,
   defaultColumns = [ALL_SOURCES_TOKEN, 'strn', 'stim'],
   resultsAvailable = false,
+  queryRaceMode = false,
 ) {
   /** @type {Set<string>} */
   const sectionIds = new Set();
@@ -124,6 +126,7 @@ export function compareContext(
     sectionIds,
     defaultColumns: [...defaultColumns],
     resultsAvailable,
+    queryRaceMode,
   };
 }
 
@@ -351,7 +354,7 @@ export function encodeCompareFragment(state, context) {
   parameters.set('cols', columns.join(''));
   writeBinding(parameters, context);
   if (state.differencesOnly === true) parameters.set('diff', '1');
-  if (state.contestedOnly === true) parameters.set('races', 'contested');
+  if (!context.queryRaceMode && state.contestedOnly === true) parameters.set('races', 'contested');
   if (section !== 'all') parameters.set('show', section);
 
   return sizedFragment(parameters, context, rejected);

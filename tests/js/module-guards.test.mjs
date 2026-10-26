@@ -40,3 +40,13 @@ test('the guard holds for every client module, and every module is tested', () =
     assertModuleGuard(name);
   }
 });
+
+// Capability ownership is structural, not a growing storage-exception list.
+test('exactly one module owns precinct memory', () => {
+  assert.deepEqual(
+    Object.entries(MODULE_KINDS)
+      .filter(([, kind]) => kind === 'precinct-memory')
+      .map(([name]) => name),
+    ['precinct-selection-store.mjs'],
+  );
+});

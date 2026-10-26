@@ -24,6 +24,7 @@
 // re-renders it from the audited view model rather than putting the server's
 // markup back — `compare-markup-parity.test.mjs` is what makes those two the
 // same thing.
+
 import { render } from 'lit-html';
 import { readClientPayload } from './client-payload.mjs';
 import { migrateCompareState } from './compare-migrate.mjs';
@@ -42,6 +43,13 @@ import {
   decodeCompareFragment,
   encodeCompareFragment,
 } from './compare-url.mjs';
+import {
+  readContestedOnly,
+  readPrecinctSelection,
+  resolvePrecinct,
+  withContestedOnly,
+} from './precinct-ballot.mjs';
+import { refreshPrecinctLinks, wirePrecinctControl } from './precinct-control.mjs';
 
 /**
  * What a reader is told when the link they arrived on says nothing this page
@@ -90,12 +98,14 @@ export function wireComparisons() {
   const payload = /** @type {ComparisonsPayload} */ (admitted);
   const personalization = payload.personalization;
   const comparisons = payload.comparisons;
+  const generalRaceMode = payload.precinct_ballot?.election_id === 'wa-2026-general';
   const context = compareContext(
     personalization,
     payload.data_version,
     comparisons,
     payload.default_columns,
     payload.results_available,
+    generalRaceMode,
   );
   const raceResults = new Map(Object.entries(payload.race_results));
   const engine = createColumnSignalEngine(personalization, comparisons, raceResults);
@@ -186,7 +196,7 @@ export function wireComparisons() {
   const auditedDefault = () => ({
     columns: [...payload.default_columns],
     differencesOnly: false,
-    contestedOnly: false,
+    contestedOnly: generalRaceMode ? readContestedOnly(router.controlSearch(), true) : false,
     section: 'all',
   });
 
@@ -199,6 +209,7 @@ export function wireComparisons() {
    */
   const snapshot = (value) => ({ ...value, columns: [...value.columns] });
 
+  let precinctIds = /** @type {Set<string>|null} */ (null);
   let state = auditedDefault();
   /**
    * The state the address bar currently names: what a change the codec refuses
@@ -241,6 +252,7 @@ export function wireComparisons() {
   function showingAuditedDefault() {
     const audited = auditedDefault();
     return (
+      precinctIds === null &&
       !state.differencesOnly &&
       !state.contestedOnly &&
       state.section === audited.section &&
@@ -308,7 +320,10 @@ export function wireComparisons() {
   function writeFragment(mode) {
     const encoded = encodeCompareFragment(state, context);
     if (encoded.status !== 'ok') return false;
-    router.write(encoded.fragment, mode);
+    const search = generalRaceMode
+      ? withContestedOnly(router.controlSearch(), state.contestedOnly, true)
+      : router.controlSearch();
+    router.write(encoded.fragment, mode, search);
     committed = snapshot(state);
     writtenAddress = router.key();
     return true;
@@ -323,12 +338,25 @@ export function wireComparisons() {
 
   /** Adopt whatever the live address says, and do what it implies. */
   function readAddress() {
+    // Membership and fragment policy must describe the same incoming entry.
+    const contract = payload.precinct_ballot;
+    if (contract?.election_id === 'wa-2026-general') {
+      precinctIds = resolvePrecinct(
+        contract,
+        readPrecinctSelection(router.controlSearch(), contract).code,
+      ).contestIds;
+    }
     const outcome = resolve(decodeCompareFragment(router.fragment(), context));
     if (outcome.state === null) {
       writtenAddress = router.key();
       return;
     }
     state = snapshot(outcome.state);
+    if (generalRaceMode) state.contestedOnly = readContestedOnly(router.controlSearch(), true);
+    if (precinctIds !== null) {
+      state.section = 'all';
+      state.differencesOnly = false;
+    }
     linkNotice = outcome.notice;
     changeNotice = '';
     if (outcome.address === 'clean') {
@@ -338,9 +366,10 @@ export function wireComparisons() {
     // A migrated state replaces the stale link it was resolved from. If the
     // codec will not write it, nothing can carry it: the page falls back to the
     // audited default, clears the link, and says which of the two happened.
-    if (outcome.address === 'rewrite' && !writeFragment('replace')) {
+    if ((outcome.address === 'rewrite' || generalRaceMode) && !writeFragment('replace')) {
       state = auditedDefault();
-      linkNotice = UNMIGRATABLE_LINK_NOTICE;
+      linkNotice =
+        outcome.address === 'rewrite' ? UNMIGRATABLE_LINK_NOTICE : UNSHAREABLE_VIEW_NOTICE;
       clearFragment();
       return;
     }
@@ -360,6 +389,10 @@ export function wireComparisons() {
    * @returns {boolean}
    */
   function commit(mode = 'push') {
+    if (precinctIds !== null) {
+      state.section = 'all';
+      state.differencesOnly = false;
+    }
     if (writeFragment(mode)) {
       changeNotice = '';
       renderPage();
@@ -617,8 +650,15 @@ export function wireComparisons() {
     let differCount = 0;
     let shown = 0;
     for (const display of comparisons.display_index) {
-      if (state.section !== 'all' && display.section_id !== state.section) continue;
-      if (state.contestedOnly && !contestedIds.has(display.race_id)) continue;
+      if (precinctIds !== null && !precinctIds.has(display.race_id)) continue;
+      if (precinctIds === null && state.section !== 'all' && display.section_id !== state.section)
+        continue;
+      if (
+        state.contestedOnly &&
+        !contestedIds.has(display.race_id) &&
+        !(generalRaceMode && display.race_type === 'measure')
+      )
+        continue;
       total += 1;
       // Every display row names a published race: both come from the same
       // payload, and the comparison contract is built from `personalization`.
@@ -626,7 +666,7 @@ export function wireComparisons() {
       const configuredCells = state.columns.map((signal) => engine.resolveColumn(signal, race));
       const differs = rowDiffers(configuredCells);
       if (differs) differCount += 1;
-      if (state.differencesOnly && !differs) continue;
+      if (precinctIds === null && state.differencesOnly && !differs) continue;
       let section = sections.get(display.section_id);
       if (section === undefined) {
         section = {
@@ -702,6 +742,9 @@ export function wireComparisons() {
     /** @type {HTMLInputElement} */ (document.querySelector(selector));
 
   function syncControls() {
+    sectionFilter.disabled = precinctIds !== null;
+    for (const selector of ['[data-comparison-full]', '[data-comparison-differences]'])
+      toggleInput(selector).disabled = precinctIds !== null;
     sectionFilter.value = state.section;
     toggleInput('[data-comparison-full]').checked = !state.differencesOnly;
     toggleInput('[data-comparison-differences]').checked = state.differencesOnly;
@@ -714,6 +757,7 @@ export function wireComparisons() {
   // checkbox the reader clicked reports the state that survived, not the one
   // they asked for.
   function renderPage() {
+    refreshPrecinctLinks(payload.precinct_ballot, router.controlSearch());
     const text = disclosure();
     notice.hidden = text === '';
     notice.textContent = text;
@@ -752,7 +796,9 @@ export function wireComparisons() {
       const decoded = decodeCompareFragment(link.hash, context);
       if (decoded.status !== 'valid') return;
       event.preventDefault();
+      const currentRaceMode = state.contestedOnly;
       state = snapshot(decoded.state);
+      if (generalRaceMode) state.contestedOnly = currentRaceMode;
       commit();
     });
   });
@@ -770,4 +816,12 @@ export function wireComparisons() {
 
   readAddress();
   renderPage();
+  wirePrecinctControl(payload.precinct_ballot, router, (ids, reset) => {
+    precinctIds = ids;
+    if (reset) {
+      state.section = 'all';
+      state.differencesOnly = false;
+      commit('replace');
+    } else renderPage();
+  });
 }

@@ -427,3 +427,26 @@ Amend it in the pull request that changes the rule, as a dated decision.
 If shipped UI and this document disagree, one of them is wrong — fix
 whichever it is, deliberately. A design change isn't done until any new
 rule or rationale it produced lands here.
+
+## Voting precinct control (#608)
+
+The November2026 general guide places Precinct in the existing Filters row on
+Endorsements and Comparisons, with all filter headers aligned. An unset choice
+shows a Select action; a selected choice shows its linked precinct name and a
+compact × button labeled Clear precinct selection. The action opens a native
+modal with the existing searchable field, an ordinary Find my precinct link,
+and Select and Cancel buttons. Search edits a draft: only Select applies it;
+Cancel and Escape preserve the applied choice, URL and device memory. Opening or
+canceling this ephemeral editor does not change the query or fragment. Opening
+focuses search; native modal focus containment and return focus preserve keyboard
+context. The row wraps within narrow viewports. There is no separate search strip
+or explanatory line above it. (Scott's explicit preview revision, October 25, 2026.)
+There is no setup section, district questionnaire, address collection or embedded map.
+Both general list views default to Contested, visibly selected; All remains enabled
+and adds applicable uncontested races within existing public eligibility. Selecting
+a precinct constrains both modes to applicable covered races and measures. Section
+and differences restrictions are disabled while selected; Races remains usable.
+Source choices and comparison columns remain independent. Clear removes geography
+while preserving race mode. Selected precinct text uses stronger weight; control
+bodies and the race count align vertically while headers retain their common row. Unsupported choices never claim an exact ballot. Primary has no
+precinct control.

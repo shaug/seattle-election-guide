@@ -30,6 +30,7 @@ from election_guide.rendering.shell import (
     CONTACT_HREF,
     EXTERNAL_LINK_ATTRIBUTES,
     OPENS_IN_NEW_TAB,
+    PRECINCT_LOOKUP_HREF,
     SITE_NAME,
     election_day_banner_html,
     election_names,
@@ -101,6 +102,7 @@ def template_environment() -> Environment:
     globals_map["opens_in_new_tab"] = OPENS_IN_NEW_TAB
     globals_map["site_name"] = SITE_NAME
     globals_map["contact_href"] = CONTACT_HREF
+    globals_map["precinct_lookup_href"] = PRECINCT_LOOKUP_HREF
     globals_map["site_icon_svg"] = site_icon_svg
     globals_map["share_icon_svg"] = share_icon_svg
     globals_map["info_icon_svg"] = info_icon_svg
@@ -124,7 +126,7 @@ def render_html_document(
     # One CSS entry per page, so the guide ships the shell, the rules it shares
     # with the sources editor, and its own — and nothing the editor alone
     # renders (rendering/stylesheets.py).
-    stylesheet = page_stylesheet("guide")
+    stylesheet = page_stylesheet("guide", precinct=view_model.precinct_ballot is not None)
     # One entry module, one bundle, inlined verbatim inside a module script so
     # the guide stays one self-contained file (docs/FRONTEND.md, Modules).
     guide_entry_script = bundle_entry("guide-entry.mjs", global_name="GuidePage")
@@ -168,6 +170,8 @@ def render_html_document(
             ],
             filter_scopes=[option for group in filter_scope_groups for option in group.options],
             sources_page_path=sources_page_url,
+            endorsements_path=guide_path,
+            comparisons_path=f"{guide_path}comparisons/",
         ).model_dump(mode="json"),
         # Each card links its race's own page (issue #136). Bound to this
         # election here rather than passed as a two-argument helper, so the
@@ -426,7 +430,7 @@ def render_comparison_document(
     view_model = view_model.public_view()
     environment = template_environment()
     template = environment.get_template("compare.html.j2")
-    stylesheet = page_stylesheet("compare")
+    stylesheet = page_stylesheet("compare", precinct=view_model.precinct_ballot is not None)
     compare_entry_script = bundle_entry("compare-entry.mjs", global_name="ComparePage")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     election_display_name, _ = election_names(
@@ -442,6 +446,9 @@ def render_comparison_document(
         default_columns=["gall", "strn", "stim"],
         results_available=view_model.results is not None,
         race_results=context.comparison_result_outcomes(view_model),
+        endorsements_path=guide_path,
+        comparisons_path=f"{guide_path}comparisons/",
+        sources_path=f"{guide_path}sources/",
     )
     preset_fragments = [
         (

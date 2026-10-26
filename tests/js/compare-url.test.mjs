@@ -297,3 +297,22 @@ test('lens and comparison fragments reject cleanly on the other page', () => {
 test('the codec stays pure', () => {
   assertModuleGuard('compare-url.mjs');
 });
+
+test('general comparison query owns race mode without changing the primary fragment', () => {
+  const state = {
+    columns: ['gall', 'strn'],
+    contestedOnly: true,
+    section: 'all',
+    differencesOnly: false,
+  };
+  const general = compareContext(
+    personalization(),
+    'd119ee3107bb',
+    comparisons(),
+    undefined,
+    false,
+    true,
+  );
+  assert.equal(new URLSearchParams(encoded(state, general)).has('races'), false);
+  assert.equal(new URLSearchParams(encoded(state)).get('races'), 'contested');
+});

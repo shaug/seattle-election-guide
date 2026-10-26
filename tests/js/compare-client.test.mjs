@@ -21,6 +21,16 @@ import { assertModuleGuard } from './support/module-guards.mjs';
 
 // Must match tests/compare_parity.py's PAGE_URL: it is what the fixture's
 // relative links resolve against.
+const PRECINCT_MARKUP = readFileSync(
+  new URL(
+    '../../src/election_guide/rendering/templates/_precinct_control.html.j2',
+    import.meta.url,
+  ),
+  'utf8',
+).replace(
+  '{{ precinct_lookup_href }}',
+  'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
+);
 const PAGE = 'https://seattleelections.guide/e/wa-2026-primary/comparisons/';
 
 const AUDITED_PAGE = readFileSync(
@@ -48,7 +58,7 @@ const AUDITED_PAYLOAD = /** @type {string} */ (
 const { wireComparisons } = await import(
   '../../src/election_guide/rendering/templates/compare-client.mjs'
 );
-const { compareContext, encodeCompareFragment } = await import(
+const { compareContext, decodeCompareFragment, encodeCompareFragment } = await import(
   '../../src/election_guide/rendering/templates/compare-url.mjs'
 );
 
@@ -61,18 +71,20 @@ const { compareContext, encodeCompareFragment } = await import(
  * inventing a page the server does not render.
  *
  * @param {object} [options]
+ * @param {string} [options.search]
  * @param {string} [options.fragment] The fragment to arrive on, `#` included.
  * @param {(payload: any) => void} [options.editPayload]
  * @returns {Document}
  */
-function boot({ fragment = '', editPayload } = {}) {
-  const document = installDom(`${PAGE}${fragment}`);
+function boot({ fragment = '', editPayload, search = '' } = {}) {
+  const document = installDom(`${PAGE}${search}${fragment}`);
   document.write(AUDITED_PAGE);
   if (editPayload !== undefined) {
     const element = /** @type {Element} */ (document.querySelector('[data-client-payload]'));
     const payload = JSON.parse(/** @type {string} */ (element.textContent));
     editPayload(payload);
     element.textContent = JSON.stringify(payload);
+    if (payload.precinct_ballot) document.body.insertAdjacentHTML('afterbegin', PRECINCT_MARKUP);
   }
   wireComparisons();
   return document;
@@ -275,4 +287,78 @@ test('the next change that does take clears the explanation of the one that did 
 
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('compare-client.mjs');
+});
+
+test('precinct comparison preserves explicit All through presets and Clear', () => {
+  const payload = auditedPayload();
+  const ids = payload.comparisons.display_index.slice(0, 3).map((d) => d.race_id);
+  const context = compareContext(
+    payload.personalization,
+    payload.data_version,
+    payload.comparisons,
+    payload.default_columns,
+  );
+  const encoded = encodeCompareFragment(
+    {
+      columns: ['gall', 'strn'],
+      section: payload.comparisons.display_index[0].section_id,
+      contestedOnly: true,
+      differencesOnly: true,
+    },
+    context,
+  );
+  const document = boot({
+    search: '?precinct=1279&races=all',
+    fragment: `#${encoded.fragment}`,
+    editPayload: (p) => {
+      withdrawStranger(p);
+      p.precinct_ballot = {
+        schema_version: '1.0',
+        election_id: 'wa-2026-general',
+        mapping_hash: 'checked',
+        endorsements_path: '/e/wa-2026-general/',
+        comparisons_path: '/e/wa-2026-general/comparisons/',
+        precincts: [{ code: '1279', name: 'SEA 46-1279', contest_ids: ids }],
+      };
+    },
+  });
+  const visible = () =>
+    [...document.querySelectorAll('[data-comparison-race]')].map((r) => r.dataset.comparisonRace);
+  assert.deepEqual(visible(), ids);
+  assert.equal(new URLSearchParams(window.location.search).get('races'), 'all');
+  assert.equal(document.querySelector('[data-comparison-section-filter]').disabled, true);
+  document.querySelector('.comparison-presets a').click();
+  assert.deepEqual(visible(), ids);
+  window.location.hash = `#${encoded.fragment}`;
+  window.dispatchEvent(new Event('hashchange'));
+  assert.deepEqual(visible(), ids);
+  assert.equal(document.querySelector('[data-comparison-section-filter]').value, 'all');
+  assert.equal(document.querySelector('[data-comparison-differences]').checked, false);
+  const selected = columns(document);
+  document.querySelector('[data-precinct-clear]').click();
+  assert.deepEqual(
+    visible(),
+    payload.comparisons.display_index.map((d) => d.race_id),
+  );
+  assert.deepEqual(columns(document), selected);
+  assert.equal(document.querySelector('[data-comparison-section-filter]').disabled, false);
+  assert.equal(new URLSearchParams(window.location.search).get('precinct'), 'all');
+  const cleared = window.location.hash;
+  const decoded = decodeCompareFragment(cleared, context);
+  assert.equal(decoded.status, 'valid');
+  assert.equal(decoded.state.section, 'all');
+  assert.equal(decoded.state.contestedOnly, false);
+  assert.equal(decoded.state.differencesOnly, false);
+  document.querySelector('.comparison-column-add').click();
+  assert.equal(notice(document).hidden, false);
+  assert.equal(window.location.hash, cleared);
+  assert.deepEqual(
+    visible(),
+    payload.comparisons.display_index.map((d) => d.race_id),
+  );
+  const replay = boot({ search: '?precinct=all', fragment: cleared });
+  assert.deepEqual(
+    [...replay.querySelectorAll('[data-comparison-race]')].map((r) => r.dataset.comparisonRace),
+    payload.comparisons.display_index.map((d) => d.race_id),
+  );
 });

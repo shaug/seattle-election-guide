@@ -87,3 +87,10 @@ export function createLensRouter() {
     },
   };
 }
+
+/** Subscribe to query navigation without extending the shared lens router.
+ * @param {() => void} listener
+ */
+export function onLensHistoryChange(listener) {
+  window.addEventListener('popstate', listener);
+}

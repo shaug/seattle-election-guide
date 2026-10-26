@@ -17,8 +17,10 @@
 /**
  * @typedef {object} CompareRouter
  * @property {() => string} fragment The live fragment, `#` included.
+ * @property {() => string} controlSearch
+ * @property {(search: string) => void} replaceControlSearch
  * @property {() => string} key The whole address, as one comparable string.
- * @property {(fragment: string, mode: 'push'|'replace') => void} write
+ * @property {(fragment: string, mode: 'push'|'replace', search?: string) => void} write
  * @property {() => void} clearFragment
  * @property {(listener: () => void) => void} onFragmentChange
  * @property {(listener: () => void) => void} onHistoryChange
@@ -38,6 +40,14 @@ export function createCompareRouter() {
 
   return {
     fragment: () => window.location.hash,
+    controlSearch: () => window.location.search,
+    replaceControlSearch(search) {
+      history.replaceState(
+        history.state,
+        '',
+        `${window.location.pathname}${search}${window.location.hash}`,
+      );
+    },
 
     /**
      * The whole address as one string.
@@ -54,9 +64,10 @@ export function createCompareRouter() {
      *
      * @param {string} fragment The codec's fragment, with no leading `#`.
      * @param {'push'|'replace'} mode
+     * @param {string} [search] A codec-composed query committed in the same history entry.
      */
-    write(fragment, mode) {
-      const target = `${bareAddress()}#${fragment}`;
+    write(fragment, mode, search = window.location.search) {
+      const target = `${window.location.pathname}${search}#${fragment}`;
       if (mode === 'replace') history.replaceState(COMPARISON_ENTRY, '', target);
       else history.pushState(COMPARISON_ENTRY, '', target);
     },

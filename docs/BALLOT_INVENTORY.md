@@ -112,3 +112,28 @@ Every election, jurisdiction, race, candidate, and ballot option cites at least 
 source. Race records keep district, office, position, display name, and official display aliases
 as separate fields so later endorsement matching does not depend on lossy string parsing. Race
 and ballot-choice records also retain exact CSV selectors and sample-ballot page locators.
+
+## Reviewed November2026 precinct projection (#608)
+
+`config/elections/wa-2026-general-precinct-ballots.json` binds 1,020 reviewed
+Seattle precincts to current major-district assignments and official city membership.
+CD7/9, LD32/34/36/37/43/46, county council1/2/4/8 and Seattle council1–7 are
+represented, including valid districts with no covered contest. Canonical LD11
+records remain intact but match no reviewed Seattle precinct.
+
+All Seattle precincts share statewide, countywide and citywide eligibility.
+KCC1.12.050(B) makes District Court West citywide; RCW2.06.020(1)(a) makes
+Appeals DivisionI District1 KingCounty. No judicial question is asked. Exact
+sources, hashes, actual check dates and the accepted November-applicability
+inference are in `data/review/geography/wa-2026-general-precinct-ballots.json`.
+November3 is the target election date, not a claimed GIS effective date.
+
+The31 fixture groups are source-composed expected sets over geographic combinations,
+not official ballot styles or voter-specific samples. Each contains exact covered
+IDs before and after candidate-only uncontested exclusion. The first set supplies
+geographic membership before existing public eligibility; the second remains an
+oracle for the default Contested view. An explicit All selection uses the full
+geographic public set. Race mode does not change inventory or section order. The countywide sample
+ballot is corroborating contest evidence. Actual official precinct/part/style
+examples remain a separate release acceptance gate. Primary is unsupported by this
+projection; future elections require new reviewed evidence.
