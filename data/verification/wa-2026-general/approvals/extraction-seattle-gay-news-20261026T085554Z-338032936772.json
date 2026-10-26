@@ -1,0 +1,6 @@
+{
+  "evidence": "docs/GENERAL_BASELINES_2026-10-26.md#seattle-gay-news; data/review/rechecks/wa-2026-general-2026-10-26-automatic.json; exact extraction-seattle-gay-news-20261026T085554Z-338032936772; actual delegated reviewer OpenAI Codex /root/review_497_native26_sgn_ufcw, reviewed 2026-10-26T10:29:46.261951Z. Native check08:55:54UTC and later manual source-check times are distinct. Existing source qualifications and prior records are preserved; no scheduled reuse or adoption claim.",
+  "reviewed_at": "2026-10-26T10:29:46.261951Z",
+  "reviewer": "OpenAI Codex /root/review_497_native26_sgn_ufcw",
+  "snapshot_id": "extraction-seattle-gay-news-20261026T085554Z-338032936772"
+}
