@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-26T13:31:31.488443Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/review_636_political_oct26: LATE_actual_Oct26_review_for_overdue_slot; data/review/rechecks/wa-2026-general-2026-10-26-manual.json#sources/washington-bus; explicitly delegated factual review, source qualifications and held omissions preserved. Acknowledgement written now by OpenAI Codex /root at 2026-10-26T13:47:24.528055+00:00; original actual reviewer/review time retained. The same32actualOct26 reviews also support other date slots; this is LATE, not retrospective on-date source evidence. No canonical decision, native baseline or scheduled adoption approval.",
+  "mode": "human",
+  "scheduled_for": "2026-10-24",
+  "source_id": "washington-bus",
+  "status": "manual"
+}

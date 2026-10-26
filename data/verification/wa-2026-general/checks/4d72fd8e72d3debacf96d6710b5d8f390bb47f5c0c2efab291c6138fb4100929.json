@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-26T13:23:57.021778Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26: actual_current_Oct26_review; data/review/rechecks/wa-2026-general-2026-10-26-manual.json#sources/washington-state-labor-council; explicitly delegated factual review, source qualifications and held omissions preserved. Acknowledgement written now by OpenAI Codex /root at 2026-10-26T13:48:05.765216+00:00; original actual reviewer/review time retained. No canonical decision, native baseline or scheduled adoption approval.",
+  "mode": "human",
+  "scheduled_for": "2026-10-26",
+  "source_id": "washington-state-labor-council",
+  "status": "manual"
+}
