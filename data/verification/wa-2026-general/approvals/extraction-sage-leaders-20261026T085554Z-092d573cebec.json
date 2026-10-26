@@ -1,0 +1,6 @@
+{
+  "evidence": "docs/GENERAL_BASELINES_2026-10-26.md#sage-leaders; data/review/rechecks/wa-2026-general-2026-10-26-automatic.json; exact extraction-sage-leaders-20261026T085554Z-092d573cebec; actual delegated reviewer OpenAI Codex /root/assess_497_native26_records, reviewed 2026-10-26T10:26:34.330535+00:00. Native check08:55:54UTC and later manual source-check times are distinct. Existing source qualifications and prior records are preserved; no scheduled reuse or adoption claim.",
+  "reviewed_at": "2026-10-26T10:26:34.330535Z",
+  "reviewer": "OpenAI Codex /root/assess_497_native26_records",
+  "snapshot_id": "extraction-sage-leaders-20261026T085554Z-092d573cebec"
+}

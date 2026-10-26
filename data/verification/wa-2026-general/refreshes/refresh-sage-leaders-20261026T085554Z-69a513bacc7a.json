@@ -1,0 +1,13 @@
+{
+  "capture_id": "capture-sage-leaders-20261026T085554Z-03570cf8ba9c",
+  "checked_at": "2026-10-26T08:55:54Z",
+  "content_changed": true,
+  "diff": [],
+  "error": null,
+  "id": "refresh-sage-leaders-20261026T085554Z-69a513bacc7a",
+  "previous_snapshot_id": "extraction-sage-leaders-20261025T084659Z-7c292933c09a",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-sage-leaders-20261026T085554Z-092d573cebec",
+  "source_id": "sage-leaders",
+  "status": "updated"
+}
