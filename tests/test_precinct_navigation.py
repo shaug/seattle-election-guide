@@ -477,3 +477,86 @@ return JSON.stringify({failures,counts:expected});})()
     result = _evaluate_in_chrome(path, expression, initial_url=url)
     assert result.get("harnessError") is None, result
     assert result["failures"] == [], result
+
+
+def test_comparison_anchor_history_adopts_query_race_mode_without_resetting_columns(
+    navigation_site: tuple[Path, str], general_view: PublicationViewModel
+) -> None:
+    """An ordinary anchor must not suppress the incoming general race-mode query."""
+    path, url = navigation_site
+    root = Path(__file__).resolve().parents[1]
+    inventory = read_inventory(root / "data/normalized/wa-2026-general-inventory.json")
+    public_ids = {race.id for section in general_view.guide_sections for race in section.races}
+    expected = {
+        "all": sorted(public_ids),
+        "contested": sorted(
+            race.id
+            for race in inventory.races
+            if race.id in public_ids
+            and (
+                race.race_type == "measure"
+                or sum(choice.choice_type == "candidate" for choice in race.choices) >= 2
+            )
+        ),
+    }
+    expression = (
+        "(async()=>{"
+        + HARNESS
+        + """
+parent.blockStorage=false;localStorage.clear();
+const expected=EXPECTED;
+const observations=[];
+const columns=()=>[...doc().querySelectorAll(
+ '[data-comparison-head] [data-column-signal]')].map(el=>el.dataset.columnSignal);
+const check=(which,label)=>{
+ const all=doc().querySelector('[data-comparison-all-races]');
+ const contested=doc().querySelector('[data-comparison-contested]');
+ const status=doc().querySelector('[data-comparison-status]').textContent.trim();
+ observations.push({label,url:win().location.href,all:all.checked,
+  contested:contested.checked,ids:ids(),status,columns:columns()});
+ equal(ids(),expected[which],label+' exact IDs');
+ equal(all.checked,which==='all',label+' All selected');
+ equal(contested.checked,which==='contested',label+' Contested selected');
+ equal(status.startsWith(String(expected[which].length)+' of '),true,label+' count');
+ equal(new URLSearchParams(win().location.search).get('races'),
+  which==='all'?'all':null,label+' query mode');
+};
+const traverse=direction=>new Promise((resolve,reject)=>{
+ const timeout=setTimeout(()=>reject(new Error('anchor history '+direction+' timed out')),2000);
+ const done=()=>{clearTimeout(timeout);setTimeout(resolve,20);};
+ frame.onload=done;win().addEventListener('popstate',done,{once:true});
+ win().history[direction]();
+});
+await load('/e/wa-2026-general/comparisons/?precinct=all#comparison-main');
+const anchor=win().location.href;
+check('contested','initial ordinary anchor');
+equal(columns(),['gall','strn','stim'],'initial default columns');
+doc().querySelector('.comparison-presets a').click();
+check('contested','preset retains default mode');
+equal(columns(),['strn','stim'],'preset columns');
+doc().querySelector('[data-comparison-all-races]').click();
+check('all','explicit All after preset');
+const override=win().location.href;
+await traverse('back');
+equal(win().location.href,anchor,'Back retains ordinary anchor URL');
+check('contested','Back to ordinary anchor');
+equal(columns(),['strn','stim'],'ordinary anchor keeps current columns');
+await traverse('forward');
+equal(win().location.href,override,'Forward restores override URL');
+check('all','Forward to explicit All');
+equal(columns(),['strn','stim'],'Forward restores preset columns');
+await traverse('back');
+equal(win().location.href,anchor,'second Back retains ordinary anchor URL');
+check('contested','second Back to ordinary anchor');
+await load(win().location.href);
+equal(win().location.href,anchor,'reload retains ordinary anchor URL');
+check('contested','reload ordinary anchor');
+equal(columns(),['gall','strn','stim'],'reload ordinary anchor uses default columns');
+return JSON.stringify({failures,observations,expected});})()
+.catch(error=>JSON.stringify({harnessError:String(error),stack:error.stack}))
+"""
+    ).replace("EXPECTED", json.dumps(expected))
+    result = _evaluate_in_chrome(path, expression, initial_url=url)
+    (path.parent / "anchor-history-result.json").write_text(json.dumps(result, indent=2) + "\n")
+    assert result.get("harnessError") is None, result
+    assert result["failures"] == [], result

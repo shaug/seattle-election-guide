@@ -348,6 +348,11 @@ export function wireComparisons() {
     }
     const outcome = resolve(decodeCompareFragment(router.fragment(), context));
     if (outcome.state === null) {
+      // An anchor keeps the columns, while the query still owns general race mode.
+      if (generalRaceMode) {
+        state.contestedOnly = readContestedOnly(router.controlSearch(), true);
+        committed = snapshot(state);
+      }
       writtenAddress = router.key();
       return;
     }
