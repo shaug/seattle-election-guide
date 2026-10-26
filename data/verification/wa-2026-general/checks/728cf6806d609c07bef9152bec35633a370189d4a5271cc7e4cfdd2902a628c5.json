@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-23T07:45:57.590081Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex delegated researcher /root/review_472_labor_rights_oct23: historical_exact_actual_Oct23_review_acknowledged_now; data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json#source_reviews/washington-state-building-trades; explicitly delegated factual review, source qualifications and held omissions preserved. Acknowledgement written now by OpenAI Codex /root at 2026-10-26T13:47:07.803335+00:00; original actual reviewer/review time retained. No canonical decision, native baseline or scheduled adoption approval.",
+  "mode": "human",
+  "scheduled_for": "2026-10-23",
+  "source_id": "washington-state-building-trades",
+  "status": "manual"
+}

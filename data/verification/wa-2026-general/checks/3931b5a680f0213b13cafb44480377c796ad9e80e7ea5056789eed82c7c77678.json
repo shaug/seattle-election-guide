@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-23T07:52:41.174379Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex delegated researcher /root/review_472_labor_rights_oct23: LATE original October23 DSA factual review; data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json#source_reviews/seattle-democratic-socialists; acknowledgement written now by OpenAI Codex /root at 2026-10-26T17:23:45.816571+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Prior qualifiers, held omissions and explicit Young Democrats enum clarification preserved. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+  "mode": "human",
+  "scheduled_for": "2026-10-21",
+  "source_id": "seattle-democratic-socialists",
+  "status": "manual"
+}

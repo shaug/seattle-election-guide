@@ -134,6 +134,18 @@ def test_live_fetch_rejects_a_truncated_declared_body(
         collection_http.fetch_http(f"http://127.0.0.1:{port}/")
 
 
+def test_live_fetch_accepts_complete_declared_body_when_connection_closes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(collection_http, "_validate_public_dns", _skip_dns)
+    monkeypatch.setattr(collection_http, "_validate_connected_peer", _skip_peer)
+    with _server(_CompleteClosingHandler) as port:
+        artifact = collection_http.fetch_http(f"http://127.0.0.1:{port}/")
+
+    assert artifact.status == 200
+    assert artifact.content == b"<p>complete</p>"
+
+
 @contextmanager
 def _server(handler: type[BaseHTTPRequestHandler]) -> Generator[int]:
     server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
@@ -193,6 +205,16 @@ class _TruncatedHandler(_QuietHandler):
         self.send_header("Content-Length", "100")
         self.end_headers()
         self.wfile.write(b"<p>partial</p>")
+
+
+class _CompleteClosingHandler(_QuietHandler):
+    def do_GET(self) -> None:
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html")
+        self.send_header("Content-Length", "15")
+        self.send_header("Connection", "close")
+        self.end_headers()
+        self.wfile.write(b"<p>complete</p>")
 
 
 def _skip_dns(host: str, port: int, *, deadline: float) -> set[str]:

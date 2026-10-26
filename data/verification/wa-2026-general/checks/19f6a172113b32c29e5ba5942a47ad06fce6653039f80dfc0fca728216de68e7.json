@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-26T13:23:57.021781Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26: LATE_actual_Oct26_review_for_overdue_slot; data/review/rechecks/wa-2026-general-2026-10-26-manual.json#sources/protec17; explicitly delegated factual review, source qualifications and held omissions preserved. Acknowledgement written now by OpenAI Codex /root at 2026-10-26T13:47:29.353954+00:00; original actual reviewer/review time retained. The same32actualOct26 reviews also support other date slots; this is LATE, not retrospective on-date source evidence. No canonical decision, native baseline or scheduled adoption approval.",
+  "mode": "human",
+  "scheduled_for": "2026-10-24",
+  "source_id": "protec17",
+  "status": "manual"
+}
