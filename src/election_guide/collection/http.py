@@ -150,6 +150,8 @@ def _read_response(response: HTTPResponse, peer: socket.socket, deadline: float)
     content = bytearray()
     while True:
         remaining = _remaining_seconds(deadline)
+        if response.isclosed():
+            break
         peer.settimeout(remaining)
         chunk = response.read1(min(READ_CHUNK_SIZE, MAX_DOWNLOAD_BYTES + 1 - len(content)))
         if not chunk:
