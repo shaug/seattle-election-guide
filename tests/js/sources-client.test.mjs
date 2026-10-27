@@ -273,10 +273,36 @@ test('only an admitted race-mode capability carries race mode through Sources', 
     const document = await wire(`${SOURCES_URL}?precinct=all&races=all&unrelated=1`, pagePayload);
     for (const action of ['save', 'cancel', 'page-reset']) {
       const href = document.querySelector(`[data-sources-${action}]`).getAttribute('href');
-      assert.equal(
-        new URL(href, SOURCES_URL).search,
-        enabled ? '?precinct=all&races=all' : '?precinct=all',
-      );
+      assert.equal(new URL(href, SOURCES_URL).search, enabled ? '?precinct=all&races=all' : '');
+    }
+  }
+});
+
+test('primary Sources discards unsupported queries while preserving selection and target fragments', async () => {
+  const incoming = '#race-mayor';
+  const editedLinks = async (url, pagePayload) => {
+    const document = await wire(url, pagePayload);
+    const urbn = box(document, 'urbn');
+    urbn.checked = false;
+    urbn.dispatchEvent(new Event('change'));
+    return ['save', 'cancel', 'page-reset'].map((action) =>
+      document.querySelector(`[data-sources-${action}]`).getAttribute('href'),
+    );
+  };
+  const baseline = await editedLinks(`${SOURCES_URL}${incoming}`, payload());
+  assert.match(baseline[0], /sel=strn/);
+  assert.equal(baseline[1], `${GUIDE_PATH}${incoming}`);
+  assert.equal(baseline[2], GUIDE_PATH);
+  for (const pagePayload of [payload(), payload({ race_mode_query_enabled: false })]) {
+    for (const query of [
+      '?precinct=1279',
+      '?precinct=all&races=all&unrelated=discard',
+      '?precinct=1279&precinct=2200&races=all&races=contested',
+      '?precinct=invalid&races=invalid',
+    ]) {
+      const links = await editedLinks(`${SOURCES_URL}${query}${incoming}`, pagePayload);
+      assert.deepEqual(links, baseline);
+      for (const href of links) assert.equal(new URL(href, SOURCES_URL).search, '');
     }
   }
 });

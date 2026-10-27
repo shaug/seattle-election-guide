@@ -37,10 +37,10 @@ const UNREADABLE_LINK_NOTICE =
 export function wireSourcesEditor(payload) {
   const router = createLensRouter();
   const context = lensContext(payload, payload.data_version);
-  const query = ballotQuery(
-    router.controlSearch(),
-    'race_mode_query_enabled' in payload && payload.race_mode_query_enabled === true,
-  );
+  const query =
+    'race_mode_query_enabled' in payload && payload.race_mode_query_enabled === true
+      ? ballotQuery(router.controlSearch())
+      : '';
   const guidePath = `${payload.guide_path}${query}`;
   if ('race_mode_query_enabled' in payload && payload.race_mode_query_enabled === true) {
     const headerPaths = {
