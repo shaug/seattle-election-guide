@@ -84,6 +84,7 @@
     "tests": {
       "test_every_page_payload_declares_its_schema_version": "unit",
       "test_field_coverage_recognizes_optional_fields_without_accepting_missing_fields": "unit",
+      "test_sources_race_mode_capability_is_only_in_the_general_variant": "unit",
       "test_the_schema_forbids_undeclared_payload_fields": "unit"
     },
     "partition": "integration-comparisons"
@@ -282,6 +283,24 @@
     "tests": {},
     "partition": "integration-rendering"
   },
+  "tests/test_precinct_ballot.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_precinct_navigation.py": {
+    "suite": "e2e",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_precinct_rendering.py": {
+    "suite": "e2e",
+    "tests": {
+      "test_general_sources_capability_does_not_extend_the_legacy_payload": "contract",
+      "test_modal_lookup_link_is_required_and_does_not_admit_other_links": "integration"
+    },
+    "partition": "integration-rendering"
+  },
   "tests/test_preview_teardown.py": {
     "suite": "integration",
     "tests": {},
@@ -355,6 +374,11 @@
     "tests": {},
     "partition": "integration-artifacts"
   },
+  "tests/test_release_fixtures.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
   "tests/test_release_history.py": {
     "suite": "integration",
     "tests": {},
@@ -406,6 +430,7 @@
       "test_chrome_startup_unreadable_diagnostics_preserve_read_error": "e2e",
       "test_chromium_build_is_semantically_faithful_and_visually_safe": "e2e",
       "test_full_race_card_stacks_name_and_meter_below_480px": "e2e",
+      "test_html_uses_one_view_model_for_screen_print_filters_and_evidence": "e2e",
       "test_masthead_share_button_uses_web_share_then_falls_back_to_copy": "e2e",
       "test_mobile_meter_hold_glide_release_and_native_scroll": "e2e",
       "test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources": "e2e",
@@ -434,6 +459,7 @@
       "test_race_page_restores_an_active_lens_from_its_own_link": "e2e",
       "test_race_page_sticky_strip_is_hidden_when_printed": "e2e",
       "test_race_page_with_personalization_disabled_renders_unchanged": "e2e",
+      "test_reset_query_audit_requires_exact_query_for_admitted_page_capability": "e2e",
       "test_shared_footer_closes_short_viewport_and_follows_tall_content": "e2e",
       "test_shared_footer_keeps_icons_on_row_one_and_provenance_full_width_on_squeeze": "e2e",
       "test_single_split_block_uses_lower_half_seam": "e2e",
@@ -616,10 +642,5 @@
     "suite": "contract",
     "tests": {},
     "partition": "integration-comparisons"
-  },
-  "tests/test_release_fixtures.py": {
-    "suite": "unit",
-    "tests": {},
-    "partition": "integration-artifacts"
   }
 }
