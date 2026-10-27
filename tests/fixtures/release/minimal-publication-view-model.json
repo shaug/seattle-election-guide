@@ -1,0 +1,757 @@
+{
+  "comparisons": {
+    "display_index": [
+      {
+        "baseline": {
+          "explicit_source_count": 2,
+          "leading_pick_ids": [
+            "king-county-assessor--dominique-m-scarimbolo"
+          ],
+          "share": "3/4"
+        },
+        "candidate_names": {
+          "king-county-assessor--al-dams": "Al Dams",
+          "king-county-assessor--christopher-roberts": "Christopher Roberts",
+          "king-county-assessor--dominique-m-scarimbolo": "Dominique M Scarimbolo",
+          "king-county-assessor--rob-foxcurran": "Rob Foxcurran"
+        },
+        "measure_response_labels": {},
+        "race_id": "king-county-assessor",
+        "race_label": "King County Assessor",
+        "race_order": 0,
+        "race_type": "candidate",
+        "section_id": "county",
+        "section_label": "County",
+        "section_order": 0
+      }
+    ],
+    "policy": {
+      "enabled": false
+    },
+    "schema_version": "1.0"
+  },
+  "corrections": null,
+  "metadata": {
+    "captured_source_count": 6,
+    "certification_date": null,
+    "contributing_source_count": 6,
+    "coverage_gap_count": 0,
+    "data_as_of": "2026-08-05T00:20:00Z",
+    "data_version": "00f1133ddaf9",
+    "election_date": "2026-08-04",
+    "election_id": "wa-2026-primary",
+    "election_name": "2026 Washington August Primary",
+    "election_type": "primary",
+    "generated_at": "2026-08-05T00:20:00Z",
+    "git_commit": "render-fixture",
+    "published_race_count": 1,
+    "race_count": 1,
+    "results_capture_urls": null,
+    "source_count": 6,
+    "source_panel_hash": "38b67afa11fd778a478582720ce784356f0cb1dddef3ef7b72d0da51950781aa",
+    "source_panel_id": "wa-2026-primary-default-sources-v4",
+    "source_panel_version": "v4",
+    "source_registry_hash": "3f6fbd44cfd76298986a56d0d3c3824dffdd5157dfe3dfecf37b13bdf109a3fe",
+    "state": "WA",
+    "unavailable_source_count": 0,
+    "unresolved_review_count": 1
+  },
+  "methodology": {
+    "deduplicated_view": "not_computed",
+    "default_aggregation_view": "source_level",
+    "grade_legend": [
+      {
+        "grade": "TIED",
+        "rule": "Multiple choices share the greatest exact support"
+      },
+      {
+        "grade": "Insufficient",
+        "rule": "Fewer than 2 explicit progressive sources"
+      },
+      {
+        "grade": "A+",
+        "rule": "At least 90% and at least 4 explicit sources"
+      },
+      {
+        "grade": "A",
+        "rule": "At least 75%"
+      },
+      {
+        "grade": "B",
+        "rule": "At least 60%"
+      },
+      {
+        "grade": "C",
+        "rule": "At least 45%"
+      },
+      {
+        "grade": "D",
+        "rule": "At least 0%"
+      }
+    ],
+    "interpretation_notes": [
+      "Agreement is measured only among explicitly endorsing eligible sources.",
+      "No endorsement and missing coverage remain visible but do not enter the denominator.",
+      "Each legislative-district organization counts independently on broader Seattle-ballot races it explicitly covers, but only on its own district's legislative contests. Their shared party network remains disclosed.",
+      "The Seattle Times is a separate comparison, never an extra progressive vote.",
+      "Category representation and category support remain available in audit exports."
+    ],
+    "limitations": [
+      "This guide aggregates endorsements; it is not independent candidate vetting.",
+      "Some organizations have disclosed overlap, but raw source totals are preserved.",
+      "Possible overlap is not deduplicated because the registry does not establish statistical dependence or a shared decision process.",
+      "Organizations may update endorsements after the captured evidence date.",
+      "The exact ballot available to a voter depends on their registration address."
+    ],
+    "process_steps": [
+      "Collect official endorsements",
+      "Preserve source evidence",
+      "Normalize races and candidates",
+      "Split multi-candidate endorsements exactly",
+      "Compute progressive consensus",
+      "Compare separately with the Seattle Times"
+    ],
+    "source_categories": [
+      {
+        "category": "progressive_general",
+        "label": "Progressive editorial and general",
+        "source_ids": [
+          "the-stranger",
+          "the-urbanist",
+          "washington-working-families-party",
+          "washington-bus",
+          "sage-leaders"
+        ]
+      },
+      {
+        "category": "comparison",
+        "label": "Centrist comparison",
+        "source_ids": [
+          "seattle-times-editorial-board"
+        ]
+      }
+    ],
+    "source_overlap_groups": [],
+    "verification_instructions": "Verify any displayed value against consensus.json, endorsement_records.csv, and the evidence URL and locator in the source cell."
+  },
+  "personalization": {
+    "categories": [
+      {
+        "code": "Ggen",
+        "id": "progressive_general",
+        "label": "Progressive editorial and general",
+        "member_source_codes": [
+          "sldr",
+          "strn",
+          "urbn",
+          "wbus",
+          "wwfp"
+        ],
+        "panel_role": "tallying",
+        "selectable": true
+      },
+      {
+        "code": "Gdem",
+        "id": "democratic_party",
+        "label": "Democratic Party",
+        "member_source_codes": [],
+        "panel_role": "tallying",
+        "selectable": true
+      },
+      {
+        "code": "Gurb",
+        "id": "transportation_urbanism",
+        "label": "Transportation and urbanism",
+        "member_source_codes": [],
+        "panel_role": "tallying",
+        "selectable": true
+      },
+      {
+        "code": "Genv",
+        "id": "environmental",
+        "label": "Environment",
+        "member_source_codes": [],
+        "panel_role": "tallying",
+        "selectable": true
+      },
+      {
+        "code": "Glab",
+        "id": "labor",
+        "label": "Labor",
+        "member_source_codes": [],
+        "panel_role": "tallying",
+        "selectable": true
+      },
+      {
+        "code": "Grgt",
+        "id": "rights_representation",
+        "label": "Rights and representation",
+        "member_source_codes": [],
+        "panel_role": "tallying",
+        "selectable": true
+      },
+      {
+        "code": "Gcmp",
+        "id": "comparison",
+        "label": "Centrist comparison",
+        "member_source_codes": [
+          "stim"
+        ],
+        "panel_role": "comparison",
+        "selectable": true
+      }
+    ],
+    "panel_hash": "38b67afa11fd778a478582720ce784356f0cb1dddef3ef7b72d0da51950781aa",
+    "panel_id": "wa-2026-primary-default-sources-v4",
+    "panel_version": "v4",
+    "policy": {
+      "comparison_source_codes": [
+        "stim"
+      ],
+      "default_mode": "audited",
+      "enabled": true,
+      "maximum_url_characters": 4096,
+      "minimum_explicit_sources": 2,
+      "modes": [
+        "audited",
+        "sources"
+      ],
+      "selection_combination": "additive_union",
+      "url_schema_version": "1",
+      "weighting": "equal"
+    },
+    "races": [
+      {
+        "candidate_order": [
+          "king-county-assessor--dominique-m-scarimbolo",
+          "king-county-assessor--christopher-roberts",
+          "king-county-assessor--rob-foxcurran",
+          "king-county-assessor--al-dams"
+        ],
+        "cells": [
+          {
+            "allocation": {},
+            "confidence_warning": false,
+            "source_code": "sldr",
+            "state": "unavailable"
+          },
+          {
+            "allocation": {
+              "king-county-assessor--christopher-roberts": "1"
+            },
+            "confidence_warning": false,
+            "source_code": "stim",
+            "state": "endorsement"
+          },
+          {
+            "allocation": {},
+            "confidence_warning": true,
+            "source_code": "strn",
+            "state": "unverified"
+          },
+          {
+            "allocation": {
+              "king-county-assessor--dominique-m-scarimbolo": "1"
+            },
+            "confidence_warning": false,
+            "source_code": "urbn",
+            "state": "endorsement"
+          },
+          {
+            "allocation": {},
+            "confidence_warning": false,
+            "source_code": "wbus",
+            "state": "no_endorsement"
+          },
+          {
+            "allocation": {
+              "king-county-assessor--christopher-roberts": "1/2",
+              "king-county-assessor--dominique-m-scarimbolo": "1/2"
+            },
+            "confidence_warning": false,
+            "source_code": "wwfp",
+            "state": "multi_endorsement"
+          }
+        ],
+        "eligible_source_codes": [
+          "sldr",
+          "stim",
+          "strn",
+          "urbn",
+          "wbus",
+          "wwfp"
+        ],
+        "race_id": "king-county-assessor"
+      }
+    ],
+    "retired_codes": [],
+    "schema_version": "1.0",
+    "scoring": {
+      "allocation": "exact_equal_split",
+      "configuration_id": "unweighted-progressive-v1",
+      "grades": [
+        {
+          "grade": "A+",
+          "minimum_explicit_sources": 4,
+          "minimum_share": "9/10"
+        },
+        {
+          "grade": "A",
+          "minimum_explicit_sources": null,
+          "minimum_share": "3/4"
+        },
+        {
+          "grade": "B",
+          "minimum_explicit_sources": null,
+          "minimum_share": "3/5"
+        },
+        {
+          "grade": "C",
+          "minimum_explicit_sources": null,
+          "minimum_share": "9/20"
+        },
+        {
+          "grade": "D",
+          "minimum_explicit_sources": null,
+          "minimum_share": "0"
+        }
+      ],
+      "insufficient_precedes_ordinary_grade": true,
+      "minimum_explicit_sources": 2,
+      "missing_coverage_enters_denominator": false,
+      "no_endorsement_enters_denominator": false,
+      "tie_precedes_grade": true
+    },
+    "sources": [
+      {
+        "code": "strn",
+        "id": "the-stranger",
+        "overlap_group_ids": [],
+        "panel_role": "consensus",
+        "reporting_category_id": "progressive_general",
+        "selectable": true,
+        "selection_category_ids": [
+          "progressive_general"
+        ]
+      },
+      {
+        "code": "urbn",
+        "id": "the-urbanist",
+        "overlap_group_ids": [],
+        "panel_role": "consensus",
+        "reporting_category_id": "progressive_general",
+        "selectable": true,
+        "selection_category_ids": [
+          "progressive_general"
+        ]
+      },
+      {
+        "code": "wwfp",
+        "id": "washington-working-families-party",
+        "overlap_group_ids": [],
+        "panel_role": "consensus",
+        "reporting_category_id": "progressive_general",
+        "selectable": true,
+        "selection_category_ids": [
+          "progressive_general"
+        ]
+      },
+      {
+        "code": "wbus",
+        "id": "washington-bus",
+        "overlap_group_ids": [],
+        "panel_role": "consensus",
+        "reporting_category_id": "progressive_general",
+        "selectable": true,
+        "selection_category_ids": [
+          "progressive_general"
+        ]
+      },
+      {
+        "code": "sldr",
+        "id": "sage-leaders",
+        "overlap_group_ids": [],
+        "panel_role": "consensus",
+        "reporting_category_id": "progressive_general",
+        "selectable": true,
+        "selection_category_ids": [
+          "progressive_general"
+        ]
+      },
+      {
+        "code": "stim",
+        "id": "seattle-times-editorial-board",
+        "overlap_group_ids": [],
+        "panel_role": "comparison",
+        "reporting_category_id": "comparison",
+        "selectable": true,
+        "selection_category_ids": [
+          "comparison"
+        ]
+      }
+    ]
+  },
+  "results": null,
+  "schema_version": "1.14",
+  "sections": [
+    {
+      "id": "county",
+      "label": "County",
+      "races": [
+        {
+          "alternatives": [
+            {
+              "candidate_id": "king-county-assessor--christopher-roberts",
+              "candidate_label": "Christopher Roberts",
+              "percentage_label": "25%",
+              "share": "1/4",
+              "support_points": "1/2"
+            }
+          ],
+          "candidates": [
+            {
+              "id": "king-county-assessor--dominique-m-scarimbolo",
+              "label": "Dominique M Scarimbolo"
+            },
+            {
+              "id": "king-county-assessor--christopher-roberts",
+              "label": "Christopher Roberts"
+            },
+            {
+              "id": "king-county-assessor--rob-foxcurran",
+              "label": "Rob Foxcurran"
+            },
+            {
+              "id": "king-county-assessor--al-dams",
+              "label": "Al Dams"
+            }
+          ],
+          "category_breakdown": [
+            {
+              "candidate_support": [
+                {
+                  "candidate_id": "king-county-assessor--christopher-roberts",
+                  "candidate_label": "Christopher Roberts",
+                  "support_points": "1/2"
+                },
+                {
+                  "candidate_id": "king-county-assessor--dominique-m-scarimbolo",
+                  "candidate_label": "Dominique M Scarimbolo",
+                  "support_points": "3/2"
+                }
+              ],
+              "category": "progressive_general",
+              "eligible_source_count": 5,
+              "explicit_endorsement_count": 2,
+              "label": "Progressive editorial and general",
+              "source_coverage_count": 3
+            }
+          ],
+          "category_coverage_count": 1,
+          "comparisons": [
+            {
+              "badge_label": "DIFFERENT PICK",
+              "candidate_ids": [
+                "king-county-assessor--christopher-roberts"
+              ],
+              "candidate_labels": [
+                "Christopher Roberts"
+              ],
+              "source_id": "seattle-times-editorial-board",
+              "status": "differs"
+            }
+          ],
+          "eligible_source_count": 5,
+          "endorsement_groups": [
+            {
+              "candidate_id": "king-county-assessor--dominique-m-scarimbolo",
+              "candidate_label": "Dominique M Scarimbolo",
+              "endorsers": [
+                {
+                  "co_endorsement": false,
+                  "confidence_warning": false,
+                  "evidence_locator": "Fixture line 1",
+                  "evidence_url": "https://example.com/the-urbanist",
+                  "source_id": "the-urbanist",
+                  "source_name": "The Urbanist Elections Committee"
+                },
+                {
+                  "co_endorsement": true,
+                  "confidence_warning": false,
+                  "evidence_locator": "Fixture line 1",
+                  "evidence_url": "https://example.com/washington-working-families-party",
+                  "source_id": "washington-working-families-party",
+                  "source_name": "Washington Working Families Party"
+                }
+              ],
+              "source_count": 2,
+              "support_points": "3/2"
+            },
+            {
+              "candidate_id": "king-county-assessor--christopher-roberts",
+              "candidate_label": "Christopher Roberts",
+              "endorsers": [
+                {
+                  "co_endorsement": true,
+                  "confidence_warning": false,
+                  "evidence_locator": "Fixture line 1",
+                  "evidence_url": "https://example.com/washington-working-families-party",
+                  "source_id": "washington-working-families-party",
+                  "source_name": "Washington Working Families Party"
+                }
+              ],
+              "source_count": 1,
+              "support_points": "1/2"
+            }
+          ],
+          "explicit_endorsement_count": 2,
+          "filter_tokens": [
+            "Countywide",
+            "county",
+            "king-county"
+          ],
+          "grade": "A",
+          "id": "king-county-assessor",
+          "is_contested": true,
+          "jurisdiction_id": "king-county",
+          "missing_source_count": 2,
+          "no_endorsement_count": 1,
+          "percentage_label": "75%",
+          "percentage_whole": 75,
+          "race_label": "King County Assessor",
+          "race_type": "candidate",
+          "recommendation_candidate_ids": [
+            "king-county-assessor--dominique-m-scarimbolo"
+          ],
+          "recommendation_candidate_labels": [
+            "Dominique M Scarimbolo"
+          ],
+          "recommendation_label": "Dominique M Scarimbolo",
+          "section_id": "county",
+          "section_label": "County",
+          "source_cells": [
+            {
+              "allocation": {},
+              "candidate_ids": [],
+              "candidate_labels": [],
+              "captured_at": "2026-07-19T12:00:00Z",
+              "confidence_warning": true,
+              "evidence_locator": "Fixture line 2",
+              "evidence_title": "Fixture for the-stranger",
+              "evidence_url": "https://example.com/the-stranger",
+              "published_at": "2026-07-02",
+              "redistribution": "permitted",
+              "source_id": "the-stranger",
+              "state": "unverified",
+              "updated_at": null
+            },
+            {
+              "allocation": {
+                "king-county-assessor--dominique-m-scarimbolo": "1"
+              },
+              "candidate_ids": [
+                "king-county-assessor--dominique-m-scarimbolo"
+              ],
+              "candidate_labels": [
+                "Dominique M Scarimbolo"
+              ],
+              "captured_at": "2026-07-19T12:00:00Z",
+              "confidence_warning": false,
+              "evidence_locator": "Fixture line 1",
+              "evidence_title": "Fixture for the-urbanist",
+              "evidence_url": "https://example.com/the-urbanist",
+              "published_at": "2026-07-02",
+              "redistribution": "permitted",
+              "source_id": "the-urbanist",
+              "state": "endorsement",
+              "updated_at": null
+            },
+            {
+              "allocation": {
+                "king-county-assessor--christopher-roberts": "1/2",
+                "king-county-assessor--dominique-m-scarimbolo": "1/2"
+              },
+              "candidate_ids": [
+                "king-county-assessor--dominique-m-scarimbolo",
+                "king-county-assessor--christopher-roberts"
+              ],
+              "candidate_labels": [
+                "Dominique M Scarimbolo",
+                "Christopher Roberts"
+              ],
+              "captured_at": "2026-07-19T12:00:00Z",
+              "confidence_warning": false,
+              "evidence_locator": "Fixture line 1",
+              "evidence_title": "Fixture for washington-working-families-party",
+              "evidence_url": "https://example.com/washington-working-families-party",
+              "published_at": "2026-07-02",
+              "redistribution": "permitted",
+              "source_id": "washington-working-families-party",
+              "state": "multi_endorsement",
+              "updated_at": null
+            },
+            {
+              "allocation": {},
+              "candidate_ids": [],
+              "candidate_labels": [],
+              "captured_at": "2026-07-19T12:00:00Z",
+              "confidence_warning": false,
+              "evidence_locator": "Fixture line 1",
+              "evidence_title": "Fixture for washington-bus",
+              "evidence_url": "https://example.com/washington-bus",
+              "published_at": "2026-07-02",
+              "redistribution": "permitted",
+              "source_id": "washington-bus",
+              "state": "no_endorsement",
+              "updated_at": null
+            },
+            {
+              "allocation": {},
+              "candidate_ids": [],
+              "candidate_labels": [],
+              "captured_at": "2026-07-19T12:00:00Z",
+              "confidence_warning": false,
+              "evidence_locator": "Unavailable capture metadata",
+              "evidence_title": null,
+              "evidence_url": "https://example.com/unavailable",
+              "published_at": null,
+              "redistribution": "restricted",
+              "source_id": "sage-leaders",
+              "state": "unavailable",
+              "updated_at": null
+            },
+            {
+              "allocation": {
+                "king-county-assessor--christopher-roberts": "1"
+              },
+              "candidate_ids": [
+                "king-county-assessor--christopher-roberts"
+              ],
+              "candidate_labels": [
+                "Christopher Roberts"
+              ],
+              "captured_at": "2026-07-19T12:00:00Z",
+              "confidence_warning": false,
+              "evidence_locator": "Fixture line 1",
+              "evidence_title": "Fixture for seattle-times-editorial-board",
+              "evidence_url": "https://example.com/seattle-times-editorial-board",
+              "published_at": "2026-07-02",
+              "redistribution": "permitted",
+              "source_id": "seattle-times-editorial-board",
+              "state": "endorsement",
+              "updated_at": null
+            }
+          ],
+          "source_coverage_count": 3,
+          "support_leader_candidate_ids": [
+            "king-county-assessor--dominique-m-scarimbolo"
+          ],
+          "support_leader_candidate_labels": [
+            "Dominique M Scarimbolo"
+          ],
+          "support_leader_label": "Dominique M Scarimbolo",
+          "support_summary": "Based on 2 explicitly endorsing sources",
+          "warning_codes": [
+            "missing_coverage",
+            "no_endorsement",
+            "pending_review",
+            "low_confidence"
+          ],
+          "warning_messages": [
+            "2 eligible sources lack a resolved decision.",
+            "1 eligible sources explicitly endorse no one.",
+            "1 normalization review items remain unresolved.",
+            "One or more scored endorsements carry a confidence warning."
+          ],
+          "winner_share": "3/4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "category": "progressive_general",
+      "contribution_status": "contributing",
+      "coverage_gap_note": null,
+      "coverage_gap_status": null,
+      "endorsement_count": 0,
+      "evidence_url": "https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/",
+      "id": "the-stranger",
+      "name": "The Stranger Election Control Board",
+      "organization_url": "https://www.thestranger.com/",
+      "overlap_group_ids": [],
+      "panel_role": "consensus",
+      "split_endorsement_count": 0
+    },
+    {
+      "category": "progressive_general",
+      "contribution_status": "contributing",
+      "coverage_gap_note": null,
+      "coverage_gap_status": null,
+      "endorsement_count": 1,
+      "evidence_url": "https://www.theurbanist.org/2026-primary-election-endorsements/",
+      "id": "the-urbanist",
+      "name": "The Urbanist Elections Committee",
+      "organization_url": "https://www.theurbanist.org/",
+      "overlap_group_ids": [],
+      "panel_role": "consensus",
+      "split_endorsement_count": 0
+    },
+    {
+      "category": "progressive_general",
+      "contribution_status": "contributing",
+      "coverage_gap_note": null,
+      "coverage_gap_status": null,
+      "endorsement_count": 1,
+      "evidence_url": "https://workingfamilies.org/state/washington/",
+      "id": "washington-working-families-party",
+      "name": "Washington Working Families Party",
+      "organization_url": "https://workingfamilies.org/state/washington/",
+      "overlap_group_ids": [],
+      "panel_role": "consensus",
+      "split_endorsement_count": 1
+    },
+    {
+      "category": "progressive_general",
+      "contribution_status": "contributing",
+      "coverage_gap_note": null,
+      "coverage_gap_status": null,
+      "endorsement_count": 0,
+      "evidence_url": "https://www.washingtonbus.org/endorsements",
+      "id": "washington-bus",
+      "name": "The Washington Bus",
+      "organization_url": "https://www.washingtonbus.org/",
+      "overlap_group_ids": [],
+      "panel_role": "consensus",
+      "split_endorsement_count": 0
+    },
+    {
+      "category": "progressive_general",
+      "contribution_status": "contributing",
+      "coverage_gap_note": null,
+      "coverage_gap_status": null,
+      "endorsement_count": 0,
+      "evidence_url": "https://www.sageleaders.org/2026-endorsements",
+      "id": "sage-leaders",
+      "name": "Sage Leaders",
+      "organization_url": "https://www.sageleaders.org/",
+      "overlap_group_ids": [],
+      "panel_role": "consensus",
+      "split_endorsement_count": 0
+    },
+    {
+      "category": "comparison",
+      "contribution_status": "contributing",
+      "coverage_gap_note": null,
+      "coverage_gap_status": null,
+      "endorsement_count": 1,
+      "evidence_url": "https://www.seattletimes.com/opinion/editorials/seattle-times-endorsements-aug-4-2026-primary/",
+      "id": "seattle-times-editorial-board",
+      "name": "The Seattle Times Editorial Board",
+      "organization_url": "https://www.seattletimes.com/opinion/editorials/",
+      "overlap_group_ids": [],
+      "panel_role": "comparison",
+      "split_endorsement_count": 0
+    }
+  ]
+}

@@ -20,12 +20,25 @@ modules with Biome, type-checks them with `tsc --noEmit --checkJs`, and then
 runs the Node tests. `make format` fixes both languages: ruff for Python,
 `biome check --write` for JavaScript.
 
-The complete pytest suite remains available through `make test`. For a faster
-focused run, use `make test-unit` for tests that do not build full publication
-artifacts or drive Chromium, and `make test-integration` for the rendering,
-browser, hosting, and release-artifact suite. CI divides that integration suite
-again into duration-balanced comparison, rendering, and artifact partitions;
-their membership is defined once in the `Makefile` (issue #428).
+The complete pytest suite remains available through `make test`. `make test-unit`
+runs isolated component logic with small local fixtures; real sockets, DNS,
+child processes and forks are rejected before they run, including when those
+units run inside the complete gate. `make test-contract` checks committed data,
+repository surfaces and declarations. `make test-integration` exercises actual
+Git, artifacts, storage and application flows; `make test-e2e` exercises browser
+and whole-page behavior.
+
+`tests/suites.json` owns semantic membership and the required CI partition for
+every case, with explicit exceptions for mixed modules. Collection rejects an
+unclassified module, a missing partition or duplicate node IDs. CI retains its
+four established pytest check names for exact-source promotion and divides the
+non-unit work by measured duration across the three integration-named partitions.
+Those stable partition names are execution groups, separate from semantic test
+kinds. The Make targets and CI use the same collection policy; the coverage
+contract requires every collected node exactly once across their union (#651).
+Every pytest collection also checks the CI matrix contains each required
+partition once, so omitting the lane that holds the coverage test fails before
+any remaining lane can execute.
 
 Neither focused target replaces `make check` before proposing a diff.
 

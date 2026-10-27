@@ -2260,6 +2260,7 @@ def _write_release_bundle(
     git_commit: str,
     html: bytes,
     source_registry_hash: str | None = None,
+    view_model: PublicationViewModel | None = None,
 ) -> Path:
     bundle = root / "bundle"
     html_relative = "guide/guide.html"
@@ -2278,11 +2279,13 @@ def _write_release_bundle(
         if relative == html_relative:
             path.write_bytes(html)
         elif relative == "data/publication_view_model.json":
-            view_model_payload = _bundle_view_model(
+            selected_view = view_model or _bundle_view_model(
                 root / "view-model-src",
                 election_id=election_id,
                 source_registry_hash=source_registry_hash,
-            ).model_dump(mode="json")
+            )
+            assert selected_view.metadata.election_id == election_id
+            view_model_payload = selected_view.model_dump(mode="json")
             # Hosting must continue to accept already-published schema-1.9
             # bundles. Those also predate the optional structured naming fields.
             view_model_payload["metadata"].pop("election_type")

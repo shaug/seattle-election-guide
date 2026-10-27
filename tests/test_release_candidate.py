@@ -23,6 +23,7 @@ from election_guide.release.automation_models import (
 )
 from election_guide.release.declaration import ReleaseInputs, ResolvedRelease
 from election_guide.release.models import release_archive_name
+from tests.release_fixtures import minimal_publication_view_model
 from tests.test_hosting import _write_release_bundle  # pyright: ignore[reportPrivateUsage]
 from tests.test_hosting_releases import _released_archive  # pyright: ignore[reportPrivateUsage]
 
@@ -86,6 +87,7 @@ def prepared(
         release_version="primary.2",
         git_commit=sha,
         html=b"guide\n",
+        view_model=minimal_publication_view_model(),
     )
     _released_archive(bundle, "primary.2", output / "reproducibility-a")
     stage_pages_site(
