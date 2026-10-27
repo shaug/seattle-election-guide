@@ -187,7 +187,14 @@ def _admitted_qualification(root: Path, identity: str, election_id: str) -> bool
     path = f"data/verification/{election_id}/source-reviews/{identity}.json"
     try:
         admitted = subprocess.run(
-            ["git", "-C", str(_REPOSITORY_ROOT), "show", f"refs/remotes/origin/main:{path}"],
+            [
+                "git",
+                "--no-lazy-fetch",
+                "-C",
+                str(_REPOSITORY_ROOT),
+                "show",
+                f"refs/remotes/origin/main:{path}",
+            ],
             capture_output=True,
             check=False,
         )
