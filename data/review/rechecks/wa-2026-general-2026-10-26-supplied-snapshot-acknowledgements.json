@@ -1,0 +1,885 @@
+{
+  "LATE_slots": 24,
+  "acknowledgements": [
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/68756a3689c8d6ac80c729a5d360eb9af8694be23aaf71413b56aaf8008aa9a2.json",
+      "actual_check_sha256": "68756a3689c8d6ac80c729a5d360eb9af8694be23aaf71413b56aaf8008aa9a2",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/2fe8079e7fe99b204dff5375bfa28a85b96f00ffd5713e58430750679054dfea.json",
+          "sha256": "2fe8079e7fe99b204dff5375bfa28a85b96f00ffd5713e58430750679054dfea"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-state-democrats",
+      "finished_at": "2026-10-26T20:03:41.226929+00:00",
+      "index": 1,
+      "issue": 616,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-state-democrats; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:40.702261+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-24",
+        "source_id": "washington-state-democrats",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-24",
+      "source_id": "washington-state-democrats",
+      "started_at": "2026-10-26T20:03:40.702261+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/05780a6625d9c6bc94a6dc7ce1010794469af87438f0ed62e05d3849f9c635c8.json",
+      "actual_check_sha256": "05780a6625d9c6bc94a6dc7ce1010794469af87438f0ed62e05d3849f9c635c8",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/397334c738213314d520fd98b39808b273cf6d6ea832bde6545fc540140ef6ae.json",
+          "sha256": "397334c738213314d520fd98b39808b273cf6d6ea832bde6545fc540140ef6ae"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-state-democrats",
+      "finished_at": "2026-10-26T20:03:41.537565+00:00",
+      "index": 2,
+      "issue": 630,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-state-democrats; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:41.248398+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-25",
+        "source_id": "washington-state-democrats",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-25",
+      "source_id": "washington-state-democrats",
+      "started_at": "2026-10-26T20:03:41.248398+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/2bf7bc9b6f7f2159c0be2f2d489068dc5cc8eb4b76ebb2220220a6992908fc1f.json",
+      "actual_check_sha256": "2bf7bc9b6f7f2159c0be2f2d489068dc5cc8eb4b76ebb2220220a6992908fc1f",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/3b69023529065e9c1c400d42c911e51d741bb25be287239760d5d4a67ca9c61c.json",
+          "sha256": "3b69023529065e9c1c400d42c911e51d741bb25be287239760d5d4a67ca9c61c"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-state-democrats",
+      "finished_at": "2026-10-26T20:03:41.845535+00:00",
+      "index": 3,
+      "issue": 636,
+      "kind": "current October26 supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): current October26 supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-state-democrats; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:41.559719+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-26",
+        "source_id": "washington-state-democrats",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-26",
+      "source_id": "washington-state-democrats",
+      "started_at": "2026-10-26T20:03:41.559719+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/22e32d6dff788ac1697387d3e9952d8b5a0464025c20c00c36ae1bf7413bf139.json",
+      "actual_check_sha256": "22e32d6dff788ac1697387d3e9952d8b5a0464025c20c00c36ae1bf7413bf139",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/648c8792821dcfb38fa60f748539c626ae834bee507ded3f6b9996c4619cc0ea.json",
+          "sha256": "648c8792821dcfb38fa60f748539c626ae834bee507ded3f6b9996c4619cc0ea"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/sierra-club-washington",
+      "finished_at": "2026-10-26T20:03:42.144820+00:00",
+      "index": 4,
+      "issue": 616,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/sierra-club-washington; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:41.867369+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-24",
+        "source_id": "sierra-club-washington",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-24",
+      "source_id": "sierra-club-washington",
+      "started_at": "2026-10-26T20:03:41.867369+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/93c0a3c40d317c771eaaaf84dd1a1e7ab5dc01f909dbefb9713d25e51c9e0734.json",
+      "actual_check_sha256": "93c0a3c40d317c771eaaaf84dd1a1e7ab5dc01f909dbefb9713d25e51c9e0734",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/6a3ee0a68f7c16eb586b4ddbf168c2a794d031550e1aabdcd9963e8a132deb19.json",
+          "sha256": "6a3ee0a68f7c16eb586b4ddbf168c2a794d031550e1aabdcd9963e8a132deb19"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/sierra-club-washington",
+      "finished_at": "2026-10-26T20:03:42.449902+00:00",
+      "index": 5,
+      "issue": 630,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/sierra-club-washington; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:42.166765+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-25",
+        "source_id": "sierra-club-washington",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-25",
+      "source_id": "sierra-club-washington",
+      "started_at": "2026-10-26T20:03:42.166765+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/025e16c7ac0d4bfc341054b0cc1c42a1795bb297a8e8e42f2c04073a987df4de.json",
+      "actual_check_sha256": "025e16c7ac0d4bfc341054b0cc1c42a1795bb297a8e8e42f2c04073a987df4de",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/55997c495fcb70b4d1ffa7dd69f8084eae39faff1c34798ef8da71d158d3f4eb.json",
+          "sha256": "55997c495fcb70b4d1ffa7dd69f8084eae39faff1c34798ef8da71d158d3f4eb"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/sierra-club-washington",
+      "finished_at": "2026-10-26T20:03:42.755813+00:00",
+      "index": 6,
+      "issue": 636,
+      "kind": "current October26 supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): current October26 supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/sierra-club-washington; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:42.472048+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-26",
+        "source_id": "sierra-club-washington",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-26",
+      "source_id": "sierra-club-washington",
+      "started_at": "2026-10-26T20:03:42.472048+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/77b84c43485b7e4815520a46c82a58cf6fc075565a8fff84cd60b403b2b7f7cc.json",
+      "actual_check_sha256": "77b84c43485b7e4815520a46c82a58cf6fc075565a8fff84cd60b403b2b7f7cc",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/5b3b518857283cdcecb914c485e3d4f87f05671826cf0a2cee3ab8ac295e5bd4.json",
+          "sha256": "5b3b518857283cdcecb914c485e3d4f87f05671826cf0a2cee3ab8ac295e5bd4"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates",
+      "finished_at": "2026-10-26T20:03:43.060430+00:00",
+      "index": 7,
+      "issue": 593,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:42.778267+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-21",
+        "source_id": "planned-parenthood-alliance-advocates",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-21",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "started_at": "2026-10-26T20:03:42.778267+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/1b08a2f96d589b7adfc7a5457102e96a12f7402c30756831774b409190112b77.json",
+      "actual_check_sha256": "1b08a2f96d589b7adfc7a5457102e96a12f7402c30756831774b409190112b77",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/d6163982e2a16e6673c8e9989dc3bd3de9458da077f8fd291bbd36d78c1a1805.json",
+          "sha256": "d6163982e2a16e6673c8e9989dc3bd3de9458da077f8fd291bbd36d78c1a1805"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates",
+      "finished_at": "2026-10-26T20:03:43.368237+00:00",
+      "index": 8,
+      "issue": 596,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:43.083143+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-22",
+        "source_id": "planned-parenthood-alliance-advocates",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-22",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "started_at": "2026-10-26T20:03:43.083143+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/b06287d8d4b1354eaac1d71a8329c80f57f54e1492b16d550acb3b0d9462e5a7.json",
+      "actual_check_sha256": "b06287d8d4b1354eaac1d71a8329c80f57f54e1492b16d550acb3b0d9462e5a7",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/061361287244bf9c24fd2e3813066041aab786f3a7018f8b54825a6d4451576a.json",
+          "sha256": "061361287244bf9c24fd2e3813066041aab786f3a7018f8b54825a6d4451576a"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates",
+      "finished_at": "2026-10-26T20:03:43.670957+00:00",
+      "index": 9,
+      "issue": 604,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:43.390948+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-23",
+        "source_id": "planned-parenthood-alliance-advocates",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-23",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "started_at": "2026-10-26T20:03:43.390948+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/dbb148a41d0f29b56c0ad477eb778a12c59e0ce4a2ff9d89464f0bfe4a4c98ba.json",
+      "actual_check_sha256": "dbb148a41d0f29b56c0ad477eb778a12c59e0ce4a2ff9d89464f0bfe4a4c98ba",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/b3f2e51be9a4a71362daaaa1ffce866348e895d245a1300cdd5b7935f4271980.json",
+          "sha256": "b3f2e51be9a4a71362daaaa1ffce866348e895d245a1300cdd5b7935f4271980"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates",
+      "finished_at": "2026-10-26T20:03:43.972485+00:00",
+      "index": 10,
+      "issue": 616,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:43.693278+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-24",
+        "source_id": "planned-parenthood-alliance-advocates",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-24",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "started_at": "2026-10-26T20:03:43.693278+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/77769e0c56eafa284f6a12b2a60793345269b4b9fc925e5080efb51558387f0b.json",
+      "actual_check_sha256": "77769e0c56eafa284f6a12b2a60793345269b4b9fc925e5080efb51558387f0b",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/d88fa52ff5bab8b5d115a3acb053ad28d2baf26179f1145cee020abb318c24f7.json",
+          "sha256": "d88fa52ff5bab8b5d115a3acb053ad28d2baf26179f1145cee020abb318c24f7"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates",
+      "finished_at": "2026-10-26T20:03:44.276023+00:00",
+      "index": 11,
+      "issue": 630,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:43.995389+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-25",
+        "source_id": "planned-parenthood-alliance-advocates",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-25",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "started_at": "2026-10-26T20:03:43.995389+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/4b7817eb3fc201d6c371b09394901875d9b8d1d908f2f00176a9667eed280a0b.json",
+      "actual_check_sha256": "4b7817eb3fc201d6c371b09394901875d9b8d1d908f2f00176a9667eed280a0b",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/aec48fbf110718b583704530fc934d06b0f9a357208fa1692066fc4049f59bee.json",
+          "sha256": "aec48fbf110718b583704530fc934d06b0f9a357208fa1692066fc4049f59bee"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates",
+      "finished_at": "2026-10-26T20:03:44.588017+00:00",
+      "index": 12,
+      "issue": 636,
+      "kind": "current October26 supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): current October26 supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/planned-parenthood-alliance-advocates; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:44.298540+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-26",
+        "source_id": "planned-parenthood-alliance-advocates",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-26",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "started_at": "2026-10-26T20:03:44.298540+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/5c1d4fb3026daea47c26f5c67919b8ca3ff12255bbfb24a7081a35248292c723.json",
+      "actual_check_sha256": "5c1d4fb3026daea47c26f5c67919b8ca3ff12255bbfb24a7081a35248292c723",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/35a041aa7bb0910f213e495dc08036e8e7a18c92faa358a1d5d20e0cc33a7265.json",
+          "sha256": "35a041aa7bb0910f213e495dc08036e8e7a18c92faa358a1d5d20e0cc33a7265"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action",
+      "finished_at": "2026-10-26T20:03:44.960066+00:00",
+      "index": 13,
+      "issue": 593,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:44.611114+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-21",
+        "source_id": "nondriver-action",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-21",
+      "source_id": "nondriver-action",
+      "started_at": "2026-10-26T20:03:44.611114+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/02885e7ed3c7810fc666306eba8db6370e1a2b5a533384457ea279c8b91f8904.json",
+      "actual_check_sha256": "02885e7ed3c7810fc666306eba8db6370e1a2b5a533384457ea279c8b91f8904",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/52f43e8e8388454823283a890c5013dffef8ca7020fb62caed0810321d9403c2.json",
+          "sha256": "52f43e8e8388454823283a890c5013dffef8ca7020fb62caed0810321d9403c2"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action",
+      "finished_at": "2026-10-26T20:03:45.321326+00:00",
+      "index": 14,
+      "issue": 596,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:44.982576+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-22",
+        "source_id": "nondriver-action",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-22",
+      "source_id": "nondriver-action",
+      "started_at": "2026-10-26T20:03:44.982576+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/45a125e1a2da2f6eb2c81e4166f42fd86312ff8ebd804df672ee70b5f224d485.json",
+      "actual_check_sha256": "45a125e1a2da2f6eb2c81e4166f42fd86312ff8ebd804df672ee70b5f224d485",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/f040ea126b217b839abac97a3be13938d8b6ab7edea613b2b94c852276f063be.json",
+          "sha256": "f040ea126b217b839abac97a3be13938d8b6ab7edea613b2b94c852276f063be"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action",
+      "finished_at": "2026-10-26T20:03:45.634863+00:00",
+      "index": 15,
+      "issue": 604,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:45.343380+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-23",
+        "source_id": "nondriver-action",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-23",
+      "source_id": "nondriver-action",
+      "started_at": "2026-10-26T20:03:45.343380+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/dbb5fa7e85d3cc3743ce3489de29f49cd5223fa11c94cf2aed8a0b53015af065.json",
+      "actual_check_sha256": "dbb5fa7e85d3cc3743ce3489de29f49cd5223fa11c94cf2aed8a0b53015af065",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/b0e164951df430d2e2c692bf83b5e212ded9b2c0c9950d2708167bd44acfce9d.json",
+          "sha256": "b0e164951df430d2e2c692bf83b5e212ded9b2c0c9950d2708167bd44acfce9d"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action",
+      "finished_at": "2026-10-26T20:03:45.980806+00:00",
+      "index": 16,
+      "issue": 616,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:45.656828+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-24",
+        "source_id": "nondriver-action",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-24",
+      "source_id": "nondriver-action",
+      "started_at": "2026-10-26T20:03:45.656828+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/56c91d70e95249307274f295206cc3868719aa65607f35cdecbe556ac283994c.json",
+      "actual_check_sha256": "56c91d70e95249307274f295206cc3868719aa65607f35cdecbe556ac283994c",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/32887be836e96721bda67d8070eec49e77b733e8372db8cb813d93e17225369b.json",
+          "sha256": "32887be836e96721bda67d8070eec49e77b733e8372db8cb813d93e17225369b"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action",
+      "finished_at": "2026-10-26T20:03:46.303035+00:00",
+      "index": 17,
+      "issue": 630,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:46.003616+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-25",
+        "source_id": "nondriver-action",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-25",
+      "source_id": "nondriver-action",
+      "started_at": "2026-10-26T20:03:46.003616+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/8b913e8d0eddaf840a5567de5e3c94e7d3e6c47fbb2db8d94a20c4d088bd59da.json",
+      "actual_check_sha256": "8b913e8d0eddaf840a5567de5e3c94e7d3e6c47fbb2db8d94a20c4d088bd59da",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/6a13b39fa51ac4bdde4e2ddc1238995d7e7273a03c1bc85d472b7a7bb47000bb.json",
+          "sha256": "6a13b39fa51ac4bdde4e2ddc1238995d7e7273a03c1bc85d472b7a7bb47000bb"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action",
+      "finished_at": "2026-10-26T20:03:46.628401+00:00",
+      "index": 18,
+      "issue": 636,
+      "kind": "current October26 supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): current October26 supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/nondriver-action; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:46.325797+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-26",
+        "source_id": "nondriver-action",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-26",
+      "source_id": "nondriver-action",
+      "started_at": "2026-10-26T20:03:46.325797+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/699bc3c9614e9921a16d06a25327cd14fc573641481ad32c90823650c6c40173.json",
+      "actual_check_sha256": "699bc3c9614e9921a16d06a25327cd14fc573641481ad32c90823650c6c40173",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/a2718e116ef415c551b3e32eee4647eef2ceda6aee103e5e72274232ce8532ae.json",
+          "sha256": "a2718e116ef415c551b3e32eee4647eef2ceda6aee103e5e72274232ce8532ae"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association",
+      "finished_at": "2026-10-26T20:03:46.985265+00:00",
+      "index": 19,
+      "issue": 593,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:46.656916+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-21",
+        "source_id": "washington-education-association",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-21",
+      "source_id": "washington-education-association",
+      "started_at": "2026-10-26T20:03:46.656916+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/0e09aa6a9c2aa203e4ce7b087d9d2b6d6a4dd47c4595c649e035433d12820e2b.json",
+      "actual_check_sha256": "0e09aa6a9c2aa203e4ce7b087d9d2b6d6a4dd47c4595c649e035433d12820e2b",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/63f6d5e7340e53f41a6569ec2fed30393b81cc5dc9e1c1a384f63b96d38d712a.json",
+          "sha256": "63f6d5e7340e53f41a6569ec2fed30393b81cc5dc9e1c1a384f63b96d38d712a"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association",
+      "finished_at": "2026-10-26T20:03:47.324456+00:00",
+      "index": 20,
+      "issue": 596,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:47.009372+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-22",
+        "source_id": "washington-education-association",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-22",
+      "source_id": "washington-education-association",
+      "started_at": "2026-10-26T20:03:47.009372+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/37709f226ec232634ec0fb2c786ccecb99bbfd255aaf3c5fa7b10f995e2a98b4.json",
+      "actual_check_sha256": "37709f226ec232634ec0fb2c786ccecb99bbfd255aaf3c5fa7b10f995e2a98b4",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/2c1202ee723ff35ad59e1652a984b74275efa8ccb3f00d2d5d600b16d1c9fc16.json",
+          "sha256": "2c1202ee723ff35ad59e1652a984b74275efa8ccb3f00d2d5d600b16d1c9fc16"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association",
+      "finished_at": "2026-10-26T20:03:47.645908+00:00",
+      "index": 21,
+      "issue": 604,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:47.352088+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-23",
+        "source_id": "washington-education-association",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-23",
+      "source_id": "washington-education-association",
+      "started_at": "2026-10-26T20:03:47.352088+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/37e271b749f4ee2690630029e83f85894726c527c1752438f74fd9ceb1faf668.json",
+      "actual_check_sha256": "37e271b749f4ee2690630029e83f85894726c527c1752438f74fd9ceb1faf668",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/84c422f5cd46f621f6f86545ecd6727bbbcc3906cc3243949ec3994d6666d204.json",
+          "sha256": "84c422f5cd46f621f6f86545ecd6727bbbcc3906cc3243949ec3994d6666d204"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association",
+      "finished_at": "2026-10-26T20:03:47.938707+00:00",
+      "index": 22,
+      "issue": 616,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:47.668480+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-24",
+        "source_id": "washington-education-association",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-24",
+      "source_id": "washington-education-association",
+      "started_at": "2026-10-26T20:03:47.668480+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/55aaa1d596d60811da2dea68af5e90debb3188918d3388356142e2412ddf1b29.json",
+      "actual_check_sha256": "55aaa1d596d60811da2dea68af5e90debb3188918d3388356142e2412ddf1b29",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/a56ff293c4732ebd7448cd94ebc8539dc421dbd1ed5be74382469d15b6e6602f.json",
+          "sha256": "a56ff293c4732ebd7448cd94ebc8539dc421dbd1ed5be74382469d15b6e6602f"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association",
+      "finished_at": "2026-10-26T20:03:48.233857+00:00",
+      "index": 23,
+      "issue": 630,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:47.961476+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-25",
+        "source_id": "washington-education-association",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-25",
+      "source_id": "washington-education-association",
+      "started_at": "2026-10-26T20:03:47.961476+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/f6eeeb09169906830e690b91f18bd656f70aac7fb299a7aad41444144adedcd6.json",
+      "actual_check_sha256": "f6eeeb09169906830e690b91f18bd656f70aac7fb299a7aad41444144adedcd6",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/fea6694f00990526a4eee7c5eb2c88b4c5981a635b80c35adada04b282dcc9bb.json",
+          "sha256": "fea6694f00990526a4eee7c5eb2c88b4c5981a635b80c35adada04b282dcc9bb"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association",
+      "finished_at": "2026-10-26T20:03:48.555284+00:00",
+      "index": 24,
+      "issue": 636,
+      "kind": "current October26 supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): current October26 supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:48.256117+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-26",
+        "source_id": "washington-education-association",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-26",
+      "source_id": "washington-education-association",
+      "started_at": "2026-10-26T20:03:48.256117+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/27393820014c452a1c8186849ce1ca8bfe1378c0b44c9acdf9ecbf4be382ee6c.json",
+      "actual_check_sha256": "27393820014c452a1c8186849ce1ca8bfe1378c0b44c9acdf9ecbf4be382ee6c",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/f1be4998987d92481d59b722c2b09eb5a70bd28347eb9e4887278832642e14eb.json",
+          "sha256": "f1be4998987d92481d59b722c2b09eb5a70bd28347eb9e4887278832642e14eb"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger",
+      "finished_at": "2026-10-26T20:03:48.867085+00:00",
+      "index": 25,
+      "issue": 593,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:48.579007+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-21",
+        "source_id": "the-stranger",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-21",
+      "source_id": "the-stranger",
+      "started_at": "2026-10-26T20:03:48.579007+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/8ef9bbcaada5607a60eff3cb75e1d975a1efee11781cfbd2d9f7fa105219eb49.json",
+      "actual_check_sha256": "8ef9bbcaada5607a60eff3cb75e1d975a1efee11781cfbd2d9f7fa105219eb49",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/ac9a60976f182963d54faf547b13a9ed2a2f360fd3ba3e5147fd8621af03eb5f.json",
+          "sha256": "ac9a60976f182963d54faf547b13a9ed2a2f360fd3ba3e5147fd8621af03eb5f"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger",
+      "finished_at": "2026-10-26T20:03:49.177877+00:00",
+      "index": 26,
+      "issue": 596,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:48.889792+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-22",
+        "source_id": "the-stranger",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-22",
+      "source_id": "the-stranger",
+      "started_at": "2026-10-26T20:03:48.889792+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/61dc5f982da27cc385539e8752282061fe3b553db37a2eaae14cd8d80f77f3d4.json",
+      "actual_check_sha256": "61dc5f982da27cc385539e8752282061fe3b553db37a2eaae14cd8d80f77f3d4",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/cba2cd4c6935bb79223132f1369ed794424f3e930dbccf52719e10d7dab7cf56.json",
+          "sha256": "cba2cd4c6935bb79223132f1369ed794424f3e930dbccf52719e10d7dab7cf56"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger",
+      "finished_at": "2026-10-26T20:03:49.497703+00:00",
+      "index": 27,
+      "issue": 604,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:49.201363+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-23",
+        "source_id": "the-stranger",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-23",
+      "source_id": "the-stranger",
+      "started_at": "2026-10-26T20:03:49.201363+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/acc9be81a35429aa9260bccb04e107ff024f94b9f41b719ea1bb9972019bd6f1.json",
+      "actual_check_sha256": "acc9be81a35429aa9260bccb04e107ff024f94b9f41b719ea1bb9972019bd6f1",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/43224801a31e16ae786f435de0f8065cd388d93041ac85a8f0ab66f909697b19.json",
+          "sha256": "43224801a31e16ae786f435de0f8065cd388d93041ac85a8f0ab66f909697b19"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger",
+      "finished_at": "2026-10-26T20:03:49.800325+00:00",
+      "index": 28,
+      "issue": 616,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:49.520774+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-24",
+        "source_id": "the-stranger",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-24",
+      "source_id": "the-stranger",
+      "started_at": "2026-10-26T20:03:49.520774+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/7a2e97eef8fae3e6479f4ce61c900d784727de3dfa813ba3b90ab460a7ee7679.json",
+      "actual_check_sha256": "7a2e97eef8fae3e6479f4ce61c900d784727de3dfa813ba3b90ab460a7ee7679",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/e666010498f0bc0c7af7ce054069035fd8e13edaa8282f2874709dc781927251.json",
+          "sha256": "e666010498f0bc0c7af7ce054069035fd8e13edaa8282f2874709dc781927251"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger",
+      "finished_at": "2026-10-26T20:03:50.107974+00:00",
+      "index": 29,
+      "issue": 630,
+      "kind": "LATE supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:49.823738+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-25",
+        "source_id": "the-stranger",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-25",
+      "source_id": "the-stranger",
+      "started_at": "2026-10-26T20:03:49.823738+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/091df880c03071baa666d37c7761eef8cb162a27c4ee56206b886e0059a49410.json",
+      "actual_check_sha256": "091df880c03071baa666d37c7761eef8cb162a27c4ee56206b886e0059a49410",
+      "actual_reviewed_at": "2026-10-26T18:57:02.720958+00:00",
+      "actual_source_reviewer": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d)",
+      "due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/c814b6433ae5442e62f6be156822b2ba310a0e71e9479b7142d43dc8b1c17d74.json",
+          "sha256": "c814b6433ae5442e62f6be156822b2ba310a0e71e9479b7142d43dc8b1c17d74"
+        }
+      ],
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger",
+      "finished_at": "2026-10-26T20:03:50.414487+00:00",
+      "index": 30,
+      "issue": 636,
+      "kind": "current October26 supplied-snapshot review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T18:57:02.720958Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): current October26 supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/the-stranger; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:50.132164+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-26",
+        "source_id": "the-stranger",
+        "status": "manual"
+      },
+      "scheduled_for": "2026-10-26",
+      "source_id": "the-stranger",
+      "started_at": "2026-10-26T20:03:50.132164+00:00"
+    }
+  ],
+  "actual_supplied_snapshot_source_reviews": 6,
+  "actual_writer": "OpenAI Codex /root",
+  "aggregate_issues_complete": false,
+  "current26_slots": 6,
+  "late_review_does_not_reconstruct_earlier_source_state": true,
+  "normal_CLI_writes": 30,
+  "record_type": "thirty_normal_supplied_snapshot_obligation_acknowledgements",
+  "recorded_at": "2026-10-26T20:03:50.415822+00:00",
+  "scheduled_adoption_credit": false,
+  "schema_version": "1.0"
+}

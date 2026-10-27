@@ -1,0 +1,247 @@
+{
+  "acknowledgements": [
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/3931b5a680f0213b13cafb44480377c796ad9e80e7ea5056789eed82c7c77678.json",
+      "actual_check_sha256": "3931b5a680f0213b13cafb44480377c796ad9e80e7ea5056789eed82c7c77678",
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json#source_reviews/seattle-democratic-socialists",
+      "existing_due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/152f5d08662d674a477f89cbcdd2b93f56f6f1c8dbfec54942de9f86b8dacd1f.json",
+          "sha256": "152f5d08662d674a477f89cbcdd2b93f56f6f1c8dbfec54942de9f86b8dacd1f"
+        }
+      ],
+      "finished_at": "2026-10-26T17:23:46.347617+00:00",
+      "index": 1,
+      "issue": 593,
+      "kind": "LATE original October23 DSA factual review",
+      "normal_check_record": {
+        "checked_at": "2026-10-23T07:52:41.174379Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex delegated researcher /root/review_472_labor_rights_oct23: LATE original October23 DSA factual review; data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json#source_reviews/seattle-democratic-socialists; acknowledgement written now by OpenAI Codex /root at 2026-10-26T17:23:45.816571+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Prior qualifiers, held omissions and explicit Young Democrats enum clarification preserved. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-21",
+        "source_id": "seattle-democratic-socialists",
+        "status": "manual"
+      },
+      "reviewed_at": "2026-10-23T07:52:41.174379+00:00",
+      "reviewer": "OpenAI Codex delegated researcher /root/review_472_labor_rights_oct23",
+      "scheduled_for": "2026-10-21",
+      "source_id": "seattle-democratic-socialists",
+      "started_at": "2026-10-26T17:23:45.816571+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/91b73ecb68b6071d12cd66e72d892df2dd7200bb9c64af25f3136320ec0a9cab.json",
+      "actual_check_sha256": "91b73ecb68b6071d12cd66e72d892df2dd7200bb9c64af25f3136320ec0a9cab",
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json#source_reviews/seattle-democratic-socialists",
+      "existing_due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/1ecd945315f62a5516ae8b356061f87b37c50a6cfcb569901114127ec6e9e603.json",
+          "sha256": "1ecd945315f62a5516ae8b356061f87b37c50a6cfcb569901114127ec6e9e603"
+        }
+      ],
+      "finished_at": "2026-10-26T17:23:46.641278+00:00",
+      "index": 2,
+      "issue": 596,
+      "kind": "LATE original October23 DSA factual review",
+      "normal_check_record": {
+        "checked_at": "2026-10-23T07:52:41.174379Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex delegated researcher /root/review_472_labor_rights_oct23: LATE original October23 DSA factual review; data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json#source_reviews/seattle-democratic-socialists; acknowledgement written now by OpenAI Codex /root at 2026-10-26T17:23:46.369305+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Prior qualifiers, held omissions and explicit Young Democrats enum clarification preserved. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-22",
+        "source_id": "seattle-democratic-socialists",
+        "status": "manual"
+      },
+      "reviewed_at": "2026-10-23T07:52:41.174379+00:00",
+      "reviewer": "OpenAI Codex delegated researcher /root/review_472_labor_rights_oct23",
+      "scheduled_for": "2026-10-22",
+      "source_id": "seattle-democratic-socialists",
+      "started_at": "2026-10-26T17:23:46.369305+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/4f621ae939dbe213af637cdeeb6f661610b0c4415de7099e84cbf17797128166.json",
+      "actual_check_sha256": "4f621ae939dbe213af637cdeeb6f661610b0c4415de7099e84cbf17797128166",
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/young-democrats-of-washington",
+      "existing_due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/96062a1840d70800787355632d32e19de0b59dd4bce79a64c6eee597171e96e5.json",
+          "sha256": "96062a1840d70800787355632d32e19de0b59dd4bce79a64c6eee597171e96e5"
+        }
+      ],
+      "finished_at": "2026-10-26T17:23:46.951861+00:00",
+      "index": 3,
+      "issue": 616,
+      "kind": "LATE current October26 source review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T16:53:57.125084Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex /root/review_636_637_0fc_complete: LATE current October26 source review; data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/young-democrats-of-washington; acknowledgement written now by OpenAI Codex /root at 2026-10-26T17:23:46.663357+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Prior qualifiers, held omissions and explicit Young Democrats enum clarification preserved. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-24",
+        "source_id": "young-democrats-of-washington",
+        "status": "manual"
+      },
+      "reviewed_at": "2026-10-26T16:53:57.125084+00:00",
+      "reviewer": "OpenAI Codex /root/review_636_637_0fc_complete",
+      "scheduled_for": "2026-10-24",
+      "source_id": "young-democrats-of-washington",
+      "started_at": "2026-10-26T17:23:46.663357+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/f3de38c8391cbb2bfda00766f2db284a55b72055e9202afbda22821153a86214.json",
+      "actual_check_sha256": "f3de38c8391cbb2bfda00766f2db284a55b72055e9202afbda22821153a86214",
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/young-democrats-of-washington",
+      "existing_due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/9071f576b541edced32242fd868d1354b303b733d33550018797c1c1ad1dd627.json",
+          "sha256": "9071f576b541edced32242fd868d1354b303b733d33550018797c1c1ad1dd627"
+        }
+      ],
+      "finished_at": "2026-10-26T17:23:47.245949+00:00",
+      "index": 4,
+      "issue": 630,
+      "kind": "LATE current October26 source review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T16:53:57.125084Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex /root/review_636_637_0fc_complete: LATE current October26 source review; data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/young-democrats-of-washington; acknowledgement written now by OpenAI Codex /root at 2026-10-26T17:23:46.972978+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Prior qualifiers, held omissions and explicit Young Democrats enum clarification preserved. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-25",
+        "source_id": "young-democrats-of-washington",
+        "status": "manual"
+      },
+      "reviewed_at": "2026-10-26T16:53:57.125084+00:00",
+      "reviewer": "OpenAI Codex /root/review_636_637_0fc_complete",
+      "scheduled_for": "2026-10-25",
+      "source_id": "young-democrats-of-washington",
+      "started_at": "2026-10-26T17:23:46.972978+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/8d12e702356973b8a557043f546027ced4478407b688655b5480379235657b29.json",
+      "actual_check_sha256": "8d12e702356973b8a557043f546027ced4478407b688655b5480379235657b29",
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/young-democrats-of-washington",
+      "existing_due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/11e217c853545f5c844a465eafcf2f4d93a78d627a4fcd9717e726b0df540fad.json",
+          "sha256": "11e217c853545f5c844a465eafcf2f4d93a78d627a4fcd9717e726b0df540fad"
+        }
+      ],
+      "finished_at": "2026-10-26T17:23:47.535223+00:00",
+      "index": 5,
+      "issue": 636,
+      "kind": "current October26 source review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T16:53:57.125084Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex /root/review_636_637_0fc_complete: current October26 source review; data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/young-democrats-of-washington; acknowledgement written now by OpenAI Codex /root at 2026-10-26T17:23:47.267228+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Prior qualifiers, held omissions and explicit Young Democrats enum clarification preserved. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-26",
+        "source_id": "young-democrats-of-washington",
+        "status": "manual"
+      },
+      "reviewed_at": "2026-10-26T16:53:57.125084+00:00",
+      "reviewer": "OpenAI Codex /root/review_636_637_0fc_complete",
+      "scheduled_for": "2026-10-26",
+      "source_id": "young-democrats-of-washington",
+      "started_at": "2026-10-26T17:23:47.267228+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/ab83c1d3e73f9332d5e2f9aa3834abbf2bb51db273da6dc6123db863c770b231.json",
+      "actual_check_sha256": "ab83c1d3e73f9332d5e2f9aa3834abbf2bb51db273da6dc6123db863c770b231",
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/washington-for-peace-and-justice",
+      "existing_due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/f4761c1b59f4f74132555d05ee1348003d746a4a7fb22ceb110aa30f988f3fd6.json",
+          "sha256": "f4761c1b59f4f74132555d05ee1348003d746a4a7fb22ceb110aa30f988f3fd6"
+        }
+      ],
+      "finished_at": "2026-10-26T17:23:47.828561+00:00",
+      "index": 6,
+      "issue": 616,
+      "kind": "LATE current October26 source review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T16:53:57.125084Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex /root/review_636_637_0fc_complete: LATE current October26 source review; data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/washington-for-peace-and-justice; acknowledgement written now by OpenAI Codex /root at 2026-10-26T17:23:47.557350+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Prior qualifiers, held omissions and explicit Young Democrats enum clarification preserved. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-24",
+        "source_id": "washington-for-peace-and-justice",
+        "status": "manual"
+      },
+      "reviewed_at": "2026-10-26T16:53:57.125084+00:00",
+      "reviewer": "OpenAI Codex /root/review_636_637_0fc_complete",
+      "scheduled_for": "2026-10-24",
+      "source_id": "washington-for-peace-and-justice",
+      "started_at": "2026-10-26T17:23:47.557350+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/556e4a16b720dc20cd285f9054e30616c03cb24535c5c606f02df04fa820f00f.json",
+      "actual_check_sha256": "556e4a16b720dc20cd285f9054e30616c03cb24535c5c606f02df04fa820f00f",
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/washington-for-peace-and-justice",
+      "existing_due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/440c80bb8a2c3a720ca9d1655e02793833e136d5e474ba17b2be2b639a40f2a0.json",
+          "sha256": "440c80bb8a2c3a720ca9d1655e02793833e136d5e474ba17b2be2b639a40f2a0"
+        }
+      ],
+      "finished_at": "2026-10-26T17:23:48.123291+00:00",
+      "index": 7,
+      "issue": 630,
+      "kind": "LATE current October26 source review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T16:53:57.125084Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex /root/review_636_637_0fc_complete: LATE current October26 source review; data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/washington-for-peace-and-justice; acknowledgement written now by OpenAI Codex /root at 2026-10-26T17:23:47.849867+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Prior qualifiers, held omissions and explicit Young Democrats enum clarification preserved. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-25",
+        "source_id": "washington-for-peace-and-justice",
+        "status": "manual"
+      },
+      "reviewed_at": "2026-10-26T16:53:57.125084+00:00",
+      "reviewer": "OpenAI Codex /root/review_636_637_0fc_complete",
+      "scheduled_for": "2026-10-25",
+      "source_id": "washington-for-peace-and-justice",
+      "started_at": "2026-10-26T17:23:47.849867+00:00"
+    },
+    {
+      "actual_check_path": "data/verification/wa-2026-general/checks/5d48cd79df84ae1fd541dc416de4d2715f9e637e69563a4f0469b7724f791de7.json",
+      "actual_check_sha256": "5d48cd79df84ae1fd541dc416de4d2715f9e637e69563a4f0469b7724f791de7",
+      "evidence_ref": "data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/washington-for-peace-and-justice",
+      "existing_due_records": [
+        {
+          "path": "data/verification/wa-2026-general/checks/5eeaecc7cc17cd7b968597dc130d5d548f63949c62a4d0deb79c363bdab378ac.json",
+          "sha256": "5eeaecc7cc17cd7b968597dc130d5d548f63949c62a4d0deb79c363bdab378ac"
+        }
+      ],
+      "finished_at": "2026-10-26T17:23:48.420958+00:00",
+      "index": 8,
+      "issue": 636,
+      "kind": "current October26 source review",
+      "normal_check_record": {
+        "checked_at": "2026-10-26T16:53:57.125084Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex /root/review_636_637_0fc_complete: current October26 source review; data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json#source_reviews/washington-for-peace-and-justice; acknowledgement written now by OpenAI Codex /root at 2026-10-26T17:23:48.144850+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Prior qualifiers, held omissions and explicit Young Democrats enum clarification preserved. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+        "mode": "human",
+        "scheduled_for": "2026-10-26",
+        "source_id": "washington-for-peace-and-justice",
+        "status": "manual"
+      },
+      "reviewed_at": "2026-10-26T16:53:57.125084+00:00",
+      "reviewer": "OpenAI Codex /root/review_636_637_0fc_complete",
+      "scheduled_for": "2026-10-26",
+      "source_id": "washington-for-peace-and-justice",
+      "started_at": "2026-10-26T17:23:48.144850+00:00"
+    }
+  ],
+  "actual_writer": "OpenAI Codex /root",
+  "aggregate_issues_complete": false,
+  "late_review_does_not_reconstruct_earlier_source_state": true,
+  "new_source_review_supported_slots": 6,
+  "new_source_reviews": 2,
+  "normal_CLI_writes": 8,
+  "original_Oct23_DSA_review_supported_LATE_slots": 2,
+  "record_type": "eight_normal_manual_obligation_acknowledgements",
+  "recorded_at": "2026-10-26T17:23:48.421743+00:00",
+  "scheduled_adoption_credit": false,
+  "schema_version": "1.0"
+}
