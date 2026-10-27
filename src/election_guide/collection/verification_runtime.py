@@ -68,7 +68,11 @@ def consecutive_failures(
 ) -> int:
     latest: dict[str, CheckRecord] = {}
     for check in sorted(read_checks(root), key=check_order):
-        if check.source_id == source_id and (through is None or check.scheduled_for <= through):
+        if (
+            check.source_id == source_id
+            and check.status != "manual_due"
+            and (through is None or check.scheduled_for <= through)
+        ):
             latest[check.scheduled_for.isoformat()] = check
     missing_days = {
         day.isoformat() for day in missing or set() if through is None or day <= through

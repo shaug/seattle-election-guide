@@ -14,6 +14,7 @@ from election_guide.calendar.models import ELECTION_TIMEZONE
 from election_guide.collection.models import AccessFailureDiagnostic, RefreshEvent
 from election_guide.collection.refresh import read_refresh_event, record_refresh_failure
 from election_guide.collection.verification import (
+    CHECK_EVIDENCE_MAX_LENGTH,
     CheckRecord,
     RecordedAccessDisposition,
     VerificationModel,
@@ -66,6 +67,9 @@ def record_manual_access_failure(
     ):
         raise ValueError("failed manual access requires an existing dated manual obligation")
     reference = f"{reviewer.strip()}: {evidence.strip()}"
+    # Reject user metadata before appending an immutable refresh at the actual check time.
+    if len(reference) > CHECK_EVIDENCE_MAX_LENGTH:
+        raise ValueError(f"failed access evidence exceeds {CHECK_EVIDENCE_MAX_LENGTH} characters")
     for check in checks:
         if check.source_id == source_id and check.checked_at == checked_at and check.event_id:
             event = read_refresh_event(root / "refreshes" / f"{check.event_id}.json")

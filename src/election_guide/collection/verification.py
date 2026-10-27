@@ -119,13 +119,16 @@ class RecordedAccessDisposition(VerificationModel):
     effective_from: date
 
 
+CHECK_EVIDENCE_MAX_LENGTH = 1100
+
+
 class CheckRecord(VerificationModel):
     source_id: str = Field(pattern=SOURCE_ID_PATTERN)
     scheduled_for: date
     checked_at: AwareDatetime
     status: Literal["created", "updated", "unchanged", "failed", "manual", "manual_due", "missed"]
     event_id: str | None = Field(default=None, pattern=REFRESH_ID_PATTERN)
-    evidence: str | None = Field(default=None, max_length=1100)
+    evidence: str | None = Field(default=None, max_length=CHECK_EVIDENCE_MAX_LENGTH)
     mode: Literal["live", "fixture", "human", "watch"]
     recorded_at: AwareDatetime | None = Field(default=None, exclude_if=lambda value: value is None)
     access_disposition: RecordedAccessDisposition | None = Field(
@@ -372,6 +375,7 @@ def plan_verification(
             )
             observed = {check.scheduled_for for check in history}
             missed_days = {check.scheduled_for for check in history if check.status == "missed"}
+            attempts = [check for check in history if check.status != "manual_due"]
             pending = [day for day in dates if day not in observed]
             due = [day for day in pending if day <= as_of]
             from election_guide.collection.refresh import read_refresh_event
@@ -403,14 +407,14 @@ def plan_verification(
                     else (pending[0] if pending else election_day + timedelta(days=1)),
                     due=bool(due) and as_of <= election_day,
                     limitation=override.limitation,
-                    latest_attempt=history[-1] if history else None,
+                    latest_attempt=attempts[-1] if attempts else None,
                     freshness=(
                         "access_limited"
-                        if history and history[-1].access_disposition
+                        if attempts and attempts[-1].access_disposition
                         else "current"
-                        if successes and history[-1] == successes[-1]
+                        if successes and attempts[-1] == successes[-1]
                         else "review_required"
-                        if history
+                        if attempts
                         else "never_verified"
                     ),
                 )

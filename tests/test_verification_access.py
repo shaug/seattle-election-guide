@@ -531,6 +531,89 @@ def test_failures_keep_distinct_slot_escalation_and_recovery_uses_real_time(
     assert lane.last_successful_check == recovered and lane.freshness == "current"
 
 
+def test_later_due_markers_preserve_earlier_actual_attempts_and_failed_slot_escalation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from datetime import datetime
+
+    from election_guide.collection import verification_access
+    from election_guide.collection.verification import plan_verification, read_policy
+    from election_guide.collection.verification_runtime import consecutive_failures
+    from election_guide.collection.verification_tasks import task_sections
+
+    policy, state, fixtures = setup_access_policy(tmp_path, monkeypatch)
+    root = state / "wa-2026-general"
+    qualify(root, tmp_path)
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-30T19:00:00+00:00")
+    )
+    for count, day in enumerate(("2026-10-27", "2026-10-28", "2026-10-29"), start=1):
+        run_fixture(policy, state, fixtures, day)  # Administrative due marker at 18:00 UTC.
+        before = {p: p.read_bytes() for p in root.rglob("*.json")}
+        args = access_failure_arguments(policy, state)
+        args[args.index("--scheduled-for") + 1] = day
+        args[args.index("--checked-at") + 1] = day + "T17:00:00Z"
+        result = runner.invoke(app, args)
+        assert result.exit_code == 0, result.output
+        failed = json.loads(result.output)
+        assert failed["checked_at"] == day + "T17:00:00Z"
+        lane = next(
+            c
+            for c in plan_verification(read_policy(policy), state, date.fromisoformat(day))
+            .elections[0]
+            .coverage
+            if c.source_id == SOURCE
+        )
+        assert lane.latest_attempt is not None and lane.latest_attempt.status == "failed"
+        assert lane.latest_attempt.checked_at.isoformat() == day + "T17:00:00+00:00"
+        assert lane.last_successful_check == datetime.fromisoformat("2026-10-26T18:00:00+00:00")
+        assert lane.freshness == "access_limited"
+        assert consecutive_failures(root, SOURCE) == count
+        repeated = runner.invoke(app, args)
+        assert repeated.exit_code == 0 and json.loads(repeated.output) == failed
+        assert consecutive_failures(root, SOURCE) == count
+        assert all(p.read_bytes() == raw for p, raw in before.items())
+    sections = task_sections(
+        read_policy(policy), state, date(2026, 10, 29), "example/guide", "a" * 40, watch=False
+    )
+    assert any(s["source_id"] == SOURCE and s["handled"] and s["escalated"] for s in sections)
+    # A later slot's administrative marker is neither an attempt nor a successful recovery.
+    run_fixture(policy, state, fixtures, "2026-10-30")
+    lane = next(
+        c
+        for c in plan_verification(read_policy(policy), state, date(2026, 10, 30))
+        .elections[0]
+        .coverage
+        if c.source_id == SOURCE
+    )
+    assert lane.latest_attempt is not None
+    assert lane.latest_attempt.checked_at.isoformat() == "2026-10-29T17:00:00+00:00"
+    assert lane.freshness == "access_limited" and consecutive_failures(root, SOURCE) == 3
+
+
+@pytest.mark.parametrize("option", ["--reviewer", "--evidence"])
+def test_rejected_manual_metadata_leaves_no_event_and_truthful_time_retry_succeeds(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, option: str
+) -> None:
+    policy, state, fixtures = setup_verification_fixture(tmp_path, monkeypatch)
+    run_fixture(policy, state, fixtures, "2026-10-26")
+    root = state / "wa-2026-general"
+    before = {p.relative_to(root): p.read_bytes() for p in root.rglob("*.json")}
+    args = access_failure_arguments(policy, state)
+    args[args.index(option) + 1] = "x" * 1101
+    rejected = runner.invoke(app, args)
+    assert rejected.exit_code != 0
+    assert {p.relative_to(root): p.read_bytes() for p in root.rglob("*.json")} == before
+    corrected = runner.invoke(app, access_failure_arguments(policy, state))
+    assert corrected.exit_code == 0, corrected.output
+    failed = json.loads(corrected.output)
+    assert failed["status"] == "failed" and failed["checked_at"] == "2026-10-26T20:00:00Z"
+    after = {p.relative_to(root): p.read_bytes() for p in root.rglob("*.json")}
+    repeated = runner.invoke(app, access_failure_arguments(policy, state))
+    assert repeated.exit_code == 0 and json.loads(repeated.output) == failed
+    assert {p.relative_to(root): p.read_bytes() for p in root.rglob("*.json")} == after
+
+
 def test_handled_only_comment_does_not_reopen_but_unresolved_observation_does(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
