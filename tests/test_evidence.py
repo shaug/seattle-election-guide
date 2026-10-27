@@ -245,7 +245,7 @@ def test_restricted_capture_manifest_does_not_embed_local_path_or_content(tmp_pa
     storage_root = tmp_path / "private-snapshots"
     manifest_path = record_capture(
         _capture_request(redistribution="restricted"),
-        FIXTURES / "static.html",
+        _isolated_artifact(tmp_path, "static.html"),
         storage_root,
         tmp_path / "public-manifests",
     )
@@ -267,7 +267,7 @@ def test_manual_image_entry_imports_with_verified_capture(tmp_path: Path) -> Non
             http_status=None,
             redistribution="restricted",
         ),
-        FIXTURES / "endorsement-card.svg",
+        _isolated_artifact(tmp_path, "endorsement-card.svg"),
         storage_root,
         manifest_dir,
     )
@@ -995,7 +995,7 @@ def test_capture_outside_any_repository_is_allowed(tmp_path: Path) -> None:
     manifest = read_capture_manifest(
         record_capture(
             _capture_request(redistribution="restricted"),
-            FIXTURES / "static.html",
+            _isolated_artifact(tmp_path, "static.html"),
             tmp_path / "external-store",
             tmp_path / "manifests",
         )
@@ -1107,7 +1107,7 @@ def test_presence_survey_require_local_drops_the_absent_store_exemption(tmp_path
     local_root = tmp_path / "snapshots"
     record_capture(
         _capture_request(redistribution="restricted"),
-        FIXTURES / "static.html",
+        _isolated_artifact(tmp_path, "static.html"),
         local_root,
         manifest_dir,
     )
@@ -1143,7 +1143,7 @@ def test_presence_survey_exemption_does_not_depend_on_the_store_existing(
     manifest = read_capture_manifest(
         record_capture(
             _capture_request(redistribution="restricted"),
-            FIXTURES / "static.html",
+            _isolated_artifact(tmp_path, "static.html"),
             local_root,
             manifest_dir,
         )
@@ -1166,6 +1166,13 @@ def test_presence_survey_exemption_does_not_depend_on_the_store_existing(
 
     assert [entry.status for entry in survey] == ["expected-absent"]
     assert [entry.status for entry in required] == ["missing"]
+
+
+def _isolated_artifact(root: Path, name: str) -> Path:
+    """The same bytes without incidental custody of the project's Git index."""
+    path = root / name
+    path.write_bytes((FIXTURES / name).read_bytes())
+    return path
 
 
 def _capture_request(

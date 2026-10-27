@@ -1,0 +1,625 @@
+{
+  "tests/test_analytics.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_authorities.py": {
+    "suite": "unit",
+    "tests": {
+      "test_committed_authority_registry_registers_the_wa_2026_primary_authorities": "contract"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_ballot_order.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_calendar.py": {
+    "suite": "contract",
+    "tests": {
+      "test_capturing_certified_results_before_certification_fails_validation": "unit",
+      "test_collection_opening_rejects_multiple_guide_publication_deadlines": "unit",
+      "test_collection_opening_requires_one_guide_publication_deadline": "unit",
+      "test_election_with_two_election_day_milestones_fails_validation": "unit",
+      "test_election_without_a_results_capture_milestone_fails_validation": "unit",
+      "test_election_without_an_election_day_milestone_fails_validation": "unit",
+      "test_full_runway_primary_or_general_requires_each_early_ballot_anchor": "unit",
+      "test_full_runway_special_requires_regular_overseas_issuance": "unit",
+      "test_guide_publication_cannot_precede_any_collection_opening": "unit",
+      "test_guide_publication_cannot_wait_past_regular_overseas_issuance": "unit",
+      "test_milestone_naming_an_undeclared_election_fails_validation": "unit",
+      "test_offset_must_agree_with_the_milestone_phase": "unit",
+      "test_offset_outside_the_planning_horizon_fails_validation": "unit",
+      "test_reference_outside_the_repository_fails_validation": "unit",
+      "test_repeated_election_identity_fails_validation": "unit",
+      "test_repeated_milestone_identity_fails_validation": "unit",
+      "test_undeclared_field_fails_validation": "unit"
+    },
+    "partition": "integration-comparisons"
+  },
+  "tests/test_calendar_feed.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_calendar_results_ingest.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_calendar_tracking.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_calendar_watch.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_changelog.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_check_links_workflow.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_ci.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_cli.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_client_payload_types.py": {
+    "suite": "contract",
+    "tests": {
+      "test_every_page_payload_declares_its_schema_version": "unit",
+      "test_field_coverage_recognizes_optional_fields_without_accepting_missing_fields": "unit",
+      "test_the_schema_forbids_undeclared_payload_fields": "unit"
+    },
+    "partition": "integration-comparisons"
+  },
+  "tests/test_collection.py": {
+    "suite": "unit",
+    "tests": {
+      "test_project_adapter_is_complete_and_inventory_validated": "contract"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_collection_http.py": {
+    "suite": "integration",
+    "tests": {
+      "test_live_fetch_serializes_host_with_the_scheme_default_port": "unit",
+      "test_public_form_post_preserves_response_bounds": "unit",
+      "test_public_form_post_refuses_redirect_without_replaying": "unit",
+      "test_public_form_post_rejects_private_connected_peer": "unit",
+      "test_public_form_post_serializes_reviewed_fields": "unit"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_compare_rendering.py": {
+    "suite": "integration",
+    "tests": {
+      "test_agreement_tones_recompute_when_the_reference_changes": "e2e",
+      "test_all_agree_and_no_match_empty_states_are_distinct_and_resettable": "e2e",
+      "test_coendorsement_intersection_and_blank_are_not_differences": "e2e",
+      "test_compare_certified_result_never_reaches_the_reference_position": "e2e",
+      "test_compare_client_enforces_picker_bounds_and_history": "e2e",
+      "test_compare_client_labels_comparison_category_truthfully": "e2e",
+      "test_compare_client_migrates_stale_links_without_promoting_a_new_reference": "e2e",
+      "test_compare_client_mobile_add_action_is_compact_and_opens_the_new_picker": "e2e",
+      "test_compare_client_mobile_budget_and_focus_have_layout_evidence": "e2e",
+      "test_compare_client_preserves_an_arbitrary_first_reference_from_a_legacy_fragment": "e2e",
+      "test_compare_client_presets_filters_and_url_round_trip": "e2e",
+      "test_compare_client_removes_the_first_column_and_promotes_the_next_reference": "e2e",
+      "test_compare_client_reports_a_guide_link_instead_of_ignoring_it": "e2e",
+      "test_compare_client_swaps_the_reference_and_recomputes_relative_state": "e2e",
+      "test_compare_header_uses_one_compact_corner_action_geometry": "e2e",
+      "test_compare_picker_offers_certified_result_only_once_a_file_exists": "e2e",
+      "test_compare_result_column_carries_no_agreement_and_never_affects_differs": "e2e",
+      "test_compare_result_column_states_a_measures_approved_or_rejected_outcome": "e2e",
+      "test_compare_table_headers_stack_below_controls_without_overlap": "e2e",
+      "test_comparison_columns_do_not_compress_below_the_supported_320px_floor": "e2e",
+      "test_default_differences_match_fixed_oracle_with_visual_and_accessible_signals": "e2e",
+      "test_each_comparison_preset_clicks_and_loads_its_exact_ordered_columns": "e2e",
+      "test_guide_and_compare_controls_share_the_scroll_placement_contract": "e2e",
+      "test_guide_and_compare_shared_controls_have_the_same_composition_and_geometry": "e2e",
+      "test_legacy_differing_and_contested_differences_fragments_restore_independent_controls": "e2e",
+      "test_mobile_comparison_scrolls_columns_while_preserving_context": "e2e",
+      "test_mobile_lower_rows_keep_visible_source_identity": "e2e"
+    },
+    "partition": "integration-comparisons"
+  },
+  "tests/test_comparisons.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_corrections.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_corrections_rendering.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_current_factual_mappings.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_evidence.py": {
+    "suite": "unit",
+    "tests": {
+      "test_capture_from_a_linked_worktree_into_the_primary_checkout_is_allowed": "integration",
+      "test_capture_into_a_subdirectory_of_the_official_store_is_refused": "integration",
+      "test_ignored_capture_inside_a_linked_worktree_fails_before_reporting_success": "integration",
+      "test_permitted_capture_into_a_tracked_root_records_repository_scope": "integration",
+      "test_presence_survey_reports_a_lost_repository_artifact_as_missing": "integration",
+      "test_presence_survey_reports_every_manifest_by_scope": "integration",
+      "test_presence_survey_reports_tampered_bytes_as_corrupt": "integration",
+      "test_restricted_capture_accepts_nonexistent_ignored_storage_root": "integration",
+      "test_restricted_capture_checks_actual_bytes_despite_hidden_index_flags": "integration",
+      "test_restricted_capture_into_an_ignored_root_stays_local_only": "integration",
+      "test_restricted_capture_rejects_index_only_input": "integration",
+      "test_restricted_capture_rejects_modified_committed_input": "integration",
+      "test_restricted_capture_rejects_unignored_repository_paths": "integration",
+      "test_restricted_capture_requires_ignored_repository_storage": "integration",
+      "test_tracked_capture_inside_a_linked_worktree_is_allowed": "integration"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_frontend_bundle.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_frontend_ratchets.py": {
+    "suite": "unit",
+    "tests": {
+      "test_every_full_document_template_extends_the_shared_layout": "contract",
+      "test_every_rule_in_the_document_says_what_holds_it": "contract",
+      "test_inline_script_stays_within_its_recorded_ceiling": "contract",
+      "test_module_injection_placeholders_are_registered": "contract",
+      "test_no_module_builds_an_html_document_from_a_python_string": "contract"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_general_source_panel.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_github_cli.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_hosting.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_hosting_check_production_cli.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_hosting_models.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_hosting_releases.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_initialization.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_inventory.py": {
+    "suite": "unit",
+    "tests": {
+      "test_committed_inventory_matches_retained_safe_inputs": "contract"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_link_check.py": {
+    "suite": "unit",
+    "tests": {
+      "test_link_check_targets_are_sorted_by_source_id": "contract",
+      "test_link_check_targets_cover_every_source_with_a_citable_url": "contract",
+      "test_link_check_targets_skip_a_restricted_source_with_no_canonical_url": "contract"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_link_check_state.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_link_rot_alert.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_mirrors.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_normalization.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_og_image.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_page_stylesheets.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_personalization.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_preview_teardown.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_production_check.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_production_probe.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_production_verification_workflow.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_production_wait.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_publication.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release_admission_read.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release_artifact_download.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release_automation_workflow.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release_candidate.py": {
+    "suite": "integration",
+    "tests": {
+      "test_producer_rejects_invalid_fields": "unit",
+      "test_file_digest_rejects_invalid_fields": "unit"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release_comparison.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release_declaration.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_release_evidence.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release_history.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_release_lineage.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_release_promotion.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release_publication.py": {
+    "suite": "integration",
+    "tests": {
+      "test_published_predecessor_rejects_invalid_exact_release": "unit"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_release_runbook.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_release_workflow.py": {
+    "suite": "integration",
+    "tests": {
+      "test_source_capture_requires_full_exact_checkout": "unit"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_rendering.py": {
+    "suite": "integration",
+    "tests": {
+      "test_a_comparison_token_is_inert_while_the_policy_is_disabled": "e2e",
+      "test_a_pre_removal_shared_link_replays_with_its_comparison_token_ignored": "e2e",
+      "test_a_race_page_shares_its_own_canonical_address": "e2e",
+      "test_browser_evaluation_preserves_connection_diagnostics": "e2e",
+      "test_browser_evaluation_preserves_startup_diagnostics": "e2e",
+      "test_candidate_meter_closing_split_border_uses_lower_half_seam": "e2e",
+      "test_chrome_page_failure_does_not_gain_startup_diagnostics": "e2e",
+      "test_chrome_startup_diagnostic_probe_failure_preserves_original_and_cleanup": "e2e",
+      "test_chrome_startup_early_exit_diagnostics_precede_cleanup": "e2e",
+      "test_chrome_startup_malformed_diagnostics_keep_original_parse_error": "e2e",
+      "test_chrome_startup_timeout_diagnostics_are_bounded_and_precleanup": "e2e",
+      "test_chrome_startup_unreadable_diagnostics_preserve_read_error": "e2e",
+      "test_chromium_build_is_semantically_faithful_and_visually_safe": "e2e",
+      "test_full_race_card_stacks_name_and_meter_below_480px": "e2e",
+      "test_masthead_share_button_uses_web_share_then_falls_back_to_copy": "e2e",
+      "test_mobile_meter_hold_glide_release_and_native_scroll": "e2e",
+      "test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources": "e2e",
+      "test_nonempty_render_destination_is_preserved": "e2e",
+      "test_overview_meter_progressively_discloses_endorsement_segments": "e2e",
+      "test_personalization_compact_caption_shows_only_the_lens_short_form": "e2e",
+      "test_personalization_divergent_race_discloses_a_compact_comparison_on_its_card": "e2e",
+      "test_personalization_full_panel_selection_shows_no_divergent_comparison": "e2e",
+      "test_personalization_initial_my_sources_matches_audited_consensus": "e2e",
+      "test_personalization_malformed_link_falls_back_to_audited_with_a_persistent_notice": "e2e",
+      "test_personalization_notice_clears_on_the_next_explicit_change": "e2e",
+      "test_personalization_ordinary_anchor_navigation_never_shows_a_lens_notice": "e2e",
+      "test_personalization_ordinary_anchor_survives_initial_load_while_disabled": "e2e",
+      "test_personalization_prior_schema_link_falls_back_to_a_clean_base_url": "e2e",
+      "test_personalization_reactive_banner_appends_below_the_controls_not_over_them": "e2e",
+      "test_personalization_shared_link_restores_the_same_version_selection": "e2e",
+      "test_personalization_stale_link_migrates_with_a_persistent_notice": "e2e",
+      "test_personalization_unresolvable_link_falls_back_to_audited_with_a_persistent_notice": "e2e",
+      "test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_screen": "e2e",
+      "test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole": "e2e",
+      "test_public_views_require_full_panel_confidence_for_uncontested_races": "e2e",
+      "test_race_detail_split_meter_stays_statically_segmented": "e2e",
+      "test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sources": "e2e",
+      "test_race_page_pins_the_lens_strip_the_way_the_guide_pins_its_own": "e2e",
+      "test_race_page_reflects_the_active_lens_leader_not_the_audited_default": "e2e",
+      "test_race_page_restores_an_active_lens_from_its_own_link": "e2e",
+      "test_race_page_sticky_strip_is_hidden_when_printed": "e2e",
+      "test_race_page_with_personalization_disabled_renders_unchanged": "e2e",
+      "test_shared_footer_closes_short_viewport_and_follows_tall_content": "e2e",
+      "test_shared_footer_keeps_icons_on_row_one_and_provenance_full_width_on_squeeze": "e2e",
+      "test_single_split_block_uses_lower_half_seam": "e2e",
+      "test_sources_links_carry_the_guides_current_fragment": "e2e",
+      "test_sources_strip_keeps_the_same_geometry_between_default_and_lens_states": "e2e",
+      "test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing": "e2e",
+      "test_the_persistent_action_strip_renders_at_a_whole_pixel_height": "e2e",
+      "test_the_results_chip_wraps_beneath_a_narrow_headings_name": "e2e",
+      "test_the_sticky_header_declares_its_own_compositing_promotion": "e2e",
+      "test_the_support_caption_stays_inside_its_column_beside_the_name": "e2e"
+    },
+    "partition": "integration-rendering"
+  },
+  "tests/test_results.py": {
+    "suite": "unit",
+    "tests": {
+      "test_cli_results_ingest_accepts_an_election_night_capture": "integration",
+      "test_cli_results_ingest_checks_calendar_certification_date": "integration",
+      "test_cli_results_ingest_fails_for_an_unknown_authority": "integration",
+      "test_cli_results_ingest_reads_a_repository_scope_certified_capture": "integration",
+      "test_cli_results_ingest_rejects_an_unavailable_election_night_capture": "integration",
+      "test_cli_results_ingest_requires_at_least_one_race_id": "integration",
+      "test_cli_results_ingest_secretary_of_state_merges_into_an_existing_file": "integration",
+      "test_cli_results_ingest_secretary_of_state_requires_an_existing_file": "integration",
+      "test_cli_results_ingest_secretary_of_state_requires_at_least_one_race_id": "integration",
+      "test_cli_results_validate_accepts_a_valid_certified_file": "integration",
+      "test_cli_results_validate_rejects_a_committed_counting_file": "integration",
+      "test_cli_results_validate_rejects_an_unmatched_choice_id": "integration",
+      "test_resolve_race_matches_every_publication_eligible_race_label": "contract"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_retrospective.py": {
+    "suite": "contract",
+    "tests": {
+      "test_the_figure_guard_catches_what_it_was_written_for": "unit"
+    },
+    "partition": "integration-comparisons"
+  },
+  "tests/test_scoring.py": {
+    "suite": "unit",
+    "tests": {
+      "test_score_cli_writes_valid_canonical_report": "integration",
+      "test_score_comparison_cli_is_deterministic_and_complete": "integration",
+      "test_committed_source_panel_impact_matches_current_scoring": "contract"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_serialization.py": {
+    "suite": "unit",
+    "tests": {
+      "test_yaml_safe_fallback_without_libyaml": "integration"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_shared_names.py": {
+    "suite": "contract",
+    "tests": {
+      "test_a_data_attribute_is_not_confused_with_a_longer_one": "unit",
+      "test_a_name_is_not_found_in_a_file_named_after_it": "unit",
+      "test_the_breakpoint_scan_needs_a_width_context_outside_the_stylesheet": "unit",
+      "test_the_class_scan_reports_only_names_executable_code_spells": "unit",
+      "test_the_class_vocabulary_ignores_file_names_in_comments": "unit",
+      "test_the_data_attribute_scan_sees_every_authoring_form": "unit",
+      "test_survey_snapshot_is_immutable_and_independent_of_its_input": "unit"
+    },
+    "partition": "integration-comparisons"
+  },
+  "tests/test_single_issue_alert.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_sources.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_sources_check_links_cli.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_stonewall_evidence.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_suite_policy.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_template_environment.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_updates_baseline.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_updates_gate.py": {
+    "suite": "unit",
+    "tests": {
+      "test_cli_blocks_a_change_and_preserves_the_page_report": "integration",
+      "test_cli_writes_failure_evidence_when_baseline_is_missing": "integration"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_updates_history.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_verification_access.py": {
+    "suite": "integration",
+    "tests": {
+      "test_handled_only_comment_does_not_reopen_but_unresolved_observation_does": "unit",
+      "test_genuine_legacy_run_keeps_its_immutable_serialization_identity": "unit"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_verification_discovery.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_verification_runtime.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_verification_schedule.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_verification_sources.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_verification_tasks.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
+  "tests/test_verification_tru.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_verification_ufcw.py": {
+    "suite": "integration",
+    "tests": {
+      "test_ufcw_current_publication_extracts_all_33_verified_decisions": "unit"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_verification_vault.py": {
+    "suite": "unit",
+    "tests": {
+      "test_committed_vault_restores_identical_evidence_on_a_fresh_runner": "integration",
+      "test_restore_rejects_ciphertext_changes_and_paths_into_public_git": "integration",
+      "test_vault_missing_key_fails_before_creating_publishable_evidence": "integration",
+      "test_vault_tampering_or_wrong_key_cannot_become_verified_evidence": "integration"
+    },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_verification_wfp.py": {
+    "suite": "integration",
+    "tests": {
+      "test_request_policy_rejects_other_sources_endpoints_and_forms": "unit"
+    },
+    "partition": "integration-comparisons"
+  },
+  "tests/test_verification_workflows.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_release_fixtures.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  }
+}

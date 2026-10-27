@@ -1,10 +1,5 @@
-.PHONY: sync format check check-election-contracts check-evidence check-results check-js check-changelog check-release-reproducible check-release-reproducible-general check-updates changelog types test test-unit test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify release-verify-primary release-verify-general hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-election-contracts check-evidence check-results check-js check-changelog check-release-reproducible check-release-reproducible-general check-updates changelog types test test-unit test-contract test-e2e test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify release-verify-primary release-verify-general hosting-stage hosting-serve hosting-deploy
 
-INTEGRATION_COMPARISONS_TESTS := tests/test_compare_rendering.py
-INTEGRATION_RENDERING_TESTS := tests/test_rendering.py tests/test_precinct_rendering.py tests/test_precinct_navigation.py
-INTEGRATION_ARTIFACT_TESTS := tests/test_hosting.py tests/test_hosting_releases.py tests/test_release.py
-INTEGRATION_TESTS := $(INTEGRATION_COMPARISONS_TESTS) $(INTEGRATION_RENDERING_TESTS) $(INTEGRATION_ARTIFACT_TESTS)
-UNIT_TEST_IGNORES := $(addprefix --ignore=,$(INTEGRATION_TESTS))
 GENERAL_RELEASE_LEDGER := data/releases/wa-2026-general/source-decisions.yaml
 GENERAL_RELEASE_INPUTS := --inventory-path data/normalized/wa-2026-general-inventory.json --registry-path config/sources/wa-2026-general.yaml --dataset-path data/normalized/wa-2026-general-canonical-dataset.json --snapshot-root data/releases/wa-2026-general/snapshots --manifest-dir data/releases/wa-2026-general/manifests
 
@@ -89,24 +84,29 @@ types:
 test:
 	uv run pytest
 
-# The integration boundary is centralized here so local commands and CI cannot
-# silently cover different files (issue #428). These partitions are balanced by
-# measured duration rather than test count: rendering, Chromium interaction, and
-# full publication artifact construction dominate the suite's wall time.
+# tests/suites.json owns semantic boundaries and duration-balanced required
+# partitions (#651). Collection rejects missing assignments and duplicate nodes.
+# The existing check names stay stable for exact-source release admission.
 test-unit:
-	uv run pytest $(UNIT_TEST_IGNORES)
+	uv run pytest --test-partition unit
+
+test-contract:
+	uv run pytest --test-suite contract
+
+test-e2e:
+	uv run pytest --test-suite e2e
 
 test-integration:
-	uv run pytest $(INTEGRATION_TESTS)
+	uv run pytest --test-suite integration
 
 test-integration-comparisons:
-	uv run pytest $(INTEGRATION_COMPARISONS_TESTS)
+	uv run pytest --test-partition integration-comparisons
 
 test-integration-rendering:
-	uv run pytest $(INTEGRATION_RENDERING_TESTS)
+	uv run pytest --test-partition integration-rendering
 
 test-integration-artifacts:
-	uv run pytest $(INTEGRATION_ARTIFACT_TESTS)
+	uv run pytest --test-partition integration-artifacts
 
 release-verify: release-verify-general
 

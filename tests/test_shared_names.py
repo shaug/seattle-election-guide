@@ -77,8 +77,12 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import TypedDict, cast
+from types import MappingProxyType
+from typing import Any, TypedDict, cast
+
+import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_ROOT = REPO_ROOT / "src" / "election_guide"
@@ -100,6 +104,28 @@ class SharedNames(TypedDict):
     data_attributes: dict[str, list[str]]
     class_names: dict[str, list[str]]
     breakpoints: dict[str, list[str]]
+
+
+FrozenSurvey = Mapping[str, Mapping[str, tuple[str, ...]]]
+
+
+def freeze_survey(survey: SharedNames) -> FrozenSurvey:
+    categories = {
+        "data_attributes": survey["data_attributes"],
+        "class_names": survey["class_names"],
+        "breakpoints": survey["breakpoints"],
+    }
+    return MappingProxyType(
+        {
+            category: MappingProxyType({name: tuple(kinds) for name, kinds in values.items()})
+            for category, values in categories.items()
+        }
+    )
+
+
+@pytest.fixture(scope="module")
+def tree_survey() -> FrozenSurvey:
+    return freeze_survey(survey_tree())
 
 
 def read_manifest() -> SharedNames:
@@ -376,12 +402,27 @@ def test_the_breakpoint_scan_needs_a_width_context_outside_the_stylesheet() -> N
     assert breakpoint_survey(coincidence) == {}
 
 
+def test_survey_snapshot_is_immutable_and_independent_of_its_input() -> None:
+    original: SharedNames = {
+        "data_attributes": {"data-probe-region": ["template", "client"]},
+        "class_names": {},
+        "breakpoints": {},
+    }
+    snapshot = freeze_survey(original)
+    original["data_attributes"]["data-probe-region"].append("test")
+    assert snapshot["data_attributes"] == {"data-probe-region": ("template", "client")}
+    with pytest.raises(TypeError):
+        cast(Any, snapshot["data_attributes"])["data-probe-region"] = ()
+
+
 # --------------------------------------------------------------------------
 # The contract itself.
 # --------------------------------------------------------------------------
 
 
-def _assert_declared(declared: dict[str, list[str]], found: dict[str, list[str]]) -> None:
+def _assert_declared(
+    declared: Mapping[str, Sequence[str]], found: Mapping[str, Sequence[str]]
+) -> None:
     undeclared = {name: kinds for name, kinds in found.items() if name not in declared}
     assert not undeclared, (
         f"{sorted(undeclared)} are spelled on more than one surface but are not declared in "
@@ -398,7 +439,7 @@ def _assert_declared(declared: dict[str, list[str]], found: dict[str, list[str]]
     drifted = {
         name: {"declared": declared[name], "found": kinds}
         for name, kinds in found.items()
-        if name in declared and declared[name] != kinds
+        if name in declared and tuple(declared[name]) != tuple(kinds)
     }
     assert not drifted, (
         f"the surfaces spelling {sorted(drifted)} are not the ones tests/shared_names.json "
@@ -408,19 +449,19 @@ def _assert_declared(declared: dict[str, list[str]], found: dict[str, list[str]]
     )
 
 
-def test_shared_data_attributes_are_declared_once() -> None:
+def test_shared_data_attributes_are_declared_once(tree_survey: FrozenSurvey) -> None:
     """docs/FRONTEND.md, Shared names: `data-*` attributes are declared once."""
-    _assert_declared(read_manifest()["data_attributes"], survey_tree()["data_attributes"])
+    _assert_declared(read_manifest()["data_attributes"], tree_survey["data_attributes"])
 
 
-def test_shared_class_names_are_declared_once() -> None:
+def test_shared_class_names_are_declared_once(tree_survey: FrozenSurvey) -> None:
     """docs/FRONTEND.md, Shared names: a class name executable code spells is declared."""
-    _assert_declared(read_manifest()["class_names"], survey_tree()["class_names"])
+    _assert_declared(read_manifest()["class_names"], tree_survey["class_names"])
 
 
-def test_shared_breakpoints_are_declared_once() -> None:
+def test_shared_breakpoints_are_declared_once(tree_survey: FrozenSurvey) -> None:
     """docs/FRONTEND.md, Shared names: breakpoints are declared once."""
-    _assert_declared(read_manifest()["breakpoints"], survey_tree()["breakpoints"])
+    _assert_declared(read_manifest()["breakpoints"], tree_survey["breakpoints"])
 
 
 def declared_names() -> dict[str, list[str]]:

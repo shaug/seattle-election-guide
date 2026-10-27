@@ -292,6 +292,28 @@ def test_source_requires_merged_main_pr(admission: tuple[Any, ...], case: str) -
         promotion.verify_merged_release_source(root, source_sha=sha)
 
 
+@pytest.mark.parametrize(
+    "lane",
+    [
+        "pytest (unit)",
+        "pytest (integration-comparisons)",
+        "pytest (integration-rendering)",
+        "pytest (integration-artifacts)",
+    ],
+)
+@pytest.mark.parametrize("state", ["missing", "failure", "cancelled", "skipped"])
+def test_each_required_test_partition_blocks_promotion_when_incomplete(
+    admission: tuple[Any, ...], lane: str, state: str
+) -> None:
+    promotion, record, root, api = admission
+    if state == "missing":
+        api.jobs = [job for job in api.jobs if job["name"] != lane]
+    else:
+        next(job for job in api.jobs if job["name"] == lane)["conclusion"] = state
+    with pytest.raises(ValueError, match="exact-source CI lane has not succeeded"):
+        promotion.verify_merged_release_source(root, source_sha=record.source_sha)
+
+
 def artifact_metadata(record: Any, artifact: Any) -> dict[str, Any]:
     return {
         "id": artifact.id,
