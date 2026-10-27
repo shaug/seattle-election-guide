@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-26T13:23:25.204352Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source washington-community-action-network; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.washingtoncan.org/endorsements",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1789506320122-9AW0DKTSI0ZPP4BYRWI3/No+hate+in+wa+state+for+website.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1789505191999-20HFECETIFPIKHRHT3V7/No+on+648+for+website.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316472599-H2O2LHYFK7R37XHJ9LYV/US+7+Pramila+Jayapal.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316469031-DAD1BHUNS0BX5T8MMGVO/WA+11+David+Hackney.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316469018-N1U8CFVOU5Z3HKPMWSB7/WA+30+Claire+Wilson+2.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316575036-4D6ILKTWKQZFL6SZ67U3/WA+30+Jamilia+Taylor+%281%29.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316470406-AS7UWT1PXUY23OICJOPC/WA+33+Mia+Su-Ling+Gregerson.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1792627705502-J169R49TRDEJT8J14A2N/WA+37+Chipalo+Street.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1792627780366-YRS1IN52KNQW178S0VVY/WA+45+Manka+Dhingra+%281%29.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316470015-ZUKYFTSZDIVAKMF8KKRT/WA+45+Roger+Goodman.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1786316473276-28F74S18PNO6O7YHE3GX/WA+47+Claudia+Kauffman.png",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/5fe1ff20-4d88-4a9f-9c32-8a83d8996014/2026+General+Endorsements++-+2.PNG",
+    "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/96031cac-155f-4c00-b312-347cf37d7c8c/2026+General+Endorsements++-+1.PNG"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_civic_oct26",
+  "recorded_at": "2026-10-27T03:02:42.448033Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:28:14.813497Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-community-action-network"
+}

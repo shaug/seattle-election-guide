@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-19T14:40:58.618629Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source the-stranger; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+    "https://i0.wp.com/www.thestranger.com/wp-content/uploads/2026/10/SECB-Cheat-Sheet_Oct_Stranger_2026-1.jpg?fit=695%2C2520&ssl=1",
+    "https://www.thestranger.com/news/the-strangers-2026-general-election-endorsements/"
+  ],
+  "original_reviewer": "OpenAI Codex / oct19_civic_sources",
+  "recorded_at": "2026-10-27T03:02:38.124607Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-19T14:45:54.317571Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "the-stranger"
+}

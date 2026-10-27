@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-26T13:21:47.112423Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source alliance-for-gun-responsibility; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://gunresponsibility.org/2026-endorsements/",
+    "https://gunresponsibility.org/wp-content/smush-webp/2026/06/2026-Endorsements-Header-1024x512.png.webp"
+  ],
+  "original_reviewer": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26",
+  "recorded_at": "2026-10-27T03:02:23.066436Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:23:57.021782Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "alliance-for-gun-responsibility"
+}

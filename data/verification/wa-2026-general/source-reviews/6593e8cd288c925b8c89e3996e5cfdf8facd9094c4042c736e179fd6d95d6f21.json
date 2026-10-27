@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-26T10:22:20.351152Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-automatic.json; source transit-riders-union; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://transitriders.org/",
+    "https://transitriders.org/2026-general-election-endorsements/",
+    "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+    "https://transitriders.sfo3.digitaloceanspaces.com/transitriders.org/wp-content/uploads/2026/10/17022007/TRU_November_2026_General_Endorsements-1024x581.jpg"
+  ],
+  "original_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+  "recorded_at": "2026-10-27T03:02:39.578652Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T10:26:34.330535Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "transit-riders-union"
+}

@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-10-26T13:23:43.602629Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source washington-bus; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.washingtonbus.org/endorsements",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/2d71fdb9-7420-42cb-8394-6931d4a9ab68/1.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/75296ef1-b742-4513-89d3-53d616ab85a6/hannahfix.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/4608f154-e45a-4380-b8b7-7e72b3a80cd8/2.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/bdc0d946-db26-4f0d-89e8-cf37e338d51a/5.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/d058592b-9e2e-4b51-9856-09bec59810d6/7.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/f371d7d8-7001-4138-8a59-84611d98d123/2.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/4bbbb2c9-7efe-43aa-9c64-dc49bbc929a0/3.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/aeb1c339-40ba-4121-b042-52a101e7b5c8/6.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/e6bdc0a4-da92-411e-88b2-6eccd6204505/1.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/940fffd0-5926-4a03-88c4-ed0462c701d0/4.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/a724c019-e27a-4506-94f5-1322380e3138/6.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/24ba4d48-5afd-480c-a80f-56ec3af5491e/8.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/74f005cc-2944-4e32-8e5a-29afab9a0e42/3.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/01954ef8-74b1-403b-9a83-9368740e1695/5.png",
+    "https://images.squarespace-cdn.com/content/v1/6802c86d1563454e4aa66f2f/48dda22c-2779-44e4-8fac-d2d7f075b95b/init.png"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_political_oct26",
+  "recorded_at": "2026-10-27T03:02:41.732820Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:31:31.488443Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-bus"
+}

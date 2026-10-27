@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-26T10:22:58.123898Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-automatic.json; source ufcw-3000; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://ufcw3000.org/endorsements",
+    "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+    "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_497_native26_sgn_ufcw",
+  "recorded_at": "2026-10-27T03:02:40.299573Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T10:29:46.261951Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "ufcw-3000"
+}

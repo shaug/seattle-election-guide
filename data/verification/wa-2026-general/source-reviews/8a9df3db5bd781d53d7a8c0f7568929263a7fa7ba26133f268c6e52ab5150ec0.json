@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-26T13:21:36.082845Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source washington-stonewall-democrats; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://washington-stonewall-2026.bluewaters.chatgpt.site/candidates.json",
+    "https://washington-stonewall-2026.bluewaters.chatgpt.site/",
+    "https://washington-stonewall-2026.bluewaters.chatgpt.site/app.js",
+    "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_political_oct26",
+  "recorded_at": "2026-10-27T03:02:48.268168Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:31:31.488457Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-stonewall-democrats"
+}

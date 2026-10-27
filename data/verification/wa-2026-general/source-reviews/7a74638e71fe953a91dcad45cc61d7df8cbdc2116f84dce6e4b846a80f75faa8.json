@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-26T13:21:45.458676Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source aft-washington; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.aftwa.org/endorsements-and-elections/our-2026-general-legislative-endorsements",
+    "https://www.aftwa.org/endorsements-and-elections/washington-state-supreme-court-endorsements",
+    "https://www.aftwa.org/endorsements-and-elections/vote-no-statewide-initiatives",
+    "https://www.aftwa.org/endorsements-and-elections/selected-legislative-endorsements",
+    "https://www.aftwa.org/endorsements-and-elections"
+  ],
+  "original_reviewer": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26",
+  "recorded_at": "2026-10-27T03:02:22.301927Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:23:57.021780Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "aft-washington"
+}

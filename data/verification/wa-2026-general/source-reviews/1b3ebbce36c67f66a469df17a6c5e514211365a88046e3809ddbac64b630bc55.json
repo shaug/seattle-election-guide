@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-26T13:23:42.603893Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source 37th-district-democrats; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://37dems.org/",
+    "https://37dems.org/wp-content/uploads/2026/09/09-16-26-CD9-Endorsement-Results.jpg"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_political_oct26",
+  "recorded_at": "2026-10-27T03:02:20.134311Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:31:31.488421Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "37th-district-democrats"
+}

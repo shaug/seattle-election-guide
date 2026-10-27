@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-26T13:21:46.495304Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source oneamerica-votes; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://oavotes.org/wp-content/uploads/2026/05/NoHate-scaled-aspect-ratio-4-3-1024x768.jpg",
+    "https://oavotes.org/wp-content/uploads/2025/02/TogetherWeRise_24-147-1-scaled-aspect-ratio-3-1-scaled.jpg",
+    "https://oavotes.org/our-work/endorsements/2026-endorsements/"
+  ],
+  "original_reviewer": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26",
+  "recorded_at": "2026-10-27T03:02:28.795452Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:24:39.744926Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "oneamerica-votes"
+}
