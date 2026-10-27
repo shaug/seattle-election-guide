@@ -3,14 +3,14 @@ canonical_origin: https://seattleelections.guide
 current_election_id: wa-2026-general
 elections:
 - election_id: wa-2026-general
-  bundle_id: wa-2026-general-2026-general.51
-  release_version: 2026-general.51
+  bundle_id: wa-2026-general-2026-general.52
+  release_version: 2026-general.52
   source_panel_id: wa-2026-general-default-sources-v2
   source_panel_hash: 5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569
   source_registry_hash: d9c0bfbad3bd963d11b24ee45d1ae3bfe8f2b16a6b489fd80e6cf463efdc1f27
   publication_request:
-    issue_number: 497
-    previous_release_sha: 6b97a123405e868f030db031519bea65055cc98b
+    issue_number: 639
+    previous_release_sha: 9238b582e38ea5723b4700ce592caebf46ff8593
     inputs:
       ledger_sha256: ed4428cd74b40bef8232daeed0012a5f523303de2fa13c7c82dbd8ff15eaf953
       dataset_sha256: a633d1b0a71f9fbcf2da338c89661c77ce70035c610ac2e222e081286bb4ed45
