@@ -593,7 +593,7 @@
     "tests": {
       "test_ufcw_current_publication_extracts_all_33_verified_decisions": "unit"
     },
-    "partition": "integration-artifacts"
+    "partition": "integration-rendering"
   },
   "tests/test_verification_vault.py": {
     "suite": "unit",

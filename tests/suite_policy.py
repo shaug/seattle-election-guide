@@ -18,6 +18,10 @@ Policy = Mapping[str, Mapping[str, object]]
 Node = tuple[str, str, str]
 
 
+class UnitExternalIOError(BaseException):
+    """An isolation breach must escape application-level exception recovery."""
+
+
 def classify_test(path: str, function: str, policy: Policy) -> Suite:
     if path not in policy:
         raise ValueError(f"unclassified test module: {path}")
@@ -82,4 +86,4 @@ def deny_external_unit_io(event: str, _arguments: tuple[object, ...]) -> None:
         "os.forkpty",
         "os.exec",
     }:
-        raise RuntimeError(f"unit tests cannot perform external IO: {event}")
+        raise UnitExternalIOError(f"unit tests cannot perform external IO: {event}")

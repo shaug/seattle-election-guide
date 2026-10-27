@@ -1,13 +1,20 @@
 """Test suite boundaries fail closed and preserve every collected obligation (#651)."""
 
+import json
 import socket
 import subprocess
 import sys
+from contextlib import suppress
 from pathlib import Path
+from typing import cast
+from unittest.mock import Mock
 
 import pytest
 
+from tests import conftest
 from tests.suite_policy import (
+    PARTITIONS,
+    UnitExternalIOError,
     classify_test,
     deny_external_unit_io,
     group_nodes,
@@ -67,7 +74,7 @@ def test_each_parameter_case_retains_one_original_node_identity() -> None:
     ],
 )
 def test_unit_external_boundary_is_rejected_before_execution(event: str) -> None:
-    with pytest.raises(RuntimeError, match="unit tests cannot perform external IO"):
+    with pytest.raises(UnitExternalIOError, match="unit tests cannot perform external IO"):
         deny_external_unit_io(event, ())
 
 
@@ -101,12 +108,12 @@ def test_real_unit_network_and_child_process_attempts_stop_before_side_effects(
     tmp_path: Path,
 ) -> None:
     with (
-        pytest.raises(RuntimeError, match="unit tests cannot perform external IO"),
+        pytest.raises(UnitExternalIOError, match="unit tests cannot perform external IO"),
         socket.socket(),
     ):
         pass
     sentinel = tmp_path / "child-ran"
-    with pytest.raises(RuntimeError, match="unit tests cannot perform external IO"):
+    with pytest.raises(UnitExternalIOError, match="unit tests cannot perform external IO"):
         subprocess.run(
             [
                 sys.executable,
@@ -132,3 +139,48 @@ def test_a_missing_or_duplicate_required_partition_is_rejected(partitions: list[
     groups = group_nodes([], POLICY, partitions=True)
     with pytest.raises(ValueError, match="required test partitions"):
         require_partition_coverage(partitions, groups)
+
+
+def test_unit_io_rejection_cannot_be_swallowed_by_application_error_handling() -> None:
+    with (
+        pytest.raises(UnitExternalIOError, match="unit tests cannot perform external IO"),
+        suppress(Exception),
+    ):
+        deny_external_unit_io("socket.connect", ())
+
+
+@pytest.mark.parametrize("missing", PARTITIONS)
+def test_collection_rejects_an_omitted_ci_partition_before_any_case_runs(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, missing: str
+) -> None:
+    """Omitting the partition containing the coverage test cannot hide that contract."""
+    policy_path = tmp_path / "suites.json"
+    policy_path.write_text(json.dumps({"tests/test_logic.py": {"suite": "unit"}}))
+    monkeypatch.setattr(conftest, "POLICY_PATH", policy_path)
+    workflow = tmp_path / ".github/workflows/ci.yml"
+    workflow.parent.mkdir(parents=True)
+    workflow.write_text(
+        json.dumps(
+            {
+                "jobs": {
+                    "tests": {
+                        "strategy": {
+                            "matrix": {"partition": [p for p in PARTITIONS if p != missing]}
+                        }
+                    }
+                }
+            }
+        )
+    )
+    config = Mock(spec=pytest.Config)
+    config.rootpath = tmp_path
+    config.stash = pytest.Stash()
+    config.getoption.return_value = "all"
+    item = Mock(spec=pytest.Function)
+    item.path = tmp_path / "tests/test_logic.py"
+    item.nodeid = "tests/test_logic.py::test_logic"
+    item.originalname = "test_logic"
+    with pytest.raises(pytest.UsageError, match="required test partitions"):
+        conftest.pytest_collection_modifyitems(
+            cast(pytest.Config, config), [cast(pytest.Item, item)]
+        )

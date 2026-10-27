@@ -7,7 +7,7 @@ from typing import cast
 
 import pytest
 
-from election_guide.serialization import read_json
+from election_guide.serialization import read_json, read_yaml
 from tests.suite_policy import (
     PARTITIONS,
     SUITES,
@@ -17,6 +17,7 @@ from tests.suite_policy import (
     deny_external_unit_io,
     group_nodes,
     partition_test,
+    require_partition_coverage,
 )
 
 POLICY_PATH = Path(__file__).with_name("suites.json")
@@ -71,7 +72,11 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
     ]
     try:
         group_nodes(nodes, policy)
-        group_nodes(nodes, policy, partitions=True)
+        partitions = group_nodes(nodes, policy, partitions=True)
+        workflow = read_yaml(config.rootpath / ".github/workflows/ci.yml")
+        require_partition_coverage(
+            workflow["jobs"]["tests"]["strategy"]["matrix"]["partition"], partitions
+        )
         assigned = {
             node_id: classify_test(path, function, policy) for node_id, path, function in nodes
         }

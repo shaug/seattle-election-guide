@@ -36,6 +36,9 @@ non-unit work by measured duration across the three integration-named partitions
 Those stable partition names are execution groups, separate from semantic test
 kinds. The Make targets and CI use the same collection policy; the coverage
 contract requires every collected node exactly once across their union (#651).
+Every pytest collection also checks the CI matrix contains each required
+partition once, so omitting the lane that holds the coverage test fails before
+any remaining lane can execute.
 
 Neither focused target replaces `make check` before proposing a diff.
 
