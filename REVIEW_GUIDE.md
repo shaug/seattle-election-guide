@@ -63,14 +63,16 @@ fresh source read, backdated check, failure reset or authority for unattended in
 Fixtures cannot receive live baseline approval. Keep #497 and its runbook proposed until actual
 scheduled execution and later independent normal scheduled reuse have the required evidence.
 
-The approved partial #589 access policy has a separate complete-initial-review qualification.
-Review its entire official publication/mappings scope and the pinned original source/election,
-reviewer/time and acceptance references before accepting the new immutable qualification.
-Record the actual qualification writer/time separately; no current writer is substituted for
-the original reviewer. The normal CLI does not perform the review or turn an old generic manual
-acknowledgement/baseline approval into completeness. Incomplete supplied snapshots and unknown
-legacy review extent stay unqualified. A qualification grants neither collector-baseline
-approval nor #497 scheduled reuse. See [the source policy](SOURCE_POLICY.md#prospective-access-limitations-589-partial-approved-milestone).
+The approved partial #589 access policy uses one explicit complete-initial-review attestation.
+Normal protected review must establish the full official publication/mapping scope, actual
+source/election, official URL, original check time, named original reviewer/review time and ordinary
+durable facts/review reference. Record the new writer/time separately; no current writer is
+substituted for the original reviewer. Use the existing facts/review packet's ordinary durable
+reference. The CLI proposes the attestation; pending archive-branch presence is
+insufficient for use until its exact bytes are in the normal main snapshot. It conducts no review
+and infers no completeness from a generic acknowledgement or baseline approval. Unsupported scope
+stays unresolved without rejecting valid evidence merely for its format. No collector-baseline
+approval or #497 scheduled reuse follows. See [the source policy](SOURCE_POLICY.md#prospective-access-limitations-589-partial-approved-milestone).
 
 ## Recorded maintainer-approved measure interpretation
 

@@ -277,19 +277,29 @@ three-slot escalation are unchanged. This does not complete #589's unapproved in
 criteria, adopt #497, close #616 or resolve an earlier dated obligation by policy migration.
 
 Before qualifying a source, establish the COMPLETE accepted official-publication/mapping review
-from actual existing evidence. Do not infer it from the normal manual acknowledgement or a
-baseline approval. The input JSON uses `InitialReviewEvidence`: exact election/source and scope
-`complete_official_publication_and_mappings`, official URLs, original reviewer/review time,
-accepting actor/time, and separate pinned structured review/acceptance references. Each reference
-contains its repository JSON path/SHA-256 and JSON pointers identifying its actual source,
-election, actor and timestamp fields. Unsupported or explicitly incomplete evidence stays
-unqualified; the command cannot conduct a source review or invent missing historical evidence.
-Run from the repository root and commit the new qualification through normal review:
+from actual existing facts and review evidence. Do not infer it from a normal manual acknowledgement
+or baseline approval. Propose one attestation with exact source/election, explicit complete scope,
+official URLs, original actual check time and named reviewer/review time, and one ordinary durable
+facts/review reference. An immutable record path or commit-qualified reference avoids ambiguity
+when an existing document can change. Existing review packets retain their ordinary formats.
+Normal protected versioned review establishes acceptance of the explicit claim; the new writing actor/time are
+recorded separately. Unsupported actual scope remains unresolved without a new publisher fetch
+merely to satisfy record formatting. Run from the repository root:
 
 ```bash
 uv run election-guide verification qualify-initial-review data/verification/wa-2026-general \
-  path/to/review-qualification-input.json --recorded-by <actual-qualifying-actor>
+  --source-id <registered-source> --scope complete_official_publication_and_mappings \
+  --official-url <official-publication-URL> --checked-at <actual-original-check-time> \
+  --reviewer <actual-original-reviewer> --reviewed-at <actual-original-review-time> \
+  --evidence <ordinary-durable-facts-review-reference> --recorded-by <actual-writing-actor>
 ```
+
+Commit the proposed record through normal protected review. Pending archive-branch presence is
+not sufficient: eligibility compares its exact bytes with the canonical archive blob in the
+already available local `origin/main` snapshot. No network request is made for admission. The
+normal workflow already fetches/merges main; if proof is unavailable or bytes differ, leave the
+obligation unresolved. Structural validation still permits unmerged proposals. A later main
+admission never changes a disposition already recorded on an older failed check.
 
 For a genuinely observed manual failed request, preserve its actual observer/time and durable
 bounded diagnostic reference. The following records an observation; it performs no source GET

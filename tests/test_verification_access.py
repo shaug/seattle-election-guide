@@ -109,37 +109,17 @@ def setup_access_policy(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tupl
         date(2026, 10, 26),
         "Fixture original reviewer",
         datetime.fromisoformat("2026-10-26T18:00:00+00:00"),
-        "Fixture original accepted source review; generic acknowledgement alone is insufficient.",
+        "Fixture source review; generic acknowledgement alone is insufficient.",
     )
     data = yaml.safe_load(policy.read_text())
     data["schema_version"] = "1.1"
     data["access_failures"] = {"effective_from": "2026-10-27", "disposition": "retain_verified"}
     policy.write_text(yaml.safe_dump(data))
     monkeypatch.chdir(tmp_path)
-    evidence = tmp_path / "data/review"
-    evidence.mkdir(parents=True)
-    (evidence / "complete-review.json").write_text(
-        json.dumps(
-            {
-                "source_id": SOURCE,
-                "election_id": "wa-2026-general",
-                "reviewer": "Fixture original reviewer",
-                "reviewed_at": "2026-10-26T17:00:00Z",
-                "scope": "complete official publication and all supported mappings",
-                "facts": ["fixture fact"],
-            }
-        )
-    )
-    (evidence / "acceptance.json").write_text(
-        json.dumps(
-            {
-                "source_id": SOURCE,
-                "election_id": "wa-2026-general",
-                "accepted_by": "Fixture original accepter",
-                "accepted_at": "2026-10-26T18:00:00Z",
-                "accepted_review": "complete-review.json",
-            }
-        )
+    monkeypatch.setattr(verification_access, "_REPOSITORY_ROOT", tmp_path)
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs/accepted-review.md").write_text(
+        "Fixture durable complete-publication facts/review packet; no actual source request.\n"
     )
     monkeypatch.setattr(
         verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-26T20:00:00+00:00")
@@ -148,49 +128,93 @@ def setup_access_policy(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tupl
 
 
 def qualify(
-    root: Path, tmp_path: Path, *, scope: str = "complete_official_publication_and_mappings"
+    root: Path,
+    tmp_path: Path,
+    *,
+    scope: str = "complete_official_publication_and_mappings",
+    admitted: bool = True,
+    source_id: str = SOURCE,
+    official_url: str = "https://www.seattletimes.com/opinion/editorials/endorsements/",
+    reviewer: str = "Fixture original reviewer",
 ) -> dict[str, Any]:
-    import hashlib
-
-    refs: list[dict[str, Any]] = []
-    for name in ("complete-review.json", "acceptance.json"):
-        path = tmp_path / "data/review" / name
-        refs.append(
-            {"path": f"data/review/{name}", "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
-        )
-    refs[1].update({"actor_pointer": "/accepted_by", "time_pointer": "/accepted_at"})
-    payload = {
-        "source_id": SOURCE,
-        "election_id": "wa-2026-general",
-        "scope": scope,
-        "official_urls": ["https://www.seattletimes.com/opinion/editorials/endorsements/"],
-        "original_reviewer": "Fixture original reviewer",
-        "reviewed_at": "2026-10-26T17:00:00Z",
-        "accepted_by": "Fixture original accepter",
-        "accepted_at": "2026-10-26T18:00:00Z",
-        "review_evidence": refs[0],
-        "acceptance_evidence": refs[1],
-    }
-    path = tmp_path / "qualification-input.json"
-    path.write_text(json.dumps(payload))
     result = runner.invoke(
         app,
         [
             "verification",
             "qualify-initial-review",
             str(root),
-            str(path),
-            "--recorded-by",
-            "Fixture qualification recorder",
             "--policy-path",
             str(tmp_path / "policy.yaml"),
+            "--source-id",
+            source_id,
+            "--scope",
+            scope,
+            "--official-url",
+            official_url,
+            "--checked-at",
+            "2026-10-26T16:00:00Z",
+            "--reviewer",
+            reviewer,
+            "--reviewed-at",
+            "2026-10-26T17:00:00Z",
+            "--evidence",
+            "docs/accepted-review.md",
+            "--recorded-by",
+            "Fixture qualification recorder",
         ],
     )
     if scope != "complete_official_publication_and_mappings":
         assert result.exit_code != 0
         return {}
     assert result.exit_code == 0, result.output
+    if admitted:
+        admit_qualifications(root, tmp_path)
     return json.loads(result.output)
+
+
+def initialize_admission_repo(repo: Path) -> None:
+    import subprocess
+
+    if (repo / ".git").exists():
+        return
+    for args in [
+        ["init", "-q", "--initial-branch=main"],
+        ["config", "user.name", "Fixture"],
+        ["config", "user.email", "fixture@example.test"],
+        ["commit", "--allow-empty", "-qm", "Accepted main fixture"],
+        ["update-ref", "refs/remotes/origin/main", "HEAD"],
+    ]:
+        subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True)
+
+
+def copy_qualification_proposal(root: Path, repo: Path) -> None:
+    import subprocess
+
+    initialize_admission_repo(repo)
+    target = repo / "data/verification" / root.name / "source-reviews"
+    target.mkdir(parents=True, exist_ok=True)
+    for path in (root / "source-reviews").glob("*.json"):
+        (target / path.name).write_bytes(path.read_bytes())
+    subprocess.run(["git", "add", "data/verification"], cwd=repo, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "commit", "--allow-empty", "-qm", "Proposed complete-review attestation fixture"],
+        cwd=repo,
+        check=True,
+        capture_output=True,
+    )
+
+
+def admit_qualifications(root: Path, repo: Path) -> None:
+    import subprocess
+
+    copy_qualification_proposal(root, repo)
+    # Local isolated fixture of the existing trusted, already fetched protected-main authority.
+    subprocess.run(
+        ["git", "update-ref", "refs/remotes/origin/main", "HEAD"],
+        cwd=repo,
+        check=True,
+        capture_output=True,
+    )
 
 
 def failure(policy: Path, state: Path, day: str) -> dict[str, Any]:
@@ -430,31 +454,25 @@ def test_handled_only_comment_does_not_reopen_but_unresolved_observation_does(
     assert issue["state"] == "OPEN" and len(comments) == 2
 
 
-def test_qualification_cannot_relabel_the_original_review_actor(
+def test_pending_changed_attestation_cannot_replace_admitted_original_actor(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    policy, state, _fixtures = setup_access_policy(tmp_path, monkeypatch)
+    from datetime import datetime
+
+    from election_guide.collection import verification_access
+    from election_guide.evidence.models import evidence_fingerprint
+
+    policy, state, fixtures = setup_access_policy(tmp_path, monkeypatch)
     root = state / "wa-2026-general"
-    qualify(root, tmp_path)
-    path = tmp_path / "qualification-input.json"
-    data = json.loads(path.read_text())
-    data["original_reviewer"] = "Someone who did not perform this review"
-    path.write_text(json.dumps(data))
-    result = runner.invoke(
-        app,
-        [
-            "verification",
-            "qualify-initial-review",
-            str(root),
-            str(path),
-            "--recorded-by",
-            "Fixture qualifier",
-            "--policy-path",
-            str(policy),
-        ],
+    original = qualify(root, tmp_path)
+    qualify(root, tmp_path, admitted=False, reviewer="Unreviewed changed actor fixture")
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-27T19:00:00+00:00")
     )
-    assert result.exit_code != 0
-    assert len(list((root / "source-reviews").glob("*.json"))) == 1
+    run_fixture(policy, state, fixtures, "2026-10-27")
+    check = failure(policy, state, "2026-10-27")
+    assert check["access_disposition"]["qualification_id"] == evidence_fingerprint(original)
+    assert original["original_reviewer"] == "Fixture original reviewer"
 
 
 def test_policy_activation_does_not_handle_an_older_dated_obligation(
@@ -489,7 +507,6 @@ def test_policy_activation_does_not_handle_an_older_dated_obligation(
 def test_automatic_access_failure_requires_qualification_and_typed_transport_proof(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, problem: str, qualified: bool, handled: bool
 ) -> None:
-    import hashlib
     from datetime import datetime
 
     import yaml
@@ -515,68 +532,22 @@ def test_automatic_access_failure_requires_qualification_and_typed_transport_pro
     )
     policy_path.write_text(yaml.safe_dump(data))
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(verification_access, "_REPOSITORY_ROOT", tmp_path)
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs/accepted-review.md").write_text(
+        "Fixture source facts/review packet, no real source access.\n"
+    )
     monkeypatch.setattr(
         verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-26T20:00:00+00:00")
     )
     if qualified:
-        directory = tmp_path / "data/review"
-        directory.mkdir(parents=True)
-        review = directory / "review.json"
-        accepted = directory / "accepted.json"
-        review.write_text(
-            json.dumps(
-                {
-                    "source_id": source,
-                    "election_id": "wa-2026-general",
-                    "reviewer": "Fixture source reviewer",
-                    "reviewed_at": "2026-10-26T17:00:00Z",
-                }
-            )
+        qualify(
+            state / "wa-2026-general",
+            tmp_path,
+            source_id=source,
+            official_url="https://seiu775.org/endorsements/",
+            reviewer="Fixture source reviewer",
         )
-        accepted.write_text(
-            json.dumps(
-                {
-                    "source_id": source,
-                    "election_id": "wa-2026-general",
-                    "reviewer": "Fixture source accepter",
-                    "reviewed_at": "2026-10-26T18:00:00Z",
-                }
-            )
-        )
-        evidence = {
-            "source_id": source,
-            "election_id": "wa-2026-general",
-            "scope": "complete_official_publication_and_mappings",
-            "official_urls": ["https://seiu775.org/endorsements/"],
-            "original_reviewer": "Fixture source reviewer",
-            "reviewed_at": "2026-10-26T17:00:00Z",
-            "accepted_by": "Fixture source accepter",
-            "accepted_at": "2026-10-26T18:00:00Z",
-            "review_evidence": {
-                "path": "data/review/review.json",
-                "sha256": hashlib.sha256(review.read_bytes()).hexdigest(),
-            },
-            "acceptance_evidence": {
-                "path": "data/review/accepted.json",
-                "sha256": hashlib.sha256(accepted.read_bytes()).hexdigest(),
-            },
-        }
-        input_path = tmp_path / "initial-review.json"
-        input_path.write_text(json.dumps(evidence))
-        result = runner.invoke(
-            app,
-            [
-                "verification",
-                "qualify-initial-review",
-                str(state / "wa-2026-general"),
-                str(input_path),
-                "--recorded-by",
-                "Fixture qualifier",
-                "--policy-path",
-                str(policy_path),
-            ],
-        )
-        assert result.exit_code == 0, result.output
 
     def fetch(url: str) -> HttpArtifact:
         if problem == "http200_partial":
@@ -602,42 +573,46 @@ def test_automatic_access_failure_requires_qualification_and_typed_transport_pro
     failure_result = report["automatic"][0]
     assert failure_result["status"] == "failed"
     assert bool(failure_result.get("access_disposition")) is handled
-    assert failure_result["baseline_reviewed"] is False  # Qualification is NOT collector adoption.
+    assert failure_result["baseline_reviewed"] is False
     assert failure_result["consecutive_failures"] == 1
 
 
-def test_explicitly_incomplete_original_is_not_overridden_by_qualification_scope(
+def test_admission_requires_exact_attestation_bytes(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import hashlib
+    import subprocess
+    from datetime import datetime
 
-    policy, state, _fixtures = setup_access_policy(tmp_path, monkeypatch)
+    from election_guide.collection import verification_access
+
+    policy, state, fixtures = setup_access_policy(tmp_path, monkeypatch)
     root = state / "wa-2026-general"
     qualify(root, tmp_path)
-    # A supplied retained subset is not an initial complete official-publication review.
-    review = tmp_path / "data/review/complete-review.json"
-    data = json.loads(review.read_text())
-    data["complete_live_website_or_linked_publication_discovery"] = False
-    review.write_text(json.dumps(data))
-    payload_path = tmp_path / "qualification-input.json"
-    payload = json.loads(payload_path.read_text())
-    payload["review_evidence"]["sha256"] = hashlib.sha256(review.read_bytes()).hexdigest()
-    payload_path.write_text(json.dumps(payload))
-    result = runner.invoke(
-        app,
-        [
-            "verification",
-            "qualify-initial-review",
-            str(root),
-            str(payload_path),
-            "--recorded-by",
-            "Fixture qualifier",
-            "--policy-path",
-            str(policy),
-        ],
+    admitted = next((tmp_path / "data/verification/wa-2026-general/source-reviews").glob("*.json"))
+    admitted.write_bytes(admitted.read_bytes() + b"\n")
+    subprocess.run(
+        ["git", "add", str(admitted.relative_to(tmp_path))],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
     )
-    assert result.exit_code != 0
-    assert len(list((root / "source-reviews").glob("*.json"))) == 1
+    subprocess.run(
+        ["git", "commit", "-qm", "Different admitted bytes fixture"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "update-ref", "refs/remotes/origin/main", "HEAD"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-27T19:00:00+00:00")
+    )
+    run_fixture(policy, state, fixtures, "2026-10-27")
+    assert "access_disposition" not in failure(policy, state, "2026-10-27")
 
 
 def test_genuine_legacy_run_keeps_its_immutable_serialization_identity() -> None:
@@ -755,3 +730,133 @@ def test_genuine_legacy_markers_leave_closed630_636_unchanged(
         reopen_count == 1
         and len(comments["630"]) == len(comments["636"]) == len(comments["700"]) == 1
     )
+
+
+def test_pending_attestation_is_not_authority_without_main_admission(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import subprocess
+    from datetime import datetime
+
+    from election_guide.collection import verification_access
+    from election_guide.evidence.models import evidence_fingerprint
+
+    policy, state, fixtures = setup_access_policy(tmp_path, monkeypatch)
+    root = state / "wa-2026-general"
+    qualify(root, tmp_path, admitted=False)
+    initialize_admission_repo(tmp_path)
+    subprocess.run(
+        ["git", "switch", "-c", "codex/endorsement-verification-state"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    copy_qualification_proposal(root, tmp_path)
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-27T19:00:00+00:00")
+    )
+    run_fixture(policy, state, fixtures, "2026-10-27")
+    old = failure(policy, state, "2026-10-27")
+    assert "access_disposition" not in old
+    old_path = root / "checks" / (evidence_fingerprint(old) + ".json")
+    old_bytes = old_path.read_bytes()
+    admit_qualifications(root, tmp_path)
+    assert failure(policy, state, "2026-10-27") == old  # No late main admission backfill.
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-28T19:00:00+00:00")
+    )
+    run_fixture(policy, state, fixtures, "2026-10-28")
+    assert (
+        failure(policy, state, "2026-10-28")["access_disposition"]["disposition"]
+        == "retained_verified_with_limitation"
+    )
+    assert old_path.read_bytes() == old_bytes
+
+
+def test_complete_review_attestation_accepts_ordinary_durable_reference(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    policy, state, _fixtures = setup_access_policy(tmp_path, monkeypatch)
+    path = tmp_path / "docs/accepted-review.md"
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(
+        "Fixture complete official-publication/mapping review; no new source request.\n"
+    )
+    result = runner.invoke(
+        app,
+        [
+            "verification",
+            "qualify-initial-review",
+            str(state / "wa-2026-general"),
+            "--policy-path",
+            str(policy),
+            "--source-id",
+            SOURCE,
+            "--scope",
+            "complete_official_publication_and_mappings",
+            "--official-url",
+            "https://www.seattletimes.com/opinion/editorials/endorsements/",
+            "--checked-at",
+            "2026-10-26T16:00:00Z",
+            "--reviewer",
+            "Fixture original reviewer",
+            "--reviewed-at",
+            "2026-10-26T17:00:00Z",
+            "--evidence",
+            "docs/accepted-review.md",
+            "--recorded-by",
+            "Fixture qualification recorder",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    attestation = json.loads(result.output)
+    assert attestation["checked_at"] == "2026-10-26T16:00:00Z"
+    assert attestation["evidence"] == "docs/accepted-review.md"
+    assert attestation["original_reviewer"] == "Fixture original reviewer"
+    assert attestation["recorded_by"] == "Fixture qualification recorder"
+
+
+def test_unrelated_cwd_main_cannot_supply_qualification_admission(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from datetime import datetime
+
+    from election_guide.collection import verification_access
+
+    policy, state, fixtures = setup_access_policy(tmp_path, monkeypatch)
+    qualify(state / "wa-2026-general", tmp_path)
+    # cwd has the test attestation in its main; the actual runtime repository does not.
+    monkeypatch.setattr(
+        verification_access,
+        "_REPOSITORY_ROOT",
+        Path(verification_access.__file__).resolve().parents[3],
+        raising=False,
+    )
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-27T19:00:00+00:00")
+    )
+    run_fixture(policy, state, fixtures, "2026-10-27")
+    assert "access_disposition" not in failure(policy, state, "2026-10-27")
+
+
+def test_unavailable_main_proof_keeps_access_unresolved(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import subprocess
+    from datetime import datetime
+
+    from election_guide.collection import verification_access
+
+    policy, state, fixtures = setup_access_policy(tmp_path, monkeypatch)
+    qualify(state / "wa-2026-general", tmp_path)
+    subprocess.run(
+        ["git", "update-ref", "-d", "refs/remotes/origin/main"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-27T19:00:00+00:00")
+    )
+    run_fixture(policy, state, fixtures, "2026-10-27")
+    assert "access_disposition" not in failure(policy, state, "2026-10-27")

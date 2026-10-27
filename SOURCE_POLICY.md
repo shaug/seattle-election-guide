@@ -83,15 +83,25 @@ slots from October 27, 2026. Current weekly/daily frequencies, calendar boundari
 automatic attempts and three-distinct-failed-slot escalation are unchanged. #589 remains open
 for its unapproved interval/configuration and other remaining criteria.
 
-A complete initial review requires a separate immutable `source-reviews` qualification in the
-existing verification archive. It identifies the exact election/source, official URLs, pinned
-original structured review and acceptance records, original reviewer/review time and accepting
-actor/time. JSON pointers bind those identities and times to the actual referenced records.
-The qualification records its new writing actor/time separately. Completeness is an explicit
-reviewed attestation, never inferred from a generic acknowledgement, HTTP 200, extractor
-`complete` flag, baseline approval, partial supplied snapshot or fixture. Explicitly incomplete
-evidence cannot qualify. Unsupported legacy evidence remains unresolved; this change creates
-no production qualifications or retrospective source approvals.
+A complete initial review uses one explicit immutable `source-reviews` attestation in the
+existing verification archive: exact election/source, complete official-publication/mapping
+scope, official URLs, actual original check time, original reviewer/review time and an ordinary
+durable reference to the existing facts/review packet. Record the new writing actor/time
+separately. Normal protected versioned review establishes acceptance. Existing facts/review
+packets may use their ordinary durable reference formats.
+
+A proposal is not authority merely because it exists on the pending archive branch. Before a
+new failed check can use it, its exact bytes must exist in the normal canonical archive path
+in the already available local `origin/main` snapshot. No fetch is performed; unavailable or
+different admitted bytes leave the obligation unresolved. The normal workflow already fetches
+and incorporates main. Structural archive validation permits a pending proposal without treating
+it as accepted. Later ref availability never backfills an old check.
+
+Completeness is an explicit assertion assessed through normal protected review, never inferred
+from a generic acknowledgement, HTTP 200, extractor `complete` flag, baseline approval, partial
+supplied snapshot or fixture. Do not attest incomplete or unsupported review scope. Missing actual
+review evidence stays unresolved; heterogeneous formatting alone does not disqualify it. This
+change creates no production attestations or retrospective source approvals.
 
 Only a failed HTTP-fetch observation with a typed HTTP 401/403/408/429/500/502/503/504,
 deadline, DNS or TLS diagnostic can use this disposition. HTTP 404/410, response-integrity,

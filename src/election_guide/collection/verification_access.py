@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import hashlib
+import subprocess
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Literal, cast
+from typing import Literal
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
@@ -27,6 +27,8 @@ from election_guide.evidence.models import evidence_fingerprint
 from election_guide.evidence.storage import write_immutable_record
 from election_guide.serialization import canonical_json_bytes, read_json
 from election_guide.validation import validated_http_url
+
+_REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 
 
 def utc_now() -> datetime:
@@ -106,162 +108,95 @@ def record_manual_access_failure(
 # CheckRecord, successful fetch, extractor flag or collector baseline approval.
 
 
-class ReviewEvidenceReference(VerificationModel):
-    path: str
-    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
-    source_pointer: str = "/source_id"
-    election_pointer: str = "/election_id"
-    actor_pointer: str = "/reviewer"
-    time_pointer: str = "/reviewed_at"
+class InitialReviewQualification(VerificationModel):
+    """One explicit complete-review attestation, accepted by normal protected review."""
 
-    @field_validator("path")
-    @classmethod
-    def validate_path(cls, value: str) -> str:
-        path = Path(value)
-        if (
-            path.is_absolute()
-            or ".." in path.parts
-            or path.as_posix() != value
-            or not value.startswith(("data/review/", "docs/"))
-            or path.suffix != ".json"
-        ):
-            raise ValueError(
-                "qualification requires a public repository review/acceptance reference"
-            )
-        return value
-
-    def verify(self) -> None:
-        path = Path(self.path)
-        if path.is_symlink() or not path.resolve().is_relative_to(Path.cwd().resolve()):
-            raise ValueError("qualification evidence must stay inside the repository")
-        if hashlib.sha256(path.read_bytes()).hexdigest() != self.sha256:
-            raise ValueError("qualification evidence differs from its pinned accepted bytes")
-
-    def verify_binding(self, source_id: str, election_id: str, actor: str, at: datetime) -> None:
-        """Pin original identity/time fields, without interpreting review completeness."""
-        self.verify()
-        document = read_json(Path(self.path))
-
-        def value(pointer: str) -> object:
-            if pointer == "":
-                return document
-            if not pointer.startswith("/") or len(pointer) > 1000:
-                raise ValueError("review evidence requires a bounded explicit JSON pointer")
-            current: object = document
-            try:
-                for token in pointer[1:].split("/"):
-                    token = token.replace("~1", "/").replace("~0", "~")
-                    if isinstance(current, list):
-                        if not token.isascii() or not token.isdecimal():
-                            raise ValueError("review pointer requires a nonnegative array index")
-                        current = cast(list[object], current)[int(token)]
-                    elif isinstance(current, dict):
-                        current = cast(dict[str, object], current)[token]
-                    else:
-                        raise ValueError("review pointer does not identify an original field")
-            except (KeyError, IndexError) as error:
-                raise ValueError("review pointer does not identify an original field") from error
-            return current
-
-        if value(self.source_pointer) != source_id or value(self.election_pointer) != election_id:
-            raise ValueError("qualification evidence belongs to another source/election")
-        source_record = value(self.source_pointer.rsplit("/", 1)[0])
-        if isinstance(source_record, dict) and any(
-            cast(dict[str, object], source_record).get(key) is False
-            for key in (
-                "complete_live_website_or_linked_publication_discovery",
-                "complete_official_publication_and_mappings",
-                "complete_official_publication_review",
-                "complete_publication",
-                "complete_supported_mappings",
-            )
-        ):
-            raise ValueError(
-                "explicitly incomplete source evidence cannot qualify a complete review"
-            )
-        actual_at = value(self.time_pointer)
-        if (
-            value(self.actor_pointer) != actor
-            or not isinstance(actual_at, str)
-            or datetime.fromisoformat(actual_at.replace("Z", "+00:00")) != at
-        ):
-            raise ValueError("qualification must preserve the original actual reviewer/time")
-
-
-class InitialReviewEvidence(VerificationModel):
     election_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     source_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     scope: Literal["complete_official_publication_and_mappings"]
     official_urls: list[str] = Field(min_length=1)
+    checked_at: AwareDatetime
     original_reviewer: str = Field(min_length=1, max_length=200)
     reviewed_at: AwareDatetime
-    accepted_by: str = Field(min_length=1, max_length=200)
-    accepted_at: AwareDatetime
-    review_evidence: ReviewEvidenceReference
-    acceptance_evidence: ReviewEvidenceReference
+    evidence: str = Field(min_length=1, max_length=1000)
+    recorded_by: str = Field(min_length=1, max_length=200)
+    recorded_at: AwareDatetime
 
     @field_validator("official_urls")
     @classmethod
     def validate_urls(cls, value: list[str]) -> list[str]:
         if len(set(value)) != len(value):
-            raise ValueError("qualification repeats an official publication URL")
+            raise ValueError("attestation repeats an official publication URL")
         return [validated_http_url(url) for url in value]
 
     @model_validator(mode="after")
-    def validate_review(self) -> InitialReviewEvidence:
-        if not self.original_reviewer.strip() or not self.accepted_by.strip():
-            raise ValueError("qualification requires the original actual reviewer and accepter")
-        if self.accepted_at < self.reviewed_at:
-            raise ValueError("source acceptance cannot predate its complete review")
-        if self.review_evidence.path == self.acceptance_evidence.path:
-            raise ValueError(
-                "complete review and its acceptance require separate pinned references"
-            )
-        return self
-
-    def verify_evidence(self) -> None:
-        self.review_evidence.verify_binding(
-            self.source_id, self.election_id, self.original_reviewer, self.reviewed_at
-        )
-        self.acceptance_evidence.verify_binding(
-            self.source_id, self.election_id, self.accepted_by, self.accepted_at
-        )
-
-
-class InitialReviewQualification(InitialReviewEvidence):
-    recorded_by: str = Field(min_length=1, max_length=200)
-    recorded_at: AwareDatetime
-
-    @model_validator(mode="after")
-    def validate_recording(self) -> InitialReviewQualification:
-        if not self.recorded_by.strip() or self.recorded_at < self.accepted_at:
-            raise ValueError("qualification must identify its actual later recording actor/time")
+    def validate_review(self) -> InitialReviewQualification:
+        if not all(
+            value.strip() for value in (self.original_reviewer, self.evidence, self.recorded_by)
+        ):
+            raise ValueError("attestation requires actual reviewer, evidence and recording actor")
+        if not self.checked_at <= self.reviewed_at <= self.recorded_at:
+            raise ValueError("attestation must preserve actual check, review and recording order")
         return self
 
 
 def qualify_initial_review(
-    policy: VerificationPolicy, root: Path, evidence: InitialReviewEvidence, recorded_by: str
+    policy: VerificationPolicy,
+    root: Path,
+    source_id: str,
+    scope: str,
+    official_urls: list[str],
+    checked_at: datetime,
+    reviewer: str,
+    reviewed_at: datetime,
+    evidence: str,
+    recorded_by: str,
 ) -> InitialReviewQualification:
-    election = next(item for item in policy.elections if item.election_id == evidence.election_id)
+    election = next(item for item in policy.elections if item.election_id == root.name)
     registry, _ = read_panel(election)
-    source = next(item for item in registry.sources if item.id == evidence.source_id)
-    if root.name != evidence.election_id:
-        raise ValueError("qualification root belongs to another election")
+    source = next(item for item in registry.sources if item.id == source_id)
+    qualification = InitialReviewQualification.model_validate(
+        {
+            "election_id": election.election_id,
+            "source_id": source_id,
+            "scope": scope,
+            "official_urls": official_urls,
+            "checked_at": checked_at,
+            "original_reviewer": reviewer,
+            "reviewed_at": reviewed_at,
+            "evidence": evidence,
+            "recorded_by": recorded_by,
+            "recorded_at": utc_now(),
+        }
+    )
     if not any(
         urlsplit(url).hostname == urlsplit(source.organization_url).hostname
-        for url in evidence.official_urls
+        for url in qualification.official_urls
     ):
-        raise ValueError("qualification lacks the registered official organization's publication")
-    evidence.verify_evidence()
-    qualification = InitialReviewQualification(
-        **evidence.model_dump(), recorded_by=recorded_by, recorded_at=utc_now()
-    )
+        raise ValueError("attestation lacks the registered official organization's publication")
     payload = qualification.model_dump(mode="json")
     write_immutable_record(
         root / "source-reviews" / f"{evidence_fingerprint(payload)}.json",
         canonical_json_bytes(payload),
     )
     return qualification
+
+
+def _admitted_qualification(root: Path, identity: str, election_id: str) -> bool:
+    """Use the already available normal main snapshot; never fetch or trust pending state."""
+    path = f"data/verification/{election_id}/source-reviews/{identity}.json"
+    try:
+        admitted = subprocess.run(
+            ["git", "-C", str(_REPOSITORY_ROOT), "show", f"refs/remotes/origin/main:{path}"],
+            capture_output=True,
+            check=False,
+        )
+    except OSError:
+        return False
+    return (
+        admitted.returncode == 0
+        and admitted.stdout == (root / "source-reviews" / f"{identity}.json").read_bytes()
+    )
 
 
 def read_qualifications(
@@ -274,7 +209,6 @@ def read_qualifications(
             record.model_dump(mode="json")
         ) or record.election_id != (election_id or root.name):
             raise ValueError("qualification identity/election contradicts its immutable record")
-        record.verify_evidence()
         result[path.stem] = record
     return result
 
@@ -305,6 +239,8 @@ def new_access_disposition(
         reverse=True,
     ):
         if review.source_id != check.source_id or review.recorded_at > check.checked_at:
+            continue
+        if not _admitted_qualification(root, identity, review.election_id):
             continue
         # A known changed publication, parse/completeness/conflict failure or
         # unknown diagnostic after this accepted review needs review, not an

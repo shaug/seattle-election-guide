@@ -11,7 +11,6 @@ from election_guide.collection.models import AccessFailureDiagnostic
 from election_guide.collection.vault import read_key, restore_store, seal_store
 from election_guide.collection.verification import plan_verification, read_policy
 from election_guide.collection.verification_access import (
-    InitialReviewEvidence,
     qualify_initial_review,
     record_manual_access_failure,
 )
@@ -23,7 +22,6 @@ from election_guide.collection.verification_tasks import (
     require_committed_state,
     task_sections,
 )
-from election_guide.serialization import read_json
 
 app = typer.Typer(help="Check endorsement sources and retain public facts and observations in Git.")
 
@@ -31,22 +29,36 @@ app = typer.Typer(help="Check endorsement sources and retain public facts and ob
 @app.command("qualify-initial-review")
 def qualify_review(
     election_root: Annotated[Path, typer.Argument(exists=True, file_okay=False)],
-    evidence_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False)],
-    recorded_by: Annotated[str, typer.Option(help="Actual qualification-recording actor.")],
+    source_id: Annotated[str, typer.Option()],
+    scope: Annotated[
+        str, typer.Option(help="Explicit complete official-publication/mapping scope.")
+    ],
+    official_url: Annotated[list[str], typer.Option("--official-url")],
+    checked_at: Annotated[str, typer.Option(help="Actual original source check time.")],
+    reviewer: Annotated[str, typer.Option(help="Actual original complete-review actor.")],
+    reviewed_at: Annotated[str, typer.Option()],
+    evidence: Annotated[str, typer.Option(help="Ordinary durable facts/review reference.")],
+    recorded_by: Annotated[str, typer.Option(help="Actual attestation-recording actor.")],
     policy_path: Annotated[Path, typer.Option(exists=True, dir_okay=False)] = Path(
         "config/verification.yaml"
     ),
 ) -> None:
-    """Attest an already accepted COMPLETE review; normal repository review is required.
+    """Propose one complete-review attestation; normal protected admission is required.
 
-    This does not conduct or approve a source review, approve a collector baseline,
-    or convert a generic manual acknowledgement into complete-publication evidence.
+    This conducts no source review or baseline approval. Pending archive-branch
+    attestations cannot authorize a handled limitation before main admission.
     """
     try:
         qualification = qualify_initial_review(
             read_policy(policy_path),
             election_root,
-            InitialReviewEvidence.model_validate(read_json(evidence_path)),
+            source_id,
+            scope,
+            official_url,
+            datetime.fromisoformat(checked_at.replace("Z", "+00:00")),
+            reviewer,
+            datetime.fromisoformat(reviewed_at.replace("Z", "+00:00")),
+            evidence,
             recorded_by,
         )
     except (OSError, ValueError, StopIteration) as error:
