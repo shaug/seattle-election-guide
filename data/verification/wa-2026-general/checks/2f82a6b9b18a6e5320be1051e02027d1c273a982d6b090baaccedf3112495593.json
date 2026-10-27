@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-27T10:36:02.783956Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex/root/review_608_code_c340: data/review/rechecks/wa-2026-general-2026-10-27-manual.json#/source_reviews/nwpc-washington; actual bounded current-publication review handled. Original official checks 2026-10-27T10:29:14.225283+00:00 to 2026-10-27T10:29:15.160687+00:00. Held/prior-qualified rows: none. No new current affirmation, freshening or withdrawal for those rows; their old verified dates/actors/allocations remain. Not a complete-initial-review attestation, native baseline or adoption. Actual later writer receipt: data/review/rechecks/wa-2026-general-2026-10-27-manual-acknowledgements.json#/acknowledgements/nwpc-washington",
+  "mode": "human",
+  "scheduled_for": "2026-10-27",
+  "source_id": "nwpc-washington",
+  "status": "manual"
+}
