@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-26T18:57:02.720958Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): LATE supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:47.009372+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+  "mode": "human",
+  "scheduled_for": "2026-10-22",
+  "source_id": "washington-education-association",
+  "status": "manual"
+}
