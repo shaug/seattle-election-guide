@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-26T16:50:54.266000Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json; source washington-for-peace-and-justice; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_637_0fc_complete",
+  "recorded_at": "2026-10-27T03:02:44.611616Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T16:53:57.125084Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-for-peace-and-justice"
+}

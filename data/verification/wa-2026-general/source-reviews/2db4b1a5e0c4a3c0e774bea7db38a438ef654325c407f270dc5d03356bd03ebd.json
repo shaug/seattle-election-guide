@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-10-19T14:38:02.275235Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source nondriver-action; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/mike-french.png?fit=1300%2C1300&ssl=1",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/teresa.png?fit=1300%2C1300&ssl=1",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/saldana.png?fit=1300%2C1300&ssl=1",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/brenda-lykins.png?fit=1300%2C1300&ssl=1",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/nilu-jenks.png?fit=1300%2C1300&ssl=1",
+    "https://ndaction.org/2026-endorsements/",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/10/IMG_20261001_093639.png?fit=1300%2C1300&ssl=1",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/10/group-endorsement-part-2.png?fit=1300%2C1625&ssl=1",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/emily-clouse.png?fit=1300%2C1300&ssl=1",
+    "https://ndaction.org/wp-content/uploads/2026/09/nondriver-action-2026-endorsements.pdf",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/joe-burns.png?fit=1300%2C1300&ssl=1",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/kelsey.png?fit=1300%2C1300&ssl=1",
+    "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/10/IMG_20261001_093139.png?fit=1300%2C1300&ssl=1"
+  ],
+  "original_reviewer": "OpenAI Codex / oct19_civic_sources",
+  "recorded_at": "2026-10-27T03:02:27.375742Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-19T14:45:54.317990Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "nondriver-action"
+}

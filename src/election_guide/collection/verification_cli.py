@@ -7,8 +7,13 @@ from typing import Annotated
 
 import typer
 
+from election_guide.collection.models import AccessFailureDiagnostic
 from election_guide.collection.vault import read_key, restore_store, seal_store
 from election_guide.collection.verification import plan_verification, read_policy
+from election_guide.collection.verification_access import (
+    qualify_initial_review,
+    record_manual_access_failure,
+)
 from election_guide.collection.verification_review import acknowledge_manual, approve_baseline
 from election_guide.collection.verification_runtime import run_verification
 from election_guide.collection.verification_state import validate_state
@@ -19,6 +24,83 @@ from election_guide.collection.verification_tasks import (
 )
 
 app = typer.Typer(help="Check endorsement sources and retain public facts and observations in Git.")
+
+
+@app.command("qualify-initial-review")
+def qualify_review(
+    election_root: Annotated[Path, typer.Argument(exists=True, file_okay=False)],
+    source_id: Annotated[str, typer.Option()],
+    scope: Annotated[
+        str, typer.Option(help="Explicit complete official-publication/mapping scope.")
+    ],
+    official_url: Annotated[list[str], typer.Option("--official-url")],
+    checked_at: Annotated[str, typer.Option(help="Actual original source check time.")],
+    reviewer: Annotated[str, typer.Option(help="Actual original complete-review actor.")],
+    reviewed_at: Annotated[str, typer.Option()],
+    evidence: Annotated[str, typer.Option(help="Ordinary durable facts/review reference.")],
+    recorded_by: Annotated[str, typer.Option(help="Actual attestation-recording actor.")],
+    policy_path: Annotated[Path, typer.Option(exists=True, dir_okay=False)] = Path(
+        "config/verification.yaml"
+    ),
+) -> None:
+    """Propose one complete-review attestation; normal protected admission is required.
+
+    This conducts no source review or baseline approval. Pending archive-branch
+    attestations cannot authorize a handled limitation before main admission.
+    """
+    try:
+        qualification = qualify_initial_review(
+            read_policy(policy_path),
+            election_root,
+            source_id,
+            scope,
+            official_url,
+            datetime.fromisoformat(checked_at.replace("Z", "+00:00")),
+            reviewer,
+            datetime.fromisoformat(reviewed_at.replace("Z", "+00:00")),
+            evidence,
+            recorded_by,
+        )
+    except (OSError, ValueError, StopIteration) as error:
+        typer.echo(f"Could not qualify initial review: {error}", err=True)
+        raise typer.Exit(1) from error
+    typer.echo(qualification.model_dump_json())
+
+
+@app.command("record-access-failure")
+def access_failure(
+    policy_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False)],
+    election_id: Annotated[str, typer.Option()],
+    source_id: Annotated[str, typer.Option()],
+    scheduled_for: Annotated[str, typer.Option()],
+    checked_at: Annotated[str, typer.Option()],
+    reviewer: Annotated[str, typer.Option(help="Actual failed-attempt observer.")],
+    evidence: Annotated[str, typer.Option(help="Durable actual failed-access reference.")],
+    category: Annotated[str, typer.Option()],
+    http_status: Annotated[int | None, typer.Option()] = None,
+    state_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/verification"),
+) -> None:
+    """Record an observed manual access failure without fetching or claiming success."""
+    try:
+        policy = read_policy(policy_path)
+        validate_state(policy, state_root)
+        check = record_manual_access_failure(
+            policy,
+            state_root,
+            election_id,
+            source_id,
+            date.fromisoformat(scheduled_for),
+            datetime.fromisoformat(checked_at.replace("Z", "+00:00")),
+            reviewer,
+            evidence,
+            AccessFailureDiagnostic.model_validate(
+                {"category": category, "http_status": http_status}
+            ),
+        )
+    except (OSError, ValueError, StopIteration) as error:
+        typer.echo(f"Could not record failed access: {error}", err=True)
+        raise typer.Exit(1) from error
+    typer.echo(check.model_dump_json())
 
 
 @app.command("run")

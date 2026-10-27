@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-26T10:22:55.700756Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-automatic.json; source seattle-gay-news; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.sgn.org/ch/News/Seattle",
+    "https://www.sgn.org/ch/News/Seattle?start=10",
+    "https://www.sgn.org/ch/News/Seattle?start=20",
+    "https://www.sgn.org/ch/News/Seattle?start=30",
+    "https://www.sgn.org/story/168513/",
+    "https://www.sgn.org/story/168554/",
+    "https://www.sgn.org/story/168558/",
+    "https://www.sgn.org/story/168630/",
+    "https://www.sgn.org/story/168637/",
+    "https://www.sgn.org/story/168638/",
+    "https://www.sgn.org/story/168738/",
+    "https://www.sgn.org/story/168742/",
+    "https://www.sgn.org/story/168779/",
+    "https://www.sgn.org/story/168782/",
+    "https://www.sgn.org/story/171425/"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_497_native26_sgn_ufcw",
+  "recorded_at": "2026-10-27T03:02:32.405034Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T10:29:46.261951Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "seattle-gay-news"
+}

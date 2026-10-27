@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-20T10:05:15.190272Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-20-wfp.json; source washington-working-families-party; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://workingfamilies.org/wp-admin/admin-ajax.php",
+    "https://workingfamilies.org/candidates/"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_497_wfp_oct20",
+  "recorded_at": "2026-10-27T03:02:48.987287Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-20T10:07:11.637698Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-working-families-party"
+}

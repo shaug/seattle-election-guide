@@ -287,6 +287,15 @@ def test_sgn_failed_learning_survives_rotation_on_fresh_runner(
     first_failure = run(state, 20)
     assert first_failure["status"] == "failed"
     assert first_failure["previous_snapshot_id"] == baseline["snapshot_id"]
+    assert (
+        first_failure.get("review_required")
+        == {
+            "fetch": None,
+            "heading": "conflicting_evidence",
+            "decode": "parse",
+            "pagination": "incomplete_publication",
+        }[failure]
+    )
     assert any(
         new in json.loads(p.read_text())["articles"]
         for p in state.rglob("discovery-obligations/*.json")
