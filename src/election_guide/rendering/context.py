@@ -14,6 +14,8 @@ from fractions import Fraction
 from typing import Any
 
 from election_guide.corrections.models import ElectionCorrections
+from election_guide.publication.ballot_order import BALLOT_ORDER_FILES
+from election_guide.publication.builder import SECTION_ORDER
 from election_guide.publication.models import (
     PublicationChoiceEndorsements,
     PublicationRace,
@@ -557,9 +559,20 @@ def comparison_result_outcomes(
     return outcomes_by_race
 
 
+def ballot_filter_sections(view_model: PublicationViewModel) -> list[tuple[str, str]]:
+    # Display headings must not repurpose saved filters or hide a same-named district option.
+    sections = view_model.guide_sections
+    if view_model.metadata.election_id in BALLOT_ORDER_FILES:
+        tokens = {
+            token for section in sections for race in section.races for token in race.filter_tokens
+        }
+        return [(key, label) for key, label in SECTION_ORDER if key in tokens]
+    return [(section.id, section.label) for section in sections]
+
+
 def _filter_options(view_model: PublicationViewModel) -> list[str]:
     sections = view_model.guide_sections
-    section_labels = {section.label for section in sections}
+    section_labels = {label for _, label in ballot_filter_sections(view_model)}
     return sorted(
         {
             token
@@ -581,6 +594,7 @@ def filter_scope_groups(view_model: PublicationViewModel) -> list[FilterScopeGro
     (issue #239). The options are `FilterScope` on both sides, so the two
     consumers cannot disagree about a key.
     """
+    sections = ballot_filter_sections(view_model)
     return [
         FilterScopeGroupView(
             label=None,
@@ -588,10 +602,7 @@ def filter_scope_groups(view_model: PublicationViewModel) -> list[FilterScopeGro
         ),
         FilterScopeGroupView(
             label="Ballot sections",
-            options=tuple(
-                FilterScope(value=section.id, label=section.label)
-                for section in view_model.guide_sections
-            ),
+            options=tuple(FilterScope(value=key, label=label) for key, label in sections),
         ),
         FilterScopeGroupView(
             label="Districts and jurisdictions",
