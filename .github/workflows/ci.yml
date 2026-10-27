@@ -380,6 +380,7 @@ jobs:
       contents: read
       actions: read
       issues: read
+      pull-requests: read
       deployments: write
     environment:
       name: production
@@ -605,6 +606,7 @@ jobs:
       contents: read
       actions: read
       issues: write
+      pull-requests: write
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -658,6 +660,7 @@ jobs:
       contents: read
       actions: read
       issues: write
+      pull-requests: write
       deployments: write
     env:
       GH_TOKEN: ${{ github.token }}
