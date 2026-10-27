@@ -409,3 +409,20 @@ entries:
         url: https://github.com/shaug/seattle-election-guide/issues/609
       - label: "King County official sample ballot"
         url: https://kingcounty.gov/en/dept/elections/election-information/2026/november-general
+  - corrected_on: '2026-10-27'
+    headline: Added SGN’s No endorsements on all three statewide initiatives.
+    body: SGN explicitly recommends No on IL26-001 (parental rights in public schools), IL26-638 (K–12 school
+      athletics), and IP26-645 (state and local taxes). These three verified positions are now included,
+      bringing the guide to 933 decisions across the same 46 publishers while retaining every previous decision.
+      The editorial is dated October 26; the endorsements’ first appearance is unknown.
+    provenance:
+    - label: SGN initiative editorial
+      url: https://www.sgn.org/story/171504/
+    - label: Complete review of the three additions
+      url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_SGN_INITIATIVES_2026-10-27.md
+    - label: Initiative IL26-001
+      url: /e/wa-2026-general/races/initiative-26-001/
+    - label: Initiative IL26-638
+      url: /e/wa-2026-general/races/initiative-26-638/
+    - label: Initiative IP26-645
+      url: /e/wa-2026-general/races/initiative-26-645/

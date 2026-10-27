@@ -1,0 +1,1031 @@
+{
+  "actual_check_started_at": "2026-10-27T10:51:14.586315+00:00",
+  "actual_checked_at": "2026-10-27T10:51:14.822675+00:00",
+  "actual_reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+  "actual_reviewer": "OpenAI Codex/root/review_608_code_c340",
+  "additional_current_dispositions": [
+    {
+      "allocation": null,
+      "candidate_ids": [],
+      "canonical_row": null,
+      "disposition": "not a frozen general-ballot choice; October22 Smith article explicitly says Sawant out; no general dual",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:17.589815+00:00",
+          "actual_checked_at": "2026-10-27T10:51:17.822318+00:00",
+          "current_response_sha256": "b231552182fc3734c90ba614bb5be820763b974ff50b45e2a61fe49672c189f2",
+          "locator": "Full editorial title and body",
+          "official_url": "https://www.sgn.org/story/168554/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "publisher_fact": "Kshama Sawant, US House9",
+      "race_id": null
+    },
+    {
+      "allocation": null,
+      "candidate_ids": [],
+      "canonical_row": null,
+      "disposition": "outside frozen Seattle inventory",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:18.454273+00:00",
+          "actual_checked_at": "2026-10-27T10:51:18.639514+00:00",
+          "current_response_sha256": "ade7dd74e0a5ddca64c08e15c1d2619327d4768b6a2baa656bf1985a13cdc304",
+          "locator": "Full editorial title and body",
+          "official_url": "https://www.sgn.org/story/168638/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "publisher_fact": "Erin Chapman-Smith, LD29 House2",
+      "race_id": null
+    },
+    {
+      "allocation": null,
+      "candidate_ids": [],
+      "canonical_row": null,
+      "disposition": "primary library measure outside frozen November transit Proposition1; number alone not identity",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:19.235499+00:00",
+          "actual_checked_at": "2026-10-27T10:51:19.442845+00:00",
+          "current_response_sha256": "0edfbceedb6da08a764a3fa56a3572f93f0c6c8567330b5b9cf820963de8d08c",
+          "locator": "Full editorial title and body",
+          "official_url": "https://www.sgn.org/story/168782/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "publisher_fact": "Yes, Seattle Proposition1 library levy",
+      "race_id": null
+    }
+  ],
+  "authorization_reference": "docs/runbooks/endorsement-source-daily-verification.md#delegated-completion-of-497",
+  "canonical_qualification": "Three explicit No choices, one source point each, admitted locally under finite root-approved composition. All old8 source-level metadata/decisions/provenance stay exact; no blanket source timestamp replacement. Normal protected delivery/release approval remains separate.",
+  "changes": {
+    "001": {
+      "first_appearance": "unknown",
+      "new_value": {
+        "candidate_ids": [
+          "initiative-26-001--no"
+        ],
+        "captured_at": "2026-10-27T10:51:14.822675+00:00",
+        "evidence_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+        "evidence_locator": "SGN Editorial Board, story171504; full current article and final No instruction; exact initiative ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/001",
+        "evidence_url": "https://www.sgn.org/story/171504/",
+        "race_id": "initiative-26-001",
+        "review_note": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+        "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+        "reviewer": "OpenAI Codex/root/review_608_code_c340"
+      },
+      "operation": "add",
+      "prior_value": null,
+      "source_id": "seattle-gay-news"
+    },
+    "638": {
+      "first_appearance": "unknown",
+      "new_value": {
+        "candidate_ids": [
+          "initiative-26-638--no"
+        ],
+        "captured_at": "2026-10-27T10:51:14.822675+00:00",
+        "evidence_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+        "evidence_locator": "SGN Editorial Board, story171504; full current article and final No instruction; exact initiative ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/638",
+        "evidence_url": "https://www.sgn.org/story/171504/",
+        "race_id": "initiative-26-638",
+        "review_note": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+        "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+        "reviewer": "OpenAI Codex/root/review_608_code_c340"
+      },
+      "operation": "add",
+      "prior_value": null,
+      "source_id": "seattle-gay-news"
+    },
+    "645": {
+      "first_appearance": "unknown",
+      "new_value": {
+        "candidate_ids": [
+          "initiative-26-645--no"
+        ],
+        "captured_at": "2026-10-27T10:51:14.822675+00:00",
+        "evidence_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+        "evidence_locator": "SGN Editorial Board, story171504; full current article and final No instruction; exact initiative ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/645",
+        "evidence_url": "https://www.sgn.org/story/171504/",
+        "race_id": "initiative-26-645",
+        "review_note": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+        "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+        "reviewer": "OpenAI Codex/root/review_608_code_c340"
+      },
+      "operation": "add",
+      "prior_value": null,
+      "source_id": "seattle-gay-news"
+    }
+  },
+  "election_id": "wa-2026-general",
+  "endorsement_first_appearance": "unknown",
+  "issues": [
+    497,
+    647
+  ],
+  "native27_disposition": "Exact native8 extraction/event/metadata unchanged and unapproved as a complete current baseline. New mapping1.0.2 requires a future actual normal native11 snapshot and its exact review/approval, followed by later independent scheduled reuse.",
+  "new3_current_facts": [
+    {
+      "accepted_M29_contains_fact": false,
+      "allocations": [
+        {
+          "candidate_id": "initiative-26-001--no",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "canonical_row": null,
+      "current_official_position": "No",
+      "disposition": "new covered official fact omitted by native8; requires normal explicit mapping/admission review; no approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:14.586315+00:00",
+          "actual_checked_at": "2026-10-27T10:51:14.822675+00:00",
+          "current_response_sha256": "753c593ee1e7040334a7753b468cc4c7b9ca6fc2f443c8946cd448e06a9b61e4",
+          "locator": "SGN Editorial Board October26 story171504, exact title IDs, full body and final No instruction",
+          "observed_fact_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+          "official_url": "https://www.sgn.org/story/171504/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "first_appearance": "unknown; printed date not proof of first publication",
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 2,
+            "choice_type": "ballot_option",
+            "display_name": "No",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: Initiative Measure No. IL26-001; response='No'",
+            "id": "initiative-26-001--no",
+            "official_name": "No",
+            "party_preference": null,
+            "race_id": "initiative-26-001",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "Initiative IL26-001 — Parental Rights in Public Schools",
+        "district": "Statewide",
+        "evidence_locator": "initialized election configuration race id='initiative-26-001'",
+        "id": "initiative-26-001",
+        "office": "Ballot measure",
+        "position": "Initiative No. IL26-001",
+        "race_type": "measure"
+      },
+      "mapping_assessment": "Exact initiative number and subject match frozen official measure; explicit No. Existing adapter has no corresponding rule; no broad prefix normalization.",
+      "mapping_rule": null,
+      "native27_contains_fact": false,
+      "proposal_only": true,
+      "publisher_printed_date": "2026-10-26",
+      "race_id": "initiative-26-001",
+      "status": "endorsed"
+    },
+    {
+      "accepted_M29_contains_fact": false,
+      "allocations": [
+        {
+          "candidate_id": "initiative-26-638--no",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "canonical_row": null,
+      "current_official_position": "No",
+      "disposition": "new covered official fact omitted by native8; requires normal explicit mapping/admission review; no approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:14.586315+00:00",
+          "actual_checked_at": "2026-10-27T10:51:14.822675+00:00",
+          "current_response_sha256": "753c593ee1e7040334a7753b468cc4c7b9ca6fc2f443c8946cd448e06a9b61e4",
+          "locator": "SGN Editorial Board October26 story171504, exact title IDs, full body and final No instruction",
+          "observed_fact_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+          "official_url": "https://www.sgn.org/story/171504/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "first_appearance": "unknown; printed date not proof of first publication",
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 2,
+            "choice_type": "ballot_option",
+            "display_name": "No",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: Initiative Measure No. IL26-638; response='No'",
+            "id": "initiative-26-638--no",
+            "official_name": "No",
+            "party_preference": null,
+            "race_id": "initiative-26-638",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "Initiative IL26-638 — Participation in K-12 School Athletics",
+        "district": "Statewide",
+        "evidence_locator": "initialized election configuration race id='initiative-26-638'",
+        "id": "initiative-26-638",
+        "office": "Ballot measure",
+        "position": "Initiative No. IL26-638",
+        "race_type": "measure"
+      },
+      "mapping_assessment": "Exact initiative number and subject match frozen official measure; explicit No. Existing adapter has no corresponding rule; no broad prefix normalization.",
+      "mapping_rule": null,
+      "native27_contains_fact": false,
+      "proposal_only": true,
+      "publisher_printed_date": "2026-10-26",
+      "race_id": "initiative-26-638",
+      "status": "endorsed"
+    },
+    {
+      "accepted_M29_contains_fact": false,
+      "allocations": [
+        {
+          "candidate_id": "initiative-26-645--no",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "canonical_row": null,
+      "current_official_position": "No",
+      "disposition": "new covered official fact omitted by native8; requires normal explicit mapping/admission review; no approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:14.586315+00:00",
+          "actual_checked_at": "2026-10-27T10:51:14.822675+00:00",
+          "current_response_sha256": "753c593ee1e7040334a7753b468cc4c7b9ca6fc2f443c8946cd448e06a9b61e4",
+          "locator": "SGN Editorial Board October26 story171504, exact title IDs, full body and final No instruction",
+          "observed_fact_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+          "official_url": "https://www.sgn.org/story/171504/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "first_appearance": "unknown; printed date not proof of first publication",
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 2,
+            "choice_type": "ballot_option",
+            "display_name": "No",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: Initiative Measure No. IP26-645; response='No'",
+            "id": "initiative-26-645--no",
+            "official_name": "No",
+            "party_preference": null,
+            "race_id": "initiative-26-645",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "Initiative IP26-645 — State and Local Taxes",
+        "district": "Statewide",
+        "evidence_locator": "initialized election configuration race id='initiative-26-645'",
+        "id": "initiative-26-645",
+        "office": "Ballot measure",
+        "position": "Initiative No. IP26-645",
+        "race_type": "measure"
+      },
+      "mapping_assessment": "Exact initiative number and subject match frozen official measure; explicit No. Existing adapter has no corresponding rule; no broad prefix normalization.",
+      "mapping_rule": null,
+      "native27_contains_fact": false,
+      "proposal_only": true,
+      "publisher_printed_date": "2026-10-26",
+      "race_id": "initiative-26-645",
+      "status": "endorsed"
+    }
+  ],
+  "normal_compile_conservation": {
+    "SGN_old_source_level_metadata_and_old8_exact": true,
+    "WB_decisions": 23,
+    "actor": "OpenAI Codex/root/review_608_code_c340",
+    "checked_at": "2026-10-27T11:51:33.859133+00:00",
+    "full_aggregate_or_UI_comparison_performed": false,
+    "fullgates_run": false,
+    "inventory_exact": true,
+    "native89_exact": true,
+    "new933_total": 933,
+    "new_same46_publishers": 46,
+    "old930_full_endorsement_objects_and_IDs_exact": true,
+    "old930_ledger_dictionaries_exact": true,
+    "old_other_sources_exact": true,
+    "source_registry_exact": true
+  },
+  "observation_metadata": {
+    "availability": "observed",
+    "byte_length": 49445,
+    "canonical_url": "https://www.sgn.org/story/171504/",
+    "checked_at": "2026-10-27T10:51:14.822675+00:00",
+    "http_status": 200,
+    "media_type": "text/html; charset=utf-8",
+    "redirect_chain": [],
+    "request_started_at": "2026-10-27T10:51:14.586315+00:00",
+    "sha256": "753c593ee1e7040334a7753b468cc4c7b9ca6fc2f443c8946cd448e06a9b61e4"
+  },
+  "official_url": "https://www.sgn.org/story/171504/",
+  "publisher_printed_publication_date": "2026-10-26",
+  "record_type": "delegated_complete_current_factual_review_and_local_admission",
+  "recorded_at": "2026-10-27T11:50:29.310041+00:00",
+  "recorded_by": "OpenAI Codex/root/review_608_code_c340",
+  "retained_old8_facts": [
+    {
+      "allocations": [
+        {
+          "candidate_id": "king-county-council-2--rebecca-saldana",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "canonical_row": {
+        "accepted_M29_decision": {
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "race_id": "king-county-council-2"
+        },
+        "comparison": "same race and ordered choices; original dictionary retained",
+        "index_zero_based": 5,
+        "path": "data/releases/wa-2026-general/source-decisions.yaml",
+        "source_id": "seattle-gay-news"
+      },
+      "current_official_position": "endorse named candidate(s)",
+      "disposition": "supported current fact; retain canonical treatment; no admission or baseline approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:18.051023+00:00",
+          "actual_checked_at": "2026-10-27T10:51:18.242797+00:00",
+          "current_response_sha256": "85aee34b6ca583246f0a0ccc763a35048f0680c6f50f824ea33fb9db3f947d1c",
+          "locator": "Full editorial title, endorsement statement and final vote instruction",
+          "observed_fact_excerpt": "SGN Endorsements Rebecca Saldaña (King County Council District 2)",
+          "official_url": "https://www.sgn.org/story/168630/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 1,
+            "choice_type": "candidate",
+            "display_name": "Rebecca Saldaña",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='County Council District No. 2'; Office='Metropolitan King County Council District No. 2'; Candidate='Rebecca Saldaña'; Ballot Order='1'",
+            "id": "king-county-council-2--rebecca-saldana",
+            "official_name": "Rebecca Saldaña",
+            "party_preference": "(States No Party Preference)",
+            "race_id": "king-county-council-2",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "Metropolitan King County Council — District 2",
+        "district": "Metropolitan King County Council District 2",
+        "evidence_locator": "initialized election configuration race id='king-county-council-2'",
+        "id": "king-county-council-2",
+        "office": "Metropolitan King County Councilmember",
+        "position": "District 2",
+        "race_type": "candidate"
+      },
+      "mapping_rule": {
+        "accepted_M29_sha256": "5187130853493d0eb2eb40a1be54205ee223cb5c71d6746a567ddc780a2090ca",
+        "index_zero_based": 5,
+        "native_adapter_fingerprint": "cf8e61aa1e03a3dac44bb1ea73dcc1202ada44c0619a0ce0e06c78af3abbdb83",
+        "path": "config/adapters/wa-2026-general/seattle-gay-news.yaml",
+        "rule": {
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "pattern": "^SGN\\s+Endorsements\\s+Rebecca\\s+Saldaña\\s+\\(King\\s+County\\s+Council\\s+District\\s+2\\)$",
+          "race_id": "king-county-council-2",
+          "status": "endorsed"
+        }
+      },
+      "native_index_zero_based": 0,
+      "qualifications": [
+        "July current-cycle editorial live after primary; no separate general-only slate."
+      ],
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "allocations": [
+        {
+          "candidate_id": "ld-37-state-representative-1--kelabe-tewolde",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "canonical_row": {
+        "accepted_M29_decision": {
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "race_id": "ld-37-state-representative-1"
+        },
+        "comparison": "same race and ordered choices; original dictionary retained",
+        "index_zero_based": 2,
+        "path": "data/releases/wa-2026-general/source-decisions.yaml",
+        "source_id": "seattle-gay-news"
+      },
+      "current_official_position": "endorse named candidate(s)",
+      "disposition": "supported current fact; retain canonical treatment; no admission or baseline approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:17.365764+00:00",
+          "actual_checked_at": "2026-10-27T10:51:17.587895+00:00",
+          "current_response_sha256": "15dc66ac1b431691872021dc32c864651b735b607ad8da631777d96dc056fb1b",
+          "locator": "Full editorial title, endorsement statement and final vote instruction",
+          "observed_fact_excerpt": "SGN Endorsements Kelabe Tewolde (Washington State Legislative District 37 Position 1)",
+          "official_url": "https://www.sgn.org/story/168513/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 1,
+            "choice_type": "candidate",
+            "display_name": "Kelabe Tewolde",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 1'; Candidate='Kelabe Tewolde'; Ballot Order='1'",
+            "id": "ld-37-state-representative-1--kelabe-tewolde",
+            "official_name": "Kelabe Tewolde",
+            "party_preference": "(Prefers Democratic Party)",
+            "race_id": "ld-37-state-representative-1",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "Legislative District 37 State Representative — Position 1",
+        "district": "Legislative District 37",
+        "evidence_locator": "initialized election configuration race id='ld-37-state-representative-1'",
+        "id": "ld-37-state-representative-1",
+        "office": "State Representative",
+        "position": "Position 1",
+        "race_type": "candidate"
+      },
+      "mapping_rule": {
+        "accepted_M29_sha256": "5187130853493d0eb2eb40a1be54205ee223cb5c71d6746a567ddc780a2090ca",
+        "index_zero_based": 2,
+        "native_adapter_fingerprint": "cf8e61aa1e03a3dac44bb1ea73dcc1202ada44c0619a0ce0e06c78af3abbdb83",
+        "path": "config/adapters/wa-2026-general/seattle-gay-news.yaml",
+        "rule": {
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "pattern": "^SGN\\s+Endorsements\\s+Kelabe\\s+Tewolde\\s+\\(Washington\\s+State\\s+Legislative\\s+District\\s+37\\s+Position\\s+1\\)$",
+          "race_id": "ld-37-state-representative-1",
+          "status": "endorsed"
+        }
+      },
+      "native_index_zero_based": 1,
+      "qualifications": [
+        "July current-cycle editorial live after primary; no separate general-only slate."
+      ],
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "allocations": [
+        {
+          "candidate_id": "ld-37-state-representative-2--jaelynn-scott",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "canonical_row": {
+        "accepted_M29_decision": {
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "race_id": "ld-37-state-representative-2"
+        },
+        "comparison": "same race and ordered choices; original dictionary retained",
+        "index_zero_based": 3,
+        "path": "data/releases/wa-2026-general/source-decisions.yaml",
+        "source_id": "seattle-gay-news"
+      },
+      "current_official_position": "endorse named candidate(s)",
+      "disposition": "supported current fact; retain canonical treatment; no admission or baseline approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:18.244789+00:00",
+          "actual_checked_at": "2026-10-27T10:51:18.451852+00:00",
+          "current_response_sha256": "de42ac9de75222298fcfd65c3674f410e59eef67b2e2ff5e174f9640e1369dfc",
+          "locator": "Full editorial title, endorsement statement and final vote instruction",
+          "observed_fact_excerpt": "SGN Endorsements Jaelynn Scott (Washington State House of Representatives 37th District Position 2)",
+          "official_url": "https://www.sgn.org/story/168637/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 1,
+            "choice_type": "candidate",
+            "display_name": "Jaelynn Scott",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 2'; Candidate='Jaelynn Scott'; Ballot Order='1'",
+            "id": "ld-37-state-representative-2--jaelynn-scott",
+            "official_name": "Jaelynn Scott",
+            "party_preference": "(Prefers Democratic Party)",
+            "race_id": "ld-37-state-representative-2",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "Legislative District 37 State Representative — Position 2",
+        "district": "Legislative District 37",
+        "evidence_locator": "initialized election configuration race id='ld-37-state-representative-2'",
+        "id": "ld-37-state-representative-2",
+        "office": "State Representative",
+        "position": "Position 2",
+        "race_type": "candidate"
+      },
+      "mapping_rule": {
+        "accepted_M29_sha256": "5187130853493d0eb2eb40a1be54205ee223cb5c71d6746a567ddc780a2090ca",
+        "index_zero_based": 3,
+        "native_adapter_fingerprint": "cf8e61aa1e03a3dac44bb1ea73dcc1202ada44c0619a0ce0e06c78af3abbdb83",
+        "path": "config/adapters/wa-2026-general/seattle-gay-news.yaml",
+        "rule": {
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "pattern": "^SGN\\s+Endorsements\\s+Jaelynn\\s+Scott\\s+\\(Washington\\s+State\\s+House\\s+of\\s+Representatives\\s+37th\\s+District\\s+Position\\s+2\\)$",
+          "race_id": "ld-37-state-representative-2",
+          "status": "endorsed"
+        }
+      },
+      "native_index_zero_based": 2,
+      "qualifications": [
+        "July current-cycle editorial live after primary; no separate general-only slate."
+      ],
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "allocations": [
+        {
+          "candidate_id": "ld-37-state-senator--tatiana-brown",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "canonical_row": {
+        "accepted_M29_decision": {
+          "candidate_ids": [
+            "ld-37-state-senator--tatiana-brown"
+          ],
+          "race_id": "ld-37-state-senator"
+        },
+        "comparison": "same race and ordered choices; original dictionary retained",
+        "index_zero_based": 1,
+        "path": "data/releases/wa-2026-general/source-decisions.yaml",
+        "source_id": "seattle-gay-news"
+      },
+      "current_official_position": "endorse named candidate(s)",
+      "disposition": "supported current fact; retain canonical treatment; no admission or baseline approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:18.863104+00:00",
+          "actual_checked_at": "2026-10-27T10:51:19.071394+00:00",
+          "current_response_sha256": "42ad142af42b027b78dd0a0b263bfc19be1853c1861e5d5f2512069615611ca0",
+          "locator": "Full editorial title, endorsement statement and final vote instruction",
+          "observed_fact_excerpt": "SGN Endorsements Tatiana Brown (Washington State Senate 37th District)",
+          "official_url": "https://www.sgn.org/story/168742/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 2,
+            "choice_type": "candidate",
+            "display_name": "Tatiana Brown",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Senator'; Candidate='Tatiana Brown'; Ballot Order='2'",
+            "id": "ld-37-state-senator--tatiana-brown",
+            "official_name": "Tatiana Brown",
+            "party_preference": "(Prefers Democratic Party)",
+            "race_id": "ld-37-state-senator",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "Legislative District 37 State Senator",
+        "district": "Legislative District 37",
+        "evidence_locator": "initialized election configuration race id='ld-37-state-senator'",
+        "id": "ld-37-state-senator",
+        "office": "State Senator",
+        "position": null,
+        "race_type": "candidate"
+      },
+      "mapping_rule": {
+        "accepted_M29_sha256": "5187130853493d0eb2eb40a1be54205ee223cb5c71d6746a567ddc780a2090ca",
+        "index_zero_based": 1,
+        "native_adapter_fingerprint": "cf8e61aa1e03a3dac44bb1ea73dcc1202ada44c0619a0ce0e06c78af3abbdb83",
+        "path": "config/adapters/wa-2026-general/seattle-gay-news.yaml",
+        "rule": {
+          "candidate_ids": [
+            "ld-37-state-senator--tatiana-brown"
+          ],
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "pattern": "^SGN\\s+Endorsements\\s+Tatiana\\s+Brown\\s+\\(Washington\\s+State\\s+Senate\\s+37th\\s+District\\)$",
+          "race_id": "ld-37-state-senator",
+          "status": "endorsed"
+        }
+      },
+      "native_index_zero_based": 3,
+      "qualifications": [
+        "July current-cycle editorial live after primary; no separate general-only slate."
+      ],
+      "race_id": "ld-37-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "allocations": [
+        {
+          "candidate_id": "ld-43-state-senator--hannah-sabio-howell",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "canonical_row": {
+        "accepted_M29_decision": {
+          "candidate_ids": [
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "race_id": "ld-43-state-senator"
+        },
+        "comparison": "same race and ordered choices; original dictionary retained",
+        "index_zero_based": 4,
+        "path": "data/releases/wa-2026-general/source-decisions.yaml",
+        "source_id": "seattle-gay-news"
+      },
+      "current_official_position": "endorse named candidate(s)",
+      "disposition": "supported current fact; retain canonical treatment; no admission or baseline approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:18.641583+00:00",
+          "actual_checked_at": "2026-10-27T10:51:18.861236+00:00",
+          "current_response_sha256": "af6e804802846feb6318f006203f4562623d158cc8aa45e2cc1b4487adfb4e38",
+          "locator": "Full editorial title, endorsement statement and final vote instruction",
+          "observed_fact_excerpt": "SGN Endorsements Hannah Sabio-Howell (Washington State Senate 43rd District)",
+          "official_url": "https://www.sgn.org/story/168738/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 2,
+            "choice_type": "candidate",
+            "display_name": "Hannah Sabio-Howell",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Senator'; Candidate='Hannah Sabio-Howell'; Ballot Order='2'",
+            "id": "ld-43-state-senator--hannah-sabio-howell",
+            "official_name": "Hannah Sabio-Howell",
+            "party_preference": "(Prefers Democratic Party)",
+            "race_id": "ld-43-state-senator",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "Legislative District 43 State Senator",
+        "district": "Legislative District 43",
+        "evidence_locator": "initialized election configuration race id='ld-43-state-senator'",
+        "id": "ld-43-state-senator",
+        "office": "State Senator",
+        "position": null,
+        "race_type": "candidate"
+      },
+      "mapping_rule": {
+        "accepted_M29_sha256": "5187130853493d0eb2eb40a1be54205ee223cb5c71d6746a567ddc780a2090ca",
+        "index_zero_based": 4,
+        "native_adapter_fingerprint": "cf8e61aa1e03a3dac44bb1ea73dcc1202ada44c0619a0ce0e06c78af3abbdb83",
+        "path": "config/adapters/wa-2026-general/seattle-gay-news.yaml",
+        "rule": {
+          "candidate_ids": [
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "pattern": "^SGN\\s+Endorsements\\s+Hannah\\s+Sabio\\-Howell\\s+\\(Washington\\s+State\\s+Senate\\s+43rd\\s+District\\)$",
+          "race_id": "ld-43-state-senator",
+          "status": "endorsed"
+        }
+      },
+      "native_index_zero_based": 4,
+      "qualifications": [
+        "July current-cycle editorial live after primary; no separate general-only slate."
+      ],
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "allocations": [
+        {
+          "candidate_id": "seattle-city-council-5--nilu-jenks",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "canonical_row": {
+        "accepted_M29_decision": {
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "race_id": "seattle-city-council-5"
+        },
+        "comparison": "same race and ordered choices; original dictionary retained",
+        "index_zero_based": 6,
+        "path": "data/releases/wa-2026-general/source-decisions.yaml",
+        "source_id": "seattle-gay-news"
+      },
+      "current_official_position": "endorse named candidate(s)",
+      "disposition": "supported current fact; retain canonical treatment; no admission or baseline approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:17.824182+00:00",
+          "actual_checked_at": "2026-10-27T10:51:18.049899+00:00",
+          "current_response_sha256": "9044ff2fa08559e8d28d35d1c9b26c45e9a9c0370aecaa0cfabb540be9ddd89b",
+          "locator": "Full editorial title, endorsement statement and final vote instruction",
+          "observed_fact_excerpt": "SGN Endorsements Nilu Jenks (Seattle City Council District 5)",
+          "official_url": "https://www.sgn.org/story/168558/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 1,
+            "choice_type": "candidate",
+            "display_name": "Nilu Jenks",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='SEATTLE CITY COUNCIL DISTRICT 5'; Office='Council District No. 5'; Candidate='Nilu Jenks'; Ballot Order='1'",
+            "id": "seattle-city-council-5--nilu-jenks",
+            "official_name": "Nilu Jenks",
+            "party_preference": "(States No Party Preference)",
+            "race_id": "seattle-city-council-5",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "Seattle City Council — District 5",
+        "district": "Seattle City Council District 5",
+        "evidence_locator": "initialized election configuration race id='seattle-city-council-5'",
+        "id": "seattle-city-council-5",
+        "office": "City Councilmember",
+        "position": "District 5 — unexpired 1-year term",
+        "race_type": "candidate"
+      },
+      "mapping_rule": {
+        "accepted_M29_sha256": "5187130853493d0eb2eb40a1be54205ee223cb5c71d6746a567ddc780a2090ca",
+        "index_zero_based": 6,
+        "native_adapter_fingerprint": "cf8e61aa1e03a3dac44bb1ea73dcc1202ada44c0619a0ce0e06c78af3abbdb83",
+        "path": "config/adapters/wa-2026-general/seattle-gay-news.yaml",
+        "rule": {
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "pattern": "^SGN\\s+Endorsements\\s+Nilu\\s+Jenks\\s+\\(Seattle\\s+City\\s+Council\\s+District\\s+5\\)$",
+          "race_id": "seattle-city-council-5",
+          "status": "endorsed"
+        }
+      },
+      "native_index_zero_based": 5,
+      "qualifications": [
+        "July current-cycle editorial live after primary; no separate general-only slate."
+      ],
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "allocations": [
+        {
+          "candidate_id": "us-house-7--pramila-jayapal",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "canonical_row": {
+        "accepted_M29_decision": {
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "race_id": "us-house-7"
+        },
+        "comparison": "same race and ordered choices; original dictionary retained",
+        "index_zero_based": 0,
+        "path": "data/releases/wa-2026-general/source-decisions.yaml",
+        "source_id": "seattle-gay-news"
+      },
+      "current_official_position": "endorse named candidate(s)",
+      "disposition": "supported current fact; retain canonical treatment; no admission or baseline approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:19.073476+00:00",
+          "actual_checked_at": "2026-10-27T10:51:19.232451+00:00",
+          "current_response_sha256": "5e58ecc6170af21f6ff2efd4644eac006b2174e4e902ae647b2ce86fa96b0c3a",
+          "locator": "Full editorial title, endorsement statement and final vote instruction",
+          "observed_fact_excerpt": "SGN Endorsements Pramila Jayapal (US House of Representatives 7th District)",
+          "official_url": "https://www.sgn.org/story/168779/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 1,
+            "choice_type": "candidate",
+            "display_name": "Pramila Jayapal",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Congressional District 7'; Office='U.S. Representative'; Candidate='Pramila Jayapal'; Ballot Order='1'",
+            "id": "us-house-7--pramila-jayapal",
+            "official_name": "Pramila Jayapal",
+            "party_preference": "(Prefers Democratic Party)",
+            "race_id": "us-house-7",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "U.S. Representative — Congressional District 7",
+        "district": "Congressional District 7",
+        "evidence_locator": "initialized election configuration race id='us-house-7'",
+        "id": "us-house-7",
+        "office": "U.S. Representative",
+        "position": null,
+        "race_type": "candidate"
+      },
+      "mapping_rule": {
+        "accepted_M29_sha256": "5187130853493d0eb2eb40a1be54205ee223cb5c71d6746a567ddc780a2090ca",
+        "index_zero_based": 0,
+        "native_adapter_fingerprint": "cf8e61aa1e03a3dac44bb1ea73dcc1202ada44c0619a0ce0e06c78af3abbdb83",
+        "path": "config/adapters/wa-2026-general/seattle-gay-news.yaml",
+        "rule": {
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "pattern": "^SGN\\s+Endorsements\\s+Pramila\\s+Jayapal\\s+\\(US\\s+House\\s+of\\s+Representatives\\s+7th\\s+District\\)$",
+          "race_id": "us-house-7",
+          "status": "endorsed"
+        }
+      },
+      "native_index_zero_based": 6,
+      "qualifications": [
+        "July current-cycle editorial live after primary; no separate general-only slate."
+      ],
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "allocations": [
+        {
+          "candidate_id": "us-house-9--adam-smith",
+          "source_point_allocation": "1"
+        }
+      ],
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "canonical_row": {
+        "accepted_M29_decision": {
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "evidence_excerpt": "Vote Smith.",
+          "evidence_locator": "Official SGN Editorial Board October 22, 2026 endorsement article, title names U.S. House 9th District and final bold Vote Smith instruction; current article original SHA-256 a9380cbc6d99ce99af0675543a2759912964439ef28dfed9c32c115a489eadf3, numbered text lines 38-40 and 58-59. Capture capture-seattle-gay-news-20261023T075253Z-440582633817; verified manual record manual-seattle-gay-news-20261023T075841Z-d1aebd1111a4.",
+          "evidence_url": "https://www.sgn.org/story/171425/",
+          "race_id": "us-house-9"
+        },
+        "comparison": "same race and ordered choices; original dictionary retained",
+        "index_zero_based": 7,
+        "path": "data/releases/wa-2026-general/source-decisions.yaml",
+        "source_id": "seattle-gay-news"
+      },
+      "current_official_position": "endorse named candidate(s)",
+      "disposition": "supported current fact; retain canonical treatment; no admission or baseline approval",
+      "evidence": [
+        {
+          "actual_check_started_at": "2026-10-27T10:51:19.444849+00:00",
+          "actual_checked_at": "2026-10-27T10:51:19.652487+00:00",
+          "current_response_sha256": "056124e76088b06bbbafb8f6713e30f45b743d57a803f0886e9a1a570df9d578",
+          "locator": "Full editorial title, endorsement statement and final vote instruction",
+          "observed_fact_excerpt": "SGN Endorsements: Adam Smith (US House of Representatives, 9th District)",
+          "official_url": "https://www.sgn.org/story/171425/",
+          "review_started_at": "2026-10-27T10:54:53+00:00",
+          "reviewed_at": "2026-10-27T11:02:37.944401+00:00",
+          "reviewer": "OpenAI Codex/root/review_608_code_c340"
+        }
+      ],
+      "frozen_mapping": {
+        "choices": [
+          {
+            "aliases": [],
+            "ballot_order": 1,
+            "choice_type": "candidate",
+            "display_name": "Adam Smith",
+            "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='CONGRESSIONAL DISTRICT 9'; Office='U.S. Representative'; Candidate='Adam Smith'; Ballot Order='1'",
+            "id": "us-house-9--adam-smith",
+            "official_name": "Adam Smith",
+            "party_preference": "(Prefers Democratic Party)",
+            "race_id": "us-house-9",
+            "source_ids": [
+              "king-county-2026-general-ballot"
+            ]
+          }
+        ],
+        "display_name": "U.S. Representative — Congressional District 9",
+        "district": "Congressional District 9",
+        "evidence_locator": "initialized election configuration race id='us-house-9'",
+        "id": "us-house-9",
+        "office": "U.S. Representative",
+        "position": null,
+        "race_type": "candidate"
+      },
+      "mapping_rule": {
+        "accepted_M29_sha256": "5187130853493d0eb2eb40a1be54205ee223cb5c71d6746a567ddc780a2090ca",
+        "index_zero_based": 7,
+        "native_adapter_fingerprint": "cf8e61aa1e03a3dac44bb1ea73dcc1202ada44c0619a0ce0e06c78af3abbdb83",
+        "path": "config/adapters/wa-2026-general/seattle-gay-news.yaml",
+        "rule": {
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "evidence_locator": "Official current SGN story/171425 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+          "pattern": "^SGN\\s+Endorsements:\\s+Adam\\s+Smith\\s+\\(US\\s+House\\s+of\\s+Representatives,\\s+9th\\s+District\\)$",
+          "race_id": "us-house-9",
+          "status": "endorsed"
+        }
+      },
+      "native_index_zero_based": 7,
+      "qualifications": [],
+      "race_id": "us-house-9",
+      "status": "endorsed"
+    }
+  ],
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "source_policy": "Facts-only recurring review. Generated compiler artifacts are permitted factual JSON, not recreated official HTML or retained-original manual evidence."
+}

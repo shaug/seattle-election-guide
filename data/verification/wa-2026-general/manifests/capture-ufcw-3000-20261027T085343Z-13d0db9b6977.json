@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 220802,
+  "canonical_url": "https://ufcw3000.org/endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "a28d5f9d8af1aab12d9438aa883fd0e7c5a6680c8ca6e905d7afe156f2369da2",
+  "http_status": null,
+  "id": "capture-ufcw-3000-20261027T085343Z-13d0db9b6977",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Generated comparison; public observations identify transient HTTP inputs.",
+  "requested_url": "https://ufcw3000.org/endorsements",
+  "retrieved_at": "2026-10-27T08:53:43Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "title": "Derived UFCW publication comparison; inputs linked by discovery record",
+  "updated_at": null
+}

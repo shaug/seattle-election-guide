@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "56219d1619fe9f4447158c79ecf00e41ee8226ebc56604c359f851d39cc57f9f"
+  },
+  "checked_at": "2026-10-27T11:35:56.417241Z",
+  "event_id": "refresh-planned-parenthood-alliance-advocates-20261027T113556Z-756080a04699",
+  "evidence": "OpenAI Codex/root/assess_497_remaining_adoption: data/review/rechecks/wa-2026-general-2026-10-27-access.json#/sources/planned-parenthood-alliance-advocates; actual one guarded public HTTP403 at 2026-10-27T11:35:56.417241+00:00 by OpenAI Codex/root/assess_497_remaining_adoption. No response content or current endorsement verification. Normal resolver alone determines any retained-access limitation; prior facts/dates/failures/counts remain.",
+  "mode": "human",
+  "recorded_at": "2026-10-27T11:54:31.551603Z",
+  "scheduled_for": "2026-10-27",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "status": "failed"
+}

@@ -1,0 +1,39 @@
+{
+  "captured_at": "2026-10-27T10:51:14.822675Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+      "evidence_locator": "SGN Editorial Board, story171504; full current article and final No instruction; exact initiative ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/001",
+      "evidence_url": "https://www.sgn.org/story/171504/",
+      "race_id": "initiative-26-001",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+      "evidence_locator": "SGN Editorial Board, story171504; full current article and final No instruction; exact initiative ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/638",
+      "evidence_url": "https://www.sgn.org/story/171504/",
+      "race_id": "initiative-26-638",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+      "evidence_locator": "SGN Editorial Board, story171504; full current article and final No instruction; exact initiative ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/645",
+      "evidence_url": "https://www.sgn.org/story/171504/",
+      "race_id": "initiative-26-645",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "October 23 whole-source-block review and exact official locators: data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json; data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. Prior locator: Official Seattle news index listing the editorial board's 2026 endorsement articles. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.",
+  "review_note": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+  "reviewer": "OpenAI Codex/root/review_608_code_c340",
+  "source_id": "seattle-gay-news"
+}

@@ -33,12 +33,29 @@ runner = CliRunner()
         ('<a href="/story/199999/unrecognized-link-shape">New publication</a>', False),
     ],
 )
+@pytest.mark.parametrize(
+    ("new_title", "expected_new_decisions"),
+    [
+        pytest.param("SGN Endorsements A Newly Published Candidate", {}, id="unknown-candidate"),
+        pytest.param(
+            "SGN Endorsements: Washington State Ballot Initiatives (IP26-645, IL26-001, IL26-638)",
+            {
+                "initiative-26-001": ["initiative-26-001--no"],
+                "initiative-26-638": ["initiative-26-638--no"],
+                "initiative-26-645": ["initiative-26-645--no"],
+            },
+            id="reviewed-initiatives",
+        ),
+    ],
+)
 def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     new_link: str,
     expect_fetch: bool,
     headline: str,
+    new_title: str,
+    expected_new_decisions: dict[str, list[str]],
 ) -> None:
     monkeypatch.delenv("ENDORSEMENT_EVIDENCE_KEY", raising=False)
     policy = cast(dict[str, Any], yaml.safe_load((ROOT / "config/verification.yaml").read_text()))
@@ -132,9 +149,7 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     # A previously unknown endorsement article is discovered from the current
     # index. Fixed known mappings cannot interpret it; the changed-byte gate
     # must send it to human review even when known decisions are identical.
-    articles["https://www.sgn.org/story/199999/"] = headline.format(
-        "SGN Endorsements A Newly Published Candidate"
-    ).encode()
+    articles["https://www.sgn.org/story/199999/"] = headline.format(new_title).encode()
     pages["https://www.sgn.org/ch/News/Seattle"] += new_link.encode()
     third = runner.invoke(
         app,
@@ -153,6 +168,9 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     assert ("https://www.sgn.org/story/199999/" in calls) is expect_fetch
     event = json.loads(third.output)["automatic"][0]
     assert event["status"] == "updated" and event["content_changed"] is True
+    assert {d["race_id"]: d["after"]["candidate_ids"] for d in event["diff"]} == (
+        expected_new_decisions if expect_fetch else {}
+    )
     tasks = runner.invoke(
         app,
         [
@@ -173,6 +191,8 @@ def test_new_article_and_known_article_edit_never_become_quiet_zero_diff(
     assert tasks.exit_code == 0, tasks.output
     assert event["id"] in tasks.output
     if expect_fetch:
+        assert "Human baseline spot-check required" in tasks.output
+    if not expect_fetch or not expected_new_decisions:
         assert "unrecognized wording" in tasks.output
     assert not any(
         b"Changed authored wording" in path.read_bytes() for path in state.rglob("*.json")

@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 64661,
+  "canonical_url": "https://transitriders.org/2026-general-election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "29e111ea40b19beb5d4bcf354ef8870776faa726b3fa8fca659b84407b45c86d",
+  "http_status": 200,
+  "id": "capture-transit-riders-union-20261027T085343Z-fc6045c40fca",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Public observation; original response bytes are transient.",
+  "requested_url": "https://transitriders.org/2026-general-election-endorsements/",
+  "retrieved_at": "2026-10-27T08:53:43Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "title": "Official endorsement discovery input",
+  "updated_at": null
+}

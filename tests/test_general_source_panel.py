@@ -225,7 +225,17 @@ def test_general_additions_preserve_verified_choices_and_coendorsement_allocatio
     assert wb638["status"] == "endorsed"
     assert wb638["candidate_ids"] == ["initiative-26-638--no"]
     assert wb638["allocation"] == {"initiative-26-638--no": "1"}
-    assert len(dataset["endorsements"]) == 930
+    for race_id, candidate_id in {
+        "initiative-26-001": "initiative-26-001--no",
+        "initiative-26-638": "initiative-26-638--no",
+        "initiative-26-645": "initiative-26-645--no",
+    }.items():
+        row = by_key["seattle-gay-news", race_id]
+        assert row["status"] == "endorsed"
+        assert row["candidate_ids"] == [candidate_id]
+        assert row["allocation"] == {candidate_id: "1"}
+    assert sum(row["source_id"] == "seattle-gay-news" for row in dataset["endorsements"]) == 11
+    assert len(dataset["endorsements"]) == 933
     assert not {"king-county-republican-party", "progressive-voters-guide"} & {
         row["source_id"] for row in dataset["endorsements"]
     }
