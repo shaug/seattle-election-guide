@@ -14,6 +14,15 @@ from election_guide.normalization.semantics import EndorsementStatus
 EXTRACTION_ID_PATTERN = r"^extraction-[a-z0-9-]+-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}$"
 REFRESH_ID_PATTERN = r"^refresh-[a-z0-9-]+-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}$"
 AdapterKind = Literal["static_html", "dynamic_html", "pdf", "image"]
+ReviewRequiredReason = Literal["parse", "incomplete_publication", "conflicting_evidence"]
+
+
+class PublicationReviewRequired(ValueError):
+    """A positively identified publication problem, not an inferred transport cause."""
+
+    def __init__(self, reason: ReviewRequiredReason, message: str) -> None:
+        super().__init__(message)
+        self.reason: ReviewRequiredReason = reason
 
 
 class CollectionModel(BaseModel):
@@ -196,6 +205,9 @@ class RefreshEvent(CollectionModel):
     access_failure: AccessFailureDiagnostic | None = Field(
         default=None, exclude_if=lambda value: value is None
     )
+    review_required: ReviewRequiredReason | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
     @model_validator(mode="after")
     def validate_status(self) -> RefreshEvent:
@@ -205,11 +217,13 @@ class RefreshEvent(CollectionModel):
         if self.status == "failed":
             if self.error is None or self.snapshot_id is not None or self.diff:
                 raise ValueError("failed refresh must have only an error and prior state")
-            if self.access_failure and (self.capture_id or self.content_changed is not None):
+            if self.access_failure and (
+                self.capture_id or self.content_changed is not None or self.review_required
+            ):
                 raise ValueError("pure access failure cannot include a parsed response")
             return self
-        if self.access_failure is not None:
-            raise ValueError("successful refresh cannot carry an access failure")
+        if self.access_failure is not None or self.review_required is not None:
+            raise ValueError("successful refresh cannot carry a failure diagnostic")
         if self.error is not None or self.capture_id is None or self.snapshot_id is None:
             raise ValueError("successful refresh requires capture and snapshot without an error")
         if self.content_changed is None:

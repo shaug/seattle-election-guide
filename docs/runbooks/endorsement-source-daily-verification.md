@@ -315,6 +315,10 @@ uv run election-guide verification record-access-failure config/verification.yam
 
 Only supported typed HTTP status/deadline/DNS/TLS access failures can carry the new limitation;
 unknown, generic OS/network, parser, partial/conflicting publication and safety failures do not.
+An older ambiguous failure remains unresolved without blocking a separate later typed pure-access
+attempt. Positive intervening changed content, failed observed response/comparison or a typed
+parse/incomplete/conflicting-publication reason still requires a later complete accepted review.
+Never backfill such a reason or an HTTP diagnosis onto an old event; all older obligations remain.
 Automatic sources continue their existing automatic path. A qualifier must already exist when
 the new failed observation is recorded and predate its check; it cannot resolve an old check.
 All historical failures, six automatic attempts, baseline approvals, ciphertext and IDs remain.

@@ -30,7 +30,11 @@ from election_guide.collection.http import (
     TOTAL_TIMEOUT_EXCEEDED,
     fetch_http,
 )
-from election_guide.collection.models import AccessFailureDiagnostic, RefreshEvent
+from election_guide.collection.models import (
+    AccessFailureDiagnostic,
+    PublicationReviewRequired,
+    RefreshEvent,
+)
 from election_guide.collection.refresh import (
     read_adapter_spec,
     record_refresh_failure,
@@ -443,4 +447,5 @@ def _refresh(
             root / "refreshes",
             extraction_dir=root / "extractions",
             access_failure=access_failure,
+            review_required=error.reason if isinstance(error, PublicationReviewRequired) else None,
         )

@@ -136,6 +136,8 @@ def qualify(
     source_id: str = SOURCE,
     official_url: str = "https://www.seattletimes.com/opinion/editorials/endorsements/",
     reviewer: str = "Fixture original reviewer",
+    checked_at: str = "2026-10-26T16:00:00Z",
+    reviewed_at: str = "2026-10-26T17:00:00Z",
 ) -> dict[str, Any]:
     result = runner.invoke(
         app,
@@ -152,11 +154,11 @@ def qualify(
             "--official-url",
             official_url,
             "--checked-at",
-            "2026-10-26T16:00:00Z",
+            checked_at,
             "--reviewer",
             reviewer,
             "--reviewed-at",
-            "2026-10-26T17:00:00Z",
+            reviewed_at,
             "--evidence",
             "docs/accepted-review.md",
             "--recorded-by",
@@ -314,17 +316,9 @@ def test_later_qualification_and_new_policy_never_backfill_old_dispositions(
     assert all(p.read_bytes() == raw for p, raw in old.items())
 
 
-@pytest.mark.parametrize(
-    "error",
-    [
-        "parser found no decisions",
-        "incomplete publication",
-        "conflicting choices",
-        "unknown ValueError",
-    ],
-)
-def test_intervening_unresolved_content_or_unknown_failure_blocks_access_disposition(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, error: str
+@pytest.mark.parametrize("content_changed", [True, False, None])
+def test_intervening_observed_content_failure_blocks_access_disposition(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, content_changed: bool | None
 ) -> None:
     from datetime import date, datetime
 
@@ -332,13 +326,37 @@ def test_intervening_unresolved_content_or_unknown_failure_blocks_access_disposi
     from election_guide.collection.refresh import record_refresh_failure
     from election_guide.collection.verification import CheckRecord
     from election_guide.collection.verification_runtime import record_check
+    from election_guide.evidence.models import CaptureRequest
+    from election_guide.evidence.storage import read_capture_manifest, record_observation
 
     policy, state, fixtures = setup_access_policy(tmp_path, monkeypatch)
     root = state / "wa-2026-general"
     qualify(root, tmp_path)
     at = datetime.fromisoformat("2026-10-27T17:00:00+00:00")
+    capture_id = None
+    if content_changed is None:
+        path = tmp_path / "uncompared-publication.html"
+        path.write_text("Fixture publication observed but not successfully compared.\n")
+        request = CaptureRequest(
+            source_id=SOURCE,
+            requested_url="https://www.seattletimes.com/opinion/editorials/",
+            canonical_url="https://www.seattletimes.com/opinion/editorials/",
+            retrieved_at=at,
+            title="Uncompared fixture publication; no real source request",
+            media_type="text/html",
+            capture_method="manual_upload",
+            redistribution="restricted",
+            redistribution_note="Authored local fixture observation; no publisher access.",
+        )
+        capture_id = read_capture_manifest(record_observation(request, path, root / "manifests")).id
     event = record_refresh_failure(
-        SOURCE, at, error, root / "refreshes", extraction_dir=root / "extractions"
+        SOURCE,
+        at,
+        "Fixture observed publication could not be parsed completely",
+        root / "refreshes",
+        extraction_dir=root / "extractions",
+        content_changed=content_changed,
+        capture_id=capture_id,
     )
     record_check(
         root,
@@ -356,6 +374,116 @@ def test_intervening_unresolved_content_or_unknown_failure_blocks_access_disposi
     )
     run_fixture(policy, state, fixtures, "2026-10-28")
     assert "access_disposition" not in failure(policy, state, "2026-10-28")
+
+
+def test_old_ambiguous_failure_stays_unresolved_without_blocking_new_typed_access_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from datetime import datetime
+
+    from election_guide.collection import verification_access
+    from election_guide.collection.refresh import record_refresh_failure
+    from election_guide.collection.verification import CheckRecord, read_policy
+    from election_guide.collection.verification_runtime import consecutive_failures, record_check
+    from election_guide.collection.verification_tasks import task_sections
+
+    policy, state, fixtures = setup_access_policy(tmp_path, monkeypatch)
+    root = state / "wa-2026-general"
+    qualify(root, tmp_path)
+    at = datetime.fromisoformat("2026-10-27T17:00:00+00:00")
+    event = record_refresh_failure(
+        SOURCE,
+        at,
+        "Source check failed (ValueError); inspect official access and adapter.",
+        root / "refreshes",
+        extraction_dir=root / "extractions",
+    )
+    record_check(
+        root,
+        CheckRecord(
+            source_id=SOURCE,
+            scheduled_for=date(2026, 10, 27),
+            checked_at=at,
+            status="failed",
+            mode="live",
+            event_id=event.id,
+        ),
+    )
+    old_bytes = {p: p.read_bytes() for p in root.rglob("*.json")}
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-28T19:00:00+00:00")
+    )
+    run_fixture(policy, state, fixtures, "2026-10-28")
+    new = failure(policy, state, "2026-10-28")
+    assert new["access_disposition"]["disposition"] == "retained_verified_with_limitation"
+    assert new["status"] == "failed"
+    assert consecutive_failures(root, SOURCE) == 2
+    old_sections = task_sections(
+        read_policy(policy), state, date(2026, 10, 27), "example/guide", "a" * 40, watch=False
+    )
+    assert all(
+        not item.get("handled", False) for item in old_sections if item["source_id"] == SOURCE
+    )
+    assert all(p.read_bytes() == raw for p, raw in old_bytes.items())
+
+
+@pytest.mark.parametrize("reason", ["parse", "incomplete_publication", "conflicting_evidence"])
+def test_explicit_intervening_review_reason_blocks_until_later_complete_review(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, reason: Any
+) -> None:
+    from datetime import datetime
+
+    from election_guide.collection import verification_access
+    from election_guide.collection.refresh import record_refresh_failure
+    from election_guide.collection.verification import CheckRecord
+    from election_guide.collection.verification_runtime import record_check
+
+    policy, state, fixtures = setup_access_policy(tmp_path, monkeypatch)
+    root = state / "wa-2026-general"
+    qualify(root, tmp_path)
+    at = datetime.fromisoformat("2026-10-27T17:00:00+00:00")
+    event = record_refresh_failure(
+        SOURCE,
+        at,
+        "Fixture positively identified incomplete or conflicting publication",
+        root / "refreshes",
+        extraction_dir=root / "extractions",
+        review_required=reason,
+    )
+    record_check(
+        root,
+        CheckRecord(
+            source_id=SOURCE,
+            scheduled_for=date(2026, 10, 27),
+            checked_at=at,
+            status="failed",
+            mode="live",
+            event_id=event.id,
+        ),
+    )
+    old_bytes = {p: p.read_bytes() for p in root.rglob("*.json")}
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-28T19:00:00+00:00")
+    )
+    run_fixture(policy, state, fixtures, "2026-10-28")
+    failed = failure(policy, state, "2026-10-28")
+    assert "access_disposition" not in failed
+    qualify(
+        root,
+        tmp_path,
+        checked_at="2026-10-28T16:00:00Z",
+        reviewed_at="2026-10-28T17:00:00Z",
+        reviewer="Fixture later complete reviewer",
+    )
+    monkeypatch.setattr(
+        verification_access, "utc_now", lambda: datetime.fromisoformat("2026-10-29T19:00:00+00:00")
+    )
+    run_fixture(policy, state, fixtures, "2026-10-29")
+    assert failure(policy, state, "2026-10-29")["access_disposition"]["disposition"] == (
+        "retained_verified_with_limitation"
+    )
+    assert all(p.read_bytes() == raw for p, raw in old_bytes.items())
+    assert "access_disposition" not in failed
 
 
 def test_failures_keep_distinct_slot_escalation_and_recovery_uses_real_time(

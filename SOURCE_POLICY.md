@@ -110,8 +110,12 @@ Only a failed HTTP-fetch observation with a typed HTTP 401/403/408/429/500/502/5
 deadline, DNS or TLS diagnostic can use this disposition. HTTP 404/410, response-integrity,
 redirect/access-safety, generic network/OS errors, unknown diagnostics, parser/incomplete
 publications and new/conflicting evidence remain unresolved. Successful partial responses
-never become access failures. A known intervening changed publication or unclassified/content
-failure requires a later complete review before another access limitation may be handled.
+never become access failures. Positive intervening publication evidence requires a later complete
+review: changed content, a failed observed response/comparison, or an explicit typed parse,
+incomplete-publication or conflicting-evidence reason. Record that reason only at its known
+producer boundary, never by guessing from generic exception messages. An older ambiguous
+null-capture/null-comparison failure stays unresolved for its own date; it does not establish a
+content conflict or prevent a separately observed later typed pure-access limitation.
 
 The permitted disposition is stored on the **new failed check**, referencing the qualification
 and policy fingerprint already in force. Reconciliation never derives one for an old check from

@@ -244,9 +244,9 @@ def new_access_disposition(
             continue
         if not _admitted_qualification(root, identity, review.election_id):
             continue
-        # A known changed publication, parse/completeness/conflict failure or
-        # unknown diagnostic after this accepted review needs review, not an
-        # access exception. A later explicit complete qualification can supersede it.
+        # Positive publication evidence requires review. An older ambiguous
+        # failure stays unresolved on its own slot; it does not prove a content
+        # conflict or prevent a separate later typed access limitation.
         intervening = [
             read_refresh_event(root / "refreshes" / f"{prior.event_id}.json")
             for prior in read_checks(root)
@@ -255,7 +255,15 @@ def new_access_disposition(
             and review.reviewed_at < prior.checked_at < check.checked_at
         ]
         if any(
-            item.content_changed or (item.status == "failed" and item.access_failure is None)
+            item.content_changed
+            or (
+                item.status == "failed"
+                and (
+                    item.capture_id is not None
+                    or item.content_changed is not None
+                    or item.review_required is not None
+                )
+            )
             for item in intervening
         ):
             continue
