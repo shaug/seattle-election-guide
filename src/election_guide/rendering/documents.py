@@ -8,7 +8,8 @@ from `rendering/context.py`; this module only assembles them into a document.
 
 from __future__ import annotations
 
-from functools import partial
+from functools import lru_cache, partial
+from pathlib import Path
 from typing import Any, cast
 from urllib.parse import urlsplit
 
@@ -82,8 +83,20 @@ def template_environment() -> Environment:
     About, the archive, and the 404 — from the same environment and the same
     `base.html.j2` layout as the election-scoped pages (issue 241).
     """
+    # Cache compiled code, never render data. Content keys also refresh the shell
+    # macro global when an editor preserves a template's size and timestamp.
+    directory = TEMPLATE_DIR.resolve()
+    sources = tuple(
+        (path.relative_to(directory).as_posix(), path.read_bytes())
+        for path in sorted(directory.rglob("*.j2"))
+    )
+    return _template_environment(directory, sources)
+
+
+@lru_cache(maxsize=4)
+def _template_environment(directory: Path, _sources: tuple[tuple[str, bytes], ...]) -> Environment:
     environment = Environment(
-        loader=FileSystemLoader(TEMPLATE_DIR),
+        loader=FileSystemLoader(directory),
         autoescape=True,
         undefined=StrictUndefined,
         trim_blocks=True,
