@@ -121,3 +121,14 @@ The contract contains all geographically applicable public contest IDs, independ
 of the general view's race mode. Contested is the general default; an explicit All
 override includes eligible uncontested races. Both modes preserve applicable measures.
 The browser applies race mode after geography without changing section order.
+
+## Ballot presentation
+
+The November 2026 publication builder consumes the versioned, reviewed
+`publication/ballot_orders/wa-2026-general.v1.json` map. It validates the complete
+inventory before selecting visible contests and derives the existing shared
+section/race view-model order. This presentation input is separate from canonical
+inventory/choice order and scoring inputs; no source retrieval occurs in builds.
+The map is election-scoped package data, with supplied-PDF provenance and visual
+locators. Other elections preserve their legacy presentation. #608 owns voter
+membership independently; filtering preserves the supplied relative order.

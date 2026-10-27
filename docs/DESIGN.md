@@ -450,3 +450,23 @@ Source choices and comparison columns remain independent. Clear removes geograph
 while preserving race mode. Selected precinct text uses stronger weight; control
 bodies and the race count align vertically while headers retain their common row. Unsupported choices never claim an exact ballot. Primary has no
 precinct control.
+
+## November 2026 ballot sequence
+
+Approved October 26, 2026, issue #609: the November guide uses the official
+ballot's contest sequence with ten flat headings: State measures; Federal;
+State; County; State Supreme Court; Court of Appeals, Division 1, District 1;
+West Electoral District; City of Seattle; Seattle Municipal Court; City of
+Seattle — measures. Existing heading styling applies; there is no new ballot
+column/page layout. Legislative districts ascend numerically, with senator then
+House positions 1–2 within each district. The Seattle measure follows all
+municipal-court positions.
+
+Endorsements, compact overview, print and Comparisons consume the same supplied
+section/race order. Filters retain relative order and omit empty sections.
+Existing control mechanisms and source/scoring/visibility policies remain in
+force. The guide's existing Ballot filter tokens keep their prior meanings,
+independent of the new display grouping; this does not introduce location setup.
+See BALLOT_INVENTORY.md for the source, literal-versus-SEG heading distinctions,
+and the explicit November-only boundary. Historical primary publications do not
+inherit this mapping.

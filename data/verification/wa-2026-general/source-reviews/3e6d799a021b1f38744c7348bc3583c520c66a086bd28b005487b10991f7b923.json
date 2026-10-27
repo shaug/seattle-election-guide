@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-26T13:23:39.564788Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source 11th-district-democrats; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=c0097e484d",
+    "https://www.11thlddems.org/",
+    "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/5e958fa4-20f9-4d01-9567-30021d454605.png",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/d9a25f91-55e5-59da-3639-1f78c1f0fdd4.gif",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/17298b55-d64b-41c8-8d15-7deaae7e3116.png",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/db1a3597-0c5f-17be-f8eb-357185605c03.gif",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/ae867dda-808b-350e-6e67-5ec5343af4e2.png",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/34b57977-6c5a-b694-8ff3-5d97400ad838.png",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/5b335b25-f809-e39f-da47-f2fdaea34df8.png",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/4790b2d9-8f78-dd12-2def-a2681f4344c9.png",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/1dd741e1-c725-9aab-f7f5-6152207dbcc9.png",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/171df8e2-963d-1179-8899-c3ba95e2a3fe.jpg",
+    "https://gallery.mailchimp.com/c75f17fe2b6e715cad36922d4/images/698d47d1-0702-4aff-afde-efb37c30d84f.jpg",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/4c1a552a-f1b4-8e3c-3b7b-f6885c962d0b.gif",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/63946636-0f0d-3a9a-aa11-3a002280e170.jpg",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/2258f462-c633-c31c-2b21-fed1b099a951.jpg",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/cf1d4f01-cbc4-ad80-3ebc-199031d0b620.png",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/a4231226-a882-525a-f07e-a89f3eb96d0a.png",
+    "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/8dcc731c-7400-90ab-1606-5fe973d4f49d.png"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_political_oct26",
+  "recorded_at": "2026-10-27T03:02:17.314840Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:31:31.488410Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "11th-district-democrats"
+}

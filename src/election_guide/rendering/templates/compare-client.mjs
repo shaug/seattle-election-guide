@@ -656,7 +656,11 @@ export function wireComparisons() {
     let shown = 0;
     for (const display of comparisons.display_index) {
       if (precinctIds !== null && !precinctIds.has(display.race_id)) continue;
-      if (precinctIds === null && state.section !== 'all' && display.section_id !== state.section)
+      if (
+        precinctIds === null &&
+        state.section !== 'all' &&
+        (display.filter_section_id ?? display.section_id) !== state.section
+      )
         continue;
       if (
         state.contestedOnly &&

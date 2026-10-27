@@ -137,3 +137,43 @@ geographic public set. Race mode does not change inventory or section order. The
 ballot is corroborating contest evidence. Actual official precinct/part/style
 examples remain a separate release acceptance gate. Primary is unsupported by this
 projection; future elections require new reviewed evidence.
+
+## November 2026 presentation order (#609)
+
+`src/election_guide/publication/ballot_orders/wa-2026-general.v1.json` is the
+reviewed, versioned presentation map for all 52 November inventory contests.
+Its section/entry array order is authoritative for presentation; each entry
+records the printed page, column (left=1, middle=2, right=3), and contest-box
+ordinal in King County's 12-page official composite sample ballot. Box ordinals
+include contests outside SEG and exclude instructions and heading blocks.
+
+The supplied official PDF has SHA-256
+`f1df968fe7093344a872eb22b9aaabc0a5dec3065f2b9448b7b72546381f572c`.
+It was supplied by the user on October 26, 2026 (October 27 UTC), then all
+12 rendered pages were inspected by the actual reviewer recorded in the map.
+This custody is distinct from a successful county-host retrieval; the earlier
+HTTP 403 is not erased or relabeled as a successful check. The map retains the
+normal official URL, actual review timestamp and reviewer, and per-contest
+visual locators without redistributing the PDF.
+
+The publication builder rejects a missing map, duplicate section/contest IDs,
+repeated or out-of-reading-order locators, a different election ID, and any
+missing or unknown inventory contest. Validation covers the complete inventory
+before publication eligibility or reader filters remove contests. A new contest
+requires a reviewed map update; it is never silently appended or alphabetized.
+No canonical race, choice, endorsement or scoring record is reordered or changed.
+
+State measures lead; the State candidate section groups legislative districts
+numerically, then senator and representative positions 1–2 within each district.
+West Electoral District and Seattle Municipal Court are separate. The Seattle
+transit measure follows municipal position 7. "State measures", "City of Seattle",
+and "City of Seattle — measures" are SEG disambiguating headings: the ballot
+prints "State" with initiative subtype headings and "City" with the jurisdiction
+in contest titles. The Court of Appeals heading drops the ballot's "No." for
+readability. Other headings retain the ballot wording with line breaks normalized.
+
+Ordering is independent of #608 membership and of endorsement-source geography.
+All existing source, eligibility, scoring and Races controls remain in force.
+Other elections retain their existing section/sequence behavior until they have
+an explicitly registered, reviewed election-specific map. The composite's other
+county contests do not expand SEG's publication inventory or certify its coverage.

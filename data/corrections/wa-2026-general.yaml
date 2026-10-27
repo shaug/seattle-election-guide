@@ -396,21 +396,16 @@ entries:
         url: https://github.com/shaug/seattle-election-guide/actions/runs/40177971864
       - label: "Recurring verification delivery"
         url: https://github.com/shaug/seattle-election-guide/issues/497
-
-
   - corrected_on: 2026-10-26
-    headline: Choose a precinct to see its covered voting decisions.
+    headline: "Contests follow November ballot order."
     body: >-
-      The November general-election guide offers a searchable precinct choice on
-      Endorsements and Comparisons. Contested is the default; All adds applicable
-      uncontested races within the guide's published coverage. Both choices keep
-      the selected precinct's geography and applicable ballot measures. Clear
-      removes the precinct selection while preserving the chosen race mode.
-      Source choices change scores, not which contests belong to the precinct.
-      Primary-election voting decisions, ballot ordering, and recorded
-      endorsements stay the same.
+      State measures now come first, followed by federal, state, county and
+      judicial races, Seattle offices and Seattle measures. Court of Appeals,
+      West Electoral District and Seattle Municipal Court have their own
+      headings. The guide, compact overview, print view and Comparisons use the
+      same sequence. Endorsement sources, scores and race visibility are unchanged.
     provenance:
-      - label: Precinct ballot scope
-        url: https://github.com/shaug/seattle-election-guide/issues/608
-      - label: King County precinct map
-        url: https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a
+      - label: "Ballot ordering research and implementation"
+        url: https://github.com/shaug/seattle-election-guide/issues/609
+      - label: "King County official sample ballot"
+        url: https://kingcounty.gov/en/dept/elections/election-information/2026/november-general

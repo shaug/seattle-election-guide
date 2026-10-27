@@ -74,6 +74,87 @@ decision and its rationale.
 Collection must not bypass authentication, paywalls, robots controls, or other access controls.
 An inaccessible source receives an explicit status and may enter the manual review path.
 
+## Verified endorsements survive failed access
+
+The maintainer clarified this site policy on October 27, 2026: **a source-access failure is
+an observation failure, not evidence that an endorsement was deleted or changed. Keep the
+latest verified endorsement decisions and their usable evidence canonical.** Denied, timed-out,
+empty or incomplete retrieval must not silently replace those facts with an empty result.
+Record the actual failure, check time, last real success and access limitation; continue the
+normal retries and genuine failure counts/escalation. No source designation, freshness check
+or access-failure mode may block a release merely because a previously verified source is
+inaccessible. No exception or override is required to retain that evidence.
+
+An inaccessible publication leaves uncertainty about completeness, especially possible additional
+endorsements. It does not establish that nothing new exists. A later complete publication can add
+endorsements through normal factual review and approval while retaining prior supported facts.
+Affirmative changes, contradictions and withdrawals remain reviewable and applicable through the
+normal audit; this rule does not assert that endorsements never change. First-review failures
+cannot invent a baseline, and incomplete parser output, unknown errors and conflicting evidence
+do not become accepted facts or successful checks. Existing integrity and publication checks remain.
+
+Complete-review attestation admission below governs whether a **new dated access obligation**
+can carry a handled limitation. An absent or not-yet-admitted attestation never erases already
+accepted canonical facts and creates no access-only release block. Historical observations,
+identifiers and limitations remain unchanged; no new policy backfills a prior failure as success.
+
+## Prospective access limitations (#589, partial approved milestone)
+
+Scott approved retaining accepted endorsements after a **pure access failure following a
+complete accepted initial official-publication and mapping review**, with an explicit limitation.
+The schema-1.1 verification policy applies this default only to new observations for Pacific
+slots from October 27, 2026. Current weekly/daily frequencies, calendar boundaries, normal
+automatic attempts and three-distinct-failed-slot escalation are unchanged. #589 remains open
+for its unapproved interval/configuration and other remaining criteria.
+
+A complete initial review uses one explicit immutable `source-reviews` attestation in the
+existing verification archive: exact election/source, complete official-publication/mapping
+scope, official URLs, actual original check time, original reviewer/review time and an ordinary
+durable reference to the existing facts/review packet. Record the new writing actor/time
+separately. Normal protected versioned review establishes acceptance. Existing facts/review
+packets may use their ordinary durable reference formats.
+Normal protected review establishes that the explicit publication URLs belong to the registered
+source. An official embedded guide, social account, separate publication host or `www` alias
+need not share the organization's homepage host; hostname equality cannot establish legitimacy.
+
+A proposal is not authority merely because it exists on the pending archive branch. Before a
+new failed check can use it, its exact bytes must exist in the normal canonical archive path
+in the already available local `origin/main` snapshot. No fetch is performed; unavailable or
+different admitted bytes leave the obligation unresolved. The normal workflow already fetches
+and incorporates main. Structural archive validation permits a pending proposal without treating
+it as accepted. Later ref availability never backfills an old check.
+
+Completeness is an explicit assertion assessed through normal protected review, never inferred
+from a generic acknowledgement, HTTP 200, extractor `complete` flag, baseline approval, partial
+supplied snapshot or fixture. Do not attest incomplete or unsupported review scope. Missing actual
+review evidence stays unresolved; heterogeneous formatting alone does not disqualify it. This
+change creates no production attestations or retrospective source approvals.
+
+Only a failed HTTP-fetch observation with a typed HTTP 401/403/408/429/500/502/503/504,
+deadline, DNS or TLS diagnostic can use this disposition. HTTP 404/410, response-integrity,
+redirect/access-safety, generic network/OS errors, unknown diagnostics, parser/incomplete
+publications and new/conflicting evidence remain unresolved. Successful partial responses
+never become access failures. Positive intervening publication evidence requires a later complete
+review: changed content, a failed observed response/comparison, or an explicit typed parse,
+incomplete-publication or conflicting-evidence reason. Record that reason only at its known
+producer boundary, never by guessing from generic exception messages. An older ambiguous
+null-capture/null-comparison failure stays unresolved for its own date; it does not establish a
+content conflict or prevent a separately observed later typed pure-access limitation.
+
+The permitted disposition is stored on the **new failed check**, referencing the qualification
+and policy fingerprint already in force. Reconciliation never derives one for an old check from
+a later policy or qualification. Retained facts stay unchanged; the failed status/event, actual
+last success, latest attempt, freshness limitation, normal next attempt, counts and escalation
+remain distinct. This is not fresh verification, a withdrawal, collector-baseline adoption,
+release approval or permission to bypass access controls. No accepted deployment is taken down.
+The normal publication gates and pending source-review work remain required.
+
+An operator may resolve that finite dated access obligation after its other requirements pass.
+Handled-only observations can be appended to an already closed daily task without reopening it;
+new unresolved observations still reopen it. The reconciler does not automatically close whole
+tasks. Earlier dated SEIU exceptions/closures and #616 recovery remain separately scoped and
+are not granted by this future policy.
+
 Source discovery uses four preregistration states: `published`, `not_found`,
 `not_an_endorsement_publisher`, and `access_restricted`. These describe publication discovery,
 not a source's decision in any race. In particular, `not_found` must never be normalized as an

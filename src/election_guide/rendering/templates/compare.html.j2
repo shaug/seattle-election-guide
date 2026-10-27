@@ -41,7 +41,7 @@
         precinct_enabled=guide.precinct_ballot is not none
       ) %}
         <option value="all">All Seattle ballot races</option>
-        {% for section in comparison_sections %}<option value="{{ section.section_id }}">{{ section.section_label }}</option>{% endfor %}
+        {% for section_id, section_label in comparison_filter_sections %}<option value="{{ section_id }}">{{ section_label }}</option>{% endfor %}
       {% endcall %}
       </div>
       <div class="comparison-content">

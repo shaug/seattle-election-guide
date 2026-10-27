@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-23T07:43:29.535332Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json; source washington-state-democrats; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://wadems.org/2026-campaign-resources/"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_472_political_oct23",
+  "recorded_at": "2026-10-27T03:02:46.823008Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-23T07:47:20.385872Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-state-democrats"
+}

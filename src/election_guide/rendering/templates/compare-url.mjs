@@ -120,7 +120,8 @@ export function compareContext(
 ) {
   /** @type {Set<string>} */
   const sectionIds = new Set();
-  for (const race of comparisons.display_index) sectionIds.add(race.section_id);
+  for (const race of comparisons.display_index)
+    sectionIds.add(race.filter_section_id ?? race.section_id);
   return {
     ...codecContext(personalization, dataVersion),
     sectionIds,

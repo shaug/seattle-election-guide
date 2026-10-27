@@ -127,7 +127,8 @@
     ],
     "data-comparison-section": [
       "template",
-      "client"
+      "client",
+      "test"
     ],
     "data-comparison-section-filter": [
       "template",

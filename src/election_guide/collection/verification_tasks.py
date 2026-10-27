@@ -90,6 +90,7 @@ def task_sections(
                 f"checked at {check.checked_at.isoformat()}. Mode: {check.mode}."
             )
             escalated = False
+            handled = False
             if check.event_id:
                 event_path = election_root / "refreshes" / f"{check.event_id}.json"
                 event = read_refresh_event(event_path)
@@ -130,12 +131,36 @@ def task_sections(
                     )
                 if event.error:
                     detail += f"\n\nFailure: {event.error}"
+                if event.access_failure:
+                    diagnostic = event.access_failure
+                    status = f"; HTTP {diagnostic.http_status}" if diagnostic.http_status else ""
+                    detail += (
+                        f"\n\nAccess diagnostic: {diagnostic.stage}/{diagnostic.category}{status}."
+                    )
+                if check.access_disposition:
+                    from election_guide.collection.verification_access import (
+                        validate_access_disposition,
+                    )
+
+                    review = validate_access_disposition(election_root, check, event)
+                    handled = True
+                    detail += (
+                        "\n\n**Handled access limitation; not a successful verification.** "
+                        "Retain accepted facts. The failed attempt, actual last success, normal "
+                        "next attempt and failure escalation remain unchanged. "
+                        f"Complete initial review: {review.original_reviewer} at "
+                        f"{review.reviewed_at.isoformat()}; actual source check "
+                        f"{review.checked_at.isoformat()}. Attestation recorded by "
+                        f"{review.recorded_by} at {review.recorded_at.isoformat()}; "
+                        f"immutable qualification `{check.access_disposition.qualification_id}`. "
+                        "This supplies no collector-baseline approval or #497 scheduled reuse."
+                    )
                 escalated = (
                     consecutive_failures(election_root, check.source_id, check.scheduled_for) >= 3
                 )
             elif check.status == "manual_due":
                 if any(
-                    item.status == "manual"
+                    (item.status == "manual" or item.access_disposition is not None)
                     and item.source_id == check.source_id
                     and item.scheduled_for == check.scheduled_for
                     for item in checks
@@ -172,6 +197,7 @@ def task_sections(
                     "marker": marker,
                     "body": f"### {check.source_id}\n\n{detail}",
                     "escalated": escalated,
+                    "handled": handled,
                 }
             )
     if watch:
@@ -318,7 +344,7 @@ def reconcile_tasks(sections: list[dict[str, Any]], repository: str) -> list[str
             )
         if existing:
             number = str(existing[0]["number"])
-            if existing[0]["state"] == "CLOSED":
+            if existing[0]["state"] == "CLOSED" and not section.get("handled", False):
                 run_gh(
                     ["gh", "issue", "reopen", number, "--repo", repository],
                     "could not reopen daily verification task",
