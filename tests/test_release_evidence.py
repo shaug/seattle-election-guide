@@ -355,14 +355,16 @@ def successful_report(setup: tuple[Any, ...]) -> Any:
     from election_guide.hosting.production_check import (
         MANIFEST_CHECK,
         CommitCheck,
+        DataFreshnessCheck,
         Observation,
         ProductionCheckReport,
         RouteCheckResult,
         evaluate_archive_index,
         evaluate_deployment_contract,
         plan_publication_route_checks,
+        release_manifest_check,
     )
-    from election_guide.hosting.production_wait import ProductionWaitReport
+    from election_guide.hosting.production_wait import ProductionWaitReport, complete_strict_report
 
     _, _, resolved, _, upload, root = setup
     site = resolved.site
@@ -390,10 +392,14 @@ def successful_report(setup: tuple[Any, ...]) -> Any:
             site, representative_race_path=contract.representative_race_path
         )
     )
+    checked_at = datetime(2026, 10, 16, tzinfo=UTC)
     report = ProductionCheckReport(
         base_url=site.canonical_origin,
-        checked_at=datetime(2026, 10, 16, tzinfo=UTC),
+        checked_at=checked_at,
         manifest=RouteCheckResult(check=MANIFEST_CHECK, observed=Observation(status=200)),
+        release_manifest=RouteCheckResult(
+            check=release_manifest_check(site.current_election_id), observed=Observation(status=200)
+        ),
         deployment_contract=contract,
         archive_index=evaluate_archive_index(
             site,
@@ -406,8 +412,12 @@ def successful_report(setup: tuple[Any, ...]) -> Any:
         current_election_id=site.current_election_id,
         route_results=routes,
         commit=CommitCheck(expected=upload.source_sha, observed=upload.source_sha),
+        data_freshness=DataFreshnessCheck(
+            published_at=datetime(2026, 10, 15, tzinfo=UTC), checked_at=checked_at
+        ),
     )
     assert report.ok
+    assert complete_strict_report(report, site, upload.source_sha, active_window=True)
     return ProductionWaitReport((report, report), (0, 1), timed_out=False)
 
 
