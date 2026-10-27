@@ -267,6 +267,57 @@ Failed checks can report a fixed operation stage and failure category, with a va
 HTTP status where available. These bounded diagnostics retain no arbitrary exception
 text and do not by themselves establish a cause, recovery or source approval.
 
+## Approved future access disposition (#589, partial milestone)
+
+The maintainer's October 27 UTC approval permits retaining accepted facts with an explicit
+limitation after a future pure access failure following a complete accepted initial review.
+`config/verification.yaml` schema 1.1 starts this default with Pacific slots on October 27;
+weekly/daily frequency, normal automatic attempts, calendar/24-hour boundaries and genuine
+three-slot escalation are unchanged. This does not complete #589's unapproved interval/other
+criteria, adopt #497, close #616 or resolve an earlier dated obligation by policy migration.
+
+Before qualifying a source, establish the COMPLETE accepted official-publication/mapping review
+from actual existing evidence. Do not infer it from the normal manual acknowledgement or a
+baseline approval. The input JSON uses `InitialReviewEvidence`: exact election/source and scope
+`complete_official_publication_and_mappings`, official URLs, original reviewer/review time,
+accepting actor/time, and separate pinned structured review/acceptance references. Each reference
+contains its repository JSON path/SHA-256 and JSON pointers identifying its actual source,
+election, actor and timestamp fields. Unsupported or explicitly incomplete evidence stays
+unqualified; the command cannot conduct a source review or invent missing historical evidence.
+Run from the repository root and commit the new qualification through normal review:
+
+```bash
+uv run election-guide verification qualify-initial-review data/verification/wa-2026-general \
+  path/to/review-qualification-input.json --recorded-by <actual-qualifying-actor>
+```
+
+For a genuinely observed manual failed request, preserve its actual observer/time and durable
+bounded diagnostic reference. The following records an observation; it performs no source GET
+and claims no successful acknowledgement or HTTP response body:
+
+```bash
+uv run election-guide verification record-access-failure config/verification.yaml \
+  --election-id wa-2026-general --source-id <registered-manual-source> \
+  --scheduled-for <Pacific-slot> --checked-at <actual-UTC-time> \
+  --reviewer <actual-observer> --evidence <actual-failure-reference> \
+  --category http_status --http-status 403
+```
+
+Only supported typed HTTP status/deadline/DNS/TLS access failures can carry the new limitation;
+unknown, generic OS/network, parser, partial/conflicting publication and safety failures do not.
+Automatic sources continue their existing automatic path. A qualifier must already exist when
+the new failed observation is recorded and predate its check; it cannot resolve an old check.
+All historical failures, six automatic attempts, baseline approvals, ciphertext and IDs remain.
+Legacy sources without demonstrable complete-review evidence remain unresolved; no qualification
+is supplied by this implementation or its fixture tests.
+
+Inspect `verification plan` for actual last success, latest failed attempt, freshness limitation
+and next normal due date. `reconcile --dry-run` keeps failed statuses and escalation explicit.
+A handled-only observation does not reopen an already closed dated task, but a new unresolved
+observation does. Operators still close a finite task only after all other criteria pass;
+reconciliation performs no automatic whole-task closure. Historical scoped SEIU closure authority
+is separate; #616 remains the finite recovery follow-up.
+
 ## Legacy encrypted custody
 
 Historical `verification seal` and `verification restore` utilities remain documented in

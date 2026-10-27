@@ -184,6 +184,16 @@ match their manifest are `corrupt` under either scope.
 
 ## Recurring verification (#497)
 
+The partial approved #589 milestone adds explicit failed-access observations and complete-initial
+review qualifications inside the same immutable verification archive. It introduces no fetcher,
+scheduler, evidence service, interval setting or source membership change. Generic acknowledgements,
+baseline flags and HTTP success do not qualify a complete accepted review. A new permitted failed
+check keeps its actual failure and last-success clock while recording a handled limitation;
+reader-side reconciliation never backfills old records. Parser, incomplete/conflicting and unknown
+cases stay unresolved. The existing publication review/admission gates remain required. See the
+[source policy](../SOURCE_POLICY.md#prospective-access-limitations-589-partial-approved-milestone)
+and the normal CLI procedure in the daily runbook.
+
 `config/verification.yaml` binds the current frozen election inputs to the six
 adapters under `config/adapters/wa-2026-general/`. Other eligible sources receive
 finite manual-review obligations. `verification plan`, `run`, `validate`, and

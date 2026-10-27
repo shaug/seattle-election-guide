@@ -165,6 +165,22 @@ class ExtractionSnapshot(CollectionModel):
         return self
 
 
+class AccessFailureDiagnostic(CollectionModel):
+    """Bounded transport failures, never parser/completeness judgments."""
+
+    stage: Literal["http_fetch"] = "http_fetch"
+    category: Literal["http_status", "deadline", "dns", "tls"]
+    http_status: Literal[401, 403, 408, 429, 500, 502, 503, 504] | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+
+    @model_validator(mode="after")
+    def validate_status(self) -> AccessFailureDiagnostic:
+        if (self.category == "http_status") != (self.http_status is not None):
+            raise ValueError("HTTP access failure requires its explicit supported status")
+        return self
+
+
 class RefreshEvent(CollectionModel):
     schema_version: Literal["1.0"] = "1.0"
     id: str = Field(pattern=REFRESH_ID_PATTERN)
@@ -177,6 +193,9 @@ class RefreshEvent(CollectionModel):
     previous_snapshot_id: str | None = Field(default=None, pattern=EXTRACTION_ID_PATTERN)
     diff: list[DecisionDiff] = Field(default_factory=list[DecisionDiff])
     error: str | None = Field(default=None, min_length=1, max_length=2_000)
+    access_failure: AccessFailureDiagnostic | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
     @model_validator(mode="after")
     def validate_status(self) -> RefreshEvent:
@@ -186,7 +205,11 @@ class RefreshEvent(CollectionModel):
         if self.status == "failed":
             if self.error is None or self.snapshot_id is not None or self.diff:
                 raise ValueError("failed refresh must have only an error and prior state")
+            if self.access_failure and (self.capture_id or self.content_changed is not None):
+                raise ValueError("pure access failure cannot include a parsed response")
             return self
+        if self.access_failure is not None:
+            raise ValueError("successful refresh cannot carry an access failure")
         if self.error is not None or self.capture_id is None or self.snapshot_id is None:
             raise ValueError("successful refresh requires capture and snapshot without an error")
         if self.content_changed is None:

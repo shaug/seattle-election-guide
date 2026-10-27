@@ -74,6 +74,46 @@ decision and its rationale.
 Collection must not bypass authentication, paywalls, robots controls, or other access controls.
 An inaccessible source receives an explicit status and may enter the manual review path.
 
+## Prospective access limitations (#589, partial approved milestone)
+
+Scott approved retaining accepted endorsements after a **pure access failure following a
+complete accepted initial official-publication and mapping review**, with an explicit limitation.
+The schema-1.1 verification policy applies this default only to new observations for Pacific
+slots from October 27, 2026. Current weekly/daily frequencies, calendar boundaries, normal
+automatic attempts and three-distinct-failed-slot escalation are unchanged. #589 remains open
+for its unapproved interval/configuration and other remaining criteria.
+
+A complete initial review requires a separate immutable `source-reviews` qualification in the
+existing verification archive. It identifies the exact election/source, official URLs, pinned
+original structured review and acceptance records, original reviewer/review time and accepting
+actor/time. JSON pointers bind those identities and times to the actual referenced records.
+The qualification records its new writing actor/time separately. Completeness is an explicit
+reviewed attestation, never inferred from a generic acknowledgement, HTTP 200, extractor
+`complete` flag, baseline approval, partial supplied snapshot or fixture. Explicitly incomplete
+evidence cannot qualify. Unsupported legacy evidence remains unresolved; this change creates
+no production qualifications or retrospective source approvals.
+
+Only a failed HTTP-fetch observation with a typed HTTP 401/403/408/429/500/502/503/504,
+deadline, DNS or TLS diagnostic can use this disposition. HTTP 404/410, response-integrity,
+redirect/access-safety, generic network/OS errors, unknown diagnostics, parser/incomplete
+publications and new/conflicting evidence remain unresolved. Successful partial responses
+never become access failures. A known intervening changed publication or unclassified/content
+failure requires a later complete review before another access limitation may be handled.
+
+The permitted disposition is stored on the **new failed check**, referencing the qualification
+and policy fingerprint already in force. Reconciliation never derives one for an old check from
+a later policy or qualification. Retained facts stay unchanged; the failed status/event, actual
+last success, latest attempt, freshness limitation, normal next attempt, counts and escalation
+remain distinct. This is not fresh verification, a withdrawal, collector-baseline adoption,
+release approval or permission to bypass access controls. No accepted deployment is taken down.
+The normal publication gates and pending source-review work remain required.
+
+An operator may resolve that finite dated access obligation after its other requirements pass.
+Handled-only observations can be appended to an already closed daily task without reopening it;
+new unresolved observations still reopen it. The reconciler does not automatically close whole
+tasks. Earlier dated SEIU exceptions/closures and #616 recovery remain separately scoped and
+are not granted by this future policy.
+
 Source discovery uses four preregistration states: `published`, `not_found`,
 `not_an_endorsement_publisher`, and `access_restricted`. These describe publication discovery,
 not a source's decision in any race. In particular, `not_found` must never be normalized as an

@@ -63,6 +63,15 @@ fresh source read, backdated check, failure reset or authority for unattended in
 Fixtures cannot receive live baseline approval. Keep #497 and its runbook proposed until actual
 scheduled execution and later independent normal scheduled reuse have the required evidence.
 
+The approved partial #589 access policy has a separate complete-initial-review qualification.
+Review its entire official publication/mappings scope and the pinned original source/election,
+reviewer/time and acceptance references before accepting the new immutable qualification.
+Record the actual qualification writer/time separately; no current writer is substituted for
+the original reviewer. The normal CLI does not perform the review or turn an old generic manual
+acknowledgement/baseline approval into completeness. Incomplete supplied snapshots and unknown
+legacy review extent stay unqualified. A qualification grants neither collector-baseline
+approval nor #497 scheduled reuse. See [the source policy](SOURCE_POLICY.md#prospective-access-limitations-589-partial-approved-milestone).
+
 ## Recorded maintainer-approved measure interpretation
 
 The October 12, 2026 general update records one explicit exception: Tech 4 Taxes’

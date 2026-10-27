@@ -15,6 +15,7 @@ from pydantic import BaseModel, ValidationError
 
 from election_guide.collection.adapters import ExtractionError, extract_decisions, read_artifact
 from election_guide.collection.models import (
+    AccessFailureDiagnostic,
     AdapterDecision,
     AdapterSpec,
     DecisionDiff,
@@ -295,6 +296,7 @@ def record_refresh_failure(
     extraction_dir: Path,
     capture_id: str | None = None,
     content_changed: bool | None = None,
+    access_failure: AccessFailureDiagnostic | None = None,
 ) -> RefreshEvent:
     """Append an explicit failure while retaining the committed verified snapshot."""
     with _source_lock(refresh_dir, source_id):
@@ -309,6 +311,7 @@ def record_refresh_failure(
             previous=previous,
             capture_id=capture_id,
             content_changed=content_changed,
+            access_failure=access_failure,
         )
 
 
@@ -321,6 +324,7 @@ def _record_failure_locked(
     previous: ExtractionSnapshot | None,
     capture_id: str | None = None,
     content_changed: bool | None = None,
+    access_failure: AccessFailureDiagnostic | None = None,
 ) -> RefreshEvent:
     payload = _event_payload(
         source_id=source_id,
@@ -333,6 +337,8 @@ def _record_failure_locked(
         diff=[],
         error=error.strip()[:2_000] or "unknown collection failure",
     )
+    if access_failure is not None:
+        payload["access_failure"] = access_failure.model_dump(mode="json")
     event = RefreshEvent.model_validate(
         {**payload, "id": _record_id("refresh", source_id, checked_at, payload)}
     )
