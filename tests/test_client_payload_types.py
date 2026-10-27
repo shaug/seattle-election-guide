@@ -53,8 +53,21 @@ def test_every_modeled_field_reaches_the_declarations() -> None:
     } | set(schema.get("properties", {}))
     assert modeled_fields
 
-    missing = sorted(field for field in modeled_fields if f"{field}:" not in declarations)
+    missing = sorted(
+        field
+        for field in modeled_fields
+        if re.search(rf"^\s*{re.escape(field)}\??:", declarations, re.MULTILINE) is None
+    )
     assert missing == []
+
+
+def test_field_coverage_recognizes_optional_fields_without_accepting_missing_fields() -> None:
+    # JSON Schema's conditional exclusion makes a serialized field optional. Both declaration
+    # shapes are fields; a name merely mentioned in a comment must not satisfy the coverage gate.
+    for declaration in ("  filter_section_id: string;", "  filter_section_id?: string | null;"):
+        assert re.search(r"^\s*filter_section_id\??:", declaration, re.MULTILINE)
+    for declaration in ("", "// filter_section_id: string", "  unrelated_field?: string;"):
+        assert re.search(r"^\s*filter_section_id\??:", declaration, re.MULTILINE) is None
 
 
 def test_every_declaration_the_client_names_is_generated() -> None:

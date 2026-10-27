@@ -617,7 +617,11 @@ export function wireComparisons() {
     let differCount = 0;
     let shown = 0;
     for (const display of comparisons.display_index) {
-      if (state.section !== 'all' && display.section_id !== state.section) continue;
+      if (
+        state.section !== 'all' &&
+        (display.filter_section_id ?? display.section_id) !== state.section
+      )
+        continue;
       if (state.contestedOnly && !contestedIds.has(display.race_id)) continue;
       total += 1;
       // Every display row names a published race: both come from the same

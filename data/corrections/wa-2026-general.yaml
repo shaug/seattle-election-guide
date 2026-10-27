@@ -396,3 +396,16 @@ entries:
         url: https://github.com/shaug/seattle-election-guide/actions/runs/40177971864
       - label: "Recurring verification delivery"
         url: https://github.com/shaug/seattle-election-guide/issues/497
+  - corrected_on: 2026-10-26
+    headline: "Contests follow November ballot order."
+    body: >-
+      State measures now come first, followed by federal, state, county and
+      judicial races, Seattle offices and Seattle measures. Court of Appeals,
+      West Electoral District and Seattle Municipal Court have their own
+      headings. The guide, compact overview, print view and Comparisons use the
+      same sequence. Endorsement sources, scores and race visibility are unchanged.
+    provenance:
+      - label: "Ballot ordering research and implementation"
+        url: https://github.com/shaug/seattle-election-guide/issues/609
+      - label: "King County official sample ballot"
+        url: https://kingcounty.gov/en/dept/elections/election-information/2026/november-general

@@ -472,6 +472,7 @@ def render_comparison_document(
         project_url=project_url,
         **context.footer_update_context(view_model),
         comparison_sections=comparison_sections,
+        comparison_filter_sections=context.ballot_filter_sections(view_model),
         comparison_race_count=sum(len(section.rows) for section in comparison_sections),
         comparison_differ_count=sum(
             row.differs for section in comparison_sections for row in section.rows

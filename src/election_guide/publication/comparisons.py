@@ -73,6 +73,11 @@ class ComparisonDisplayRace(ComparisonsModel):
     race_type: Literal["candidate", "measure", "party_office"]
     section_id: str = Field(min_length=1)
     section_label: str = Field(min_length=1)
+    # Mapped elections retain existing section-filter membership independently of display groups.
+    # Omit this optional addition entirely for legacy payloads/primary publications.
+    filter_section_id: str | None = Field(
+        default=None, min_length=1, exclude_if=lambda value: value is None
+    )
     section_order: int = Field(ge=0, strict=True)
     race_order: int = Field(ge=0, strict=True)
     candidate_names: dict[str, str]
