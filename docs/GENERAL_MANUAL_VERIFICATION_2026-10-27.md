@@ -62,7 +62,7 @@ Only the four actual typed HTTP 403 observations entered normal record-access-fa
 
 No new source-review attestation was written. Root independently reviews the emitted dispositions before final delivery. Native SEIU 775's eleventh failed slot was already among the 89 retained normal records and was not replayed.
 
-Four current incomplete/member lanes receive no successful acknowledgement or typed HTTP failure:
+At that earlier observation, four incomplete/member lanes received no successful acknowledgement or typed HTTP failure:
 
 - Young Democrats: the earlier current public parent returned 200 but did not expose the complete 16-choice carousel. It was not repeated in the later seven requests.
 - Sierra Club: the current registered route returned 200 with an Incapsula nonpublication. Keep its earlier unknown-stage EBADF and later 26 interstitial as their original separate observations; the current 200 is not a successful endorsement review.
@@ -71,4 +71,22 @@ Four current incomplete/member lanes receive no successful acknowledgement or ty
 
 These limits leave uncertainty about possible additions, not evidence of withdrawal. SOURCE_POLICY retains the latest verified facts and usable evidence without an access-only publication block. Ordinary attempts and genuine failure counts continue. No old failures were reset/reclassified, no source panel/cadence changed, and no inaccessible evidence became a success.
 
-#647 remains open for the current incomplete/member scopes and root's remaining delivery review. #497 remains proposed/open with first SGN 11 and later independent normal reuse still outstanding. No reconciliation, issue closure, version preparation, protected publication or full gate was run by this local composition.
+That initial composition left #647 open for those scopes and delivery review. It supplied no #497 scheduled adoption. The later bounded dispositions below preserve these original observations.
+
+## Later ordinary public browser review
+
+**OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d** read the complete relevant Young Democrats carousel, Sierra Club page and WA4PJ carousel in ordinary authorized public Chrome views. The [current three-source facts-only record](../data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json) preserves every covered decision, the three 52-race scope comparisons, literal wording, existing mapping qualifications and separate clocks. The source comparison completed at **2026-10-27T23:16:51.859013Z**; independent factual admission by **OpenAI Codex /root/performance_651** completed at **23:32:54.128857Z**. No new source request was made during admission.
+
+| Source | Actual browser observation UTC | Current bounded result | Actual later normal acknowledgement writer UTC |
+|---|---|---|---|
+| Young Democrats | 23:08:19.522–23:09:13.650 | 16 decisions / 19 choices supported, including three equal dual endorsements | 23:41:02.674962–23:41:03.512202 |
+| Sierra Club | 23:09:37.262–23:10:12.791 | 24 decisions / 24 choices supported with retained typo, unnumbered transit and out-of-scope qualifications | 23:41:03.595131–23:41:04.239015 |
+| WA4PJ | 23:10:12.871–23:11:19.748 | 30 current decisions verified; one mapped-office affirmation unverified | None: no whole-source acknowledgement |
+
+The two actual normal CLI acknowledgements bind the original named reviewer and comparison time to the October 27 obligations. Their later writer was **OpenAI Codex /root/performance_651**; the record contains actual invocation times, emitted check identities and receipts. Existing canonical IDs, dates, statuses, choices and allocations remain unchanged. No automatic check, native approval, complete-initial-review attestation, failure reset or #497 reuse credit follows from these browser reviews. Numeric HTTP status and browser network timing were not observed.
+
+WA4PJ slide 8 literally says **“LD-45 Senator: Javier Valdez.”** The retained canonical decision is **LD46 State Senator**, reviewed by shaug on October 16. No prior LD45-to-LD46 override was found, and no new override is admitted. Only the new current mapped-office affirmation is unverified; retaining the old verified fact needs no new mapping decision. First appearance of the label mismatch is unknown. The 30 other current decisions, two existing declines, excluded grey court entries and Bergquist position qualification remain explicit. The existing [#505 October 30 follow-up](https://github.com/shaug/seattle-election-guide/issues/505) should resolve this exact office-label mismatch through normal factual review before any new mapped affirmation or whole-source acknowledgement.
+
+WEA receives a present **limited administrative member-boundary disposition**, with no machine acknowledgement or fresh October 27 endorsement review. Its 20 canonical decisions / 21 choices remain usable under the source policy. The actual October 26 supplied-snapshot review and later acknowledgement remain distinct from the October 27 11:35:56.759375Z member-certification boundary. No Proceed, certification, login or gated-data read occurred. Possible additions remain unknown; the existing #505 October 30 follow-up can review legitimately available evidence. No new human evidence is necessary merely to retain the old verified facts or record this boundary.
+
+The October 27 manual task therefore has **34 actual bounded review acknowledgements, four failed-access limitations, one partial WA4PJ disposition and one WEA administrative disposition**. These are 40 dated dispositions, not 40 fresh complete factual reviews. All original failures and retry histories remain. Root retains final task closeout and protected delivery authority.

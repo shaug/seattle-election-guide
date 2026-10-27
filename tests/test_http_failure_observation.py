@@ -140,7 +140,8 @@ def _refresh(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AutomaticResult
         missed=[],
     )
 
-    def due_plan(*args: object) -> VerificationPlan:
+    def due_plan(*args: object, **kwargs: object) -> VerificationPlan:
+        assert kwargs == {"as_of_at": checked_at}
         return plan
 
     def git(args: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
