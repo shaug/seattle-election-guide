@@ -61,8 +61,51 @@ def test_publish_requires_every_lane_and_exact_merged_source() -> None:
         assert (observed.returncode == 0) == (result == "success")
 
 
+@pytest.mark.parametrize(
+    ("job_name", "expected_permissions"),
+    [
+        (
+            "publication-evidence",
+            {
+                "contents": "read",
+                "actions": "read",
+                "issues": "write",
+                "pull-requests": "write",
+            },
+        ),
+        (
+            "finalize",
+            {
+                "contents": "read",
+                "actions": "read",
+                "issues": "write",
+                "pull-requests": "write",
+                "deployments": "write",
+            },
+        ),
+        (
+            "deploy",
+            {
+                "contents": "read",
+                "actions": "read",
+                "issues": "read",
+                "deployments": "write",
+            },
+        ),
+    ],
+)
+def test_pr_owned_evidence_jobs_receive_only_matching_permissions(
+    job_name: str, expected_permissions: dict[str, str]
+) -> None:
+    # Job permission maps replace the workflow default. Receipts use issue
+    # comments even when the reviewed publication request names a pull request.
+    assert workflow()["jobs"][job_name]["permissions"] == expected_permissions
+
+
 def test_privileges_and_switch_scope() -> None:
-    jobs = workflow()["jobs"]
+    document = workflow()
+    jobs = document["jobs"]
+    assert document["permissions"]["pull-requests"] == "read"
     assert jobs["publish"]["permissions"]["contents"] == "write"
     for name in ["publish", "publication-evidence", "deploy"]:
         assert "github.event_name != 'pull_request'" in jobs[name]["if"]
@@ -79,6 +122,7 @@ def test_privileges_and_switch_scope() -> None:
                 assert "automation upload" in step["run"]
         if name not in ["publication-evidence", "finalize"]:
             assert job.get("permissions", {}).get("issues") != "write"
+            assert job.get("permissions", {}).get("pull-requests") != "write"
 
 
 def test_attempt_scoped_artifact_ids_flow_through_jobs() -> None:
