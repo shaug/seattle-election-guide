@@ -133,10 +133,18 @@ not official ballot styles or voter-specific samples. Each contains exact covere
 IDs before and after candidate-only uncontested exclusion. The first set supplies
 geographic membership before existing public eligibility; the second remains an
 oracle for the default Contested view. An explicit All selection uses the full
-geographic public set. Race mode does not change inventory or section order. The countywide sample
-ballot is corroborating contest evidence. Actual official precinct/part/style
-examples remain a separate release acceptance gate. Primary is unsupported by this
-projection; future elections require new reviewed evidence.
+geographic public set. Race mode does not change inventory or section order. The
+countywide composite ballot is corroborating contest evidence, not a
+precinct-specific ballot. On October27,2026, Scott approved shipping on the reviewed
+1,020 official assignments, current declarations, all 52 mappings, 31 independent
+exact-set checks, and that composite. He removed precinct-specific sample ballots
+as a requirement, without creating a mandatory collection follow-up. This
+supersedes the earlier sample-ballot release gate; its dated wording is retained
+in DECISIONS.md. Actual end-to-end precinct/part/style comparisons remain
+unperformed; this does not establish that such examples do not exist. Mapping,
+admission, primary compatibility, and normal release checks remain required.
+Primary is unsupported by this projection; future elections require new reviewed
+evidence.
 
 ## November 2026 presentation order (#609)
 

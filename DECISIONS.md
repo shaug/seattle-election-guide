@@ -93,6 +93,23 @@ Remember only the election-specific precinct; an explicit URL choice or Clear wi
 The location is voting geography, including for overseas voters, not current device
 location. Address and device lookup are later work feeding the same resolver.
 
-Source-composed geography fixtures support implementation but do not satisfy the
-release requirement for actual official precinct/part/style ballot examples. A
-working preview and that separate acceptance remain required before production.
+## Precinct evidence acceptance (#608, October27,2026)
+
+Scott approved shipping the reviewed feature and removed precinct-specific sample
+ballots as a requirement. The accepted evidence is the reviewed 1,020 official
+precinct assignments, current district declarations, all 52 contest mappings,
+31 independent exact-set checks, and the county composite ballot. This decision
+does not create a mandatory sample-collection follow-up.
+
+Actual end-to-end precinct/part/style ballot comparisons have not been performed.
+The county composite is not a precinct-specific ballot. Scott's uncertainty about
+the availability of such examples does not establish that none exist. Current
+official geography, correct mappings, admission tests, primary compatibility,
+normal protected release checks, and independent production acceptance remain
+required. No mapping or release guard is relaxed by this decision.
+
+The following October26 requirement is superseded, retained as decision history:
+
+> Source-composed geography fixtures support implementation but do not satisfy the
+> release requirement for actual official precinct/part/style ballot examples. A
+> working preview and that separate acceptance remain required before production.
