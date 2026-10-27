@@ -29,6 +29,7 @@ from election_guide.normalization.models import (
     ReviewItem,
 )
 from election_guide.normalization.semantics import EXPLICIT_STATUSES
+from election_guide.publication.ballot_order import BALLOT_ORDER_FILES, load_ballot_order
 from election_guide.publication.comparisons import (
     ComparisonBaseline,
     ComparisonDisplayRace,
@@ -346,14 +347,36 @@ def _build_view_model(
     jurisdiction_by_id = {
         jurisdiction.id: jurisdiction for jurisdiction in dataset.inventory.jurisdictions
     }
+    order = load_ballot_order(dataset.inventory)
+    section_order = (
+        [(section.id, section.label) for section in order.sections] if order else SECTION_ORDER
+    )
+    placements = (
+        {
+            contest.race_id: (section.id, section.label)
+            for section in order.sections
+            for contest in section.contests
+        }
+        if order
+        else {}
+    )
+    inventory_by_id = {race.id: race for race in dataset.inventory.races}
+    ordered_races = (
+        [inventory_by_id[race_id] for race_id in placements] if order else dataset.inventory.races
+    )
     section_races: dict[str, list[PublicationRace]] = {
-        section_id: [] for section_id, _ in SECTION_ORDER
+        section_id: [] for section_id, _ in section_order
     }
-    for race in dataset.inventory.races:
+    for race in ordered_races:
         if not race.publication_eligible:
             continue
         result = result_by_race[race.id]
-        section_id, section_label = _section(race, jurisdiction_by_id[race.jurisdiction_id].kind)
+        filter_section_id, filter_section_label = _section(
+            race, jurisdiction_by_id[race.jurisdiction_id].kind
+        )
+        section_id, section_label = placements.get(
+            race.id, (filter_section_id, filter_section_label)
+        )
         choices = {choice.id: choice.display_name for choice in race.choices}
         leader_labels = [choices[candidate_id] for candidate_id in result.winner_candidate_ids]
         has_recommendation = result.grade != "Insufficient"
@@ -382,7 +405,7 @@ def _build_view_model(
             is_contested=len(race.choices) > 1,
             filter_tokens=sorted(
                 {
-                    section_id,
+                    filter_section_id,
                     race.jurisdiction_id,
                     jurisdiction_by_id[race.jurisdiction_id].kind,
                     race.district,
@@ -463,7 +486,7 @@ def _build_view_model(
         section_races[section_id].append(publication_race)
     sections = [
         PublicationSection(id=section_id, label=label, races=section_races[section_id])
-        for section_id, label in SECTION_ORDER
+        for section_id, label in section_order
         if section_races[section_id]
     ]
     published_cells = [
@@ -635,6 +658,7 @@ def _comparisons(
 ) -> ComparisonsContract:
     """Publish display metadata without duplicating personalization scoring truth."""
     inventory_by_id = {race.id: race for race in dataset.inventory.races}
+    jurisdiction_kinds = {j.id: j.kind for j in dataset.inventory.jurisdictions}
     return ComparisonsContract(
         # Comparison releases created before this switch retain their serialized
         # disabled policy. New releases publish the audited comparison route.
@@ -646,6 +670,13 @@ def _comparisons(
                 race_type=inventory_by_id[published.id].race_type,
                 section_id=section.id,
                 section_label=section.label,
+                filter_section_id=(
+                    _section(
+                        inventory_by_id[published.id], jurisdiction_kinds[published.jurisdiction_id]
+                    )[0]
+                    if dataset.inventory.election.id in BALLOT_ORDER_FILES
+                    else None
+                ),
                 section_order=section_order,
                 race_order=race_order,
                 candidate_names={

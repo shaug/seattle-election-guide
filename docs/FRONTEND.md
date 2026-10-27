@@ -804,3 +804,17 @@ they cannot be mistaken for open design questions: narrowing the inlined
 personalization contract to one identifier space (The data contract), and
 testing the `schema_version` reveal itself (The data contract). Both are
 unowned.
+
+## Election-specific presentation order
+
+Issue #609's November 2026 ordering is resolved in the publication builder from
+one validated package-local map before rendering. Existing section/race fields
+carry that order to the guide, compact/print cards, personalization and Comparisons
+`display_index`; clients do not re-sort by label, score or source selection.
+The guide's legacy Ballot filter catalog and tokens retain their existing
+membership semantics independently of display headings. Other elections retain
+the legacy path. The mapped November comparison display index carries optional `filter_section_id`
+to preserve legacy section-filter membership separately from display headings.
+It is omitted from legacy/primary payloads; old payloads fall back to `section_id`.
+No new client state, storage or lookup is added.
+Validation and preservation checks live in `tests/test_ballot_order.py`.

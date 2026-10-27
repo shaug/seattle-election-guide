@@ -392,6 +392,7 @@ interface ComparisonDisplayRace {
   race_type: "candidate" | "measure" | "party_office";
   section_id: string;
   section_label: string;
+  filter_section_id?: string | null;
   section_order: number;
   race_order: number;
   candidate_names: {
