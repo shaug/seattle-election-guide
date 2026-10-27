@@ -791,6 +791,13 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     assert second.status.restricted_capture_count == 0
     assert second.status.unresolved_high_severity_count == 0
     assert second.status.source_access_failures
+    notes = (second.bundle_dir / "RELEASE_NOTES.md").read_text()
+    assert (
+        "These counts describe the canonical release inputs, not the latest recurring "
+        "source-access observations. \u2018None\u2019 in this section does not establish current "
+        "successful access or recovery. Later access failures retain the latest verified "
+        "endorsement evidence; additions, changes and withdrawals still require normal review."
+    ) in notes
     with ZipFile(second.archive_path) as archive:
         names = set(archive.namelist())
     assert "seattle-election-guide/RELEASE_NOTES.md" in names

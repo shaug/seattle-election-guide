@@ -19,6 +19,13 @@ Normal frequencies, six automatic attempts, daily retries, 24-hour rules, actual
 and three-distinct-failed-slot escalation remain unchanged. #589's unapproved interval and other
 criteria remain open.
 
+The [canonical source-access policy](../SOURCE_POLICY.md#verified-endorsements-survive-failed-access)
+keeps the latest verified endorsement evidence canonical through failed access. These new records
+govern only future dated-task handling; missing main admission does not erase accepted facts or
+block a release merely because the source is inaccessible. Failed/empty/incomplete retrieval is
+not evidence of deletion, and uncertain completeness may hide additions. Later complete additions,
+affirmative changes and withdrawals retain their normal factual-review requirements.
+
 The public factual bases are the
 [October 26 automatic reviews](../data/review/rechecks/wa-2026-general-2026-10-26-automatic.json),
 [October 26 manual reviews](../data/review/rechecks/wa-2026-general-2026-10-26-manual.json),

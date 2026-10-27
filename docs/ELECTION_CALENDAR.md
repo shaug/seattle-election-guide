@@ -460,6 +460,8 @@ and official-authority election-results rules remain in
 [the source policy](../SOURCE_POLICY.md#public-repository-boundaries).
 
 The approved partial #589 access disposition changes no dates, intervals or retries.
+The [source policy](../SOURCE_POLICY.md#verified-endorsements-survive-failed-access) retains verified
+canonical evidence through failed access; a source-access freshness limitation creates no release gate.
 From the explicit prospective Pacific policy date, a new pure failed-access observation
 may carry an immutable handled limitation after a separately qualified complete accepted
 initial review. This never advances last success, marks freshness current, suppresses

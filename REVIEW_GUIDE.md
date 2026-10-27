@@ -23,6 +23,11 @@ the evidence as a current-cycle endorsement, not as a separate general-election 
 primary-only publication still needs an explicit official carry-forward statement before its
 choices can be used for the general election; ballot advancement alone is not that statement.
 
+Apply [the canonical source-access policy](SOURCE_POLICY.md#verified-endorsements-survive-failed-access)
+when a later observation fails. Review actual additions, changes and withdrawals through this
+guide; failed or incomplete retrieval alone supplies no withdrawal decision. Attestation admission
+for handling a dated access task is separate from retaining already verified canonical evidence.
+
 Ambiguous matches remain unresolved. Overrides are data records containing the prior value, new
 value, reason, evidence, author, and timestamp; they are never hidden source-code branches.
 

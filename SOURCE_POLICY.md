@@ -74,6 +74,30 @@ decision and its rationale.
 Collection must not bypass authentication, paywalls, robots controls, or other access controls.
 An inaccessible source receives an explicit status and may enter the manual review path.
 
+## Verified endorsements survive failed access
+
+The maintainer clarified this site policy on October 27, 2026: **a source-access failure is
+an observation failure, not evidence that an endorsement was deleted or changed. Keep the
+latest verified endorsement decisions and their usable evidence canonical.** Denied, timed-out,
+empty or incomplete retrieval must not silently replace those facts with an empty result.
+Record the actual failure, check time, last real success and access limitation; continue the
+normal retries and genuine failure counts/escalation. No source designation, freshness check
+or access-failure mode may block a release merely because a previously verified source is
+inaccessible. No exception or override is required to retain that evidence.
+
+An inaccessible publication leaves uncertainty about completeness, especially possible additional
+endorsements. It does not establish that nothing new exists. A later complete publication can add
+endorsements through normal factual review and approval while retaining prior supported facts.
+Affirmative changes, contradictions and withdrawals remain reviewable and applicable through the
+normal audit; this rule does not assert that endorsements never change. First-review failures
+cannot invent a baseline, and incomplete parser output, unknown errors and conflicting evidence
+do not become accepted facts or successful checks. Existing integrity and publication checks remain.
+
+Complete-review attestation admission below governs whether a **new dated access obligation**
+can carry a handled limitation. An absent or not-yet-admitted attestation never erases already
+accepted canonical facts and creates no access-only release block. Historical observations,
+identifiers and limitations remain unchanged; no new policy backfills a prior failure as success.
+
 ## Prospective access limitations (#589, partial approved milestone)
 
 Scott approved retaining accepted endorsements after a **pure access failure following a

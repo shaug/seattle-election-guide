@@ -4,6 +4,15 @@ The release workflow turns the reviewed source-decision ledger into a reproducib
 It does not imply comprehensive source coverage. Gaps remain visible in the guide and in
 `release-status.json`; missing coverage is never counted as opposition.
 
+The [canonical source-access policy](../SOURCE_POLICY.md#verified-endorsements-survive-failed-access)
+retains the latest verified endorsement evidence when a later request fails; access alone creates
+no publication block. Release notes' reviewed-extract counts, unresolved-review count and access/
+discovery section describe the canonical release inputs, not the latest recurring verification
+archive. `None` in that section establishes no current source access or recovery. The production
+probe's data-freshness check measures the release manifest's build time, not a publisher's last
+successful check. Consult the immutable verification observations for actual failures, last success,
+limitations and retry counts; none of these release summaries supplies #497 scheduled reuse.
+
 ## Public update log
 
 Compare the candidate with the currently published guide before publication. Every change to

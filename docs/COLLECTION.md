@@ -184,6 +184,13 @@ match their manifest are `corrupt` under either scope.
 
 ## Recurring verification (#497)
 
+Follow [the canonical retained-evidence policy](../SOURCE_POLICY.md#verified-endorsements-survive-failed-access).
+A failed request appends its actual failure and retains the previous comparison snapshot; an empty
+or incomplete input cannot silently delete verified canonical decisions. A new extraction is a
+review proposal, not a ledger edit. Later complete additions, affirmative changes and withdrawals
+still pass normal factual review/approval. Access uncertainty can hide additions; it neither proves
+withdrawal nor blocks release of retained verified evidence. Actual clocks, retries and counters stay.
+
 The partial approved #589 milestone adds explicit failed-access observations and complete-initial
 review qualifications inside the same immutable verification archive. It introduces no fetcher,
 scheduler, evidence service, interval setting or source membership change. Generic acknowledgements,

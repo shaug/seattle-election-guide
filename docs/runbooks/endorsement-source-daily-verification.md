@@ -269,6 +269,14 @@ text and do not by themselves establish a cause, recovery or source approval.
 
 ## Approved future access disposition (#589, partial milestone)
 
+Apply [the canonical source-access policy](../../SOURCE_POLICY.md#verified-endorsements-survive-failed-access):
+retain the latest verified decisions/evidence through denial, timeout, empty or incomplete retrieval.
+Keep the failed observation, true last success, retries and escalation explicit. Do not interpret
+missing input as withdrawal, install an access-only publication block or require an exception to
+retain verified facts. A later complete publication can add reviewed decisions; actual contradictory
+or withdrawal evidence still requires normal factual review. The task-handling qualification below
+does not control whether already accepted evidence remains canonical.
+
 The maintainer's October 27 UTC approval permits retaining accepted facts with an explicit
 limitation after a future pure access failure following a complete accepted initial review.
 `config/verification.yaml` schema 1.1 starts this default with Pacific slots on October 27;
