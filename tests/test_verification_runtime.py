@@ -133,6 +133,159 @@ def test_parser_break_preserves_prior_baseline_and_three_scheduled_failures_esca
     assert report["automatic"][0]["escalated"] is True
 
 
+@pytest.mark.parametrize("problem", ["denied", "network", "timeout", "empty", "incomplete"])
+def test_failed_retrieval_keeps_verified_facts_and_later_review_can_add_endorsements(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, problem: str
+) -> None:
+    from election_guide.collection.http import HttpArtifact
+    from election_guide.collection.verification import plan_verification, read_policy
+    from election_guide.collection.verification_review import approve_baseline
+    from election_guide.collection.verification_runtime import run_verification
+    from election_guide.release import compile_release_dataset, verify_release_compilation
+
+    # All responses/reviews here are controlled fixtures, not publisher access or adoption.
+    source = "seiu-775"
+    policy_path, state, _ = setup_verification_fixture(tmp_path, monkeypatch, source)
+    policy = read_policy(policy_path)
+    root = state / "wa-2026-general"
+    response = b"<p>Seattle City Council District 5: Nilu Jenks</p>"
+    calls: list[str] = []
+
+    def fetch(url: str) -> HttpArtifact:
+        calls.append(url)
+        if len(calls) == 2 and problem == "denied":
+            raise ValueError("live collection returned HTTP 403")
+        if len(calls) == 2 and problem == "timeout":
+            raise TimeoutError("Controlled fixture timeout")
+        if len(calls) == 2 and problem == "network":
+            raise ConnectionResetError("Controlled fixture connection reset")
+        return HttpArtifact(response, 200, url, [], "text/html")
+
+    monkeypatch.setattr("election_guide.collection.verification_runtime.fetch_http", fetch)
+
+    def run(day: int) -> dict[str, Any]:
+        return run_verification(
+            policy,
+            state,
+            datetime.fromisoformat(f"2026-10-{day}T18:00:00+00:00"),
+            live=True,
+            fixtures=None,
+        )
+
+    baseline = run(26)["automatic"][0]
+    approve_baseline(
+        root,
+        baseline["snapshot_id"],
+        "Fixture original reviewer",
+        datetime.fromisoformat("2026-10-26T19:00:00+00:00"),
+        "Complete fixture publication/mappings.",
+    )
+    archive_before = {p: p.read_bytes() for p in root.rglob("*.json")}
+    registry = ROOT / "config/sources/wa-2026-general.yaml"
+    inventory = ROOT / "data/normalized/wa-2026-general-inventory.json"
+    ledger = tmp_path / "release-ledger.yaml"
+    payload: dict[str, Any] = {
+        "schema_version": "1.0",
+        "election_id": "wa-2026-general",
+        "data_as_of": "2026-10-28T20:00:00Z",
+        "reviewer": "Fixture reviewer",
+        "review_note": "Controlled complete-publication fixture, no publisher request.",
+        "sources": [
+            {
+                "source_id": source,
+                "captured_at": "2026-10-26T18:00:00Z",
+                "reviewed_at": "2026-10-26T19:00:00Z",
+                "evidence_locator": "Fixture full list.",
+                "decisions": [
+                    {
+                        "race_id": "seattle-city-council-5",
+                        "candidate_ids": ["seattle-city-council-5--nilu-jenks"],
+                    }
+                ],
+            }
+        ],
+    }
+    ledger.write_text(yaml.safe_dump(payload))
+    canonical = tmp_path / "canonical.json"
+    snapshots, manifests = tmp_path / "snapshots", tmp_path / "manifests"
+    accepted = compile_release_dataset(ledger, inventory, registry, canonical, snapshots, manifests)
+    canonical_before = canonical.read_bytes()
+    if problem == "empty":
+        response = b""
+    elif problem == "incomplete":
+        response += b"<p>Seattle City Council District 5: Unmapped Choice</p>"
+    failed = run(27)["automatic"][0]
+    assert failed["status"] == "failed" and failed["snapshot_id"] is None
+    assert failed["previous_snapshot_id"] == baseline["snapshot_id"]
+    assert failed["consecutive_failures"] == 1 and failed["escalated"] is False
+    assert all(p.read_bytes() == raw for p, raw in archive_before.items())
+    lane = next(
+        c
+        for c in plan_verification(policy, state, datetime(2026, 10, 27).date())
+        .elections[0]
+        .coverage
+        if c.source_id == source
+    )
+    assert lane.last_successful_check == datetime.fromisoformat("2026-10-26T18:00:00+00:00")
+    assert lane.latest_attempt is not None and lane.latest_attempt.status == "failed"
+    assert lane.next_due.isoformat() == "2026-10-28"
+    assert (
+        verify_release_compilation(ledger, inventory, registry, canonical, snapshots, manifests)
+        == accepted
+    )
+    assert canonical.read_bytes() == canonical_before
+    assert run(27)["automatic"] == [] and len(calls) == 2
+
+    # A later complete fixture adds a reviewed mapping; missing input never removed the old one.
+    adapter_path = tmp_path / "adapter.yaml"
+    adapter = yaml.safe_load(adapter_path.read_text())
+    adapter["decision_pattern"] = (
+        r"(?m)^(?:Seattle City Council District 5|King County Assessor): [^\n]+$"
+    )
+    adapter["rules"].append(
+        {
+            "race_id": "king-county-assessor",
+            "pattern": "King County Assessor: Rob Foxcurran",
+            "candidate_ids": ["king-county-assessor--rob-foxcurran"],
+            "evidence_locator": "Later complete fixture publication.",
+        }
+    )
+    adapter_path.write_text(yaml.safe_dump(adapter))
+    response = (
+        b"<p>Seattle City Council District 5: Nilu Jenks</p>"
+        b"<p>King County Assessor: Rob Foxcurran</p>"
+    )
+    later = run(28)["automatic"][0]
+    assert later["status"] == "updated" and later["baseline_reviewed"] is False
+    assert [(d["kind"], d["race_id"]) for d in later["diff"]] == [("added", "king-county-assessor")]
+    assert (
+        canonical.read_bytes() == canonical_before
+    )  # Extraction alone changes no canonical facts.
+    approve_baseline(
+        root,
+        later["snapshot_id"],
+        "Fixture later reviewer",
+        datetime.fromisoformat("2026-10-28T19:00:00+00:00"),
+        "Complete added-mapping fixture review.",
+    )
+    payload["sources"][0]["decisions"].append(
+        {
+            "race_id": "king-county-assessor",
+            "candidate_ids": ["king-county-assessor--rob-foxcurran"],
+            "captured_at": "2026-10-28T18:00:00Z",
+            "reviewed_at": "2026-10-28T19:00:00Z",
+            "reviewer": "Fixture later reviewer",
+            "review_note": "Reviewed added fixture endorsement.",
+            "evidence_url": "https://seiu775.org/endorsements/",
+            "evidence_locator": "Later complete fixture publication, named office.",
+        }
+    )
+    ledger.write_text(yaml.safe_dump(payload))
+    updated = compile_release_dataset(ledger, inventory, registry, canonical, snapshots, manifests)
+    assert len(updated.endorsements) == 2 and accepted.endorsements[0] in updated.endorsements
+    assert all(p.read_bytes() == raw for p, raw in archive_before.items())
+
+
 def test_missing_scheduled_events_are_visible_even_without_a_source_job_record(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

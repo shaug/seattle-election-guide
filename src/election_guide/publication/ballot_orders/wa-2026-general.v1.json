@@ -1,0 +1,437 @@
+{
+  "schema_version": "1",
+  "election_id": "wa-2026-general",
+  "evidence": {
+    "url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/current-election/2026/11/sample-ballot.pdf?hash=895ADB51E1998F1D24C40AE595A68F95&rev=ddaa4d38e7dd4f0e81025944a419a679",
+    "sha256": "f1df968fe7093344a872eb22b9aaabc0a5dec3065f2b9448b7b72546381f572c",
+    "custody": "User-supplied official composite PDF, received 2026-10-27 01:10 UTC (minute precision); Library materialization 2026-10-27T01:12:38.575622+00:00. No successful county-host download is claimed.",
+    "reviewed_at": "2026-10-27T01:14:38.227927+00:00",
+    "reviewer": "Codex research chat 01a16b66-0fc3-7a22-8e57-9ec95e886e5e"
+  },
+  "sections": [
+    {
+      "id": "state-measures",
+      "label": "State measures",
+      "contests": [
+        {
+          "race_id": "initiative-26-645",
+          "page": 1,
+          "column": 2,
+          "box": 1,
+          "printed_heading": "State / Initiative to the People"
+        },
+        {
+          "race_id": "initiative-26-001",
+          "page": 1,
+          "column": 3,
+          "box": 1,
+          "printed_heading": "Initiatives to the Legislature"
+        },
+        {
+          "race_id": "initiative-26-638",
+          "page": 2,
+          "column": 1,
+          "box": 1,
+          "printed_heading": "Continuation of Initiatives to the Legislature; no repeated header"
+        }
+      ]
+    },
+    {
+      "id": "federal",
+      "label": "Federal",
+      "contests": [
+        {
+          "race_id": "us-house-7",
+          "page": 2,
+          "column": 1,
+          "box": 3,
+          "printed_heading": "Federal"
+        },
+        {
+          "race_id": "us-house-9",
+          "page": 2,
+          "column": 2,
+          "box": 2,
+          "printed_heading": "Federal"
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "label": "State",
+      "contests": [
+        {
+          "race_id": "ld-11-state-representative-1",
+          "page": 2,
+          "column": 3,
+          "box": 2,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-11-state-representative-2",
+          "page": 2,
+          "column": 3,
+          "box": 3,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-32-state-senator",
+          "page": 3,
+          "column": 2,
+          "box": 2,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-32-state-representative-1",
+          "page": 3,
+          "column": 2,
+          "box": 3,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-32-state-representative-2",
+          "page": 3,
+          "column": 2,
+          "box": 4,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-34-state-senator",
+          "page": 3,
+          "column": 3,
+          "box": 2,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-34-state-representative-1",
+          "page": 3,
+          "column": 3,
+          "box": 3,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-34-state-representative-2",
+          "page": 3,
+          "column": 3,
+          "box": 4,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-36-state-senator",
+          "page": 3,
+          "column": 3,
+          "box": 5,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-36-state-representative-1",
+          "page": 3,
+          "column": 3,
+          "box": 6,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-36-state-representative-2",
+          "page": 4,
+          "column": 1,
+          "box": 1,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-37-state-senator",
+          "page": 4,
+          "column": 1,
+          "box": 2,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-37-state-representative-1",
+          "page": 4,
+          "column": 1,
+          "box": 3,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-37-state-representative-2",
+          "page": 4,
+          "column": 1,
+          "box": 4,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-43-state-senator",
+          "page": 4,
+          "column": 2,
+          "box": 1,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-43-state-representative-1",
+          "page": 4,
+          "column": 2,
+          "box": 2,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-43-state-representative-2",
+          "page": 4,
+          "column": 2,
+          "box": 3,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-46-state-senator",
+          "page": 4,
+          "column": 3,
+          "box": 1,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-46-state-representative-1",
+          "page": 4,
+          "column": 3,
+          "box": 2,
+          "printed_heading": "State"
+        },
+        {
+          "race_id": "ld-46-state-representative-2",
+          "page": 4,
+          "column": 3,
+          "box": 3,
+          "printed_heading": "State"
+        }
+      ]
+    },
+    {
+      "id": "county",
+      "label": "County",
+      "contests": [
+        {
+          "race_id": "king-county-prosecuting-attorney",
+          "page": 5,
+          "column": 1,
+          "box": 5,
+          "printed_heading": "County"
+        },
+        {
+          "race_id": "king-county-assessor",
+          "page": 5,
+          "column": 2,
+          "box": 1,
+          "printed_heading": "County"
+        },
+        {
+          "race_id": "king-county-director-of-elections",
+          "page": 5,
+          "column": 2,
+          "box": 2,
+          "printed_heading": "County"
+        },
+        {
+          "race_id": "king-county-council-2",
+          "page": 5,
+          "column": 2,
+          "box": 3,
+          "printed_heading": "County"
+        },
+        {
+          "race_id": "king-county-council-4",
+          "page": 5,
+          "column": 2,
+          "box": 4,
+          "printed_heading": "County"
+        },
+        {
+          "race_id": "king-county-council-8",
+          "page": 5,
+          "column": 2,
+          "box": 6,
+          "printed_heading": "County"
+        }
+      ]
+    },
+    {
+      "id": "state-supreme-court",
+      "label": "State Supreme Court",
+      "contests": [
+        {
+          "race_id": "supreme-court-justice-1",
+          "page": 5,
+          "column": 3,
+          "box": 1,
+          "printed_heading": "State Supreme Court"
+        },
+        {
+          "race_id": "supreme-court-justice-3",
+          "page": 5,
+          "column": 3,
+          "box": 2,
+          "printed_heading": "State Supreme Court"
+        },
+        {
+          "race_id": "supreme-court-justice-4",
+          "page": 5,
+          "column": 3,
+          "box": 3,
+          "printed_heading": "State Supreme Court"
+        },
+        {
+          "race_id": "supreme-court-justice-5",
+          "page": 5,
+          "column": 3,
+          "box": 4,
+          "printed_heading": "State Supreme Court"
+        },
+        {
+          "race_id": "supreme-court-justice-7",
+          "page": 5,
+          "column": 3,
+          "box": 5,
+          "printed_heading": "State Supreme Court"
+        }
+      ]
+    },
+    {
+      "id": "court-of-appeals",
+      "label": "Court of Appeals, Division 1, District 1",
+      "contests": [
+        {
+          "race_id": "court-of-appeals-division-1-district-1-judge-5",
+          "page": 6,
+          "column": 1,
+          "box": 1,
+          "printed_heading": "Court of Appeals, Division No. 1, District No. 1"
+        },
+        {
+          "race_id": "court-of-appeals-division-1-district-1-judge-6",
+          "page": 6,
+          "column": 1,
+          "box": 2,
+          "printed_heading": "Court of Appeals, Division No. 1, District No. 1"
+        }
+      ]
+    },
+    {
+      "id": "west-electoral-district",
+      "label": "West Electoral District",
+      "contests": [
+        {
+          "race_id": "king-county-district-court-west-judge-1",
+          "page": 7,
+          "column": 1,
+          "box": 4,
+          "printed_heading": "West Electoral District"
+        },
+        {
+          "race_id": "king-county-district-court-west-judge-2",
+          "page": 7,
+          "column": 1,
+          "box": 5,
+          "printed_heading": "West Electoral District"
+        },
+        {
+          "race_id": "king-county-district-court-west-judge-3",
+          "page": 7,
+          "column": 1,
+          "box": 6,
+          "printed_heading": "West Electoral District"
+        },
+        {
+          "race_id": "king-county-district-court-west-judge-4",
+          "page": 7,
+          "column": 2,
+          "box": 1,
+          "printed_heading": "West Electoral District"
+        },
+        {
+          "race_id": "king-county-district-court-west-judge-5",
+          "page": 7,
+          "column": 2,
+          "box": 2,
+          "printed_heading": "West Electoral District"
+        }
+      ]
+    },
+    {
+      "id": "seattle-city",
+      "label": "City of Seattle",
+      "contests": [
+        {
+          "race_id": "seattle-city-council-5",
+          "page": 9,
+          "column": 2,
+          "box": 2,
+          "printed_heading": "City; contest title City of Seattle / Council District No. 5"
+        }
+      ]
+    },
+    {
+      "id": "seattle-municipal-court",
+      "label": "Seattle Municipal Court",
+      "contests": [
+        {
+          "race_id": "seattle-municipal-court-judge-1",
+          "page": 9,
+          "column": 3,
+          "box": 1,
+          "printed_heading": "Seattle Municipal Court"
+        },
+        {
+          "race_id": "seattle-municipal-court-judge-2",
+          "page": 9,
+          "column": 3,
+          "box": 2,
+          "printed_heading": "Seattle Municipal Court"
+        },
+        {
+          "race_id": "seattle-municipal-court-judge-3",
+          "page": 9,
+          "column": 3,
+          "box": 3,
+          "printed_heading": "Seattle Municipal Court"
+        },
+        {
+          "race_id": "seattle-municipal-court-judge-4",
+          "page": 9,
+          "column": 3,
+          "box": 4,
+          "printed_heading": "Seattle Municipal Court"
+        },
+        {
+          "race_id": "seattle-municipal-court-judge-5",
+          "page": 9,
+          "column": 3,
+          "box": 5,
+          "printed_heading": "Seattle Municipal Court"
+        },
+        {
+          "race_id": "seattle-municipal-court-judge-6",
+          "page": 9,
+          "column": 3,
+          "box": 6,
+          "printed_heading": "Seattle Municipal Court"
+        },
+        {
+          "race_id": "seattle-municipal-court-judge-7",
+          "page": 10,
+          "column": 1,
+          "box": 1,
+          "printed_heading": "Continuation of Seattle Municipal Court; no repeated header"
+        }
+      ]
+    },
+    {
+      "id": "seattle-measures",
+      "label": "City of Seattle — measures",
+      "contests": [
+        {
+          "race_id": "seattle-proposition-1-transit",
+          "page": 10,
+          "column": 1,
+          "box": 2,
+          "printed_heading": "City; contest title City of Seattle / Proposition No. 1 / Seattle Transit Measure"
+        }
+      ]
+    }
+  ]
+}

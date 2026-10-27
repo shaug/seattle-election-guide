@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-26T13:23:42.971537Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source 32nd-district-democrats; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://32democrats.org/2026-endorsements/",
+    "https://32democrats.org/wp/wp-content/uploads/Screenshot-2026-10-19-at-10.54.10-PM-1.png"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_political_oct26",
+  "recorded_at": "2026-10-27T03:02:18.021802Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:31:31.488430Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "32nd-district-democrats"
+}

@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-26T13:21:45.630656Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source protec17; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.protec17.org/endorsements/",
+    "https://www.protec17.org/wp-content/uploads/2024/10/WA-Endorsement-Graphic-1024x806.png",
+    "https://www.protec17.org/wp-content/uploads/2024/10/OR-Endorsements-Graphic-Updated-1024x806.png"
+  ],
+  "original_reviewer": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26",
+  "recorded_at": "2026-10-27T03:02:30.213540Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:23:57.021781Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "protec17"
+}

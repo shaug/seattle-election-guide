@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-26T13:21:33.272308Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source king-county-democrats; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.kcdems.org/our-party/e/2026-endorsements/"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_political_oct26",
+  "recorded_at": "2026-10-27T03:02:25.949303Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:31:31.488066Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "king-county-democrats"
+}

@@ -276,3 +276,42 @@ test('the next change that does take clears the explanation of the one that did 
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('compare-client.mjs');
 });
+
+test('saved section filters span new ballot headings without changing membership or order', () => {
+  const payload = auditedPayload();
+  const expected = payload.comparisons.display_index
+    .filter((row) => row.section_id === 'city')
+    .map((row) => row.race_id);
+  assert.ok(expected.length > 1);
+  for (const row of payload.comparisons.display_index) {
+    row.filter_section_id = row.section_id;
+    if (row.race_id === expected[0]) row.section_id = 'seattle-city';
+    if (row.race_id === expected[1]) row.section_id = 'seattle-municipal-court';
+  }
+  const context = compareContext(
+    payload.personalization,
+    payload.data_version,
+    payload.comparisons,
+    ['gall', 'strn'],
+  );
+  const encoded = encodeCompareFragment(
+    { columns: ['gall', 'strn'], differencesOnly: false, contestedOnly: false, section: 'city' },
+    context,
+  );
+  assert.equal(encoded.status, 'ok');
+  const document = boot({
+    fragment: `#${encoded.fragment}`,
+    editPayload: (actual) => {
+      actual.comparisons = payload.comparisons;
+    },
+  });
+  assert.deepEqual(
+    [...document.querySelectorAll('[data-comparison-race]')].map((row) =>
+      row.getAttribute('data-comparison-race'),
+    ),
+    expected,
+  );
+  assert.ok(document.querySelector('[data-comparison-section="seattle-city"]'));
+  assert.ok(document.querySelector('[data-comparison-section="seattle-municipal-court"]'));
+  assert.equal(notice(document).hidden, true);
+});

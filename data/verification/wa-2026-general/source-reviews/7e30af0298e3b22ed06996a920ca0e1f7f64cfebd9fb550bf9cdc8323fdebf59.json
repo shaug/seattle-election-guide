@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-26T13:21:46.910868Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source washington-housing-alliance; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.wahousingalliance.org/endorsements",
+    "https://images.squarespace-cdn.com/content/v1/692f58eda59be86eb5356112/e07f2704-750e-4fae-9922-97203c964a60/AdvocacyDay2014-AlecMiller-78.jpg",
+    "https://images.squarespace-cdn.com/content/v1/692f58eda59be86eb5356112/d110367f-9328-44aa-b832-4f7ddb06b5b6/485151429_1071438801689274_930686238691352070_n.jpg"
+  ],
+  "original_reviewer": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26",
+  "recorded_at": "2026-10-27T03:02:45.363876Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:23:57.021783Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-housing-alliance"
+}

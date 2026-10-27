@@ -107,3 +107,14 @@ The workflow adapter binds Actions outputs and GitHub deployment envelopes to th
 workflow shell does not reimplement them. Verification-only recovery reads the original Git
 object and upload receipt, preserving provenance without rebuilding or uploading. Failed evidence
 keeps delivery incomplete and retryable. Historical two-revision lineage checks remain unchanged.
+
+## Ballot presentation
+
+The November 2026 publication builder consumes the versioned, reviewed
+`publication/ballot_orders/wa-2026-general.v1.json` map. It validates the complete
+inventory before selecting visible contests and derives the existing shared
+section/race view-model order. This presentation input is separate from canonical
+inventory/choice order and scoring inputs; no source retrieval occurs in builds.
+The map is election-scoped package data, with supplied-PDF provenance and visual
+locators. Other elections preserve their legacy presentation. #608 owns voter
+membership independently; filtering preserves the supplied relative order.

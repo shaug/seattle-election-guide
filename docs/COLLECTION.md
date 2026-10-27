@@ -184,6 +184,23 @@ match their manifest are `corrupt` under either scope.
 
 ## Recurring verification (#497)
 
+Follow [the canonical retained-evidence policy](../SOURCE_POLICY.md#verified-endorsements-survive-failed-access).
+A failed request appends its actual failure and retains the previous comparison snapshot; an empty
+or incomplete input cannot silently delete verified canonical decisions. A new extraction is a
+review proposal, not a ledger edit. Later complete additions, affirmative changes and withdrawals
+still pass normal factual review/approval. Access uncertainty can hide additions; it neither proves
+withdrawal nor blocks release of retained verified evidence. Actual clocks, retries and counters stay.
+
+The partial approved #589 milestone adds explicit failed-access observations and complete-initial
+review qualifications inside the same immutable verification archive. It introduces no fetcher,
+scheduler, evidence service, interval setting or source membership change. Generic acknowledgements,
+baseline flags and HTTP success do not qualify a complete accepted review. A new permitted failed
+check keeps its actual failure and last-success clock while recording a handled limitation;
+reader-side reconciliation never backfills old records. Parser, incomplete/conflicting and unknown
+cases stay unresolved. The existing publication review/admission gates remain required. See the
+[source policy](../SOURCE_POLICY.md#prospective-access-limitations-589-partial-approved-milestone)
+and the normal CLI procedure in the daily runbook.
+
 `config/verification.yaml` binds the current frozen election inputs to the six
 adapters under `config/adapters/wa-2026-general/`. Other eligible sources receive
 finite manual-review obligations. `verification plan`, `run`, `validate`, and

@@ -14,6 +14,7 @@ from urllib.parse import unquote, urljoin, urlsplit
 from pydantic import AwareDatetime, Field, model_validator
 
 from election_guide.collection.http import HttpArtifact, fetch_http
+from election_guide.collection.models import PublicationReviewRequired
 from election_guide.collection.verification import SourcePolicy, VerificationModel
 from election_guide.evidence.models import (
     CAPTURE_ID_PATTERN,
@@ -288,11 +289,20 @@ class PublicationCollector:
         if self.source_id == "ufcw-3000" and url != UFCW_INDEX:
             validate_ufcw_article(artifact.canonical_url)
         if artifact.media_type.split(";", 1)[0] not in {"text/html", "application/xhtml+xml"}:
-            raise ValueError("index or article is not HTML")
+            raise PublicationReviewRequired("parse", "index or article is not HTML")
+        if not artifact.content:
+            raise PublicationReviewRequired(
+                "incomplete_publication", "publication response is empty"
+            )
         self.retain(url, artifact, "static_html")
         parser = parser or PublicationParser()
-        parser.feed(artifact.content.decode("utf-8"))
-        parser.close()
+        try:
+            parser.feed(artifact.content.decode("utf-8"))
+            parser.close()
+        except UnicodeError as error:
+            raise PublicationReviewRequired(
+                "parse", "publication text is not valid UTF-8"
+            ) from error
         return artifact.content, parser
 
     def retain(
@@ -300,10 +310,14 @@ class PublicationCollector:
     ) -> None:
         """Retain one real bounded response; assets share the publication budgets."""
         if len(self.captures) >= 140:
-            raise ValueError("publication discovery exceeds its combined capture bound")
+            raise PublicationReviewRequired(
+                "incomplete_publication", "publication discovery exceeds its combined capture bound"
+            )
         self.total += len(artifact.content)
         if self.total > 64 * 1024 * 1024:
-            raise ValueError("publication discovery exceeds its total byte bound")
+            raise PublicationReviewRequired(
+                "incomplete_publication", "publication discovery exceeds its total byte bound"
+            )
         path = self.storage.parent / "discovery-input.html"
         path.write_bytes(artifact.content)
         request = CaptureRequest(
@@ -367,7 +381,9 @@ def discover_publication(
     url = policy.index_url
     for _ in range(40):
         if url in visited:
-            raise ValueError("publication pagination loops")
+            raise PublicationReviewRequired(
+                "incomplete_publication", "publication pagination loops"
+            )
         visited.add(url)
         raw, page = fetch(url)
         index_hashes[url] = hashlib.sha256(raw).hexdigest()
@@ -382,10 +398,14 @@ def discover_publication(
                 raise ValueError("article discovery leaves the official HTTPS host")
             identifier = re.search(r"/story/[0-9]+/", article)
             if identifier is None:
-                raise ValueError("official article URL has no stable story identity")
+                raise PublicationReviewRequired(
+                    "parse", "official article URL has no stable story identity"
+                )
             canonical = f"https://{host}{identifier.group(0)}"
             if len(known | discovered | {canonical}) > 100:
-                raise ValueError("publication discovery exceeds its 100-article bound")
+                raise PublicationReviewRequired(
+                    "incomplete_publication", "publication discovery exceeds its 100-article bound"
+                )
             if canonical not in known | discovered:
                 obligation = SgnDiscoveryObligation(
                     checked_at=checked_at, articles=[canonical], capture_id=captures[-1]
@@ -405,22 +425,35 @@ def discover_publication(
             and item not in visited
         )
         if len(next_pages) != 1:
-            raise ValueError("publication boundary was not reached through unambiguous pagination")
+            raise PublicationReviewRequired(
+                "incomplete_publication",
+                "publication boundary was not reached through unambiguous pagination",
+            )
         url = next_pages[0]
     else:
-        raise ValueError("publication discovery reached the 40-page bound before its boundary")
+        raise PublicationReviewRequired(
+            "incomplete_publication",
+            "publication discovery reached the 40-page bound before its boundary",
+        )
     articles = sorted(known | discovered)
     if not articles or len(articles) > 100:
-        raise ValueError("publication discovery requires one to 100 articles")
+        raise PublicationReviewRequired(
+            "incomplete_publication", "publication discovery requires one to 100 articles"
+        )
     headings: list[str] = []
     article_hashes: dict[str, str] = {}
     for article in articles:
         raw, page = fetch(article)
         if page.heading_count != 1:
-            raise ValueError("endorsement article must have exactly one heading")
+            raise PublicationReviewRequired(
+                "parse", "endorsement article must have exactly one heading"
+            )
         title = " ".join("".join(page.heading).split())
         if not title.casefold().startswith("sgn endorsements"):
-            raise ValueError("known endorsement article no longer has an endorsement heading")
+            raise PublicationReviewRequired(
+                "conflicting_evidence",
+                "known endorsement article no longer has an endorsement heading",
+            )
         headings.append(f"<p>{html.escape(title)}</p>")
         article_hashes[article] = hashlib.sha256(raw).hexdigest()
     # This derived comparison binds article/body and index fingerprints to
@@ -436,7 +469,9 @@ def discover_publication(
         + f"<!--{evidence_fingerprint(comparison)}--></body></html>"
     ).encode()
     if len(body) > 25 * 1024 * 1024:
-        raise ValueError("SGN derived comparison exceeds the 25 MiB artifact limit")
+        raise PublicationReviewRequired(
+            "incomplete_publication", "SGN derived comparison exceeds the 25 MiB artifact limit"
+        )
     record = {
         "source_id": policy.source_id,
         "checked_at": checked_at.isoformat(),
@@ -532,7 +567,9 @@ def discover_ufcw_publication(
             known.update(read_ufcw_discovery_obligation(path).articles)
     articles = sorted(known | listed)
     if len(articles) > 100:
-        raise ValueError("UFCW discovery exceeds its 100-article bound")
+        raise PublicationReviewRequired(
+            "incomplete_publication", "UFCW discovery exceeds its 100-article bound"
+        )
     # Learning membership does not assert that any article was collected or
     # compared. Its index observation survives collection failure so a later
     # runner must retry these URLs after link rotation.
@@ -555,7 +592,9 @@ def discover_ufcw_publication(
             or not "".join(article.heading).strip()
             or not "".join(article.content).strip()
         ):
-            raise ValueError("UFCW article requires one publication heading and nonempty body")
+            raise PublicationReviewRequired(
+                "parse", "UFCW article requires one publication heading and nonempty body"
+            )
         hashes[url] = hashlib.sha256(content).hexdigest()
     # Extract only the existing reviewed landing-page facts. The digest binds
     # every complete original article, including unrecognized/withdrawn wording.
@@ -566,7 +605,9 @@ def discover_ufcw_publication(
     }
     body = raw + f"<!--{evidence_fingerprint(comparison)}-->".encode()
     if len(body) > 25 * 1024 * 1024:
-        raise ValueError("UFCW derived comparison exceeds the 25 MiB artifact limit")
+        raise PublicationReviewRequired(
+            "incomplete_publication", "UFCW derived comparison exceeds the 25 MiB artifact limit"
+        )
     record = {
         "source_id": "ufcw-3000",
         "checked_at": checked_at.isoformat(),

@@ -17,6 +17,7 @@ from election_guide.collection.discovery import (
     PublicationCollector,
     PublicationParser,
 )
+from election_guide.collection.models import PublicationReviewRequired
 from election_guide.collection.verification import VerificationModel
 from election_guide.evidence.models import (
     CAPTURE_ID_PATTERN,
@@ -120,7 +121,7 @@ class TruParser(PublicationParser):
         classes = set((attributes.get("class") or "").split())
         if tag == "article":
             if any(name == "article" for name, _ in self.stack):
-                raise ValueError("TRU has nested publication articles")
+                raise PublicationReviewRequired("parse", "TRU has nested publication articles")
             self.article_count += 1
             self.entry_headings = []
             self.bookmarks = []
@@ -179,13 +180,15 @@ class TruParser(PublicationParser):
             self.entries.append((" ".join("".join(self.entry_headings).split()), self.bookmarks))
         # Reject broken publication structure; HTML void elements never enter the stack.
         if not self.stack or self.stack[-1][0] != tag:
-            raise ValueError("TRU publication has malformed element structure")
+            raise PublicationReviewRequired(
+                "parse", "TRU publication has malformed element structure"
+            )
         self.stack.pop()
 
     def close(self) -> None:
         super().close()
         if self.stack:
-            raise ValueError("TRU publication has unclosed elements")
+            raise PublicationReviewRequired("parse", "TRU publication has unclosed elements")
 
 
 class TruDiscoveryObligation(VerificationModel):
@@ -260,19 +263,27 @@ def discover_tru_publication(
         parser = TruParser()
         raw, _ = collector.fetch(url, parser)
         if not parser.entries:
-            raise ValueError("TRU archive has no identifiable endorsement posts")
+            raise PublicationReviewRequired(
+                "incomplete_publication", "TRU archive has no identifiable endorsement posts"
+            )
         learned: set[str] = set()
         for title, links in parser.entries:
             if not title or len(links) != 1 or links[0][1] != title:
-                raise ValueError("TRU archive post lacks one identifiable bookmark heading")
+                raise PublicationReviewRequired(
+                    "parse", "TRU archive post lacks one identifiable bookmark heading"
+                )
             if current_title(title):
                 article_url = urljoin(url, links[0][0])
                 validate_tru_article(article_url)
                 learned.add(article_url)
             elif re.search(r"2026.*general.*endorse", title, re.I):
-                raise ValueError("TRU current-general title requires review")
+                raise PublicationReviewRequired(
+                    "conflicting_evidence", "TRU current-general title requires review"
+                )
         if len(known | listed | learned) > 100:
-            raise ValueError("TRU discovery exceeds its 100-article bound")
+            raise PublicationReviewRequired(
+                "incomplete_publication", "TRU discovery exceeds its 100-article bound"
+            )
         newly_learned = sorted(learned - known - listed)
         if newly_learned:
             obligation = TruDiscoveryObligation(
@@ -286,17 +297,26 @@ def discover_tru_publication(
         indexes[url] = hashlib.sha256(raw).hexdigest()
         next_urls = {urljoin(url, item) for item in parser.next_links}
         if len(next_urls) > 1:
-            raise ValueError("TRU archive has competing next-page identities")
+            raise PublicationReviewRequired(
+                "incomplete_publication", "TRU archive has competing next-page identities"
+            )
         for next_url in next_urls:
             if archive_number(next_url) != number + 1:
-                raise ValueError("TRU archive pagination must increase by one")
+                raise PublicationReviewRequired(
+                    "incomplete_publication", "TRU archive pagination must increase by one"
+                )
         if TRU_BOUNDARY in learned:
             break
         if len(next_urls) != 1:
-            raise ValueError("TRU archive did not reach its reviewed September boundary")
+            raise PublicationReviewRequired(
+                "incomplete_publication",
+                "TRU archive did not reach its reviewed September boundary",
+            )
         url = next_urls.pop()
     else:
-        raise ValueError("TRU discovery reached its 40-page bound before the boundary")
+        raise PublicationReviewRequired(
+            "incomplete_publication", "TRU discovery reached its 40-page bound before the boundary"
+        )
     articles = sorted(known | listed)
     hashes: dict[str, str] = {}
     designated: bytes | None = None
@@ -311,14 +331,15 @@ def discover_tru_publication(
             or parser.content_count != 1
             or not "".join(parser.content).strip()
         ):
-            raise ValueError(
-                "TRU article requires one current-general publication and nonempty content"
+            raise PublicationReviewRequired(
+                "parse", "TRU article requires one current-general publication and nonempty content"
             )
         hashes[url] = hashlib.sha256(raw).hexdigest()
         if url == TRU_CURRENT:
             if parser.images.count(TRU_IMAGE) != 1:
-                raise ValueError(
-                    "TRU designated publication no longer links its exact required image"
+                raise PublicationReviewRequired(
+                    "conflicting_evidence",
+                    "TRU designated publication no longer links its exact required image",
                 )
             designated = raw
     # The exact linked asset consumes the same transport, custody and aggregate budgets.
@@ -328,7 +349,9 @@ def discover_tru_publication(
         or artifact.canonical_url != TRU_IMAGE
         or artifact.media_type.split(";", 1)[0] != "image/jpeg"
     ):
-        raise ValueError("TRU meaningful image changed identity or media type")
+        raise PublicationReviewRequired(
+            "conflicting_evidence", "TRU meaningful image changed identity or media type"
+        )
     collector.retain(TRU_IMAGE, artifact, "image")
     comparison = {
         "articles": hashes,
@@ -337,10 +360,14 @@ def discover_tru_publication(
         "assets": {TRU_IMAGE: hashlib.sha256(artifact.content).hexdigest()},
     }
     if designated is None:
-        raise ValueError("TRU designated extraction publication is missing")
+        raise PublicationReviewRequired(
+            "incomplete_publication", "TRU designated extraction publication is missing"
+        )
     body = designated + f"<!--{evidence_fingerprint(comparison)}-->".encode()
     if len(body) > 25 * 1024 * 1024:
-        raise ValueError("TRU derived comparison exceeds the 25 MiB artifact limit")
+        raise PublicationReviewRequired(
+            "incomplete_publication", "TRU derived comparison exceeds the 25 MiB artifact limit"
+        )
     audit = DiscoveryAudit(
         source_id="transit-riders-union",
         checked_at=checked_at,

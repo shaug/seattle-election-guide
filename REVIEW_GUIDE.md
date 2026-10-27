@@ -23,6 +23,11 @@ the evidence as a current-cycle endorsement, not as a separate general-election 
 primary-only publication still needs an explicit official carry-forward statement before its
 choices can be used for the general election; ballot advancement alone is not that statement.
 
+Apply [the canonical source-access policy](SOURCE_POLICY.md#verified-endorsements-survive-failed-access)
+when a later observation fails. Review actual additions, changes and withdrawals through this
+guide; failed or incomplete retrieval alone supplies no withdrawal decision. Attestation admission
+for handling a dated access task is separate from retaining already verified canonical evidence.
+
 Ambiguous matches remain unresolved. Overrides are data records containing the prior value, new
 value, reason, evidence, author, and timestamp; they are never hidden source-code branches.
 
@@ -62,6 +67,17 @@ approvals apply only to the precise facts/snapshot reviewed. Migration supplies 
 fresh source read, backdated check, failure reset or authority for unattended interpretation.
 Fixtures cannot receive live baseline approval. Keep #497 and its runbook proposed until actual
 scheduled execution and later independent normal scheduled reuse have the required evidence.
+
+The approved partial #589 access policy uses one explicit complete-initial-review attestation.
+Normal protected review must establish the full official publication/mapping scope, actual
+source/election, official URL, original check time, named original reviewer/review time and ordinary
+durable facts/review reference. Record the new writer/time separately; no current writer is
+substituted for the original reviewer. Use the existing facts/review packet's ordinary durable
+reference. The CLI proposes the attestation; pending archive-branch presence is
+insufficient for use until its exact bytes are in the normal main snapshot. It conducts no review
+and infers no completeness from a generic acknowledgement or baseline approval. Unsupported scope
+stays unresolved without rejecting valid evidence merely for its format. No collector-baseline
+approval or #497 scheduled reuse follows. See [the source policy](SOURCE_POLICY.md#prospective-access-limitations-589-partial-approved-milestone).
 
 ## Recorded maintainer-approved measure interpretation
 

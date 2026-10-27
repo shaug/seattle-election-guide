@@ -171,6 +171,7 @@ def test_ufcw_required_article_failure_preserves_baseline(
     failed = run(policy, state, 20)
     assert failed["status"] == "failed"
     assert failed["previous_snapshot_id"] == baseline["snapshot_id"]
+    assert failed.get("review_required") == (None if isinstance(failure, OSError) else "parse")
     assert len(list(state.rglob("extractions/*.json"))) == 1
 
 

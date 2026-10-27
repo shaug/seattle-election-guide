@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-26T13:21:43.068571Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source mlk-labor; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.mlklabor.org/wp-content/uploads/2026/01/Endorsements-Web-1024x600.jpg",
+    "https://www.mlklabor.org/endorsements/"
+  ],
+  "original_reviewer": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26",
+  "recorded_at": "2026-10-27T03:02:26.668535Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:23:57.021675Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "mlk-labor"
+}

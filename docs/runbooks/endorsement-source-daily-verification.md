@@ -267,6 +267,79 @@ Failed checks can report a fixed operation stage and failure category, with a va
 HTTP status where available. These bounded diagnostics retain no arbitrary exception
 text and do not by themselves establish a cause, recovery or source approval.
 
+## Approved future access disposition (#589, partial milestone)
+
+Apply [the canonical source-access policy](../../SOURCE_POLICY.md#verified-endorsements-survive-failed-access):
+retain the latest verified decisions/evidence through denial, timeout, empty or incomplete retrieval.
+Keep the failed observation, true last success, retries and escalation explicit. Do not interpret
+missing input as withdrawal, install an access-only publication block or require an exception to
+retain verified facts. A later complete publication can add reviewed decisions; actual contradictory
+or withdrawal evidence still requires normal factual review. The task-handling qualification below
+does not control whether already accepted evidence remains canonical.
+
+The maintainer's October 27 UTC approval permits retaining accepted facts with an explicit
+limitation after a future pure access failure following a complete accepted initial review.
+`config/verification.yaml` schema 1.1 starts this default with Pacific slots on October 27;
+weekly/daily frequency, normal automatic attempts, calendar/24-hour boundaries and genuine
+three-slot escalation are unchanged. This does not complete #589's unapproved interval/other
+criteria, adopt #497, close #616 or resolve an earlier dated obligation by policy migration.
+
+Before qualifying a source, establish the COMPLETE accepted official-publication/mapping review
+from actual existing facts and review evidence. Do not infer it from a normal manual acknowledgement
+or baseline approval. Propose one attestation with exact source/election, explicit complete scope,
+official URLs, original actual check time and named reviewer/review time, and one ordinary durable
+facts/review reference. An immutable record path or commit-qualified reference avoids ambiguity
+when an existing document can change. Existing review packets retain their ordinary formats.
+Normal protected versioned review establishes acceptance of the explicit claim; the new writing actor/time are
+recorded separately. Unsupported actual scope remains unresolved without a new publisher fetch
+merely to satisfy record formatting. Run from the repository root:
+
+```bash
+uv run election-guide verification qualify-initial-review data/verification/wa-2026-general \
+  --source-id <registered-source> --scope complete_official_publication_and_mappings \
+  --official-url <official-publication-URL> --checked-at <actual-original-check-time> \
+  --reviewer <actual-original-reviewer> --reviewed-at <actual-original-review-time> \
+  --evidence <ordinary-durable-facts-review-reference> --recorded-by <actual-writing-actor>
+```
+
+Commit the proposed record through normal protected review. Pending archive-branch presence is
+not sufficient: eligibility compares its exact bytes with the canonical archive blob in the
+already available local `origin/main` snapshot. No network request is made for admission. The
+normal workflow already fetches/merges main; if proof is unavailable or bytes differ, leave the
+obligation unresolved. Structural validation still permits unmerged proposals. A later main
+admission never changes a disposition already recorded on an older failed check.
+
+For a genuinely observed manual failed request, preserve its actual observer/time and durable
+bounded diagnostic reference. The following records an observation; it performs no source GET
+and claims no successful acknowledgement or HTTP response body:
+
+```bash
+uv run election-guide verification record-access-failure config/verification.yaml \
+  --election-id wa-2026-general --source-id <registered-manual-source> \
+  --scheduled-for <Pacific-slot> --checked-at <actual-UTC-time> \
+  --reviewer <actual-observer> --evidence <actual-failure-reference> \
+  --category http_status --http-status 403
+```
+
+Only supported typed HTTP status/deadline/DNS/TLS access failures can carry the new limitation;
+unknown, generic OS/network, parser, partial/conflicting publication and safety failures do not.
+An older ambiguous failure remains unresolved without blocking a separate later typed pure-access
+attempt. Positive intervening changed content, failed observed response/comparison or a typed
+parse/incomplete/conflicting-publication reason still requires a later complete accepted review.
+Never backfill such a reason or an HTTP diagnosis onto an old event; all older obligations remain.
+Automatic sources continue their existing automatic path. A qualifier must already exist when
+the new failed observation is recorded and predate its check; it cannot resolve an old check.
+All historical failures, six automatic attempts, baseline approvals, ciphertext and IDs remain.
+Legacy sources without demonstrable complete-review evidence remain unresolved; no qualification
+is supplied by this implementation or its fixture tests.
+
+Inspect `verification plan` for actual last success, latest failed attempt, freshness limitation
+and next normal due date. `reconcile --dry-run` keeps failed statuses and escalation explicit.
+A handled-only observation does not reopen an already closed dated task, but a new unresolved
+observation does. Operators still close a finite task only after all other criteria pass;
+reconciliation performs no automatic whole-task closure. Historical scoped SEIU closure authority
+is separate; #616 remains the finite recovery follow-up.
+
 ## Legacy encrypted custody
 
 Historical `verification seal` and `verification restore` utilities remain documented in

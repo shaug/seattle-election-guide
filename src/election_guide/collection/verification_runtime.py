@@ -8,6 +8,7 @@ import socket
 import ssl
 import subprocess
 import tempfile
+from contextlib import suppress
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -29,7 +30,11 @@ from election_guide.collection.http import (
     TOTAL_TIMEOUT_EXCEEDED,
     fetch_http,
 )
-from election_guide.collection.models import RefreshEvent
+from election_guide.collection.models import (
+    AccessFailureDiagnostic,
+    PublicationReviewRequired,
+    RefreshEvent,
+)
 from election_guide.collection.refresh import (
     read_adapter_spec,
     record_refresh_failure,
@@ -42,6 +47,7 @@ from election_guide.collection.verification import (
     SourcePolicy,
     VerificationPolicy,
     baseline_reviewed,
+    check_order,
     plan_verification,
     read_checks,
     read_panel,
@@ -61,8 +67,12 @@ def consecutive_failures(
     root: Path, source_id: str, through: date | None = None, missing: set[date] | None = None
 ) -> int:
     latest: dict[str, CheckRecord] = {}
-    for check in sorted(read_checks(root), key=lambda item: item.checked_at):
-        if check.source_id == source_id and (through is None or check.scheduled_for <= through):
+    for check in sorted(read_checks(root), key=check_order):
+        if (
+            check.source_id == source_id
+            and check.status != "manual_due"
+            and (through is None or check.scheduled_for <= through)
+        ):
             latest[check.scheduled_for.isoformat()] = check
     missing_days = {
         day.isoformat() for day in missing or set() if through is None or day <= through
@@ -203,17 +213,22 @@ def run_verification(
                     live=live,
                     fixtures=fixtures,
                 )
-                record_check(
-                    working,
-                    CheckRecord(
-                        source_id=obligation.source_id,
-                        scheduled_for=as_of,
-                        checked_at=checked_at,
-                        status=event.status,
-                        event_id=event.id,
-                        mode="live" if live else "fixture",
-                    ),
+                check = CheckRecord(
+                    source_id=obligation.source_id,
+                    scheduled_for=as_of,
+                    checked_at=checked_at,
+                    status=event.status,
+                    event_id=event.id,
+                    mode="live" if live else "fixture",
                 )
+                from election_guide.collection.verification_access import new_access_disposition
+
+                disposition = new_access_disposition(
+                    policy, working, check, event, election_id=election.election_id
+                )
+                if disposition:
+                    check = check.model_copy(update={"access_disposition": disposition})
+                record_check(working, check)
                 failures = consecutive_failures(working, obligation.source_id)
                 reviewed = baseline_reviewed(working, event.snapshot_id)
                 report["automatic"].append(
@@ -223,6 +238,11 @@ def run_verification(
                         "baseline_reviewed": reviewed,
                         "consecutive_failures": failures,
                         "escalated": failures >= 3,
+                        **(
+                            {"access_disposition": disposition.model_dump(mode="json")}
+                            if disposition
+                            else {}
+                        ),
                     }
                 )
             # Immutable bytes first, observations last. Git publishes the
@@ -415,10 +435,21 @@ def _refresh(
         diagnostic = (
             _http_failure_diagnostic(error) if stage == "http_fetch" else "category=unknown"
         )
+        access_failure = None
+        if stage == "http_fetch":
+            category, _, status = diagnostic.removeprefix("category=").partition("; status=")
+            if category in {"http_status", "deadline", "dns", "tls"}:
+                # Unsupported/ambiguous diagnostics remain unresolved.
+                with suppress(ValueError):
+                    access_failure = AccessFailureDiagnostic.model_validate(
+                        {"category": category, "http_status": int(status) if status else None}
+                    )
         return record_refresh_failure(
             source.id,
             checked_at,
             f"Source check failed (stage={stage}; {diagnostic}).",
             root / "refreshes",
             extraction_dir=root / "extractions",
+            access_failure=access_failure,
+            review_required=error.reason if isinstance(error, PublicationReviewRequired) else None,
         )

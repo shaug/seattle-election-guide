@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-26T13:23:26.256882Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source washington-conservation-action; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+    "https://waconservationaction.org/eight-native-candidates-head-to-washingtons-general-election/",
+    "https://waconservationaction.org/the-2026-dirty-dozen/"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_civic_oct26",
+  "recorded_at": "2026-10-27T03:02:43.165550Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:30:17.355392Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-conservation-action"
+}

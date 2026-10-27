@@ -87,17 +87,39 @@ class ElectionPolicy(VerificationModel):
         return self
 
 
+class AccessFailurePolicy(VerificationModel):
+    """Prospective Pacific task dates; no refresh-interval configuration."""
+
+    effective_from: date
+    disposition: Literal["retain_verified"] = "retain_verified"
+
+
 class VerificationPolicy(VerificationModel):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.0", "1.1"] = "1.0"
     calendar: Path
     elections: list[ElectionPolicy] = Field(min_length=1)
+    access_failures: AccessFailurePolicy | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
     @model_validator(mode="after")
     def validate_unique_elections(self) -> VerificationPolicy:
+        if self.access_failures and self.schema_version != "1.1":
+            raise ValueError("access-failure disposition requires policy schema 1.1")
         identifiers = [item.election_id for item in self.elections]
         if len(identifiers) != len(set(identifiers)):
             raise ValueError("verification policy repeats an election")
         return self
+
+
+class RecordedAccessDisposition(VerificationModel):
+    disposition: Literal["retained_verified_with_limitation"] = "retained_verified_with_limitation"
+    qualification_id: str = Field(pattern=r"^[0-9a-f]{64}$")
+    policy_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    effective_from: date
+
+
+CHECK_EVIDENCE_MAX_LENGTH = 1100
 
 
 class CheckRecord(VerificationModel):
@@ -106,18 +128,31 @@ class CheckRecord(VerificationModel):
     checked_at: AwareDatetime
     status: Literal["created", "updated", "unchanged", "failed", "manual", "manual_due", "missed"]
     event_id: str | None = Field(default=None, pattern=REFRESH_ID_PATTERN)
-    evidence: str | None = Field(default=None, max_length=1100)
+    evidence: str | None = Field(default=None, max_length=CHECK_EVIDENCE_MAX_LENGTH)
     mode: Literal["live", "fixture", "human", "watch"]
+    recorded_at: AwareDatetime | None = Field(default=None, exclude_if=lambda value: value is None)
+    access_disposition: RecordedAccessDisposition | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
     @model_validator(mode="after")
     def validate_result(self) -> CheckRecord:
+        if self.access_disposition and (self.status != "failed" or self.mode == "fixture"):
+            raise ValueError("retained-access limitation requires a real failed observation")
         if (self.status in {"created", "updated", "unchanged", "failed"}) != bool(self.event_id):
-            raise ValueError("automatic checks require their refresh event")
+            raise ValueError("automatic or failed checks require their refresh event")
         if self.status == "manual" and (self.mode != "human" or not self.evidence):
             raise ValueError("manual success requires human review evidence")
         if self.status == "missed" and self.mode != "watch":
             raise ValueError("missing checks require watcher provenance")
-        if self.status not in {"manual", "missed"} and self.mode not in {"live", "fixture"}:
+        manual_failure = self.status == "failed" and self.mode == "human"
+        if manual_failure and (not self.evidence or self.recorded_at is None):
+            raise ValueError("manual failed access requires its actor, evidence and recording time")
+        if (
+            self.status not in {"manual", "missed"}
+            and self.mode not in {"live", "fixture"}
+            and not manual_failure
+        ):
             raise ValueError("automatic observations require live or fixture provenance")
         return self
 
@@ -149,6 +184,10 @@ class CoverageRecord(VerificationModel):
     next_due: date
     due: bool
     limitation: str
+    latest_attempt: CheckRecord | None = Field(default=None, exclude_if=lambda value: value is None)
+    freshness: Literal["never_verified", "current", "access_limited", "review_required"] | None = (
+        Field(default=None, exclude_if=lambda value: value is None)
+    )
 
 
 class ElectionPlan(VerificationModel):
@@ -180,6 +219,9 @@ class AutomaticResult(RefreshEvent):
     baseline_reviewed: bool
     consecutive_failures: int = Field(ge=0)
     escalated: bool
+    access_disposition: RecordedAccessDisposition | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
 
 class ManualObligation(VerificationModel):
@@ -272,6 +314,12 @@ def read_checks(root: Path) -> list[CheckRecord]:
     return checks
 
 
+def check_order(check: CheckRecord) -> tuple[datetime, int, datetime]:
+    # A due marker is not a later outcome when clocks have equal precision.
+    rank = 0 if check.status == "manual_due" else 1 if check.status in {"failed", "missed"} else 2
+    return check.checked_at, rank, check.recorded_at or check.checked_at
+
+
 def scheduled_dates(start: date, daily: date, end: date) -> list[date]:
     dates: list[date] = []
     day = start
@@ -323,10 +371,11 @@ def plan_verification(
             )
             history = sorted(
                 (check for check in checks if check.source_id == source.id),
-                key=lambda check: check.checked_at,
+                key=check_order,
             )
             observed = {check.scheduled_for for check in history}
             missed_days = {check.scheduled_for for check in history if check.status == "missed"}
+            attempts = [check for check in history if check.status != "manual_due"]
             pending = [day for day in dates if day not in observed]
             due = [day for day in pending if day <= as_of]
             from election_guide.collection.refresh import read_refresh_event
@@ -358,6 +407,16 @@ def plan_verification(
                     else (pending[0] if pending else election_day + timedelta(days=1)),
                     due=bool(due) and as_of <= election_day,
                     limitation=override.limitation,
+                    latest_attempt=attempts[-1] if attempts else None,
+                    freshness=(
+                        "access_limited"
+                        if attempts and attempts[-1].access_disposition
+                        else "current"
+                        if successes and attempts[-1] == successes[-1]
+                        else "review_required"
+                        if attempts
+                        else "never_verified"
+                    ),
                 )
             )
             for day in sorted(set(due) | missed_days):
