@@ -1,0 +1,6 @@
+{
+  "evidence": "docs/GENERAL_OLDER_BASELINE_DISPOSITIONS_2026-10-26.md#six-late-factual-reviews; data/review/rechecks/wa-2026-general-2026-10-26-automatic.json; exact extraction-transit-riders-union-20261023T085015Z-685cf64b6fc9; actual delegated factual reviewer OpenAI Codex /root/review_497_older_baseline_dispositions, reviewed 2026-10-26T22:04:31Z; original check 2026-10-23T08:50:15Z. Uses already reviewed complete current official facts and original mappings with all source qualifications. Original official-observation times and later attestation-writing time are distinct. No new source read, old-page-state, on-time completion, approval transfer or scheduled-reuse claim.",
+  "reviewed_at": "2026-10-26T22:04:31Z",
+  "reviewer": "OpenAI Codex /root/review_497_older_baseline_dispositions",
+  "snapshot_id": "extraction-transit-riders-union-20261023T085015Z-685cf64b6fc9"
+}
