@@ -1,0 +1,2684 @@
+{
+  "accepted_base": "f1027ec683dfb7fb15886ede7ad22768b1b41acc",
+  "acknowledgement_recorded_at": "2026-10-27T23:41:04.272075+00:00",
+  "acknowledgements": {
+    "sierra-club-washington": {
+      "actual_invocation_finished_at": "2026-10-27T23:41:04.239015+00:00",
+      "actual_invocation_started_at": "2026-10-27T23:41:03.595131+00:00",
+      "actual_original_reviewed_at": "2026-10-27T23:16:51.859013+00:00",
+      "actual_original_reviewer": "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "actual_writer": "OpenAI Codex /root/performance_651",
+      "exit_code": 0,
+      "normal_argv": [
+        "uv",
+        "run",
+        "election-guide",
+        "verification",
+        "acknowledge-manual",
+        "data/verification/wa-2026-general",
+        "--source-id",
+        "sierra-club-washington",
+        "--scheduled-for",
+        "2026-10-27",
+        "--reviewer",
+        "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+        "--reviewed-at",
+        "2026-10-27T23:16:51.859013+00:00",
+        "--evidence",
+        "data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/sierra-club-washington; actual ordinary public browser interval 2026-10-27T23:09:37.262Z to 2026-10-27T23:10:12.791Z; source factual comparison completed 2026-10-27T23:16:51.859013+00:00. Existing qualifications/old canonical provenance retained. No numeric HTTP, native recovery, baseline approval or scheduled reuse asserted."
+      ],
+      "normal_check_record": {
+        "checked_at": "2026-10-27T23:16:51.859013Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/sierra-club-washington; actual ordinary public browser interval 2026-10-27T23:09:37.262Z to 2026-10-27T23:10:12.791Z; source factual comparison completed 2026-10-27T23:16:51.859013+00:00. Existing qualifications/old canonical provenance retained. No numeric HTTP, native recovery, baseline approval or scheduled reuse asserted.",
+        "mode": "human",
+        "scheduled_for": "2026-10-27",
+        "source_id": "sierra-club-washington",
+        "status": "manual"
+      },
+      "normal_output_path": "data/verification/wa-2026-general/checks/b8d55639e588436935694007b37f1015231457fb53db9bd1c24f507323b39e0b.json",
+      "normal_output_sha256": "b8d55639e588436935694007b37f1015231457fb53db9bd1c24f507323b39e0b",
+      "ordinary_durable_evidence": "data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/sierra-club-washington",
+      "pid": 27340,
+      "reaped": true,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b204dbcb19d3e692e5e49ae70d6d319c1b0d82a9f39f56805c0361441d191a"
+    },
+    "young-democrats-of-washington": {
+      "actual_invocation_finished_at": "2026-10-27T23:41:03.512202+00:00",
+      "actual_invocation_started_at": "2026-10-27T23:41:02.674962+00:00",
+      "actual_original_reviewed_at": "2026-10-27T23:16:51.859013+00:00",
+      "actual_original_reviewer": "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "actual_writer": "OpenAI Codex /root/performance_651",
+      "exit_code": 0,
+      "normal_argv": [
+        "uv",
+        "run",
+        "election-guide",
+        "verification",
+        "acknowledge-manual",
+        "data/verification/wa-2026-general",
+        "--source-id",
+        "young-democrats-of-washington",
+        "--scheduled-for",
+        "2026-10-27",
+        "--reviewer",
+        "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+        "--reviewed-at",
+        "2026-10-27T23:16:51.859013+00:00",
+        "--evidence",
+        "data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/young-democrats-of-washington; actual ordinary public browser interval 2026-10-27T23:08:19.522Z to 2026-10-27T23:09:13.650Z; source factual comparison completed 2026-10-27T23:16:51.859013+00:00. Existing qualifications/old canonical provenance retained. No numeric HTTP, native recovery, baseline approval or scheduled reuse asserted."
+      ],
+      "normal_check_record": {
+        "checked_at": "2026-10-27T23:16:51.859013Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/young-democrats-of-washington; actual ordinary public browser interval 2026-10-27T23:08:19.522Z to 2026-10-27T23:09:13.650Z; source factual comparison completed 2026-10-27T23:16:51.859013+00:00. Existing qualifications/old canonical provenance retained. No numeric HTTP, native recovery, baseline approval or scheduled reuse asserted.",
+        "mode": "human",
+        "scheduled_for": "2026-10-27",
+        "source_id": "young-democrats-of-washington",
+        "status": "manual"
+      },
+      "normal_output_path": "data/verification/wa-2026-general/checks/cdca613dc1cd1f126040bb5c5fc2240334b0dea023d0e795047c16158fde7470.json",
+      "normal_output_sha256": "cdca613dc1cd1f126040bb5c5fc2240334b0dea023d0e795047c16158fde7470",
+      "ordinary_durable_evidence": "data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/young-democrats-of-washington",
+      "pid": 27334,
+      "reaped": true,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b204dbcb19d3e692e5e49ae70d6d319c1b0d82a9f39f56805c0361441d191a"
+    }
+  },
+  "aggregate_issue_acceptance_complete": false,
+  "canonical_decision_changes": [],
+  "election_id": "wa-2026-general",
+  "independent_factual_admission_actor": "OpenAI Codex /root/performance_651",
+  "independent_factual_admission_at": "2026-10-27T23:32:54.128857+00:00",
+  "input_factual_package": {
+    "bytes": 119156,
+    "sha256": "231d63b02f855fe7283de5a49f1458cff2a5cc4557dea23812673be0b442a1fd"
+  },
+  "native_baseline_approval_or_scheduled_reuse_claimed": false,
+  "original_factual_comparison_base": "fb3f36759eef79023704d16e74f46f23103f5ee1",
+  "owning_issue": 647,
+  "qualifications": [
+    "Facts-only projection of the completed current browser review: 70 current verified decisions and one current mapped-office affirmation unverified. Canonical decisions and old verified dates are unchanged. Only Young Democrats and Sierra are eligible for normal dated acknowledgements.",
+    "Original browser windows and factual-review time stay separate from this later independent admission time. Numeric HTTP status remains unmeasured.",
+    "Preserve the exact existing Bergquist Rep12 qualification, Sierra Chiaplo/unnumbered SeattleTransit/outsideLD48 limits, grey court exclusions and two red declines. No new Valdez override or source-label correctness claim.",
+    "Exactly two normal dated acknowledgements were appended after independent admission. WA4PJ has no whole-source acknowledgement; WEA remains an administrative member-boundary disposition with no machine acknowledgement. No old check/event/approval/counter record changed."
+  ],
+  "record_type": "bounded_current_source_factual_followup",
+  "recorded_at": "2026-10-27T23:39:30.846394+00:00",
+  "recorded_by": "OpenAI Codex /root/performance_651",
+  "related_issues": [
+    497,
+    505
+  ],
+  "schema_version": "1.0",
+  "source_reviews": {
+    "sierra-club-washington": {
+      "actual_browser_observation_started_at": "2026-10-27T23:09:37.262Z",
+      "actual_factual_review_complete_at": "2026-10-27T23:16:51.859013+00:00",
+      "actual_publication_read_complete_at": "2026-10-27T23:10:12.791Z",
+      "actual_reviewer": "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "canonical_changes_proposed": [],
+      "canonical_dates_and_objects_not_freshened": true,
+      "complete_relevant_registered_publication_read": true,
+      "current_review_complete": true,
+      "current_unverified_retained_decision_count": 0,
+      "current_verified_decision_count": 24,
+      "full_52_race_covered_intersection": [
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "court-of-appeals-division-1-district-1-judge-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "court-of-appeals-division-1-district-1-judge-6"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "initiative-26-001"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "initiative-26-638"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "initiative-26-645"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-assessor"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-council-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-council-4"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-council-8"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-director-of-elections"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-3"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-4"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-prosecuting-attorney"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-11-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-11-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-32-state-representative-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-32-state-representative-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-32-state-senator"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-34-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-34-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-34-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-36-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-36-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-36-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-37-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-37-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-37-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-43-state-representative-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-43-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-46-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-46-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-46-state-senator"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-city-council-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-3"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-4"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-6"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-7"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "seattle-proposition-1-transit"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "supreme-court-justice-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "supreme-court-justice-3"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "supreme-court-justice-4"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "supreme-court-justice-5"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "supreme-court-justice-7"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "us-house-7"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "us-house-9"
+        }
+      ],
+      "http_status": null,
+      "manual_acknowledgement_eligible": true,
+      "network_retrieval_time": null,
+      "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "qualifications": [
+        "Complete relevant pageDOM read throughfooter/U.S.House/BallotInitiatives/StateLegislature/SupremeCourt/LocalRaces. NoIncapsula in this browser. NonnumericHTTPobservation only; historicalcollector200interstitial unchanged.",
+        "ActualLD48 labels House1JessicaForsythe/House2OsmanSalahudin retained as printed; both outside frozen52, no silent reversal or import. LD33 and allothernoninventory geography outside scope.",
+        "No page publication-updated date established. Ordinary donationpopup appeared in screenshot afterDOMread; no payment/login/accessgate or credentialaction."
+      ],
+      "retained_decision_count": 24,
+      "rows": [
+        {
+          "actual_observed_choice_wording": [
+            "Pramila Jayapal"
+          ],
+          "canonical_allocation": {
+            "us-house-7--pramila-jayapal": "1"
+          },
+          "canonical_candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "canonical_choice_names": [
+            "Pramila Jayapal"
+          ],
+          "canonical_decision_sha256": "815bd31fff9d57cbb0cc2d2a71966ac9e1ab161ef34580bfc7e63226b1b16f89",
+          "canonical_endorsement_id": "endorsement-9cef292fe0daf7b2",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "U.S. House: 7th Congressional District",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "998758538420ee6a9d4ffdd7291935732bb5df9cb19fa4342bcd3c310d3875f7",
+          "qualifications": [],
+          "race_id": "us-house-7"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Adam Smith"
+          ],
+          "canonical_allocation": {
+            "us-house-9--adam-smith": "1"
+          },
+          "canonical_candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "canonical_choice_names": [
+            "Adam Smith"
+          ],
+          "canonical_decision_sha256": "556e93310e489baaa51f4b05897cf4e12f668d2d4ed2f9e04ffd7973f73c6ed7",
+          "canonical_endorsement_id": "endorsement-611b62c3a039c58e",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "U.S. House: 9th Congressional District",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "21d49e256033695a8ba5b5d6299d9c4fe22775a627cbdda929930f5e629b63d2",
+          "qualifications": [],
+          "race_id": "us-house-9"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Vote No"
+          ],
+          "canonical_allocation": {
+            "initiative-26-645--no": "1"
+          },
+          "canonical_candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "canonical_choice_names": [
+            "No"
+          ],
+          "canonical_decision_sha256": "cfc4261b806808e19bbf0fe7054cb7f7ab2dafd960be4fb8257256513064b4bf",
+          "canonical_endorsement_id": "endorsement-c4cd03be28430903",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Ballot Initiatives: Initiative 645",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "52698a01e6ba9f28e2dec316571afdc6e4e77143de05a26509fb30e338e13f33",
+          "qualifications": [],
+          "race_id": "initiative-26-645"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Vote Yes"
+          ],
+          "canonical_allocation": {
+            "seattle-proposition-1-transit--yes": "1"
+          },
+          "canonical_candidate_ids": [
+            "seattle-proposition-1-transit--yes"
+          ],
+          "canonical_choice_names": [
+            "Yes"
+          ],
+          "canonical_decision_sha256": "7ea54dfe92248e03a724d087cca8c8f1fe677597dd0b35cd3d125f83c440065f",
+          "canonical_endorsement_id": "endorsement-99e5f2838d221763",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Existing decisions/choices/statuses/allocations unchanged; literal label qualifications remain explicit.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Ballot Initiatives: Seattle Transit Measure",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "938032ae44c024f1a86a4d2bb3355ee233dbeb4455a30871ad4e909567bed0ba",
+          "qualifications": [
+            "Source literally Seattle Transit Measure: Vote Yes, with no propositionnumber. Preserve accepted existing mapping to Seattle Proposition1 and lack of printed number."
+          ],
+          "race_id": "seattle-proposition-1-transit"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Steve Bergquist"
+          ],
+          "canonical_allocation": {
+            "ld-11-state-representative-2--steve-bergquist": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-11-state-representative-2--steve-bergquist"
+          ],
+          "canonical_choice_names": [
+            "Steve Bergquist"
+          ],
+          "canonical_decision_sha256": "785b5eed16120efbc223507f226702c0e5f709668fee4026a7fe4cc32389eb4b",
+          "canonical_endorsement_id": "endorsement-74076f05eda1670c",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "11th Legislative District: WA House Position 2",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "5303804133dfaed3ca455240a3345a29da9f56616fb0e77edd412bc6bbc335cd",
+          "qualifications": [],
+          "race_id": "ld-11-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Keith Scully"
+          ],
+          "canonical_allocation": {
+            "ld-32-state-representative-1--keith-scully": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-32-state-representative-1--keith-scully"
+          ],
+          "canonical_choice_names": [
+            "Keith Scully"
+          ],
+          "canonical_decision_sha256": "d29f884af6e35d9779a8be83e7e97ad0adf8af8f6b8916f77dd3077000f45b4d",
+          "canonical_endorsement_id": "endorsement-cbb1b5a8a03811da",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "32nd: WA House Position 1",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "0d370eb3f822b02e3ccaa32cfd2c90d01e1fcb085283b844bbd3d207111e5711",
+          "qualifications": [],
+          "race_id": "ld-32-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Joe Fitzgibbon"
+          ],
+          "canonical_allocation": {
+            "ld-34-state-representative-2--joe-fitzgibbon": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ],
+          "canonical_choice_names": [
+            "Joe Fitzgibbon"
+          ],
+          "canonical_decision_sha256": "3afbe8cb7939d8f7916691fc47c0ad4f4986b87bf21cc5a8fa916b34a866b519",
+          "canonical_endorsement_id": "endorsement-172d039dd006c47c",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "34th: WA House Position 2",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "11ac1851a8bc22432abded34c783bdb20dfc30ce7b64e0228bfa80160033f9b1",
+          "qualifications": [],
+          "race_id": "ld-34-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Emily Alvarado"
+          ],
+          "canonical_allocation": {
+            "ld-34-state-senator--emily-alvarado": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-34-state-senator--emily-alvarado"
+          ],
+          "canonical_choice_names": [
+            "Emily Alvarado"
+          ],
+          "canonical_decision_sha256": "fc01e8d896ecf964a813f9feb736178ca187eaa79bbbc335fc9a3f61f363d420",
+          "canonical_endorsement_id": "endorsement-c6461aab43df0ee0",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "34th: WA State Senate",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "6d8879625c1cd60c1d45b1e5d9c71f5e6fef82b320dc35bb8f4d4343b9b57460",
+          "qualifications": [],
+          "race_id": "ld-34-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Julia Reed"
+          ],
+          "canonical_allocation": {
+            "ld-36-state-representative-1--julia-grant-reed": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "canonical_choice_names": [
+            "Julia Grant Reed"
+          ],
+          "canonical_decision_sha256": "ae9f995c1c43eee3155bcbf784b5f045d02f7584ed70eb5781e0a01fff2455e1",
+          "canonical_endorsement_id": "endorsement-602ac95de39ef591",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "36th: WA House Position 1",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "f4e6acd8c4fd16f8147eee852345bbeb64408f495d6b702484c78ea2efd92454",
+          "qualifications": [],
+          "race_id": "ld-36-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Liz Berry"
+          ],
+          "canonical_allocation": {
+            "ld-36-state-representative-2--liz-berry": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-36-state-representative-2--liz-berry"
+          ],
+          "canonical_choice_names": [
+            "Liz Berry"
+          ],
+          "canonical_decision_sha256": "fd573594023bc41d4032ca5038225cfa60f189c7acb34cb315bfd28d038e8896",
+          "canonical_endorsement_id": "endorsement-bff75f05fba5fa53",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "36th: WA House Position 2",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "050cdbbdb7f8b8bc223053fc5b264a1c475e03967c03ce5049498a4a965eeff5",
+          "qualifications": [],
+          "race_id": "ld-36-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Noel Frame"
+          ],
+          "canonical_allocation": {
+            "ld-36-state-senator--noel-c-frame": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-36-state-senator--noel-c-frame"
+          ],
+          "canonical_choice_names": [
+            "Noel C. Frame"
+          ],
+          "canonical_decision_sha256": "59e79382700f538a85e4dab7e938955d776da652cef0eb91d0c728dd171e4f00",
+          "canonical_endorsement_id": "endorsement-33c2e99730faaac3",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "36th: WA State Senate",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "35b9d44ea29380287b1ff7106cc132ab31f3c066030188e2ba114aa283110073",
+          "qualifications": [],
+          "race_id": "ld-36-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Kelabe Tewolde"
+          ],
+          "canonical_allocation": {
+            "ld-37-state-representative-1--kelabe-tewolde": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "canonical_choice_names": [
+            "Kelabe Tewolde"
+          ],
+          "canonical_decision_sha256": "6051b316b5fecc557961433d6cbba3803280ebc3495b4a0a39f2e53483b70d74",
+          "canonical_endorsement_id": "endorsement-69b25f459d4d8c83",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "37th: WA House Position 1",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "f360443aa5dfc494df1cd8e2c22b9bda5bc54b8b27100cb413bc54aab3b98452",
+          "qualifications": [],
+          "race_id": "ld-37-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Jaelynn Scott"
+          ],
+          "canonical_allocation": {
+            "ld-37-state-representative-2--jaelynn-scott": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "canonical_choice_names": [
+            "Jaelynn Scott"
+          ],
+          "canonical_decision_sha256": "50edd3a7a218c7846dba6daeda7329fefc66a170fe12e80fb16f136d91e523a4",
+          "canonical_endorsement_id": "endorsement-fcf177ce0325d6ed",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "37th: WA House Position 2",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "f75647f3af769f640d7b8c64283a5c308ccc469cb7bd97ce28b6ddb55e2e496b",
+          "qualifications": [],
+          "race_id": "ld-37-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Chiaplo Street"
+          ],
+          "canonical_allocation": {
+            "ld-37-state-senator--chipalo-street": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "canonical_choice_names": [
+            "Chipalo Street"
+          ],
+          "canonical_decision_sha256": "b676e97fb0831e5193e154ed1ba6443b95e722a8dbe444127282dedde4b25ed7",
+          "canonical_endorsement_id": "endorsement-aed5ba5e74c5169e",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Existing decisions/choices/statuses/allocations unchanged; literal label qualifications remain explicit.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "37th: WA State Senate",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "daea357cbbbaad85a5d1c2887b27482923c1c9bb5be541f34acd22e0664a7aa2",
+          "qualifications": [
+            "Source literally Chiaplo Street; accepted frozen candidate Chipalo Street. Preserve exact typo and existing candidate mapping, not a new alias rule."
+          ],
+          "race_id": "ld-37-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Nicole Macri"
+          ],
+          "canonical_allocation": {
+            "ld-43-state-representative-1--nicole-macri": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-43-state-representative-1--nicole-macri"
+          ],
+          "canonical_choice_names": [
+            "Nicole Macri"
+          ],
+          "canonical_decision_sha256": "572b168a44926cc3c8d68d34431c638ad6b935cee38ae84e11b11ab7e9e2db81",
+          "canonical_endorsement_id": "endorsement-523b28bd362e245a",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "43rd: WA House Position 1",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "a9fd75da7659b12a505a6c2529f1ddf25b0fe548d3f16eacfd7cf851d36a61f9",
+          "qualifications": [],
+          "race_id": "ld-43-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Jamie Pedersen"
+          ],
+          "canonical_allocation": {
+            "ld-43-state-senator--jamie-pedersen": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen"
+          ],
+          "canonical_choice_names": [
+            "Jamie Pedersen"
+          ],
+          "canonical_decision_sha256": "38c21fe965b9645db68667bbc497357360bc2efa32b2a15b41c80f801ff2a0a0",
+          "canonical_endorsement_id": "endorsement-ecf1835d2cdec8b8",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "43rd: WA State Senate",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "acc76e27b3cd046bf162240b91ce5b9073c7f9d6dfacef96024bb80b6cc75d76",
+          "qualifications": [],
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Gerry Pollet"
+          ],
+          "canonical_allocation": {
+            "ld-46-state-representative-1--gerry-pollet": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "canonical_choice_names": [
+            "Gerry Pollet"
+          ],
+          "canonical_decision_sha256": "d9b48d28f12799089e4ed9a7a99ff3edd7995b0af001945f6037e7f2008a7e41",
+          "canonical_endorsement_id": "endorsement-782d2e0dcee8105c",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "46th: WA House Position 1",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "2767855e14c7c8c6cc8df26b292c22e99100d48a6635f29bbd72ed7fb9a29837",
+          "qualifications": [],
+          "race_id": "ld-46-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Darya Farivar"
+          ],
+          "canonical_allocation": {
+            "ld-46-state-representative-2--darya-farivar": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "canonical_choice_names": [
+            "Darya Farivar"
+          ],
+          "canonical_decision_sha256": "2c911a7841a6cfc345ce83fdfbc98899f2bf73b5e598a0041d7bf24dbcef40ca",
+          "canonical_endorsement_id": "endorsement-97580d2efc64d9d3",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "46th: WA House Position 2",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "ba18271d9ebe826e932724dd0774939eee4be50b1b6d657b85329c557baed7b9",
+          "qualifications": [],
+          "race_id": "ld-46-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Javier Valdez"
+          ],
+          "canonical_allocation": {
+            "ld-46-state-senator--javier-valdez": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "canonical_choice_names": [
+            "Javier Valdez"
+          ],
+          "canonical_decision_sha256": "f2d732c73489dbeee9b27a59da9f3bdc7a01c16cb75dd78a0e2fd5808943b20d",
+          "canonical_endorsement_id": "endorsement-3746ec0807339e12",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "46th: WA State Senate",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "e0ca6a3c547e42e339f9cc711e297132ec1419be1da7cd8b6e8185c0e0821160",
+          "qualifications": [],
+          "race_id": "ld-46-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Colleen Melody"
+          ],
+          "canonical_allocation": {
+            "supreme-court-justice-1--colleen-melody": "1"
+          },
+          "canonical_candidate_ids": [
+            "supreme-court-justice-1--colleen-melody"
+          ],
+          "canonical_choice_names": [
+            "Colleen Melody"
+          ],
+          "canonical_decision_sha256": "d07320e9886e32417d0c6c532a9d8d49d6ae77e0abeb829b31b34e70dbc699c7",
+          "canonical_endorsement_id": "endorsement-7304992fc61b3c92",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Supreme Court: Position 1",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "7d84c07f038e5178043c5251bf82a79a5d85bd8c6c9e8fbfdb26c06306faee9a",
+          "qualifications": [],
+          "race_id": "supreme-court-justice-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Jaime Hawk"
+          ],
+          "canonical_allocation": {
+            "supreme-court-justice-3--jaime-michelle-hawk": "1"
+          },
+          "canonical_candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "canonical_choice_names": [
+            "Jaime Michelle Hawk"
+          ],
+          "canonical_decision_sha256": "0797451984cf4acb27ae22d3565f39916d026c2809031607ab66ade14296e0d2",
+          "canonical_endorsement_id": "endorsement-9592dc449f27be02",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Supreme Court: Position 3",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "3dcff1e13a47dfa3685258c1a040555a727b6dd47b40d1f2cc9a7a7c66991bd9",
+          "qualifications": [],
+          "race_id": "supreme-court-justice-3"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Ian Birk"
+          ],
+          "canonical_allocation": {
+            "supreme-court-justice-4--ian-birk": "1"
+          },
+          "canonical_candidate_ids": [
+            "supreme-court-justice-4--ian-birk"
+          ],
+          "canonical_choice_names": [
+            "Ian Birk"
+          ],
+          "canonical_decision_sha256": "c50a07a9b8d1b6dd6ffc68178e6b80bcf5ff3897b572bd4af69221f976283a3d",
+          "canonical_endorsement_id": "endorsement-e2d625b5c48f320f",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Supreme Court: Position 4",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "8d1a1b71a564ac3dc089ed5cd472f988751747fc17f8e7984a2a217e1e19ecf5",
+          "qualifications": [],
+          "race_id": "supreme-court-justice-4"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Theo Angelis"
+          ],
+          "canonical_allocation": {
+            "supreme-court-justice-5--theo-angelis": "1"
+          },
+          "canonical_candidate_ids": [
+            "supreme-court-justice-5--theo-angelis"
+          ],
+          "canonical_choice_names": [
+            "Theo Angelis"
+          ],
+          "canonical_decision_sha256": "7f03cc22fea543cc2f945ee9f2847a2bb4af06284e06fc01edc3bf88add78c28",
+          "canonical_endorsement_id": "endorsement-8247ada099503ea1",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Supreme Court: Position 5",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "051c3ea0b11f7d8367dfb3e8b50e3d97320dd384b01d0b2d769d709172d5d6e2",
+          "qualifications": [],
+          "race_id": "supreme-court-justice-5"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Debra L. Stephens"
+          ],
+          "canonical_allocation": {
+            "supreme-court-justice-7--debra-l-stephens": "1"
+          },
+          "canonical_candidate_ids": [
+            "supreme-court-justice-7--debra-l-stephens"
+          ],
+          "canonical_choice_names": [
+            "Debra L. Stephens"
+          ],
+          "canonical_decision_sha256": "a867fe48317f237b0e67a8367875d3471bff3222b6c4f6de64f4363d844a33a6",
+          "canonical_endorsement_id": "endorsement-4f85e26d23755d1e",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Supreme Court: Position 7",
+          "official_publication_url": "https://www.sierraclub.org/washington/2026-endorsements",
+          "prior_packet_decision_sha256": "6e1b93c7464f31a336fe02e39379eb6e839e7df35946f32321dfe6a80a392a2f",
+          "qualifications": [],
+          "race_id": "supreme-court-justice-7"
+        }
+      ],
+      "source_id": "sierra-club-washington"
+    },
+    "washington-for-peace-and-justice": {
+      "actual_browser_observation_started_at": "2026-10-27T23:10:12.871Z",
+      "actual_factual_review_complete_at": "2026-10-27T23:16:51.859013+00:00",
+      "actual_publication_read_complete_at": "2026-10-27T23:11:19.748Z",
+      "actual_reviewer": "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "canonical_changes_proposed": [],
+      "canonical_dates_and_objects_not_freshened": true,
+      "complete_relevant_registered_publication_read": true,
+      "current_review_complete": false,
+      "current_unverified_retained_decision_count": 1,
+      "current_verified_decision_count": 30,
+      "full_52_race_covered_intersection": [
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "court-of-appeals-division-1-district-1-judge-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "court-of-appeals-division-1-district-1-judge-6"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "initiative-26-001"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "initiative-26-638"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "initiative-26-645"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-assessor"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "king-county-council-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "king-county-council-4"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "king-county-council-8"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-director-of-elections"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-3"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-4"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-prosecuting-attorney"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-11-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-11-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-32-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-32-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-32-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-34-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-34-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-34-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-36-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-36-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-36-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-37-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-37-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-37-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-43-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-43-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-46-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-46-state-representative-2"
+        },
+        {
+          "finding": "Retained canonical decision preserved; current mapped-office affirmation UNVERIFIED because the publication says LD45 and the canonical race is LD46. No override admitted.",
+          "race_id": "ld-46-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "seattle-city-council-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-3"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-4"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-6"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-7"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-proposition-1-transit"
+        },
+        {
+          "finding": "Grey supportive/ambiguous rating; not normalized as endorsement or decline",
+          "race_id": "supreme-court-justice-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "supreme-court-justice-3"
+        },
+        {
+          "finding": "Grey supportive/ambiguous rating; not normalized as endorsement or decline",
+          "race_id": "supreme-court-justice-4"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "supreme-court-justice-5"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "supreme-court-justice-7"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "us-house-7"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "us-house-9"
+        }
+      ],
+      "http_status": null,
+      "manual_acknowledgement_eligible": false,
+      "network_retrieval_time": null,
+      "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "qualifications": [
+        "All12slides read, finalNext count0. Slide2legend: greenpositive/votefor; greylikelysupportive/againstworseopponent, excludedfromnormalizedendorsements; redleaveblank/writein retained as existingdeclined_to_endorse semantics.",
+        "Two retaineddeclines are CD9 andSupremeCourt7; not imported as ballotwrite-in candidates. GreyMelodyCourt1/BirkCourt4 remainexcluded/unresolved, not newlyendorsed or declined.",
+        "Slide8JavierValdez printedLD45 andslide5BergquistRep12 preserve exact office-label qualifications. No source-labelcorrectness claim.",
+        "29singleendorsement decisions plus2declines unchanged; measuresNo645/001/638 retained. Sourceotherdistricts includingLD33/48 outside frozen52; no newcoveredendorsement. October15 publisher date distinct from actualOctober27review."
+      ],
+      "retained_decision_count": 31,
+      "rows": [
+        {
+          "actual_observed_choice_wording": [
+            "Pramila Jayapal"
+          ],
+          "canonical_allocation": {
+            "us-house-7--pramila-jayapal": "1"
+          },
+          "canonical_candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "canonical_choice_names": [
+            "Pramila Jayapal"
+          ],
+          "canonical_decision_sha256": "78150a1bf66a7851f5baa05ed8ad32fc5012fdb4db237fe12d9d1b0054ca8af0",
+          "canonical_endorsement_id": "endorsement-f5e731c357cba019",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "55ff1dca04c8f5a86b397e7fa3c0b64fc5a0ad0968a0974bc17210f8a3661b09",
+          "qualifications": [],
+          "race_id": "us-house-7"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Jaime Hawk"
+          ],
+          "canonical_allocation": {
+            "supreme-court-justice-3--jaime-michelle-hawk": "1"
+          },
+          "canonical_candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "canonical_choice_names": [
+            "Jaime Michelle Hawk"
+          ],
+          "canonical_decision_sha256": "c56fcc06806708c135ab131e2c4a36da195bda91b005698aa8c4278287311521",
+          "canonical_endorsement_id": "endorsement-7a192a35a5acd430",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "f7b187f083df4243b7e1797dd3e166d01a09363e154dc70442036964f570c3a4",
+          "qualifications": [],
+          "race_id": "supreme-court-justice-3"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Theo Angelis"
+          ],
+          "canonical_allocation": {
+            "supreme-court-justice-5--theo-angelis": "1"
+          },
+          "canonical_candidate_ids": [
+            "supreme-court-justice-5--theo-angelis"
+          ],
+          "canonical_choice_names": [
+            "Theo Angelis"
+          ],
+          "canonical_decision_sha256": "4a9a148282ccf2d4cd6881e4cceb1795f74db5625af4d52745def546ab448faf",
+          "canonical_endorsement_id": "endorsement-611054e404dd2dea",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "b70c6019909e94fee98b0e61a33791a54c52be5283aef35b9e062005d895a5c0",
+          "qualifications": [],
+          "race_id": "supreme-court-justice-5"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Rebecca Saldana"
+          ],
+          "canonical_allocation": {
+            "king-county-council-2--rebecca-saldana": "1"
+          },
+          "canonical_candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "canonical_choice_names": [
+            "Rebecca Saldaña"
+          ],
+          "canonical_decision_sha256": "0de3d237a6ea237e24479ffa2f9588389268fffc2581a4a60df06c2946f5a8b6",
+          "canonical_endorsement_id": "endorsement-fbbeea6880a7ea10",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 4",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "2bf7561de51dd5c66be5d774a32c1bb4006f517284b8e9fdd727774d66fcf53b",
+          "qualifications": [],
+          "race_id": "king-county-council-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Jorge Baron"
+          ],
+          "canonical_allocation": {
+            "king-county-council-4--jorge-l-baron": "1"
+          },
+          "canonical_candidate_ids": [
+            "king-county-council-4--jorge-l-baron"
+          ],
+          "canonical_choice_names": [
+            "Jorge L. Barón"
+          ],
+          "canonical_decision_sha256": "7df2189ad870b806318508b58726d81c53c94a4a602341b525a8713095e82e26",
+          "canonical_endorsement_id": "endorsement-83cbfe56d0fa22a6",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 4",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "e542d12cf148e90a71ce7eedd9b32ac703f46ad61c2a85d0c31cd7c61ce8b8b2",
+          "qualifications": [],
+          "race_id": "king-county-council-4"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Teresa Mosqueda"
+          ],
+          "canonical_allocation": {
+            "king-county-council-8--teresa-mosqueda": "1"
+          },
+          "canonical_candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "canonical_choice_names": [
+            "Teresa Mosqueda"
+          ],
+          "canonical_decision_sha256": "c3016ed30a3fbfc7ae65de6b0bdce8d73baebfedf572275cac91835d9d77f709",
+          "canonical_endorsement_id": "endorsement-f0533de3f7b5ebef",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 4",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "6e9d87048dd4ab7d38ca0caebf746b2c0dd1039261dd7f3d86661d1923372d0f",
+          "qualifications": [],
+          "race_id": "king-county-council-8"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Nilu Jenks"
+          ],
+          "canonical_allocation": {
+            "seattle-city-council-5--nilu-jenks": "1"
+          },
+          "canonical_candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "canonical_choice_names": [
+            "Nilu Jenks"
+          ],
+          "canonical_decision_sha256": "9d12443be00c474757ca1c5002b1af6d30c5680136274bbf5f13906fbe226560",
+          "canonical_endorsement_id": "endorsement-91165acb9cca45c3",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 4",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "8b07be5a4b504a402e5f55dcfb3693838503163b12f0281196ec7ad1ffc1837e",
+          "qualifications": [],
+          "race_id": "seattle-city-council-5"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Ashley Fedan"
+          ],
+          "canonical_allocation": {
+            "ld-11-state-representative-1--ashley-fedan": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-11-state-representative-1--ashley-fedan"
+          ],
+          "canonical_choice_names": [
+            "Ashley Fedan"
+          ],
+          "canonical_decision_sha256": "add59d2e5ca5601ff25b234d12e0440543323c667b4e5e88390a8b2310c8a86f",
+          "canonical_endorsement_id": "endorsement-9e08c313e5b40d66",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 5",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "cdce7c6b685fc306f1b9ed92270a25e7c042137177996cfae7cdacb6e020fb45",
+          "qualifications": [],
+          "race_id": "ld-11-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Cindy Ryu"
+          ],
+          "canonical_allocation": {
+            "ld-32-state-senator--cindy-ryu": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-32-state-senator--cindy-ryu"
+          ],
+          "canonical_choice_names": [
+            "Cindy Ryu"
+          ],
+          "canonical_decision_sha256": "cc033f8f337fcdf7d755c09809b81345d8b14730f5700068f53c24e41e091ea7",
+          "canonical_endorsement_id": "endorsement-55a100adbf20a2e1",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "13ccd2634e73280caf39198dc90e61332df4d388b7bb7372d29ca472155d0dd9",
+          "qualifications": [],
+          "race_id": "ld-32-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Danica Noble"
+          ],
+          "canonical_allocation": {
+            "ld-32-state-representative-1--danica-noble": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ],
+          "canonical_choice_names": [
+            "Danica Noble"
+          ],
+          "canonical_decision_sha256": "9e739cabb9a13cdc534baaedd91f8b47809be44f176b3688c0c104665186e9e8",
+          "canonical_endorsement_id": "endorsement-e3b6333a36dfe190",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "3048554846aeb5f779c5a7f54d4de76622ae78459fbccaf882f4a08c62a9b4d7",
+          "qualifications": [],
+          "race_id": "ld-32-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Imraan Siddiqi"
+          ],
+          "canonical_allocation": {
+            "ld-32-state-representative-2--imraan-siddiqi": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "canonical_choice_names": [
+            "Imraan Siddiqi"
+          ],
+          "canonical_decision_sha256": "7ff78c44460acd5d1c2902e5c78ef227ad8f0d8cac84e6e02b72af1ea2141acd",
+          "canonical_endorsement_id": "endorsement-18cfcc4f4588e274",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "00dd21709aa53a82eba2a6302c617b887ab30ff1f8bde946e19e031204d7a9dd",
+          "qualifications": [],
+          "race_id": "ld-32-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Brianna Thomas"
+          ],
+          "canonical_allocation": {
+            "ld-34-state-representative-1--brianna-k-thomas": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-34-state-representative-1--brianna-k-thomas"
+          ],
+          "canonical_choice_names": [
+            "Brianna K. Thomas"
+          ],
+          "canonical_decision_sha256": "024edaffad415c3ac42a14879ddf14d69a30d062f5b1b2bdb245c104a2295c93",
+          "canonical_endorsement_id": "endorsement-63560f89c2f71020",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "ebf2ddb8baa3c297d25250002c44d50d0e0fc543844a2d69960032bc2be0f172",
+          "qualifications": [],
+          "race_id": "ld-34-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Joe Fitzgibbon"
+          ],
+          "canonical_allocation": {
+            "ld-34-state-representative-2--joe-fitzgibbon": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ],
+          "canonical_choice_names": [
+            "Joe Fitzgibbon"
+          ],
+          "canonical_decision_sha256": "3d007e5ba86ffc26e9742751358c59953958dc7ae4cf13206c4ff5fac986f278",
+          "canonical_endorsement_id": "endorsement-9cc1bce90fc560bb",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "48c6dbef1be8f56ba2634486ee8b72c21cc4b8a6b3047588e4c96b61fc3009aa",
+          "qualifications": [],
+          "race_id": "ld-34-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Emily Alvarado"
+          ],
+          "canonical_allocation": {
+            "ld-34-state-senator--emily-alvarado": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-34-state-senator--emily-alvarado"
+          ],
+          "canonical_choice_names": [
+            "Emily Alvarado"
+          ],
+          "canonical_decision_sha256": "9f107a242d2fc0ffbb5d3ee429b9c3b34e05e725474cfe94b41c94defc4decaf",
+          "canonical_endorsement_id": "endorsement-9779cb8e1dad93ee",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "805f8db99dc19f7a959d8583b1337ebc6c90430fc622c00e97bcb0193e5afc13",
+          "qualifications": [],
+          "race_id": "ld-34-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Noel Frame"
+          ],
+          "canonical_allocation": {
+            "ld-36-state-senator--noel-c-frame": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-36-state-senator--noel-c-frame"
+          ],
+          "canonical_choice_names": [
+            "Noel C. Frame"
+          ],
+          "canonical_decision_sha256": "b09b10a531fdbe785d76d135cdb6c9ee1c759697c21f346857359576866ce8ef",
+          "canonical_endorsement_id": "endorsement-924d080694185eb4",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "a99a33555e712e9afdad47b336e24abd18168bfb417aac5c1a175d9ea2278776",
+          "qualifications": [],
+          "race_id": "ld-36-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Julia Reed"
+          ],
+          "canonical_allocation": {
+            "ld-36-state-representative-1--julia-grant-reed": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "canonical_choice_names": [
+            "Julia Grant Reed"
+          ],
+          "canonical_decision_sha256": "9865f2e8ccb3aafcf2c888fb4236eff14dab956fa2b5ab31df9dd95fa0af22d9",
+          "canonical_endorsement_id": "endorsement-cadeda3e35cb9978",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "87936b53b81418abb0709f455ac0b00e9b40acfeceb6b17a37554f764d51c825",
+          "qualifications": [],
+          "race_id": "ld-36-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Liz Berry"
+          ],
+          "canonical_allocation": {
+            "ld-36-state-representative-2--liz-berry": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-36-state-representative-2--liz-berry"
+          ],
+          "canonical_choice_names": [
+            "Liz Berry"
+          ],
+          "canonical_decision_sha256": "88c9309db52a97f4ebf60bec737e5107b4062a8b7096e538096182a2b4319495",
+          "canonical_endorsement_id": "endorsement-15876cd3df2bc623",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "197060c9ce07dbde3b21457b7659414e1f2134ca0278caa6772c933178b3e84c",
+          "qualifications": [],
+          "race_id": "ld-36-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Chipalo Street"
+          ],
+          "canonical_allocation": {
+            "ld-37-state-senator--chipalo-street": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "canonical_choice_names": [
+            "Chipalo Street"
+          ],
+          "canonical_decision_sha256": "077f2f5423f73b361298fb6ec7598f74f537883d32dad57910fbbd6ae12f45ad",
+          "canonical_endorsement_id": "endorsement-e91be2ce51ae09ac",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "a98290a486d21f688ccf191f7e5dc6c2b4f3df237a12bd29789c24f9ae60f288",
+          "qualifications": [],
+          "race_id": "ld-37-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Kelabe Tewolde"
+          ],
+          "canonical_allocation": {
+            "ld-37-state-representative-1--kelabe-tewolde": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "canonical_choice_names": [
+            "Kelabe Tewolde"
+          ],
+          "canonical_decision_sha256": "4fdaeb8c3ca8cbc5d532a0c496cdffeef58559d89d9ad85deff05e3045e96e85",
+          "canonical_endorsement_id": "endorsement-a364733ef6af1652",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "6739cca5cf4886d1a5609eddc7342945c103fc3df94042e35554189b166312a9",
+          "qualifications": [],
+          "race_id": "ld-37-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Jaelynn Scott"
+          ],
+          "canonical_allocation": {
+            "ld-37-state-representative-2--jaelynn-scott": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "canonical_choice_names": [
+            "Jaelynn Scott"
+          ],
+          "canonical_decision_sha256": "eb5486fe74cfb0322b3ae7c021532c633b6f034cab3423e30a18e2557402b48c",
+          "canonical_endorsement_id": "endorsement-be42827bcee4162c",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 7",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "454609fca26b868931f5e52c9d6dd79bd453a7510d74f6ef6a58cddb37bf05bb",
+          "qualifications": [],
+          "race_id": "ld-37-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Hannah Sabio-Howell"
+          ],
+          "canonical_allocation": {
+            "ld-43-state-senator--hannah-sabio-howell": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "canonical_choice_names": [
+            "Hannah Sabio-Howell"
+          ],
+          "canonical_decision_sha256": "487db35fc33e2c473b7c768ab78cc866225725def7e3a6243afab0fb0bc350ac",
+          "canonical_endorsement_id": "endorsement-65c9a3257a573886",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 8",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "13d7350f74236d7c259ac584bdc486ee805c2c1d071ba100a812c16d767c79e9",
+          "qualifications": [],
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Shaun Scott"
+          ],
+          "canonical_allocation": {
+            "ld-43-state-representative-2--shaun-scott": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-43-state-representative-2--shaun-scott"
+          ],
+          "canonical_choice_names": [
+            "Shaun Scott"
+          ],
+          "canonical_decision_sha256": "3bda96daa3a789afc432732db4e6406d7d45bbe3ff6ae61497f14e0bd5451bc2",
+          "canonical_endorsement_id": "endorsement-1a87058037da3c55",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 8",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "8ec881b2db0c3ec37d086cc848c95fbc13e44b476b042767a84ac77e36a08c53",
+          "qualifications": [],
+          "race_id": "ld-43-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Nicole Macri"
+          ],
+          "canonical_allocation": {
+            "ld-43-state-representative-1--nicole-macri": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-43-state-representative-1--nicole-macri"
+          ],
+          "canonical_choice_names": [
+            "Nicole Macri"
+          ],
+          "canonical_decision_sha256": "f0173b8895f9f3606ccc7616c5648b03826886557ccc0d1a45a9fa0d6d691218",
+          "canonical_endorsement_id": "endorsement-29ea976b7327f40f",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 8",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "134a2eed76125fa76538a9f2e80b90f89eec73186086940f44adeecea08b4a2c",
+          "qualifications": [],
+          "race_id": "ld-43-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Javier Valdez"
+          ],
+          "canonical_allocation": {
+            "ld-46-state-senator--javier-valdez": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "canonical_choice_names": [
+            "Javier Valdez"
+          ],
+          "canonical_decision_sha256": "b8b07ca2ca9abe59b129f1db96402ffab2d14ca400f7d2a1e004cb7cd6101ca0",
+          "canonical_endorsement_id": "endorsement-2ba90e95d9b43448",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Existing decisions/choices/statuses/allocations unchanged; literal label qualifications remain explicit.",
+          "current_review_finding": "UNVERIFIED_CURRENT_MAPPED_OFFICE_AFFIRMATION",
+          "evidence_locator": "Public carousel slide 8",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "9ba145b90eea13621dd00c1079d06f2fc82e2f23dc42910e908b23d0a60213d2",
+          "qualifications": [
+            "Slide 8 literally labels the choice “LD-45 Senator: Javier Valdez”; the retained canonical decision and frozen official inventory identify Javier Valdez for LD46 State Senator. The current mapped-office affirmation remains unverified because the race labels differ. No publisher correction, source-label correctness, new mapping approval, withdrawal or first-appearance date is inferred.",
+            "ROOT disposition: do not create/admit a new LD45-to46 override. Current mapped-office affirmation is UNVERIFIED; preserve literalLD45, original canonicalLD46 ID/choice/status/allocation/review date, unknown first appearance and all prior evidence. No whole-source31 acknowledgement or complete-initial attestation. Precise mapping follow-up belongs in existing505 October30.",
+            "Unique exact frozen Valdez/StateSenator identity and official inventory provenance are context only, not a new mapping approval or statewide LD45 candidate-absence claim."
+          ],
+          "race_id": "ld-46-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Darya Farivar"
+          ],
+          "canonical_allocation": {
+            "ld-46-state-representative-2--darya-farivar": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "canonical_choice_names": [
+            "Darya Farivar"
+          ],
+          "canonical_decision_sha256": "375d287841395b21c99568864574f02eabaa381544d5e8084ca021114fa89f04",
+          "canonical_endorsement_id": "endorsement-53c05bfd6679d57d",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 8",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "434125ee87718200bc0e5b8fb8892eb3859da045a88ee9ef2f82b8e56b1c990b",
+          "qualifications": [],
+          "race_id": "ld-46-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "NO on I-645"
+          ],
+          "canonical_allocation": {
+            "initiative-26-645--no": "1"
+          },
+          "canonical_candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "canonical_choice_names": [
+            "No"
+          ],
+          "canonical_decision_sha256": "5b232fadca8a9ee245d32f58fbda03544cf09327c678cb5af08884000254c3fe",
+          "canonical_endorsement_id": "endorsement-6c07aba1da0effcf",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 9",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "0e37d435e24a8892dde468e00dc89720c56dacc4767886012a8f5c0f87f47005",
+          "qualifications": [],
+          "race_id": "initiative-26-645"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "NO on I-001"
+          ],
+          "canonical_allocation": {
+            "initiative-26-001--no": "1"
+          },
+          "canonical_candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "canonical_choice_names": [
+            "No"
+          ],
+          "canonical_decision_sha256": "81d4d875bb6b110bab51660d3387031cd2a40234a809310362d3c96b315a0c16",
+          "canonical_endorsement_id": "endorsement-5cb127c42a6cdd12",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 9",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "57da1c066899ea6316445b1adc23c2364f13b6c8a60312fe76a980066f71b3e9",
+          "qualifications": [],
+          "race_id": "initiative-26-001"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "NO on I-638"
+          ],
+          "canonical_allocation": {
+            "initiative-26-638--no": "1"
+          },
+          "canonical_candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "canonical_choice_names": [
+            "No"
+          ],
+          "canonical_decision_sha256": "2c057ab355f4e67a9e8c1d13613e8aedaebfb315432407a526edaf8334855369",
+          "canonical_endorsement_id": "endorsement-ad8dad16057d2b8a",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 9",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "186881714a6ce2a87fd6bcb09e951cc006ec4ff278a2e09425415a8e836a5175",
+          "qualifications": [],
+          "race_id": "initiative-26-638"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Leave Blank or Write in Paula Stein"
+          ],
+          "canonical_allocation": {},
+          "canonical_candidate_ids": [],
+          "canonical_choice_names": [],
+          "canonical_decision_sha256": "961cb8347b1f62f06cf81b487cb3a5b376c86dd1ebe252cb355cbbd9db42ad4b",
+          "canonical_endorsement_id": "endorsement-3c37b2f2c4d43c94",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "declined_to_endorse",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "8cbc0369be7b4677854620304b218b02dae6cd551a70ac753387001c7fa61171",
+          "qualifications": [],
+          "race_id": "us-house-9"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Leave Blank or Write in Paula Stein"
+          ],
+          "canonical_allocation": {},
+          "canonical_candidate_ids": [],
+          "canonical_choice_names": [],
+          "canonical_decision_sha256": "7b277d006e2a9451bf6545e92c1ce69039a356167f210e4566c75c9cf072ce9f",
+          "canonical_endorsement_id": "endorsement-e9fce8ab5ece9bb2",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "declined_to_endorse",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "c8a0f8367be0c708e19119be29bc6324c05508684969d7c1eec34a7aefde608b",
+          "qualifications": [],
+          "race_id": "supreme-court-justice-7"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Steve Bergquist"
+          ],
+          "canonical_allocation": {
+            "ld-11-state-representative-2--steve-bergquist": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-11-state-representative-2--steve-bergquist"
+          ],
+          "canonical_choice_names": [
+            "Steve Bergquist"
+          ],
+          "canonical_decision_sha256": "8326a19ecd578aa901bb29717bb6676885278c56132242dc38e7c179893d55f0",
+          "canonical_endorsement_id": "endorsement-bfc79907e34b8952",
+          "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Existing decisions/choices/statuses/allocations unchanged; literal label qualifications remain explicit.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 5",
+          "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+          "prior_packet_decision_sha256": "f017bc935a15f1801da3ab2a42157b5e412d9ca896147af9da67b4130c83dfda",
+          "qualifications": [
+            "Slide5 literally LD-11 Rep12: Steve Bergquist. Preserve existing specifically maintainer-approved mapping to LD11 House Position2, not a correctly printed Position2 assertion."
+          ],
+          "race_id": "ld-11-state-representative-2"
+        }
+      ],
+      "source_id": "washington-for-peace-and-justice"
+    },
+    "young-democrats-of-washington": {
+      "actual_browser_observation_started_at": "2026-10-27T23:08:19.522Z",
+      "actual_factual_review_complete_at": "2026-10-27T23:16:51.859013+00:00",
+      "actual_publication_read_complete_at": "2026-10-27T23:09:13.650Z",
+      "actual_reviewer": "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "canonical_changes_proposed": [],
+      "canonical_dates_and_objects_not_freshened": true,
+      "complete_relevant_registered_publication_read": true,
+      "current_review_complete": true,
+      "current_unverified_retained_decision_count": 0,
+      "current_verified_decision_count": 16,
+      "full_52_race_covered_intersection": [
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "court-of-appeals-division-1-district-1-judge-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "court-of-appeals-division-1-district-1-judge-6"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "initiative-26-001"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "initiative-26-638"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "initiative-26-645"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-assessor"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "king-county-council-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-council-4"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "king-county-council-8"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-director-of-elections"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-3"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-4"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-district-court-west-judge-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "king-county-prosecuting-attorney"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-11-state-representative-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-11-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-32-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-32-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-32-state-senator"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-34-state-representative-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-34-state-representative-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-34-state-senator"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-36-state-representative-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-36-state-representative-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-36-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-37-state-representative-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-37-state-representative-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-37-state-senator"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-43-state-representative-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-43-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-46-state-representative-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "ld-46-state-representative-2"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "ld-46-state-senator"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "seattle-city-council-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-1"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-2"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-3"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-4"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-6"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-municipal-court-judge-7"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "seattle-proposition-1-transit"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "supreme-court-justice-1"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "supreme-court-justice-3"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "supreme-court-justice-4"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "supreme-court-justice-5"
+        },
+        {
+          "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
+          "race_id": "supreme-court-justice-7"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "us-house-7"
+        },
+        {
+          "finding": "Compared retained decision above",
+          "race_id": "us-house-9"
+        }
+      ],
+      "http_status": null,
+      "manual_acknowledgement_eligible": true,
+      "network_retrieval_time": null,
+      "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+      "qualifications": [
+        "All3slides read, finalNext absent. Three equalduals: LD32House1 Noble/Scully; LD43Senate Pedersen/Sabio-Howell; KCC2 Hasegawa/Saldana. Existing halfallocations retained.",
+        "Printed measures onlyNo001/638; no newNo645 orSeattleTransit claim. JaimeHawk/ToshikoHasegawa source names retain existing race-scoped canonical full-name mappings.",
+        "Otherstatewide/local candidates outside frozen52, including NE/Southwest county-district-court divisions, are not imported. October8 publisher date is distinct from actualOctober27review."
+      ],
+      "retained_decision_count": 16,
+      "rows": [
+        {
+          "actual_observed_choice_wording": [
+            "Pramila Jayapal"
+          ],
+          "canonical_allocation": {
+            "us-house-7--pramila-jayapal": "1"
+          },
+          "canonical_candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "canonical_choice_names": [
+            "Pramila Jayapal"
+          ],
+          "canonical_decision_sha256": "cf55088957a38d2aaddd4dd82bbbc085905c8a027c1e6fd5568c38adca78d8af",
+          "canonical_endorsement_id": "endorsement-8e2a2b63b9a12fce",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 1",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "599b3485f21ead544bf3ac619b2fc8abc2da8805047c1a8799e11af0036c5cca",
+          "qualifications": [],
+          "race_id": "us-house-7"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Adam Smith"
+          ],
+          "canonical_allocation": {
+            "us-house-9--adam-smith": "1"
+          },
+          "canonical_candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "canonical_choice_names": [
+            "Adam Smith"
+          ],
+          "canonical_decision_sha256": "daeed41a1fc2c9538093d2d74b90ba499d63c95677559c8aea15e8fa0b2fa9ba",
+          "canonical_endorsement_id": "endorsement-745d228e18f06317",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 1",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "ca566ae76de6dd0e718cd0c05017a0c96f2de90071034a790a638b84bc25e4f7",
+          "qualifications": [],
+          "race_id": "us-house-9"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Jaime Hawk"
+          ],
+          "canonical_allocation": {
+            "supreme-court-justice-3--jaime-michelle-hawk": "1"
+          },
+          "canonical_candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "canonical_choice_names": [
+            "Jaime Michelle Hawk"
+          ],
+          "canonical_decision_sha256": "850afe0cf75d77c59428c4cb02de81158c4680ad045e0fe6917f0250efc8565c",
+          "canonical_endorsement_id": "endorsement-72b37da7c3a85c3e",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 1",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "ee09e6fad6f66c919abc28a4e248503c6e51727c7b9fff2f8932c2adf12e67fa",
+          "qualifications": [],
+          "race_id": "supreme-court-justice-3"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Cindy Ryu"
+          ],
+          "canonical_allocation": {
+            "ld-32-state-senator--cindy-ryu": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-32-state-senator--cindy-ryu"
+          ],
+          "canonical_choice_names": [
+            "Cindy Ryu"
+          ],
+          "canonical_decision_sha256": "0ef7727b0cdcc66ee2a28a6419d50796819b9a7c7f7aad323539c66eb32d8bbc",
+          "canonical_endorsement_id": "endorsement-f1c11c4cbf74eae5",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 2",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "ac11a6cea41a680475f6939bc3102577d6c8efe7432919a09bd8d3a04d40eb22",
+          "qualifications": [],
+          "race_id": "ld-32-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Danica Noble",
+            "Keith Scully"
+          ],
+          "canonical_allocation": {
+            "ld-32-state-representative-1--danica-noble": "1/2",
+            "ld-32-state-representative-1--keith-scully": "1/2"
+          },
+          "canonical_candidate_ids": [
+            "ld-32-state-representative-1--danica-noble",
+            "ld-32-state-representative-1--keith-scully"
+          ],
+          "canonical_choice_names": [
+            "Danica Noble",
+            "Keith Scully"
+          ],
+          "canonical_decision_sha256": "bea5e7373d58458a57122906ed8a513426aa1e49cf761faeeb1f4101a177deb6",
+          "canonical_endorsement_id": "endorsement-c8b6f0e16c81f7cf",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "dual_endorsement",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 2",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "c31c72467d4fa2fad8e2c8768ef15db0e265b4f0fce49c48719dfa8b73a5058e",
+          "qualifications": [
+            "The input packet listed the two human display labels in source order. Here canonical display labels follow their actual canonical candidate IDs; observed source wording/order remains separate. Both choices retain equal 1/2 allocations; neither ordering asserts rank or changes the accepted decision."
+          ],
+          "race_id": "ld-32-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Imraan Siddiqi"
+          ],
+          "canonical_allocation": {
+            "ld-32-state-representative-2--imraan-siddiqi": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "canonical_choice_names": [
+            "Imraan Siddiqi"
+          ],
+          "canonical_decision_sha256": "23e5317f78c6bc935e9555e6f56d15822357eeead31ab06c6be9165216b6f214",
+          "canonical_endorsement_id": "endorsement-15effaec60da5003",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 2",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "17b3c822b7ab85e2c7ba40df7c8b5a8f6e1eaa880f76e80dcaeb9ec6d7b1d7d4",
+          "qualifications": [],
+          "race_id": "ld-32-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Sharon Tomiko Santos"
+          ],
+          "canonical_allocation": {
+            "ld-37-state-representative-1--sharon-tomiko-santos": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ],
+          "canonical_choice_names": [
+            "Sharon Tomiko Santos"
+          ],
+          "canonical_decision_sha256": "89871888f41a144ad37c30bb81479dd96398651b304e2759c896cfb3997e48ee",
+          "canonical_endorsement_id": "endorsement-28202d563496e995",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 2",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "ee7bc944daae1b5d077689693b8c29c3e838771484d83055d31ada9e83011a84",
+          "qualifications": [],
+          "race_id": "ld-37-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Jaelynn Scott"
+          ],
+          "canonical_allocation": {
+            "ld-37-state-representative-2--jaelynn-scott": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "canonical_choice_names": [
+            "Jaelynn Scott"
+          ],
+          "canonical_decision_sha256": "46491cd6997a73fd521ea73e18a88edc06f1bf0e346b78d8a848fcb572bc7944",
+          "canonical_endorsement_id": "endorsement-c2036668da25cb73",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 2",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "616d50cc14b968bb6596aa6b9d7171a2a48dd18bbd0f3ad3c1ca688ee30a0fd1",
+          "qualifications": [],
+          "race_id": "ld-37-state-representative-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Jamie Pedersen",
+            "Hannah Sabio-Howell"
+          ],
+          "canonical_allocation": {
+            "ld-43-state-senator--hannah-sabio-howell": "1/2",
+            "ld-43-state-senator--jamie-pedersen": "1/2"
+          },
+          "canonical_candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen",
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "canonical_choice_names": [
+            "Jamie Pedersen",
+            "Hannah Sabio-Howell"
+          ],
+          "canonical_decision_sha256": "eebad618a94d9197c72559aa674a6eace07cf19b521d8886543a99a74461f464",
+          "canonical_endorsement_id": "endorsement-6add73d4e2021cd3",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "dual_endorsement",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 2",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "ad3c46ad470a49b50f24d6be84676ebcb074bacdc020bd0aac7b94118d4a380b",
+          "qualifications": [],
+          "race_id": "ld-43-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Gerry Pollet"
+          ],
+          "canonical_allocation": {
+            "ld-46-state-representative-1--gerry-pollet": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "canonical_choice_names": [
+            "Gerry Pollet"
+          ],
+          "canonical_decision_sha256": "beb0f39a0d36e3a70ac9c4d5003fb5bc5f81843d7b6fcd1397824293f4a29529",
+          "canonical_endorsement_id": "endorsement-1f27209b12abd64d",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 2",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "adbd0dcafeaedc15a06748e393ddbab1f580f298309b1f4989cf62b1a7aade73",
+          "qualifications": [],
+          "race_id": "ld-46-state-representative-1"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Javier Valdez"
+          ],
+          "canonical_allocation": {
+            "ld-46-state-senator--javier-valdez": "1"
+          },
+          "canonical_candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "canonical_choice_names": [
+            "Javier Valdez"
+          ],
+          "canonical_decision_sha256": "5a5ca75d25cd0bc20e9b06ae4e9f8e8aada0d85768a32a1000ab4c01099a557d",
+          "canonical_endorsement_id": "endorsement-c788bde4a3119a12",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 2",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "24b1a16b15f208a0f1b6d23986b9e4dffbfb8f9975191fec41ab3e34973d1e33",
+          "qualifications": [],
+          "race_id": "ld-46-state-senator"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Toshiko Hasegawa",
+            "Rebecca Saldana"
+          ],
+          "canonical_allocation": {
+            "king-county-council-2--rebecca-saldana": "1/2",
+            "king-county-council-2--toshiko-grace-hasegawa": "1/2"
+          },
+          "canonical_candidate_ids": [
+            "king-county-council-2--toshiko-grace-hasegawa",
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "canonical_choice_names": [
+            "Toshiko Grace Hasegawa",
+            "Rebecca Saldaña"
+          ],
+          "canonical_decision_sha256": "bf11a9e21d15671dfc3d30cb0506f9c814accf48007d6712e370f151b3cf1e58",
+          "canonical_endorsement_id": "endorsement-ba5e11a7e2dc6862",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "dual_endorsement",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "22f458927b2c116fe1624a3749b0d0450752ffa132632b0aeb463687194b8059",
+          "qualifications": [
+            "The input packet listed the two human display labels in source order. Here canonical display labels follow their actual canonical candidate IDs; observed source wording/order remains separate. Both choices retain equal 1/2 allocations; neither ordering asserts rank or changes the accepted decision."
+          ],
+          "race_id": "king-county-council-2"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Teresa Mosqueda"
+          ],
+          "canonical_allocation": {
+            "king-county-council-8--teresa-mosqueda": "1"
+          },
+          "canonical_candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "canonical_choice_names": [
+            "Teresa Mosqueda"
+          ],
+          "canonical_decision_sha256": "4892b26898658eb5d7b8e0de26e6f98acb5211a845e6995b4b647d82284a828e",
+          "canonical_endorsement_id": "endorsement-a24e39cd9130156e",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "b4814bab6296baf7495684a4a60ff8d70ff0b20127c6b238ad2e27fb356f0fd6",
+          "qualifications": [],
+          "race_id": "king-county-council-8"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "Nilu Jenks"
+          ],
+          "canonical_allocation": {
+            "seattle-city-council-5--nilu-jenks": "1"
+          },
+          "canonical_candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "canonical_choice_names": [
+            "Nilu Jenks"
+          ],
+          "canonical_decision_sha256": "b5895b465bfd27d4ca4435cfaddc1381e111df3e4283405d6dc82efeefeb1177",
+          "canonical_endorsement_id": "endorsement-ac16d3f92baed9a5",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "79265c05a91710a573f57b5ac6f0762732d6a9aa6347207784da45c45df956b1",
+          "qualifications": [],
+          "race_id": "seattle-city-council-5"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "No"
+          ],
+          "canonical_allocation": {
+            "initiative-26-001--no": "1"
+          },
+          "canonical_candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "canonical_choice_names": [
+            "No"
+          ],
+          "canonical_decision_sha256": "8e1d5420a285d98cfbbd0feba966f10aad6c926160fb5dbff414e193d140abdd",
+          "canonical_endorsement_id": "endorsement-7db05a85b20e7e52",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "229dc760858cd186c6845f29766d554f31397d428300cccfd480d9e9b94b41f5",
+          "qualifications": [],
+          "race_id": "initiative-26-001"
+        },
+        {
+          "actual_observed_choice_wording": [
+            "No"
+          ],
+          "canonical_allocation": {
+            "initiative-26-638--no": "1"
+          },
+          "canonical_candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "canonical_choice_names": [
+            "No"
+          ],
+          "canonical_decision_sha256": "008d17fcdc1388f8a1e065fbc36916777ad026c0088aaa06c8c1e790bf434f74",
+          "canonical_endorsement_id": "endorsement-2d1b02db1d250e17",
+          "canonical_prior_reviewed_at": "2026-10-12T16:24:42Z",
+          "canonical_prior_reviewer": "shaug",
+          "canonical_status": "endorsed",
+          "comparison": "Current named publication supports accepted decision; no change proposed.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_RETAINED_QUALIFICATIONS",
+          "evidence_locator": "Public carousel slide 3",
+          "official_publication_url": "https://www.instagram.com/p/DeQTz0cgTzM/",
+          "prior_packet_decision_sha256": "230689c093b841d1fa49519809c7ad6fab21e76c15ac82cd76351e6f9d3c4101",
+          "qualifications": [],
+          "race_id": "initiative-26-638"
+        }
+      ],
+      "source_id": "young-democrats-of-washington"
+    }
+  }
+}
