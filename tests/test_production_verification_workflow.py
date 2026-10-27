@@ -52,6 +52,21 @@ def _finalization_step() -> dict[str, Any]:
     )
 
 
+def test_recovery_can_retain_evidence_on_owning_pull_requests() -> None:
+    workflow: dict[str, Any] = yaml.load(
+        (ROOT / ".github/workflows/verify-release.yml").read_text(), Loader=yaml.BaseLoader
+    )
+    assert workflow["permissions"] == {
+        "contents": "read",
+        "actions": "read",
+        "issues": "write",
+        "pull-requests": "write",
+        "deployments": "write",
+    }
+    assert set(workflow["on"]) == {"workflow_dispatch"}
+    assert workflow["jobs"]["verify"]["if"] == "github.ref == 'refs/heads/main'"
+
+
 @pytest.mark.parametrize("finalize_status", [0, 1])
 def test_deployment_verifies_its_uploaded_sha_and_preserves_evidence(
     tmp_path: Path, finalize_status: int
