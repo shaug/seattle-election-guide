@@ -12,6 +12,8 @@ import yaml
 from typer.testing import CliRunner
 
 from election_guide.cli import app
+from election_guide.serialization import read_json
+from tests.suite_policy import Node, Policy, group_nodes, require_partition_coverage
 
 PROJECT_ROOT = Path(__file__).parents[1]
 INTEGRATION_PARTITIONS = (
@@ -83,19 +85,25 @@ def _pytest_arguments(make_target: str) -> list[str]:
     return shlex.split(command)[3:]
 
 
-def test_local_test_suites_cover_each_integration_module_once() -> None:
+def test_local_test_suites_cover_each_integration_module_once(
+    collected_nodes: tuple[Node, ...],
+) -> None:
     """A file omitted from both unit and integration targets would silently escape CI."""
-    aggregate = _pytest_arguments("test-integration")
-    partitioned = [
-        path
-        for partition in INTEGRATION_PARTITIONS
-        for path in _pytest_arguments(f"test-{partition}")
-    ]
-
-    assert partitioned == aggregate
+    policy: Policy = read_json(PROJECT_ROOT / "tests/suites.json")
+    groups = group_nodes(collected_nodes, policy, partitions=True)
+    assert set(groups) == {"unit", *INTEGRATION_PARTITIONS}
+    workflow = yaml.load(
+        (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(), Loader=yaml.BaseLoader
+    )
+    require_partition_coverage(workflow["jobs"]["tests"]["strategy"]["matrix"]["partition"], groups)
+    partitioned = [node for nodes in groups.values() for node in nodes]
+    assert sorted(partitioned) == sorted(node[0] for node in collected_nodes)
     assert len(partitioned) == len(set(partitioned))
-    assert all((PROJECT_ROOT / path).is_file() for path in aggregate)
-    assert _pytest_arguments("test-unit") == [f"--ignore={path}" for path in aggregate]
+    assert all((PROJECT_ROOT / path).is_file() for _, path, _ in collected_nodes)
+    for partition in ("unit", *INTEGRATION_PARTITIONS):
+        assert _pytest_arguments(f"test-{partition}") == ["--test-partition", partition]
+    assert _pytest_arguments("test") == []
+    assert _pytest_arguments("test-integration") == ["--test-suite", "integration"]
 
 
 def test_ci_runs_independent_lanes_in_parallel_behind_one_required_check() -> None:
@@ -141,7 +149,7 @@ def test_ci_runs_independent_lanes_in_parallel_behind_one_required_check() -> No
         == 0
     )
     for environment_name in success_environment:
-        for unsuccessful_result in ("failure", "cancelled"):
+        for unsuccessful_result in ("failure", "cancelled", "skipped", ""):
             environment = success_environment | {
                 environment_name: unsuccessful_result,
             }

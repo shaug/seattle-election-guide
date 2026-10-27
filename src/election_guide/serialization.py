@@ -3,14 +3,23 @@
 import json
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import yaml
 from yaml.constructor import ConstructorError
 from yaml.nodes import MappingNode, ScalarNode
 
+if TYPE_CHECKING:
+    # Both backends expose SafeConstructor; keep its checked loader interface.
+    from yaml import SafeLoader as _SafeLoader
+else:
+    try:
+        from yaml import CSafeLoader as _SafeLoader
+    except ImportError:
+        from yaml import SafeLoader as _SafeLoader
 
-class UniqueKeyLoader(yaml.SafeLoader):
+
+class UniqueKeyLoader(_SafeLoader):
     """Load safe YAML while rejecting fields that silently overwrite each other."""
 
     def construct_mapping(self, node: MappingNode, deep: bool = False) -> dict[Any, Any]:
