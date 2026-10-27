@@ -266,7 +266,9 @@ test('the module keeps client state out of storage', () => {
 
 test('only an admitted race-mode capability carries race mode through Sources', async () => {
   for (const enabled of [false, true]) {
-    const pagePayload = enabled ? payload({ race_mode_query_enabled: true }) : payload();
+    const pagePayload = enabled
+      ? payload({ race_mode_query_enabled: true, comparisons_path: null })
+      : payload();
     assert.equal('race_mode_query_enabled' in pagePayload, enabled);
     const document = await wire(`${SOURCES_URL}?precinct=all&races=all&unrelated=1`, pagePayload);
     for (const action of ['save', 'cancel', 'page-reset']) {
@@ -276,5 +278,35 @@ test('only an admitted race-mode capability carries race mode through Sources', 
         enabled ? '?precinct=all&races=all' : '?precinct=all',
       );
     }
+  }
+});
+
+test('general header navigation uses complete published paths and leaves legacy headers bare', async () => {
+  for (const general of [false, true]) {
+    const guidePath = general ? '/edition/guide/' : GUIDE_PATH;
+    const comparisonsPath = general ? '/edition/side-by-side/' : `${GUIDE_PATH}comparisons/`;
+    const pagePayload = general
+      ? payload({
+          guide_path: guidePath,
+          race_mode_query_enabled: true,
+          comparisons_path: comparisonsPath,
+        })
+      : payload();
+    const document = installDom(`${SOURCES_URL}?precinct=1279&races=all&unrelated=1`);
+    const marker = (destination) => (general ? ` data-precinct-link="${destination}"` : '');
+    document.body.innerHTML =
+      sourcesMarkup() +
+      `<nav>
+      <a href="${guidePath}"${marker('endorsements')}>Endorsements</a>
+      <a href="${comparisonsPath}"${marker('comparisons')}>Comparisons</a>
+    </nav>`;
+    const { wireSourcesEditor } = await import(
+      '../../src/election_guide/rendering/templates/sources-client.mjs'
+    );
+    wireSourcesEditor(pagePayload);
+    const links = [...document.querySelectorAll('nav a')];
+    const query = general ? '?precinct=1279&races=all' : '';
+    assert.equal(links[0].getAttribute('href'), `${guidePath}${query}`);
+    assert.equal(links[1].getAttribute('href'), `${comparisonsPath}${query}`);
   }
 });

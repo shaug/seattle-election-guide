@@ -560,3 +560,85 @@ return JSON.stringify({failures,observations,expected});})()
     (path.parent / "anchor-history-result.json").write_text(json.dumps(result, indent=2) + "\n")
     assert result.get("harnessError") is None, result
     assert result["failures"] == [], result
+
+
+def test_sources_header_links_preserve_explicit_ballot_context_over_memory(
+    navigation_site: tuple[Path, str], general_view: PublicationViewModel
+) -> None:
+    """Header navigation must carry the same owned ballot query as editor actions."""
+    path, url = navigation_site
+    root = Path(__file__).resolve().parents[1]
+    inventory = read_inventory(root / "data/normalized/wa-2026-general-inventory.json")
+    catalog = read_precinct_catalog(CATALOG_PATH, inventory)
+    public_ids = {race.id for section in general_view.guide_sections for race in section.races}
+    area = next(precinct for precinct in catalog.precincts if precinct.code == "1279")
+    expected = {
+        "all": sorted(public_ids),
+        "1279": sorted(
+            race.id
+            for race in inventory.races
+            if race.id in public_ids and race.jurisdiction_id in area.jurisdiction_ids
+        ),
+    }
+    expression = (
+        "(async()=>{"
+        + HARNESS
+        + """
+const expected=EXPECTED;
+const observations=[];
+for(const blocked of [false,true]) {
+ for(const code of ['all','1279']) {
+  for(const destination of ['endorsements','comparisons']) {
+   parent.blockStorage=false;localStorage.clear();localStorage.setItem(key,'2200');
+   parent.blockStorage=blocked;
+   const query='?precinct='+code+'&races=all';
+   await load('/e/wa-2026-general/sources/'+query+'&unrelated=discard');
+   const box=doc().querySelector('[data-sources-source]');box.checked=false;
+   box.dispatchEvent(new (win().Event)('change',{bubbles:true}));
+   const selector=destination==='endorsements'
+    ? 'nav[aria-label="Site"] a:nth-of-type(1)'
+    : 'nav[aria-label="Site"] a:nth-of-type(3)';
+   const link=doc().querySelector(selector);
+   const header=new URL(link.href);
+   const target='/e/wa-2026-general/'+(destination==='comparisons'?'comparisons/':'');
+   const label=destination+' '+code+' blocked='+blocked;
+   equal(link.textContent,destination==='endorsements'?'Endorsements':'Comparisons',
+    label+' actual header destination');
+   equal(header.pathname,target,label+' renderer-owned complete path');
+   equal(header.search,query,label+' header owns only ballot query');
+   equal(header.hash,'',label+' header does not save source draft');
+   const menu=doc().querySelector('.site-band-menu');
+   if(!menu.open)menu.querySelector('summary').click();
+   await click(selector);
+   const comparison=destination==='comparisons';
+   const all=doc().querySelector(comparison?'[data-comparison-all-races]':'#complete-filter');
+   const contested=doc().querySelector(
+    comparison?'[data-comparison-contested]':'#contested-filter');
+   const status=doc().querySelector(comparison?'[data-comparison-status]':'#filter-status');
+   observations.push({label,header:header.href,url:win().location.href,ids:ids(),
+    all:all.checked,contested:contested.checked,status:status.textContent.trim(),
+    precinct:doc().querySelector('[data-precinct-open]').textContent.trim()});
+   equal(win().location.pathname,target,label+' actual destination');
+   equal(win().location.search,query,label+' explicit query beats memory');
+   equal(ids(),expected[code],label+' exact All IDs');
+   equal(all.checked,true,label+' All selected');
+   equal(contested.checked,false,label+' Contested not selected');
+   equal(status.textContent.trim().startsWith(String(expected[code].length)),true,
+    label+' truthful count');
+   equal(doc().querySelector('[data-precinct-open]').textContent.trim(),
+    code==='all'?'Select':'SEA 46-1279',label+' explicit precinct');
+   equal(localStorage.getItem(key),'2200',label+' header does not change memory');
+   if(!comparison)equal(
+    doc().querySelector('[data-lens-banner-status]').textContent.includes('Counting all'),
+    true,label+' unsaved source edit stays a draft');
+  }
+ }
+}
+return JSON.stringify({failures,observations,expected});})()
+.catch(error=>JSON.stringify({harnessError:String(error),stack:error.stack}))
+"""
+    ).replace("EXPECTED", json.dumps(expected))
+    result = _evaluate_in_chrome(path, expression, initial_url=url)
+    (path.parent / "sources-header-result.json").write_text(json.dumps(result, indent=2) + "\n")
+    assert result.get("harnessError") is None, result
+    assert result["failures"] == [], result

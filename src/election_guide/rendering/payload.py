@@ -347,6 +347,7 @@ class GeneralSourcesPayload(SourcesPayload):
     """General-only query capability; the legacy Sources contract stays unchanged."""
 
     race_mode_query_enabled: Literal[True]
+    comparisons_path: str | None
 
 
 class ComparisonsPayload(ClientPayloadModel):
@@ -611,7 +612,7 @@ def _sources_tree(view_model: PublicationViewModel) -> list[SourcesTreeCategory]
 
 
 def sources_payload(
-    view_model: PublicationViewModel, *, guide_path: str
+    view_model: PublicationViewModel, *, guide_path: str, comparisons_path: str | None = None
 ) -> SourcesPayload | GeneralSourcesPayload:
     """Build the sources editor's payload.
 
@@ -627,7 +628,9 @@ def sources_payload(
         view_model.precinct_ballot is not None
         and view_model.precinct_ballot.election_id == "wa-2026-general"
     ):
-        return GeneralSourcesPayload.model_validate({**fields, "race_mode_query_enabled": True})
+        return GeneralSourcesPayload.model_validate(
+            {**fields, "race_mode_query_enabled": True, "comparisons_path": comparisons_path}
+        )
     return SourcesPayload.model_validate(fields)
 
 

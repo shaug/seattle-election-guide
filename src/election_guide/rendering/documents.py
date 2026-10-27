@@ -387,7 +387,7 @@ def render_sources_document(
     # Issue 124: the comparison section is documentation, not a control, and
     # points at the one page that still puts these sources side by side.
     compare_href = f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
-    payload = sources_payload(view_model, guide_path=guide_path)
+    payload = sources_payload(view_model, guide_path=guide_path, comparisons_path=compare_href)
     return template.render(
         **context.personalization_lookup_context(view_model),
         guide=view_model,

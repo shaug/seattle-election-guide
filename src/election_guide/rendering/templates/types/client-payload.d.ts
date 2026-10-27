@@ -381,6 +381,7 @@ interface GeneralSourcesPayload {
   guide_path: string;
   tree: SourcesTreeCategory[];
   race_mode_query_enabled: true;
+  comparisons_path: string | null;
 }
 /**
  * The Comparisons page's payload.
