@@ -89,7 +89,6 @@ def test_publish_requires_every_lane_and_exact_merged_source() -> None:
                 "contents": "read",
                 "actions": "read",
                 "issues": "read",
-                "pull-requests": "read",
                 "deployments": "write",
             },
         ),

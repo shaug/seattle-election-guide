@@ -316,7 +316,8 @@ The owning number may identify an issue or a pull request. Durable receipts use 
 [issue-comment API](https://docs.github.com/en/rest/issues/comments#create-an-issue-comment)
 for either owner. Trusted publication-evidence, finalization, and verification-recovery jobs
 therefore declare both `issues: write` and `pull-requests: write`; deployment declares read
-access to both so it can verify the receipts. Job permission maps replace the workflow defaults,
+access through its existing `issues: read` grant to verify the receipts, with no new
+pull-request permission. Job permission maps replace the workflow defaults,
 so each declares its own required access. These grants retain the main-only delivery boundaries
 and verification recovery's prohibition on rebuilding or uploading. A published archive whose
 durable evidence failed is still incomplete delivery; it supplies no production acceptance (#644).
