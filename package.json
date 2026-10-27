@@ -20,7 +20,7 @@
     "happy-dom": "21.0.4",
     "json-schema-to-typescript": "16.0.0",
     "typescript": "7.0.2",
-    "wrangler": "4.152.0"
+    "wrangler": "4.153.0"
   },
   "dependencies": {
     "lit-html": "3.3.3"
