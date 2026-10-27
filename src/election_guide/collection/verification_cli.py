@@ -223,10 +223,18 @@ def plan(
     policy_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False)],
     as_of: Annotated[str, typer.Option(help="Pacific calendar date, YYYY-MM-DD.")],
     state_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/verification"),
+    as_of_at: Annotated[
+        str | None, typer.Option(help="Optional timezone-aware freshness evaluation instant.")
+    ] = None,
 ) -> None:
     """Show all eligible sources, due work, and missing checks without mutation."""
     try:
-        result = plan_verification(read_policy(policy_path), state_root, date.fromisoformat(as_of))
+        result = plan_verification(
+            read_policy(policy_path),
+            state_root,
+            date.fromisoformat(as_of),
+            as_of_at=datetime.fromisoformat(as_of_at.replace("Z", "+00:00")) if as_of_at else None,
+        )
     except (OSError, ValueError) as error:
         typer.echo(f"Could not plan verification: {error}", err=True)
         raise typer.Exit(1) from error

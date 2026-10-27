@@ -201,6 +201,14 @@ cases stay unresolved. The existing publication review/admission gates remain re
 [source policy](../SOURCE_POLICY.md#prospective-access-limitations-589-partial-approved-milestone)
 and the normal CLI procedure in the daily runbook.
 
+The separate #589 interval capability adds optional strict whole-day source settings in policy
+schema 1.2, pinned at first activation. Omission preserves all 46 current frequencies and legacy
+record serialization; no current setting is populated. Fixed Pacific obligation dates remain
+separate from real-success-anchored elapsed UTC freshness. Date-only evidence gains no invented
+time, and an active-cycle interval edit cannot move old or future duties. See
+[the source policy](../SOURCE_POLICY.md#optional-source-refresh-intervals-589) and
+[the calendar contract](ELECTION_CALENDAR.md#optional-intervals-and-elapsed-freshness-589).
+
 `config/verification.yaml` binds the current frozen election inputs to the six
 adapters under `config/adapters/wa-2026-general/`. Other eligible sources receive
 finite manual-review obligations. `verification plan`, `run`, `validate`, and

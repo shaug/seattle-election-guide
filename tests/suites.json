@@ -589,6 +589,16 @@
     "tests": {},
     "partition": "integration-artifacts"
   },
+  "tests/test_verification_intervals.py": {
+    "suite": "integration",
+    "tests": {
+      "test_late_slot_watch_marker_cannot_replace_an_actual_failure_at_the_same_clock": "unit",
+      "test_interval_rejects_nonpositive_or_not_whole_number_configuration": "unit",
+      "test_intervals_require_versioned_schema_and_do_not_combine_with_daily_override": "unit",
+      "test_removing_active_interval_is_rejected_and_legacy_omission_needs_no_git_history": "contract"
+    },
+    "partition": "integration-artifacts"
+  },
   "tests/test_verification_runtime.py": {
     "suite": "integration",
     "tests": {},

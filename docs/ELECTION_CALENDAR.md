@@ -468,3 +468,25 @@ initial review. This never advances last success, marks freshness current, suppr
 three-slot escalation or creates missing historical checks. Old checks are not reclassified
 by a new policy or later qualification. Calendar/watcher obligations, including the final
 election-day slot and all existing comprehensive checkpoints, remain unchanged.
+
+### Optional intervals and elapsed freshness (#589)
+
+Schema 1.2 of the verification policy accepts `refresh_interval_days: N` for a registered
+source, where N is a strict positive whole number of days. All 46 current sources omit it and
+keep their existing frequencies. Before first activation, a reviewed explicit setting uses
+N-date spacing anchored to collection before issuance and to issuance thereafter, unioned with
+actual activation, issuance and election day. Mandatory boundary duties can be closer than N.
+The activation pins this explicit map; later addition, removal or edits are rejected, preserving
+already owed slots and historical observations. An omitted legacy setting needs no pin or Git
+history lookup. Existing comprehensive refresh milestones remain independent.
+
+These Pacific attempt dates do not measure how old the last real success is. Reports compute
+that deadline by adding N elapsed UTC days to a completed review or approved live observation.
+Inherited defaults are seven days before issuance and one afterward; the transition shortens a
+future weekly deadline without postponing an already overdue one or shortening 24 elapsed hours.
+For example, noon PDT on October 31 plus 24 hours is 11am PST on November 1, not noon PST.
+An actual evaluation instant distinguishes due at the deadline from overdue after it. Date-only
+planning preserves attempt work but leaves those within-day booleans absent; untimed legacy
+reviews do not become midnight successes. Failure, administrative markers, closures and duplicate
+polling never advance last success or reanchor future slots. Access limitations retain canonical
+verified facts and do not block release.
