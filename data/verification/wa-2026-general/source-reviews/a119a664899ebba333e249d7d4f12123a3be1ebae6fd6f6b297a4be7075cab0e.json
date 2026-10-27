@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-26T13:23:42.620016Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source 43rd-district-democrats; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://43rddemocrats.org/endorsements/2026",
+    "https://images.squarespace-cdn.com/content/v1/5a3993300abd04ae23f41290/4e114444-4d40-4035-8617-d2f76dd2069f/43rd_Banner_endorsed.jpg"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_political_oct26",
+  "recorded_at": "2026-10-27T03:02:20.833897Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:31:31.488425Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "43rd-district-democrats"
+}

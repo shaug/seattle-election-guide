@@ -414,6 +414,25 @@ def test_tru_incomplete_publications_preserve_previous_snapshot(
             )
     failed = run(policy, state, 20)
     assert failed["status"] == "failed" and failed["previous_snapshot_id"] == first["snapshot_id"]
+    expected_reason = {
+        "maintenance": "incomplete_publication",
+        "empty": "incomplete_publication",
+        "utf8": "parse",
+        "not-html": "parse",
+        "no-boundary": "incomplete_publication",
+        "ambiguous-next": "incomplete_publication",
+        "loop": "incomplete_publication",
+        "article-empty": "parse",
+        "article-maintenance": "parse",
+        "article-utf8": "parse",
+        "image-missing": "conflicting_evidence",
+        "image-replaced": "conflicting_evidence",
+        "image-canonical": "conflicting_evidence",
+        "image-media": "conflicting_evidence",
+        "articles-bound": "incomplete_publication",
+        "pages-bound": "incomplete_publication",
+    }.get(case)
+    assert failed.get("review_required") == expected_reason
     assert len(list(state.rglob("extractions/*.json"))) == 1
     validate(policy, state)
 

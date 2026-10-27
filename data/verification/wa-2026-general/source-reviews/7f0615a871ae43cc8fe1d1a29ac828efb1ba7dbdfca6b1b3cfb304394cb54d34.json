@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-26T13:21:43.555144Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source seiu-925; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.seiu925.org/2026endorsements/"
+  ],
+  "original_reviewer": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26",
+  "recorded_at": "2026-10-27T03:02:35.253777Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:23:57.021779Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "seiu-925"
+}

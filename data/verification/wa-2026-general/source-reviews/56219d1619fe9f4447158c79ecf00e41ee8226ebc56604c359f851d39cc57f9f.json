@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-19T14:46:34.386000Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source planned-parenthood-alliance-advocates; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+    "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-melody",
+    "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-birk",
+    "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-angelis"
+  ],
+  "original_reviewer": "OpenAI Codex / oct19_labor_rights_sources",
+  "recorded_at": "2026-10-27T03:02:29.509331Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-19T14:47:14.537881Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "planned-parenthood-alliance-advocates"
+}

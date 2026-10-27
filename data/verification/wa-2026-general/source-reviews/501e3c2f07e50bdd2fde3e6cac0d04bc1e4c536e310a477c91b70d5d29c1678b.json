@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-26T13:23:43.696292Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source seattle-democratic-socialists; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+    "https://seattledsa.org/2026/07/trans-athletes-supreme-court/",
+    "https://seattledsa.org/event/nseattlecanvass/",
+    "https://seattledsa.org/committees/electoral/",
+    "https://seattledsa.org/blog/",
+    "https://seattledsa.org/committees/sioc/",
+    "https://seattledsa.org/events/category/electoral/",
+    "https://seattledsa.org/events/category/electoral/2026-09/",
+    "https://seattledsa.org/events/category/electoral/2026-11/",
+    "https://seattledsa.org/blog/page/2/",
+    "https://seattledsa.org/wp-content/uploads/2026/04/Copy_of_COLUMBIA_CITY_CANVASS.png"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_political_oct26",
+  "recorded_at": "2026-10-27T03:02:31.690804Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:31:31.488461Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "seattle-democratic-socialists"
+}

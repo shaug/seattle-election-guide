@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-26T13:21:45.553948Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source washington-state-building-trades; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.wabuildingtrades.org/candidates.html",
+    "https://www.wabuildingtrades.org/uploads/1/3/6/1/136135495/editor/20221108-204345.jpg?1668188007",
+    "https://www.wabuildingtrades.org/uploads/1/3/6/1/136135495/union-and-i-vote_orig.jpg"
+  ],
+  "original_reviewer": "OpenAI Codex delegated factual reviewer /root/review_636_labor_oct26",
+  "recorded_at": "2026-10-27T03:02:46.096197Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:23:57.021780Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-state-building-trades"
+}

@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-26T13:23:25.823280Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source tech-4-taxes; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://tech4taxes.org/endorsements",
+    "https://tech4taxes.org/legagenda"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_civic_oct26",
+  "recorded_at": "2026-10-27T03:02:37.407139Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:24:54.217702Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "tech-4-taxes"
+}

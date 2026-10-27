@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-26T13:23:25.396271Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-manual.json; source the-urbanist; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.theurbanist.org/2026-general-election-endorsements/",
+    "https://storage.ghost.io/c/19/31/1931222a-d1c5-42ac-8932-2ee3ac1f8927/content/images/2026/10/Urbanist-2026-General-Election-Endorsements-1-1.png",
+    "https://storage.ghost.io/c/19/31/1931222a-d1c5-42ac-8932-2ee3ac1f8927/content/images/2026/10/Urbanist-2026-General-Election-Endorsements-2-4.png"
+  ],
+  "original_reviewer": "OpenAI Codex /root/review_636_civic_oct26",
+  "recorded_at": "2026-10-27T03:02:38.835227Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T13:28:14.813497Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "the-urbanist"
+}

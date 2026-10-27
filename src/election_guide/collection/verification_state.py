@@ -49,6 +49,7 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
             "refreshes",
             "checks",
             "approvals",
+            "source-reviews",
             "discovery",
             "discovery-obligations",
             "activation.json",
@@ -59,6 +60,15 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
             Activation.model_validate(read_json(directory / "activation.json"))
         registry, _ = read_panel(election)
         sources = {source.id for source in registry.sources}
+        from election_guide.collection.verification_access import (
+            read_qualifications,
+            validate_access_disposition,
+        )
+
+        qualifications = read_qualifications(directory)
+        if any(item.source_id not in sources for item in qualifications.values()):
+            raise ValueError("complete-review qualification belongs to an unknown source")
+        count += len(qualifications)
         envelopes: dict[str, SealedCapture] = {}
         for path in directory.glob("vault/sha256/*/*.json"):
             envelope = SealedCapture.model_validate(read_json(path))
@@ -153,6 +163,8 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
                     check.status,
                 ):
                     raise ValueError("scheduled observation contradicts its refresh event")
+                if check.access_disposition:
+                    validate_access_disposition(directory, check, event)
             count += 1
         for path in directory.glob("approvals/*.json"):
             approval = BaselineApproval.model_validate(read_json(path))

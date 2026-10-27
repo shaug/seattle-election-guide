@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-26T10:22:20.818273Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-automatic.json; source sage-leaders; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.sageleaders.org/2026-endorsements"
+  ],
+  "original_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+  "recorded_at": "2026-10-27T03:02:30.921261Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-26T10:26:34.330535Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "sage-leaders"
+}

@@ -351,6 +351,12 @@ def _release_status(
 
 
 def _release_notes(status: ReleaseStatus, election_name: str) -> str:
+    input_scope_note = (
+        "These counts describe the canonical release inputs, not the latest recurring "
+        "source-access observations. \u2018None\u2019 in this section does not establish current "
+        "successful access or recovery. Later access failures retain the latest verified "
+        "endorsement evidence; additions, changes and withdrawals still require normal review."
+    )
     access_lines = (
         "\n".join(
             f"- `{item.source_id}`: {item.status} — {item.note}"
@@ -376,6 +382,8 @@ review, validation, provenance, build, and release manifests.
 - Unresolved review items: {status.unresolved_review_count}
 
 ## Source access and discovery failures
+
+{input_scope_note}
 
 {access_lines}
 

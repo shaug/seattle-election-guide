@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-20T10:38:18.442348Z",
+  "election_id": "wa-2026-general",
+  "evidence": "data/review/rechecks/wa-2026-general-2026-10-20-manual.json; source washington-education-association; qualifications and exact retained boundaries in that original record",
+  "official_urls": [
+    "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+    "https://www.washingtonea.org/advocacy/wea-pac/",
+    "https://www.washingtonea.org/advocacy/ourvoice/post/help-wea-members-in-falls-election/",
+    "https://www.washingtonea.org/advocacy/ourvoice/",
+    "https://www.washingtonea.org/advocacy/ourvoice/post/successful-wea-day-action/",
+    "https://www.washingtonea.org/advocacy/ourvoice/post/learn-more-about-anti-school-initiatives/",
+    "https://www.washingtonea.org/advocacy/ourvoice/post/ballots-arrive-next-week-what-to-know-before-you-vote/"
+  ],
+  "original_reviewer": "OpenAI Codex /root/diagnose_591_seiu_oct20",
+  "recorded_at": "2026-10-27T03:02:43.886175Z",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+  "reviewed_at": "2026-10-20T10:51:07.668967Z",
+  "scope": "complete_official_publication_and_mappings",
+  "source_id": "washington-education-association"
+}
