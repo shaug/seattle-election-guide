@@ -6,7 +6,6 @@ import subprocess
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Literal
-from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
 from pydantic import AwareDatetime, Field, field_validator, model_validator
@@ -154,7 +153,8 @@ def qualify_initial_review(
 ) -> InitialReviewQualification:
     election = next(item for item in policy.elections if item.election_id == root.name)
     registry, _ = read_panel(election)
-    source = next(item for item in registry.sources if item.id == source_id)
+    if not any(source.id == source_id for source in registry.sources):
+        raise ValueError("attestation requires a registered source for this election")
     qualification = InitialReviewQualification.model_validate(
         {
             "election_id": election.election_id,
@@ -169,11 +169,6 @@ def qualify_initial_review(
             "recorded_at": utc_now(),
         }
     )
-    if not any(
-        urlsplit(url).hostname == urlsplit(source.organization_url).hostname
-        for url in qualification.official_urls
-    ):
-        raise ValueError("attestation lacks the registered official organization's publication")
     payload = qualification.model_dump(mode="json")
     write_immutable_record(
         root / "source-reviews" / f"{evidence_fingerprint(payload)}.json",

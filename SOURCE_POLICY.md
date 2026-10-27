@@ -89,6 +89,9 @@ scope, official URLs, actual original check time, original reviewer/review time 
 durable reference to the existing facts/review packet. Record the new writing actor/time
 separately. Normal protected versioned review establishes acceptance. Existing facts/review
 packets may use their ordinary durable reference formats.
+Normal protected review establishes that the explicit publication URLs belong to the registered
+source. An official embedded guide, social account, separate publication host or `www` alias
+need not share the organization's homepage host; hostname equality cannot establish legitimacy.
 
 A proposal is not authority merely because it exists on the pending archive branch. Before a
 new failed check can use it, its exact bytes must exist in the normal canonical archive path

@@ -816,6 +816,72 @@ def test_complete_review_attestation_accepts_ordinary_durable_reference(
     assert attestation["recorded_by"] == "Fixture qualification recorder"
 
 
+@pytest.mark.parametrize(
+    "source_id,official_url",
+    [
+        (
+            "washington-stonewall-democrats",
+            "https://sites.google.com/wastonewalldems.com/wadems2026endorsement/endorsement-guide",
+        ),
+        ("citizens-against-aipac-corruption", "https://www.trackaipac.com/endorsements"),
+        ("seattle-subway", "https://seattlesubway.org/election-endorsements/"),
+        ("washington-for-peace-and-justice", "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/"),
+    ],
+)
+def test_complete_review_accepts_reviewed_official_publication_on_another_host(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, source_id: str, official_url: str
+) -> None:
+    _policy, state, _fixtures = setup_access_policy(tmp_path, monkeypatch)
+    # These publication identities already occur in the accepted registry/review
+    # records. The fixture proposes an attestation; it makes no publisher request
+    # and does not infer acceptance from the URL or write an organization URL.
+    attestation = qualify(
+        state / "wa-2026-general",
+        tmp_path,
+        source_id=source_id,
+        official_url=official_url,
+        admitted=False,
+    )
+    assert attestation["source_id"] == source_id
+    assert attestation["official_urls"] == [official_url]
+    assert attestation["scope"] == "complete_official_publication_and_mappings"
+    assert not (tmp_path / ".git").exists()
+
+
+@pytest.mark.parametrize(
+    "source_id,official_url",
+    [
+        ("not-a-registered-source", "https://example.test/official/"),
+        (SOURCE, "file:///tmp/not-a-publication.html"),
+        (SOURCE, "https://example.test/official/?access_token=fixture"),
+    ],
+)
+def test_review_proposal_still_requires_registered_source_and_clean_http_url(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, source_id: str, official_url: str
+) -> None:
+    from datetime import datetime
+
+    from election_guide.collection.verification import read_policy
+    from election_guide.collection.verification_access import qualify_initial_review
+
+    policy, state, _fixtures = setup_access_policy(tmp_path, monkeypatch)
+    root = state / "wa-2026-general"
+    with pytest.raises(ValueError):
+        qualify_initial_review(
+            read_policy(policy),
+            root,
+            source_id,
+            "complete_official_publication_and_mappings",
+            [official_url],
+            datetime.fromisoformat("2026-10-26T16:00:00+00:00"),
+            "Fixture original reviewer",
+            datetime.fromisoformat("2026-10-26T17:00:00+00:00"),
+            "docs/accepted-review.md",
+            "Fixture qualification recorder",
+        )
+    assert not (root / "source-reviews").exists()
+
+
 def test_unrelated_cwd_main_cannot_supply_qualification_admission(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
