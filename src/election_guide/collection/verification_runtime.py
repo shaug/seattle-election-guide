@@ -42,12 +42,14 @@ from election_guide.collection.refresh import (
 )
 from election_guide.collection.tru_discovery import TRU_HOME, discover_tru_publication
 from election_guide.collection.verification import (
+    Activation,
     CheckRecord,
     ElectionPolicy,
     SourcePolicy,
     VerificationPolicy,
     baseline_reviewed,
     check_order,
+    explicit_intervals,
     plan_verification,
     read_checks,
     read_panel,
@@ -98,7 +100,7 @@ def run_verification(
     if checked_at.tzinfo is None:
         raise ValueError("verification check time must include a timezone")
     as_of = checked_at.astimezone(ZoneInfo(ELECTION_TIMEZONE)).date()
-    plan = plan_verification(policy, state_root, as_of)
+    plan = plan_verification(policy, state_root, as_of, as_of_at=checked_at)
     code_root = Path(__file__).resolve().parents[3]
     revision = subprocess.run(
         ["git", "-C", str(code_root), "rev-parse", "HEAD"],
@@ -161,7 +163,13 @@ def run_verification(
             if not activation.exists():
                 write_immutable_record(
                     activation,
-                    canonical_json_bytes({"activated_on": as_of.isoformat(), "revision": revision}),
+                    canonical_json_bytes(
+                        Activation(
+                            activated_on=as_of,
+                            revision=revision,
+                            refresh_intervals=explicit_intervals(election) or None,
+                        ).model_dump(mode="json")
+                    ),
                 )
             for missed in plan.missed:
                 if missed.election_id == election.election_id and not any(
@@ -188,7 +196,7 @@ def run_verification(
                         working,
                         CheckRecord(
                             source_id=obligation.source_id,
-                            scheduled_for=as_of,
+                            scheduled_for=obligation.scheduled_for or as_of,
                             checked_at=checked_at,
                             status="manual_due",
                             mode="live" if live else "fixture",
@@ -198,7 +206,7 @@ def run_verification(
                         {
                             "election_id": election.election_id,
                             "source_id": obligation.source_id,
-                            "due": as_of.isoformat(),
+                            "due": (obligation.scheduled_for or as_of).isoformat(),
                             "limitation": obligation.limitation,
                         }
                     )
@@ -215,7 +223,7 @@ def run_verification(
                 )
                 check = CheckRecord(
                     source_id=obligation.source_id,
-                    scheduled_for=as_of,
+                    scheduled_for=obligation.scheduled_for or as_of,
                     checked_at=checked_at,
                     status=event.status,
                     event_id=event.id,
@@ -252,7 +260,9 @@ def run_verification(
             ):
                 write_immutable_record(root / path.relative_to(working), path.read_bytes())
     report["mode"] = "live" if live else "fixture"
-    report["coverage"] = plan_verification(policy, state_root, as_of).model_dump(mode="json")
+    report["coverage"] = plan_verification(
+        policy, state_root, as_of, as_of_at=checked_at
+    ).model_dump(mode="json")
     write_immutable_record(
         state_root / "runs" / f"{evidence_fingerprint(report)}.json", canonical_json_bytes(report)
     )

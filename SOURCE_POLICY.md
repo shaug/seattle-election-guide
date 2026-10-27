@@ -104,8 +104,8 @@ Scott approved retaining accepted endorsements after a **pure access failure fol
 complete accepted initial official-publication and mapping review**, with an explicit limitation.
 The schema-1.1 verification policy applies this default only to new observations for Pacific
 slots from October 27, 2026. Current weekly/daily frequencies, calendar boundaries, normal
-automatic attempts and three-distinct-failed-slot escalation are unchanged. #589 remains open
-for its unapproved interval/configuration and other remaining criteria.
+automatic attempts and three-distinct-failed-slot escalation are unchanged. Optional interval
+configuration below is separate from access handling and does not activate new current frequencies.
 
 A complete initial review uses one explicit immutable `source-reviews` attestation in the
 existing verification archive: exact election/source, complete official-publication/mapping
@@ -154,6 +154,36 @@ Handled-only observations can be appended to an already closed daily task withou
 new unresolved observations still reopen it. The reconciler does not automatically close whole
 tasks. Earlier dated SEIU exceptions/closures and #616 recovery remain separately scoped and
 are not granted by this future policy.
+
+## Optional source refresh intervals (#589)
+
+Verification policy schema 1.2 permits an optional strict positive whole-number
+`refresh_interval_days` on a registered source. Omission preserves the existing weekly-to-daily
+calendar and SGN's earlier daily override, including legacy serialized identities. None of the 46
+current source settings is changed. Explicit intervals cannot combine with `daily_from_collection`.
+
+Configure an interval before an election's first verification activation. The existing immutable
+activation record pins only explicit source intervals. Adding, changing or removing one after
+activation is rejected before any attempt or state write; a legacy activation without a pin
+continues unchanged and needs no historical Git object. Do not reset activation or rewrite old
+checks to recadence an active cycle. A new cycle requires its own reviewed policy and activation.
+
+Attempt obligations use fixed Pacific dates anchored to collection and regular issuance, plus
+actual activation, issuance and election-day duties. A late run records the latest owed configured
+slot with its actual later check time; older missed duties remain reportable. Failure or a later
+success never reanchors that date set or creates extra failure slots between configured dates.
+
+Freshness is separate: a real reviewed success plus N elapsed UTC days supplies its deadline.
+Omitted settings inherit seven days before regular issuance and one day thereafter (SGN daily
+from collection). At issuance an existing weekly deadline may shorten, but an already overdue
+deadline never moves later and a success is never treated as 24 hours old before 24 hours elapsed.
+Pacific midnight and DST do not substitute for elapsed UTC time. Date-only review evidence supplies
+no invented check instant; its accepted facts remain canonical while timed freshness is unknown.
+
+Reports distinguish the finite attempt date, true last success and freshness due/overdue state.
+A timezone-aware evaluation clock is required to decide within-day freshness; a date-only plan
+does not invent one. Neither overdue freshness nor interval qualification creates an access-only
+release gate, deletes retained facts, resolves an old failure or supplies #497 scheduled reuse.
 
 Source discovery uses four preregistration states: `published`, `not_found`,
 `not_an_endorsement_publisher`, and `access_restricted`. These describe publication discovery,

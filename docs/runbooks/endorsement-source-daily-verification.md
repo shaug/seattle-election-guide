@@ -74,6 +74,46 @@ the review time and durable evidence reference under existing authority. Compreh
 check, next due date, and limitation. Unapproved captures and fixture runs do not
 populate the successful verification date.
 
+### Optional whole-day intervals (#589)
+
+All 46 current sources retain their omitted settings and existing frequencies. For a new cycle
+only, policy schema 1.2 accepts `refresh_interval_days: N` on a registered source: a positive
+integer, not a boolean, string, fraction or zero. It cannot combine with
+`daily_from_collection: true`. The existing activation records the explicit source-to-interval
+map once. Adding, editing or removing an interval after activation fails before attempts/writes;
+do not rewrite activation or backfill historical work. Legacy omitted settings need no pin or
+historical Git object. `verification validate` checks archived pin structure/source membership;
+planning and running also require its exact match to current explicit settings.
+
+Explicit slots are collection-anchored before issuance, issuance-anchored afterward, with actual
+activation, issuance and final election-day duties. A late run binds `scheduled_for` to the latest
+owed configured slot while retaining the actual check time and older missed work. Repeated polling
+does not invent extra intervening attempt dates or inflate the three-distinct-slot escalation.
+`due`/`next_due` describe attempt work, not evidence age. `refresh_interval_days`, `scheduled_for`
+and cadence `interval` appear only for explicitly configured sources.
+
+`freshness_due_at` uses the last actual completed manual review or approved live check plus elapsed
+UTC days. Failed, fixture, unapproved, handled-access and administrative observations never advance
+that anchor. With omitted defaults, regular issuance shortens a future weekly deadline while
+preserving earlier debt and a full 24 hours since success; SGN remains daily from collection.
+When a real evaluation clock is available, `freshness_due` is true at the deadline and
+`freshness_overdue` only after it. `run --checked-at` supplies its actual clock. A read-only example:
+
+```bash
+uv run election-guide verification plan config/verification.yaml \
+  --as-of 2026-10-27 --as-of-at 2026-10-27T18:00:00Z
+```
+
+The clock must include a timezone and match `--as-of` in Pacific time. Omit `--as-of-at` for a
+date-only plan; within-day freshness booleans are then absent. Without a genuinely timed success,
+the deadline remains unknown. Do not infer a midnight success from an old dated facts document.
+None of these reporting states removes canonical verified evidence, permits release vetoes,
+performs publisher access, changes the current cron, or grants #497 adoption/reuse credit.
+
+The legacy `freshness` label describes the latest observation/review/access condition, not its
+elapsed age. Read `freshness_due_at`, `freshness_due` and `freshness_overdue` for age; a last
+successful observation can remain the latest observation while its next freshness deadline is overdue.
+
 ## Git-backed evidence
 
 The workflow continues `codex/endorsement-verification-state`, merges current
