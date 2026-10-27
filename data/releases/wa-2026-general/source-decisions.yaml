@@ -1,6 +1,6 @@
 schema_version: '1.0'
 election_id: wa-2026-general
-data_as_of: '2026-10-25T02:45:30Z'
+data_as_of: '2026-10-27T11:02:37.944401+00:00'
 reviewer: OpenAI Codex / root (explicit maintainer delegation)
 review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured 21
   new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every new or
@@ -1530,6 +1530,48 @@ sources:
       District and final bold Vote Smith instruction; current article original SHA-256 a9380cbc6d99ce99af0675543a2759912964439ef28dfed9c32c115a489eadf3,
       numbered text lines 38-40 and 58-59. Capture capture-seattle-gay-news-20261023T075253Z-440582633817; verified
       manual record manual-seattle-gay-news-20261023T075841Z-d1aebd1111a4.
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+    evidence_url: https://www.sgn.org/story/171504/
+    evidence_excerpt: Vote “No” on IL26-638, IL26-001, and IP26-645.
+    evidence_locator: SGN Editorial Board, story171504; full current article and final No instruction; exact initiative
+      ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/001
+    captured_at: '2026-10-27T10:51:14.822675+00:00'
+    reviewed_at: '2026-10-27T11:02:37.944401+00:00'
+    reviewer: OpenAI Codex/root/review_608_code_c340
+    review_note: 'Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340;
+      full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26;
+      endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z.
+      Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.'
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+    evidence_url: https://www.sgn.org/story/171504/
+    evidence_excerpt: Vote “No” on IL26-638, IL26-001, and IP26-645.
+    evidence_locator: SGN Editorial Board, story171504; full current article and final No instruction; exact initiative
+      ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/638
+    captured_at: '2026-10-27T10:51:14.822675+00:00'
+    reviewed_at: '2026-10-27T11:02:37.944401+00:00'
+    reviewer: OpenAI Codex/root/review_608_code_c340
+    review_note: 'Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340;
+      full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26;
+      endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z.
+      Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.'
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+    evidence_url: https://www.sgn.org/story/171504/
+    evidence_excerpt: Vote “No” on IL26-638, IL26-001, and IP26-645.
+    evidence_locator: SGN Editorial Board, story171504; full current article and final No instruction; exact initiative
+      ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/645
+    captured_at: '2026-10-27T10:51:14.822675+00:00'
+    reviewed_at: '2026-10-27T11:02:37.944401+00:00'
+    reviewer: OpenAI Codex/root/review_608_code_c340
+    review_note: 'Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340;
+      full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26;
+      endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z.
+      Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.'
 - source_id: tech-4-taxes
   captured_at: '2026-10-12T16:13:32Z'
   reviewed_at: '2026-10-12T16:24:42Z'

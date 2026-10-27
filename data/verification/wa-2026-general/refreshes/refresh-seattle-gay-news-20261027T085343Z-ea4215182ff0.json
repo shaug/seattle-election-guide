@@ -1,0 +1,13 @@
+{
+  "capture_id": "capture-seattle-gay-news-20261027T085343Z-94bdc8b4a443",
+  "checked_at": "2026-10-27T08:53:43Z",
+  "content_changed": true,
+  "diff": [],
+  "error": null,
+  "id": "refresh-seattle-gay-news-20261027T085343Z-ea4215182ff0",
+  "previous_snapshot_id": "extraction-seattle-gay-news-20261026T085554Z-338032936772",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-seattle-gay-news-20261027T085343Z-8977249922f4",
+  "source_id": "seattle-gay-news",
+  "status": "updated"
+}

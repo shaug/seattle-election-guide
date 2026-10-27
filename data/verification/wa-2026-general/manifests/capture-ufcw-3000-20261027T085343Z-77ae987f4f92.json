@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 220731,
+  "canonical_url": "https://ufcw3000.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "cd638ae683660d26e19a1d991e595756d70588c0b778d7f53eb6222ced766411",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20261027T085343Z-77ae987f4f92",
+  "media_type": "text/html;charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Public observation; original response bytes are transient.",
+  "requested_url": "https://ufcw3000.org/endorsements",
+  "retrieved_at": "2026-10-27T08:53:43Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "title": "Official endorsement discovery input",
+  "updated_at": null
+}

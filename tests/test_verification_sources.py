@@ -156,6 +156,32 @@ def test_six_general_sources_match_reviewed_facts_and_cover_all_eligible_sources
     }
 
 
+def test_sgn_current_measures_preserve_all_eleven_reviewed_decisions() -> None:
+    from election_guide.collection.adapters import extract_decisions
+    from election_guide.collection.refresh import read_adapter_spec
+
+    spec = read_adapter_spec(ROOT / "config/adapters/wa-2026-general/seattle-gay-news.yaml")
+    decisions = extract_decisions(
+        spec,
+        (ROOT / "tests/fixtures/verification/seattle-gay-news-current-measures.html").read_bytes(),
+        media_type="text/html",
+    )
+    assert {decision.race_id: decision.candidate_ids for decision in decisions} == {
+        "initiative-26-001": ["initiative-26-001--no"],
+        "initiative-26-638": ["initiative-26-638--no"],
+        "initiative-26-645": ["initiative-26-645--no"],
+        "king-county-council-2": ["king-county-council-2--rebecca-saldana"],
+        "ld-37-state-representative-1": ["ld-37-state-representative-1--kelabe-tewolde"],
+        "ld-37-state-representative-2": ["ld-37-state-representative-2--jaelynn-scott"],
+        "ld-37-state-senator": ["ld-37-state-senator--tatiana-brown"],
+        "ld-43-state-senator": ["ld-43-state-senator--hannah-sabio-howell"],
+        "seattle-city-council-5": ["seattle-city-council-5--nilu-jenks"],
+        "us-house-7": ["us-house-7--pramila-jayapal"],
+        "us-house-9": ["us-house-9--adam-smith"],
+    }
+    assert all(decision.status == "endorsed" and decision.requires_review for decision in decisions)
+
+
 def test_wfp_complete_publication_extracts_all_ten_reviewed_choices() -> None:
     from election_guide.collection.adapters import extract_decisions
     from election_guide.collection.refresh import read_adapter_spec

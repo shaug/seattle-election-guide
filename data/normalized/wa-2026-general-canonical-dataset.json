@@ -559,6 +559,29 @@
     {
       "availability": "captured",
       "browser_required": false,
+      "byte_length": 2471,
+      "canonical_url": "https://www.sgn.org/story/171504/",
+      "capture_method": "manual_upload",
+      "content_sha256": "06e504ab5c346feeb85f937603728991e77a3f31884c60df28b8ca358ba5b4a2",
+      "http_status": null,
+      "id": "capture-seattle-gay-news-20261027T105114Z-e8bd283a4d71",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://www.sgn.org/story/171504/",
+      "retrieved_at": "2026-10-27T10:51:14.822675Z",
+      "schema_version": "1.0",
+      "source_id": "seattle-gay-news",
+      "storage_reference": "sha256/06/06e504ab5c346feeb85f937603728991e77a3f31884c60df28b8ca358ba5b4a2",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Seattle Gay News Editorial Board",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
       "byte_length": 7705,
       "canonical_url": "https://tech4taxes.org/endorsements",
       "capture_method": "manual_upload",
@@ -5797,6 +5820,51 @@
       "raw_candidate_text": "Adam Smith",
       "raw_notes": "Issue #472: OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23 independently reviewed the complete source block and its retained October 23 official originals at 2026-10-23T08:37:27.623952Z; initial research by OpenAI Codex /root/review_472_political_oct23. Seven prior July current-cycle SGN decisions remain qualified as live after the primary, not a separate general-election slate; add only the October 22 Adam Smith editorial. All prior decision dictionaries and historical approvals preserved. Actual review and two-claim admission: data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. No personal shaug source read or native baseline approval asserted. Prior source review: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle editorial endorsement index; shaug verified all seven general-ballot matches and the omissions of Kshama Sawant and the out-of-inventory library levy.",
       "raw_race_text": "U.S. Representative — Congressional District 9",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "capture_id": "capture-seattle-gay-news-20261027T105114Z-e8bd283a4d71",
+      "evidence_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+      "evidence_locator": "SGN Editorial Board, story171504; full current article and final No instruction; exact initiative ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/001",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-e9e266a3e6e729df",
+      "raw_candidate_text": "No",
+      "raw_notes": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+      "raw_race_text": "Initiative IL26-001 — Parental Rights in Public Schools",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "capture_id": "capture-seattle-gay-news-20261027T105114Z-e8bd283a4d71",
+      "evidence_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+      "evidence_locator": "SGN Editorial Board, story171504; full current article and final No instruction; exact initiative ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/638",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-4858a9b0e7af636e",
+      "raw_candidate_text": "No",
+      "raw_notes": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+      "raw_race_text": "Initiative IL26-638 — Participation in K-12 School Athletics",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "capture_id": "capture-seattle-gay-news-20261027T105114Z-e8bd283a4d71",
+      "evidence_excerpt": "Vote “No” on IL26-638, IL26-001, and IP26-645.",
+      "evidence_locator": "SGN Editorial Board, story171504; full current article and final No instruction; exact initiative ID and subject; data/review/rechecks/wa-2026-general-2026-10-27-sgn.json#/changes/645",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-68961b624ac8f038",
+      "raw_candidate_text": "No",
+      "raw_notes": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+      "raw_race_text": "Initiative IP26-645 — State and Local Taxes",
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "seattle-gay-news"
@@ -21852,6 +21920,72 @@
       "reviewed_at": "2026-10-23T08:37:27.623952Z",
       "reviewer": "OpenAI Codex delegated independent reviewer /root/review_472_labor_rights_oct23",
       "source_capture_id": "capture-seattle-gay-news-20261023T075253Z-f63d21380e40",
+      "source_id": "seattle-gay-news",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-001--no": "1"
+      },
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-e9e266a3e6e729df",
+      "id": "endorsement-d5fe555601d2c0a1",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+      "published_at": null,
+      "race_id": "initiative-26-001",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-27T11:02:37.944401Z",
+      "reviewer": "OpenAI Codex/root/review_608_code_c340",
+      "source_capture_id": "capture-seattle-gay-news-20261027T105114Z-e8bd283a4d71",
+      "source_id": "seattle-gay-news",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-638--no": "1"
+      },
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-4858a9b0e7af636e",
+      "id": "endorsement-1f83b8e1666a133e",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+      "published_at": null,
+      "race_id": "initiative-26-638",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-27T11:02:37.944401Z",
+      "reviewer": "OpenAI Codex/root/review_608_code_c340",
+      "source_capture_id": "capture-seattle-gay-news-20261027T105114Z-e8bd283a4d71",
+      "source_id": "seattle-gay-news",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "initiative-26-645--no": "1"
+      },
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-68961b624ac8f038",
+      "id": "endorsement-0ef00f7753e404db",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #497/#647 delegated current official factual review by OpenAI Codex/root/review_608_code_c340; full story171504 explicitly says No on IL26-638, IL26-001 and IP26-645. Printed publication date2026-10-26; endorsement first appearance unknown. Actual manual observation/review times below, distinct from native08:53:43Z. Add only this exact frozen No choice; retain old8 provenance and all held/dual treatments.",
+      "published_at": null,
+      "race_id": "initiative-26-645",
+      "review_item_id": null,
+      "reviewed_at": "2026-10-27T11:02:37.944401Z",
+      "reviewer": "OpenAI Codex/root/review_608_code_c340",
+      "source_capture_id": "capture-seattle-gay-news-20261027T105114Z-e8bd283a4d71",
       "source_id": "seattle-gay-news",
       "status": "endorsed"
     },
