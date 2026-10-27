@@ -441,7 +441,24 @@ approval of later endorsement changes.
 
 Keep the normal cadence and immutable history intact. A fixture, operator check,
 or no-due run cannot stand in for the required independent scheduled execution.
-Inaccessible originals and incomplete live evidence remain open obligations.
+
+A failed automatic fetch does not establish that an ordinary browser is denied access.
+An authorized public browser view or supplied PDF/image can support normal factual review,
+while respecting source-access restrictions. Record the official URL, actual observation or
+known capture time, named reviewer and review time, covered races/choices, allocations and
+limitations in the existing facts-only recheck packet. Keep full third-party artifacts private.
+An unchanged comparison needs no ledger rewrite; additions or changes still require normal
+factual admission and protected delivery. See the [SEIU supplied-snapshot recheck](../../data/review/rechecks/wa-2026-general-2026-10-27-seiu-supplied-snapshot.json).
+
+That review creates no automatic success, native-snapshot approval, scheduled reuse or failure
+reset. All six automatic lanes, ordinary attempts, cadence and access safeguards remain intact.
+Incomplete or unreviewed scope remains explicit.
+
+Future direct HTTP-fetch failures may append a bounded observation of the actual response
+status or no response, followed-redirect count, and same-origin/cross-origin/refused class.
+The fixed failure classification remains unchanged; challenge stays `UNKNOWN`, not a WAF
+finding. The note contains no URLs, header values, environment data or response body and
+does not change access or retry behavior.
 
 ### October 20 delegated daily reviews
 

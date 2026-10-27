@@ -11,6 +11,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
 from http.client import HTTPConnection, HTTPResponse, HTTPSConnection
+from typing import Literal
 from urllib.parse import urlencode, urljoin, urlsplit, urlunsplit
 
 from election_guide.validation import validated_http_url, validated_media_type
@@ -45,6 +46,23 @@ class HttpArtifact:
     media_type: str
 
 
+class HttpFetchFailure(ValueError):
+    """Keep the existing failure text/cause with only bounded transport facts."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        response_status: int | None,
+        followed_redirects: int,
+        redirect_class: Literal["SAME_ORIGIN", "CROSS_ORIGIN", "REFUSED"],
+    ) -> None:
+        super().__init__(message)
+        self.response_status = response_status
+        self.followed_redirects = followed_redirects
+        self.redirect_class = redirect_class
+
+
 def fetch_http(
     url: str, *, timeout_seconds: float = 30, form: dict[str, str] | None = None
 ) -> HttpArtifact:
@@ -56,9 +74,19 @@ def fetch_http(
     redirects: list[str] = []
     deadline = time.monotonic() + timeout_seconds
     body = None if form is None else urlencode(form).encode("ascii")
+    initial = urlsplit(requested_url)
+    initial_origin = (
+        initial.scheme,
+        initial.hostname,
+        initial.port or (443 if initial.scheme == "https" else 80),
+    )
+    response_status: int | None = None
+    followed_redirects = 0
+    redirect_class: Literal["SAME_ORIGIN", "CROSS_ORIGIN", "REFUSED"] = "SAME_ORIGIN"
 
     try:
         for _ in range(MAX_REDIRECTS + 1):
+            response_status = None
             remaining = _remaining_seconds(deadline)
             split = urlsplit(current_url)
             host = split.hostname
@@ -99,15 +127,28 @@ def fetch_http(
                         ),
                     },
                 )
+                if redirects:
+                    # Count a followed hop only after its request has been sent.
+                    followed_redirects += 1
+                    if (split.scheme, host, port) != initial_origin:
+                        redirect_class = "CROSS_ORIGIN"
                 response = connection.getresponse()
+                response_status = response.status
                 if response.status in REDIRECT_STATUSES:
                     if form is not None:
+                        redirect_class = "REFUSED"
                         raise ValueError("live collection refuses a POST redirect")
                     location = response.getheader("Location")
                     if location is None:
+                        redirect_class = "REFUSED"
                         raise ValueError("redirect response has no Location header")
-                    redirected = validated_http_url(urljoin(current_url, location))
+                    try:
+                        redirected = validated_http_url(urljoin(current_url, location))
+                    except ValueError:
+                        redirect_class = "REFUSED"
+                        raise
                     if split.scheme == "https" and urlsplit(redirected).scheme != "https":
+                        redirect_class = "REFUSED"
                         raise ValueError(HTTPS_DOWNGRADE_REFUSED)
                     redirects.append(redirected)
                     current_url = redirected
@@ -130,11 +171,18 @@ def fetch_http(
                 deadline_timer.cancel()
                 connection.close()
                 peer.close()
+        redirect_class = "REFUSED"
         raise ValueError(REDIRECT_LIMIT_EXCEEDED)
     except (OSError, TimeoutError, ValueError) as error:
-        if time.monotonic() >= deadline:
-            raise ValueError(TOTAL_TIMEOUT_EXCEEDED) from error
-        raise ValueError(f"{FAILURE_PREFIX}{error}") from error
+        message = (
+            TOTAL_TIMEOUT_EXCEEDED if time.monotonic() >= deadline else f"{FAILURE_PREFIX}{error}"
+        )
+        raise HttpFetchFailure(
+            message,
+            response_status=response_status,
+            followed_redirects=followed_redirects,
+            redirect_class=redirect_class,
+        ) from error
 
 
 def _read_response(response: HTTPResponse, peer: socket.socket, deadline: float) -> bytes:
