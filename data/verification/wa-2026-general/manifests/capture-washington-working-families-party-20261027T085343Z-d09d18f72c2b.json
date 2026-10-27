@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 2383,
+  "canonical_url": "https://workingfamilies.org/wp-admin/admin-ajax.php",
+  "capture_method": "static_html",
+  "content_sha256": "193b7dbe1a1e2883513cc49a6c434ab19689a377623774295d7c4fc994890574",
+  "http_status": 200,
+  "id": "capture-washington-working-families-party-20261027T085343Z-d09d18f72c2b",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Public response observed; original bytes are transient. Public POST; application/x-www-form-urlencoded; action=more_candidates&state=25&count=0. Reviewed WFP request bound by verification policy.",
+  "requested_url": "https://workingfamilies.org/wp-admin/admin-ajax.php",
+  "retrieved_at": "2026-10-27T08:53:43Z",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "title": "Official wa-2026-general endorsement publication",
+  "updated_at": null
+}

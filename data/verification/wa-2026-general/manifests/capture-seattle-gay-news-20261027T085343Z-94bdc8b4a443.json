@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 1134,
+  "canonical_url": "https://www.sgn.org/ch/News/Seattle",
+  "capture_method": "manual_upload",
+  "content_sha256": "104feb749d42a62d831fc4e128172b2345fc59ae462ed3d100a6ead3bf1f596b",
+  "http_status": null,
+  "id": "capture-seattle-gay-news-20261027T085343Z-94bdc8b4a443",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Generated comparison; public observations identify transient HTTP inputs.",
+  "requested_url": "https://www.sgn.org/ch/News/Seattle",
+  "retrieved_at": "2026-10-27T08:53:43Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "title": "Derived article-heading comparison; inputs linked by discovery record",
+  "updated_at": null
+}
