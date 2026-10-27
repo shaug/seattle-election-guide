@@ -77,3 +77,39 @@ denominator, but both remain visible as separate coverage signals.
 - The published guide is generated from one publication view model.
 - Reproducibility tests use an explicit build timestamp or `SOURCE_DATE_EPOCH`.
 - GitHub Releases, rather than normal commits, carry versioned publication bundles.
+
+## Selected-precinct candidate visibility (#608, revised October26,2026)
+
+Scott approved one searchable precinct selector for Seattle's November2026 general
+election. Precinct membership intersects official eligibility with SEG coverage and
+the existing public-visibility rules. Both general list views default to Contested,
+with that choice visibly selected. All is an explicit working override that includes
+applicable uncontested candidate races admitted by the full verified-source policy.
+Both modes retain applicable ballot measures and obey the selected geography.
+Changing or clearing precinct preserves the chosen race mode. Source selection never
+changes membership. This does not change source scoring, canonical records, primary,
+or ballot ordering. This revision supersedes the October25 contested-only precinct rule.
+Remember only the election-specific precinct; an explicit URL choice or Clear wins.
+The location is voting geography, including for overseas voters, not current device
+location. Address and device lookup are later work feeding the same resolver.
+
+## Precinct evidence acceptance (#608, October27,2026)
+
+Scott approved shipping the reviewed feature and removed precinct-specific sample
+ballots as a requirement. The accepted evidence is the reviewed 1,020 official
+precinct assignments, current district declarations, all 52 contest mappings,
+31 independent exact-set checks, and the county composite ballot. This decision
+does not create a mandatory sample-collection follow-up.
+
+Actual end-to-end precinct/part/style ballot comparisons have not been performed.
+The county composite is not a precinct-specific ballot. Scott's uncertainty about
+the availability of such examples does not establish that none exist. Current
+official geography, correct mappings, admission tests, primary compatibility,
+normal protected release checks, and independent production acceptance remain
+required. No mapping or release guard is relaxed by this decision.
+
+The following October26 requirement is superseded, retained as decision history:
+
+> Source-composed geography fixtures support implementation but do not satisfy the
+> release requirement for actual official precinct/part/style ballot examples. A
+> working preview and that separate acceptance remain required before production.

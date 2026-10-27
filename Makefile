@@ -1,7 +1,7 @@
 .PHONY: sync format check check-election-contracts check-evidence check-results check-js check-changelog check-release-reproducible check-release-reproducible-general check-updates changelog types test test-unit test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify release-verify-primary release-verify-general hosting-stage hosting-serve hosting-deploy
 
 INTEGRATION_COMPARISONS_TESTS := tests/test_compare_rendering.py
-INTEGRATION_RENDERING_TESTS := tests/test_rendering.py
+INTEGRATION_RENDERING_TESTS := tests/test_rendering.py tests/test_precinct_rendering.py tests/test_precinct_navigation.py
 INTEGRATION_ARTIFACT_TESTS := tests/test_hosting.py tests/test_hosting_releases.py tests/test_release.py
 INTEGRATION_TESTS := $(INTEGRATION_COMPARISONS_TESTS) $(INTEGRATION_RENDERING_TESTS) $(INTEGRATION_ARTIFACT_TESTS)
 UNIT_TEST_IGNORES := $(addprefix --ignore=,$(INTEGRATION_TESTS))

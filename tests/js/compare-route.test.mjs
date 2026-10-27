@@ -62,3 +62,10 @@ test('clearing preserves whatever state the entry already carried', async () => 
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('compare-route.mjs');
 });
+
+test('one pushed comparison address commits query and fragment together', async () => {
+  const route = await router(`${PAGE}?precinct=2502&races=all#cmp=1&cols=gallstrn`);
+  route.write('cmp=1&cols=gallstrn', 'push', '?precinct=2502');
+  assert.equal(window.location.search, '?precinct=2502');
+  assert.equal(window.location.hash, '#cmp=1&cols=gallstrn');
+});

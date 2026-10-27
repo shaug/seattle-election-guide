@@ -1,0 +1,9 @@
+{
+  "release": "2026-primary.9",
+  "source_sha": "cd378c44a3dedd1059dba786725d1d022cc1403e",
+  "origin": "Retained actual published/download-verified primary9 bundle; no new download/build",
+  "html_extraction": "Only executable type=module script removed; actual embedded JSON, SSR markup and CSS retained. Current client is invoked explicitly in tests.",
+  "original_html_sha256": "166601f9338f069303bf27520347e154b106c8f6b92afe145fa0a0c58bfb6f34",
+  "fixture_html_sha256": "8c0a3091ef16ba449f0b734b76f69477d279efae449a26b8d9028cf26f05928c",
+  "original_view_model_sha256": "131823b5e211604aaa97751cfd1e5906ea818002aced78ef7b276dbd34aa84d5"
+}

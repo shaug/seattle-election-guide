@@ -1,0 +1,871 @@
+{
+  "actual_current_check_range": {
+    "actor": "OpenAI Codex/root/assess_497_remaining_adoption",
+    "first_started": "2026-10-27T11:35:54.560479+00:00",
+    "last_finished": "2026-10-27T11:35:56.759381+00:00"
+  },
+  "actual_observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+  "current_incomplete_lanes": [
+    "young-democrats-of-washington parent200 previously read but full carousel unavailable; no repeat in seven observations",
+    "sierra-club-washington HTTP200 Incapsula nonpublication",
+    "washington-for-peace-and-justice HTTP200 incomplete social carousel",
+    "washington-education-association HTTP200 member certification gate; embedded data not admitted, no Proceed or bypass"
+  ],
+  "election_id": "wa-2026-general",
+  "issues": [
+    497,
+    647
+  ],
+  "no_new_source_reviews_attestation": true,
+  "no_success_acknowledgements_for_incomplete_or_denied_scope": true,
+  "normal_failure_materializations": [
+    {
+      "actual_invocation_finished_at": "2026-10-27T11:54:30.116263+00:00",
+      "actual_invocation_started_at": "2026-10-27T11:54:29.387143+00:00",
+      "actual_observation_checked_at": "2026-10-27T11:35:54.742088+00:00",
+      "actual_source_observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "actual_writer": "OpenAI Codex/root/review_608_code_c340",
+      "available_origin_main_before_invocation": "3fea54c9501b99a234bbfeb97ac6b09707cd17c2",
+      "existing_accepted_source_review": {
+        "normal_origin_main_exact_bytes_verified": true,
+        "path": "data/verification/wa-2026-general/source-reviews/0ed4151332688a54ded6450eb9e6d4bcb739e295bc9e0bca8b114b16d638b852.json",
+        "record": {
+          "checked_at": "2026-10-23T07:43:29.535332Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json; source washington-state-democrats; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://wadems.org/2026-campaign-resources/"
+          ],
+          "original_reviewer": "OpenAI Codex /root/review_472_political_oct23",
+          "recorded_at": "2026-10-27T03:02:46.823008Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-23T07:47:20.385872Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "washington-state-democrats"
+        },
+        "sha256": "0ed4151332688a54ded6450eb9e6d4bcb739e295bc9e0bca8b114b16d638b852"
+      },
+      "exit_code": 0,
+      "interpretation": "failed observation remains failed; retained-access limitation only if emitted by normal resolver; no success/recovery/current endorsement affirmation or prior failure reclassification",
+      "label": "access40327-washington-state-democrats",
+      "normal_argv": [
+        "election-guide",
+        "verification",
+        "record-access-failure",
+        "config/verification.yaml",
+        "--election-id",
+        "wa-2026-general",
+        "--source-id",
+        "washington-state-democrats",
+        "--scheduled-for",
+        "2026-10-27",
+        "--checked-at",
+        "2026-10-27T11:35:54.742088+00:00",
+        "--reviewer",
+        "OpenAI Codex/root/assess_497_remaining_adoption",
+        "--evidence",
+        "data/review/rechecks/wa-2026-general-2026-10-27-access.json#/sources/washington-state-democrats; actual one guarded public HTTP403 at 2026-10-27T11:35:54.742088+00:00 by OpenAI Codex/root/assess_497_remaining_adoption. No response content or current endorsement verification. Normal resolver alone determines any retained-access limitation; prior facts/dates/failures/counts remain.",
+        "--category",
+        "http_status",
+        "--http-status",
+        "403"
+      ],
+      "normal_check_record": {
+        "access_disposition": {
+          "disposition": "retained_verified_with_limitation",
+          "effective_from": "2026-10-27",
+          "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+          "qualification_id": "0ed4151332688a54ded6450eb9e6d4bcb739e295bc9e0bca8b114b16d638b852"
+        },
+        "checked_at": "2026-10-27T11:35:54.742088Z",
+        "event_id": "refresh-washington-state-democrats-20261027T113554Z-8320441e32b6",
+        "evidence": "OpenAI Codex/root/assess_497_remaining_adoption: data/review/rechecks/wa-2026-general-2026-10-27-access.json#/sources/washington-state-democrats; actual one guarded public HTTP403 at 2026-10-27T11:35:54.742088+00:00 by OpenAI Codex/root/assess_497_remaining_adoption. No response content or current endorsement verification. Normal resolver alone determines any retained-access limitation; prior facts/dates/failures/counts remain.",
+        "mode": "human",
+        "recorded_at": "2026-10-27T11:54:30.018668Z",
+        "scheduled_for": "2026-10-27",
+        "source_id": "washington-state-democrats",
+        "status": "failed"
+      },
+      "normal_output_path": "data/verification/wa-2026-general/checks/2c4527d98843c5413b64d05d226090e97d1e81878a9470122c39a65cc3317246.json",
+      "normal_output_sha256": "2c4527d98843c5413b64d05d226090e97d1e81878a9470122c39a65cc3317246",
+      "normal_refresh_event": {
+        "access_failure": {
+          "category": "http_status",
+          "http_status": 403,
+          "stage": "http_fetch"
+        },
+        "capture_id": null,
+        "checked_at": "2026-10-27T11:35:54.742088Z",
+        "content_changed": null,
+        "diff": [],
+        "error": "Manual source access failed; observation evidence is in its scheduled check.",
+        "id": "refresh-washington-state-democrats-20261027T113554Z-8320441e32b6",
+        "previous_snapshot_id": null,
+        "schema_version": "1.0",
+        "snapshot_id": null,
+        "source_id": "washington-state-democrats",
+        "status": "failed"
+      },
+      "normal_refresh_path": "data/verification/wa-2026-general/refreshes/refresh-washington-state-democrats-20261027T113554Z-8320441e32b6.json",
+      "normal_refresh_sha256": "f297a50cb8c93d46684774e58582d2b2aafe9aa5b39db5427024321b8772df5b",
+      "normal_resolver_disposition": {
+        "disposition": "retained_verified_with_limitation",
+        "effective_from": "2026-10-27",
+        "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+        "qualification_id": "0ed4151332688a54ded6450eb9e6d4bcb739e295bc9e0bca8b114b16d638b852"
+      },
+      "outer_finished_at": "2026-10-27T11:54:30.144857+00:00",
+      "outer_started_at": "2026-10-27T11:54:29.370869+00:00",
+      "pid": 57272,
+      "reaped": true,
+      "source_id": "washington-state-democrats"
+    },
+    {
+      "actual_invocation_finished_at": "2026-10-27T11:54:30.849935+00:00",
+      "actual_invocation_started_at": "2026-10-27T11:54:30.182982+00:00",
+      "actual_observation_checked_at": "2026-10-27T11:35:55.855439+00:00",
+      "actual_source_observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "actual_writer": "OpenAI Codex/root/review_608_code_c340",
+      "available_origin_main_before_invocation": "3fea54c9501b99a234bbfeb97ac6b09707cd17c2",
+      "existing_accepted_source_review": {
+        "normal_origin_main_exact_bytes_verified": true,
+        "path": "data/verification/wa-2026-general/source-reviews/2db4b1a5e0c4a3c0e774bea7db38a438ef654325c407f270dc5d03356bd03ebd.json",
+        "record": {
+          "checked_at": "2026-10-19T14:38:02.275235Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source nondriver-action; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/mike-french.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/teresa.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/saldana.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/brenda-lykins.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/nilu-jenks.png?fit=1300%2C1300&ssl=1",
+            "https://ndaction.org/2026-endorsements/",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/10/IMG_20261001_093639.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/10/group-endorsement-part-2.png?fit=1300%2C1625&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/emily-clouse.png?fit=1300%2C1300&ssl=1",
+            "https://ndaction.org/wp-content/uploads/2026/09/nondriver-action-2026-endorsements.pdf",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/joe-burns.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/kelsey.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/10/IMG_20261001_093139.png?fit=1300%2C1300&ssl=1"
+          ],
+          "original_reviewer": "OpenAI Codex / oct19_civic_sources",
+          "recorded_at": "2026-10-27T03:02:27.375742Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-19T14:45:54.317990Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "nondriver-action"
+        },
+        "sha256": "2db4b1a5e0c4a3c0e774bea7db38a438ef654325c407f270dc5d03356bd03ebd"
+      },
+      "exit_code": 0,
+      "interpretation": "failed observation remains failed; retained-access limitation only if emitted by normal resolver; no success/recovery/current endorsement affirmation or prior failure reclassification",
+      "label": "access40327-nondriver-action",
+      "normal_argv": [
+        "election-guide",
+        "verification",
+        "record-access-failure",
+        "config/verification.yaml",
+        "--election-id",
+        "wa-2026-general",
+        "--source-id",
+        "nondriver-action",
+        "--scheduled-for",
+        "2026-10-27",
+        "--checked-at",
+        "2026-10-27T11:35:55.855439+00:00",
+        "--reviewer",
+        "OpenAI Codex/root/assess_497_remaining_adoption",
+        "--evidence",
+        "data/review/rechecks/wa-2026-general-2026-10-27-access.json#/sources/nondriver-action; actual one guarded public HTTP403 at 2026-10-27T11:35:55.855439+00:00 by OpenAI Codex/root/assess_497_remaining_adoption. No response content or current endorsement verification. Normal resolver alone determines any retained-access limitation; prior facts/dates/failures/counts remain.",
+        "--category",
+        "http_status",
+        "--http-status",
+        "403"
+      ],
+      "normal_check_record": {
+        "access_disposition": {
+          "disposition": "retained_verified_with_limitation",
+          "effective_from": "2026-10-27",
+          "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+          "qualification_id": "2db4b1a5e0c4a3c0e774bea7db38a438ef654325c407f270dc5d03356bd03ebd"
+        },
+        "checked_at": "2026-10-27T11:35:55.855439Z",
+        "event_id": "refresh-nondriver-action-20261027T113555Z-02f2c095386c",
+        "evidence": "OpenAI Codex/root/assess_497_remaining_adoption: data/review/rechecks/wa-2026-general-2026-10-27-access.json#/sources/nondriver-action; actual one guarded public HTTP403 at 2026-10-27T11:35:55.855439+00:00 by OpenAI Codex/root/assess_497_remaining_adoption. No response content or current endorsement verification. Normal resolver alone determines any retained-access limitation; prior facts/dates/failures/counts remain.",
+        "mode": "human",
+        "recorded_at": "2026-10-27T11:54:30.747480Z",
+        "scheduled_for": "2026-10-27",
+        "source_id": "nondriver-action",
+        "status": "failed"
+      },
+      "normal_output_path": "data/verification/wa-2026-general/checks/a92aaff86a49a19d8ceb6a6f63837d6604ac80417e747392539ccf413cb0f4c0.json",
+      "normal_output_sha256": "a92aaff86a49a19d8ceb6a6f63837d6604ac80417e747392539ccf413cb0f4c0",
+      "normal_refresh_event": {
+        "access_failure": {
+          "category": "http_status",
+          "http_status": 403,
+          "stage": "http_fetch"
+        },
+        "capture_id": null,
+        "checked_at": "2026-10-27T11:35:55.855439Z",
+        "content_changed": null,
+        "diff": [],
+        "error": "Manual source access failed; observation evidence is in its scheduled check.",
+        "id": "refresh-nondriver-action-20261027T113555Z-02f2c095386c",
+        "previous_snapshot_id": null,
+        "schema_version": "1.0",
+        "snapshot_id": null,
+        "source_id": "nondriver-action",
+        "status": "failed"
+      },
+      "normal_refresh_path": "data/verification/wa-2026-general/refreshes/refresh-nondriver-action-20261027T113555Z-02f2c095386c.json",
+      "normal_refresh_sha256": "d1a54c4655473f34f6f03efb6c797ea3dc0304d90f755b627e37c46b6dbf4456",
+      "normal_resolver_disposition": {
+        "disposition": "retained_verified_with_limitation",
+        "effective_from": "2026-10-27",
+        "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+        "qualification_id": "2db4b1a5e0c4a3c0e774bea7db38a438ef654325c407f270dc5d03356bd03ebd"
+      },
+      "outer_finished_at": "2026-10-27T11:54:30.881183+00:00",
+      "outer_started_at": "2026-10-27T11:54:30.166890+00:00",
+      "pid": 57276,
+      "reaped": true,
+      "source_id": "nondriver-action"
+    },
+    {
+      "actual_invocation_finished_at": "2026-10-27T11:54:31.647447+00:00",
+      "actual_invocation_started_at": "2026-10-27T11:54:30.920933+00:00",
+      "actual_observation_checked_at": "2026-10-27T11:35:56.417241+00:00",
+      "actual_source_observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "actual_writer": "OpenAI Codex/root/review_608_code_c340",
+      "available_origin_main_before_invocation": "3fea54c9501b99a234bbfeb97ac6b09707cd17c2",
+      "existing_accepted_source_review": {
+        "normal_origin_main_exact_bytes_verified": true,
+        "path": "data/verification/wa-2026-general/source-reviews/56219d1619fe9f4447158c79ecf00e41ee8226ebc56604c359f851d39cc57f9f.json",
+        "record": {
+          "checked_at": "2026-10-19T14:46:34.386000Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source planned-parenthood-alliance-advocates; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+            "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-melody",
+            "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-birk",
+            "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-angelis"
+          ],
+          "original_reviewer": "OpenAI Codex / oct19_labor_rights_sources",
+          "recorded_at": "2026-10-27T03:02:29.509331Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-19T14:47:14.537881Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "planned-parenthood-alliance-advocates"
+        },
+        "sha256": "56219d1619fe9f4447158c79ecf00e41ee8226ebc56604c359f851d39cc57f9f"
+      },
+      "exit_code": 0,
+      "interpretation": "failed observation remains failed; retained-access limitation only if emitted by normal resolver; no success/recovery/current endorsement affirmation or prior failure reclassification",
+      "label": "access40327-planned-parenthood-alliance-advocates",
+      "normal_argv": [
+        "election-guide",
+        "verification",
+        "record-access-failure",
+        "config/verification.yaml",
+        "--election-id",
+        "wa-2026-general",
+        "--source-id",
+        "planned-parenthood-alliance-advocates",
+        "--scheduled-for",
+        "2026-10-27",
+        "--checked-at",
+        "2026-10-27T11:35:56.417241+00:00",
+        "--reviewer",
+        "OpenAI Codex/root/assess_497_remaining_adoption",
+        "--evidence",
+        "data/review/rechecks/wa-2026-general-2026-10-27-access.json#/sources/planned-parenthood-alliance-advocates; actual one guarded public HTTP403 at 2026-10-27T11:35:56.417241+00:00 by OpenAI Codex/root/assess_497_remaining_adoption. No response content or current endorsement verification. Normal resolver alone determines any retained-access limitation; prior facts/dates/failures/counts remain.",
+        "--category",
+        "http_status",
+        "--http-status",
+        "403"
+      ],
+      "normal_check_record": {
+        "access_disposition": {
+          "disposition": "retained_verified_with_limitation",
+          "effective_from": "2026-10-27",
+          "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+          "qualification_id": "56219d1619fe9f4447158c79ecf00e41ee8226ebc56604c359f851d39cc57f9f"
+        },
+        "checked_at": "2026-10-27T11:35:56.417241Z",
+        "event_id": "refresh-planned-parenthood-alliance-advocates-20261027T113556Z-756080a04699",
+        "evidence": "OpenAI Codex/root/assess_497_remaining_adoption: data/review/rechecks/wa-2026-general-2026-10-27-access.json#/sources/planned-parenthood-alliance-advocates; actual one guarded public HTTP403 at 2026-10-27T11:35:56.417241+00:00 by OpenAI Codex/root/assess_497_remaining_adoption. No response content or current endorsement verification. Normal resolver alone determines any retained-access limitation; prior facts/dates/failures/counts remain.",
+        "mode": "human",
+        "recorded_at": "2026-10-27T11:54:31.551603Z",
+        "scheduled_for": "2026-10-27",
+        "source_id": "planned-parenthood-alliance-advocates",
+        "status": "failed"
+      },
+      "normal_output_path": "data/verification/wa-2026-general/checks/f6450170111316a7cc319f84653428a405ec3b9632acfb85fcbc49061aded221.json",
+      "normal_output_sha256": "f6450170111316a7cc319f84653428a405ec3b9632acfb85fcbc49061aded221",
+      "normal_refresh_event": {
+        "access_failure": {
+          "category": "http_status",
+          "http_status": 403,
+          "stage": "http_fetch"
+        },
+        "capture_id": null,
+        "checked_at": "2026-10-27T11:35:56.417241Z",
+        "content_changed": null,
+        "diff": [],
+        "error": "Manual source access failed; observation evidence is in its scheduled check.",
+        "id": "refresh-planned-parenthood-alliance-advocates-20261027T113556Z-756080a04699",
+        "previous_snapshot_id": null,
+        "schema_version": "1.0",
+        "snapshot_id": null,
+        "source_id": "planned-parenthood-alliance-advocates",
+        "status": "failed"
+      },
+      "normal_refresh_path": "data/verification/wa-2026-general/refreshes/refresh-planned-parenthood-alliance-advocates-20261027T113556Z-756080a04699.json",
+      "normal_refresh_sha256": "c6b1e1ff43d5a190fa4e1ed198b12594e451b1a9d91b7aa953eb715c23f38614",
+      "normal_resolver_disposition": {
+        "disposition": "retained_verified_with_limitation",
+        "effective_from": "2026-10-27",
+        "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+        "qualification_id": "56219d1619fe9f4447158c79ecf00e41ee8226ebc56604c359f851d39cc57f9f"
+      },
+      "outer_finished_at": "2026-10-27T11:54:31.677533+00:00",
+      "outer_started_at": "2026-10-27T11:54:30.904277+00:00",
+      "pid": 57280,
+      "reaped": true,
+      "source_id": "planned-parenthood-alliance-advocates"
+    },
+    {
+      "actual_invocation_finished_at": "2026-10-27T11:54:32.393248+00:00",
+      "actual_invocation_started_at": "2026-10-27T11:54:31.717851+00:00",
+      "actual_observation_checked_at": "2026-10-27T11:35:56.474202+00:00",
+      "actual_source_observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "actual_writer": "OpenAI Codex/root/review_608_code_c340",
+      "available_origin_main_before_invocation": "3fea54c9501b99a234bbfeb97ac6b09707cd17c2",
+      "existing_accepted_source_review": {
+        "normal_origin_main_exact_bytes_verified": true,
+        "path": "data/verification/wa-2026-general/source-reviews/b074c438e7f78966982412a5368b2a3467c886429587c79b28651ef8a4c89cb3.json",
+        "record": {
+          "checked_at": "2026-10-19T14:40:58.618629Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source the-stranger; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+            "https://i0.wp.com/www.thestranger.com/wp-content/uploads/2026/10/SECB-Cheat-Sheet_Oct_Stranger_2026-1.jpg?fit=695%2C2520&ssl=1",
+            "https://www.thestranger.com/news/the-strangers-2026-general-election-endorsements/"
+          ],
+          "original_reviewer": "OpenAI Codex / oct19_civic_sources",
+          "recorded_at": "2026-10-27T03:02:38.124607Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-19T14:45:54.317571Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "the-stranger"
+        },
+        "sha256": "b074c438e7f78966982412a5368b2a3467c886429587c79b28651ef8a4c89cb3"
+      },
+      "exit_code": 0,
+      "interpretation": "failed observation remains failed; retained-access limitation only if emitted by normal resolver; no success/recovery/current endorsement affirmation or prior failure reclassification",
+      "label": "access40327-the-stranger",
+      "normal_argv": [
+        "election-guide",
+        "verification",
+        "record-access-failure",
+        "config/verification.yaml",
+        "--election-id",
+        "wa-2026-general",
+        "--source-id",
+        "the-stranger",
+        "--scheduled-for",
+        "2026-10-27",
+        "--checked-at",
+        "2026-10-27T11:35:56.474202+00:00",
+        "--reviewer",
+        "OpenAI Codex/root/assess_497_remaining_adoption",
+        "--evidence",
+        "data/review/rechecks/wa-2026-general-2026-10-27-access.json#/sources/the-stranger; actual one guarded public HTTP403 at 2026-10-27T11:35:56.474202+00:00 by OpenAI Codex/root/assess_497_remaining_adoption. No response content or current endorsement verification. Normal resolver alone determines any retained-access limitation; prior facts/dates/failures/counts remain.",
+        "--category",
+        "http_status",
+        "--http-status",
+        "403"
+      ],
+      "normal_check_record": {
+        "access_disposition": {
+          "disposition": "retained_verified_with_limitation",
+          "effective_from": "2026-10-27",
+          "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+          "qualification_id": "b074c438e7f78966982412a5368b2a3467c886429587c79b28651ef8a4c89cb3"
+        },
+        "checked_at": "2026-10-27T11:35:56.474202Z",
+        "event_id": "refresh-the-stranger-20261027T113556Z-65e56b2ce308",
+        "evidence": "OpenAI Codex/root/assess_497_remaining_adoption: data/review/rechecks/wa-2026-general-2026-10-27-access.json#/sources/the-stranger; actual one guarded public HTTP403 at 2026-10-27T11:35:56.474202+00:00 by OpenAI Codex/root/assess_497_remaining_adoption. No response content or current endorsement verification. Normal resolver alone determines any retained-access limitation; prior facts/dates/failures/counts remain.",
+        "mode": "human",
+        "recorded_at": "2026-10-27T11:54:32.296776Z",
+        "scheduled_for": "2026-10-27",
+        "source_id": "the-stranger",
+        "status": "failed"
+      },
+      "normal_output_path": "data/verification/wa-2026-general/checks/0fe23d03e58d43405bea6babe8e7d365c67c60c0ae32fd95940e776b93c3f539.json",
+      "normal_output_sha256": "0fe23d03e58d43405bea6babe8e7d365c67c60c0ae32fd95940e776b93c3f539",
+      "normal_refresh_event": {
+        "access_failure": {
+          "category": "http_status",
+          "http_status": 403,
+          "stage": "http_fetch"
+        },
+        "capture_id": null,
+        "checked_at": "2026-10-27T11:35:56.474202Z",
+        "content_changed": null,
+        "diff": [],
+        "error": "Manual source access failed; observation evidence is in its scheduled check.",
+        "id": "refresh-the-stranger-20261027T113556Z-65e56b2ce308",
+        "previous_snapshot_id": null,
+        "schema_version": "1.0",
+        "snapshot_id": null,
+        "source_id": "the-stranger",
+        "status": "failed"
+      },
+      "normal_refresh_path": "data/verification/wa-2026-general/refreshes/refresh-the-stranger-20261027T113556Z-65e56b2ce308.json",
+      "normal_refresh_sha256": "a0d9072eaa6a615ca92750b92cbacfbd49ba92017caf61303460a8bd8a1215e2",
+      "normal_resolver_disposition": {
+        "disposition": "retained_verified_with_limitation",
+        "effective_from": "2026-10-27",
+        "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+        "qualification_id": "b074c438e7f78966982412a5368b2a3467c886429587c79b28651ef8a4c89cb3"
+      },
+      "outer_finished_at": "2026-10-27T11:54:32.430805+00:00",
+      "outer_started_at": "2026-10-27T11:54:31.700571+00:00",
+      "pid": 57284,
+      "reaped": true,
+      "source_id": "the-stranger"
+    }
+  ],
+  "record_type": "actual_current_due_observations_and_normal_failure_materialization",
+  "recorded_at": "2026-10-27T11:50:29.310041+00:00",
+  "recorded_by": "OpenAI Codex/root/review_608_code_c340",
+  "scheduled_for": "2026-10-27",
+  "schema_version": "1.0",
+  "scope": "Seven actual ordinary current27 requests, four HTTP403 and three HTTP200 incomplete/member routes; no endorsement verification or new fact admission. Earlier no-attempt assessments stay historical.",
+  "source_policy_boundary": "Only four actual typed HTTP403 observations enter normal record-access-failure once each. The normal resolver independently checks exact already accepted source-review bytes/current policy and intervening integrity conditions. A failed observation remains failed even if it carries retained_verified_with_limitation; unresolved stays unresolved. No prior26 reclassification, count reset or manual replay of native SEIU11.",
+  "sources": {
+    "nondriver-action": {
+      "checked_at": "2026-10-27T11:35:55.855439+00:00",
+      "complete_current_factual_review": false,
+      "current_due_reference": {
+        "id": "e1c816532d610c3c9ce4849bf45bcf37362e88a909b25ca5971555d85f86b768",
+        "path": "data/verification/wa-2026-general/checks/e1c816532d610c3c9ce4849bf45bcf37362e88a909b25ca5971555d85f86b768.json",
+        "record": {
+          "checked_at": "2026-10-27T08:53:43Z",
+          "event_id": null,
+          "evidence": null,
+          "mode": "live",
+          "scheduled_for": "2026-10-27",
+          "source_id": "nondriver-action",
+          "status": "manual_due"
+        },
+        "sha256": "e1c816532d610c3c9ce4849bf45bcf37362e88a909b25ca5971555d85f86b768"
+      },
+      "current_supported_decisions": 0,
+      "existing_initial_review_reference": {
+        "bytes": 1913,
+        "path": "data/verification/wa-2026-general/source-reviews/2db4b1a5e0c4a3c0e774bea7db38a438ef654325c407f270dc5d03356bd03ebd.json",
+        "record": {
+          "checked_at": "2026-10-19T14:38:02.275235Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source nondriver-action; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/mike-french.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/teresa.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/saldana.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/brenda-lykins.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/nilu-jenks.png?fit=1300%2C1300&ssl=1",
+            "https://ndaction.org/2026-endorsements/",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/10/IMG_20261001_093639.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/10/group-endorsement-part-2.png?fit=1300%2C1625&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/emily-clouse.png?fit=1300%2C1300&ssl=1",
+            "https://ndaction.org/wp-content/uploads/2026/09/nondriver-action-2026-endorsements.pdf",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/joe-burns.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/09/kelsey.png?fit=1300%2C1300&ssl=1",
+            "https://i0.wp.com/ndaction.org/wp-content/uploads/2026/10/IMG_20261001_093139.png?fit=1300%2C1300&ssl=1"
+          ],
+          "original_reviewer": "OpenAI Codex / oct19_civic_sources",
+          "recorded_at": "2026-10-27T03:02:27.375742Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-19T14:45:54.317990Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "nondriver-action"
+        },
+        "role": "Existing acceptedM30 attestation reference only; no current task eligibility determination, no main-admission recheck or approval transfer",
+        "sha256": "2db4b1a5e0c4a3c0e774bea7db38a438ef654325c407f270dc5d03356bd03ebd"
+      },
+      "finished_at": "2026-10-27T11:35:55.855446+00:00",
+      "fresh_success": false,
+      "http_status": 403,
+      "method": "GET",
+      "necessary_review_gap": "Current official publication could not be read. No image/PDF/alternate endpoint was requested.",
+      "observation_classification": "ACTUAL_CURRENT_HTTP403",
+      "observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "requested_url": "https://ndaction.org/2026-endorsements/",
+      "retained_canonical_decisions": 4,
+      "short_evidence_locator": "http_status403 at the registered public endorsement URL; no response body was returned by the guarded transport.",
+      "source_id": "nondriver-action",
+      "started_at": "2026-10-27T11:35:55.783646+00:00",
+      "typed_access_diagnostic": {
+        "category": "http_status",
+        "http_status": 403,
+        "stage": "http_fetch"
+      }
+    },
+    "planned-parenthood-alliance-advocates": {
+      "checked_at": "2026-10-27T11:35:56.417241+00:00",
+      "complete_current_factual_review": false,
+      "current_due_reference": {
+        "id": "d88dc6edf6bdfd393bf523f7c3e2bd87404d58842b4e454557fdb487be054ea0",
+        "path": "data/verification/wa-2026-general/checks/d88dc6edf6bdfd393bf523f7c3e2bd87404d58842b4e454557fdb487be054ea0.json",
+        "record": {
+          "checked_at": "2026-10-27T08:53:43Z",
+          "event_id": null,
+          "evidence": null,
+          "mode": "live",
+          "scheduled_for": "2026-10-27",
+          "source_id": "planned-parenthood-alliance-advocates",
+          "status": "manual_due"
+        },
+        "sha256": "d88dc6edf6bdfd393bf523f7c3e2bd87404d58842b4e454557fdb487be054ea0"
+      },
+      "current_supported_decisions": 0,
+      "existing_initial_review_reference": {
+        "bytes": 1311,
+        "path": "data/verification/wa-2026-general/source-reviews/56219d1619fe9f4447158c79ecf00e41ee8226ebc56604c359f851d39cc57f9f.json",
+        "record": {
+          "checked_at": "2026-10-19T14:46:34.386000Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source planned-parenthood-alliance-advocates; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+            "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-melody",
+            "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-birk",
+            "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements/wa-supreme-court/wa-supreme-court-angelis"
+          ],
+          "original_reviewer": "OpenAI Codex / oct19_labor_rights_sources",
+          "recorded_at": "2026-10-27T03:02:29.509331Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-19T14:47:14.537881Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "planned-parenthood-alliance-advocates"
+        },
+        "role": "Existing acceptedM30 attestation reference only; no current task eligibility determination, no main-admission recheck or approval transfer",
+        "sha256": "56219d1619fe9f4447158c79ecf00e41ee8226ebc56604c359f851d39cc57f9f"
+      },
+      "finished_at": "2026-10-27T11:35:56.417251+00:00",
+      "fresh_success": false,
+      "http_status": 403,
+      "method": "GET",
+      "necessary_review_gap": "Current official publication could not be read. No candidate detail, alternate, member or private route was requested.",
+      "observation_classification": "ACTUAL_CURRENT_HTTP403",
+      "observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "requested_url": "https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements",
+      "retained_canonical_decisions": 26,
+      "short_evidence_locator": "http_status403 at the registered public Washington candidate-endorsements URL; no response body was returned.",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "started_at": "2026-10-27T11:35:55.856109+00:00",
+      "typed_access_diagnostic": {
+        "category": "http_status",
+        "http_status": 403,
+        "stage": "http_fetch"
+      }
+    },
+    "sierra-club-washington": {
+      "byte_length": 212,
+      "canonical_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "checked_at": "2026-10-27T11:35:54.865476+00:00",
+      "complete_current_factual_review": false,
+      "current_due_reference": {
+        "id": "2f402841a082eb405ac88abb1eaa12a11a08ea519328cd1685966f9e09f5a435",
+        "path": "data/verification/wa-2026-general/checks/2f402841a082eb405ac88abb1eaa12a11a08ea519328cd1685966f9e09f5a435.json",
+        "record": {
+          "checked_at": "2026-10-27T08:53:43Z",
+          "event_id": null,
+          "evidence": null,
+          "mode": "live",
+          "scheduled_for": "2026-10-27",
+          "source_id": "sierra-club-washington",
+          "status": "manual_due"
+        },
+        "sha256": "2f402841a082eb405ac88abb1eaa12a11a08ea519328cd1685966f9e09f5a435"
+      },
+      "current_supported_decisions": 0,
+      "existing_initial_review_reference": {
+        "bytes": 699,
+        "path": "data/verification/wa-2026-general/source-reviews/d6ff9f9a2864d70acf0ae5d38bd2acd16e931aae05c58572ed01e7f716e63878.json",
+        "record": {
+          "checked_at": "2026-10-19T14:37:00.518000Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source sierra-club-washington; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://www.sierraclub.org/washington/2026-endorsements"
+          ],
+          "original_reviewer": "OpenAI Codex / oct19_civic_sources",
+          "recorded_at": "2026-10-27T03:02:35.971123Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-19T14:45:54.317944Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "sierra-club-washington"
+        },
+        "role": "Existing acceptedM30 attestation reference only; no current task eligibility determination, no main-admission recheck or approval transfer",
+        "sha256": "d6ff9f9a2864d70acf0ae5d38bd2acd16e931aae05c58572ed01e7f716e63878"
+      },
+      "finished_at": "2026-10-27T11:35:54.865488+00:00",
+      "fresh_success": false,
+      "http_status": 200,
+      "media_type": "text/html",
+      "method": "GET",
+      "necessary_review_gap": "Incomplete/nonpublication observation, not a typed access failure or successful verification. No script/resource fetch. The older26EBADF and later26interstitial remain their own unchanged observations.",
+      "observation_classification": "ACTUAL_CURRENT_HTTP200_INCAPSULA_NONPUBLICATION",
+      "observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "redirect_chain": [],
+      "requested_url": "https://www.sierraclub.org/washington/2026-endorsements",
+      "retained_canonical_decisions": 24,
+      "sha256": "d02032286070b4dd9d8fbd985a7bdca8af8edf52b89ff177db3bfcb2c8a9c43d",
+      "short_evidence_locator": "Raw212-byte HTML has an Incapsula resource script and empty body; no endorsement text, list, images or links to current factual choices.",
+      "source_id": "sierra-club-washington",
+      "started_at": "2026-10-27T11:35:54.743143+00:00",
+      "typed_access_diagnostic": null
+    },
+    "the-stranger": {
+      "checked_at": "2026-10-27T11:35:56.474202+00:00",
+      "complete_current_factual_review": false,
+      "current_due_reference": {
+        "id": "77facd735138846571e0c52e61a048e266e612122c9a7d5ee109b33c722ea1bf",
+        "path": "data/verification/wa-2026-general/checks/77facd735138846571e0c52e61a048e266e612122c9a7d5ee109b33c722ea1bf.json",
+        "record": {
+          "checked_at": "2026-10-27T08:53:43Z",
+          "event_id": null,
+          "evidence": null,
+          "mode": "live",
+          "scheduled_for": "2026-10-27",
+          "source_id": "the-stranger",
+          "status": "manual_due"
+        },
+        "sha256": "77facd735138846571e0c52e61a048e266e612122c9a7d5ee109b33c722ea1bf"
+      },
+      "current_supported_decisions": 0,
+      "existing_initial_review_reference": {
+        "bytes": 951,
+        "path": "data/verification/wa-2026-general/source-reviews/b074c438e7f78966982412a5368b2a3467c886429587c79b28651ef8a4c89cb3.json",
+        "record": {
+          "checked_at": "2026-10-19T14:40:58.618629Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-19-manual.json; source the-stranger; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+            "https://i0.wp.com/www.thestranger.com/wp-content/uploads/2026/10/SECB-Cheat-Sheet_Oct_Stranger_2026-1.jpg?fit=695%2C2520&ssl=1",
+            "https://www.thestranger.com/news/the-strangers-2026-general-election-endorsements/"
+          ],
+          "original_reviewer": "OpenAI Codex / oct19_civic_sources",
+          "recorded_at": "2026-10-27T03:02:38.124607Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-19T14:45:54.317571Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "the-stranger"
+        },
+        "role": "Existing acceptedM30 attestation reference only; no current task eligibility determination, no main-admission recheck or approval transfer",
+        "sha256": "b074c438e7f78966982412a5368b2a3467c886429587c79b28651ef8a4c89cb3"
+      },
+      "finished_at": "2026-10-27T11:35:56.474210+00:00",
+      "fresh_success": false,
+      "http_status": 403,
+      "method": "GET",
+      "necessary_review_gap": "Current official publication could not be read. No alternate guide, image, browser, paywall or cache route was attempted.",
+      "observation_classification": "ACTUAL_CURRENT_HTTP403",
+      "observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "requested_url": "https://www.thestranger.com/news/the-stranger-election-control-board-2026-general-election-cheat-sheet/",
+      "retained_canonical_decisions": 31,
+      "short_evidence_locator": "http_status403 at the registered public general cheat-sheet URL; no response body was returned.",
+      "source_id": "the-stranger",
+      "started_at": "2026-10-27T11:35:56.420604+00:00",
+      "typed_access_diagnostic": {
+        "category": "http_status",
+        "http_status": 403,
+        "stage": "http_fetch"
+      }
+    },
+    "washington-education-association": {
+      "byte_length": 41576,
+      "canonical_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+      "checked_at": "2026-10-27T11:35:56.759375+00:00",
+      "complete_current_factual_review": false,
+      "current_due_reference": {
+        "id": "ff20f17ea14f8636a25d347347075f7492b0dce0f802324a8431d3b660736a73",
+        "path": "data/verification/wa-2026-general/checks/ff20f17ea14f8636a25d347347075f7492b0dce0f802324a8431d3b660736a73.json",
+        "record": {
+          "checked_at": "2026-10-27T08:53:43Z",
+          "event_id": null,
+          "evidence": null,
+          "mode": "live",
+          "scheduled_for": "2026-10-27",
+          "source_id": "washington-education-association",
+          "status": "manual_due"
+        },
+        "sha256": "ff20f17ea14f8636a25d347347075f7492b0dce0f802324a8431d3b660736a73"
+      },
+      "current_supported_decisions": 0,
+      "existing_initial_review_reference": {
+        "bytes": 1241,
+        "path": "data/verification/wa-2026-general/source-reviews/d7da561e4137d69b43ea78179f3adebd036ca0a2aefdda8a0e4deb993181305a.json",
+        "record": {
+          "checked_at": "2026-10-20T10:38:18.442348Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-20-manual.json; source washington-education-association; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+            "https://www.washingtonea.org/advocacy/wea-pac/",
+            "https://www.washingtonea.org/advocacy/ourvoice/post/help-wea-members-in-falls-election/",
+            "https://www.washingtonea.org/advocacy/ourvoice/",
+            "https://www.washingtonea.org/advocacy/ourvoice/post/successful-wea-day-action/",
+            "https://www.washingtonea.org/advocacy/ourvoice/post/learn-more-about-anti-school-initiatives/",
+            "https://www.washingtonea.org/advocacy/ourvoice/post/ballots-arrive-next-week-what-to-know-before-you-vote/"
+          ],
+          "original_reviewer": "OpenAI Codex /root/diagnose_591_seiu_oct20",
+          "recorded_at": "2026-10-27T03:02:43.886175Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-20T10:51:07.668967Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "washington-education-association"
+        },
+        "role": "Existing acceptedM30 attestation reference only; no current task eligibility determination, no main-admission recheck or approval transfer",
+        "sha256": "d7da561e4137d69b43ea78179f3adebd036ca0a2aefdda8a0e4deb993181305a"
+      },
+      "finished_at": "2026-10-27T11:35:56.759381+00:00",
+      "fresh_success": false,
+      "http_status": 200,
+      "media_type": "text/html; charset=UTF-8",
+      "method": "GET",
+      "necessary_review_gap": "No current factual support is admitted from embedded endorsement text behind the observed membership boundary. Root may review the access constraint; it is not an HTTP failure, a qualified access disposition or complete successful official-publication check.",
+      "observation_classification": "ACTUAL_CURRENT_HTTP200_MEMBER_CERTIFICATION_BOUNDARY",
+      "observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "redirect_chain": [],
+      "requested_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+      "retained_canonical_decisions": 20,
+      "sha256": "adc601a1f0ecd373d21dee9b8ecc9a5fae34aab3758ab07d3778e5c73676e49a",
+      "short_evidence_locator": "Response presents an explicit WEA-membership certification/Proceed prompt on the registered URL. No Proceed, certification, submission, cookie manipulation or other gate action occurred.",
+      "source_id": "washington-education-association",
+      "started_at": "2026-10-27T11:35:56.474871+00:00",
+      "typed_access_diagnostic": null
+    },
+    "washington-for-peace-and-justice": {
+      "byte_length": 721503,
+      "canonical_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "checked_at": "2026-10-27T11:35:55.783293+00:00",
+      "complete_current_factual_review": false,
+      "current_due_reference": {
+        "id": "9d5f56c270a8955cca1a6060e18ede353c521df5fd7544623964dd637ab81765",
+        "path": "data/verification/wa-2026-general/checks/9d5f56c270a8955cca1a6060e18ede353c521df5fd7544623964dd637ab81765.json",
+        "record": {
+          "checked_at": "2026-10-27T08:53:43Z",
+          "event_id": null,
+          "evidence": null,
+          "mode": "live",
+          "scheduled_for": "2026-10-27",
+          "source_id": "washington-for-peace-and-justice",
+          "status": "manual_due"
+        },
+        "sha256": "9d5f56c270a8955cca1a6060e18ede353c521df5fd7544623964dd637ab81765"
+      },
+      "current_supported_decisions": 0,
+      "existing_initial_review_reference": {
+        "bytes": 731,
+        "path": "data/verification/wa-2026-general/source-reviews/5420485ca08aec998c4b0d960efdc491a2ff34430900b1f579fd4cc360d41d00.json",
+        "record": {
+          "checked_at": "2026-10-26T16:50:54.266000Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-26-source-followup.json; source washington-for-peace-and-justice; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/"
+          ],
+          "original_reviewer": "OpenAI Codex /root/review_636_637_0fc_complete",
+          "recorded_at": "2026-10-27T03:02:44.611616Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-26T16:53:57.125084Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "washington-for-peace-and-justice"
+        },
+        "role": "Existing acceptedM30 attestation reference only; no current task eligibility determination, no main-admission recheck or approval transfer",
+        "sha256": "5420485ca08aec998c4b0d960efdc491a2ff34430900b1f579fd4cc360d41d00"
+      },
+      "finished_at": "2026-10-27T11:35:55.783306+00:00",
+      "fresh_success": false,
+      "http_status": 200,
+      "media_type": "text/html; charset=\"utf-8\"",
+      "method": "GET",
+      "necessary_review_gap": "All31 retained decisions remain unverified today by this response. No signed CDN image, child, login, browser or API request; no first-appearance or current-completeness claim.",
+      "observation_classification": "ACTUAL_CURRENT_HTTP200_INCOMPLETE_SOCIAL_PUBLICATION",
+      "observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "redirect_chain": [],
+      "requested_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
+      "retained_canonical_decisions": 31,
+      "sha256": "876ebecbc7ecd93677afc5409f31b05cd15060662bba6cf8981eed03f9edbacb",
+      "short_evidence_locator": "Visible body is Instagram. Public metadata identifies the official October15 general-guide announcement, but the choices depend on unfetched carousel material.",
+      "source_id": "washington-for-peace-and-justice",
+      "started_at": "2026-10-27T11:35:54.866147+00:00",
+      "typed_access_diagnostic": null
+    },
+    "washington-state-democrats": {
+      "checked_at": "2026-10-27T11:35:54.742088+00:00",
+      "complete_current_factual_review": false,
+      "current_due_reference": {
+        "id": "fe6d9097d947e2c311cc509eaa598b6053681aa66da4cb0fbe9966ece342db19",
+        "path": "data/verification/wa-2026-general/checks/fe6d9097d947e2c311cc509eaa598b6053681aa66da4cb0fbe9966ece342db19.json",
+        "record": {
+          "checked_at": "2026-10-27T08:53:43Z",
+          "event_id": null,
+          "evidence": null,
+          "mode": "live",
+          "scheduled_for": "2026-10-27",
+          "source_id": "washington-state-democrats",
+          "status": "manual_due"
+        },
+        "sha256": "fe6d9097d947e2c311cc509eaa598b6053681aa66da4cb0fbe9966ece342db19"
+      },
+      "current_supported_decisions": 0,
+      "existing_initial_review_reference": {
+        "bytes": 710,
+        "path": "data/verification/wa-2026-general/source-reviews/0ed4151332688a54ded6450eb9e6d4bcb739e295bc9e0bca8b114b16d638b852.json",
+        "record": {
+          "checked_at": "2026-10-23T07:43:29.535332Z",
+          "election_id": "wa-2026-general",
+          "evidence": "data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json; source washington-state-democrats; qualifications and exact retained boundaries in that original record",
+          "official_urls": [
+            "https://wadems.org/2026-campaign-resources/"
+          ],
+          "original_reviewer": "OpenAI Codex /root/review_472_political_oct23",
+          "recorded_at": "2026-10-27T03:02:46.823008Z",
+          "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption (attestation recorder)",
+          "reviewed_at": "2026-10-23T07:47:20.385872Z",
+          "scope": "complete_official_publication_and_mappings",
+          "source_id": "washington-state-democrats"
+        },
+        "role": "Existing acceptedM30 attestation reference only; no current task eligibility determination, no main-admission recheck or approval transfer",
+        "sha256": "0ed4151332688a54ded6450eb9e6d4bcb739e295bc9e0bca8b114b16d638b852"
+      },
+      "finished_at": "2026-10-27T11:35:54.742099+00:00",
+      "fresh_success": false,
+      "http_status": 403,
+      "method": "GET",
+      "necessary_review_gap": "Current official publication could not be read. Root separately evaluates this actual new failed observation; no handled disposition inferred.",
+      "observation_classification": "ACTUAL_CURRENT_HTTP403",
+      "observer": "OpenAI Codex/root/assess_497_remaining_adoption",
+      "requested_url": "https://wadems.org/2026-campaign-resources/",
+      "retained_canonical_decisions": 3,
+      "short_evidence_locator": "http_status403 at the registered public campaign-resources URL; no response body was returned by the guarded transport.",
+      "source_id": "washington-state-democrats",
+      "started_at": "2026-10-27T11:35:54.560479+00:00",
+      "typed_access_diagnostic": {
+        "category": "http_status",
+        "http_status": 403,
+        "stage": "http_fetch"
+      }
+    }
+  }
+}

@@ -10,5 +10,7 @@ import { wireSourcesEditor } from './sources-client.mjs';
 export function boot() {
   wireShellShare();
   wireElectionDay();
-  wireSourcesEditor(/** @type {SourcesPayload} */ (requireClientPayload(document)));
+  wireSourcesEditor(
+    /** @type {SourcesPayload|GeneralSourcesPayload} */ (requireClientPayload(document)),
+  );
 }

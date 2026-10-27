@@ -52,8 +52,17 @@ def find_chrome() -> Path:
 
 # The screen controls are one select and four radios. Issue 97 merged the
 # personalization controls into the page-anchored sources tree, so there is
-# no longer a Customize button here.
+# no longer a Customize button here. The separately tested general-only precinct
+# modal is a distinct component, not one of these five view/race controls.
 EXPECTED_SCREEN_CONTROL_COUNT = 5
+
+# Reset has one exact query representation per admitted page capability. General
+# precinct pages bind ordinary browsing explicitly; primary/legacy pages stay bare.
+_RESET_QUERY_EXPRESSION = (
+    "(window.location.search===(JSON.parse(document.querySelector("
+    "'[data-client-payload]')?.textContent??'{}').precinct_ballot?.election_id==="
+    "'wa-2026-general'?'?precinct=all':''))"
+)
 
 # How long a settle may wait for the page's own work to finish. Every animation
 # the guide declares is a .15s transition (guide-race.css, guide.css), so this
@@ -241,10 +250,19 @@ def _capture_emulated_viewport(
                     "if(!support||!meter)return true;"
                     "return Math.abs(support.getBoundingClientRect().right-"
                     "meter.getBoundingClientRect().right)<=1;});"
-                    "const controlCount=document.querySelectorAll("
-                    "'.screen-controls button,.screen-controls select,.screen-controls input')"
-                    ".length;"
+                    "const controlCount=[...document.querySelectorAll("
+                    "'.screen-controls button,.screen-controls select,.screen-controls input')]"
+                    ".filter(control=>!control.closest('[data-precinct-control]')).length;"
+                    "const precinct=document.querySelector('[data-precinct-control]');"
+                    "const precinctExpected=bindings.precinct_ballot?.election_id==="
+                    "'wa-2026-general';"
+                    "const precinctControlValid=precinctExpected?Boolean("
+                    "precinct?.closest('.screen-controls')&&"
+                    "precinct.querySelectorAll('dialog').length===1&&"
+                    "precinct.querySelectorAll('input').length===1&&"
+                    "precinct.querySelectorAll('button').length===3):!precinct;"
                     "return JSON.stringify({"
+                    "precinctControlValid,"
                     "comparisonPublished:Boolean(comparison),"
                     "noComparisonBars:document.querySelectorAll("
                     "'.comparison,.screen-comparisons,[data-display-role=\"comparison\"]')"
@@ -270,6 +288,7 @@ def _capture_emulated_viewport(
         residue_metrics = cast(dict[str, object], json.loads(cast(str, residue_result["value"])))
         expected_residue = {
             "comparisonPublished": True,
+            "precinctControlValid": True,
             "noComparisonBars": True,
             "noComparisonRows": True,
             "noTimesText": True,
@@ -290,12 +309,18 @@ def _capture_emulated_viewport(
                     "const filter=document.querySelector('#race-filter');"
                     "const status=document.querySelector('#filter-status');"
                     "const completeFilter=document.querySelector('#complete-filter');"
+                    "const defaultContested=JSON.parse(document.querySelector("
+                    "'[data-client-payload]').textContent).precinct_ballot?.election_id==="
+                    "'wa-2026-general';"
                     "const contestedFilter=document.querySelector('#contested-filter');"
                     "const viewInputs=[...document.querySelectorAll('input[name=ballot-view]')];"
                     "const binarySelectors=[...document.querySelectorAll("
                     "'.view-setting .segmented-control')];"
                     "const selectorWidths=binarySelectors.map(control=>"
                     "control.getBoundingClientRect().width);"
+                    "const defaultRaceMode=Boolean(contestedFilter?.checked)===defaultContested;"
+                    "completeFilter?.click();await pause();"
+                    "const allRaceMode=Boolean(completeFilter?.checked)&&!completeFilter?.disabled;"
                     "const cards=[...document.querySelectorAll('[data-publication-race-id]')]"
                     ".filter(card=>getComputedStyle(card).display!=='none'&&"
                     "card.getBoundingClientRect().width>0&&card.getBoundingClientRect().height>0);"
@@ -326,7 +351,7 @@ def _capture_emulated_viewport(
                     "const expectedCompactColumns=window.innerWidth<=720?2:"
                     "window.innerWidth<=1050?3:4;"
                     "const controlQuery=new URLSearchParams(window.location.search);"
-                    "const controls={"
+                    "const controls={defaultRaceMode,allRaceMode,"
                     "compact:document.documentElement.dataset.ballotView==='compact',"
                     "scopePreserved:scopedOption?filter.value===scopedOption.value:"
                     "filter.value==='all'&&filter.options.length===1,"
@@ -338,7 +363,7 @@ def _capture_emulated_viewport(
                     "return inputs.length===2&&inputs.filter(input=>input.checked).length===1;}),"
                     "countMatches:compactCards.length===expectedCompactCards.length,"
                     "urlView:controlQuery.get('view')==='compact',"
-                    "urlRaces:controlQuery.get('races')==='contested',"
+                    "urlRaces:controlQuery.get('races')===(defaultContested?null:'contested'),"
                     "urlFilter:controlQuery.get('filter')===(scopedOption?.value??null),"
                     # An empty overview has no scoped option or grid, and a
                     # contested-only filter can also hide every visible card.
@@ -351,11 +376,12 @@ def _capture_emulated_viewport(
                     "const meter=card.querySelector('.screen-meter');"
                     "return Boolean(meter&&meterAligned(meter));}),"
                     "};"
-                    "fullInput?.click();completeFilter?.click();"
+                    "fullInput?.click();(defaultContested?contestedFilter:completeFilter)?.click();"
                     "filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));"
                     "await pause();controls.reset="
                     "document.documentElement.dataset.ballotView==='full'&&"
-                    "filter.value==='all'&&!contestedFilter?.checked&&window.location.search==='';"
+                    "filter.value==='all'&&Boolean(contestedFilter?.checked)===defaultContested&&"
+                    f"{_RESET_QUERY_EXPRESSION};"
                     "controls.fullMetersLeftAligned=meters.every(meter=>"
                     "meterAligned(meter));"
                     "controls.statusAllGrouped=status?.children.length===3&&"
@@ -422,6 +448,8 @@ def _capture_emulated_viewport(
             "metersRightAligned": True,
             "coreRecommendationsLinked": True,
             "controls": {
+                "defaultRaceMode": True,
+                "allRaceMode": True,
                 "compact": True,
                 "scopePreserved": True,
                 "contested": True,

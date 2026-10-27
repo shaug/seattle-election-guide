@@ -86,6 +86,12 @@ purpose and watch the check fail.
   groups it happens not to render — the filter bar and the election-day banner
   on the site-wide pages, the action strip on Comparisons. Splitting `base.css`
   by component is a separate decision about the shell, not this one.
+  The general-only precinct component is an explicit optional part in
+  `OPTIONAL_STYLESHEETS`, inserted before the page's final part only when the
+  admitted view model carries a precinct contract. Default page entries and
+  archived primary stylesheet bytes remain unchanged. The optional part has the
+  same file-coverage and authored-byte checks as ordinary parts.
+
   *Check: exists — `tests/test_page_stylesheets.py` holds every page to its
   declared parts, holds every stylesheet on disk to a page that reads it,
   asserts no page ships a class styled only by another page's own stylesheet,
@@ -384,10 +390,40 @@ purpose and watch the check fail.
 
 ## State and URLs
 
-- **The URL fragment is the only client persistence.** No `localStorage`, no
-  `sessionStorage`, no cookies. *Check: exists — the shared guard in
-  `tests/js/support/module-guards.mjs` asserts the absence of every storage
-  identifier in every module, page wiring included.*
+- **Source choices persist only in URL fragments.** The approved #608 general-election
+  precinct choice also persists in one device-memory record, owned exclusively by
+  `precinct-selection-store.mjs`. That capability stores only the election-specific
+  precinct code, never source choices, addresses, or other voter information. The
+  explicit precinct query (including `precinct=all`) outranks remembered state;
+  unavailable memory leaves URL selection usable. No session storage or cookies.
+  *Check: exists — the shared module guard forbids storage in pure/wiring modules,
+  and its capability-owner test requires exactly one precinct-memory owner.
+  `precinct-selection-store.test.mjs` tests isolation, clearing and blocked storage;
+  page/control tests cover query precedence and source-independent membership.*
+- **General race mode shares ballot query context.** `races=all` explicitly overrides
+  the general Contested default. Both modes obey precinct membership and preserve
+  measures. Only the owned `precinct` and `races` query keys travel through renderer-owned
+  Endorsements, Comparisons and Sources paths. General comparison fragments retain
+  column/section/differences state without a second race-mode copy; primary retains
+  its existing fragment codec and All default.
+  Sources keeps its legacy payload unchanged. Only the general typed variant
+  carries the required true race-query capability, selected by the renderer's
+  reviewed precinct contract. The client explicitly handles that variant and
+  the legacy contract; it infers neither election nor capability from paths,
+  panel-name patterns, markup, or browser defaults. Shared compiled Sources
+  HTML may change while the primary payload and behavior remain unchanged.
+  *Check: exists — `precinct-ballot.test.mjs` checks query defaults and ownership;
+  `compare-url.test.mjs` checks fragment separation; `test_precinct_navigation.py`
+  exercises both modes through real navigation, reload and history.*
+- **Precinct query history is general-only.** Only a supported November2026
+  general precinct contract enables the new query-history subscription/control.
+  Legacy and current primary payloads register no precinct-history listener and
+  retain their ordinary behavior. Existing routers remain the sole address owners;
+  navigation destinations come from renderer-owned complete paths in the payload.
+  *Check: exists — `test_html_uses_one_view_model_for_screen_print_filters_and_evidence`
+  observes zero primary subscriptions and no injected popstate reaction in real
+  Chromium; the actual primary9 client fixture tests the legacy case, and
+  `test_precinct_rendering.py` exercises general query Back/Forward in Chromium.*
 - **Each page's codec module is the sole reader and writer of `location`.**
   One owner per fragment. No second script parses the hash by hand, and no
   handler edits `location` around the codec. A page whose codec is pure pairs

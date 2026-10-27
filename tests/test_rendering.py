@@ -535,11 +535,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     # in an inline script (issue #239); the shipped page must still carry it.
     assert "card.dataset.filterTokens" in html
     assert 'card.dataset.contested === "true"' in html
-    assert "matchesScope && matchesContest" in html
     assert 'query.set("view", "compact")' in html
     assert '<label class="filter-control-label" for="race-filter">Ballot</label>' in html
     assert "Show races" not in html
-    assert 'query.set("races", "contested")' in html
     assert 'query.set("filter", state.scope)' in html
     assert "syncFromUrl();" in html
     assert "html.compact-ballot-mode .race-grid { grid-template-columns: repeat(4" in html
@@ -614,7 +612,55 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "target.showModal()" not in html
     assert "history.pushState" not in html
     assert "history.back()" not in html
-    assert 'window.addEventListener("popstate"' not in html
+    # Precinct history is general-only. Verify actual primary behavior rather than
+    # banning a listener method that the shared router may legitimately export.
+    observer = """<script>
+      window.primaryHistorySubscriptions = 0;
+      const originalAdd = window.addEventListener.bind(window);
+      window.addEventListener = (type, ...args) => {
+        if (type === 'popstate') window.primaryHistorySubscriptions++;
+        originalAdd(type, ...args);
+      };
+    </script>"""
+    primary_path = tmp_path / "primary-history-contract.html"
+    primary_path.write_text(html.replace("<head>", "<head>" + observer, 1))
+    scope = "Legislative District 43"
+    expected_scoped_ids = {
+        "all": sorted(race.id for race in races if scope in race.filter_tokens),
+        "contested": sorted(
+            race.id for race in races if scope in race.filter_tokens and race.is_contested
+        ),
+    }
+    primary_history = _evaluate_in_chrome(
+        primary_path,
+        """JSON.stringify((() => {
+      const ids = () => [...document.querySelectorAll('[data-publication-race-id]')]
+        .filter(row => !row.hidden).map(row => row.dataset.publicationRaceId).sort();
+      const before = ids();
+      history.pushState({}, '', '?view=compact');
+      window.dispatchEvent(new Event('popstate'));
+      const after = ids();
+      const compact = document.documentElement.classList.contains('compact-ballot-mode');
+      const filter = document.querySelector('#race-filter');
+      filter.value = EXPECTED_SCOPE;filter.dispatchEvent(new Event('change',{bubbles:true}));
+      document.querySelector('#contested-filter').click();
+      const contestedIds = ids();
+      const contestedQuery = new URLSearchParams(location.search);
+      const queryMatches = contestedQuery.get('filter') === EXPECTED_SCOPE &&
+        contestedQuery.get('races') === 'contested';
+      document.querySelector('#complete-filter').click();
+      return {subscriptions:window.primaryHistorySubscriptions,before,after,compact,
+        contestedIds,allIds:ids(),queryMatches,
+        allQueryMatches:!new URLSearchParams(location.search).has('races')};
+    })())""".replace("EXPECTED_SCOPE", json.dumps(scope)),
+    )
+    assert primary_history["subscriptions"] == 0
+    assert primary_history["after"] == primary_history["before"]
+    assert primary_history["compact"] is False
+    assert primary_history["contestedIds"] == expected_scoped_ids["contested"]
+    assert primary_history["allIds"] == expected_scoped_ids["all"]
+    assert primary_history["queryMatches"] is True
+    assert primary_history["allQueryMatches"] is True
     assert 'window.addEventListener("hashchange"' in html
     assert "redirectToRacePage" in html
     assert "withRaceTarget(window.location.hash, null)" in html
@@ -6754,3 +6800,44 @@ def test_committed_lens_page_fixtures_match_a_fresh_render() -> None:
         "Rendering)."
     )
     assert race_ids, "no race page shape to diff against"
+
+
+def test_reset_query_audit_requires_exact_query_for_admitted_page_capability(
+    tmp_path: Path,
+) -> None:
+    """The screenshot reset probe rejects residue rather than ignoring query keys."""
+    html = tmp_path / "reset-query.html"
+    html.write_text('<script type="application/json" data-client-payload>{}</script>')
+    expression = """(()=>{
+      const check=()=>CHECK;
+      const cases=[
+        {label:'general',payload:{precinct_ballot:{election_id:'wa-2026-general'}},
+          expected:'?precinct=all'},
+        {label:'primary',payload:{precinct_ballot:{election_id:'wa-2026-primary'}},expected:''},
+        {label:'legacy',payload:{},expected:''},
+        {label:'non-precinct',payload:{precinct_ballot:null},expected:''},
+      ];
+      const queries=['','?precinct=all','?precinct=1279','?precinct=unknown',
+        '?precinct=all&precinct=all','?precinct=all&other=1','?other=1','?precinct='];
+      const failures=[];
+      for(const c of cases){
+        document.querySelector('[data-client-payload]').textContent=JSON.stringify(c.payload);
+        for(const query of queries){
+          history.replaceState({},'',window.location.pathname+query);
+          const actual=check();const expected=query===c.expected;
+          if(actual!==expected)failures.push({label:c.label,query,actual,expected});
+        }
+      }
+      document.querySelector('[data-client-payload]').remove();
+      history.replaceState({},'',window.location.pathname);
+      const noPayloadBare=check();
+      history.replaceState({},'',window.location.pathname+'?precinct=all');
+      return JSON.stringify({failures,noPayloadBare,noPayloadQuery:check()});
+    })()""".replace(
+        "CHECK",
+        browser._RESET_QUERY_EXPRESSION,  # pyright: ignore[reportPrivateUsage]
+    )
+    result = _evaluate_in_chrome(html, expression)
+    assert result["failures"] == []
+    assert result["noPayloadBare"] is True
+    assert result["noPayloadQuery"] is False

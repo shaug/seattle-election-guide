@@ -22,6 +22,7 @@ import {
   selectionFragment,
 } from './lens-selection.mjs';
 import { decodeLensFragment, lensContext } from './lens-url.mjs';
+import { ballotQuery } from './precinct-ballot.mjs';
 import { sourcesTreeTemplate } from './sources-tree.mjs';
 
 /** What a reader is told when the link they arrived on could not be read. */
@@ -31,12 +32,26 @@ const UNREADABLE_LINK_NOTICE =
 /**
  * Wire the sources editor.
  *
- * @param {SourcesPayload} payload
+ * @param {SourcesPayload|GeneralSourcesPayload} payload
  */
 export function wireSourcesEditor(payload) {
   const router = createLensRouter();
   const context = lensContext(payload, payload.data_version);
-  const guidePath = payload.guide_path;
+  const query =
+    'race_mode_query_enabled' in payload && payload.race_mode_query_enabled === true
+      ? ballotQuery(router.controlSearch())
+      : '';
+  const guidePath = `${payload.guide_path}${query}`;
+  if ('race_mode_query_enabled' in payload && payload.race_mode_query_enabled === true) {
+    const headerPaths = {
+      endorsements: payload.guide_path,
+      comparisons: payload.comparisons_path,
+    };
+    for (const [destination, path] of Object.entries(headerPaths)) {
+      const link = document.querySelector(`[data-precinct-link="${destination}"]`);
+      if (link && path) link.setAttribute('href', `${path}${query}`);
+    }
+  }
 
   const memberCodesByCategoryCode = new Map(
     payload.categories.map((category) => [category.code, category.member_source_codes]),

@@ -33,7 +33,7 @@ type ComputedGrade = "TIED" | "Insufficient" | "A+" | "A" | "B" | "C" | "D";
 interface ClientPayloadTypes {
   guide_page: GuidePayload;
   race_page: RacePayload;
-  sources_page: SourcesPayload;
+  sources_page: SourcesPayload | GeneralSourcesPayload;
   comparisons_page: ComparisonsPayload;
   computed_grade: ComputedGrade;
 }
@@ -49,6 +49,7 @@ interface GuidePayload {
   scoring: LensScoring;
   categories: LensCategory[];
   sources: LensSource[];
+  precinct_ballot: PrecinctBallotContract | null;
   races: RaceDisplay[];
   filter_scopes: FilterScope[];
   sources_page_path: string;
@@ -89,6 +90,20 @@ interface LensSource {
   name: string;
   panel_role: "consensus" | "comparison";
   selectable: boolean;
+}
+interface PrecinctBallotContract {
+  schema_version?: "1.0";
+  election_id: string;
+  mapping_hash: string;
+  endorsements_path: string | null;
+  comparisons_path: string | null;
+  sources_path: string | null;
+  precincts: PrecinctContests[];
+}
+interface PrecinctContests {
+  code: string;
+  name: string;
+  contest_ids: string[];
 }
 /**
  * One race as the guide's own card renders it.
@@ -352,9 +367,27 @@ interface SourcesTreeSource {
   also_in: string[];
 }
 /**
+ * General-only query capability; the legacy Sources contract stays unchanged.
+ */
+interface GeneralSourcesPayload {
+  schema_version: "1.0";
+  data_version: string;
+  panel_id: string;
+  panel_hash: string;
+  policy: LensPolicy;
+  scoring: LensScoring;
+  categories: LensCategory[];
+  sources: LensSource[];
+  guide_path: string;
+  tree: SourcesTreeCategory[];
+  race_mode_query_enabled: true;
+  comparisons_path: string | null;
+}
+/**
  * The Comparisons page's payload.
  */
 interface ComparisonsPayload {
+  precinct_ballot: PrecinctBallotContract | null;
   schema_version: "1.0";
   data_version: string;
   default_columns: string[];

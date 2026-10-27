@@ -132,7 +132,8 @@
     ],
     "data-comparison-section-filter": [
       "template",
-      "client"
+      "client",
+      "test"
     ],
     "data-comparison-status": [
       "template",
@@ -416,6 +417,56 @@
       "test"
     ],
     "data-sticky-controls": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-precinct-clear": [
+      "client",
+      "test"
+    ],
+    "data-precinct-control": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-precinct-fields": [
+      "template",
+      "client"
+    ],
+    "data-precinct-link": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-precinct-status": [
+      "template",
+      "client"
+    ],
+    "data-precinct-cancel": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-precinct-form": [
+      "template",
+      "test"
+    ],
+    "data-precinct-open": [
+      "client",
+      "test"
+    ],
+    "data-precinct-submit": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-precinct-summary": [
+      "template",
+      "client"
+    ],
+    "data-precinct-applied-notice": [
       "template",
       "client",
       "test"
@@ -929,6 +980,42 @@
       "client",
       "python",
       "test"
+    ],
+    "filter-control-label": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "filter-select": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "filter-select-control": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "precinct-clear": [
+      "stylesheet",
+      "client"
+    ],
+    "precinct-dialog": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "precinct-open": [
+      "stylesheet",
+      "client"
+    ],
+    "precinct-selected": [
+      "stylesheet",
+      "client"
     ]
   },
   "breakpoints": {

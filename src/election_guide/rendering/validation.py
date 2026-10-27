@@ -36,6 +36,7 @@ from election_guide.rendering.models import (
 )
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
+    PRECINCT_LOOKUP_HREF,
     race_og_image_path,
     race_page_path,
 )
@@ -216,6 +217,8 @@ def validate_rendered_guide(
         # state and drops this link entirely (docs/RESULTS.md, "The
         # election-day banner"; #285) -- there is nothing left to vote on.
         expected_html_links.add(HOW_TO_VOTE_HREF)
+    if view_model.precinct_ballot is not None:
+        expected_html_links.add(PRECINCT_LOOKUP_HREF)
     if view_model.comparisons.policy.enabled:
         expected_html_links.add(f"/e/{view_model.metadata.election_id}/comparisons/")
     if view_model.metadata.results_capture_urls:

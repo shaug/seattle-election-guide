@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-27T10:36:02.785751Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex/root/review_608_code_c340: data/review/rechecks/wa-2026-general-2026-10-27-manual.json#/source_reviews/citizens-against-aipac-corruption; actual bounded current-publication review handled. Original official checks 2026-10-27T10:29:15.163715+00:00 to 2026-10-27T10:29:15.387998+00:00. Held/prior-qualified rows: none. No new current affirmation, freshening or withdrawal for those rows; their old verified dates/actors/allocations remain. Not a complete-initial-review attestation, native baseline or adoption. Actual later writer receipt: data/review/rechecks/wa-2026-general-2026-10-27-manual-acknowledgements.json#/acknowledgements/citizens-against-aipac-corruption",
+  "mode": "human",
+  "scheduled_for": "2026-10-27",
+  "source_id": "citizens-against-aipac-corruption",
+  "status": "manual"
+}

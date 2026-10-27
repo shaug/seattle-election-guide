@@ -24,7 +24,7 @@
 import { html, nothing, render } from 'lit-html';
 import { wireGuideFilters } from './guide-filters.mjs';
 import { createGuideLens, lensCountingSummary } from './guide-lens.mjs';
-import { createLensRouter } from './lens-route.mjs';
+import { createLensRouter, onLensHistoryChange } from './lens-route.mjs';
 import {
   resolveLensLink,
   resolveSelectedCodes,
@@ -38,6 +38,8 @@ import {
   LEGACY_RACE_PREFIX,
   lensContext,
 } from './lens-url.mjs';
+import { ballotQuery } from './precinct-ballot.mjs';
+import { refreshPrecinctLinks, wirePrecinctControl } from './precinct-control.mjs';
 
 /**
  * Forward a fragment that names a race to that race's own page (issue #136).
@@ -77,7 +79,8 @@ export function wireGuide(payload) {
   // over or rewriting the address bar first would be work done on a page the
   // reader never sees.
   if (forwardToRacePage(payload, router)) return;
-  wireGuideFilters(payload, router);
+  let onFiltersApplied = () => {};
+  const filters = wireGuideFilters(payload, router, () => onFiltersApplied());
 
   const personalization = payload.personalization;
   const context = lensContext(payload, payload.data_version);
@@ -146,7 +149,11 @@ export function wireGuide(payload) {
       context,
     });
     if (result.status === 'rejected') notice = SELECTION_LINK_FAILURE_NOTICE;
-    return `${payload.sources_page_path}${result.status === 'ok' ? result.fragment : ''}`;
+    const query =
+      payload.precinct_ballot?.election_id === 'wa-2026-general'
+        ? ballotQuery(router.controlSearch())
+        : '';
+    return `${payload.sources_page_path}${query}${result.status === 'ok' ? result.fragment : ''}`;
   };
 
   /**
@@ -171,6 +178,29 @@ export function wireGuide(payload) {
       link.href = href;
     }
   };
+
+  if (payload.precinct_ballot?.election_id === 'wa-2026-general') {
+    onFiltersApplied = () => {
+      renderChrome();
+      refreshPrecinctLinks(payload.precinct_ballot, router.controlSearch());
+    };
+    onLensHistoryChange(() => {
+      filters.syncFromUrl();
+      filters.apply({ syncUrl: false });
+    });
+    wirePrecinctControl(
+      payload.precinct_ballot,
+      {
+        controlSearch: router.controlSearch,
+        replaceControlSearch: router.replaceControlSearch,
+        onHistoryChange: onLensHistoryChange,
+      },
+      (ids, reset) => {
+        filters.setPrecinct(ids, reset);
+        renderChrome();
+      },
+    );
+  }
 
   /**
    * Apply a decoded (or migrated) selection. Every path that can change what
