@@ -11,6 +11,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validato
 from election_guide.corrections.models import ElectionCorrections
 from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.personalization import PersonalizationContract
+from election_guide.publication.precinct_ballot import PrecinctBallotContract
 from election_guide.results.models import ElectionResults
 from election_guide.scoring.models import ComparisonStatus, Grade
 
@@ -584,6 +585,7 @@ class PublicationViewModel(PublicationModel):
     methodology: PublicationMethodology
     personalization: PersonalizationContract
     comparisons: ComparisonsContract
+    precinct_ballot: PrecinctBallotContract | None = None
     results: ElectionResults | None = None
     """Certified or amended post-election results for this election, or `None`
     while none is committed (docs/RESULTS.md, Rendering: "results render as a
@@ -635,8 +637,25 @@ class PublicationViewModel(PublicationModel):
         cells = [
             cell for section in sections for race in section.races for cell in race.source_cells
         ]
+        precinct_ballot = self.precinct_ballot
+        if precinct_ballot is not None:
+            precinct_ballot = precinct_ballot.model_copy(
+                update={
+                    "precincts": [
+                        area.model_copy(
+                            update={
+                                "contest_ids": [
+                                    race_id for race_id in area.contest_ids if race_id in race_ids
+                                ]
+                            }
+                        )
+                        for area in precinct_ballot.precincts
+                    ]
+                }
+            )
         return self.model_copy(
             update={
+                "precinct_ballot": precinct_ballot,
                 "sections": sections,
                 "metadata": self.metadata.model_copy(
                     update={"published_race_count": len(race_ids)}

@@ -426,3 +426,18 @@ entries:
       url: /e/wa-2026-general/races/initiative-26-638/
     - label: Initiative IP26-645
       url: /e/wa-2026-general/races/initiative-26-645/
+  - corrected_on: 2026-10-27
+    headline: "Choose your voting precinct to see the guide's covered ballot decisions."
+    body: >-
+      Select a Seattle voting precinct in Endorsements or Comparisons to see
+      geographically applicable races and ballot measures covered by this guide.
+      Contested is selected by default; All also includes applicable uncontested
+      races that meet the verified-source policy. Source choices change scores,
+      not ballot membership. Your precinct and race mode stay with you across
+      the guide and Sources. Ballot ordering remains the published November
+      sequence. Location lookup is not part of this release.
+    provenance:
+      - label: "Choose a precinct"
+        url: /e/wa-2026-general/
+      - label: "Voter ballot membership"
+        url: https://github.com/shaug/seattle-election-guide/issues/608

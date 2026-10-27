@@ -33,6 +33,7 @@ from pydantic.json_schema import GenerateJsonSchema
 from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.models import PublicationSource, PublicationViewModel
 from election_guide.publication.personalization import PersonalizationContract
+from election_guide.publication.precinct_ballot import PrecinctBallotContract
 from election_guide.rendering.bundler import (
     EXACT_VERSION,
     PACKAGE_JSON,
@@ -281,6 +282,8 @@ class LensPayload(ClientPayloadModel):
 class GuidePayload(LensPayload):
     """The endorsements guide's payload."""
 
+    precinct_ballot: PrecinctBallotContract | None
+
     races: list[RaceDisplay]
     filter_scopes: list[FilterScope]
     """Every Ballot-filter token the page offers, with the label the select
@@ -340,8 +343,17 @@ class SourcesPayload(LensPayload):
     server rendered them."""
 
 
+class GeneralSourcesPayload(SourcesPayload):
+    """General-only query capability; the legacy Sources contract stays unchanged."""
+
+    race_mode_query_enabled: Literal[True]
+    comparisons_path: str | None
+
+
 class ComparisonsPayload(ClientPayloadModel):
     """The Comparisons page's payload."""
+
+    precinct_ballot: PrecinctBallotContract | None
 
     schema_version: Literal["1.0"]
     data_version: str
@@ -388,7 +400,7 @@ class ClientPayloadTypes(ClientPayloadModel):
 
     guide_page: GuidePayload
     race_page: RacePayload
-    sources_page: SourcesPayload
+    sources_page: SourcesPayload | GeneralSourcesPayload
     comparisons_page: ComparisonsPayload
     computed_grade: ComputedGrade
 
@@ -458,12 +470,34 @@ def _lens_fields(view_model: PublicationViewModel, *, contributing_only: bool) -
     }
 
 
+def _precinct_payload(
+    view_model: PublicationViewModel,
+    endorsements_path: str | None,
+    comparisons_path: str | None,
+    sources_path: str | None,
+) -> PrecinctBallotContract | None:
+    """The renderer owns destinations; the client receives complete paths."""
+    if view_model.precinct_ballot is None:
+        return None
+    if endorsements_path is None or comparisons_path is None:
+        raise ValueError("precinct payload requires renderer-owned navigation paths")
+    return view_model.precinct_ballot.model_copy(
+        update={
+            "endorsements_path": endorsements_path,
+            "comparisons_path": comparisons_path,
+            "sources_path": sources_path,
+        }
+    )
+
+
 def guide_payload(
     view_model: PublicationViewModel,
     *,
     races: list[RaceDisplay],
     filter_scopes: list[FilterScope],
     sources_page_path: str,
+    endorsements_path: str | None = None,
+    comparisons_path: str | None = None,
 ) -> GuidePayload:
     """Build the guide's payload.
 
@@ -477,6 +511,9 @@ def guide_payload(
         races=races,
         filter_scopes=filter_scopes,
         sources_page_path=sources_page_path,
+        precinct_ballot=_precinct_payload(
+            view_model, endorsements_path, comparisons_path, sources_page_path
+        ),
         personalization=(
             view_model.personalization if view_model.personalization.policy.enabled else None
         ),
@@ -574,17 +611,27 @@ def _sources_tree(view_model: PublicationViewModel) -> list[SourcesTreeCategory]
     return tree
 
 
-def sources_payload(view_model: PublicationViewModel, *, guide_path: str) -> SourcesPayload:
+def sources_payload(
+    view_model: PublicationViewModel, *, guide_path: str, comparisons_path: str | None = None
+) -> SourcesPayload | GeneralSourcesPayload:
     """Build the sources editor's payload.
 
     Categories and sources are published in full regardless of the lens policy,
     and regardless of contribution status: this page renders the whole tree.
     """
-    return SourcesPayload(
+    fields = {
         **_lens_fields(view_model, contributing_only=False),
-        guide_path=guide_path,
-        tree=_sources_tree(view_model),
-    )
+        "guide_path": guide_path,
+        "tree": _sources_tree(view_model),
+    }
+    if (
+        view_model.precinct_ballot is not None
+        and view_model.precinct_ballot.election_id == "wa-2026-general"
+    ):
+        return GeneralSourcesPayload.model_validate(
+            {**fields, "race_mode_query_enabled": True, "comparisons_path": comparisons_path}
+        )
+    return SourcesPayload.model_validate(fields)
 
 
 def comparisons_payload(
@@ -593,6 +640,9 @@ def comparisons_payload(
     default_columns: list[str],
     results_available: bool,
     race_results: dict[str, list[ComparisonResultOutcome]],
+    endorsements_path: str | None = None,
+    comparisons_path: str | None = None,
+    sources_path: str | None = None,
 ) -> ComparisonsPayload:
     """Build the Comparisons page's payload.
 
@@ -612,6 +662,9 @@ def comparisons_payload(
         default_columns=default_columns,
         personalization=view_model.personalization,
         comparisons=view_model.comparisons,
+        precinct_ballot=_precinct_payload(
+            view_model, endorsements_path, comparisons_path, sources_path
+        ),
         source_labels={
             source.code: name_by_id[source.id] for source in view_model.personalization.sources
         },

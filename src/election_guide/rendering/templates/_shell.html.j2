@@ -76,12 +76,12 @@
 {%- endmacro %}
 
 
-{% macro nav_link(label, href, key, current, sources_link=false) -%}
-<a href="{{ href }}"{% if sources_link %} data-sources-link{% endif %}{% if current == key %} aria-current="page"{% endif %}>{{ label }}</a>
+{% macro nav_link(label, href, key, current, sources_link=false, precinct_link=none) -%}
+<a href="{{ href }}"{% if sources_link %} data-sources-link{% endif %}{% if precinct_link %} data-precinct-link="{{ precinct_link }}"{% endif %}{% if current == key %} aria-current="page"{% endif %}>{{ label }}</a>
 {%- endmacro %}
 
 
-{% macro band(guide_href, sources_href, compare_href=none, corrections_href=none, about_href='/about/', current=none, sources_link_data_attribute=false, shareable=true) -%}
+{% macro band(guide_href, sources_href, compare_href=none, corrections_href=none, about_href='/about/', current=none, sources_link_data_attribute=false, shareable=true, precinct_links=false) -%}
 {# Slot 1 of the shell grammar: brand, nav, and page actions.
 
    `current` names this page's nav entry (`endorsements`, `comparisons`,
@@ -111,10 +111,10 @@
     Updates records changes after publication (docs/RESULTS.md, "The updates
     page"; issue #551), and How this
     works explains all four. -#}
-{{- nav_link('Endorsements', guide_href, 'endorsements', current) -}}
-{{- nav_link('Sources', sources_href, 'sources', current, sources_link_data_attribute) -}}
+{{- nav_link('Endorsements', guide_href, 'endorsements', current, precinct_link='endorsements' if precinct_links else none) -}}
+{{- nav_link('Sources', sources_href, 'sources', current, sources_link_data_attribute, precinct_link='sources' if precinct_links and current == 'comparisons' else none) -}}
 {%- if compare_href is not none -%}
-{{- nav_link('Comparisons', compare_href, 'comparisons', current) -}}
+{{- nav_link('Comparisons', compare_href, 'comparisons', current, precinct_link='comparisons' if precinct_links else none) -}}
 {%- endif -%}
 {%- if corrections_href is not none -%}
 {{- nav_link('Updates', corrections_href, 'corrections', current) -}}

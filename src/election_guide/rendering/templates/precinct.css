@@ -1,0 +1,25 @@
+/* General precinct pages only: compact filter slot and ephemeral choice dialog. */
+.filter-control-bar { align-items: flex-start; }
+.filter-segmented-control { display: grid; gap: .2rem; }
+.filter-select-control, .filter-segmented-control, .precinct-control { grid-template-rows: calc(.72rem * 1.45 + .2rem) 2.7rem; }
+.filter-select-control > .filter-select { align-self: center; height: 2.7rem; }
+.filter-control-status { margin-top: calc(.72rem * 1.45 + .4rem); }
+.precinct-control { display: grid; min-width: 8rem; flex: 1 1 8rem; gap: .2rem; }
+.precinct-control[hidden] { display: none; }
+.precinct-summary { display: flex; align-items: center; gap: .5rem; min-height: 2.7rem; }
+.precinct-open { padding: 0; border: 0; background: transparent; color: var(--navy); font: inherit; text-decoration: underline; text-underline-offset: .15em; cursor: pointer; }
+.precinct-selected { font-weight: 700; }
+.precinct-clear { display: inline-grid; place-items: center; min-width: 2rem; min-height: 2rem; padding: .1rem; border: 1px solid var(--line); border-radius: .25rem; background: var(--white); color: var(--navy); font: inherit; cursor: pointer; }
+.precinct-dialog { box-sizing: border-box; width: min(28rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 1.5rem; border: 1px solid var(--line-strong); border-radius: .4rem; background: var(--paper); color: var(--ink); }
+.precinct-dialog::backdrop { background: rgba(16,42,67,.45); }
+.precinct-dialog h2 { margin: 0 0 1rem; color: var(--navy); font-size: 1.25rem; }
+.precinct-status { min-height: 1.3em; margin: .65rem 0; color: var(--muted); font-size: .85rem; }
+.precinct-actions { display: flex; justify-content: flex-end; gap: .65rem; margin-top: 1.25rem; }
+.precinct-actions button { min-height: 2.7rem; padding: .45rem 1rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); color: var(--navy); font: inherit; cursor: pointer; }
+.precinct-actions button[type="submit"] { background: var(--navy); color: var(--white); }
+.precinct-actions button:disabled { opacity: .5; cursor: default; }
+.precinct-open:focus-visible, .precinct-clear:focus-visible, .precinct-actions button:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+@media (max-width: 720px) {
+  .filter-control-status { margin-top: 0; }
+  .filter-select-control, .filter-segmented-control, .precinct-control { width: auto; min-width: min(100%, 9rem); flex: 1 1 9rem; }
+}

@@ -13,15 +13,15 @@
 </div>
 {%- endmacro %}
 
-{% macro segmented_radio(label, name, options, extra_class='') -%}
-<fieldset class="filter-segmented-control{% if extra_class %} {{ extra_class }}{% endif %}" data-option-count="{{ options | length }}">
-  <legend class="filter-control-label">{{ label }}</legend>
+{% macro segmented_radio(label, name, options, extra_class='', aligned=false) -%}
+<{% if aligned %}div role="group" aria-label="{{ label }}"{% else %}fieldset{% endif %} class="filter-segmented-control{% if extra_class %} {{ extra_class }}{% endif %}" data-option-count="{{ options | length }}">
+  <{% if aligned %}span{% else %}legend{% endif %} class="filter-control-label">{{ label }}</{% if aligned %}span{% else %}legend{% endif %}>
   <div class="segmented-control">
     {% for option in options -%}
     <label><input type="radio" name="{{ name }}" value="{{ option.value }}"{% if option.id %} id="{{ option.id }}"{% endif %}{% if option.attributes %} {{ option.attributes | safe }}{% endif %}{% if option.checked %} checked{% endif %}><span>{{ option.label }}</span></label>
     {%- endfor %}
   </div>
-</fieldset>
+</{% if aligned %}div{% else %}fieldset{% endif %}>
 {%- endmacro %}
 
 {% macro control_status(status_id='', attributes='', extra_class='') -%}
@@ -30,7 +30,8 @@
 
 {# One election-control composition shared by every election view. Pages may
    supply their ballot options and binary View values, but not rearrange or
-   replace the Ballot / View / Races / status slots. #}
+   replace the Ballot / View / Races / status slots. The optional Precinct slot
+   between Races and status belongs only to admitted general precinct views. #}
 {% macro election_controls(
   aria_label,
   extra_class,
@@ -44,13 +45,15 @@
   status_id='',
   status_attributes='',
   status_extra_class='',
-  status_text=''
+  status_text='',
+  precinct_enabled=false
 ) -%}
 {% set ballot_options = caller() %}
 {% call control_bar(aria_label, extra_class) %}
   {% call labeled_select('Ballot', ballot_id, ballot_attributes, ballot_extra_class) %}{{ ballot_options | safe }}{% endcall %}
-  {{ segmented_radio('View', view_name, view_options, 'view-setting') }}
-  {{ segmented_radio('Races', race_name, race_options, 'view-setting') }}
+  {{ segmented_radio('View', view_name, view_options, 'view-setting', precinct_enabled) }}
+  {{ segmented_radio('Races', race_name, race_options, 'view-setting', precinct_enabled) }}
+  {% if precinct_enabled %}{% include '_precinct_control.html.j2' %}{% endif %}
   {% call control_status(status_id, status_attributes, status_extra_class) %}{{ status_text }}{% endcall %}
 {% endcall %}
 {%- endmacro %}

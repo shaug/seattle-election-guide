@@ -49,12 +49,15 @@ PAGE_STYLESHEETS: dict[str, tuple[str, ...]] = {
 }
 
 
+OPTIONAL_STYLESHEETS = {"guide": ("precinct.css",), "compare": ("precinct.css",)}
+
+
 class StylesheetError(LookupError):
     """A page was rendered that has no declared stylesheet."""
 
 
 @cache
-def page_stylesheet(page: str) -> str:
+def page_stylesheet(page: str, *, precinct: bool = False) -> str:
     """The CSS `page` inlines into its `<style>` element, parts in order."""
     try:
         parts = PAGE_STYLESHEETS[page]
@@ -63,4 +66,8 @@ def page_stylesheet(page: str) -> str:
             f"no stylesheet is declared for page {page!r}; declare its parts in "
             "rendering/stylesheets.py (docs/FRONTEND.md, Modules)."
         ) from None
+    if precinct:
+        if page not in OPTIONAL_STYLESHEETS:
+            raise StylesheetError(f"page {page!r} does not render a precinct control")
+        parts = (*parts[:-1], *OPTIONAL_STYLESHEETS[page], parts[-1])
     return "".join((TEMPLATE_DIR / part).read_text(encoding="utf-8") for part in parts)

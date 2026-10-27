@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 // guide-client.mjs is what used to be guide.html.j2's two inline `<script>`
 // blocks (issue #239). It composes; the behavior is in the modules it calls,
 // each tested beside it. What is tested here is the composition itself — the
@@ -11,6 +12,16 @@ import { SELECTION_LINK_FAILURE_NOTICE } from '../../src/election_guide/renderin
 import { installDom } from './support/dom.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
+const PRECINCT_MARKUP = readFileSync(
+  new URL(
+    '../../src/election_guide/rendering/templates/_precinct_control.html.j2',
+    import.meta.url,
+  ),
+  'utf8',
+).replace(
+  '{{ precinct_lookup_href }}',
+  'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
+);
 const GUIDE_URL = 'https://seattleelections.guide/e/wa-2026-primary/';
 const SOURCES_PATH = '/e/wa-2026-primary/sources/';
 const PANEL_ID = 'wa-2026-primary-default-sources-v4';
@@ -433,4 +444,87 @@ test('a fragment naming no race of this election stays on the guide', async () =
 
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('guide-client.mjs');
+});
+
+test('precinct overrides restrictive race filters and remains independent of source changes', async () => {
+  const contract = {
+    schema_version: '1.0',
+    election_id: 'wa-2026-general',
+    mapping_hash: 'checked',
+    endorsements_path: '/e/wa-2026-general/',
+    comparisons_path: '/e/wa-2026-general/comparisons/',
+    precincts: [{ code: '1279', name: 'SEA 46-1279', contest_ids: ['mayor'] }],
+  };
+  const document = await wire(
+    `${GUIDE_URL}?races=contested&precinct=1279`,
+    payload({ precinct_ballot: contract }),
+    () => {
+      globalThis.document.body.insertAdjacentHTML('afterbegin', PRECINCT_MARKUP);
+    },
+  );
+  assert.equal(document.querySelector('#race-filter').disabled, true);
+  assert.equal(document.querySelector('#race-mayor').hidden, false);
+  window.location.hash = `#${lensFragment(['strn'])}`;
+  window.dispatchEvent(new Event('hashchange'));
+  assert.equal(document.querySelector('#race-mayor').hidden, false);
+  document.querySelector('[data-precinct-clear]').click();
+  assert.equal(document.querySelector('#race-filter').disabled, false);
+  assert.equal(new URLSearchParams(window.location.search).get('precinct'), 'all');
+  assert.equal(new URLSearchParams(window.location.search).has('races'), false);
+});
+
+test('actual primary9 HTML and embedded legacy payload retain ordinary primary behavior', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { gunzipSync } = await import('node:zlib');
+  const html = gunzipSync(
+    readFileSync(new URL('../fixtures/ballot/primary9-guide.html.gz', import.meta.url)),
+  ).toString();
+  const document = installDom(GUIDE_URL);
+  document.write(html);
+  const raw = document.querySelector('[data-client-payload]').textContent;
+  const { parseClientPayload } = await import(
+    '../../src/election_guide/rendering/templates/client-payload.mjs'
+  );
+  const parsed = parseClientPayload(raw);
+  assert.equal(parsed.status, 'ok');
+  assert.equal(Object.hasOwn(parsed.payload, 'precinct_ballot'), false);
+  const before = [...document.querySelectorAll('[data-publication-race-id]')].map(
+    (r) => r.dataset.publicationRaceId,
+  );
+  let historySubscriptions = 0;
+  const originalAddListener = window.addEventListener.bind(window);
+  window.addEventListener = (type, ...args) => {
+    if (type === 'popstate') historySubscriptions++;
+    originalAddListener(type, ...args);
+  };
+  let memoryReads = 0;
+  Object.defineProperty(window, 'localStorage', {
+    get() {
+      memoryReads++;
+      throw Error('primary must not request precinct memory');
+    },
+  });
+  const { wireGuide } = await import(
+    '../../src/election_guide/rendering/templates/guide-client.mjs'
+  );
+  wireGuide(parsed.payload);
+  assert.deepEqual(
+    [...document.querySelectorAll('[data-publication-race-id]')]
+      .filter((r) => !r.hidden)
+      .map((r) => r.dataset.publicationRaceId),
+    before,
+  );
+  assert.equal(document.querySelector('[data-precinct-control]'), null);
+  assert.equal(memoryReads, 0);
+  assert.equal(window.location.search, '');
+  assert.equal(historySubscriptions, 0);
+  history.pushState({}, '', '?view=compact');
+  window.dispatchEvent(new Event('popstate'));
+  assert.equal(document.documentElement.classList.contains('compact-ballot-mode'), false);
+  assert.deepEqual(
+    [...document.querySelectorAll('[data-publication-race-id]')]
+      .filter((r) => !r.hidden)
+      .map((r) => r.dataset.publicationRaceId),
+    before,
+  );
 });

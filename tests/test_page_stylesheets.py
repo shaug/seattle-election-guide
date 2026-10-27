@@ -19,6 +19,7 @@ import pytest
 
 from election_guide.rendering.bundler import TEMPLATE_DIR
 from election_guide.rendering.stylesheets import (
+    OPTIONAL_STYLESHEETS,
     PAGE_STYLESHEETS,
     StylesheetError,
     page_stylesheet,
@@ -67,7 +68,11 @@ def _part_classes(part: str) -> set[str]:
 
 def _readers() -> Counter[str]:
     """How many pages read each declared part."""
-    return Counter(part for parts in PAGE_STYLESHEETS.values() for part in parts)
+    return Counter(
+        part
+        for parts in [*PAGE_STYLESHEETS.values(), *OPTIONAL_STYLESHEETS.values()]
+        for part in parts
+    )
 
 
 def _exclusive_parts(page: str) -> set[str]:
@@ -105,7 +110,11 @@ def test_every_stylesheet_is_declared_by_a_page_and_every_declared_part_exists()
     An undeclared stylesheet would go stale unseen; a declared part with no
     file would fail at render time instead of here.
     """
-    declared = {part for parts in PAGE_STYLESHEETS.values() for part in parts}
+    declared = {
+        part
+        for parts in [*PAGE_STYLESHEETS.values(), *OPTIONAL_STYLESHEETS.values()]
+        for part in parts
+    }
     on_disk = {path.name for path in TEMPLATE_DIR.glob("*.css")}
     assert on_disk == declared, (
         f"declared but missing: {sorted(declared - on_disk)}; "
@@ -234,3 +243,18 @@ def test_the_guide_and_the_sources_editor_still_share_what_they_both_render() ->
                 f"the {page} page lost `{declaration}`, which it renders; it belongs to the "
                 f"part both pages read (rendering/stylesheets.py; {RULE})"
             )
+
+
+def test_precinct_styles_are_opt_in_only_for_declared_general_list_pages() -> None:
+    assert OPTIONAL_STYLESHEETS == {"guide": ("precinct.css",), "compare": ("precinct.css",)}
+    for page, optional in OPTIONAL_STYLESHEETS.items():
+        parts = PAGE_STYLESHEETS[page]
+        expected = "".join(
+            (TEMPLATE_DIR / part).read_text(encoding="utf-8")
+            for part in (*parts[:-1], *optional, parts[-1])
+        )
+        assert page_stylesheet(page, precinct=True) == expected
+        assert "precinct-dialog" not in page_stylesheet(page)
+    for page in set(PAGE_STYLESHEETS) - set(OPTIONAL_STYLESHEETS):
+        with pytest.raises(StylesheetError, match="does not render a precinct control"):
+            page_stylesheet(page, precinct=True)

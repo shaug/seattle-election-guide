@@ -1,0 +1,710 @@
+[
+  {
+    "race_id": "us-house-7",
+    "jurisdiction_id": "congressional-district-7",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "Federal",
+    "official_heading": "United States Representative, Congressional District 7",
+    "official_contest_ids": [
+      "186953"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 2,
+    "source_declaration_index": 1
+  },
+  {
+    "race_id": "us-house-9",
+    "jurisdiction_id": "congressional-district-9",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "Federal",
+    "official_heading": "United States Representative, Congressional District 9",
+    "official_contest_ids": [
+      "186955"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 2,
+    "source_declaration_index": 3
+  },
+  {
+    "race_id": "ld-11-state-representative-1",
+    "jurisdiction_id": "legislative-district-11",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 11, State Representative Position No. 1",
+    "official_contest_ids": [
+      "186980"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 2,
+    "source_declaration_index": 8
+  },
+  {
+    "race_id": "ld-11-state-representative-2",
+    "jurisdiction_id": "legislative-district-11",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 11, State Representative Position No. 2",
+    "official_contest_ids": [
+      "186981"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 2,
+    "source_declaration_index": 9
+  },
+  {
+    "race_id": "ld-32-state-senator",
+    "jurisdiction_id": "legislative-district-32",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 32, State Senator",
+    "official_contest_ids": [
+      "187029"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 3,
+    "source_declaration_index": 18
+  },
+  {
+    "race_id": "ld-32-state-representative-1",
+    "jurisdiction_id": "legislative-district-32",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 32, State Representative Position No. 1",
+    "official_contest_ids": [
+      "187030"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 3,
+    "source_declaration_index": 19
+  },
+  {
+    "race_id": "ld-32-state-representative-2",
+    "jurisdiction_id": "legislative-district-32",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 32, State Representative Position No. 2",
+    "official_contest_ids": [
+      "187031"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 3,
+    "source_declaration_index": 20
+  },
+  {
+    "race_id": "ld-34-state-senator",
+    "jurisdiction_id": "legislative-district-34",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 34, State Senator",
+    "official_contest_ids": [
+      "187035"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 3,
+    "source_declaration_index": 24
+  },
+  {
+    "race_id": "ld-34-state-representative-1",
+    "jurisdiction_id": "legislative-district-34",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 34, State Representative Position No. 1",
+    "official_contest_ids": [
+      "187036"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 3,
+    "source_declaration_index": 25
+  },
+  {
+    "race_id": "ld-34-state-representative-2",
+    "jurisdiction_id": "legislative-district-34",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 34, State Representative Position No. 2",
+    "official_contest_ids": [
+      "187037"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 3,
+    "source_declaration_index": 26
+  },
+  {
+    "race_id": "ld-36-state-senator",
+    "jurisdiction_id": "legislative-district-36",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 36, State Senator",
+    "official_contest_ids": [
+      "187041"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 3,
+    "source_declaration_index": 27
+  },
+  {
+    "race_id": "ld-36-state-representative-1",
+    "jurisdiction_id": "legislative-district-36",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 36, State Representative Position No. 1",
+    "official_contest_ids": [
+      "187042"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 3,
+    "source_declaration_index": 28
+  },
+  {
+    "race_id": "ld-36-state-representative-2",
+    "jurisdiction_id": "legislative-district-36",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 36, State Representative Position No. 2",
+    "official_contest_ids": [
+      "187043"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 29
+  },
+  {
+    "race_id": "ld-37-state-senator",
+    "jurisdiction_id": "legislative-district-37",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 37, State Senator",
+    "official_contest_ids": [
+      "187044"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 30
+  },
+  {
+    "race_id": "ld-37-state-representative-1",
+    "jurisdiction_id": "legislative-district-37",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 37, State Representative Position No. 1",
+    "official_contest_ids": [
+      "187045"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 31
+  },
+  {
+    "race_id": "ld-37-state-representative-2",
+    "jurisdiction_id": "legislative-district-37",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 37, State Representative Position No. 2",
+    "official_contest_ids": [
+      "187046"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 32
+  },
+  {
+    "race_id": "ld-43-state-senator",
+    "jurisdiction_id": "legislative-district-43",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 43, State Senator",
+    "official_contest_ids": [
+      "187059"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 35
+  },
+  {
+    "race_id": "ld-43-state-representative-1",
+    "jurisdiction_id": "legislative-district-43",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 43, State Representative Position No. 1",
+    "official_contest_ids": [
+      "187060"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 36
+  },
+  {
+    "race_id": "ld-43-state-representative-2",
+    "jurisdiction_id": "legislative-district-43",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 43, State Representative Position No. 2",
+    "official_contest_ids": [
+      "187061"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 37
+  },
+  {
+    "race_id": "ld-46-state-senator",
+    "jurisdiction_id": "legislative-district-46",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 46, State Senator",
+    "official_contest_ids": [
+      "187068"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 41
+  },
+  {
+    "race_id": "ld-46-state-representative-1",
+    "jurisdiction_id": "legislative-district-46",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 46, State Representative Position No. 1",
+    "official_contest_ids": [
+      "187069"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 42
+  },
+  {
+    "race_id": "ld-46-state-representative-2",
+    "jurisdiction_id": "legislative-district-46",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State",
+    "official_heading": "Legislative District No. 46, State Representative Position No. 2",
+    "official_contest_ids": [
+      "187070"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 4,
+    "source_declaration_index": 43
+  },
+  {
+    "race_id": "king-county-prosecuting-attorney",
+    "jurisdiction_id": "king-county",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "County",
+    "official_heading": "Prosecuting Attorney",
+    "official_contest_ids": [
+      "186671"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 50
+  },
+  {
+    "race_id": "king-county-assessor",
+    "jurisdiction_id": "king-county",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "County",
+    "official_heading": "Assessor",
+    "official_contest_ids": [
+      "186672"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 51
+  },
+  {
+    "race_id": "king-county-director-of-elections",
+    "jurisdiction_id": "king-county",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "County",
+    "official_heading": "Director of Elections",
+    "official_contest_ids": [
+      "186673"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 52
+  },
+  {
+    "race_id": "king-county-council-2",
+    "jurisdiction_id": "county-council-district-2",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "County",
+    "official_heading": "Metropolitan King County, Council District No. 2",
+    "official_contest_ids": [
+      "186674"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 53
+  },
+  {
+    "race_id": "king-county-council-4",
+    "jurisdiction_id": "county-council-district-4",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "County",
+    "official_heading": "Metropolitan King County, Council District No. 4",
+    "official_contest_ids": [
+      "186675"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 54
+  },
+  {
+    "race_id": "king-county-council-8",
+    "jurisdiction_id": "county-council-district-8",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "County",
+    "official_heading": "Metropolitan King County, Council District No. 8",
+    "official_contest_ids": [
+      "186677"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 56
+  },
+  {
+    "race_id": "supreme-court-justice-1",
+    "jurisdiction_id": "washington-state",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State Supreme Court",
+    "official_heading": "Supreme Court, Justice Position No. 1",
+    "official_contest_ids": [
+      "187079"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 57
+  },
+  {
+    "race_id": "supreme-court-justice-3",
+    "jurisdiction_id": "washington-state",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State Supreme Court",
+    "official_heading": "Supreme Court, Justice Position No. 3",
+    "official_contest_ids": [
+      "187080"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 58
+  },
+  {
+    "race_id": "supreme-court-justice-4",
+    "jurisdiction_id": "washington-state",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State Supreme Court",
+    "official_heading": "Supreme Court, Justice Position No. 4",
+    "official_contest_ids": [
+      "187081"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 59
+  },
+  {
+    "race_id": "supreme-court-justice-5",
+    "jurisdiction_id": "washington-state",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State Supreme Court",
+    "official_heading": "Supreme Court, Justice Position No. 5",
+    "official_contest_ids": [
+      "187082"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 60
+  },
+  {
+    "race_id": "supreme-court-justice-7",
+    "jurisdiction_id": "washington-state",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "State Supreme Court",
+    "official_heading": "Supreme Court, Justice Position No. 7",
+    "official_contest_ids": [
+      "187083"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 5,
+    "source_declaration_index": 61
+  },
+  {
+    "race_id": "court-of-appeals-division-1-district-1-judge-5",
+    "jurisdiction_id": "court-of-appeals-division-1-district-1",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "Court of Appeals, Division 1, District 1",
+    "official_heading": "Judge Position No. 5",
+    "official_contest_ids": [
+      "187084"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 6,
+    "source_declaration_index": 62
+  },
+  {
+    "race_id": "court-of-appeals-division-1-district-1-judge-6",
+    "jurisdiction_id": "court-of-appeals-division-1-district-1",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "Court of Appeals, Division 1, District 1",
+    "official_heading": "Judge Position No. 6",
+    "official_contest_ids": [
+      "187085"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 6,
+    "source_declaration_index": 63
+  },
+  {
+    "race_id": "king-county-district-court-west-judge-1",
+    "jurisdiction_id": "king-county-district-court-west-electoral-district",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "District Court",
+    "official_heading": "West Electoral District, Judge Position No. 1",
+    "official_contest_ids": [
+      "186698"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 7,
+    "source_declaration_index": 84
+  },
+  {
+    "race_id": "king-county-district-court-west-judge-2",
+    "jurisdiction_id": "king-county-district-court-west-electoral-district",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "District Court",
+    "official_heading": "West Electoral District, Judge Position No. 2",
+    "official_contest_ids": [
+      "186699"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 7,
+    "source_declaration_index": 85
+  },
+  {
+    "race_id": "king-county-district-court-west-judge-3",
+    "jurisdiction_id": "king-county-district-court-west-electoral-district",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "District Court",
+    "official_heading": "West Electoral District, Judge Position No. 3",
+    "official_contest_ids": [
+      "186700"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 7,
+    "source_declaration_index": 86
+  },
+  {
+    "race_id": "king-county-district-court-west-judge-4",
+    "jurisdiction_id": "king-county-district-court-west-electoral-district",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "District Court",
+    "official_heading": "West Electoral District, Judge Position No. 4",
+    "official_contest_ids": [
+      "186701"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 7,
+    "source_declaration_index": 87
+  },
+  {
+    "race_id": "king-county-district-court-west-judge-5",
+    "jurisdiction_id": "king-county-district-court-west-electoral-district",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "District Court",
+    "official_heading": "West Electoral District, Judge Position No. 5",
+    "official_contest_ids": [
+      "186702"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 7,
+    "source_declaration_index": 88
+  },
+  {
+    "race_id": "seattle-city-council-5",
+    "jurisdiction_id": "seattle-city-council-district-5",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "City",
+    "official_heading": "City of Seattle, Council District No. 5",
+    "official_contest_ids": [
+      "186703"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 9,
+    "source_declaration_index": 89
+  },
+  {
+    "race_id": "seattle-municipal-court-judge-1",
+    "jurisdiction_id": "city-of-seattle",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "City",
+    "official_heading": "City of Seattle, Municipal Court Judge Position No. 1",
+    "official_contest_ids": [
+      "186704"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 9,
+    "source_declaration_index": 90
+  },
+  {
+    "race_id": "seattle-municipal-court-judge-2",
+    "jurisdiction_id": "city-of-seattle",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "City",
+    "official_heading": "City of Seattle, Municipal Court Judge Position No. 2",
+    "official_contest_ids": [
+      "186705"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 9,
+    "source_declaration_index": 91
+  },
+  {
+    "race_id": "seattle-municipal-court-judge-3",
+    "jurisdiction_id": "city-of-seattle",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "City",
+    "official_heading": "City of Seattle, Municipal Court Judge Position No. 3",
+    "official_contest_ids": [
+      "186706"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 9,
+    "source_declaration_index": 92
+  },
+  {
+    "race_id": "seattle-municipal-court-judge-4",
+    "jurisdiction_id": "city-of-seattle",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "City",
+    "official_heading": "City of Seattle, Municipal Court Judge Position No. 4",
+    "official_contest_ids": [
+      "186707"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 9,
+    "source_declaration_index": 93
+  },
+  {
+    "race_id": "seattle-municipal-court-judge-5",
+    "jurisdiction_id": "city-of-seattle",
+    "race_type": "candidate",
+    "official_candidate_count": 2,
+    "official_section": "City",
+    "official_heading": "City of Seattle, Municipal Court Judge Position No. 5",
+    "official_contest_ids": [
+      "186708"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 9,
+    "source_declaration_index": 94
+  },
+  {
+    "race_id": "seattle-municipal-court-judge-6",
+    "jurisdiction_id": "city-of-seattle",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "City",
+    "official_heading": "City of Seattle, Municipal Court Judge Position No. 6",
+    "official_contest_ids": [
+      "186709"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 9,
+    "source_declaration_index": 95
+  },
+  {
+    "race_id": "seattle-municipal-court-judge-7",
+    "jurisdiction_id": "city-of-seattle",
+    "race_type": "candidate",
+    "official_candidate_count": 1,
+    "official_section": "City",
+    "official_heading": "City of Seattle, Municipal Court Judge Position No. 7",
+    "official_contest_ids": [
+      "186710"
+    ],
+    "source_id": "official-candidates",
+    "sample_pdf_page": 10,
+    "source_declaration_index": 96
+  },
+  {
+    "race_id": "initiative-26-001",
+    "jurisdiction_id": "washington-state",
+    "race_type": "measure",
+    "official_candidate_count": null,
+    "official_heading": "Initiative Measure No. IL26-001",
+    "source_id": "official-measures",
+    "sample_pdf_page": 1
+  },
+  {
+    "race_id": "initiative-26-638",
+    "jurisdiction_id": "washington-state",
+    "race_type": "measure",
+    "official_candidate_count": null,
+    "official_heading": "Initiative Measure No. IL26-638",
+    "source_id": "official-measures",
+    "sample_pdf_page": 2
+  },
+  {
+    "race_id": "initiative-26-645",
+    "jurisdiction_id": "washington-state",
+    "race_type": "measure",
+    "official_candidate_count": null,
+    "official_heading": "Initiative Measure No. IP26-645",
+    "source_id": "official-measures",
+    "sample_pdf_page": 1
+  },
+  {
+    "race_id": "seattle-proposition-1-transit",
+    "jurisdiction_id": "city-of-seattle",
+    "race_type": "measure",
+    "official_candidate_count": null,
+    "official_heading": "City of Seattle Proposition No. 1 Seattle Transit Measure",
+    "source_id": "official-measures",
+    "sample_pdf_page": 10
+  }
+]

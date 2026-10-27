@@ -263,3 +263,76 @@ test('a page with the lens switched off keeps the tree the server rendered', asy
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('sources-client.mjs');
 });
+
+test('only an admitted race-mode capability carries race mode through Sources', async () => {
+  for (const enabled of [false, true]) {
+    const pagePayload = enabled
+      ? payload({ race_mode_query_enabled: true, comparisons_path: null })
+      : payload();
+    assert.equal('race_mode_query_enabled' in pagePayload, enabled);
+    const document = await wire(`${SOURCES_URL}?precinct=all&races=all&unrelated=1`, pagePayload);
+    for (const action of ['save', 'cancel', 'page-reset']) {
+      const href = document.querySelector(`[data-sources-${action}]`).getAttribute('href');
+      assert.equal(new URL(href, SOURCES_URL).search, enabled ? '?precinct=all&races=all' : '');
+    }
+  }
+});
+
+test('primary Sources discards unsupported queries while preserving selection and target fragments', async () => {
+  const incoming = '#race-mayor';
+  const editedLinks = async (url, pagePayload) => {
+    const document = await wire(url, pagePayload);
+    const urbn = box(document, 'urbn');
+    urbn.checked = false;
+    urbn.dispatchEvent(new Event('change'));
+    return ['save', 'cancel', 'page-reset'].map((action) =>
+      document.querySelector(`[data-sources-${action}]`).getAttribute('href'),
+    );
+  };
+  const baseline = await editedLinks(`${SOURCES_URL}${incoming}`, payload());
+  assert.match(baseline[0], /sel=strn/);
+  assert.equal(baseline[1], `${GUIDE_PATH}${incoming}`);
+  assert.equal(baseline[2], GUIDE_PATH);
+  for (const pagePayload of [payload(), payload({ race_mode_query_enabled: false })]) {
+    for (const query of [
+      '?precinct=1279',
+      '?precinct=all&races=all&unrelated=discard',
+      '?precinct=1279&precinct=2200&races=all&races=contested',
+      '?precinct=invalid&races=invalid',
+    ]) {
+      const links = await editedLinks(`${SOURCES_URL}${query}${incoming}`, pagePayload);
+      assert.deepEqual(links, baseline);
+      for (const href of links) assert.equal(new URL(href, SOURCES_URL).search, '');
+    }
+  }
+});
+
+test('general header navigation uses complete published paths and leaves legacy headers bare', async () => {
+  for (const general of [false, true]) {
+    const guidePath = general ? '/edition/guide/' : GUIDE_PATH;
+    const comparisonsPath = general ? '/edition/side-by-side/' : `${GUIDE_PATH}comparisons/`;
+    const pagePayload = general
+      ? payload({
+          guide_path: guidePath,
+          race_mode_query_enabled: true,
+          comparisons_path: comparisonsPath,
+        })
+      : payload();
+    const document = installDom(`${SOURCES_URL}?precinct=1279&races=all&unrelated=1`);
+    const marker = (destination) => (general ? ` data-precinct-link="${destination}"` : '');
+    document.body.innerHTML =
+      sourcesMarkup() +
+      `<nav>
+      <a href="${guidePath}"${marker('endorsements')}>Endorsements</a>
+      <a href="${comparisonsPath}"${marker('comparisons')}>Comparisons</a>
+    </nav>`;
+    const { wireSourcesEditor } = await import(
+      '../../src/election_guide/rendering/templates/sources-client.mjs'
+    );
+    wireSourcesEditor(pagePayload);
+    const links = [...document.querySelectorAll('nav a')];
+    const query = general ? '?precinct=1279&races=all' : '';
+    assert.equal(links[0].getAttribute('href'), `${guidePath}${query}`);
+    assert.equal(links[1].getAttribute('href'), `${comparisonsPath}${query}`);
+  }
+});

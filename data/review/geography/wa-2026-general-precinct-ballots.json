@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "issue": 608,
+  "election_id": "wa-2026-general",
+  "election_date": "2026-11-03",
+  "reviewed_at": "2026-10-25T18:05:18Z",
+  "reviewer": "Codex original #608 owner; factual acceptance by release owner thread 01a145fa-3e0a-7542-be42-4e0844a5a582",
+  "acceptance_sha256": "079933aea8c1e5cf93e7e1b0be4e28d267399ea295ef9564b1cf6e29edabf4b1",
+  "inference": "Current official1020major assignments match current precinct universe, enacted2026changes/March10posting/Aug26metadata and current November declarations; bounded covered-jurisdiction constancy, not official voter-specific ballot/style export. No official GIS November effective date asserted.",
+  "shared_jurisdiction_ids": [
+    "washington-state",
+    "king-county",
+    "city-of-seattle",
+    "court-of-appeals-division-1-district-1",
+    "king-county-district-court-west-electoral-district"
+  ],
+  "outside_covered_jurisdiction_ids": [
+    "legislative-district-11"
+  ],
+  "geography_combinations": 31,
+  "precinct_count": 1020,
+  "sources": [
+    {
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/VOTDST_AREA_418/FeatureServer?f=pjson",
+      "checked_at": "2026-10-25T17:46:21.981442+00:00",
+      "sha256": "93651c233133a8d4f4513bf2016aeaa6e054e1bb10631d573138149e65b9156a",
+      "locator": "2026 general contest declarations / current precinct geography / enacted Ordinance20037 as applicable"
+    },
+    {
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/VOTDST_AREA_418/FeatureServer/0/query?where=NAME+LIKE+%27SEA+%25%27&outFields=votdst%2CNAME&returnGeometry=false&f=json&resultRecordCount=2000",
+      "checked_at": "2026-10-25T17:46:22.329052+00:00",
+      "sha256": "d8011ae4fa147079a72084f9b20c8e8f073812a1178b6bfc5dd8b5c2dd249f08",
+      "locator": "2026 general contest declarations / current precinct geography / enacted Ordinance20037 as applicable"
+    },
+    {
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/VOTDST_AREA_418/FeatureServer/0/query?where=NAME+LIKE+%27SEA+%25%27&outFields=votdst%2CNAME&returnGeometry=false&f=json&resultRecordCount=1000&resultOffset=1000",
+      "checked_at": "2026-10-25T17:46:35.247145+00:00",
+      "sha256": "8c47b5c7a19520394b53cd221d1868327247382f02ecdd8f9b0fd2085ea92ef6",
+      "locator": "2026 general contest declarations / current precinct geography / enacted Ordinance20037 as applicable"
+    },
+    {
+      "url": "https://aqua.kingcounty.gov/council/clerk/code/04_Title_1.htm",
+      "checked_at": "2026-10-25T17:47:30.679820+00:00",
+      "sha256": "14ac4e815063b95d2b9e1f333b0d4866874efc313f7a6e1de89082f8add70db1",
+      "locator": "KCC 1.12.050(B)"
+    },
+    {
+      "url": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55",
+      "checked_at": "2026-10-25T17:45:35.912750+00:00",
+      "sha256": "6739b1dc35c3a5f7ffbf2a3c8b69dd5ad822a392b823298ef22589b9450c2e9d",
+      "locator": "2026 general contest declarations / current precinct geography / enacted Ordinance20037 as applicable"
+    },
+    {
+      "url": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55",
+      "checked_at": "2026-10-25T17:45:36.230520+00:00",
+      "sha256": "c9a6fb09470b29e5f6517a30c441e6501d2d304c4b4e51adfe360b8e747a5bfa",
+      "locator": "2026 general contest declarations / current precinct geography / enacted Ordinance20037 as applicable"
+    },
+    {
+      "url": "https://www5.kingcounty.gov/sdc/?Layer=votdst_area",
+      "checked_at": "2026-10-25T17:45:37.684685+00:00",
+      "sha256": "eef1cd612cab6fa629c12d593dedbf253985260f68bf7c4b64f6903d380e94ff",
+      "locator": "2026 general contest declarations / current precinct geography / enacted Ordinance20037 as applicable"
+    },
+    {
+      "url": "https://mkcclegisearch.kingcounty.gov/LegislationDetail.aspx?GUID=87119B8E-D4CE-4031-AA7B-2E0850B7D89A&ID=7859974&Options=&Search=",
+      "checked_at": "2026-10-25T17:45:36.946355+00:00",
+      "sha256": "998f59ed2066bce6c1231119ed9f5cbccebbd4b0df64b5f0b680d54656a875f9",
+      "locator": "2026 general contest declarations / current precinct geography / enacted Ordinance20037 as applicable"
+    },
+    {
+      "url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/current-election/2026/11/sample-ballot.pdf?hash=895ADB51E1998F1D24C40AE595A68F95&rev=ddaa4d38e7dd4f0e81025944a419a679",
+      "checked_at": "2026-10-25T17:44:39.587575+00:00",
+      "sha256": "7470c8db740b2845deffb62e5f2401f01dd8fb288ecf813356d4dcfbdb707db8",
+      "locator": "2026 general contest declarations / current precinct geography / enacted Ordinance20037 as applicable"
+    },
+    {
+      "url": "https://app.leg.wa.gov/rcw/default.aspx?cite=2.06.020",
+      "checked_at": "2026-10-25T17:59:42.304230+00:00",
+      "sha256": "a68669b7779619d3a79e4271ec28ecc9b5275f60d8c1e568eb518825c678a534",
+      "locator": "RCW 2.06.020(1)(a)"
+    },
+    {
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/FindMyDistricts_March2026/FeatureServer/655?f=pjson",
+      "checked_at": "2026-10-25T17:22:59.036562+00:00",
+      "sha256": "432fa76cee2e6fe167a2c28b61374adc07656d04ff8d47ee75575a6b5bfe5000",
+      "locator": "Current official combined major-district layer; all1020Seattle council-assigned precincts"
+    },
+    {
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/FindMyDistricts_March2026/FeatureServer/655/query?where=SCC+IN+%28%271%27%2C%272%27%2C%273%27%2C%274%27%2C%275%27%2C%276%27%2C%277%27%29&outFields=VOTDST%2CNAME%2CCONGDST%2CLEGDST%2CKCCDST%2CSCC&returnGeometry=false&f=json&resultRecordCount=2000",
+      "checked_at": "2026-10-25T17:22:59.337603+00:00",
+      "sha256": "64197ce988f426d8d0e4199d70a97ee04d778443ecef5c5d568bcd65b673d358",
+      "locator": "Current official combined major-district layer; all1020Seattle council-assigned precincts"
+    }
+  ],
+  "limits": [
+    "Prior Courts HTTP200 body was a Page not Found error; it is not cited as authority. RCW2.06.020(1)(a) supplies Appeals District1=KingCounty.",
+    "Composite sample ballot does not certify precinct eligibility. Expected sets are independently source-composed;31 are geography combinations, not official ballot styles.",
+    "Primary and jurisdictions beyond SEG general coverage are unsupported.",
+    "No live fetch during normal admission/publication."
+  ]
+}

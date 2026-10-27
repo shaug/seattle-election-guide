@@ -108,6 +108,20 @@ workflow shell does not reimplement them. Verification-only recovery reads the o
 object and upload receipt, preserving provenance without rebuilding or uploading. Failed evidence
 keeps delivery incomplete and retryable. Historical two-revision lineage checks remain unchanged.
 
+## Offline precinct personalization (#608)
+
+The November2026 general precinct catalog is a hash-bound publication input.
+Admission validates the entire reviewed electorate and every covered jurisdiction
+before building source-independent contest-ID sets. Publication and the browser
+perform no geography network requests. Voter selection changes displayed membership
+only, preserving canonical inventory, scoring inputs, source eligibility and existing
+section order. The general-only catalog is shared by both list views; primary
+archives and legacy payloads remain readable without the optional contract.
+The contract contains all geographically applicable public contest IDs, independent
+of the general view's race mode. Contested is the general default; an explicit All
+override includes eligible uncontested races. Both modes preserve applicable measures.
+The browser applies race mode after geography without changing section order.
+
 ## Ballot presentation
 
 The November 2026 publication builder consumes the versioned, reviewed

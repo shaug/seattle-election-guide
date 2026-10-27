@@ -184,3 +184,13 @@ def test_an_unknown_entry_is_a_bundler_error_rather_than_an_esbuild_message() ->
     bundle_entry.cache_clear()
     with pytest.raises(BundleError, match="no client entry module"):
         bundle_entry("nonexistent-entry.mjs", global_name="Nope")
+
+
+def test_general_precinct_history_is_absent_from_race_and_sources_bundles() -> None:
+    """An unused general subscription must not change archived race-page code."""
+    guide = _fresh("guide-entry.mjs", "GuidePage")
+    assert 'window.addEventListener("popstate", listener)' in guide
+    for entry, name in [("race-entry.mjs", "RacePage"), ("sources-entry.mjs", "SourcesPage")]:
+        bundle = _fresh(entry, name)
+        assert "onLensHistoryChange" not in bundle
+        assert 'window.addEventListener("popstate", listener)' not in bundle

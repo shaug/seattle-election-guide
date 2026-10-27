@@ -34,7 +34,7 @@ export const MODULE_DIR = new URL(
   import.meta.url,
 );
 
-/** The URL fragment is the only client persistence (§ State and URLs). */
+/** Source state stays in fragments; one explicit precinct-memory capability is separate. */
 const STORAGE_IDENTIFIERS = ['localStorage', 'sessionStorage', 'cookie'];
 
 /** Everything a computing module must not reach for (§ Testing). */
@@ -66,6 +66,9 @@ const PURITY_IDENTIFIERS = [
  * this choice deliberately rather than arriving unguarded.
  */
 export const MODULE_KINDS = {
+  'precinct-ballot.mjs': 'pure',
+  'precinct-control.mjs': 'wiring',
+  'precinct-selection-store.mjs': 'precinct-memory',
   'client-payload.mjs': 'wiring',
   'compare-client.mjs': 'wiring',
   'compare-entry.mjs': 'wiring',
@@ -138,7 +141,9 @@ export function assertModuleGuard(moduleName) {
 
   const code = executableSource(moduleName);
 
+  // The approved capability stores only a precinct; all other modules remain storage-free.
   for (const identifier of STORAGE_IDENTIFIERS) {
+    if (kind === 'precinct-memory' && identifier === 'localStorage') continue;
     assert.equal(
       mentions(code, identifier),
       false,
@@ -147,9 +152,10 @@ export function assertModuleGuard(moduleName) {
     );
   }
 
-  if (kind !== 'pure') return;
+  if (kind !== 'pure' && kind !== 'precinct-memory') return;
 
   for (const identifier of PURITY_IDENTIFIERS) {
+    if (kind === 'precinct-memory' && identifier === 'window') continue;
     assert.equal(
       mentions(code, identifier),
       false,

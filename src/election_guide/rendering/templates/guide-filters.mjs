@@ -13,6 +13,7 @@
 //     (§ State and URLs).
 
 import { filterStatusParts } from './guide-format.mjs';
+import { readContestedOnly, withContestedOnly } from './precinct-ballot.mjs';
 
 /**
  * @typedef {object} ControlState
@@ -27,15 +28,22 @@ import { filterStatusParts } from './guide-format.mjs';
  *
  * @param {string} search A query string, `?` included or not.
  * @param {ReadonlySet<string>} knownScopes
+ * @param {boolean} [defaultContested]
  * @returns {ControlState}
  */
-export function readControlState(search, knownScopes) {
+export function readControlState(search, knownScopes, defaultContested = false) {
   const query = new URLSearchParams(search);
   const requestedScope = query.get('filter');
   return {
     scope: requestedScope && knownScopes.has(requestedScope) ? requestedScope : 'all',
     view: query.get('view') === 'compact' ? 'compact' : 'full',
-    raceSet: query.get('races') === 'contested' ? 'contested' : 'complete',
+    raceSet: (
+      defaultContested
+        ? readContestedOnly(search, true)
+        : query.get('races') === 'contested'
+    )
+      ? 'contested'
+      : 'complete',
   };
 }
 
@@ -48,18 +56,16 @@ export function readControlState(search, knownScopes) {
  *
  * @param {string} search
  * @param {ControlState} state
+ * @param {boolean} [defaultContested]
  * @returns {string} A query string including its leading `?`, or `''`.
  */
-export function writeControlState(search, state) {
+export function writeControlState(search, state, defaultContested = false) {
   const query = new URLSearchParams(search);
   if (state.scope === 'all') query.delete('filter');
   else query.set('filter', state.scope);
   if (state.view === 'compact') query.set('view', 'compact');
   else query.delete('view');
-  if (state.raceSet === 'contested') query.set('races', 'contested');
-  else query.delete('races');
-  const serialized = query.toString();
-  return serialized === '' ? '' : `?${serialized}`;
+  return withContestedOnly(query.toString(), state.raceSet === 'contested', defaultContested);
 }
 
 /**
@@ -67,6 +73,7 @@ export function writeControlState(search, state) {
  * @property {(options?: { syncUrl?: boolean }) => void} apply Re-apply the
  *   controls' current state to the page.
  * @property {() => void} syncFromUrl Reload the controls from the address bar.
+ * @property {(ids:Set<string>|null, reset:boolean) => void} setPrecinct
  * @property {() => void} showEveryRace Clear the filter so a linked race is
  *   reachable, and apply it.
  */
@@ -76,9 +83,10 @@ export function writeControlState(search, state) {
  *
  * @param {GuidePayload} payload
  * @param {import('./lens-route.mjs').LensRouter} router
+ * @param {() => void} [onApply]
  * @returns {GuideFilters}
  */
-export function wireGuideFilters(payload, router) {
+export function wireGuideFilters(payload, router, onApply = () => {}) {
   const select = /** @type {HTMLSelectElement} */ (document.querySelector('#race-filter'));
   const completeFilter = /** @type {HTMLInputElement} */ (
     document.querySelector('#complete-filter')
@@ -97,6 +105,8 @@ export function wireGuideFilters(payload, router) {
     ...document.querySelectorAll('[data-filter-section]'),
   ]);
 
+  const defaultContested = payload.precinct_ballot?.election_id === 'wa-2026-general';
+  let precinctIds = /** @type {Set<string>|null} */ (null);
   const scopeLabels = new Map(payload.filter_scopes.map((scope) => [scope.value, scope.label]));
   const knownScopes = new Set(scopeLabels.keys());
 
@@ -111,7 +121,7 @@ export function wireGuideFilters(payload, router) {
   });
 
   const syncFromUrl = () => {
-    const state = readControlState(router.controlSearch(), knownScopes);
+    const state = readControlState(router.controlSearch(), knownScopes, defaultContested);
     select.value = state.scope;
     viewInputs.forEach((input) => {
       input.checked = input.value === state.view;
@@ -134,7 +144,10 @@ export function wireGuideFilters(payload, router) {
         state.scope === 'all' ||
         JSON.parse(/** @type {string} */ (card.dataset.filterTokens)).includes(state.scope);
       const matchesContest = !contestedOnly || card.dataset.contested === 'true';
-      const matches = matchesScope && matchesContest;
+      const matches =
+        (precinctIds !== null
+          ? precinctIds.has(card.dataset.publicationRaceId ?? '')
+          : matchesScope) && matchesContest;
       card.hidden = !matches;
       if (matches) visible += 1;
     });
@@ -150,7 +163,10 @@ export function wireGuideFilters(payload, router) {
       // The payload names every scope the select offers, so a resolved value
       // always has a label; the fallback covers only a `select.value` the
       // payload does not know, which the markup cannot produce.
-      scopeLabel: scopeLabels.get(state.scope) ?? 'All Seattle ballot races',
+      scopeLabel:
+        precinctIds !== null
+          ? 'Selected precinct'
+          : (scopeLabels.get(state.scope) ?? 'All Seattle ballot races'),
     });
     status.replaceChildren(
       ...statusParts.map((part, index) => {
@@ -160,7 +176,11 @@ export function wireGuideFilters(payload, router) {
         return chunk;
       }),
     );
-    if (syncUrl) router.replaceControlSearch(writeControlState(router.controlSearch(), state));
+    if (syncUrl)
+      router.replaceControlSearch(
+        writeControlState(router.controlSearch(), state, defaultContested),
+      );
+    onApply();
   };
 
   select.addEventListener('change', () => apply());
@@ -173,6 +193,14 @@ export function wireGuideFilters(payload, router) {
   return {
     apply,
     syncFromUrl,
+    setPrecinct(ids, reset) {
+      precinctIds = ids;
+      select.disabled = ids !== null;
+      if (reset) {
+        select.value = 'all';
+      }
+      apply({ syncUrl: reset });
+    },
     showEveryRace() {
       select.value = 'all';
       completeFilter.checked = true;

@@ -9,7 +9,7 @@
   <a class="skip-link" href="#comparison-main">Skip to content</a>
   <div class="page" data-comparison-page data-election-id="{{ guide.metadata.election_id }}">
     <header>
-      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=guide_path ~ 'comparisons/', corrections_href=corrections_href, current='comparisons') }}
+      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=guide_path ~ 'comparisons/', corrections_href=corrections_href, current='comparisons', precinct_links=guide.precinct_ballot is not none) }}
       <div class="page-band-rule"></div>
     </header>
     {{ election_day_banner | safe }}
@@ -37,7 +37,8 @@
           {'value': 'contested', 'label': 'Contested', 'id': '', 'attributes': 'data-comparison-contested', 'checked': false}
         ],
         '', 'aria-atomic="true" data-comparison-status', 'comparison-control-status',
-        comparison_race_count ~ ' of ' ~ comparison_race_count ~ ' races shown · ' ~ comparison_differ_count ~ ' differ'
+        comparison_race_count ~ ' of ' ~ comparison_race_count ~ ' races shown · ' ~ comparison_differ_count ~ ' differ',
+        precinct_enabled=guide.precinct_ballot is not none
       ) %}
         <option value="all">All Seattle ballot races</option>
         {% for section_id, section_label in comparison_filter_sections %}<option value="{{ section_id }}">{{ section_label }}</option>{% endfor %}
