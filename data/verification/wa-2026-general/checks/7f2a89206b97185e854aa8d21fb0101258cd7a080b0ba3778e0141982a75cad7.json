@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-28T10:57:03.192131Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/dependabot_639_640_intake (explicitly delegated factual reviewer): data/review/rechecks/wa-2026-general-2026-10-28-manual.json#37th-district-democrats; complete bounded publication review; all stated held/prior qualifications retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-28",
+  "source_id": "37th-district-democrats",
+  "status": "manual"
+}
