@@ -302,7 +302,7 @@
     "suite": "e2e",
     "tests": {
       "test_general_sources_capability_does_not_extend_the_legacy_payload": "contract",
-      "test_modal_lookup_link_is_required_and_does_not_admit_other_links": "integration"
+      "test_modal_rejects_obsolete_lookup_and_other_unexpected_links": "integration"
     },
     "partition": "integration-rendering"
   },

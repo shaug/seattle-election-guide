@@ -53,9 +53,38 @@ function boot(lookupOverride = {}) {
   return { doc, pending, query: () => query, history: () => history() };
 }
 const flush = () => new Promise((done) => setTimeout(done, 0));
+test('one unified editor shows numeric precinct and address suggestions without choosing either', async () => {
+  const b = boot();
+  assert.equal(b.doc.querySelectorAll('input').length, 1);
+  const input = b.doc.querySelector('#voting-precinct[role=combobox]');
+  assert.ok(input);
+  assert.equal(b.doc.querySelector('datalist'), null);
+  assert.equal(b.doc.querySelector('[data-address-mode]'), null);
+  assert.equal(b.doc.querySelector('[data-direct-mode]'), null);
+  assert.equal(b.doc.body.textContent.includes('Find my precinct'), false);
+  input.value = '323';
+  input.dispatchEvent(new Event('input'));
+  await new Promise((done) => setTimeout(done, 330));
+  const options = [...b.doc.querySelectorAll('[role=option]')];
+  assert.deepEqual(
+    options.map((option) => option.dataset.kind),
+    ['precinct', 'address'],
+  );
+  assert.match(options[0].textContent, /SEA 34-3230.*Precinct/);
+  assert.match(options[1].textContent, /Public civic building.*Address/);
+  assert.equal(b.doc.querySelector('[data-precinct-submit]').disabled, true);
+  const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+  input.dispatchEvent(enter);
+  assert.equal(enter.defaultPrevented, true);
+  assert.equal(b.pending.length, 0);
+  options[0].click();
+  assert.equal(b.query(), '?precinct=all&races=all');
+  assert.equal(b.doc.querySelector('[data-precinct-submit]').disabled, false);
+  b.doc.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true }));
+  assert.equal(b.query(), '?precinct=3230&races=all');
+});
 async function chooseAddress(b) {
-  b.doc.querySelector('[data-address-mode]').click();
-  const input = b.doc.querySelector('[data-address-input]');
+  const input = b.doc.querySelector('[data-ballot-search]');
   input.value = 'Public civic';
   input.dispatchEvent(new Event('input'));
   await new Promise((done) => setTimeout(done, 330));
@@ -79,9 +108,9 @@ test('address selection resolves only the existing draft, and Select commits onc
   b.doc.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true }));
   assert.equal(b.query(), '?precinct=3230&races=all');
   assert.equal(window.localStorage.getItem('seg-precinct-v1:wa-2026-general'), '3230');
-  assert.equal(b.doc.querySelector('[data-address-input]').value, '');
+  assert.equal(b.doc.querySelector('[data-ballot-search]').value, '');
 });
-for (const boundary of ['cancel', 'edit', 'history', 'mode', 'close-reopen'])
+for (const boundary of ['cancel', 'edit', 'history', 'local-query', 'close-reopen'])
   test(`late resolution cannot revive canceled draft: ${boundary}`, async () => {
     const b = boot();
     const input = await chooseAddress(b);
@@ -89,7 +118,10 @@ for (const boundary of ['cancel', 'edit', 'history', 'mode', 'close-reopen'])
       b.doc.querySelector('[data-precinct-cancel]').click();
     if (boundary === 'close-reopen') b.doc.querySelector('[data-precinct-open]').click();
     if (boundary === 'history') b.history();
-    if (boundary === 'mode') b.doc.querySelector('[data-direct-mode]').click();
+    if (boundary === 'local-query') {
+      input.value = '323';
+      input.dispatchEvent(new Event('input'));
+    }
     if (boundary === 'edit') {
       input.value = 'New text';
       input.dispatchEvent(new Event('input'));
@@ -101,8 +133,7 @@ for (const boundary of ['cancel', 'edit', 'history', 'mode', 'close-reopen'])
   });
 test('popup Enter never submits; first Escape dismisses popup, Tab never selects', async () => {
   const b = boot();
-  b.doc.querySelector('[data-address-mode]').click();
-  const input = b.doc.querySelector('[data-address-input]');
+  const input = b.doc.querySelector('[data-ballot-search]');
   input.value = 'Public';
   input.dispatchEvent(new Event('input'));
   await new Promise((done) => setTimeout(done, 330));
@@ -131,8 +162,7 @@ test('Tab after explicit suggestion selection does not cancel the in-flight reso
 test('old suggestions cannot replace newer text even when abort is ignored', async () => {
   const searches = [];
   const b = boot({ suggest: () => new Promise((done) => searches.push(done)) });
-  b.doc.querySelector('[data-address-mode]').click();
-  const input = b.doc.querySelector('[data-address-input]');
+  const input = b.doc.querySelector('[data-ballot-search]');
   input.value = 'Older query';
   input.dispatchEvent(new Event('input'));
   await new Promise((done) => setTimeout(done, 330));
@@ -143,7 +173,11 @@ test('old suggestions cannot replace newer text even when abort is ignored', asy
   await flush();
   searches[0]([{ text: 'Older canonical', magicKey: 'old', isCollection: false }]);
   await flush();
-  assert.equal(b.doc.querySelector('[role=listbox]').textContent, 'Newer canonical');
+  assert.match(b.doc.querySelector('[role=listbox]').textContent, /Newer canonical/);
+  assert.equal(
+    b.doc.querySelector('[role=listbox]').textContent.includes('Older canonical'),
+    false,
+  );
   assert.equal(b.doc.querySelector('[data-precinct-submit]').disabled, true);
 });
 
@@ -154,12 +188,12 @@ test('lookup failure retains direct precinct fallback and never prints raw error
   await flush();
   assert.match(
     b.doc.querySelector('[data-precinct-status]').textContent,
-    /Choose your precinct directly/,
+    /Choose a precinct suggestion/,
   );
-  b.doc.querySelector('[data-direct-mode]').click();
   const direct = b.doc.querySelector('#voting-precinct');
   direct.value = '3230';
   direct.dispatchEvent(new Event('input'));
+  b.doc.querySelector('[role=option][data-kind=precinct]').click();
   b.doc.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true }));
   assert.equal(b.query(), '?precinct=3230&races=all');
 });
@@ -171,13 +205,109 @@ test('ArrowUp from no active option selects the last real suggestion', async () 
       { text: 'Second canonical', magicKey: 'second', isCollection: false },
     ],
   });
-  b.doc.querySelector('[data-address-mode]').click();
-  const input = b.doc.querySelector('[data-address-input]');
+  const input = b.doc.querySelector('[data-ballot-search]');
   input.value = 'Canonical';
   input.dispatchEvent(new Event('input'));
   await new Promise((done) => setTimeout(done, 330));
   input.dispatchEvent(
     new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true, cancelable: true }),
   );
-  assert.equal(input.getAttribute('aria-activedescendant'), 'address-option-1');
+  assert.equal(input.getAttribute('aria-activedescendant'), 'ballot-option-1');
+});
+
+test('late address suggestions preserve an active local row and cannot revive a selected precinct', async () => {
+  const searches = [];
+  const b = boot({ suggest: () => new Promise((done) => searches.push(done)) });
+  const input = b.doc.querySelector('[data-ballot-search]');
+  input.value = '323';
+  input.dispatchEvent(new Event('input'));
+  input.dispatchEvent(
+    new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }),
+  );
+  await new Promise((done) => setTimeout(done, 330));
+  searches[0]([{ text: 'SEA 34-3230', magicKey: 'different-kind', isCollection: false }]);
+  await flush();
+  assert.equal(input.getAttribute('aria-activedescendant'), 'ballot-option-0');
+  assert.deepEqual(
+    [...b.doc.querySelectorAll('[role=option]')].map((o) => o.dataset.kind),
+    ['precinct', 'address'],
+  );
+  input.dispatchEvent(
+    new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
+  );
+  assert.equal(input.value, 'SEA 34-3230');
+  assert.equal(b.pending.length, 0);
+  assert.equal(b.doc.querySelector('[data-precinct-submit]').disabled, false);
+  assert.equal(b.query(), '?precinct=all&races=all');
+});
+
+test('a local choice wins over an older in-flight address resolution', async () => {
+  const b = boot();
+  const input = await chooseAddress(b);
+  input.value = '323';
+  input.dispatchEvent(new Event('input'));
+  b.doc.querySelector('[role=option][data-kind=precinct]').click();
+  b.pending[0]({ status: 'resolved', code: '3230' });
+  await flush();
+  assert.equal(input.value, 'SEA 34-3230');
+  b.doc.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true }));
+  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
+});
+
+test('applied address label is ephemeral; cancel retains it and history restores only precinct', async () => {
+  const b = boot();
+  await chooseAddress(b);
+  b.pending[0]({ status: 'resolved', code: '3230' });
+  await flush();
+  b.doc.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true }));
+  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'Public civic building');
+  assert.equal(window.localStorage.getItem('seg-precinct-v1:wa-2026-general'), '3230');
+  assert.equal(b.query().includes('Public'), false);
+  b.doc.querySelector('[data-precinct-open]').click();
+  const input = b.doc.querySelector('[data-ballot-search]');
+  assert.equal(input.value, 'Public civic building');
+  input.value = 'Uncommitted query';
+  input.dispatchEvent(new Event('input'));
+  b.doc.querySelector('[data-precinct-cancel]').click();
+  assert.equal(input.value, '');
+  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'Public civic building');
+  b.history();
+  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
+});
+
+test('IME composition never looks up intermediate text or commits on Enter', async () => {
+  let calls = 0;
+  const b = boot({
+    suggest: async () => {
+      calls += 1;
+      return [];
+    },
+  });
+  const input = b.doc.querySelector('[data-ballot-search]');
+  input.dispatchEvent(new Event('compositionstart'));
+  input.value = 'Public';
+  input.dispatchEvent(new Event('input'));
+  input.dispatchEvent(
+    new KeyboardEvent('keydown', { key: 'Enter', isComposing: true, bubbles: true }),
+  );
+  await new Promise((done) => setTimeout(done, 330));
+  assert.equal(calls, 0);
+  assert.equal(b.query(), '?precinct=all&races=all');
+  input.dispatchEvent(new Event('compositionend'));
+  await new Promise((done) => setTimeout(done, 330));
+  assert.equal(calls, 1);
+});
+
+test('a detached suggestion from an older query cannot select the current draft', () => {
+  const b = boot();
+  const input = b.doc.querySelector('[data-ballot-search]');
+  input.value = '323';
+  input.dispatchEvent(new Event('input'));
+  const old = b.doc.querySelector('[role=option][data-kind=precinct]');
+  input.value = 'Different query';
+  input.dispatchEvent(new Event('input'));
+  old.click();
+  assert.equal(b.doc.querySelector('[data-precinct-submit]').disabled, true);
+  assert.equal(input.value, 'Different query');
+  b.doc.querySelector('[data-precinct-cancel]').click();
 });

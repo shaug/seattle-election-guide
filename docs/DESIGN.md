@@ -432,10 +432,11 @@ rule or rationale it produced lands here.
 
 The November2026 general guide places Precinct in the existing Filters row on
 Endorsements and Comparisons, with all filter headers aligned. An unset choice
-shows a Select action; a selected choice shows its linked precinct name and a
-compact × button labeled Clear precinct selection. The action opens a native
-modal with the existing searchable field, an ordinary Find my precinct link,
-and Select and Cancel buttons. Search edits a draft: only Select applies it;
+shows a Select action; a selected choice shows its transient selected address
+or its precinct name and a compact × button labeled Clear precinct selection. The action opens a native
+modal with one searchable field and Select and Cancel buttons. The October28
+#657 revision below supersedes the original native precinct suggestions and
+Find my precinct link. Search edits a draft: only Select applies it;
 Cancel and Escape preserve the applied choice, URL and device memory. Opening or
 canceling this ephemeral editor does not change the query or fragment. Opening
 focuses search; native modal focus containment and return focus preserve keyboard
@@ -454,19 +455,29 @@ precinct control.
 
 ## Optional voting-address path (#657, October28,2026)
 
-The same native Ballot dialog offers direct precinct entry or voting-address
-suggestions. Direct entry stays available to away/overseas voters and during lookup
-failures. Explicit selection of a canonical address resolves the same draft precinct;
-only Select commits it. No second district form or device location is requested.
-The address label identifies canonical street/building scope, not verification of an
-omitted unit or voter registration. Ambiguous, partial, unsupported or unconfirmed
-scope never selects a precinct. Cancel, native Escape, Clear, re-edit and history
-discard transient lookup work. First Escape closes an open suggestions popup;
-subsequent Escape cancels the dialog. Enter chooses an active suggestion without
-submitting; Tab never chooses one. Loading, results and failures are announced.
-The existing focus containment/return and phone layout remain required.
-Explain County/Esri transmission and possible provider retention inside this path;
-SEG retains only the existing election-specific precinct. See ADDRESS_LOOKUP.md.
+The same native Ballot dialog has one address-or-precinct combobox and one styled
+suggestion list. Reviewed precinct matches appear immediately; debounced address
+matches join the same list. Numeric queries may match both. Each row has a small,
+right-aligned Address or Precinct label. There are no mode buttons, native datalist
+or Find my precinct link (Scott's explicit October28 revision).
+
+Selecting a suggestion fills the shared draft; only Select commits it. Raw text,
+an exact typed code or the first suggestion never silently chooses. Direct precinct
+suggestions stay usable for away/overseas voters and lookup failures. No second
+form or device position is requested. Canonical street/building scope does not
+verify an omitted unit or voter registration; ambiguous or unsupported scope fails
+closed. Loading, counts and failures are announced. Arrows activate real options;
+Enter chooses the active option without submitting; Tab never chooses. First Escape
+closes suggestions, next Escape cancels. Composition input must finish before lookup.
+Preserve native modal focus containment/return and usable phone scrolling/wrapping.
+
+Cancel, close, re-edit and history discard transient draft work. A committed address
+label may appear in the current page's summary and reopened editor; it stays only
+in page memory. Cancel preserves that applied label. Clear, history, reload and
+navigation discard it; restored/shared choices show the precinct name. No address
+enters URL or device memory. Explain County/Esri transmission and possible provider
+retention beside the unified field before lookup. SEG retains only the existing
+precinct code. See ADDRESS_LOOKUP.md.
 
 ## November 2026 ballot sequence
 

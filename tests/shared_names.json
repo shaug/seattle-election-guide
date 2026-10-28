@@ -474,27 +474,20 @@
       "client",
       "test"
     ],
-    "data-address-fields": [
-      "stylesheet",
-      "client"
-    ],
-    "data-address-input": [
-      "client",
-      "test"
-    ],
-    "data-address-mode": [
-      "client",
-      "python",
-      "test"
-    ],
-    "data-address-options": [
-      "stylesheet",
+    "data-ballot-options": [
       "client",
       "python"
     ],
-    "data-direct-mode": [
+    "data-ballot-search": [
       "client",
-      "python",
+      "test"
+    ],
+    "data-code": [
+      "client",
+      "test"
+    ],
+    "data-kind": [
+      "client",
       "test"
     ]
   },
@@ -1043,11 +1036,26 @@
       "stylesheet",
       "client"
     ],
-    "address-mode-choice": [
+    "address-privacy": [
+      "stylesheet",
+      "client",
+      "python"
+    ],
+    "ballot-option": [
       "stylesheet",
       "client"
     ],
-    "address-privacy": [
+    "ballot-option-text": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "ballot-option-type": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "ballot-options": [
       "stylesheet",
       "client"
     ]

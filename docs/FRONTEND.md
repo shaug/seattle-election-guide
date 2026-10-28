@@ -867,8 +867,11 @@ atomic public GIS snapshot or fetching entire polygon layers per lookup.
 `voting-address-lookup.mjs` is the narrow storage-free network adapter, using fixed
 approved endpoints and bounded anonymous requests (address-bearing form POST;
 fixed address-free metadata GET). `precinct-control.mjs` owns
-ephemeral address input, suggestions, request/session generations and the shared
-precinct draft. Abort and generation checks prevent stale work from changing that
+one ephemeral address-or-precinct combobox, tagged local/remote suggestions,
+request/session generations and the shared precinct draft. Numeric input does not
+infer a kind. Local matches remain available while address suggestions load or fail.
+A selected address label may stay in page memory for its applied precinct, but
+clear/history/reload/navigation discard it; only the precinct survives restoration. Abort and generation checks prevent stale work from changing that
 draft. Only existing Select calls the existing router and precinct-memory owner;
 addresses/points/provider identifiers never enter SEG URLs, storage or logs. Keep
 pure membership/scoring modules offline. Check: `voting-address-lookup.test.mjs`

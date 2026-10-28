@@ -1,6 +1,8 @@
 # Optional voting-address lookup (#657)
 
-The Ballot dialog can resolve a reader-selected canonical street/building address
+The Ballot dialog combines reviewed precinct matches and canonical address
+suggestions in one field with labelled rows, without modes or an external finder.
+It can resolve a reader-selected canonical street/building address
 to the reviewed November2026 precinct catalog. It does not verify voter registration,
 unit occupancy, omitted apartments or the reader's complete official ballot. Direct
 precinct entry remains available, including away/overseas and when lookup fails.
@@ -51,7 +53,10 @@ King County's [terms](https://kingcounty.gov/en/dept/kcit/data-information-servi
 permit nonsale use of county-owned information subject to third-party limits and
 as-is/no-warranty conditions; they are not an unlimited traffic entitlement.
 
-All address text, suggestion identifiers, points and responses are ephemeral and
-cleared on dialog close/history/mode changes. They never enter SEG URLs, storage,
-logs or analytics. Only Select commits the existing precinct draft through the
+Draft address text, suggestion identifiers, points and responses are ephemeral and
+cleared on dialog close/history/re-edit. A committed canonical address label may
+remain only in the current page memory for its applied precinct; Cancel preserves
+it, while clear/history/reload/navigation discard it. Restored choices use the
+precinct name, never a saved address. Address text, points and provider identifiers
+never enter SEG URLs, storage, logs or analytics. Only Select commits the existing precinct draft through the
 existing router/store. Cancel/Escape and stale responses cannot commit it.

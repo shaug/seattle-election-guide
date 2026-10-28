@@ -7,7 +7,7 @@
 .precinct-control { display: grid; min-width: 8rem; flex: 1 1 8rem; gap: .2rem; }
 .precinct-control[hidden] { display: none; }
 .precinct-summary { display: flex; align-items: center; gap: .5rem; min-height: 2.7rem; }
-.precinct-open { padding: 0; border: 0; background: transparent; color: var(--navy); font: inherit; text-decoration: underline; text-underline-offset: .15em; cursor: pointer; }
+.precinct-open { min-width: 0; overflow-wrap: anywhere; text-align: left; padding: 0; border: 0; background: transparent; color: var(--navy); font: inherit; text-decoration: underline; text-underline-offset: .15em; cursor: pointer; }
 .precinct-selected { font-weight: 700; }
 .precinct-clear { display: inline-grid; place-items: center; min-width: 2rem; min-height: 2rem; padding: .1rem; border: 1px solid var(--line); border-radius: .25rem; background: var(--white); color: var(--navy); font: inherit; cursor: pointer; }
 .precinct-dialog { box-sizing: border-box; width: min(28rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 1.5rem; border: 1px solid var(--line-strong); border-radius: .4rem; background: var(--paper); color: var(--ink); }
@@ -23,14 +23,12 @@
   .filter-control-status { margin-top: 0; }
   .filter-select-control, .filter-segmented-control, .precinct-control { width: auto; min-width: min(100%, 9rem); flex: 1 1 9rem; }
 }
-/* Optional address path stays inside the existing native dialog. */
-.precinct-dialog .filter-select-control[hidden] { display: none; }
-.address-mode-choice { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
-.address-mode-choice button { padding: .4rem .65rem; border: 1px solid var(--line); background: var(--white); color: var(--navy); border-radius: .25rem; font: inherit; cursor: pointer; }
-.address-mode-choice button[aria-pressed="true"] { border-color: var(--navy); font-weight: 700; }
-[data-address-fields] input { box-sizing: border-box; width: 100%; margin-top: .3rem; }
-[data-address-options] { list-style: none; margin: .35rem 0; padding: 0; max-height: 12rem; overflow-y: auto; border: 1px solid var(--line); }
-[data-address-options] li { padding: .6rem; cursor: pointer; overflow-wrap: anywhere; }
-[data-address-options] li[aria-selected="true"], [data-address-options] li:hover { background: var(--white); outline: 1px solid var(--navy); outline-offset: -1px; }
+/* One suggestion surface for optional addresses and reviewed precincts. */
+.precinct-dialog .filter-select-control { min-width: 0; }
+.precinct-dialog .filter-select { box-sizing: border-box; width: 100%; }
+.ballot-options { list-style: none; margin: .35rem 0; padding: 0; max-height: 12rem; overflow-y: auto; border: 1px solid var(--line); }
+.ballot-option { display: flex; align-items: center; gap: .75rem; padding: .6rem; cursor: pointer; }
+.ballot-option-text { min-width: 0; overflow-wrap: anywhere; }
+.ballot-option-type { flex: none; margin-left: auto; font-size: .75rem; color: var(--muted); }
+.ballot-option[aria-selected="true"], .ballot-option:hover { background: var(--white); outline: 1px solid var(--navy); outline-offset: -1px; }
 .address-privacy { font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; }
-.address-mode-choice button:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
