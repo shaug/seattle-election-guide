@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "b074c438e7f78966982412a5368b2a3467c886429587c79b28651ef8a4c89cb3"
+  },
+  "checked_at": "2026-10-28T10:35:30.897212Z",
+  "event_id": "refresh-the-stranger-20261028T103530Z-f39898933dbd",
+  "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-28-manual.json#the-stranger",
+  "mode": "human",
+  "recorded_at": "2026-10-28T11:19:39.891090Z",
+  "scheduled_for": "2026-10-28",
+  "source_id": "the-stranger",
+  "status": "failed"
+}

@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-28T10:43:02.689296Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/review_497_adoption_492_readonly: data/review/rechecks/wa-2026-general-2026-10-28-manual.json#aft-washington; complete bounded publication review; all stated held/prior qualifications retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-28",
+  "source_id": "aft-washington",
+  "status": "manual"
+}

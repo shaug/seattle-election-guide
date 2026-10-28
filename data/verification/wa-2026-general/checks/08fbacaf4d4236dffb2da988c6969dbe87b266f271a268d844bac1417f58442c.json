@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "56219d1619fe9f4447158c79ecf00e41ee8226ebc56604c359f851d39cc57f9f"
+  },
+  "checked_at": "2026-10-28T10:32:17.172681Z",
+  "event_id": "refresh-planned-parenthood-alliance-advocates-20261028T103217Z-68c5243241ee",
+  "evidence": "OpenAI Codex /root: data/review/rechecks/wa-2026-general-2026-10-28-manual.json#planned-parenthood-alliance-advocates",
+  "mode": "human",
+  "recorded_at": "2026-10-28T11:19:39.122250Z",
+  "scheduled_for": "2026-10-28",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "status": "failed"
+}

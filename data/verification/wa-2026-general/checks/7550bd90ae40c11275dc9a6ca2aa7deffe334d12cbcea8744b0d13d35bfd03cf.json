@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-28T10:52:47.881043Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-28-manual.json#oneamerica-votes; complete bounded publication review; all stated held/prior qualifications retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-28",
+  "source_id": "oneamerica-votes",
+  "status": "manual"
+}

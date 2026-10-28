@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 104600,
+  "canonical_url": "https://transitriders.org/",
+  "capture_method": "static_html",
+  "content_sha256": "bd5888ce49d85b64d6c8869b3cac2e53346bc4a97fe598f4f55872bf9649d804",
+  "http_status": 200,
+  "id": "capture-transit-riders-union-20261028T084152Z-c1befa684767",
+  "media_type": "text/html; charset=UTF-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Public observation; original response bytes are transient.",
+  "requested_url": "https://transitriders.org/",
+  "retrieved_at": "2026-10-28T08:41:52Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "title": "Official endorsement discovery input",
+  "updated_at": null
+}
