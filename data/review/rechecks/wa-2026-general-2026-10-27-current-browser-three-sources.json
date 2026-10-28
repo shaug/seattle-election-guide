@@ -44,6 +44,48 @@
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdout_sha256": "e3b204dbcb19d3e692e5e49ae70d6d319c1b0d82a9f39f56805c0361441d191a"
     },
+    "washington-for-peace-and-justice": {
+      "actual_invocation_finished_at": "2026-10-27T23:58:41.158088+00:00",
+      "actual_invocation_started_at": "2026-10-27T23:58:40.293964+00:00",
+      "actual_qualified_reviewed_at": "2026-10-27T23:58:05.210588+00:00",
+      "actual_qualified_reviewer": "OpenAI Codex /root/performance_651 (qualified current factual admission)",
+      "actual_writer": "OpenAI Codex /root/performance_651",
+      "exit_code": 0,
+      "normal_argv": [
+        "uv",
+        "run",
+        "election-guide",
+        "verification",
+        "acknowledge-manual",
+        "data/verification/wa-2026-general",
+        "--source-id",
+        "washington-for-peace-and-justice",
+        "--scheduled-for",
+        "2026-10-27",
+        "--reviewer",
+        "OpenAI Codex /root/performance_651 (qualified current factual admission)",
+        "--reviewed-at",
+        "2026-10-27T23:58:05.210588+00:00",
+        "--evidence",
+        "data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/washington-for-peace-and-justice; original public browser read 2026-10-27T23:10:12.871Z to 23:11:19.748Z by OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d, comparison completed23:16:51.859013Z. Current31 decisions admitted after Scott instructed “consider it a typo in the endorsement” at2026-10-27 23:50UTC (minute precision only) for literalLD45 JavierValdez to existingLD46. Earlier UNVERIFIED history and all old canonical facts/dates preserved. No complete-initial attestation, automatic approval or scheduled reuse."
+      ],
+      "normal_check_record": {
+        "checked_at": "2026-10-27T23:58:05.210588Z",
+        "event_id": null,
+        "evidence": "OpenAI Codex /root/performance_651 (qualified current factual admission): data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/washington-for-peace-and-justice; original public browser read 2026-10-27T23:10:12.871Z to 23:11:19.748Z by OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d, comparison completed23:16:51.859013Z. Current31 decisions admitted after Scott instructed “consider it a typo in the endorsement” at2026-10-27 23:50UTC (minute precision only) for literalLD45 JavierValdez to existingLD46. Earlier UNVERIFIED history and all old canonical facts/dates preserved. No complete-initial attestation, automatic approval or scheduled reuse.",
+        "mode": "human",
+        "scheduled_for": "2026-10-27",
+        "source_id": "washington-for-peace-and-justice",
+        "status": "manual"
+      },
+      "normal_output_path": "data/verification/wa-2026-general/checks/2e06d58f2f86501a5ff68546b4f6772d9733c568d70a0ce1c3936f36d517cab8.json",
+      "normal_output_sha256": "2e06d58f2f86501a5ff68546b4f6772d9733c568d70a0ce1c3936f36d517cab8",
+      "ordinary_durable_evidence": "data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/washington-for-peace-and-justice",
+      "pid": 42442,
+      "reaped": true,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b204dbcb19d3e692e5e49ae70d6d319c1b0d82a9f39f56805c0361441d191a"
+    },
     "young-democrats-of-washington": {
       "actual_invocation_finished_at": "2026-10-27T23:41:03.512202+00:00",
       "actual_invocation_started_at": "2026-10-27T23:41:02.674962+00:00",
@@ -96,14 +138,17 @@
     "bytes": 119156,
     "sha256": "231d63b02f855fe7283de5a49f1458cff2a5cc4557dea23812673be0b442a1fd"
   },
+  "later_acknowledgement_recorded_at": "2026-10-27T23:58:41.174851+00:00",
   "native_baseline_approval_or_scheduled_reuse_claimed": false,
   "original_factual_comparison_base": "fb3f36759eef79023704d16e74f46f23103f5ee1",
   "owning_issue": 647,
   "qualifications": [
-    "Facts-only projection of the completed current browser review: 70 current verified decisions and one current mapped-office affirmation unverified. Canonical decisions and old verified dates are unchanged. Only Young Democrats and Sierra are eligible for normal dated acknowledgements.",
+    "The original independent admission supported70 current decisions and held one mapped-office affirmation as UNVERIFIED. The separately timed later maintainer typo resolution and qualified admission below resolve only that current item. All71 decisions now have current qualified support; canonical decisions and old verified dates remain unchanged.",
     "Original browser windows and factual-review time stay separate from this later independent admission time. Numeric HTTP status remains unmeasured.",
     "Preserve the exact existing Bergquist Rep12 qualification, Sierra Chiaplo/unnumbered SeattleTransit/outsideLD48 limits, grey court exclusions and two red declines. No new Valdez override or source-label correctness claim.",
-    "Exactly two normal dated acknowledgements were appended after independent admission. WA4PJ has no whole-source acknowledgement; WEA remains an administrative member-boundary disposition with no machine acknowledgement. No old check/event/approval/counter record changed."
+    "At the original admission, exactly two normal dated acknowledgements were appended and WA4PJ had no whole-source acknowledgement; WEA remains an administrative member-boundary disposition with no machine acknowledgement. No old check/event/approval/counter record changed.",
+    "Later current qualification: Scott’s explicit October 27 23:50 UTC minute typo decision resolves only WA4PJ’s current Valdez office-label hold. All 71 decisions now have current qualified support; the original 70-plus-one admission and two acknowledgement receipts remain historical facts. WEA remains separate and receives no acknowledgement.",
+    "After the later actual qualified admission, one normal October27 WA4PJ acknowledgement was appended with the new actual admission actor/time. The two earlier acknowledgement receipts remain unchanged. No complete-initial-review attestation was written; WEA still has no machine acknowledgement."
   ],
   "record_type": "bounded_current_source_factual_followup",
   "recorded_at": "2026-10-27T23:39:30.846394+00:00",
@@ -985,9 +1030,9 @@
       "canonical_changes_proposed": [],
       "canonical_dates_and_objects_not_freshened": true,
       "complete_relevant_registered_publication_read": true,
-      "current_review_complete": false,
-      "current_unverified_retained_decision_count": 1,
-      "current_verified_decision_count": 30,
+      "current_review_complete": true,
+      "current_unverified_retained_decision_count": 0,
+      "current_verified_decision_count": 31,
       "full_52_race_covered_intersection": [
         {
           "finding": "No additional explicit in-inventory endorsement observed; absence is not a negative stance, withdrawal or decline.",
@@ -1130,7 +1175,7 @@
           "race_id": "ld-46-state-representative-2"
         },
         {
-          "finding": "Retained canonical decision preserved; current mapped-office affirmation UNVERIFIED because the publication says LD45 and the canonical race is LD46. No override admitted.",
+          "finding": "Current mapped-office affirmation verified with Scott’s new explicit typo qualification, retaining literal LD45 and the unchanged canonical LD46 Javier Valdez decision. Prior unverified history retained.",
           "race_id": "ld-46-state-senator"
         },
         {
@@ -1199,7 +1244,38 @@
         }
       ],
       "http_status": null,
-      "manual_acknowledgement_eligible": false,
+      "later_qualified_admission": {
+        "actual_author": "Scott",
+        "actual_decision_date": "2026-10-27",
+        "actual_decision_time_precision": "minute; seconds unknown",
+        "actual_decision_utc_minute": "23:50",
+        "actual_qualified_admission_actor": "OpenAI Codex /root/performance_651",
+        "actual_qualified_admission_at": "2026-10-27T23:58:05.210588+00:00",
+        "exact_instruction": "consider it a typo in the endorsement",
+        "literal_source_wording": "LD-45 Senator: Javier Valdez",
+        "original_browser_factual_review_complete_at": "2026-10-27T23:16:51.859013+00:00",
+        "original_browser_factual_reviewer": "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+        "prior_override_or_prior_current_approval_inferred": false,
+        "prior_unverified_disposition": {
+          "current_review_finding": "UNVERIFIED_CURRENT_MAPPED_OFFICE_AFFIRMATION",
+          "current_unverified_retained_decision_count": 1,
+          "current_verified_decision_count": 30,
+          "original_independent_admission_at": "2026-10-27T23:32:54.128857+00:00",
+          "qualifications": [
+            "Slide 8 literally labels the choice “LD-45 Senator: Javier Valdez”; the retained canonical decision and frozen official inventory identify Javier Valdez for LD46 State Senator. The current mapped-office affirmation remains unverified because the race labels differ. No publisher correction, source-label correctness, new mapping approval, withdrawal or first-appearance date is inferred.",
+            "ROOT disposition: do not create/admit a new LD45-to46 override. Current mapped-office affirmation is UNVERIFIED; preserve literalLD45, original canonicalLD46 ID/choice/status/allocation/review date, unknown first appearance and all prior evidence. No whole-source31 acknowledgement or complete-initial attestation. Precise mapping follow-up belongs in existing505 October30.",
+            "Unique exact frozen Valdez/StateSenator identity and official inventory provenance are context only, not a new mapping approval or statewide LD45 candidate-absence claim."
+          ],
+          "source_record_head": "e91c76056bbc98713d8da76d7564a9b6ffe290c2",
+          "source_record_sha256": "b7b82b210dae16073eed20530673fdcedc535d7161e821a31a3e7dc3ab582fb6",
+          "whole_source_acknowledgement_eligible": false
+        },
+        "publisher_correction_or_first_appearance_claimed": false,
+        "qualified_existing_candidate_id": "ld-46-state-senator--javier-valdez",
+        "qualified_existing_race_id": "ld-46-state-senator",
+        "scope": "Current WA4PJ slide 8 recurring factual affirmation only; no canonical record, review date, allocation or other mapping changes."
+      },
+      "manual_acknowledgement_eligible": true,
       "network_retrieval_time": null,
       "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
       "qualifications": [
@@ -1826,15 +1902,15 @@
           "canonical_prior_reviewed_at": "2026-10-16T16:05:10.192531Z",
           "canonical_prior_reviewer": "shaug",
           "canonical_status": "endorsed",
-          "comparison": "Existing decisions/choices/statuses/allocations unchanged; literal label qualifications remain explicit.",
-          "current_review_finding": "UNVERIFIED_CURRENT_MAPPED_OFFICE_AFFIRMATION",
+          "comparison": "Current mapped-office affirmation admitted with Scott’s new explicit typo qualification; the existing canonical LD46 Javier Valdez decision and all old provenance remain unchanged.",
+          "current_review_finding": "CURRENT_VERIFIED_WITH_EXPLICIT_MAINTAINER_TYPO_QUALIFICATION",
           "evidence_locator": "Public carousel slide 8",
           "official_publication_url": "https://www.instagram.com/wa4pj/p/Deh8Qd4gZen/",
           "prior_packet_decision_sha256": "9ba145b90eea13621dd00c1079d06f2fc82e2f23dc42910e908b23d0a60213d2",
           "qualifications": [
-            "Slide 8 literally labels the choice “LD-45 Senator: Javier Valdez”; the retained canonical decision and frozen official inventory identify Javier Valdez for LD46 State Senator. The current mapped-office affirmation remains unverified because the race labels differ. No publisher correction, source-label correctness, new mapping approval, withdrawal or first-appearance date is inferred.",
-            "ROOT disposition: do not create/admit a new LD45-to46 override. Current mapped-office affirmation is UNVERIFIED; preserve literalLD45, original canonicalLD46 ID/choice/status/allocation/review date, unknown first appearance and all prior evidence. No whole-source31 acknowledgement or complete-initial attestation. Precise mapping follow-up belongs in existing505 October30.",
-            "Unique exact frozen Valdez/StateSenator identity and official inventory provenance are context only, not a new mapping approval or statewide LD45 candidate-absence claim."
+            "The actual current publication literally says “LD-45 Senator: Javier Valdez.” Scott explicitly instructed “consider it a typo in the endorsement” on October 27 at 23:50 UTC, known to minute precision only. This qualifies only the current item as the existing frozen LD46 State Senator / Javier Valdez decision.",
+            "The earlier current mapped-office affirmation was genuinely UNVERIFIED and ineligible for a whole-source acknowledgement. That disposition and its actual time/qualifications are preserved in the later-qualified-admission history; it is not rewritten as an earlier approval.",
+            "No publisher correction, first appearance, historical override, statewide candidate-absence claim, canonical date freshening or endorsement/allocation change is asserted."
           ],
           "race_id": "ld-46-state-senator"
         },
