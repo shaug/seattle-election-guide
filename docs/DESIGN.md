@@ -441,7 +441,8 @@ canceling this ephemeral editor does not change the query or fragment. Opening
 focuses search; native modal focus containment and return focus preserve keyboard
 context. The row wraps within narrow viewports. There is no separate search strip
 or explanatory line above it. (Scott's explicit preview revision, October 25, 2026.)
-There is no setup section, district questionnaire, address collection or embedded map.
+There is no setup section, district questionnaire or embedded map. The first-version
+no-address restriction is superseded by the optional #657 voting-address path below.
 Both general list views default to Contested, visibly selected; All remains enabled
 and adds applicable uncontested races within existing public eligibility. Selecting
 a precinct constrains both modes to applicable covered races and measures. Section
@@ -450,6 +451,22 @@ Source choices and comparison columns remain independent. Clear removes geograph
 while preserving race mode. Selected precinct text uses stronger weight; control
 bodies and the race count align vertically while headers retain their common row. Unsupported choices never claim an exact ballot. Primary has no
 precinct control.
+
+## Optional voting-address path (#657, October28,2026)
+
+The same native Ballot dialog offers direct precinct entry or voting-address
+suggestions. Direct entry stays available to away/overseas voters and during lookup
+failures. Explicit selection of a canonical address resolves the same draft precinct;
+only Select commits it. No second district form or device location is requested.
+The address label identifies canonical street/building scope, not verification of an
+omitted unit or voter registration. Ambiguous, partial, unsupported or unconfirmed
+scope never selects a precinct. Cancel, native Escape, Clear, re-edit and history
+discard transient lookup work. First Escape closes an open suggestions popup;
+subsequent Escape cancels the dialog. Enter chooses an active suggestion without
+submitting; Tab never chooses one. Loading, results and failures are announced.
+The existing focus containment/return and phone layout remain required.
+Explain County/Esri transmission and possible provider retention inside this path;
+SEG retains only the existing election-specific precinct. See ADDRESS_LOOKUP.md.
 
 ## November 2026 ballot sequence
 

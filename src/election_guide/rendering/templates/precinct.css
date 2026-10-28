@@ -23,3 +23,13 @@
   .filter-control-status { margin-top: 0; }
   .filter-select-control, .filter-segmented-control, .precinct-control { width: auto; min-width: min(100%, 9rem); flex: 1 1 9rem; }
 }
+/* Optional address path stays inside the existing native dialog. */
+.address-mode-choice { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+.address-mode-choice button { padding: .4rem .65rem; border: 1px solid var(--line); background: var(--white); color: var(--navy); border-radius: .25rem; font: inherit; cursor: pointer; }
+.address-mode-choice button[aria-pressed="true"] { border-color: var(--navy); font-weight: 700; }
+[data-address-fields] input { box-sizing: border-box; width: 100%; margin-top: .3rem; }
+[data-address-options] { list-style: none; margin: .35rem 0; padding: 0; max-height: 12rem; overflow-y: auto; border: 1px solid var(--line); }
+[data-address-options] li { padding: .6rem; cursor: pointer; overflow-wrap: anywhere; }
+[data-address-options] li[aria-selected="true"], [data-address-options] li:hover { background: var(--white); outline: 1px solid var(--navy); outline-offset: -1px; }
+.address-privacy { font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; }
+.address-mode-choice button:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }

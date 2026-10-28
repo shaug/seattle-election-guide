@@ -442,11 +442,13 @@
     ],
     "data-precinct-status": [
       "template",
-      "client"
+      "client",
+      "test"
     ],
     "data-precinct-cancel": [
       "template",
       "client",
+      "python",
       "test"
     ],
     "data-precinct-form": [
@@ -460,6 +462,7 @@
     "data-precinct-submit": [
       "template",
       "client",
+      "python",
       "test"
     ],
     "data-precinct-summary": [
@@ -469,6 +472,29 @@
     "data-precinct-applied-notice": [
       "template",
       "client",
+      "test"
+    ],
+    "data-address-fields": [
+      "stylesheet",
+      "client"
+    ],
+    "data-address-input": [
+      "client",
+      "test"
+    ],
+    "data-address-mode": [
+      "client",
+      "python",
+      "test"
+    ],
+    "data-address-options": [
+      "stylesheet",
+      "client",
+      "python"
+    ],
+    "data-direct-mode": [
+      "client",
+      "python",
       "test"
     ]
   },
@@ -1014,6 +1040,14 @@
       "client"
     ],
     "precinct-selected": [
+      "stylesheet",
+      "client"
+    ],
+    "address-mode-choice": [
+      "stylesheet",
+      "client"
+    ],
+    "address-privacy": [
       "stylesheet",
       "client"
     ]

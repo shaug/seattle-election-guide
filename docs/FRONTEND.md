@@ -854,3 +854,24 @@ to preserve legacy section-filter membership separately from display headings.
 It is omitted from legacy/primary payloads; old payloads fall back to `section_id`.
 No new client state, storage or lookup is added.
 Validation and preservation checks live in `tests/test_ballot_order.py`.
+
+## Optional address lookup (#657)
+
+The admitted November2026 precinct contract may carry an explicit catalog-bound
+address capability and reviewed jurisdiction/source identities. Primary, legacy,
+unsupported and mismatched capabilities issue no lookup requests. No capability is
+inferred from URL paths, panel labels or the wall clock; general artifacts may retain
+their own pinned binding. Detected source drift fails closed, without claiming an
+atomic public GIS snapshot or fetching entire polygon layers per lookup.
+
+`voting-address-lookup.mjs` is the narrow storage-free network adapter, using fixed
+approved endpoints and bounded anonymous requests (address-bearing form POST;
+fixed address-free metadata GET). `precinct-control.mjs` owns
+ephemeral address input, suggestions, request/session generations and the shared
+precinct draft. Abort and generation checks prevent stale work from changing that
+draft. Only existing Select calls the existing router and precinct-memory owner;
+addresses/points/provider identifiers never enter SEG URLs, storage or logs. Keep
+pure membership/scoring modules offline. Check: `voting-address-lookup.test.mjs`
+and `precinct-address-control.test.mjs` exercise admission, privacy and cancellation;
+browser navigation tests preserve actual general/primary behavior. This adds no
+storage exception or ratchet ceiling.

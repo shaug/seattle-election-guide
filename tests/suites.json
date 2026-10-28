@@ -657,5 +657,15 @@
     "suite": "contract",
     "tests": {},
     "partition": "integration-comparisons"
+  },
+  "tests/test_voting_address_browser.py": {
+    "suite": "e2e",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_voting_address_contract.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
   }
 }
