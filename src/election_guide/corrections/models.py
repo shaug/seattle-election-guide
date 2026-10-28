@@ -15,7 +15,8 @@ Every substantive change to the published aggregate or a position page belongs h
 including additions from routine refreshes even when the leading choice is
 unchanged. Minor wording or typography with unchanged facts and behavior stays
 in internal software/release history instead (#663). Existing storage and field
-names remain compatible with immutable publication view models; `corrected_on` is also the date of an addition.
+names remain compatible with immutable publication view models; `corrected_on`
+is also the date of an addition.
 
 Entries here are hand-authored (an editor writes a headline and body prose
 directly), which is why nothing here cross-validates against the ballot
