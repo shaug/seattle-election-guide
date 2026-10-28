@@ -57,7 +57,7 @@
       <div class="page-band-rule"></div>
     </header>
     {{ election_day_banner | safe }}
-    {%+ call shell.page_head('Sources', eyebrow=election_display_name) %}Choose which sources count &mdash; the guide recalculates from your selection.{% endcall +%}
+    {%+ call shell.page_head('Sources', eyebrow=election_display_name) %}{% if guide.metadata.election_id == 'wa-2026-general' %}The endorsements you trust, aggregated.{% else %}Choose which sources count &mdash; the guide recalculates from your selection.{% endif %}{% endcall +%}
     <div class="sources-page-actions state-action-strip">
       {# The audited count, rendered rather than left for the client to fill in:
          the page has to stand alone without JavaScript, and the region has to

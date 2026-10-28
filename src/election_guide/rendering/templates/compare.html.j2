@@ -14,7 +14,7 @@
     </header>
     {{ election_day_banner | safe }}
     <main id="comparison-main" class="comparison-main">
-      {%+ call shell.page_head('Comparisons', eyebrow=election_display_name) %}Endorsements side by side, surfacing tension.{% endcall +%}
+      {%+ call shell.page_head('Comparisons', eyebrow=election_display_name) %}{% if guide.metadata.election_id == 'wa-2026-general' %}The endorsements you choose, juxtaposed.{% else %}Endorsements side by side, surfacing tension.{% endif %}{% endcall +%}
       <div class="comparison-intro-wrap">
         <div class="comparison-intro">
           <div class="comparison-presets" role="group" aria-label="Suggested comparisons">
