@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from election_guide.publication.models import PublicationViewModel
+from election_guide.rendering.browser import _CdpSocket  # pyright: ignore[reportPrivateUsage]
 from election_guide.rendering.config import read_rendering_configuration
 from election_guide.rendering.documents import render_comparison_document, render_html_document
 from tests.test_precinct_rendering import general_view  # noqa: F401 # pyright: ignore[reportUnusedImport]
@@ -61,6 +62,29 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
 """
     )
     path.write_text(html.replace("<head>", "<head><script>" + mock + "</script>", 1))
+
+    def keyboard(cdp: _CdpSocket, session: str) -> None:
+        def evaluate(script: str) -> None:
+            result = cdp.command("Runtime.evaluate", {"expression": script}, session_id=session)
+            assert "exceptionDetails" not in result, result
+
+        evaluate("""document.querySelector('[data-precinct-open]').click();
+          document.querySelector('[data-address-mode]').click();
+          window.addressTabVisitedDirect=false;
+          window.addressTabStayedInDialog=true;""")
+        for _ in range(8):
+            for kind in ["keyDown", "keyUp"]:
+                cdp.command(
+                    "Input.dispatchKeyEvent",
+                    {"type": kind, "key": "Tab", "windowsVirtualKeyCode": 9},
+                    session_id=session,
+                )
+            evaluate("""window.addressTabVisitedDirect ||= document.activeElement===
+              document.querySelector('#voting-precinct');
+              window.addressTabStayedInDialog &&=
+                document.querySelector('dialog').contains(document.activeElement);""")
+        evaluate("document.querySelector('[data-precinct-cancel]').click();")
+
     expression = """(async () => {
       const fixture=FIXTURE;
       const calls=window.addressCalls;
@@ -73,6 +97,12 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       click('[data-precinct-open]');click('[data-address-mode]');
       const input=document.querySelector('[data-address-input]');
       input.value='600 4th';input.dispatchEvent(new Event('input',{bubbles:true}));await wait();
+      const direct=document.querySelector('#voting-precinct');
+      const directHidden=getComputedStyle(direct.parentElement).display==='none'
+        &&direct.getClientRects().length===0;
+      const addressBounds=document.querySelector('dialog').getBoundingClientRect();
+      const addressFits=addressBounds.left>=0&&addressBounds.right<=innerWidth
+        &&document.documentElement.scrollWidth<=innerWidth;
       const status=document.querySelector('[data-precinct-status]');
       const announced=status.textContent.includes('suggestions');
       const selectKey=new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true});
@@ -105,12 +135,17 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const noLeak=!location.href.includes('600')
         &&localStorage.getItem('seg-precinct-v1:wa-2026-general')==='3230';
       click('[data-precinct-open]');
+      const directRestored=getComputedStyle(direct.parentElement).display!=='none'
+        &&direct.getClientRects().length>0;
       const bounds=document.querySelector('dialog').getBoundingClientRect();
       const fits=bounds.left>=0&&bounds.right<=innerWidth
         &&document.documentElement.scrollWidth<=innerWidth;
       click('[data-precinct-cancel]');click('[data-precinct-clear]');
       return JSON.stringify({announced,notFirst,draftOnly,ready,committed
         ,geographic,allExact,popupEscape,cancelPreserved,noLeak,fits,
+        directHidden,addressFits,directRestored,
+        directSkippedByTab:!window.addressTabVisitedDirect,
+        tabContained:window.addressTabStayedInDialog,
         directStillPresent:!!document.querySelector('#voting-precinct'),
         anonymous:calls.length>0&&calls.every(c=>c.method===(c.url.endsWith('?f=json')
         ?'GET':'POST')&&c.credentials==='omit'&&c.cache==='no-store'),
@@ -121,6 +156,6 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         "SELECTOR",
         json.dumps("[data-publication-race-id]" if page == "guide" else "[data-comparison-race]"),
     )
-    result = _evaluate_in_chrome(path, expression, viewport=(width, 1000))
+    result = _evaluate_in_chrome(path, expression, viewport=(width, 1000), interact=keyboard)
     assert result.get("error") is None
     assert result and all(result.values()), result

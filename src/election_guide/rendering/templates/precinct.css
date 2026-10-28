@@ -24,6 +24,7 @@
   .filter-select-control, .filter-segmented-control, .precinct-control { width: auto; min-width: min(100%, 9rem); flex: 1 1 9rem; }
 }
 /* Optional address path stays inside the existing native dialog. */
+.precinct-dialog .filter-select-control[hidden] { display: none; }
 .address-mode-choice { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
 .address-mode-choice button { padding: .4rem .65rem; border: 1px solid var(--line); background: var(--white); color: var(--navy); border-radius: .25rem; font: inherit; cursor: pointer; }
 .address-mode-choice button[aria-pressed="true"] { border-color: var(--navy); font-weight: 700; }
