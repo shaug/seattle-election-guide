@@ -26,8 +26,10 @@ from election_guide.collection.http import (
     FAILURE_PREFIX,
     HTTP_STATUS_PREFIX,
     HTTPS_DOWNGRADE_REFUSED,
+    MAX_REDIRECTS,
     REDIRECT_LIMIT_EXCEEDED,
     TOTAL_TIMEOUT_EXCEEDED,
+    HttpFetchFailure,
     fetch_http,
 )
 from election_guide.collection.models import (
@@ -325,6 +327,37 @@ def _http_failure_diagnostic(error: BaseException) -> str:
     return "category=unknown"
 
 
+def _transport_failure_note(error: BaseException, diagnostic: str) -> str:
+    """Only typed producer facts may supplement the existing safe diagnosis."""
+    if not isinstance(error, HttpFetchFailure):
+        return ""
+    context = vars(error)
+    status = context.get("response_status")
+    followed = context.get("followed_redirects")
+    redirect_class = context.get("redirect_class")
+    if (
+        (status is not None and (type(status) is not int or not 100 <= status <= 599))
+        or type(followed) is not int
+        or not 0 <= followed <= MAX_REDIRECTS
+        or type(redirect_class) is not str
+        or redirect_class not in {"SAME_ORIGIN", "CROSS_ORIGIN", "REFUSED"}
+        or (redirect_class == "CROSS_ORIGIN" and not followed)
+    ):
+        return ""
+    if diagnostic.startswith("category=http_status; status=") and status != int(
+        diagnostic.partition("; status=")[2]
+    ):
+        return ""
+    if diagnostic in {"category=redirect", "category=public_peer"}:
+        redirect_class = "REFUSED"
+    response = f"HTTP_{status}" if status is not None else "NONE"
+    note = (
+        f" Transport observation: response={response}; followed_redirects={followed}; "
+        f"redirect_class={redirect_class}; challenge=UNKNOWN."
+    )
+    return note if len(note.encode("ascii")) <= 512 else ""
+
+
 def _refresh(
     election: ElectionPolicy,
     policy: SourcePolicy,
@@ -457,7 +490,8 @@ def _refresh(
         return record_refresh_failure(
             source.id,
             checked_at,
-            f"Source check failed (stage={stage}; {diagnostic}).",
+            f"Source check failed (stage={stage}; {diagnostic})."
+            + (_transport_failure_note(error, diagnostic) if stage == "http_fetch" else ""),
             root / "refreshes",
             extraction_dir=root / "extractions",
             access_failure=access_failure,

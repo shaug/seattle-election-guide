@@ -1,0 +1,1072 @@
+{
+  "accepted_base": "fb3f36759eef79023704d16e74f46f23103f5ee1",
+  "actual_source_review_complete_at": "2026-10-27T22:03:35.212981Z",
+  "actual_source_reviewer": "OpenAI Codex /root/performance_651 (explicit finite delegation from root)",
+  "aggregate_daily_issues_complete": false,
+  "canonical_choice_changes": 0,
+  "direct_live_fetch_or_scheduled_check": false,
+  "election_id": "wa-2026-general",
+  "evidence_scope": "Complete covered-scope comparison of all 52 frozen Seattle races against the supplied Washington sections: all 32 canonical decisions/33 choices supported unchanged, all 29 prior usable automatic decisions supported, and no additional covered endorsement in the other 20 races. No duplicate statewide inventory, Alaska/Montana review or exhaustive search for separate later publications.",
+  "historical_access_failures_relabelled_or_reset": false,
+  "native_baseline_approval_or_scheduled_reuse_claimed": false,
+  "original_PDF_render_warnings": "Recoverable xref num117 reconstruction warning; pdfinfo and the three bounded covered-scope renders returned0 and were readable. Original bytes were not repaired or replaced.",
+  "original_factual_projection_sha256": "2fe42cc82b2b076c61d0cc99653750f0bbb8f3d092f6622e8a8561c06503f1e4",
+  "owning_issue": 497,
+  "proposal_prepared_at": "2026-10-27T22:30:24.442194+00:00",
+  "proposal_preparer": "OpenAI Codex /root/performance_651",
+  "qualifications": [
+    "Actual PDF capture metadata, later browser observation completion boundary, actual source-review completion and this later recording time are separate. No publisher update date or numeric HTTP status is inferred.",
+    "This unchanged factual recheck does not freshen canonical provenance, alter a ledger decision, resolve aggregate #497/#647 criteria, or grant native approval/reuse. Private artifact/Library custody stays outside public Git."
+  ],
+  "record_type": "bounded_supplied_snapshot_factual_verification",
+  "recorded_at": "2026-10-27T22:30:24.442194+00:00",
+  "related_daily_issues": [
+    647
+  ],
+  "retained_row_count": 32,
+  "retrospective_source_state_claimed": false,
+  "schema_version": "1.0",
+  "source_count": 1,
+  "source_counts": {
+    "seiu-775": 32
+  },
+  "sources": [
+    {
+      "actual_live_source_checked_at": null,
+      "actual_snapshot_review_complete_at": "2026-10-27T22:03:35.212981Z",
+      "actual_snapshot_reviewer": "OpenAI Codex /root/performance_651 (explicit finite delegation from root)",
+      "capture_time_not_inferred_from_filename_or_PDF_metadata": false,
+      "complete_current_manual_retained_scope": true,
+      "complete_live_website_or_linked_publication_discovery": false,
+      "confirmed_canonical_choice_changes": 0,
+      "official_publication_url": "https://seiu775.org/2026endorsements/",
+      "official_url_provenance": "Registered official source URL and supplied-PDF URL annotation reported by coordinating oversight; no new source request by this reviewer.",
+      "prior_ledger_source_provenance_preserved": {
+        "captured_at": "2026-10-16T14:59:42.052540Z",
+        "evidence_locator": "October 16 targeted approval: data/review/approvals/wa-2026-general-2026-10-16.json. Original per-decision evidence locators and prior source reviews remain bound by that record.",
+        "review_note": "Issue #545: shaug explicitly approved the concrete October 16 packet: \"approved. let's apply the 114 additions and the replacement to the guide\". shaug then approved the five enumerated ECC changes: \"Include the ECC changes\" (Jayapal, Smith, Anito and Reed additions; Pedersen/Sabio-Howell equal dual replacement). OpenAI Codex is the transcriber; shaug is the human verifier. This targeted approval applies only to the 120 changed source/race decisions in data/review/approvals/wa-2026-general-2026-10-16.json. Prior choices and three Washington Bikes held absences remain intact. No whole-panel human attestation or verification-adapter baseline approval is asserted. Retained decisions keep their prior approval: shaug, 2026-10-04T05:30:06Z. Prior review note: Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex rechecked the current official publication and found no decision changes; shaug compared the current page with the existing source block and confirmed it remains accurate, including all prior review treatments.",
+        "reviewed_at": "2026-10-16T15:48:50.280092Z",
+        "reviewer": "shaug",
+        "source_id": "seiu-775"
+      },
+      "publisher_updated_at": null,
+      "qualifications": [
+        "All 52 frozen Seattle races were checked: 32 unchanged supported decisions comprising 33 choices, plus the 20 no-addition scope dispositions below. No additional covered endorsement was found. Absence is not an explicit no-endorsement or withdrawal.",
+        "This reviewer examined the supplied PDF. A separate authorized ordinary public-browser observation was reported completed by 2026-10-27T21:50:25Z; no exact network-check instant, numeric HTTP status, redirect chain or peer is supplied. That completion boundary is not the PDF capture time or this review completion time.",
+        "The known PDF capture metadata time is 2026-10-27T21:38:57Z. Publisher date/update time and first appearances remain unknown. No October 24 on-date observation or historical page reconstruction is claimed.",
+        "The prior usable automatic29 remains supported but is not rewritten or approved as32. Danica Noble/LD32 House1, the equal Santos and Tewolde/LD37 House1 dual, and Jorge L. Baron/KCC4 are already canonical and in the shipped mapping; they are not new additions.",
+        "Preserve the equal Santos/Tewolde allocation of 1/2 each and existing race-scoped Brianna Thomas/Brianna K. Thomas, Noel Frame/Noel C. Frame, Julia G. Reed/Julia Grant Reed and Jorge L. Baron/Jorge L. Barón identities. Theo Angelis retains the frozen Supreme Court Position5 unexpired-term identity; source Seattle Pos.5 wording retains the existing Nilu Jenks mapping.",
+        "The explicit Steve Ewing/Ida Keeley LD39 House2 dual and King County Council6 Claudia Balducci are outside the frozen inventory. Yes on Pierce Transit Proposition1 is distinct from Seattle Transit Proposition1. No Alaska/Montana decision is imported.",
+        "No source request, automatic success, native baseline approval, initial-review qualification or scheduled reuse is supplied by this packet. Preserve all six automatic lanes, actual failed checks/events, prior approvals, counters, escalation, retries and cadence.",
+        "Frozen race court-of-appeals-division-1-district-1-judge-5: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race court-of-appeals-division-1-district-1-judge-6: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race king-county-assessor: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race king-county-director-of-elections: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race king-county-district-court-west-judge-1: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race king-county-district-court-west-judge-2: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race king-county-district-court-west-judge-3: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race king-county-district-court-west-judge-4: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race king-county-district-court-west-judge-5: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race king-county-prosecuting-attorney: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race ld-32-state-senator: LD32 lists House1/House2 only; no Senate endorsement listed. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race seattle-municipal-court-judge-1: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race seattle-municipal-court-judge-2: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race seattle-municipal-court-judge-3: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race seattle-municipal-court-judge-4: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race seattle-municipal-court-judge-5: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race seattle-municipal-court-judge-6: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race seattle-municipal-court-judge-7: No endorsement of this frozen office in the complete Washington section; other jurisdictions do not supply one. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race seattle-proposition-1-transit: Only Pierce Transit Proposition1 appears; different jurisdiction and measure, no Seattle transit mapping. no new fact imported; absence is not an explicit no-endorsement or withdrawal.",
+        "Frozen race supreme-court-justice-7: Supreme Court list covers positions1/3/4/5; position7 not listed. no new fact imported; absence is not an explicit no-endorsement or withdrawal."
+      ],
+      "retained_row_count": 32,
+      "rows": [
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "initiative-26-001--no"
+            ],
+            "race_id": "initiative-26-001"
+          },
+          "accepted_full_canonical_record_sha256": "65b056cf004621b9a298288d9189dd3c340af84b2ec4c59c8c29cda9e4b84388",
+          "allocation": {
+            "initiative-26-001--no": "1"
+          },
+          "candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "canonical_endorsement_id": "endorsement-db9300aec331639c",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "initiative-26-001",
+          "retained_choice_names": [
+            "No"
+          ],
+          "source_choice_wording": "Vote NO on No I-001 – Prevent the disclosure of students’ private information by voting NO.",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Statewide Ballot Initiatives; exact measure number AND subject; explicit No"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "initiative-26-638--no"
+            ],
+            "race_id": "initiative-26-638"
+          },
+          "accepted_full_canonical_record_sha256": "37d45c12a2f9821534cbc1a341b6fe6cac5570ea39c87db57747736253e2d081",
+          "allocation": {
+            "initiative-26-638--no": "1"
+          },
+          "candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "canonical_endorsement_id": "endorsement-b8eb9a2504b0716d",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "initiative-26-638",
+          "retained_choice_names": [
+            "No"
+          ],
+          "source_choice_wording": "Vote NO on I-638 – Stop new invasive verification requirements for girls to play youth sports by voting NO.",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Statewide Ballot Initiatives; exact measure number AND subject; explicit No"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "initiative-26-645--no"
+            ],
+            "race_id": "initiative-26-645"
+          },
+          "accepted_full_canonical_record_sha256": "f6b5c25f51e1acacb8229f3905f0c79ee40db4e695f1e4d292708cca631d208a",
+          "allocation": {
+            "initiative-26-645--no": "1"
+          },
+          "candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "canonical_endorsement_id": "endorsement-263fa8e5cc89a9d5",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "initiative-26-645",
+          "retained_choice_names": [
+            "No"
+          ],
+          "source_choice_wording": "Vote NO on I-645 – When the wealthy pay their fair share, life will be more affordable for the rest of us. Defend the Millionaires Tax from repeal by voting NO.",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Statewide Ballot Initiatives; exact measure number AND subject; explicit No"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "supreme-court-justice-1--colleen-melody"
+            ],
+            "race_id": "supreme-court-justice-1"
+          },
+          "accepted_full_canonical_record_sha256": "d75aec41a598bb74e938dbd71f2341240e5aa6ec8fe3cdd6cd804b48683f06ec",
+          "allocation": {
+            "supreme-court-justice-1--colleen-melody": "1"
+          },
+          "candidate_ids": [
+            "supreme-court-justice-1--colleen-melody"
+          ],
+          "canonical_endorsement_id": "endorsement-e20cb674ea05d301",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "supreme-court-justice-1",
+          "retained_choice_names": [
+            "Colleen Melody"
+          ],
+          "source_choice_wording": "Justice Position # 1 Colleen Melody",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Supreme Court Candidates; exact numbered position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "supreme-court-justice-3--jaime-michelle-hawk"
+            ],
+            "race_id": "supreme-court-justice-3"
+          },
+          "accepted_full_canonical_record_sha256": "ebacdcb8ddf6af222a7de13b2c061d2faedad6e5b0d0aef349d87c5735b26c5e",
+          "allocation": {
+            "supreme-court-justice-3--jaime-michelle-hawk": "1"
+          },
+          "candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "canonical_endorsement_id": "endorsement-635f9444305d65ea",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "supreme-court-justice-3",
+          "retained_choice_names": [
+            "Jaime Michelle Hawk"
+          ],
+          "source_choice_wording": "Justice Position # 3 Jaime Michelle Hawk",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Supreme Court Candidates; exact numbered position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "supreme-court-justice-4--ian-birk"
+            ],
+            "race_id": "supreme-court-justice-4"
+          },
+          "accepted_full_canonical_record_sha256": "77fbcfe9a534dfa83e0b99f2baf8a976701c7a9af81d1320a0db8c6bbe5a776c",
+          "allocation": {
+            "supreme-court-justice-4--ian-birk": "1"
+          },
+          "candidate_ids": [
+            "supreme-court-justice-4--ian-birk"
+          ],
+          "canonical_endorsement_id": "endorsement-17a7544537f3c43d",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "supreme-court-justice-4",
+          "retained_choice_names": [
+            "Ian Birk"
+          ],
+          "source_choice_wording": "Justice Position # 4 Ian Birk",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Supreme Court Candidates; exact numbered position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "supreme-court-justice-5--theo-angelis"
+            ],
+            "race_id": "supreme-court-justice-5"
+          },
+          "accepted_full_canonical_record_sha256": "31d34c0e37770cddd237b73a010726b2bdcb0ab126442050cc2b3166200cc547",
+          "allocation": {
+            "supreme-court-justice-5--theo-angelis": "1"
+          },
+          "candidate_ids": [
+            "supreme-court-justice-5--theo-angelis"
+          ],
+          "canonical_endorsement_id": "endorsement-b31006a54bbb3ca4",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "supreme-court-justice-5",
+          "retained_choice_names": [
+            "Theo Angelis"
+          ],
+          "source_choice_wording": "Justice Position # 5 Theo Angelis",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Supreme Court Candidates; exact numbered position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "us-house-7--pramila-jayapal"
+            ],
+            "race_id": "us-house-7"
+          },
+          "accepted_full_canonical_record_sha256": "eabf8181099d7835b39f671411d0341ad863717a8c6c5e1888cb50cd1540e8e2",
+          "allocation": {
+            "us-house-7--pramila-jayapal": "1"
+          },
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "canonical_endorsement_id": "endorsement-b2e7b420331cd3a6",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "us-house-7",
+          "retained_choice_names": [
+            "Pramila Jayapal"
+          ],
+          "source_choice_wording": "Congressional District 07 U.S. Representative: Pramila Jayapal",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > U.S. Congressional Candidates; exact district"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "us-house-9--adam-smith"
+            ],
+            "race_id": "us-house-9"
+          },
+          "accepted_full_canonical_record_sha256": "5490c284ee4b361f3282f2d3895ed8cf037045ed2835a2ee802157bbf302a2d5",
+          "allocation": {
+            "us-house-9--adam-smith": "1"
+          },
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "canonical_endorsement_id": "endorsement-ab01864574252343",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "us-house-9",
+          "retained_choice_names": [
+            "Adam Smith"
+          ],
+          "source_choice_wording": "Congressional District 09 U.S. Representative: Adam Smith",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > U.S. Congressional Candidates; exact district"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-11-state-representative-1--david-hackney"
+            ],
+            "race_id": "ld-11-state-representative-1"
+          },
+          "accepted_full_canonical_record_sha256": "d8ce3e4f1ee5ff107b59aba4672148c4bd09798e588fd3ae7076c835dd3ff70d",
+          "allocation": {
+            "ld-11-state-representative-1--david-hackney": "1"
+          },
+          "candidate_ids": [
+            "ld-11-state-representative-1--david-hackney"
+          ],
+          "canonical_endorsement_id": "endorsement-b723503db1714fbb",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-11-state-representative-1",
+          "retained_choice_names": [
+            "David Hackney"
+          ],
+          "source_choice_wording": "State Representative Pos. 1: David Hackney",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 11; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-11-state-representative-2--steve-bergquist"
+            ],
+            "race_id": "ld-11-state-representative-2"
+          },
+          "accepted_full_canonical_record_sha256": "79d865203df645f0c178c61070b156d1315dc70c614e1d53acd291d9eba28a55",
+          "allocation": {
+            "ld-11-state-representative-2--steve-bergquist": "1"
+          },
+          "candidate_ids": [
+            "ld-11-state-representative-2--steve-bergquist"
+          ],
+          "canonical_endorsement_id": "endorsement-ec3b8c0757f9afc4",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-11-state-representative-2",
+          "retained_choice_names": [
+            "Steve Bergquist"
+          ],
+          "source_choice_wording": "State Representative Pos. 2: Steve Bergquist",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 11; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-32-state-representative-2--lauren-davis"
+            ],
+            "race_id": "ld-32-state-representative-2"
+          },
+          "accepted_full_canonical_record_sha256": "b99caf3133b11e463fd357e3fc5fa7ddd2f9bbf5034a68e3fc8d141215650239",
+          "allocation": {
+            "ld-32-state-representative-2--lauren-davis": "1"
+          },
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ],
+          "canonical_endorsement_id": "endorsement-f30ce1f534ef7d84",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-32-state-representative-2",
+          "retained_choice_names": [
+            "Lauren Davis"
+          ],
+          "source_choice_wording": "State Representative Pos. 2: Lauren Davis",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 32; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-34-state-senator--emily-alvarado"
+            ],
+            "race_id": "ld-34-state-senator"
+          },
+          "accepted_full_canonical_record_sha256": "55a179f2132dcd9020c65b633249bd5e5a415e62f115aea2d9011c6673dd2db2",
+          "allocation": {
+            "ld-34-state-senator--emily-alvarado": "1"
+          },
+          "candidate_ids": [
+            "ld-34-state-senator--emily-alvarado"
+          ],
+          "canonical_endorsement_id": "endorsement-6d14c4baf7557d14",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-34-state-senator",
+          "retained_choice_names": [
+            "Emily Alvarado"
+          ],
+          "source_choice_wording": "State Senator: Emily Alvarado",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 34; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-34-state-representative-1--brianna-k-thomas"
+            ],
+            "race_id": "ld-34-state-representative-1"
+          },
+          "accepted_full_canonical_record_sha256": "34813efeec8f0dd09c31dbd376e9da06c4e04497f4dd3504246d9924839ebdf3",
+          "allocation": {
+            "ld-34-state-representative-1--brianna-k-thomas": "1"
+          },
+          "candidate_ids": [
+            "ld-34-state-representative-1--brianna-k-thomas"
+          ],
+          "canonical_endorsement_id": "endorsement-56c3a6989ef84cb3",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [
+            "Brianna Thomas"
+          ],
+          "race_id": "ld-34-state-representative-1",
+          "retained_choice_names": [
+            "Brianna K. Thomas"
+          ],
+          "source_choice_wording": "State Representative Pos. 1: Brianna Thomas",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 34; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-34-state-representative-2--joe-fitzgibbon"
+            ],
+            "race_id": "ld-34-state-representative-2"
+          },
+          "accepted_full_canonical_record_sha256": "2add8c2d009c6a8f2222415e9c7cbe9aa1724c28462d7d72d0c1247a9a337e1f",
+          "allocation": {
+            "ld-34-state-representative-2--joe-fitzgibbon": "1"
+          },
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ],
+          "canonical_endorsement_id": "endorsement-dc5c1be73f36c87b",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-34-state-representative-2",
+          "retained_choice_names": [
+            "Joe Fitzgibbon"
+          ],
+          "source_choice_wording": "State Representative Pos. 2: Joe Fitzgibbon",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 34; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-36-state-senator--noel-c-frame"
+            ],
+            "race_id": "ld-36-state-senator"
+          },
+          "accepted_full_canonical_record_sha256": "9d98892fd999abc8cb91f30ec5a473f253463653a86c25e89f5c5c452781eb04",
+          "allocation": {
+            "ld-36-state-senator--noel-c-frame": "1"
+          },
+          "candidate_ids": [
+            "ld-36-state-senator--noel-c-frame"
+          ],
+          "canonical_endorsement_id": "endorsement-60df856c4155a209",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [
+            "Noel Frame"
+          ],
+          "race_id": "ld-36-state-senator",
+          "retained_choice_names": [
+            "Noel C. Frame"
+          ],
+          "source_choice_wording": "State Senator: Noel Frame",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 36; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-36-state-representative-1--julia-grant-reed"
+            ],
+            "race_id": "ld-36-state-representative-1"
+          },
+          "accepted_full_canonical_record_sha256": "6912365aa5581319194b858c3c2a7ad5409d23c4e7cb704375006993365c6222",
+          "allocation": {
+            "ld-36-state-representative-1--julia-grant-reed": "1"
+          },
+          "candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "canonical_endorsement_id": "endorsement-d47da9f4bb369c20",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [
+            "Julia G. Reed"
+          ],
+          "race_id": "ld-36-state-representative-1",
+          "retained_choice_names": [
+            "Julia Grant Reed"
+          ],
+          "source_choice_wording": "State Representative Pos. 1: Julia G. Reed",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 36; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-36-state-representative-2--liz-berry"
+            ],
+            "race_id": "ld-36-state-representative-2"
+          },
+          "accepted_full_canonical_record_sha256": "c721bfebb8ae9cdeed55ec85d56ebe22eecc0e673376a1a3631fff376b1f26d7",
+          "allocation": {
+            "ld-36-state-representative-2--liz-berry": "1"
+          },
+          "candidate_ids": [
+            "ld-36-state-representative-2--liz-berry"
+          ],
+          "canonical_endorsement_id": "endorsement-8f1db948ce646abb",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-36-state-representative-2",
+          "retained_choice_names": [
+            "Liz Berry"
+          ],
+          "source_choice_wording": "State Representative Pos. 2: Liz Berry",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 36; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "race_id": "ld-37-state-senator"
+          },
+          "accepted_full_canonical_record_sha256": "7358423d45d1abf03f6cad6fdce972b1905acfe5da33c3d26040f1fc98a3d899",
+          "allocation": {
+            "ld-37-state-senator--chipalo-street": "1"
+          },
+          "candidate_ids": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "canonical_endorsement_id": "endorsement-dd1f3cea977e85a4",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-37-state-senator",
+          "retained_choice_names": [
+            "Chipalo Street"
+          ],
+          "source_choice_wording": "State Senator: Chipalo Street",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 37; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-37-state-representative-2--jaelynn-scott"
+            ],
+            "race_id": "ld-37-state-representative-2"
+          },
+          "accepted_full_canonical_record_sha256": "6125895b74af386833c14f5e5789ff60ce5f933d7bdedb72e7c99e9395bec505",
+          "allocation": {
+            "ld-37-state-representative-2--jaelynn-scott": "1"
+          },
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "canonical_endorsement_id": "endorsement-9b02221be13763ef",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-37-state-representative-2",
+          "retained_choice_names": [
+            "Jaelynn Scott"
+          ],
+          "source_choice_wording": "State Representative Pos. 2: Jaelynn Scott",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 37; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-43-state-senator--jamie-pedersen"
+            ],
+            "race_id": "ld-43-state-senator"
+          },
+          "accepted_full_canonical_record_sha256": "4061ee514885b5584e58aa7073b521ca3ec534f50c5237a90de7ed9cfe13010d",
+          "allocation": {
+            "ld-43-state-senator--jamie-pedersen": "1"
+          },
+          "candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen"
+          ],
+          "canonical_endorsement_id": "endorsement-80b356e95d415c91",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-43-state-senator",
+          "retained_choice_names": [
+            "Jamie Pedersen"
+          ],
+          "source_choice_wording": "State Senator: Jamie Pedersen",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 43; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-43-state-representative-1--nicole-macri"
+            ],
+            "race_id": "ld-43-state-representative-1"
+          },
+          "accepted_full_canonical_record_sha256": "e621c957021ae4fbfbb56945ddbdbdfb6a952a428e1f5a84b94e26653ede7a99",
+          "allocation": {
+            "ld-43-state-representative-1--nicole-macri": "1"
+          },
+          "candidate_ids": [
+            "ld-43-state-representative-1--nicole-macri"
+          ],
+          "canonical_endorsement_id": "endorsement-d6ebfabadd958ada",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-43-state-representative-1",
+          "retained_choice_names": [
+            "Nicole Macri"
+          ],
+          "source_choice_wording": "State Representative Pos. 1: Nicole Macri",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 43; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-43-state-representative-2--shaun-scott"
+            ],
+            "race_id": "ld-43-state-representative-2"
+          },
+          "accepted_full_canonical_record_sha256": "63f3f97025b22013c8f874e7837f0aaa3c642b063e05d87c6b540479238c57b0",
+          "allocation": {
+            "ld-43-state-representative-2--shaun-scott": "1"
+          },
+          "candidate_ids": [
+            "ld-43-state-representative-2--shaun-scott"
+          ],
+          "canonical_endorsement_id": "endorsement-96c4480d44def1e5",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-43-state-representative-2",
+          "retained_choice_names": [
+            "Shaun Scott"
+          ],
+          "source_choice_wording": "State Representative Pos. 2: Shaun Scott",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 43; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-46-state-senator--javier-valdez"
+            ],
+            "race_id": "ld-46-state-senator"
+          },
+          "accepted_full_canonical_record_sha256": "303382aa469bd18b4f0fc91a34db937e6d86bc52f65cb0387b1a091d955e0c7e",
+          "allocation": {
+            "ld-46-state-senator--javier-valdez": "1"
+          },
+          "candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "canonical_endorsement_id": "endorsement-53e5f855c47e3565",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-46-state-senator",
+          "retained_choice_names": [
+            "Javier Valdez"
+          ],
+          "source_choice_wording": "State Senator: Javier Valdez",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 46; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-46-state-representative-1--gerry-pollet"
+            ],
+            "race_id": "ld-46-state-representative-1"
+          },
+          "accepted_full_canonical_record_sha256": "819a2b1e63df15215fa92f96cb56bc5222a9fd938c0baaedc00c7eac56e9675e",
+          "allocation": {
+            "ld-46-state-representative-1--gerry-pollet": "1"
+          },
+          "candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "canonical_endorsement_id": "endorsement-8ddf963958b72879",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-46-state-representative-1",
+          "retained_choice_names": [
+            "Gerry Pollet"
+          ],
+          "source_choice_wording": "State Representative Pos. 1: Gerry Pollet",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 46; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-46-state-representative-2--darya-farivar"
+            ],
+            "race_id": "ld-46-state-representative-2"
+          },
+          "accepted_full_canonical_record_sha256": "cc4057cc2a2f4db1350192abeef5b98ac84442dfe88b79704c8445ade0a15cba",
+          "allocation": {
+            "ld-46-state-representative-2--darya-farivar": "1"
+          },
+          "candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "canonical_endorsement_id": "endorsement-8ac5caad48df4a4f",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-46-state-representative-2",
+          "retained_choice_names": [
+            "Darya Farivar"
+          ],
+          "source_choice_wording": "State Representative Pos. 2: Darya Farivar",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 46; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "king-county-council-2--rebecca-saldana"
+            ],
+            "race_id": "king-county-council-2"
+          },
+          "accepted_full_canonical_record_sha256": "881041bff0535091328fb482ed83f1f132697b17f020624602b008d44c1f6953",
+          "allocation": {
+            "king-county-council-2--rebecca-saldana": "1"
+          },
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "canonical_endorsement_id": "endorsement-df00c15fa1a0e38a",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "king-county-council-2",
+          "retained_choice_names": [
+            "Rebecca Saldaña"
+          ],
+          "source_choice_wording": "County Council Pos. 2: Rebecca Saldaña",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Washington > County and Local Candidates > King County Council; exact district"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "king-county-council-8--teresa-mosqueda"
+            ],
+            "race_id": "king-county-council-8"
+          },
+          "accepted_full_canonical_record_sha256": "82b8ab13a7f188f144130d2cf63dee107e8fa44d7a1d5b3e7b496d7cdb6f80e7",
+          "allocation": {
+            "king-county-council-8--teresa-mosqueda": "1"
+          },
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "canonical_endorsement_id": "endorsement-d791a9ebad0d5c4e",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "king-county-council-8",
+          "retained_choice_names": [
+            "Teresa Mosqueda"
+          ],
+          "source_choice_wording": "County Council Pos. 8: Teresa Mosqueda",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Washington > County and Local Candidates > King County Council; exact district"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "seattle-city-council-5--nilu-jenks"
+            ],
+            "race_id": "seattle-city-council-5"
+          },
+          "accepted_full_canonical_record_sha256": "014a763d27a538d9be1ddaef3b25613d4d30ae2c387d36b6fd8d0546f4a6481c",
+          "allocation": {
+            "seattle-city-council-5--nilu-jenks": "1"
+          },
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "canonical_endorsement_id": "endorsement-757c99d7863a4939",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. same supported choices/status as prior usable automatic snapshot.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "seattle-city-council-5",
+          "retained_choice_names": [
+            "Nilu Jenks"
+          ],
+          "source_choice_wording": "Seattle City Council Pos. 5: Nilu Jenks",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Washington > Seattle City Council; frozen Seattle5 identity/unique Nilu Jenks; retain approved source-office-label mapping"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "evidence_locator": "Washington > State Legislative Candidates > Legislative District 32; State Representative Pos.1: Danica Noble Official source: https://seiu775.org/2026endorsements/. Capture capture-seiu-775-20261016T145942Z-26f68da37490; verified manual manual-seiu-775-20261016T154850Z-498962c0b8e6.",
+            "race_id": "ld-32-state-representative-1"
+          },
+          "accepted_full_canonical_record_sha256": "d5a12566da470af93c51b6199c2a3cd004675f894e6eb8f7fe2e261c11e7e22f",
+          "allocation": {
+            "ld-32-state-representative-1--danica-noble": "1"
+          },
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ],
+          "canonical_endorsement_id": "endorsement-6c458eabc4286fb4",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. already canonical; absent from old automatic29; not a new PDF addition.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [],
+          "race_id": "ld-32-state-representative-1",
+          "retained_choice_names": [
+            "Danica Noble"
+          ],
+          "source_choice_wording": "State Representative Pos. 1: Danica Noble",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 32; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "ld-37-state-representative-1--sharon-tomiko-santos",
+              "ld-37-state-representative-1--kelabe-tewolde"
+            ],
+            "evidence_locator": "Washington > Legislative District 37 > Representative Pos.1; explicitly both candidates earned an endorsement Official source: https://seiu775.org/2026endorsements/. Capture capture-seiu-775-20261016T145942Z-26f68da37490; verified manual manual-seiu-775-20261016T154850Z-498962c0b8e6.",
+            "race_id": "ld-37-state-representative-1"
+          },
+          "accepted_full_canonical_record_sha256": "1c884d6a60b7388e1c8b7af5f6463f8207833cd3b3d15f6be85f0fce24976cb8",
+          "allocation": {
+            "ld-37-state-representative-1--kelabe-tewolde": "1/2",
+            "ld-37-state-representative-1--sharon-tomiko-santos": "1/2"
+          },
+          "candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos",
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "canonical_endorsement_id": "endorsement-9d537cbacadf83e5",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "dual_endorsement",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. already canonical; absent from old automatic29; not a new PDF addition.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [
+            "Sharon Tomiko Santos and Kelabe Tewolde (both candidates earned an endorsement)"
+          ],
+          "race_id": "ld-37-state-representative-1",
+          "retained_choice_names": [
+            "Sharon Tomiko Santos",
+            "Kelabe Tewolde"
+          ],
+          "source_choice_wording": "State Representative Pos. 1: Sharon Tomiko Santos and Kelabe Tewolde (both candidates earned an endorsement)",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > State Legislative Candidates; Legislative District 37; exact office/position"
+          }
+        },
+        {
+          "accepted_complete_decision_dictionary": {
+            "candidate_ids": [
+              "king-county-council-4--jorge-l-baron"
+            ],
+            "evidence_locator": "Washington > County and Local Candidates > King County Council > County Council Pos.4: Jorge L. Baron Official source: https://seiu775.org/2026endorsements/. Capture capture-seiu-775-20261016T145942Z-26f68da37490; verified manual manual-seiu-775-20261016T154850Z-498962c0b8e6.",
+            "race_id": "king-county-council-4"
+          },
+          "accepted_full_canonical_record_sha256": "03d003968aa19cc1eb57be70901c3a0ae462ee4016daf0e21525af8d09627749",
+          "allocation": {
+            "king-county-council-4--jorge-l-baron": "1"
+          },
+          "candidate_ids": [
+            "king-county-council-4--jorge-l-baron"
+          ],
+          "canonical_endorsement_id": "endorsement-35659abc6314fad1",
+          "canonical_hash_serialization": "sorted compact UTF-8 JSON without trailing newline",
+          "canonical_status": "endorsed",
+          "comparison": "Retained candidates/order, status, exact allocations, endorsement ID and full normalized record remain unchanged. already canonical; absent from old automatic29; not a new PDF addition.",
+          "new_publisher_endorsement_or_withdrawal_inferred": false,
+          "qualifications": [
+            "Jorge L. Baron"
+          ],
+          "race_id": "king-county-council-4",
+          "retained_choice_names": [
+            "Jorge L. Barón"
+          ],
+          "source_choice_wording": "County Council Pos. 4: Jorge L. Baron",
+          "source_locator": {
+            "artifact_page": 1,
+            "region": "single PDF page1 > Washington > County and Local Candidates > King County Council; exact district"
+          }
+        }
+      ],
+      "snapshot_capture_time": "2026-10-27T21:38:57Z",
+      "snapshot_review_scope": "Complete covered-scope comparison of all 52 frozen Seattle races against the supplied Washington sections: all 32 canonical decisions/33 choices supported unchanged, all 29 prior usable automatic decisions supported, and no additional covered endorsement in the other 20 races. No duplicate statewide inventory, Alaska/Montana review or exhaustive search for separate later publications.",
+      "source_id": "seiu-775",
+      "source_network_retrieval_time": null,
+      "supplied_artifact": {
+        "bytes": 291033,
+        "sha256": "2256cc2e6742e2f683950aded3e8409777f0f69aa8710d2698e8963ff6897c40"
+      }
+    }
+  ]
+}

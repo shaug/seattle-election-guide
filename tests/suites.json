@@ -227,6 +227,11 @@
     "tests": {},
     "partition": "integration-artifacts"
   },
+  "tests/test_http_failure_observation.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
   "tests/test_initialization.py": {
     "suite": "integration",
     "tests": {},

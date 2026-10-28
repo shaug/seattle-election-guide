@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-27T23:16:51.859013Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/sierra-club-washington; actual ordinary public browser interval 2026-10-27T23:09:37.262Z to 2026-10-27T23:10:12.791Z; source factual comparison completed 2026-10-27T23:16:51.859013+00:00. Existing qualifications/old canonical provenance retained. No numeric HTTP, native recovery, baseline approval or scheduled reuse asserted.",
+  "mode": "human",
+  "scheduled_for": "2026-10-27",
+  "source_id": "sierra-club-washington",
+  "status": "manual"
+}
