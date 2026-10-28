@@ -101,18 +101,22 @@ Each runbook's autonomy level is declared in the runbook itself — its single o
 | `runbooks/results-capture-election-night.md`  | `results_capture_election_night`     |
 | `runbooks/results-certified-ingest.md`        | `results_capture_post_certification` |
 | `runbooks/endorsement-discovery-sweep.md`     | `collection_opens` → `refresh`       |
-| `runbooks/endorsement-source-daily-verification.md` | calendar-derived weekly/daily source checks; proposed; real scheduled execution and later independent approved-baseline reuse pending |
+| `runbooks/endorsement-source-daily-verification.md` | calendar-derived weekly/daily source checks; adopted under the October 28 finite acceptance decision |
 | `runbooks/production-rollback.md`             | condition: production is serving a wrong, broken, or stale build |
 
-The endorsement-verification runbook remains **proposed** under #497. The October 23
-factual-evidence decision removes historical-page reconstruction and evidence-key recovery
-from normal operation. Code delivery, fixtures, operator dispatches and no-due workflows do
-not adopt it: all six automatic-attempt outcomes and 46 honest coverage lanes/manual tasks remain
-required. Under the [October 24 SEIU 775 adoption-only coverage decision](runbooks/endorsement-source-daily-verification.md#october-24-seiu-775-adoption-only-coverage-decision),
-the other five sources still require complete current official factual baselines, real normal
-due-source scheduled execution, later independent normal scheduled reuse and applicable reviewed
-delivery verification. SEIU 775 retains ordinary daily attempts, its genuine failed observations,
-prior usable baseline and explicit unresolved access follow-up in finite daily tasks. This decision
-does not mark the runbook adopted or #497 complete.
+The endorsement-verification runbook is **adopted** under the
+[October 28 finite adoption decision and evidence record](GENERAL_VERIFICATION_ADOPTION_2026-10-28.md).
+Scott accepted genuine normal scheduled WFP approved-baseline reuse plus meaningful existing
+source-specific automated coverage; four additional successful live reuse demonstrations are
+not adoption gates. The record preserves the old criterion as superseded history, actual missing
+observations and failures, and SGN's still-required ordinary native 11-fact review/approval.
+
+The October 23 factual-evidence contract still removes historical-page reconstruction and
+evidence-key recovery from normal operation. All six automatic-attempt outcomes and 46 honest
+coverage lanes/manual tasks remain required. The
+[October 24 SEIU 775 adoption-only exception](runbooks/endorsement-source-daily-verification.md#october-24-seiu-775-adoption-only-coverage-decision)
+still preserves ordinary daily attempts, genuine failures, prior usable facts and finite
+follow-up. Fixtures, operator dispatches and no-due workflows remain distinct from genuine
+scheduled observations and grant no baseline approval or successful source check.
 See the [accepted design](superpowers/specs/2026-10-23-secret-free-endorsement-verification-design.md)
 and [implementation record](superpowers/plans/2026-10-23-secret-free-endorsement-verification.md).
