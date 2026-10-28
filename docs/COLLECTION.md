@@ -241,9 +241,12 @@ also fail the complete response check before decision matching. Changed response
 bytes always require review. Historical initial-page snapshots and approvals remain
 immutable; neither approves the complete response. WFP's exact October 20 factual review
 and October 21 native scheduled reuse remain accepted progress. New or changed complete
-snapshots still require their own official-source review; the deployed secret-free six-source
-process requires its revised scheduled acceptance evidence before adoption can be claimed. Authored fixtures prove parsing and archive
-behavior, not live adoption or a new endorsement approval.
+snapshots still require their own official-source review. The
+[October 28 finite adoption record](GENERAL_VERIFICATION_ADOPTION_2026-10-28.md) binds genuine
+normal scheduled WFP reuse and meaningful existing source-specific automated coverage under
+the approved acceptance criterion. It does not claim four additional live reuse observations,
+SGN native 11-fact approval or SEIU recovery. Authored fixtures prove parsing and archive
+behavior, not a live source check or new endorsement approval.
 
 SGN discovery recognizes endorsement link text as well as title-bearing URLs,
 so short canonical story links are fetched and revisited. Every fetched index

@@ -1,12 +1,13 @@
 # Runbook: endorsement source daily verification
 
-**Status: proposed, implementation awaiting adoption evidence (#497).** Keep this
-status until real due-source native scheduled execution, complete current official factual
-baseline reviews for the other five automatic sources under the October 24 SEIU 775 coverage
-decision below, and later independent normal scheduled reuse have durable evidence. Fixture execution
-proves the mechanism, not live publisher access or source approval. Operator dispatches and
-no-due successes cannot substitute. The approved SEIU 775 exception changes only its adoption
-gate; its failed checks and unresolved access follow-up remain explicit in the six-source tranche.
+**Status: adopted (#497).**
+
+The [October 28 adoption decision](../GENERAL_VERIFICATION_ADOPTION_2026-10-28.md)
+accepts WFP's genuine normal scheduled reuse plus meaningful existing source-specific automated
+coverage; additional successful live reuse demonstrations are not adoption gates. Missing
+observations and failures remain explicit. This changes no source approval, access control,
+cadence, six-source attempt lane or SEIU 775 adoption-only exception. Fixture execution still
+does not establish live publisher access or approve a factual baseline.
 
 ## Trigger and boundaries
 
@@ -41,10 +42,10 @@ The first general-election tranche is:
 
 | Source | Automatic publication check | Limitation |
 |---|---|---|
-| Transit Riders Union | Official WordPress archive through the September 30 boundary, both known and learned current-general articles, exact linked October graphic | Twelve fixed formal mappings from the designated October article; qualified recommendations held. Complete HTML/image fingerprints drive review. The exact expanded factual baseline was reviewed and delivered in [PR #629](https://github.com/shaug/seattle-election-guide/pull/629); later independent normal scheduled reuse remains pending. Historical failures and exact October 20 obligations remain intact. |
+| Transit Riders Union | Official WordPress archive through the September 30 boundary, both known and learned current-general articles, exact linked October graphic | Twelve fixed formal mappings from the designated October article; qualified recommendations held. Complete HTML/image fingerprints drive review. The exact expanded factual baseline was reviewed and delivered in [PR #629](https://github.com/shaug/seattle-election-guide/pull/629). Later independent normal scheduled reuse is not established by the adoption record and remains ordinary monitoring. Historical failures and exact October 20 obligations remain intact. |
 | Sage Leaders | Current 2026 section, excluding past-year sections | Fixed, reviewed factual mappings; changed bytes require review. |
 | SEIU 775 | Washington section | Persistent HTTP 403 remains a failed check. The October 24 adoption-only coverage exception below preserves normal daily attempts and unresolved access follow-up. Fixed factual mappings and prior approvals remain intact; changed bytes require review. |
-| UFCW 3000 | Complete endorsements landing page plus known/new relevant official articles | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. The complete 33-fact native October 25 baseline (mapping 1.0.2) was reviewed and delivered in [PR #629](https://github.com/shaug/seattle-election-guide/pull/629); later independent normal scheduled reuse remains pending. |
+| UFCW 3000 | Complete endorsements landing page plus known/new relevant official articles | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. The complete 33-fact native October 25 baseline (mapping 1.0.2) was reviewed and delivered in [PR #629](https://github.com/shaug/seattle-election-guide/pull/629). Later independent normal scheduled reuse is not established by the adoption record and remains ordinary monitoring. |
 | Washington Working Families Party | Complete Washington candidate table from the reviewed public POST endpoint | Fixed, reviewed factual mappings; changed bytes require review. |
 | Seattle Gay News | Current Seattle index plus known/new articles | Daily from collection opening. Traverse pagination to the reviewed oldest current-cycle article, then revisit every known article. |
 
@@ -57,11 +58,11 @@ The six stay in the automatic-attempt lane, including an inaccessible source;
 failures do not silently reduce coverage. Current operator research and fixture tests
 do not establish native scheduled recovery or adoption. Preserve accepted exact-baseline
 reviews and native reuse, including WFP's dated review/reuse.
-Complete outstanding exact-baseline reviews and later independent native scheduled evidence;
-the October 24 decision below excepts SEIU 775 only from the adoption gate. The other five
-sources still require complete current official factual baselines, real normal due-source
-scheduled execution and later independent normal scheduled reuse. The deployed secret-free
-process still needs its own revised acceptance packet and applicable reviewed delivery verification.
+Complete ordinary exact-baseline review whenever first, changed or unapproved inputs occur.
+The October 28 decision below accepts the retained WFP reuse and source-specific automated
+coverage for adoption; it does not mark missing TRU, Sage, UFCW or SGN observations performed.
+SGN's first actual native 11-fact extraction and exact approval remain ordinary factual work.
+No changed or unreviewed snapshot inherits approval through this adoption decision.
 
 All other eligible panel sources use manual review, including not-found,
 restricted, social, dynamic, PDF, and image publications without an installed
@@ -380,6 +381,25 @@ observation does. Operators still close a finite task only after all other crite
 reconciliation performs no automatic whole-task closure. Historical scoped SEIU closure authority
 is separate; #616 remains the finite recovery follow-up.
 
+## October 28 adoption decision
+
+At **03:12 UTC on October 28, known to minute precision**, Scott approved adopting #497
+on genuine normal scheduled WFP approved-baseline reuse plus meaningful existing source-specific
+automated coverage. The [finite adoption record](../GENERAL_VERIFICATION_ADOPTION_2026-10-28.md)
+joins the actual run, observation, snapshot, exact approval and named reviewer, and identifies
+the existing passed coverage for each distinct source path. Four additional successful live
+reuse demonstrations cease to be adoption gates. Ordinary later due-source checks, factual
+review of new/changed/unapproved inputs and real failure handling continue unchanged.
+WFP supplies the actual later independent normal scheduled reuse; the four additional
+source-specific demonstrations are not established by this record.
+
+The October 24 adoption criterion and earlier open/proposed language below remain dated,
+superseded history; its SEIU operational exception and preserved failures remain in force.
+The dated #616 task has its actual [late/limited closeout](https://github.com/shaug/seattle-election-guide/issues/616#issuecomment-6454430592),
+and #647 has its [current limited closeout](https://github.com/shaug/seattle-election-guide/issues/647#issuecomment-6458004214).
+Neither is a permanent access-recovery queue. The separate October 30 #505 checkpoint and
+November 3 obligations keep their own scope; adoption does not complete them.
+
 ## Legacy encrypted custody
 
 Historical `verification seal` and `verification restore` utilities remain documented in
@@ -393,11 +413,11 @@ legacy ciphertext and keys; this implementation does not rotate, replace or dele
 The dated notes below retain the original encrypted-custody facts, failures, instructions and
 then-pending acceptance exactly as recorded. Their old vault/restoration steps are historical,
 superseded for current/future operation by the October 23 factual contract above. Previously
-accepted WFP factual review and native reuse remain accepted progress; they neither fabricate a
-new source read nor establish the deployed secret-free six-source process. No historical full-page
-reconstruction or forensic original-page audit is promised. Complete #497 only with the full
-revised live evidence, including later independent normal scheduled reuse, honest manual queue,
-genuine source recovery/approved coverage decision and applicable reviewed delivery verification.
+accepted WFP factual review and native reuse remain genuine progress. The current finite
+acceptance decision and evidence are recorded above; they fabricate no new source read,
+missing reuse result or baseline approval. No historical full-page reconstruction or forensic
+original-page audit is promised. Keep the manual queue, actual failures and approved coverage
+limitations honest, with normal reviewed delivery and factual review controls unchanged.
 See the [accepted design](../superpowers/specs/2026-10-23-secret-free-endorsement-verification-design.md)
 and [implementation record](../superpowers/plans/2026-10-23-secret-free-endorsement-verification.md).
 

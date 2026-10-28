@@ -198,7 +198,10 @@ def test_scheduled_pr_delivers_factual_evidence_contract(tmp_path: Path, existin
 def test_active_runbook_requires_factual_review_and_real_scheduled_adoption() -> None:
     runbook = (PROJECT_ROOT / "docs/runbooks/endorsement-source-daily-verification.md").read_text()
     active = runbook.split("## Legacy encrypted custody", 1)[0]
-    assert "Status: proposed" in active
+    assert "**Status: adopted (#497).**" in active.splitlines()[2]
+    assert "October 28 adoption decision" in active
+    assert "GENERAL_VERIFICATION_ADOPTION_2026-10-28.md" in active
+    assert "additional successful live reuse demonstrations are not adoption gates" in active
     assert "public factual baseline" in active
     assert "no evidence key" in active
     assert "verification restore" not in active

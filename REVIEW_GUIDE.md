@@ -65,8 +65,12 @@ for delegated work. The commands' legacy `human` mode does not change the actual
 Preserve historical IDs, ciphertext, approvals, failures and releases unchanged. Valid existing
 approvals apply only to the precise facts/snapshot reviewed. Migration supplies no new approval,
 fresh source read, backdated check, failure reset or authority for unattended interpretation.
-Fixtures cannot receive live baseline approval. Keep #497 and its runbook proposed until actual
-scheduled execution and later independent normal scheduled reuse have the required evidence.
+Fixtures cannot receive live baseline approval. The [October 28 adoption decision](docs/GENERAL_VERIFICATION_ADOPTION_2026-10-28.md)
+accepts genuine normal scheduled WFP approved-baseline reuse plus meaningful existing
+source-specific automated coverage for #497 adoption. Additional successful per-source live
+reuse demonstrations are ordinary monitoring, not adoption gates. This does not approve an
+unobserved SGN 11-fact extraction or transfer approval to changed or unreviewed inputs; normal
+exact-baseline factual review and the actual reviewer/time joins above remain required.
 
 The approved partial #589 access policy uses one explicit complete-initial-review attestation.
 Normal protected review must establish the full official publication/mapping scope, actual

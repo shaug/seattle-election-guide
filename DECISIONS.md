@@ -42,6 +42,22 @@ request before viewing consensus results, so methodology cannot be tuned to an o
   official-authority election results remain in SOURCE_POLICY.md. None of these paths permits
   access-control bypass or unauthorized redistribution.
 
+### Finite verification adoption (#497, October 28, 2026)
+
+Scott approved the revised adoption criterion on October 28 at **03:12 UTC,
+known to minute precision**: genuine normal scheduled WFP approved-baseline reuse
+plus meaningful existing source-specific automated coverage suffice for adoption.
+Four additional successful live reuse demonstrations are not adoption gates.
+The [finite adoption record](docs/GENERAL_VERIFICATION_ADOPTION_2026-10-28.md)
+preserves the superseded criterion and the actual evidence and limitations.
+
+This operational acceptance decision changes no factual approval predicate. First,
+changed or unapproved inputs still require normal exact-baseline review. SGN's
+future native 11-fact extraction and exact approval remain unperformed ordinary
+factual work, not prospective approval. All six attempt lanes, current cadence,
+access safeguards, SEIU 775's adoption-only exception, failures, counters and
+latest-VERIFIED retention remain unchanged. No missing run becomes a success.
+
 ## Consensus eligibility
 
 - An eligible source is active, preregistered for the default panel, relevant to the election,
