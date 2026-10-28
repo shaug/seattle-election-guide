@@ -26,8 +26,10 @@ from election_guide.collection.http import (
     FAILURE_PREFIX,
     HTTP_STATUS_PREFIX,
     HTTPS_DOWNGRADE_REFUSED,
+    MAX_REDIRECTS,
     REDIRECT_LIMIT_EXCEEDED,
     TOTAL_TIMEOUT_EXCEEDED,
+    HttpFetchFailure,
     fetch_http,
 )
 from election_guide.collection.models import (
@@ -42,12 +44,14 @@ from election_guide.collection.refresh import (
 )
 from election_guide.collection.tru_discovery import TRU_HOME, discover_tru_publication
 from election_guide.collection.verification import (
+    Activation,
     CheckRecord,
     ElectionPolicy,
     SourcePolicy,
     VerificationPolicy,
     baseline_reviewed,
     check_order,
+    explicit_intervals,
     plan_verification,
     read_checks,
     read_panel,
@@ -98,7 +102,7 @@ def run_verification(
     if checked_at.tzinfo is None:
         raise ValueError("verification check time must include a timezone")
     as_of = checked_at.astimezone(ZoneInfo(ELECTION_TIMEZONE)).date()
-    plan = plan_verification(policy, state_root, as_of)
+    plan = plan_verification(policy, state_root, as_of, as_of_at=checked_at)
     code_root = Path(__file__).resolve().parents[3]
     revision = subprocess.run(
         ["git", "-C", str(code_root), "rev-parse", "HEAD"],
@@ -161,7 +165,13 @@ def run_verification(
             if not activation.exists():
                 write_immutable_record(
                     activation,
-                    canonical_json_bytes({"activated_on": as_of.isoformat(), "revision": revision}),
+                    canonical_json_bytes(
+                        Activation(
+                            activated_on=as_of,
+                            revision=revision,
+                            refresh_intervals=explicit_intervals(election) or None,
+                        ).model_dump(mode="json")
+                    ),
                 )
             for missed in plan.missed:
                 if missed.election_id == election.election_id and not any(
@@ -188,7 +198,7 @@ def run_verification(
                         working,
                         CheckRecord(
                             source_id=obligation.source_id,
-                            scheduled_for=as_of,
+                            scheduled_for=obligation.scheduled_for or as_of,
                             checked_at=checked_at,
                             status="manual_due",
                             mode="live" if live else "fixture",
@@ -198,7 +208,7 @@ def run_verification(
                         {
                             "election_id": election.election_id,
                             "source_id": obligation.source_id,
-                            "due": as_of.isoformat(),
+                            "due": (obligation.scheduled_for or as_of).isoformat(),
                             "limitation": obligation.limitation,
                         }
                     )
@@ -215,7 +225,7 @@ def run_verification(
                 )
                 check = CheckRecord(
                     source_id=obligation.source_id,
-                    scheduled_for=as_of,
+                    scheduled_for=obligation.scheduled_for or as_of,
                     checked_at=checked_at,
                     status=event.status,
                     event_id=event.id,
@@ -252,7 +262,9 @@ def run_verification(
             ):
                 write_immutable_record(root / path.relative_to(working), path.read_bytes())
     report["mode"] = "live" if live else "fixture"
-    report["coverage"] = plan_verification(policy, state_root, as_of).model_dump(mode="json")
+    report["coverage"] = plan_verification(
+        policy, state_root, as_of, as_of_at=checked_at
+    ).model_dump(mode="json")
     write_immutable_record(
         state_root / "runs" / f"{evidence_fingerprint(report)}.json", canonical_json_bytes(report)
     )
@@ -313,6 +325,37 @@ def _http_failure_diagnostic(error: BaseException) -> str:
             return "category=network"
         cause = cause.__cause__
     return "category=unknown"
+
+
+def _transport_failure_note(error: BaseException, diagnostic: str) -> str:
+    """Only typed producer facts may supplement the existing safe diagnosis."""
+    if not isinstance(error, HttpFetchFailure):
+        return ""
+    context = vars(error)
+    status = context.get("response_status")
+    followed = context.get("followed_redirects")
+    redirect_class = context.get("redirect_class")
+    if (
+        (status is not None and (type(status) is not int or not 100 <= status <= 599))
+        or type(followed) is not int
+        or not 0 <= followed <= MAX_REDIRECTS
+        or type(redirect_class) is not str
+        or redirect_class not in {"SAME_ORIGIN", "CROSS_ORIGIN", "REFUSED"}
+        or (redirect_class == "CROSS_ORIGIN" and not followed)
+    ):
+        return ""
+    if diagnostic.startswith("category=http_status; status=") and status != int(
+        diagnostic.partition("; status=")[2]
+    ):
+        return ""
+    if diagnostic in {"category=redirect", "category=public_peer"}:
+        redirect_class = "REFUSED"
+    response = f"HTTP_{status}" if status is not None else "NONE"
+    note = (
+        f" Transport observation: response={response}; followed_redirects={followed}; "
+        f"redirect_class={redirect_class}; challenge=UNKNOWN."
+    )
+    return note if len(note.encode("ascii")) <= 512 else ""
 
 
 def _refresh(
@@ -447,7 +490,8 @@ def _refresh(
         return record_refresh_failure(
             source.id,
             checked_at,
-            f"Source check failed (stage={stage}; {diagnostic}).",
+            f"Source check failed (stage={stage}; {diagnostic})."
+            + (_transport_failure_note(error, diagnostic) if stage == "http_fetch" else ""),
             root / "refreshes",
             extraction_dir=root / "extractions",
             access_failure=access_failure,

@@ -74,6 +74,46 @@ the review time and durable evidence reference under existing authority. Compreh
 check, next due date, and limitation. Unapproved captures and fixture runs do not
 populate the successful verification date.
 
+### Optional whole-day intervals (#589)
+
+All 46 current sources retain their omitted settings and existing frequencies. For a new cycle
+only, policy schema 1.2 accepts `refresh_interval_days: N` on a registered source: a positive
+integer, not a boolean, string, fraction or zero. It cannot combine with
+`daily_from_collection: true`. The existing activation records the explicit source-to-interval
+map once. Adding, editing or removing an interval after activation fails before attempts/writes;
+do not rewrite activation or backfill historical work. Legacy omitted settings need no pin or
+historical Git object. `verification validate` checks archived pin structure/source membership;
+planning and running also require its exact match to current explicit settings.
+
+Explicit slots are collection-anchored before issuance, issuance-anchored afterward, with actual
+activation, issuance and final election-day duties. A late run binds `scheduled_for` to the latest
+owed configured slot while retaining the actual check time and older missed work. Repeated polling
+does not invent extra intervening attempt dates or inflate the three-distinct-slot escalation.
+`due`/`next_due` describe attempt work, not evidence age. `refresh_interval_days`, `scheduled_for`
+and cadence `interval` appear only for explicitly configured sources.
+
+`freshness_due_at` uses the last actual completed manual review or approved live check plus elapsed
+UTC days. Failed, fixture, unapproved, handled-access and administrative observations never advance
+that anchor. With omitted defaults, regular issuance shortens a future weekly deadline while
+preserving earlier debt and a full 24 hours since success; SGN remains daily from collection.
+When a real evaluation clock is available, `freshness_due` is true at the deadline and
+`freshness_overdue` only after it. `run --checked-at` supplies its actual clock. A read-only example:
+
+```bash
+uv run election-guide verification plan config/verification.yaml \
+  --as-of 2026-10-27 --as-of-at 2026-10-27T18:00:00Z
+```
+
+The clock must include a timezone and match `--as-of` in Pacific time. Omit `--as-of-at` for a
+date-only plan; within-day freshness booleans are then absent. Without a genuinely timed success,
+the deadline remains unknown. Do not infer a midnight success from an old dated facts document.
+None of these reporting states removes canonical verified evidence, permits release vetoes,
+performs publisher access, changes the current cron, or grants #497 adoption/reuse credit.
+
+The legacy `freshness` label describes the latest observation/review/access condition, not its
+elapsed age. Read `freshness_due_at`, `freshness_due` and `freshness_overdue` for age; a last
+successful observation can remain the latest observation while its next freshness deadline is overdue.
+
 ## Git-backed evidence
 
 The workflow continues `codex/endorsement-verification-state`, merges current
@@ -401,7 +441,24 @@ approval of later endorsement changes.
 
 Keep the normal cadence and immutable history intact. A fixture, operator check,
 or no-due run cannot stand in for the required independent scheduled execution.
-Inaccessible originals and incomplete live evidence remain open obligations.
+
+A failed automatic fetch does not establish that an ordinary browser is denied access.
+An authorized public browser view or supplied PDF/image can support normal factual review,
+while respecting source-access restrictions. Record the official URL, actual observation or
+known capture time, named reviewer and review time, covered races/choices, allocations and
+limitations in the existing facts-only recheck packet. Keep full third-party artifacts private.
+An unchanged comparison needs no ledger rewrite; additions or changes still require normal
+factual admission and protected delivery. See the [SEIU supplied-snapshot recheck](../../data/review/rechecks/wa-2026-general-2026-10-27-seiu-supplied-snapshot.json).
+
+That review creates no automatic success, native-snapshot approval, scheduled reuse or failure
+reset. All six automatic lanes, ordinary attempts, cadence and access safeguards remain intact.
+Incomplete or unreviewed scope remains explicit.
+
+Future direct HTTP-fetch failures may append a bounded observation of the actual response
+status or no response, followed-redirect count, and same-origin/cross-origin/refused class.
+The fixed failure classification remains unchanged; challenge stays `UNKNOWN`, not a WAF
+finding. The note contains no URLs, header values, environment data or response body and
+does not change access or retry behavior.
 
 ### October 20 delegated daily reviews
 

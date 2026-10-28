@@ -56,10 +56,15 @@ def validate_state(policy: VerificationPolicy, root: Path) -> int:
         }
         if directory.exists() and any(path.name not in expected for path in directory.iterdir()):
             raise ValueError("verification archive contains an unexpected record location")
-        if (directory / "activation.json").exists():
+        activation = (
             Activation.model_validate(read_json(directory / "activation.json"))
+            if (directory / "activation.json").exists()
+            else None
+        )
         registry, _ = read_panel(election)
         sources = {source.id for source in registry.sources}
+        if activation and set(activation.refresh_intervals or {}) - sources:
+            raise ValueError("activation refresh interval belongs to an unknown source")
         from election_guide.collection.verification_access import (
             read_qualifications,
             validate_access_disposition,

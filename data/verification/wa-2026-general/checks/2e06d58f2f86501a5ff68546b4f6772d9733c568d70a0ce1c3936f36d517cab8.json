@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-27T23:58:05.210588Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/performance_651 (qualified current factual admission): data/review/rechecks/wa-2026-general-2026-10-27-current-browser-three-sources.json#/source_reviews/washington-for-peace-and-justice; original public browser read 2026-10-27T23:10:12.871Z to 23:11:19.748Z by OpenAI Codex SEG oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d, comparison completed23:16:51.859013Z. Current31 decisions admitted after Scott instructed “consider it a typo in the endorsement” at2026-10-27 23:50UTC (minute precision only) for literalLD45 JavierValdez to existingLD46. Earlier UNVERIFIED history and all old canonical facts/dates preserved. No complete-initial attestation, automatic approval or scheduled reuse.",
+  "mode": "human",
+  "scheduled_for": "2026-10-27",
+  "source_id": "washington-for-peace-and-justice",
+  "status": "manual"
+}

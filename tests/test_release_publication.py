@@ -24,6 +24,7 @@ from election_guide.release.automation_models import (
 from election_guide.release.declaration import ReleaseInputs, ResolvedRelease, hash_release_inputs
 from election_guide.release.models import release_archive_name
 from election_guide.serialization import canonical_json_bytes
+from tests.release_fixtures import minimal_publication_view_model
 from tests.test_hosting import _write_release_bundle  # pyright: ignore[reportPrivateUsage]
 from tests.test_hosting_releases import _released_archive  # pyright: ignore[reportPrivateUsage]
 from tests.test_release_candidate import _artifact, _git  # pyright: ignore[reportPrivateUsage]
@@ -94,6 +95,7 @@ def setup_publication(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[
         git_commit=sha,
         html=b"guide\n",
         source_registry_hash="c" * 64,
+        view_model=minimal_publication_view_model(source_registry_hash="c" * 64),
     )
     archive = _released_archive(bundle, "primary.2", root / "dist/build")
 
