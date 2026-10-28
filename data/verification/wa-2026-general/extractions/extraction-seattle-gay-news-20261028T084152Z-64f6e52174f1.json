@@ -1,0 +1,135 @@
+{
+  "adapter_fingerprint": "8a4e4d55f518bfd6abf008a00f39bac5561880585b3637c15ce4b5f26bb85b9f",
+  "adapter_kind": "static_html",
+  "capture_id": "capture-seattle-gay-news-20261028T084152Z-abe9b4cdc9ee",
+  "content_sha256": "0c2199397228a6e57934178613a88d7761f1de9d2f23a18fbb2911113a5902bd",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "initiative-26-001--no"
+      ],
+      "evidence_excerpt": "SGN Endorsements: Washington State Ballot Initiatives (IP26-645, IL26-001, IL26-638)",
+      "evidence_locator": "Reviewed official SGN story171504 title identifies exact measures; full body/final instruction explicitly No. Actual current check2026-10-27T10:51:14.822675Z, review2026-10-27T11:02:37.944401+00:00 by OpenAI Codex/root/review_608_code_c340. First appearance unknown. Changed full bytes require renewed review; no native8 or future baseline approval.",
+      "extraction_confidence": "0.99",
+      "race_id": "initiative-26-001",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-638--no"
+      ],
+      "evidence_excerpt": "SGN Endorsements: Washington State Ballot Initiatives (IP26-645, IL26-001, IL26-638)",
+      "evidence_locator": "Reviewed official SGN story171504 title identifies exact measures; full body/final instruction explicitly No. Actual current check2026-10-27T10:51:14.822675Z, review2026-10-27T11:02:37.944401+00:00 by OpenAI Codex/root/review_608_code_c340. First appearance unknown. Changed full bytes require renewed review; no native8 or future baseline approval.",
+      "extraction_confidence": "0.99",
+      "race_id": "initiative-26-638",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "initiative-26-645--no"
+      ],
+      "evidence_excerpt": "SGN Endorsements: Washington State Ballot Initiatives (IP26-645, IL26-001, IL26-638)",
+      "evidence_locator": "Reviewed official SGN story171504 title identifies exact measures; full body/final instruction explicitly No. Actual current check2026-10-27T10:51:14.822675Z, review2026-10-27T11:02:37.944401+00:00 by OpenAI Codex/root/review_608_code_c340. First appearance unknown. Changed full bytes require renewed review; no native8 or future baseline approval.",
+      "extraction_confidence": "0.99",
+      "race_id": "initiative-26-645",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": "SGN Endorsements Rebecca Saldaña (King County Council District 2)",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "king-county-council-2",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": "SGN Endorsements Kelabe Tewolde (Washington State Legislative District 37 Position 1)",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-37-state-representative-1",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": "SGN Endorsements Jaelynn Scott (Washington State House of Representatives 37th District Position 2)",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-37-state-representative-2",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "evidence_excerpt": "SGN Endorsements Tatiana Brown (Washington State Senate 37th District)",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-37-state-senator",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": "SGN Endorsements Hannah Sabio-Howell (Washington State Senate 43rd District)",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "ld-43-state-senator",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": "SGN Endorsements Nilu Jenks (Seattle City Council District 5)",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "seattle-city-council-5",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": "SGN Endorsements Pramila Jayapal (US House of Representatives 7th District)",
+      "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+      "extraction_confidence": "0.99",
+      "race_id": "us-house-7",
+      "requires_review": true,
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "evidence_excerpt": "SGN Endorsements: Adam Smith (US House of Representatives, 9th District)",
+      "evidence_locator": "Official current SGN story/171425 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+      "extraction_confidence": "0.99",
+      "race_id": "us-house-9",
+      "requires_review": true,
+      "status": "endorsed"
+    }
+  ],
+  "extracted_at": "2026-10-28T08:41:52Z",
+  "extraction_fingerprint": "6c512a64723982ebb5e3c56b494c12605fecafacd4a70a0ef005718f5b75b076",
+  "extractor_version": "1.0.2",
+  "id": "extraction-seattle-gay-news-20261028T084152Z-64f6e52174f1",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news"
+}
