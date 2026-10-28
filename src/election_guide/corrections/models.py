@@ -11,10 +11,11 @@ exists and carries at least one entry (docs/RESULTS.md, Rendering: "results
 render as a state, not an option"; the same posture governs Corrections).
 
 The public page is Updates (issue #551; docs/RESULTS.md, "The updates page").
-Every change to the published aggregate or a position page belongs here,
+Every substantive change to the published aggregate or a position page belongs here,
 including additions from routine refreshes even when the leading choice is
-unchanged. Existing storage and field names remain compatible with immutable
-publication view models; `corrected_on` is also the date of an addition.
+unchanged. Minor wording or typography with unchanged facts and behavior stays
+in internal software/release history instead (#663). Existing storage and field
+names remain compatible with immutable publication view models; `corrected_on` is also the date of an addition.
 
 Entries here are hand-authored (an editor writes a headline and body prose
 directly), which is why nothing here cross-validates against the ballot

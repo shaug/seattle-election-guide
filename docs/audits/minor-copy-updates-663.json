@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "authority": "https://github.com/shaug/seattle-election-guide/issues/663",
+  "editorial_decision": "Minor copy-only changes do not need public Updates announcements. Preserve this complete original internally; omit it from the next current public feed.",
+  "recorded_on": "2026-10-28",
+  "election_id": "wa-2026-general",
+  "release": "2026-general.62",
+  "release_url": "https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.62",
+  "source_revision": "ae819c57ef936d23eacf597fff518dd441e77ad1",
+  "source_path": "data/corrections/wa-2026-general.yaml",
+  "source_file_git_blob": "31cb3e701caebb85fd7bb64f455ab2cc987dfdab",
+  "source_file_sha256": "cd00cf0c99a5c2b1d1d9fe8e0cb3c2d025c54251babe343f76f8e62f6c4a197c",
+  "original_entry_index": 26,
+  "original_entry": {
+    "corrected_on": "2026-10-28",
+    "headline": "Updated the Sources and Comparisons subheadings.",
+    "body": "Sources now reads “The endorsements you trust, aggregated.” Comparisons now reads “The endorsements you choose, juxtaposed.” Source selection, scores, recorded endorsements and the rest of both pages are unchanged.",
+    "provenance": [
+      {
+        "label": "Sources",
+        "url": "/e/wa-2026-general/sources/"
+      },
+      {
+        "label": "Comparisons",
+        "url": "/e/wa-2026-general/comparisons/"
+      },
+      {
+        "label": "Approved page subheadings",
+        "url": "https://github.com/shaug/seattle-election-guide/issues/661"
+      }
+    ]
+  },
+  "original_entry_sha256": "f7da793c4b291f5862a13d0b1b656c709ef48c9e068747feac3e64f70c1367a7",
+  "preserved_public_prefix_count": 26,
+  "preserved_public_prefix_sha256": "91c827c4db840e75dac0f8361683a828a8f006210077f3749fdc6f9be77ec136",
+  "immutable_history": "Existing source revisions and accepted general.62 archives keep the original announcement unchanged. This record changes no previously published artifact.",
+  "subtitles": "Keep the exact shipped Sources and Comparisons subtitles; the correction changes only public Updates and its editorial guidance."
+}
