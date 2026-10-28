@@ -448,7 +448,8 @@ This recurring capability creates neither one calendar milestone per day nor a
 public calendar feed entry for each check. Existing comprehensive refresh
 milestones retain their own work and authority. See
 [the runbook](runbooks/endorsement-source-daily-verification.md) for coverage,
-factual Git persistence, and pending adoption evidence. Recurring records retain
+factual Git persistence, and the
+[October 28 finite adoption record](GENERAL_VERIFICATION_ADOPTION_2026-10-28.md). Recurring records retain
 endorsement facts, official URLs, actual check timestamps, and the actual reviewer
 and review timestamp, with observed-only metadata and hashes. Current responses
 are discarded after private temporary parsing; new records retain no full-page
