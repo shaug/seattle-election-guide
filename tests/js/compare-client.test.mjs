@@ -301,7 +301,7 @@ test('precinct comparison preserves explicit All through presets and Clear', () 
   const encoded = encodeCompareFragment(
     {
       columns: ['gall', 'strn'],
-      section: payload.comparisons.display_index[0].section_id,
+      section: 'all',
       contestedOnly: true,
       differencesOnly: true,
     },
@@ -326,7 +326,7 @@ test('precinct comparison preserves explicit All through presets and Clear', () 
     [...document.querySelectorAll('[data-comparison-race]')].map((r) => r.dataset.comparisonRace);
   assert.deepEqual(visible(), ids);
   assert.equal(new URLSearchParams(window.location.search).get('races'), 'all');
-  assert.equal(document.querySelector('[data-comparison-section-filter]').disabled, true);
+  assert.equal(document.querySelector('[data-comparison-section-filter]').disabled, false);
   document.querySelector('.comparison-presets a').click();
   assert.deepEqual(visible(), ids);
   window.location.hash = `#${encoded.fragment}`;
@@ -400,4 +400,56 @@ test('saved section filters span new ballot headings without changing membership
   assert.ok(document.querySelector('[data-comparison-section="seattle-city"]'));
   assert.ok(document.querySelector('[data-comparison-section="seattle-municipal-court"]'));
   assert.equal(notice(document).hidden, true);
+});
+
+test('precinct Ballot removes ineligible categories and actually applies its scope', () => {
+  const document = boot({
+    search: '?precinct=3230&races=all',
+    editPayload: (p) => {
+      p.precinct_ballot = {
+        schema_version: '1.0',
+        election_id: 'wa-2026-general',
+        mapping_hash: 'checked',
+        endorsements_path: '/e/wa-2026-general/',
+        comparisons_path: '/e/wa-2026-general/comparisons/',
+        precincts: [
+          {
+            code: '3230',
+            name: 'SEA 34-3230',
+            contest_ids: ['us-house-7', 'king-county-assessor'],
+          },
+        ],
+      };
+    },
+  });
+  const select = document.querySelector('[data-comparison-section-filter]');
+  const ids = () =>
+    [...document.querySelectorAll('[data-comparison-race]')].map((r) => r.dataset.comparisonRace);
+  assert.equal(select.disabled, false);
+  assert.deepEqual(
+    [...select.options].map((o) => o.value),
+    ['all', 'federal', 'county'],
+  );
+  select.value = 'county';
+  select.dispatchEvent(new Event('change'));
+  assert.deepEqual(ids(), ['king-county-assessor']);
+  assert.equal(select.value, 'county');
+  assert.equal(document.querySelector('[data-comparison-differences]').disabled, true);
+  const saved = window.location.hash;
+  window.dispatchEvent(new Event('hashchange'));
+  assert.equal(window.location.hash, saved);
+  assert.equal(select.value, 'county');
+  assert.deepEqual(ids(), ['king-county-assessor']);
+  document.querySelector('[data-precinct-clear]').click();
+  assert.equal(select.disabled, false);
+  assert.equal(select.value, 'county');
+  assert.deepEqual(ids(), [
+    'king-county-assessor',
+    'king-county-council-2',
+    'king-county-council-8',
+  ]);
+  assert.deepEqual(
+    [...select.options].map((o) => o.value),
+    ['all', 'federal', 'state', 'county', 'state-supreme-court', 'city'],
+  );
 });

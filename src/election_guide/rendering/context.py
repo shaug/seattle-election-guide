@@ -30,6 +30,7 @@ from election_guide.publication.personalization import (
 )
 from election_guide.rendering.payload import (
     ComparisonResultOutcome,
+    CoveredFilterScope,
     FilterScope,
     RaceCandidateDisplay,
     RaceCandidateEndorsements,
@@ -595,20 +596,33 @@ def filter_scope_groups(view_model: PublicationViewModel) -> list[FilterScopeGro
     consumers cannot disagree about a key.
     """
     sections = ballot_filter_sections(view_model)
+
+    def option(value: str, label: str) -> FilterScope | CoveredFilterScope:
+        if view_model.precinct_ballot is None:
+            return FilterScope(value=value, label=label)
+        return CoveredFilterScope(
+            value=value,
+            label=label,
+            contest_ids=sorted(
+                race.id
+                for section in view_model.guide_sections
+                for race in section.races
+                if value == "all" or value in race.filter_tokens
+            ),
+        )
+
     return [
         FilterScopeGroupView(
             label=None,
-            options=(FilterScope(value="all", label="All Seattle ballot races"),),
+            options=(option("all", "All Seattle ballot races"),),
         ),
         FilterScopeGroupView(
             label="Ballot sections",
-            options=tuple(FilterScope(value=key, label=label) for key, label in sections),
+            options=tuple(option(key, label) for key, label in sections),
         ),
         FilterScopeGroupView(
             label="Districts and jurisdictions",
-            options=tuple(
-                FilterScope(value=token, label=token) for token in _filter_options(view_model)
-            ),
+            options=tuple(option(token, token) for token in _filter_options(view_model)),
         ),
     ]
 

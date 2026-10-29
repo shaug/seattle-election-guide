@@ -26,6 +26,7 @@
 // same thing.
 
 import { render } from 'lit-html';
+import { availableBallotScopes, makeBallotScopeProjector } from './ballot-scopes.mjs';
 import { readClientPayload } from './client-payload.mjs';
 import { migrateCompareState } from './compare-migrate.mjs';
 import { createCompareRouter } from './compare-route.mjs';
@@ -125,6 +126,20 @@ export function wireComparisons() {
   const sectionFilter = required('[data-comparison-section-filter]');
   /** @type {HTMLElement} */
   const stickyControls = required('[data-sticky-controls]');
+  const projectScopes = makeBallotScopeProjector(sectionFilter);
+  const scopeMembership = new Map([['all', comparisons.display_index.map((row) => row.race_id)]]);
+  for (const row of comparisons.display_index) {
+    const value = row.filter_section_id ?? row.section_id;
+    if (!scopeMembership.has(value)) scopeMembership.set(value, []);
+    scopeMembership.get(value)?.push(row.race_id);
+  }
+  const scopes = [...scopeMembership].map(([value, contest_ids]) => ({ value, contest_ids }));
+  const availableScopes = () => availableBallotScopes(scopes, precinctIds);
+  const normalizeScope = () => {
+    const invalid = !availableScopes().has(state.section);
+    if (invalid) state.section = 'all';
+    return invalid;
+  };
   const contestedIds = new Set(payload.contested_race_ids);
   const races = new Map(personalization.races.map((race) => [race.race_id, race]));
   const categories = personalization.categories.filter((category) => category.selectable);
@@ -353,15 +368,14 @@ export function wireComparisons() {
         state.contestedOnly = readContestedOnly(router.controlSearch(), true);
         committed = snapshot(state);
       }
+      if (normalizeScope()) writeFragment('replace');
       writtenAddress = router.key();
       return;
     }
     state = snapshot(outcome.state);
     if (generalRaceMode) state.contestedOnly = readContestedOnly(router.controlSearch(), true);
-    if (precinctIds !== null) {
-      state.section = 'all';
-      state.differencesOnly = false;
-    }
+    if (precinctIds !== null) state.differencesOnly = false;
+    normalizeScope();
     linkNotice = outcome.notice;
     changeNotice = '';
     if (outcome.address === 'clean') {
@@ -394,10 +408,8 @@ export function wireComparisons() {
    * @returns {boolean}
    */
   function commit(mode = 'push') {
-    if (precinctIds !== null) {
-      state.section = 'all';
-      state.differencesOnly = false;
-    }
+    normalizeScope();
+    if (precinctIds !== null) state.differencesOnly = false;
     if (writeFragment(mode)) {
       changeNotice = '';
       renderPage();
@@ -657,7 +669,6 @@ export function wireComparisons() {
     for (const display of comparisons.display_index) {
       if (precinctIds !== null && !precinctIds.has(display.race_id)) continue;
       if (
-        precinctIds === null &&
         state.section !== 'all' &&
         (display.filter_section_id ?? display.section_id) !== state.section
       )
@@ -751,7 +762,8 @@ export function wireComparisons() {
     /** @type {HTMLInputElement} */ (document.querySelector(selector));
 
   function syncControls() {
-    sectionFilter.disabled = precinctIds !== null;
+    projectScopes(availableScopes());
+    sectionFilter.disabled = false;
     for (const selector of ['[data-comparison-full]', '[data-comparison-differences]'])
       toggleInput(selector).disabled = precinctIds !== null;
     sectionFilter.value = state.section;
@@ -828,7 +840,6 @@ export function wireComparisons() {
   wirePrecinctControl(payload.precinct_ballot, router, (ids, reset) => {
     precinctIds = ids;
     if (reset) {
-      state.section = 'all';
       state.differencesOnly = false;
       commit('replace');
     } else renderPage();

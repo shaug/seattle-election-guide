@@ -446,7 +446,7 @@ test('the module keeps client state out of storage', () => {
   assertModuleGuard('guide-client.mjs');
 });
 
-test('precinct overrides restrictive race filters and remains independent of source changes', async () => {
+test('precinct Ballot stays usable and remains independent of source changes', async () => {
   const contract = {
     schema_version: '1.0',
     election_id: 'wa-2026-general',
@@ -457,16 +457,34 @@ test('precinct overrides restrictive race filters and remains independent of sou
   };
   const document = await wire(
     `${GUIDE_URL}?races=contested&precinct=1279`,
-    payload({ precinct_ballot: contract }),
+    payload({
+      precinct_ballot: contract,
+      filter_scopes: [
+        { value: 'all', label: 'All Seattle ballot races', contest_ids: ['mayor'] },
+        { value: 'city', label: 'City', contest_ids: ['mayor'] },
+      ],
+    }),
     () => {
       globalThis.document.body.insertAdjacentHTML('afterbegin', PRECINCT_MARKUP);
+      const option = globalThis.document.createElement('option');
+      option.value = 'city';
+      option.textContent = 'City';
+      globalThis.document.querySelector('#race-filter').append(option);
     },
   );
-  assert.equal(document.querySelector('#race-filter').disabled, true);
+  assert.equal(document.querySelector('#race-filter').disabled, false);
   assert.equal(document.querySelector('#race-mayor').hidden, false);
+  const select = document.querySelector('#race-filter');
+  select.value = 'city';
+  select.dispatchEvent(new Event('change'));
   window.location.hash = `#${lensFragment(['strn'])}`;
   window.dispatchEvent(new Event('hashchange'));
   assert.equal(document.querySelector('#race-mayor').hidden, false);
+  assert.deepEqual(
+    [...select.options].map((o) => o.value),
+    ['all', 'city'],
+  );
+  assert.equal(select.value, 'city');
   document.querySelector('[data-precinct-clear]').click();
   assert.equal(document.querySelector('#race-filter').disabled, false);
   assert.equal(new URLSearchParams(window.location.search).get('precinct'), 'all');
