@@ -4,7 +4,8 @@ import test from 'node:test';
 import { installDom } from './support/dom.mjs';
 
 installDom();
-const { wirePrecinctControl } = await import(
+const { render } = await import('lit-html');
+const { ballotOptionsTemplate, wirePrecinctControl } = await import(
   '../../src/election_guide/rendering/templates/precinct-control.mjs'
 );
 const markup = readFileSync(
@@ -221,12 +222,16 @@ test('late address suggestions preserve an active local row and cannot revive a 
   const input = b.doc.querySelector('[data-ballot-search]');
   input.value = '323';
   input.dispatchEvent(new Event('input'));
+  const localRow = b.doc.querySelector('[role=option][data-kind=precinct]');
+  input.focus();
   input.dispatchEvent(
     new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }),
   );
   await new Promise((done) => setTimeout(done, 330));
   searches[0]([{ text: 'SEA 34-3230', magicKey: 'different-kind', isCollection: false }]);
   await flush();
+  assert.ok(b.doc.querySelector('[role=option][data-kind=precinct]') === localRow);
+  assert.ok(b.doc.activeElement === input);
   assert.equal(input.getAttribute('aria-activedescendant'), 'ballot-option-0');
   assert.deepEqual(
     [...b.doc.querySelectorAll('[role=option]')].map((o) => o.dataset.kind),
@@ -367,4 +372,48 @@ test('empty or failed suggestions announce availability without claiming the add
       'No suggestions available.',
     );
   }
+});
+
+// Controlled renderer list transitions: the live controller currently appends results
+// and clears on edits. These fixtures enforce the keyed-rendering contract itself.
+test('changing suggestion lists preserve surviving rows and focus with duplicate choices', () => {
+  const doc = installDom();
+  const list = doc.createElement('ul');
+  doc.body.append(list);
+  const removed = { kind: 'precinct', text: 'Shared label', code: '3230' };
+  const first = { kind: 'address', text: 'Shared label', magicKey: 'same', isCollection: false };
+  const second = { ...first };
+  const collection = { ...first, isCollection: true };
+  const selected = [];
+  const choose = (option) => selected.push(option);
+  render(ballotOptionsTemplate([removed, first, second, collection], -1, choose), list);
+  const original = [...list.querySelectorAll('[role=option]')];
+  // Rows are normally virtual-focus targets. Programmatic focus here checks that
+  // removing a predecessor does not replace a surviving DOM element.
+  original[1].tabIndex = -1;
+  original[1].focus();
+  render(ballotOptionsTemplate([first, second, collection], 0, choose), list);
+  const surviving = [...list.querySelectorAll('[role=option]')];
+  assert.ok(surviving[0] === original[1], 'first address must retain its own row');
+  assert.ok(surviving[1] === original[2], 'identical address choice must keep a distinct row');
+  assert.ok(surviving[2] === original[3], 'collection choice must retain its own row');
+  assert.ok(doc.activeElement === original[1], 'surviving focused row must retain focus');
+  assert.equal(original[0].isConnected, false);
+  render(ballotOptionsTemplate([collection, second, first], 2, choose), list);
+  const reordered = [...list.querySelectorAll('[role=option]')];
+  assert.ok(reordered[0] === original[3]);
+  assert.ok(reordered[1] === original[2]);
+  assert.ok(reordered[2] === original[1]);
+  assert.deepEqual(
+    reordered.map((row) => row.id),
+    ['ballot-option-0', 'ballot-option-1', 'ballot-option-2'],
+  );
+  assert.deepEqual(
+    reordered.map((row) => row.getAttribute('aria-selected')),
+    ['false', 'false', 'true'],
+  );
+  for (const row of reordered) row.click();
+  assert.ok(selected[0] === collection);
+  assert.ok(selected[1] === second);
+  assert.ok(selected[2] === first);
 });

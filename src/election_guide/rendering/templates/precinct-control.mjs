@@ -1,5 +1,6 @@
 // Compact precinct slot: the modal edits a draft; only Select changes membership.
 import { html, nothing, render } from 'lit-html';
+import { repeat } from 'lit-html/directives/repeat.js';
 import {
   ballotQuery,
   readPrecinctSelection,
@@ -12,6 +13,21 @@ import { createVotingAddressLookup } from './voting-address-lookup.mjs';
 const SELECT_LABEL = 'Select';
 /** @typedef {{kind:'precinct',text:string,code:string}|{kind:'address',text:string,magicKey:string,isCollection:boolean}} BallotOption */
 /** @typedef {{kind:'precinct'|'address',text:string,code:string}} BallotChoice */
+/** Render the current session's distinct option objects without changing selection state.
+ * @param {BallotOption[]} options @param {number} active
+ * @param {(option:BallotOption)=>void} select */
+export function ballotOptionsTemplate(options, active, select) {
+  // Objects persist within a query; labels and provider keys may be duplicated.
+  return html`${repeat(
+    options,
+    (option) => option,
+    (option, index) =>
+      html`<li id=${`ballot-option-${index}`} class="ballot-option" role="option" data-kind=${option.kind} data-code=${option.kind === 'precinct' ? option.code : nothing} aria-selected=${index === active ? 'true' : 'false'} @pointerdown=${(/** @type {PointerEvent} */ event) => event.preventDefault()} @click=${() => {
+        void select(option);
+      }}><span class="ballot-option-text">${option.text}</span><span class="ballot-option-type">${option.kind === 'precinct' ? 'Precinct' : 'Address'}</span></li>`,
+  )}`;
+}
+
 /** @param {PrecinctBallotContract|null|undefined} contract
  * @param {{controlSearch:()=>string,replaceControlSearch:(search:string)=>void,onHistoryChange:(fn:()=>void)=>void}} router
  * @param {(ids:Set<string>|null, reset:boolean)=>void} onSelection
@@ -125,12 +141,9 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   };
   const show = () => {
     render(
-      html`${options.map(
-        (option, index) =>
-          html`<li id=${`ballot-option-${index}`} class="ballot-option" role="option" data-kind=${option.kind} data-code=${option.kind === 'precinct' ? option.code : nothing} aria-selected=${index === active ? 'true' : 'false'} @pointerdown=${(/** @type {PointerEvent} */ event) => event.preventDefault()} @click=${() => {
-            void select(option);
-          }}><span class="ballot-option-text">${option.text}</span><span class="ballot-option-type">${option.kind === 'precinct' ? 'Precinct' : 'Address'}</span></li>`,
-      )}`,
+      ballotOptionsTemplate(options, active, (option) => {
+        void select(option);
+      }),
       list(),
     );
     list().hidden = options.length === 0;
