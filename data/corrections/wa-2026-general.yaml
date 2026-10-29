@@ -460,3 +460,18 @@ entries:
         url: https://github.com/shaug/seattle-election-guide/issues/657
       - label: "Address lookup data and privacy"
         url: https://github.com/shaug/seattle-election-guide/blob/main/docs/ADDRESS_LOOKUP.md
+
+  - corrected_on: 2026-10-29
+    headline: "Ballot filters work within your precinct"
+    body: >-
+      With a precinct selected, the Ballot dropdown stays available and offers
+      only choices with covered races, initiatives or measures for that precinct.
+      Changing precincts keeps an applicable Ballot choice or returns to All.
+      Clearing the precinct restores the ordinary choices.
+    provenance:
+      - label: "Ballot filters within a precinct"
+        url: https://github.com/shaug/seattle-election-guide/issues/668
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Comparisons"
+        url: /e/wa-2026-general/comparisons/
