@@ -1,0 +1,18 @@
+{
+  "access_failure": {
+    "category": "http_status",
+    "http_status": 403,
+    "stage": "http_fetch"
+  },
+  "capture_id": null,
+  "checked_at": "2026-10-29T09:34:05.272588Z",
+  "content_changed": null,
+  "diff": [],
+  "error": "Manual source access failed; observation evidence is in its scheduled check.",
+  "id": "refresh-planned-parenthood-alliance-advocates-20261029T093405Z-8fa96108931e",
+  "previous_snapshot_id": null,
+  "schema_version": "1.0",
+  "snapshot_id": null,
+  "source_id": "planned-parenthood-alliance-advocates",
+  "status": "failed"
+}

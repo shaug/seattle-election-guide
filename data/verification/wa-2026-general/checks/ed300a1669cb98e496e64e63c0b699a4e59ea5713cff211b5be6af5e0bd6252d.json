@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-29T10:10:17.608000Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#planned-parenthood-alliance-advocates; actual complete current ordinary browser factual review; all prior failures and stated qualifications retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-29",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "status": "manual"
+}

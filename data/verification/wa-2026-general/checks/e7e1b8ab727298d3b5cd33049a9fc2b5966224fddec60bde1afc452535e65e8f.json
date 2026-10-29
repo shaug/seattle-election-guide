@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-29T09:45:56.786886Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#young-democrats-of-washington; complete bounded current publication review; all stated held/prior qualifications retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-29",
+  "source_id": "young-democrats-of-washington",
+  "status": "manual"
+}
