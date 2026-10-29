@@ -1,0 +1,1132 @@
+{
+  "schema_version": "1.0",
+  "record_type": "actual_normal_CLI_writing_receipts_partial_current29",
+  "election_id": "wa-2026-general",
+  "issue": 667,
+  "scheduled_for": "2026-10-29",
+  "recorded_by": "OpenAI Codex /root/assess_497_remaining_adoption",
+  "recorded_at": "2026-10-29T10:17:38.527565+00:00",
+  "counts": {
+    "baseline_approvals": 4,
+    "manual_acknowledgments": 37,
+    "genuine_failed_access_observations": 9,
+    "WEA_acknowledgments": 0,
+    "Stranger_or_ECC_incomplete_browser_acknowledgments": 0,
+    "unsupported_HTTP406_typed_writes": 0,
+    "extra_browser_error_failure_CLI_calls": 0
+  },
+  "clock_boundary": "Writer process clocks are distinct from original native check/actual official observations and original named factual reviewer/time. No new source read by this writer.",
+  "invocations": [
+    {
+      "operation": "baseline",
+      "source_id": "transit-riders-union",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:49:55.317357+00:00",
+      "ended_at": "2026-10-29T09:49:56.074565+00:00",
+      "pid": 95947,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": "data/verification/wa-2026-general/approvals/extraction-transit-riders-union-20261029T084207Z-16d724f10b4d.json",
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/approvals/extraction-transit-riders-union-20261029T084207Z-16d724f10b4d.json": "45d102c5c5d60017d8e7ec04ec1f6f4138e26afc45d872a7bf6e112897315c9e"
+      }
+    },
+    {
+      "operation": "baseline",
+      "source_id": "sage-leaders",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:49:56.176742+00:00",
+      "ended_at": "2026-10-29T09:49:56.632636+00:00",
+      "pid": 95954,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": "data/verification/wa-2026-general/approvals/extraction-sage-leaders-20261029T084207Z-cc1a441d53d3.json",
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/approvals/extraction-sage-leaders-20261029T084207Z-cc1a441d53d3.json": "6c56efc3664bc8f103fb906a76d1ecc3b11ad2546ff46286f87e9f10ad482130"
+      }
+    },
+    {
+      "operation": "baseline",
+      "source_id": "seattle-gay-news",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:49:56.739550+00:00",
+      "ended_at": "2026-10-29T09:49:57.184503+00:00",
+      "pid": 95959,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": "data/verification/wa-2026-general/approvals/extraction-seattle-gay-news-20261029T084207Z-0d502828d4ab.json",
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/approvals/extraction-seattle-gay-news-20261029T084207Z-0d502828d4ab.json": "231ccf25849372796d5219709f9480dc3ab270cbd0b736e4f239e863454e104a"
+      }
+    },
+    {
+      "operation": "baseline",
+      "source_id": "ufcw-3000",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:49:57.292233+00:00",
+      "ended_at": "2026-10-29T09:49:57.741804+00:00",
+      "pid": 95964,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": "data/verification/wa-2026-general/approvals/extraction-ufcw-3000-20261029T084207Z-1cdc60260a35.json",
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/approvals/extraction-ufcw-3000-20261029T084207Z-1cdc60260a35.json": "d43e9d4b24fac7f923bf7e0cc06156cb1405a1e1ce796f164aa2b88e26f199db"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "seattle-subway",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:49:57.851099+00:00",
+      "ended_at": "2026-10-29T09:49:58.301654+00:00",
+      "pid": 95969,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/ab4ebba2f0a15f4518fba53e4ea2561dff4bfdee1c432a20818059b836ab127d.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/ab4ebba2f0a15f4518fba53e4ea2561dff4bfdee1c432a20818059b836ab127d.json": "ab4ebba2f0a15f4518fba53e4ea2561dff4bfdee1c432a20818059b836ab127d"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-conservation-action",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:49:58.402339+00:00",
+      "ended_at": "2026-10-29T09:49:58.846610+00:00",
+      "pid": 95974,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/d1c58faea52347b5e3a14898379e32b4d50c1031fc875113003cd11324a7c356.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/d1c58faea52347b5e3a14898379e32b4d50c1031fc875113003cd11324a7c356.json": "d1c58faea52347b5e3a14898379e32b4d50c1031fc875113003cd11324a7c356"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "mlk-labor",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:49:58.955715+00:00",
+      "ended_at": "2026-10-29T09:49:59.396019+00:00",
+      "pid": 95979,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/041df56727a9eb62685f9f7287107049e8bdaa8136b177fe4fdf734fc408f87f.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/041df56727a9eb62685f9f7287107049e8bdaa8136b177fe4fdf734fc408f87f.json": "041df56727a9eb62685f9f7287107049e8bdaa8136b177fe4fdf734fc408f87f"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "aft-washington",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:49:59.502958+00:00",
+      "ended_at": "2026-10-29T09:49:59.948128+00:00",
+      "pid": 95984,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/582993f1e966b33342a7fca4e13302fca29b0693c3fb88d786117570145830cd.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/582993f1e966b33342a7fca4e13302fca29b0693c3fb88d786117570145830cd.json": "582993f1e966b33342a7fca4e13302fca29b0693c3fb88d786117570145830cd"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "nwpc-washington",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:50:00.046715+00:00",
+      "ended_at": "2026-10-29T09:50:00.496927+00:00",
+      "pid": 95989,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/53acc69c7ee8d33866eaade6a8434258d9b2a1e4af3a66be26bfbb64f6fdc57f.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/53acc69c7ee8d33866eaade6a8434258d9b2a1e4af3a66be26bfbb64f6fdc57f.json": "53acc69c7ee8d33866eaade6a8434258d9b2a1e4af3a66be26bfbb64f6fdc57f"
+      }
+    },
+    {
+      "operation": "failed_access",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "started_at": "2026-10-29T09:50:00.603472+00:00",
+      "ended_at": "2026-10-29T09:50:01.438370+00:00",
+      "pid": 95994,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_tree_dirty_observed_before": true,
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/9c760a75df4966e54e6982411dace2353a6288792c93dc677b790b73734ada25.json"
+      ],
+      "emitted_refresh_paths": [
+        "data/verification/wa-2026-general/refreshes/refresh-planned-parenthood-alliance-advocates-20261029T093405Z-8fa96108931e.json"
+      ],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/9c760a75df4966e54e6982411dace2353a6288792c93dc677b790b73734ada25.json": "9c760a75df4966e54e6982411dace2353a6288792c93dc677b790b73734ada25",
+        "data/verification/wa-2026-general/refreshes/refresh-planned-parenthood-alliance-advocates-20261029T093405Z-8fa96108931e.json": "7ba07e7372480f81e9ed2867b94c0623851cb44154fdc58b5fda8362ef04ec77"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "alliance-for-gun-responsibility",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.073765+00:00",
+      "started_at": "2026-10-29T10:03:11.022914+00:00",
+      "ended_at": "2026-10-29T10:03:11.701028+00:00",
+      "pid": 96884,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/fe749b2dd7f0e2222b7b2849767963f2f1209e248a434369fc3fb0aac8889f60.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/fe749b2dd7f0e2222b7b2849767963f2f1209e248a434369fc3fb0aac8889f60.json": "fe749b2dd7f0e2222b7b2849767963f2f1209e248a434369fc3fb0aac8889f60"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "citizens-against-aipac-corruption",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:45:08.277877+00:00",
+      "started_at": "2026-10-29T10:03:11.706056+00:00",
+      "ended_at": "2026-10-29T10:03:12.111910+00:00",
+      "pid": 96886,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/d87836333ce0f5e7f6aea4c56ef2432839e9ec9a56eb7054d0f3d42b42561f35.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/d87836333ce0f5e7f6aea4c56ef2432839e9ec9a56eb7054d0f3d42b42561f35.json": "d87836333ce0f5e7f6aea4c56ef2432839e9ec9a56eb7054d0f3d42b42561f35"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "fuse-washington",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:45:08.276771+00:00",
+      "started_at": "2026-10-29T10:03:12.116774+00:00",
+      "ended_at": "2026-10-29T10:03:12.528943+00:00",
+      "pid": 96888,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/dc9e7db656e553ae887525772d08444642c13289121caa0af8251e8a1bf6165a.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/dc9e7db656e553ae887525772d08444642c13289121caa0af8251e8a1bf6165a.json": "dc9e7db656e553ae887525772d08444642c13289121caa0af8251e8a1bf6165a"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "oneamerica-votes",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.073012+00:00",
+      "started_at": "2026-10-29T10:03:12.533795+00:00",
+      "ended_at": "2026-10-29T10:03:12.942568+00:00",
+      "pid": 96889,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/98eed68e716e4e43a3f2aa9ab45e7807595bd51321e5dacec6ef2185823ee54f.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/98eed68e716e4e43a3f2aa9ab45e7807595bd51321e5dacec6ef2185823ee54f.json": "98eed68e716e4e43a3f2aa9ab45e7807595bd51321e5dacec6ef2185823ee54f"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "protec17",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.072330+00:00",
+      "started_at": "2026-10-29T10:03:12.947429+00:00",
+      "ended_at": "2026-10-29T10:03:13.382821+00:00",
+      "pid": 96890,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/1c41096d2f60586fcc316b200cb8fbcd04ef77575c53cbd7ddbb06f7008485ce.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/1c41096d2f60586fcc316b200cb8fbcd04ef77575c53cbd7ddbb06f7008485ce.json": "1c41096d2f60586fcc316b200cb8fbcd04ef77575c53cbd7ddbb06f7008485ce"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "seattle-times-editorial-board",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.075385+00:00",
+      "started_at": "2026-10-29T10:03:13.387619+00:00",
+      "ended_at": "2026-10-29T10:03:13.791845+00:00",
+      "pid": 96891,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/9f4c9e622e52054a0a70b3cd91ae4dfbc310e68a1d1966aec7df40b8f3363618.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/9f4c9e622e52054a0a70b3cd91ae4dfbc310e68a1d1966aec7df40b8f3363618.json": "9f4c9e622e52054a0a70b3cd91ae4dfbc310e68a1d1966aec7df40b8f3363618"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "seiu-925",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.070942+00:00",
+      "started_at": "2026-10-29T10:03:13.796728+00:00",
+      "ended_at": "2026-10-29T10:03:14.209215+00:00",
+      "pid": 96892,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/e7558c645ca8716b762d914c8c371b18afc9ee0f27ccac99903ed03e5acafc14.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/e7558c645ca8716b762d914c8c371b18afc9ee0f27ccac99903ed03e5acafc14.json": "e7558c645ca8716b762d914c8c371b18afc9ee0f27ccac99903ed03e5acafc14"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "sierra-club-washington",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:45:08.275449+00:00",
+      "started_at": "2026-10-29T10:03:14.213914+00:00",
+      "ended_at": "2026-10-29T10:03:14.621400+00:00",
+      "pid": 96893,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/e06dfa0e7876a72cbc56b8f261f3baccffff6d449811efcbe314d43ac1e03631.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/e06dfa0e7876a72cbc56b8f261f3baccffff6d449811efcbe314d43ac1e03631.json": "e06dfa0e7876a72cbc56b8f261f3baccffff6d449811efcbe314d43ac1e03631"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "tech-4-housing",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:45:08.277373+00:00",
+      "started_at": "2026-10-29T10:03:14.626164+00:00",
+      "ended_at": "2026-10-29T10:03:15.036711+00:00",
+      "pid": 96894,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/9e93b818609e43c8c88a7ec880f582fb54410388572e5c7571dc23c602f8f340.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/9e93b818609e43c8c88a7ec880f582fb54410388572e5c7571dc23c602f8f340.json": "9e93b818609e43c8c88a7ec880f582fb54410388572e5c7571dc23c602f8f340"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "tech-4-taxes",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.067368+00:00",
+      "started_at": "2026-10-29T10:03:15.041515+00:00",
+      "ended_at": "2026-10-29T10:03:15.468927+00:00",
+      "pid": 96895,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/1225093df4d4e044bcbeed63793aaf126396212efd16b43ebf25521d93da33f3.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/1225093df4d4e044bcbeed63793aaf126396212efd16b43ebf25521d93da33f3.json": "1225093df4d4e044bcbeed63793aaf126396212efd16b43ebf25521d93da33f3"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "the-urbanist",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.065683+00:00",
+      "started_at": "2026-10-29T10:03:15.473767+00:00",
+      "ended_at": "2026-10-29T10:03:15.885419+00:00",
+      "pid": 96896,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/9c238a2936e236bd87d0ae3fd97aa37437b6e341ff6a56cb6fb3eee47ebee3a8.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/9c238a2936e236bd87d0ae3fd97aa37437b6e341ff6a56cb6fb3eee47ebee3a8.json": "9c238a2936e236bd87d0ae3fd97aa37437b6e341ff6a56cb6fb3eee47ebee3a8"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-bikes",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.069089+00:00",
+      "started_at": "2026-10-29T10:03:15.890337+00:00",
+      "ended_at": "2026-10-29T10:03:16.304720+00:00",
+      "pid": 96897,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/f142124d5a08c86159dde3f90858509c7c0f7e632ebe8d29d6d5f676a672fabb.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/f142124d5a08c86159dde3f90858509c7c0f7e632ebe8d29d6d5f676a672fabb.json": "f142124d5a08c86159dde3f90858509c7c0f7e632ebe8d29d6d5f676a672fabb"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-community-action-network",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.068117+00:00",
+      "started_at": "2026-10-29T10:03:16.309769+00:00",
+      "ended_at": "2026-10-29T10:03:16.781485+00:00",
+      "pid": 96898,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/5906c399aaeb32ef30c80972bf4af4cbea8428e6d465600fc386cab87eea4bc5.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/5906c399aaeb32ef30c80972bf4af4cbea8428e6d465600fc386cab87eea4bc5.json": "5906c399aaeb32ef30c80972bf4af4cbea8428e6d465600fc386cab87eea4bc5"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-for-peace-and-justice",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:45:08.276168+00:00",
+      "started_at": "2026-10-29T10:03:16.786489+00:00",
+      "ended_at": "2026-10-29T10:03:17.199061+00:00",
+      "pid": 96900,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/c56d227d824ca2b7921af6b0deee890e9f10c16c15d558f107d077fcdaefd421.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/c56d227d824ca2b7921af6b0deee890e9f10c16c15d558f107d077fcdaefd421.json": "c56d227d824ca2b7921af6b0deee890e9f10c16c15d558f107d077fcdaefd421"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-housing-alliance",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.074596+00:00",
+      "started_at": "2026-10-29T10:03:17.204183+00:00",
+      "ended_at": "2026-10-29T10:03:17.629874+00:00",
+      "pid": 96902,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/416ece192fedb195195f57c41e746d9cbd789199a8d74b5dcc2d4eb11d7a3051.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/416ece192fedb195195f57c41e746d9cbd789199a8d74b5dcc2d4eb11d7a3051.json": "416ece192fedb195195f57c41e746d9cbd789199a8d74b5dcc2d4eb11d7a3051"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-state-building-trades",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.071673+00:00",
+      "started_at": "2026-10-29T10:03:17.634709+00:00",
+      "ended_at": "2026-10-29T10:03:18.041832+00:00",
+      "pid": 96903,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/9b9ef5beea99fd282872bee5776ad401429878e2da851413b8c16c71869d4f55.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/9b9ef5beea99fd282872bee5776ad401429878e2da851413b8c16c71869d4f55.json": "9b9ef5beea99fd282872bee5776ad401429878e2da851413b8c16c71869d4f55"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-state-labor-council",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/performance_651",
+      "actual_factual_reviewed_at": "2026-10-29T09:47:19.069905+00:00",
+      "started_at": "2026-10-29T10:03:18.046668+00:00",
+      "ended_at": "2026-10-29T10:03:18.456860+00:00",
+      "pid": 96904,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/30507f578570e075d9cbd9a9547f01ec7f647e225980a426f8d26904d47ea4b5.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/30507f578570e075d9cbd9a9547f01ec7f647e225980a426f8d26904d47ea4b5.json": "30507f578570e075d9cbd9a9547f01ec7f647e225980a426f8d26904d47ea4b5"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "young-democrats-of-washington",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_factual_reviewed_at": "2026-10-29T09:45:56.786886+00:00",
+      "started_at": "2026-10-29T10:03:18.461790+00:00",
+      "ended_at": "2026-10-29T10:03:18.889138+00:00",
+      "pid": 96905,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/e7e1b8ab727298d3b5cd33049a9fc2b5966224fddec60bde1afc452535e65e8f.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/e7e1b8ab727298d3b5cd33049a9fc2b5966224fddec60bde1afc452535e65e8f.json": "e7e1b8ab727298d3b5cd33049a9fc2b5966224fddec60bde1afc452535e65e8f"
+      }
+    },
+    {
+      "operation": "failed_access",
+      "source_id": "seattle-democratic-socialists",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_failed_attempt_observer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_failed_attempt_checked_at": "2026-10-29T09:38:21.817730+00:00",
+      "started_at": "2026-10-29T10:04:30.936724+00:00",
+      "ended_at": "2026-10-29T10:04:32.115109+00:00",
+      "pid": 96933,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/10397b26fc80391cce377c917917713a2ec0b48311d929c6f2e081ae8b4366e3.json"
+      ],
+      "emitted_refresh_paths": [
+        "data/verification/wa-2026-general/refreshes/refresh-seattle-democratic-socialists-20261029T093821Z-bcbc8438446d.json"
+      ],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/10397b26fc80391cce377c917917713a2ec0b48311d929c6f2e081ae8b4366e3.json": "10397b26fc80391cce377c917917713a2ec0b48311d929c6f2e081ae8b4366e3",
+        "data/verification/wa-2026-general/refreshes/refresh-seattle-democratic-socialists-20261029T093821Z-bcbc8438446d.json": "1f5bffffc171545f00760eb895248ec549c1e436ef3ad6291d352327872e558e"
+      }
+    },
+    {
+      "operation": "failed_access",
+      "source_id": "washington-state-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_failed_attempt_observer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_failed_attempt_checked_at": "2026-10-29T09:38:21.899539+00:00",
+      "started_at": "2026-10-29T10:04:32.138400+00:00",
+      "ended_at": "2026-10-29T10:04:32.829814+00:00",
+      "pid": 96944,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/626c7503a74f1d20d794e2b27ef97d8aaf4bae1c616d4891826a3f315bdd4a7f.json"
+      ],
+      "emitted_refresh_paths": [
+        "data/verification/wa-2026-general/refreshes/refresh-washington-state-democrats-20261029T093821Z-11109b596a8a.json"
+      ],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/626c7503a74f1d20d794e2b27ef97d8aaf4bae1c616d4891826a3f315bdd4a7f.json": "626c7503a74f1d20d794e2b27ef97d8aaf4bae1c616d4891826a3f315bdd4a7f",
+        "data/verification/wa-2026-general/refreshes/refresh-washington-state-democrats-20261029T093821Z-11109b596a8a.json": "84089cec057e7d459fa14fae6e8467a23818a019e26db02b1851f19ffcb9d2e2"
+      }
+    },
+    {
+      "operation": "failed_access",
+      "source_id": "king-county-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_failed_attempt_observer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_failed_attempt_checked_at": "2026-10-29T09:38:21.902472+00:00",
+      "started_at": "2026-10-29T10:04:32.853247+00:00",
+      "ended_at": "2026-10-29T10:04:33.578989+00:00",
+      "pid": 96947,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/9f405f4b7949d2cab4fa0640397aa17377066fac54913f4dae25a36aae97b217.json"
+      ],
+      "emitted_refresh_paths": [
+        "data/verification/wa-2026-general/refreshes/refresh-king-county-democrats-20261029T093821Z-9766ce930568.json"
+      ],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/9f405f4b7949d2cab4fa0640397aa17377066fac54913f4dae25a36aae97b217.json": "9f405f4b7949d2cab4fa0640397aa17377066fac54913f4dae25a36aae97b217",
+        "data/verification/wa-2026-general/refreshes/refresh-king-county-democrats-20261029T093821Z-9766ce930568.json": "6af217db08302ded983e45261cf1bfdb2af4f130bc7cc93ae64f0499ccd3261f"
+      }
+    },
+    {
+      "operation": "failed_access",
+      "source_id": "36th-district-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_failed_attempt_observer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_failed_attempt_checked_at": "2026-10-29T09:38:22.241259+00:00",
+      "started_at": "2026-10-29T10:04:33.604338+00:00",
+      "ended_at": "2026-10-29T10:04:34.316176+00:00",
+      "pid": 96949,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/b9f15e578ee6c453194270403433b21a11dfcfcc7a69c25bdaadd86e697a2371.json"
+      ],
+      "emitted_refresh_paths": [
+        "data/verification/wa-2026-general/refreshes/refresh-36th-district-democrats-20261029T093822Z-de73c242bef8.json"
+      ],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/b9f15e578ee6c453194270403433b21a11dfcfcc7a69c25bdaadd86e697a2371.json": "b9f15e578ee6c453194270403433b21a11dfcfcc7a69c25bdaadd86e697a2371",
+        "data/verification/wa-2026-general/refreshes/refresh-36th-district-democrats-20261029T093822Z-de73c242bef8.json": "23634eab1ceb7a6c213b4cb5fe8ba08213c1b332242a3f4644f1c6ac55bb5ef1"
+      }
+    },
+    {
+      "operation": "failed_access",
+      "source_id": "46th-district-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_failed_attempt_observer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_failed_attempt_checked_at": "2026-10-29T09:38:22.537657+00:00",
+      "started_at": "2026-10-29T10:04:34.339409+00:00",
+      "ended_at": "2026-10-29T10:04:35.035573+00:00",
+      "pid": 96951,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/fbda75eac1be0d847f88657782297b19d9504eb6ab5cb7592d99a1cbb4f4a739.json"
+      ],
+      "emitted_refresh_paths": [
+        "data/verification/wa-2026-general/refreshes/refresh-46th-district-democrats-20261029T093822Z-ac373c104aca.json"
+      ],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/fbda75eac1be0d847f88657782297b19d9504eb6ab5cb7592d99a1cbb4f4a739.json": "fbda75eac1be0d847f88657782297b19d9504eb6ab5cb7592d99a1cbb4f4a739",
+        "data/verification/wa-2026-general/refreshes/refresh-46th-district-democrats-20261029T093822Z-ac373c104aca.json": "110708a6b9cc1eda147c294f44e0d97f96f415bdc02418720b16291ab3d6c795"
+      }
+    },
+    {
+      "operation": "failed_access",
+      "source_id": "the-stranger",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_failed_attempt_observer": "OpenAI Codex /root/performance_651",
+      "actual_failed_attempt_checked_at": "2026-10-29T09:39:29.649874+00:00",
+      "started_at": "2026-10-29T10:04:35.058969+00:00",
+      "ended_at": "2026-10-29T10:04:35.742256+00:00",
+      "pid": 96953,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/17ed83f183ade6486e5c6acddc013ea9777de7db5a4e5db300e7601e9309bd53.json"
+      ],
+      "emitted_refresh_paths": [
+        "data/verification/wa-2026-general/refreshes/refresh-the-stranger-20261029T093929Z-a617f4fb972a.json"
+      ],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/17ed83f183ade6486e5c6acddc013ea9777de7db5a4e5db300e7601e9309bd53.json": "17ed83f183ade6486e5c6acddc013ea9777de7db5a4e5db300e7601e9309bd53",
+        "data/verification/wa-2026-general/refreshes/refresh-the-stranger-20261029T093929Z-a617f4fb972a.json": "70197bac26c9d1a7a8f6e2fcd2752cb3878db8a87fb77fec44b0c9867a5be2d7"
+      }
+    },
+    {
+      "operation": "failed_access",
+      "source_id": "nondriver-action",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_failed_attempt_observer": "OpenAI Codex /root/performance_651",
+      "actual_failed_attempt_checked_at": "2026-10-29T09:39:31.316706+00:00",
+      "started_at": "2026-10-29T10:04:35.765882+00:00",
+      "ended_at": "2026-10-29T10:04:36.450604+00:00",
+      "pid": 96955,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/f807a58cf68bb4585cc38fbf7b733814c9de58373bbd26cb277e24176c4eab68.json"
+      ],
+      "emitted_refresh_paths": [
+        "data/verification/wa-2026-general/refreshes/refresh-nondriver-action-20261029T093931Z-1e6dd822707b.json"
+      ],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/f807a58cf68bb4585cc38fbf7b733814c9de58373bbd26cb277e24176c4eab68.json": "f807a58cf68bb4585cc38fbf7b733814c9de58373bbd26cb277e24176c4eab68",
+        "data/verification/wa-2026-general/refreshes/refresh-nondriver-action-20261029T093931Z-1e6dd822707b.json": "e27ec55d3b2fb13b80c42dd082c3c247ca9f133729632fecf848d1ed25f4230b"
+      }
+    },
+    {
+      "operation": "failed_access",
+      "source_id": "environmental-climate-caucus-wa-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_failed_attempt_observer": "OpenAI Codex /root/performance_651",
+      "actual_failed_attempt_checked_at": "2026-10-29T09:40:00.304415+00:00",
+      "started_at": "2026-10-29T10:04:36.473969+00:00",
+      "ended_at": "2026-10-29T10:04:37.199943+00:00",
+      "pid": 96958,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/136231535ec56df0a86873ca48419cff69704604768f28165a1dd500e3c7021d.json"
+      ],
+      "emitted_refresh_paths": [
+        "data/verification/wa-2026-general/refreshes/refresh-environmental-climate-caucus-wa-democrats-20261029T094000Z-d0225119371f.json"
+      ],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/136231535ec56df0a86873ca48419cff69704604768f28165a1dd500e3c7021d.json": "136231535ec56df0a86873ca48419cff69704604768f28165a1dd500e3c7021d",
+        "data/verification/wa-2026-general/refreshes/refresh-environmental-climate-caucus-wa-democrats-20261029T094000Z-d0225119371f.json": "aefb0abd77c01568fadd73b58e2955134188ac1df58c332622d5b78d2f986767"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-bus",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_factual_reviewed_at": "2026-10-29T09:51:47.924710+00:00",
+      "started_at": "2026-10-29T10:07:57.960783+00:00",
+      "ended_at": "2026-10-29T10:07:58.682396+00:00",
+      "pid": 97154,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/ab8b5dfd2714c453020ff9f51d3460efe541b483b8c4cc0649d060ce6e1606df.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/ab8b5dfd2714c453020ff9f51d3460efe541b483b8c4cc0649d060ce6e1606df.json": "ab8b5dfd2714c453020ff9f51d3460efe541b483b8c4cc0649d060ce6e1606df"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "34th-district-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_factual_reviewed_at": "2026-10-29T09:51:47.929594+00:00",
+      "started_at": "2026-10-29T10:07:58.687805+00:00",
+      "ended_at": "2026-10-29T10:07:59.114529+00:00",
+      "pid": 97155,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/64e4fd28e8ea9428a5ce67759c6e232df4b06eb8f050b90658290eff773663e1.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/64e4fd28e8ea9428a5ce67759c6e232df4b06eb8f050b90658290eff773663e1.json": "64e4fd28e8ea9428a5ce67759c6e232df4b06eb8f050b90658290eff773663e1"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "37th-district-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_factual_reviewed_at": "2026-10-29T09:49:05.566200+00:00",
+      "started_at": "2026-10-29T10:07:59.119754+00:00",
+      "ended_at": "2026-10-29T10:07:59.567958+00:00",
+      "pid": 97158,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/ed0900747080417a7b8a5a9e1df5dc01fc7bfcd30b6d55077ab711521c2d5abd.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/ed0900747080417a7b8a5a9e1df5dc01fc7bfcd30b6d55077ab711521c2d5abd.json": "ed0900747080417a7b8a5a9e1df5dc01fc7bfcd30b6d55077ab711521c2d5abd"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "43rd-district-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_factual_reviewed_at": "2026-10-29T09:51:47.934332+00:00",
+      "started_at": "2026-10-29T10:07:59.573681+00:00",
+      "ended_at": "2026-10-29T10:08:00.037226+00:00",
+      "pid": 97159,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/2cef72e4dd1ae090975e3b8d6af51afcd7deccf6d0d107fab8aae38ebbee3288.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/2cef72e4dd1ae090975e3b8d6af51afcd7deccf6d0d107fab8aae38ebbee3288.json": "2cef72e4dd1ae090975e3b8d6af51afcd7deccf6d0d107fab8aae38ebbee3288"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-stonewall-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_factual_reviewed_at": "2026-10-29T09:57:30.905759+00:00",
+      "started_at": "2026-10-29T10:08:00.042690+00:00",
+      "ended_at": "2026-10-29T10:08:00.472701+00:00",
+      "pid": 97160,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/4b4409b67a3f1e0b18fbe66140830b55a2c8772759bac798e103751d3b8bad28.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/4b4409b67a3f1e0b18fbe66140830b55a2c8772759bac798e103751d3b8bad28.json": "4b4409b67a3f1e0b18fbe66140830b55a2c8772759bac798e103751d3b8bad28"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "11th-district-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex /root/canonical_659_ba680db",
+      "actual_factual_reviewed_at": "2026-10-29T10:01:11.394416+00:00",
+      "started_at": "2026-10-29T10:08:00.477845+00:00",
+      "ended_at": "2026-10-29T10:08:00.893843+00:00",
+      "pid": 97161,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/1643110da8e858f9a20053d6ae34c9b4a1cb1126958742fdec3deee4931dadb0.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/1643110da8e858f9a20053d6ae34c9b4a1cb1126958742fdec3deee4931dadb0.json": "1643110da8e858f9a20053d6ae34c9b4a1cb1126958742fdec3deee4931dadb0"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "seattle-democratic-socialists",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d (explicitly delegated ordinary-Chrome factual reviewer)",
+      "actual_factual_reviewed_at": "2026-10-29T09:55:20.384648+00:00",
+      "started_at": "2026-10-29T10:13:54.397233+00:00",
+      "ended_at": "2026-10-29T10:13:55.105241+00:00",
+      "pid": 97456,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/59aee7ab029f49c13d213732373c9020a6f030e776fd57ef2768dbe7865fc9da.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/59aee7ab029f49c13d213732373c9020a6f030e776fd57ef2768dbe7865fc9da.json": "59aee7ab029f49c13d213732373c9020a6f030e776fd57ef2768dbe7865fc9da"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "washington-state-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "actual_factual_reviewed_at": "2026-10-29T10:05:53.702Z",
+      "started_at": "2026-10-29T10:13:55.110459+00:00",
+      "ended_at": "2026-10-29T10:13:55.538639+00:00",
+      "pid": 97457,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/f4c36b982ddde09149f7e979b521e0d6578c1738edf689cc939b0c417b357f4a.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/f4c36b982ddde09149f7e979b521e0d6578c1738edf689cc939b0c417b357f4a.json": "f4c36b982ddde09149f7e979b521e0d6578c1738edf689cc939b0c417b357f4a"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "king-county-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "actual_factual_reviewed_at": "2026-10-29T10:06:06.117Z",
+      "started_at": "2026-10-29T10:13:55.543676+00:00",
+      "ended_at": "2026-10-29T10:13:55.950788+00:00",
+      "pid": 97460,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/e46841aefbe8a01a37049722d25d79e60acd45a778579886bf10841200516f4f.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/e46841aefbe8a01a37049722d25d79e60acd45a778579886bf10841200516f4f.json": "e46841aefbe8a01a37049722d25d79e60acd45a778579886bf10841200516f4f"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "32nd-district-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "actual_factual_reviewed_at": "2026-10-29T10:06:41.366Z",
+      "started_at": "2026-10-29T10:13:55.955965+00:00",
+      "ended_at": "2026-10-29T10:13:56.374774+00:00",
+      "pid": 97461,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/76e56a1358b0e3172d70b91d46b7c5e0748676862f8cd357a190b1dc62493ad1.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/76e56a1358b0e3172d70b91d46b7c5e0748676862f8cd357a190b1dc62493ad1.json": "76e56a1358b0e3172d70b91d46b7c5e0748676862f8cd357a190b1dc62493ad1"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "36th-district-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "actual_factual_reviewed_at": "2026-10-29T10:06:40.818Z",
+      "started_at": "2026-10-29T10:13:56.380325+00:00",
+      "ended_at": "2026-10-29T10:13:56.798638+00:00",
+      "pid": 97470,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/03aa82ca896d0c37218833468230e8282f7ec2ccb65b0a727fd432503e4259aa.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/03aa82ca896d0c37218833468230e8282f7ec2ccb65b0a727fd432503e4259aa.json": "03aa82ca896d0c37218833468230e8282f7ec2ccb65b0a727fd432503e4259aa"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "46th-district-democrats",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "actual_factual_reviewed_at": "2026-10-29T10:07:13.734Z",
+      "started_at": "2026-10-29T10:13:56.803660+00:00",
+      "ended_at": "2026-10-29T10:13:57.232135+00:00",
+      "pid": 97471,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/7a23ea743add6acde343b0d6d65351e14dbb53614a0b33b104f90dfabb2ede05.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/7a23ea743add6acde343b0d6d65351e14dbb53614a0b33b104f90dfabb2ede05.json": "7a23ea743add6acde343b0d6d65351e14dbb53614a0b33b104f90dfabb2ede05"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "nondriver-action",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "actual_factual_reviewed_at": "2026-10-29T10:09:24.576Z",
+      "started_at": "2026-10-29T10:17:37.371741+00:00",
+      "ended_at": "2026-10-29T10:17:38.083840+00:00",
+      "pid": 97645,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/8676b688eaa7826aa7850c953efe40bfb23f58a27e00d0c5773c1de6839c74b9.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/8676b688eaa7826aa7850c953efe40bfb23f58a27e00d0c5773c1de6839c74b9.json": "8676b688eaa7826aa7850c953efe40bfb23f58a27e00d0c5773c1de6839c74b9"
+      }
+    },
+    {
+      "operation": "manual",
+      "source_id": "planned-parenthood-alliance-advocates",
+      "writer": "OpenAI Codex /root/assess_497_remaining_adoption",
+      "actual_factual_reviewer": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d",
+      "actual_factual_reviewed_at": "2026-10-29T10:10:17.608Z",
+      "started_at": "2026-10-29T10:17:38.089051+00:00",
+      "ended_at": "2026-10-29T10:17:38.497842+00:00",
+      "pid": 97647,
+      "exit": 0,
+      "reaped": true,
+      "source_head_observed_before_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "source_head_observed_after_batch": "f515dd605bafdc032d57446cf43ec13fc14395a0",
+      "emitted_check_paths": [
+        "data/verification/wa-2026-general/checks/ed300a1669cb98e496e64e63c0b699a4e59ea5713cff211b5be6af5e0bd6252d.json"
+      ],
+      "emitted_refresh_paths": [],
+      "emitted_approval_path": null,
+      "emitted_record_hashes": {
+        "data/verification/wa-2026-general/checks/ed300a1669cb98e496e64e63c0b699a4e59ea5713cff211b5be6af5e0bd6252d.json": "ed300a1669cb98e496e64e63c0b699a4e59ea5713cff211b5be6af5e0bd6252d"
+      }
+    }
+  ],
+  "status": "ALL_CURRENT_GRANTED_NORMAL_WRITES_COMPLETE_37_MANUAL_ACKS_TWO_CURRENT_ACCESS_LIMITATIONS_WEA_ADMIN",
+  "batch_integrity_semantics": "First10 grant used per-call source/status observations; additional18 grant uses actual source/head/status at batch start/end. No per-call source observation is invented for additional18."
+}

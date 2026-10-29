@@ -1,0 +1,17 @@
+{
+  "access_failure": {
+    "category": "deadline",
+    "stage": "http_fetch"
+  },
+  "capture_id": null,
+  "checked_at": "2026-10-29T09:40:00.304415Z",
+  "content_changed": null,
+  "diff": [],
+  "error": "Manual source access failed; observation evidence is in its scheduled check.",
+  "id": "refresh-environmental-climate-caucus-wa-democrats-20261029T094000Z-d0225119371f",
+  "previous_snapshot_id": null,
+  "schema_version": "1.0",
+  "snapshot_id": null,
+  "source_id": "environmental-climate-caucus-wa-democrats",
+  "status": "failed"
+}

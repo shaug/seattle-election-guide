@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-29T09:38:50.192238Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-conservation-action; complete bounded publication review; stated held/prior qualifications retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-29",
+  "source_id": "washington-conservation-action",
+  "status": "manual"
+}

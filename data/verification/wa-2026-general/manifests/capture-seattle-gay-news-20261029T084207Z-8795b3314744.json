@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 48177,
+  "canonical_url": "https://www.sgn.org/story/168779/",
+  "capture_method": "static_html",
+  "content_sha256": "d9aa2c284b02ddfc354dcc9ba78a2790c176a38851282a68b7a5b878e0dea9bb",
+  "http_status": 200,
+  "id": "capture-seattle-gay-news-20261029T084207Z-8795b3314744",
+  "media_type": "text/html; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Public observation; original response bytes are transient.",
+  "requested_url": "https://www.sgn.org/story/168779/",
+  "retrieved_at": "2026-10-29T08:42:07Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "title": "Official endorsement discovery input",
+  "updated_at": null
+}

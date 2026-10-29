@@ -1,0 +1,15 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "841614e28aeb8e7ab03fe6b4e902f1394cf47458694bc3de77cc6431baf3ef15"
+  },
+  "checked_at": "2026-10-29T08:42:07Z",
+  "event_id": "refresh-seiu-775-20261029T084207Z-d50ff11dfb85",
+  "evidence": null,
+  "mode": "live",
+  "scheduled_for": "2026-10-29",
+  "source_id": "seiu-775",
+  "status": "failed"
+}

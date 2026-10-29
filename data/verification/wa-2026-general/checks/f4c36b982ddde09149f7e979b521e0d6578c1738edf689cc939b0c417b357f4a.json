@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-29T10:05:53.702000Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-state-democrats; actual complete current ordinary browser factual review; all recorded qualifications and prior failures retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-29",
+  "source_id": "washington-state-democrats",
+  "status": "manual"
+}

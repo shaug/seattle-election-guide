@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "a0832a86e2456b562e1f31b30f929e69fc54b1af9437adeacdd33059e03cb2b9"
+  },
+  "checked_at": "2026-10-29T09:38:22.241259Z",
+  "event_id": "refresh-36th-district-democrats-20261029T093822Z-de73c242bef8",
+  "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-access-failures.json#36th-district-democrats",
+  "mode": "human",
+  "recorded_at": "2026-10-29T10:04:34.188784Z",
+  "scheduled_for": "2026-10-29",
+  "source_id": "36th-district-democrats",
+  "status": "failed"
+}
