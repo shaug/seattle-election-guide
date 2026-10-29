@@ -99,11 +99,25 @@ interface PrecinctBallotContract {
   comparisons_path: string | null;
   sources_path: string | null;
   precincts: PrecinctContests[];
+  address_lookup?: AddressLookupContext | null;
 }
 interface PrecinctContests {
   code: string;
   name: string;
   contest_ids: string[];
+  jurisdiction_ids?: string[];
+}
+interface AddressLookupContext {
+  election_id: "wa-2026-general";
+  mapping_hash: string;
+  city: AddressSourceIdentity;
+  precinct: AddressSourceIdentity;
+  address: AddressSourceIdentity;
+}
+interface AddressSourceIdentity {
+  item: string;
+  data: number;
+  schema_edit: number;
 }
 /**
  * One race as the guide's own card renders it.

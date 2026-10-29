@@ -28,6 +28,8 @@ from websocket import (  # pyright: ignore[reportUnknownVariableType]
     create_connection,  # pyright: ignore[reportUnknownVariableType]
 )
 
+from election_guide.rendering.shell import PRECINCT_LOOKUP_HREF
+
 
 def find_chrome() -> Path:
     """Resolve a supported local Chrome or Chromium executable."""
@@ -256,11 +258,32 @@ def _capture_emulated_viewport(
                     "const precinct=document.querySelector('[data-precinct-control]');"
                     "const precinctExpected=bindings.precinct_ballot?.election_id==="
                     "'wa-2026-general';"
+                    "const addressExpected=precinctExpected&&Boolean("
+                    "bindings.precinct_ballot.address_lookup?.election_id==="
+                    "bindings.precinct_ballot.election_id&&"
+                    "bindings.precinct_ballot.address_lookup?.mapping_hash==="
+                    "bindings.precinct_ballot.mapping_hash);"
+                    "const addressControlValid=addressExpected?Boolean("
+                    "precinct?.querySelector('.address-privacy')):"
+                    "!precinct?.querySelector('.address-privacy');"
                     "const precinctControlValid=precinctExpected?Boolean("
                     "precinct?.closest('.screen-controls')&&"
                     "precinct.querySelectorAll('dialog').length===1&&"
+                    "precinct.querySelector('#voting-precinct[role=combobox]')&&"
+                    "precinct.querySelector('label[for=voting-precinct]')&&"
+                    "precinct.querySelector('[data-ballot-options][role=listbox]')&&"
+                    "!precinct.querySelector('datalist')&&"
+                    "precinct.querySelectorAll('a').length===1&&"
+                    f"precinct.querySelector('a.precinct-info')?.href==={json.dumps(PRECINCT_LOOKUP_HREF)}&&"
+                    "precinct.querySelector('a.precinct-info')?.target==='_blank'&&"
+                    "precinct.querySelector('a.precinct-info')?.getAttribute('rel')==="
+                    "'noopener noreferrer'&&"
+                    "Boolean(precinct.querySelector('a.precinct-info')?.getAttribute('aria-label')?.trim())&&"
+                    "precinct.querySelector('[data-precinct-submit][type=submit]')&&"
+                    "precinct.querySelector('[data-precinct-cancel][type=button]')&&"
                     "precinct.querySelectorAll('input').length===1&&"
-                    "precinct.querySelectorAll('button').length===3):!precinct;"
+                    "precinct.querySelectorAll('button').length===3&&"
+                    "addressControlValid):!precinct;"
                     "return JSON.stringify({"
                     "precinctControlValid,"
                     "comparisonPublished:Boolean(comparison),"

@@ -7,19 +7,35 @@
 .precinct-control { display: grid; min-width: 8rem; flex: 1 1 8rem; gap: .2rem; }
 .precinct-control[hidden] { display: none; }
 .precinct-summary { display: flex; align-items: center; gap: .5rem; min-height: 2.7rem; }
-.precinct-open { padding: 0; border: 0; background: transparent; color: var(--navy); font: inherit; text-decoration: underline; text-underline-offset: .15em; cursor: pointer; }
+.precinct-open { min-width: 0; overflow-wrap: anywhere; text-align: left; padding: 0; border: 0; background: transparent; color: var(--navy); font: inherit; text-decoration: underline; text-underline-offset: .15em; cursor: pointer; }
 .precinct-selected { font-weight: 700; }
 .precinct-clear { display: inline-grid; place-items: center; min-width: 2rem; min-height: 2rem; padding: .1rem; border: 1px solid var(--line); border-radius: .25rem; background: var(--white); color: var(--navy); font: inherit; cursor: pointer; }
-.precinct-dialog { box-sizing: border-box; width: min(28rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 1.5rem; border: 1px solid var(--line-strong); border-radius: .4rem; background: var(--paper); color: var(--ink); }
+.precinct-dialog { box-sizing: border-box; position: fixed; top: calc(var(--precinct-viewport-top, 0px) + var(--precinct-viewport-height, 100dvh) / 2); bottom: auto; margin: 0 auto; transform: translateY(-50%); width: min(28rem, calc(100vw - 2rem)); height: min(26rem, calc(var(--precinct-viewport-height, 100dvh) - 2rem)); max-height: calc(var(--precinct-viewport-height, 100dvh) - 2rem); overflow: auto; padding: 1.5rem; border: 1px solid var(--line-strong); border-radius: .4rem; background: var(--paper); color: var(--ink); }
+.precinct-dialog form { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.precinct-dialog h2, .precinct-dialog [data-precinct-fields], .precinct-dialog .precinct-actions { flex: none; }
+.precinct-dialog .precinct-status { flex: 1; min-height: 1.3em; overflow: auto; }
 .precinct-dialog::backdrop { background: rgba(16,42,67,.45); }
-.precinct-dialog h2 { margin: 0 0 1rem; color: var(--navy); font-size: 1.25rem; }
+.precinct-dialog h2 { margin: 0 0 1rem; padding-right: 2.75rem; color: var(--navy); font-size: 1.25rem; }
+.precinct-info { position: absolute; top: .75rem; right: .75rem; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: .3rem; color: var(--navy); text-decoration: none; }
 .precinct-status { min-height: 1.3em; margin: .65rem 0; color: var(--muted); font-size: .85rem; }
 .precinct-actions { display: flex; justify-content: flex-end; gap: .65rem; margin-top: 1.25rem; }
 .precinct-actions button { min-height: 2.7rem; padding: .45rem 1rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); color: var(--navy); font: inherit; cursor: pointer; }
 .precinct-actions button[type="submit"] { background: var(--navy); color: var(--white); }
 .precinct-actions button:disabled { opacity: .5; cursor: default; }
-.precinct-open:focus-visible, .precinct-clear:focus-visible, .precinct-actions button:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+.precinct-open:focus-visible, .precinct-clear:focus-visible, .precinct-info:focus-visible, .precinct-actions button:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 @media (max-width: 720px) {
   .filter-control-status { margin-top: 0; }
   .filter-select-control, .filter-segmented-control, .precinct-control { width: auto; min-width: min(100%, 9rem); flex: 1 1 9rem; }
+}
+/* One suggestion surface for optional addresses and reviewed precincts. */
+.precinct-dialog .filter-select-control { position: relative; min-width: 0; }
+.precinct-dialog .filter-select { box-sizing: border-box; width: 100%; }
+.ballot-options { position: absolute; z-index: 2; top: 100%; left: 0; right: 0; list-style: none; margin: .35rem 0 0; padding: 0; max-height: min(12rem, var(--precinct-options-height, 12rem)); overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--line); background: var(--paper); }
+.ballot-option { display: flex; align-items: center; gap: .75rem; padding: .6rem; cursor: pointer; }
+.ballot-option-text { min-width: 0; overflow-wrap: anywhere; }
+.ballot-option-type { flex: none; margin-left: auto; font-size: .75rem; color: var(--muted); }
+.ballot-option[aria-selected="true"], .ballot-option:hover { background: var(--white); outline: 1px solid var(--navy); outline-offset: -1px; }
+.address-privacy { font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; }
+@media (max-height: 480px) {
+  .precinct-dialog { padding: 1rem; }
 }

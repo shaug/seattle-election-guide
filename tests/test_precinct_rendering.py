@@ -1,6 +1,7 @@
 """Actual headless general-page behavior against independently sourced exact sets."""
 
 import json
+from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
@@ -20,6 +21,7 @@ from election_guide.rendering.payload import GeneralSourcesPayload, SourcesPaylo
 from election_guide.rendering.validation import validate_rendered_guide
 from election_guide.scoring import read_scoring_configuration, score_dataset
 from election_guide.serialization import read_json
+from tests.address_lookup_fixtures import without_live_address_requests
 from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,7 +63,7 @@ def test_general_pages_resolve_every_independent_fixture_without_horizontal_over
         )
     )
     path = tmp_path / f"{page}.html"
-    path.write_text(html)
+    path.write_text(without_live_address_requests(html))
     fixtures = read_json(
         ROOT / "tests/fixtures/ballot/wa-2026-general-official-precinct-sets.json"
     )["fixtures"]
@@ -84,7 +86,9 @@ def test_general_pages_resolve_every_independent_fixture_without_horizontal_over
       const failures=[];
       for(const f of fixtures){
         document.querySelector('[data-precinct-open]').click();
-        input.value=f.name;input.dispatchEvent(new Event('change',{bubbles:true}));
+        input.value=f.name;input.dispatchEvent(new Event('input',{bubbles:true}));
+        input.closest('form').querySelector(
+          '[role=option][data-kind=precinct]')?.click();
         document.querySelector('[data-precinct-submit]').click();
         const actual=ids();
         if(JSON.stringify(actual)!==JSON.stringify(f.ids))
@@ -96,8 +100,11 @@ def test_general_pages_resolve_every_independent_fixture_without_horizontal_over
       }
       document.querySelector('[data-precinct-open]').click();
       input.value='1279';input.dispatchEvent(new Event('input',{bubbles:true}));
+        input.closest('form').querySelector(
+          '[role=option][data-kind=precinct]')?.click();
       document.querySelector('[data-precinct-submit]').click();
-      const keyboard=input.value==='SEA 46-1279';
+      const keyboard=document.querySelector('[data-precinct-open]')
+        .textContent==='SEA 46-1279'&&input.value==='';
       const first=fixtures.find(f=>f.name==='SEA 46-1279').ids;
       const second=fixtures.find(f=>f.name==='SEA 46-2142').ids;
       history.pushState({}, '', '?precinct=2142');
@@ -113,7 +120,7 @@ def test_general_pages_resolve_every_independent_fixture_without_horizontal_over
       return JSON.stringify({failures,keyboard,historyBack,historyForward,selected,clearIds:ids(),
         query:new URLSearchParams(window.location.search).get('precinct'),
         overflow:document.documentElement.scrollWidth>innerWidth,
-        controlCount:document.querySelectorAll('input[list]').length});
+        controlCount:document.querySelectorAll('input[role=combobox]').length});
     })()""".replace("FIXTURES", json.dumps(expected)).replace(
         "SELECTOR",
         json.dumps("[data-publication-race-id]" if page == "guide" else "[data-comparison-race]"),
@@ -145,7 +152,7 @@ def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
         )
     )
     path = tmp_path / f"modal-{page}.html"
-    path.write_text(html)
+    path.write_text(without_live_address_requests(html))
 
     def keyboard(cdp: _CdpSocket, session: str) -> None:
         def evaluate(script: str) -> None:
@@ -169,7 +176,9 @@ def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
           window.beforeModalMemory=localStorage.getItem('seg-precinct-v1:wa-2026-general');
           document.querySelector('[data-precinct-open]').click();
           const draftInput=document.querySelector('#voting-precinct');
-          draftInput.value='2142';draftInput.dispatchEvent(new Event('input',{bubbles:true}));""")
+          draftInput.value='2142';draftInput.dispatchEvent(new Event('input',{bubbles:true}));
+        draftInput.closest('form').querySelector(
+          '[role=option][data-kind=precinct]')?.click();""")
         key("Tab", 9, 8)
         evaluate(
             "window.focusContained=document.querySelector('dialog').contains(document.activeElement)"
@@ -185,7 +194,9 @@ def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
           window.escapeRestored=document.activeElement===document.querySelector('[data-precinct-open]');
           document.querySelector('[data-precinct-open]').click();
           const commitInput=document.querySelector('#voting-precinct');
-          commitInput.value='1279';commitInput.dispatchEvent(new Event('input',{bubbles:true}));""")
+          commitInput.value='1279';commitInput.dispatchEvent(new Event('input',{bubbles:true}));
+        commitInput.closest('form').querySelector(
+          '[role=option][data-kind=precinct]')?.click();""")
         key("Enter", 13)
 
     expression = """(()=>{
@@ -215,8 +226,12 @@ def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
       const focused=document.activeElement===input;
       const bounds=dialog.getBoundingClientRect();
       input.value='not a precinct';input.dispatchEvent(new Event('input',{bubbles:true}));
+        input.closest('form').querySelector(
+          '[role=option][data-kind=precinct]')?.click();
       const invalidBlocked=root.querySelector('[data-precinct-submit]').disabled&&dialog.open;
       input.value='2142';input.dispatchEvent(new Event('input',{bubbles:true}));
+        input.closest('form').querySelector(
+          '[role=option][data-kind=precinct]')?.click();
       const draftUnchanged=window.location.search===before&&
         JSON.stringify(ids())===JSON.stringify(selected);
       root.querySelector('[data-precinct-cancel]').click();
@@ -244,16 +259,47 @@ def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
         headerCount:headers.length===4});
     })()"""
     result = _evaluate_in_chrome(path, expression, viewport=(width, 1000), interact=keyboard)
-    assert all(result.values()), result
+    assert all(result.values()), json.dumps(result, sort_keys=True)
 
 
-def test_modal_lookup_link_is_required_and_does_not_admit_other_links(
+def test_modal_requires_exact_county_info_destination(
     tmp_path: Path, general_view: PublicationViewModel
 ) -> None:
     configuration = read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
     html = render_html_document(general_view, configuration)
     lookup = "https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a"
     assert html.count(f'href="{lookup}"') == 1
+
+    class CountyInfoLinks(HTMLParser):
+        def __init__(self) -> None:
+            super().__init__()
+            self.links: list[dict[str, str | None]] = []
+
+        def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+            values = dict(attrs)
+            if tag == "a" and "precinct-info" in (values.get("class") or "").split():
+                self.links.append(values)
+
+    # Exercise actual Jinja globals/templates in both callers, not a substituted
+    # hand-built controller fixture. Removing the shared suffix must fail here.
+    for document in [
+        html,
+        render_comparison_document(
+            general_view,
+            public_site_url=configuration.public_site_url,
+            project_url=configuration.project_url,
+        ),
+    ]:
+        parser = CountyInfoLinks()
+        parser.feed(document)
+        assert len(parser.links) == 1
+        link = parser.links[0]
+        expected = "Find your precinct on the county map (opens in a new tab)"
+        assert link["aria-label"] == expected
+        assert link["title"] == expected
+        assert link["href"] == lookup
+        assert link["target"] == "_blank"
+        assert link["rel"] == "noopener noreferrer"
     race_documents = {
         race.id: render_race_document(
             general_view,
@@ -266,8 +312,18 @@ def test_modal_lookup_link_is_required_and_does_not_admit_other_links(
     }
     cases = [
         ("original", html, True),
-        ("missing", html.replace(f'href="{lookup}"', 'href=""'), False),
-        ("wrong", html.replace(lookup, "https://example.test/wrong-precinct-map"), False),
+        (
+            "missing",
+            html.replace(f' href="{lookup}"', "", 1),
+            False,
+        ),
+        (
+            "wrong",
+            html.replace(
+                "</body>", '<a href="https://example.test/wrong-precinct-map">Map</a></body>'
+            ),
+            False,
+        ),
         (
             "extra",
             html.replace("</body>", '<a href="https://example.test/extra">Extra</a></body>'),

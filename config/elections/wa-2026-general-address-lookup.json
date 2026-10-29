@@ -1,0 +1,19 @@
+{
+  "election_id": "wa-2026-general",
+  "mapping_hash": "6320180e360a9ae2299d2e2971c3cf0e1b39e0d1e87c675b3a6fd3ee54fc82ef",
+  "city": {
+    "item": "ab9d5cb566f4485c952ad0a278f11ef5",
+    "data": 1792005925455,
+    "schema_edit": 1792005925455
+  },
+  "precinct": {
+    "item": "532208ddbedf4d2fa54ca7073987e83b",
+    "data": 1772636566276,
+    "schema_edit": 1772671046142
+  },
+  "address": {
+    "item": "5aa0a3c77428491da8d73e9d069c10f6",
+    "data": 1793015803957,
+    "schema_edit": 1793015812188
+  }
+}

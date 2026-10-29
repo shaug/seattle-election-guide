@@ -433,6 +433,7 @@
     ],
     "data-precinct-fields": [
       "template",
+      "stylesheet",
       "client"
     ],
     "data-precinct-link": [
@@ -442,11 +443,13 @@
     ],
     "data-precinct-status": [
       "template",
-      "client"
+      "client",
+      "test"
     ],
     "data-precinct-cancel": [
       "template",
       "client",
+      "python",
       "test"
     ],
     "data-precinct-form": [
@@ -460,6 +463,7 @@
     "data-precinct-submit": [
       "template",
       "client",
+      "python",
       "test"
     ],
     "data-precinct-summary": [
@@ -468,6 +472,23 @@
     ],
     "data-precinct-applied-notice": [
       "template",
+      "client",
+      "test"
+    ],
+    "data-ballot-options": [
+      "client",
+      "python",
+      "test"
+    ],
+    "data-ballot-search": [
+      "client",
+      "test"
+    ],
+    "data-code": [
+      "client",
+      "test"
+    ],
+    "data-kind": [
       "client",
       "test"
     ]
@@ -999,6 +1020,12 @@
       "client",
       "test"
     ],
+    "precinct-actions": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "precinct-clear": [
       "stylesheet",
       "client"
@@ -1016,6 +1043,36 @@
     "precinct-selected": [
       "stylesheet",
       "client"
+    ],
+    "address-privacy": [
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "ballot-option": [
+      "stylesheet",
+      "client"
+    ],
+    "ballot-option-text": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "ballot-option-type": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "ballot-options": [
+      "stylesheet",
+      "client"
+    ],
+    "precinct-info": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
     ]
   },
   "breakpoints": {

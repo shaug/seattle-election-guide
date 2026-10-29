@@ -441,3 +441,22 @@ entries:
         url: /e/wa-2026-general/
       - label: "Voter ballot membership"
         url: https://github.com/shaug/seattle-election-guide/issues/608
+
+  - corrected_on: 2026-10-28
+    headline: "Find your precinct from an address or precinct search."
+    body: >-
+      One search field now offers precinct and supported Seattle voting-address
+      suggestions, labelled Precinct or Address. Choose a suggestion to set a
+      draft, then Select to apply it; Cancel keeps your existing choice. Address
+      lookup uses King County GIS and county-maintained Esri services. The guide
+      remembers only the election and precinct. Endorsement records, scoring
+      rules and ballot order are unchanged.
+    provenance:
+      - label: "Choose an address or precinct"
+        url: /e/wa-2026-general/
+      - label: "Compare your covered ballot decisions"
+        url: /e/wa-2026-general/comparisons/
+      - label: "Address lookup scope and safeguards"
+        url: https://github.com/shaug/seattle-election-guide/issues/657
+      - label: "Address lookup data and privacy"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/ADDRESS_LOOKUP.md
