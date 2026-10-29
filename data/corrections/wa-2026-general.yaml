@@ -441,19 +441,6 @@ entries:
         url: /e/wa-2026-general/
       - label: "Voter ballot membership"
         url: https://github.com/shaug/seattle-election-guide/issues/608
-  - corrected_on: 2026-10-28
-    headline: "Updated the Sources and Comparisons subheadings."
-    body: >-
-      Sources now reads “The endorsements you trust, aggregated.” Comparisons
-      now reads “The endorsements you choose, juxtaposed.” Source selection,
-      scores, recorded endorsements and the rest of both pages are unchanged.
-    provenance:
-      - label: "Sources"
-        url: /e/wa-2026-general/sources/
-      - label: "Comparisons"
-        url: /e/wa-2026-general/comparisons/
-      - label: "Approved page subheadings"
-        url: https://github.com/shaug/seattle-election-guide/issues/661
 
   - corrected_on: 2026-10-28
     headline: "Find your precinct from an address or precinct search."
