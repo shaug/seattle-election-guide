@@ -69,7 +69,12 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   const list = () => /** @type {HTMLElement} */ (fields.querySelector('[data-ballot-options]'));
   const fitOptions = () => {
     if (!dialog.open) return;
-    const space = dialog.getBoundingClientRect().bottom - input().getBoundingClientRect().bottom;
+    const actions = form.querySelector('.precinct-actions');
+    const bottom = Math.min(
+      dialog.getBoundingClientRect().bottom,
+      actions?.getBoundingClientRect().top ?? dialog.getBoundingClientRect().bottom,
+    );
+    const space = bottom - input().getBoundingClientRect().bottom;
     list().style.setProperty('--precinct-options-height', `${Math.max(0, space - 20)}px`);
   };
   const viewport = document.defaultView?.visualViewport;

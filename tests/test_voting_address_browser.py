@@ -30,7 +30,11 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         )
         if page == "guide"
         else render_comparison_document(
-            general_view, public_site_url="https://seattleelections.guide"
+            general_view,
+            public_site_url="https://seattleelections.guide",
+            project_url=read_rendering_configuration(
+                ROOT / "config/rendering/guide.yaml"
+            ).project_url,
         )
     )
     path = tmp_path / "address.html"
@@ -118,7 +122,8 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
           const l=document.querySelector('[data-ballot-options]').getBoundingClientRect();
           const v=window.visualViewport;
           window.nativeViewportFit=d.top>=v.offsetTop&&d.bottom<=v.offsetTop+v.height&&
-            l.top>=d.top&&l.bottom<=d.bottom&&
+            l.top>=d.top&&l.bottom<=Math.min(d.bottom,
+              document.querySelector('.precinct-actions').getBoundingClientRect().top)-8&&
             document.querySelector('dialog').style.getPropertyValue(
               '--precinct-viewport-height')===v.height+'px';
         })()""")
@@ -184,19 +189,35 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         return [r.x,r.y,r.width,r.height]};
       const baseline=rect();
       let stableGeometry=true,containedPopup=true,overlaysContent=true,longScrolls=false;
+      let actionsClear=true,compactActions=true,actionsStable=true;
+      const initialActionTop=document.querySelector('.precinct-actions')
+        .getBoundingClientRect().top;
+      const measurements=[];
       const geometry=()=>{
+        const action=document.querySelector('.precinct-actions').getBoundingClientRect();
+        actionsStable&&=Math.abs(action.top-initialActionTop)<1;
+        const field=input.getBoundingClientRect();
+        const rootFont=parseFloat(getComputedStyle(document.documentElement).fontSize);
+        // Leave at most two rem beyond the maximum twelve-rem overlay, rather
+        // than stretching an unused status area far below that surface.
+        if(innerHeight>480) compactActions&&=action.top-field.bottom<=14*rootFont;
+        measurements.push({state:window.suggestionMode??'initial',dialog:rect(),
+          actionTop:action.top,inputBottom:field.bottom});
         stableGeometry&&=rect().every((n,i)=>Math.abs(n-baseline[i])<1);
         const list=document.querySelector('[data-ballot-options]');
         if(!list.hidden){
           const r=list.getBoundingClientRect();
           const d=document.querySelector('dialog').getBoundingClientRect();
           containedPopup&&=r.left>=d.left&&r.right<=d.right&&r.top>=d.top&&r.bottom<=d.bottom;
+          actionsClear&&=r.bottom<=action.top-8;
+          measurements.at(-1).listBottom=r.bottom;
           const privacy=document.querySelector('.address-privacy').getBoundingClientRect();
           const hit=document.elementFromPoint(r.left+r.width/2,r.top+Math.min(15,r.height/2));
           overlaysContent&&=getComputedStyle(list).position==='absolute'&&r.top<privacy.bottom&&
             list.contains(hit);
         }
       };
+      geometry();
       for(const mode of ['normal','long','empty','failure']){
         window.suggestionMode=mode;
         input.value='Public civic '+mode;input.dispatchEvent(new Event('input',{bubbles:true}));
@@ -223,6 +244,10 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         info.target==='_blank'&&info.rel==='noopener noreferrer'&&
         info.getAttribute('aria-label')==='Find your precinct on the county map'&&
         !info.href.includes(input.value);
+      const footerIcon=document.querySelector(
+        '.site-footer-actions a[aria-label="How this works"] svg');
+      const modalIcon=info?.querySelector('svg');
+      const sharedInfoIcon=!!modalIcon&&!!footerIcon&&modalIcon.outerHTML===footerIcon.outerHTML;
       const ir=info?.getBoundingClientRect();
       const dr=document.querySelector('dialog').getBoundingClientRect();
       const infoGeometry=!!ir&&ir.width>=44&&ir.height>=44&&ir.right<=dr.right&&
@@ -248,6 +273,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       input.dispatchEvent(new KeyboardEvent('keydown',{
         key:'Enter',bubbles:true,cancelable:true}));await wait();
       const draftOnly=location.search===before&&document.querySelector('dialog').open;
+      geometry();
       const ready=!document.querySelector('[data-precinct-submit]').disabled;
       click('[data-precinct-submit]');
       const committed=new URLSearchParams(location.search).get('precinct')==='3230';
@@ -281,7 +307,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       return JSON.stringify({nativeInfoFocus:window.nativeInfoFocus,
         nativeViewportFit:window.nativeViewportFit,
         nativePointerDraft:window.nativePointerDraft,
-        stableGeometry,containedPopup,overlaysContent,longScrolls,
+        stableGeometry,containedPopup,overlaysContent,longScrolls,actionsClear,compactActions,actionsStable,sharedInfoIcon,
         mixed,singleEditor,countyInfo,infoGeometry,labelsFit,fits,announced,notFirst,draftOnly,
         ready,committed,addressShown,summaryFits,geographic,allExact,popupEscape,cancelPreserved,noLeak,
         historyLabel,localWorks,nativePopupEscape:window.nativePopupEscape,
@@ -290,7 +316,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         anonymous:calls.length>0&&calls.every(c=>
           c.method===(c.url.endsWith('?f=json')?'GET':'POST')&&
           c.credentials==='omit'&&c.cache==='no-store'),
-        clear:new URLSearchParams(location.search).get('precinct')==='all'});
+        clear:new URLSearchParams(location.search).get('precinct')==='all',measurements});
     })().catch(error=>JSON.stringify({error:String(error.message)}))""".replace(
         "FIXTURE", json.dumps(fixture)
     ).replace(
@@ -299,4 +325,9 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
     )
     result = _evaluate_in_chrome(path, expression, viewport=(width, height), interact=keyboard)
     assert result.get("error") is None
-    assert result and all(result.values()), json.dumps(result, sort_keys=True)
+    (tmp_path / "dialog-geometry.json").write_text(json.dumps(result, sort_keys=True))
+    print(json.dumps({"page": page, "viewport": [width, height], **result}, sort_keys=True))
+    measurements = result.pop("measurements", [])
+    assert result and all(result.values()), json.dumps(
+        {**result, "measurements": measurements}, sort_keys=True
+    )
