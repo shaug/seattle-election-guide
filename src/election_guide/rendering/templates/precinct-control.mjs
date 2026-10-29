@@ -302,7 +302,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   dialog.addEventListener('keydown', (event) => {
     if (event.key !== 'Tab') return;
     const targets = /** @type {HTMLElement[]} */ ([
-      ...dialog.querySelectorAll('input, button:not(:disabled)'),
+      ...dialog.querySelectorAll('a[href], input, button:not(:disabled)'),
     ]);
     const first = targets[0];
     const last = targets.at(-1);

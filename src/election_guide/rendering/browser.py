@@ -28,6 +28,8 @@ from websocket import (  # pyright: ignore[reportUnknownVariableType]
     create_connection,  # pyright: ignore[reportUnknownVariableType]
 )
 
+from election_guide.rendering.shell import PRECINCT_LOOKUP_HREF
+
 
 def find_chrome() -> Path:
     """Resolve a supported local Chrome or Chromium executable."""
@@ -270,7 +272,13 @@ def _capture_emulated_viewport(
                     "precinct.querySelector('#voting-precinct[role=combobox]')&&"
                     "precinct.querySelector('label[for=voting-precinct]')&&"
                     "precinct.querySelector('[data-ballot-options][role=listbox]')&&"
-                    "!precinct.querySelector('datalist,a[target=_blank]')&&"
+                    "!precinct.querySelector('datalist')&&"
+                    "precinct.querySelectorAll('a').length===1&&"
+                    f"precinct.querySelector('a.precinct-info')?.href==={json.dumps(PRECINCT_LOOKUP_HREF)}&&"
+                    "precinct.querySelector('a.precinct-info')?.target==='_blank'&&"
+                    "precinct.querySelector('a.precinct-info')?.getAttribute('rel')==="
+                    "'noopener noreferrer'&&"
+                    "Boolean(precinct.querySelector('a.precinct-info')?.getAttribute('aria-label')?.trim())&&"
                     "precinct.querySelector('[data-precinct-submit][type=submit]')&&"
                     "precinct.querySelector('[data-precinct-cancel][type=button]')&&"
                     "precinct.querySelectorAll('input').length===1&&"

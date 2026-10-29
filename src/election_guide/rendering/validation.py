@@ -36,6 +36,7 @@ from election_guide.rendering.models import (
 )
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
+    PRECINCT_LOOKUP_HREF,
     race_og_image_path,
     race_page_path,
 )
@@ -235,6 +236,8 @@ def validate_rendered_guide(
         # The band's nav grows an Updates link under the same "state, not
         # option" gate `documents.py`'s `_corrections_href` follows (#290).
         expected_html_links.add(f"/e/{view_model.metadata.election_id}/updates/")
+    if view_model.precinct_ballot is not None:
+        expected_html_links.add(PRECINCT_LOOKUP_HREF)
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     required_site_metadata = {
         f'<link rel="canonical" href="{canonical_url}">',

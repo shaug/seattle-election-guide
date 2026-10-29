@@ -92,13 +92,30 @@ test('restore, exact search choice, clear, reload link and history preserve trut
   assert.equal(b.calls.at(-1).ids, null);
   assert.equal(input.value, '');
 });
-test('a precinct control has one labelled combobox and styled list without an external finder', () => {
+test('one labelled combobox and styled list has one named static county information link', () => {
   const b = boot();
   assert.equal(b.document.querySelectorAll('input[role=combobox]').length, 1);
   assert.equal(b.document.querySelector('datalist'), null);
   assert.ok(b.document.querySelector('[role=listbox]'));
   assert.equal(b.document.querySelector('label').htmlFor, b.document.querySelector('input').id);
-  assert.equal(b.document.querySelector('a[target="_blank"]'), null);
+  const info = b.document.querySelector('dialog a.precinct-info');
+  assert.ok(info);
+  assert.equal(b.document.querySelectorAll('dialog a').length, 1);
+  assert.equal(
+    info.href,
+    'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
+  );
+  assert.equal(info.target, '_blank');
+  assert.equal(info.rel, 'noopener noreferrer');
+  assert.equal(info.getAttribute('aria-label'), 'Find your precinct on the county map');
+  b.document.querySelector('[data-precinct-open]').click();
+  const input = b.document.querySelector('input');
+  input.value = 'Transient address text';
+  input.dispatchEvent(new Event('input'));
+  assert.equal(
+    info.href,
+    'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
+  );
 });
 test('control is wiring with no storage/address ownership', () =>
   assertModuleGuard('precinct-control.mjs'));

@@ -459,7 +459,11 @@ The same native Ballot dialog has one address-or-precinct combobox and one style
 suggestion list. Reviewed precinct matches appear immediately; debounced address
 matches join the same list. Numeric queries may match both. Each row has a small,
 right-aligned Address or Precinct label. There are no mode buttons, native datalist
-or Find my precinct link (Scott's explicit October28 revision).
+or old Find my precinct text link. A later explicit October28 revision adds one
+compact upper-right circled-i link to the same county precinct search. It keeps the
+historic new-tab/no-referrer semantics, has a descriptive accessible name, visible
+focus and a phone-sized target, and never carries search text. It joins the native
+focus loop without changing the initial input focus or Select/Cancel behavior.
 
 Selecting a suggestion fills the shared draft; only Select commits it. Raw text,
 an exact typed code or the first suggestion never silently chooses. Direct precinct

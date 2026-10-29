@@ -1,7 +1,7 @@
 # Optional voting-address lookup (#657)
 
 The Ballot dialog combines reviewed precinct matches and canonical address
-suggestions in one field with labelled rows, without modes or an external finder.
+suggestions in one field with labelled rows, without modes, plus a compact county precinct-search information link.
 It can resolve a reader-selected canonical street/building address
 to the reviewed November2026 precinct catalog. It does not verify voter registration,
 unit occupancy, omitted apartments or the reader's complete official ballot. Direct
@@ -78,3 +78,9 @@ it within the visible area. Loading, empty/error and option-selection announceme
 remain, without result counts or instructions to narrow the query. Physical phone
 keyboard behavior still requires actual device acceptance; emulated viewport geometry
 and native browser keyboard/pointer tests do not claim that certification.
+
+The modal's upper-right circled-i link reuses the historic county precinct-map
+URL and opens a separate tab with `noopener noreferrer`. It has an accessible
+purpose label and visible keyboard focus; its static destination never receives
+typed text, selected-address details or SEG query state. This replaces the former
+text finder link without adding a mode or changing address transmission/admission.

@@ -1061,6 +1061,12 @@
     "ballot-options": [
       "stylesheet",
       "client"
+    ],
+    "precinct-info": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
     ]
   },
   "breakpoints": {

@@ -261,13 +261,13 @@ def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
     assert all(result.values()), json.dumps(result, sort_keys=True)
 
 
-def test_modal_rejects_obsolete_lookup_and_other_unexpected_links(
+def test_modal_requires_exact_county_info_destination(
     tmp_path: Path, general_view: PublicationViewModel
 ) -> None:
     configuration = read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
     html = render_html_document(general_view, configuration)
     lookup = "https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a"
-    assert html.count(f'href="{lookup}"') == 0
+    assert html.count(f'href="{lookup}"') == 1
     race_documents = {
         race.id: render_race_document(
             general_view,
@@ -281,8 +281,8 @@ def test_modal_rejects_obsolete_lookup_and_other_unexpected_links(
     cases = [
         ("original", html, True),
         (
-            "obsolete",
-            html.replace("</body>", f'<a href="{lookup}">Find my precinct</a></body>'),
+            "missing",
+            html.replace(f' href="{lookup}"', "", 1),
             False,
         ),
         (

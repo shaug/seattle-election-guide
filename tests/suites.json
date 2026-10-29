@@ -302,7 +302,7 @@
     "suite": "e2e",
     "tests": {
       "test_general_sources_capability_does_not_extend_the_legacy_payload": "contract",
-      "test_modal_rejects_obsolete_lookup_and_other_unexpected_links": "integration"
+      "test_modal_requires_exact_county_info_destination": "integration"
     },
     "partition": "integration-rendering"
   },

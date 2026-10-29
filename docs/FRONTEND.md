@@ -874,6 +874,8 @@ The fixed-size dialog adapts to the visual viewport height/offset (including key
 resize); the positioned suggestion list is independently scrollable and capped to
 actual space below the field within the dialog. Results/status lengths never size
 the modal. Announce loading/availability/empty/error states without counts or refine prompts.
+The compact county information anchor reuses the renderer-owned historic destination;
+its static new-tab/no-referrer link joins the modal focus loop without receiving draft text.
 A selected address label may stay in page memory for its applied precinct, but
 clear/history/reload/navigation discard it; only the precinct survives restoration. Abort and generation checks prevent stale work from changing that
 draft. Only existing Select calls the existing router and precinct-memory owner;

@@ -78,20 +78,34 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
             )
             assert "exceptionDetails" not in result, result
 
-        def press(name: str, code: int) -> None:
+        def press(name: str, code: int, modifiers: int = 0) -> None:
             for kind in ["keyDown", "keyUp"]:
                 cdp.command(
                     "Input.dispatchKeyEvent",
-                    {"type": kind, "key": name, "windowsVirtualKeyCode": code},
+                    {
+                        "type": kind,
+                        "key": name,
+                        "windowsVirtualKeyCode": code,
+                        "modifiers": modifiers,
+                    },
                     session_id=session,
                 )
 
         evaluate("""(async()=>{
           document.querySelector('[data-precinct-open]').click();
           const input=document.querySelector('#voting-precinct');
+          window.nativeInputVisited=false;window.nativeContained=true;
+        })()""")
+        press("Tab", 9, 8)
+        evaluate("""window.nativeInfoFocus=document.activeElement.matches('a.precinct-info')&&
+          getComputedStyle(document.activeElement).outlineStyle!=='none'&&
+          parseFloat(getComputedStyle(document.activeElement).outlineWidth)>=2;""")
+        press("Tab", 9)
+        evaluate("""(async()=>{
+          const input=document.querySelector('#voting-precinct');
+          window.nativeInfoFocus&&=document.activeElement===input;
           input.value='323';input.dispatchEvent(new Event('input',{bubbles:true}));
           await new Promise(done=>setTimeout(done,400));
-          window.nativeInputVisited=false;window.nativeContained=true;
         })()""")
         cdp.command(
             "Emulation.setDeviceMetricsOverride",
@@ -202,7 +216,17 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const singleEditor=document.querySelectorAll('dialog input').length===1&&
         input.getAttribute('role')==='combobox'&&!document.querySelector('datalist')&&
         !document.querySelector('[data-address-mode],[data-direct-mode]')&&
-        !document.querySelector('dialog a');
+        document.querySelectorAll('dialog a').length===1;
+      const info=document.querySelector('dialog a.precinct-info');
+      const countyInfo=!!info&&info.href===
+        'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a'&&
+        info.target==='_blank'&&info.rel==='noopener noreferrer'&&
+        info.getAttribute('aria-label')==='Find your precinct on the county map'&&
+        !info.href.includes(input.value);
+      const ir=info?.getBoundingClientRect();
+      const dr=document.querySelector('dialog').getBoundingClientRect();
+      const infoGeometry=!!ir&&ir.width>=44&&ir.height>=44&&ir.right<=dr.right&&
+        ir.left>=dr.left+dr.width/2&&ir.top>=dr.top&&ir.bottom<=input.getBoundingClientRect().top;
       const labelsFit=options.every(option=>{
         const text=option.querySelector('.ballot-option-text').getBoundingClientRect();
         const label=option.querySelector('.ballot-option-type');
@@ -254,10 +278,11 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const localWorks=new URLSearchParams(location.search).get('precinct')==='3230'&&
         document.querySelector('[data-precinct-open]').textContent==='SEA 34-3230';
       click('[data-precinct-clear]');
-      return JSON.stringify({nativeViewportFit:window.nativeViewportFit,
+      return JSON.stringify({nativeInfoFocus:window.nativeInfoFocus,
+        nativeViewportFit:window.nativeViewportFit,
         nativePointerDraft:window.nativePointerDraft,
         stableGeometry,containedPopup,overlaysContent,longScrolls,
-        mixed,singleEditor,labelsFit,fits,announced,notFirst,draftOnly,
+        mixed,singleEditor,countyInfo,infoGeometry,labelsFit,fits,announced,notFirst,draftOnly,
         ready,committed,addressShown,summaryFits,geographic,allExact,popupEscape,cancelPreserved,noLeak,
         historyLabel,localWorks,nativePopupEscape:window.nativePopupEscape,
         nativeDialogEscape:window.nativeDialogEscape,nativeInputVisited:window.nativeInputVisited,
