@@ -1,6 +1,7 @@
 """Actual headless general-page behavior against independently sourced exact sets."""
 
 import json
+from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
@@ -268,6 +269,37 @@ def test_modal_requires_exact_county_info_destination(
     html = render_html_document(general_view, configuration)
     lookup = "https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a"
     assert html.count(f'href="{lookup}"') == 1
+
+    class CountyInfoLinks(HTMLParser):
+        def __init__(self) -> None:
+            super().__init__()
+            self.links: list[dict[str, str | None]] = []
+
+        def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+            values = dict(attrs)
+            if tag == "a" and "precinct-info" in (values.get("class") or "").split():
+                self.links.append(values)
+
+    # Exercise actual Jinja globals/templates in both callers, not a substituted
+    # hand-built controller fixture. Removing the shared suffix must fail here.
+    for document in [
+        html,
+        render_comparison_document(
+            general_view,
+            public_site_url=configuration.public_site_url,
+            project_url=configuration.project_url,
+        ),
+    ]:
+        parser = CountyInfoLinks()
+        parser.feed(document)
+        assert len(parser.links) == 1
+        link = parser.links[0]
+        expected = "Find your precinct on the county map (opens in a new tab)"
+        assert link["aria-label"] == expected
+        assert link["title"] == expected
+        assert link["href"] == lookup
+        assert link["target"] == "_blank"
+        assert link["rel"] == "noopener noreferrer"
     race_documents = {
         race.id: render_race_document(
             general_view,

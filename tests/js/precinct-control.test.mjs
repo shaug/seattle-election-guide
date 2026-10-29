@@ -10,10 +10,12 @@ const PRECINCT_MARKUP = readFileSync(
     import.meta.url,
   ),
   'utf8',
-).replace(
-  '{{ precinct_lookup_href }}',
-  'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
-);
+)
+  .replace(
+    '{{ precinct_lookup_href }}',
+    'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
+  )
+  .replaceAll('{{ opens_in_new_tab }}', ' (opens in a new tab)');
 installDom();
 const { wirePrecinctControl } = await import(
   '../../src/election_guide/rendering/templates/precinct-control.mjs'
@@ -107,7 +109,11 @@ test('one labelled combobox and styled list has one named static county informat
   );
   assert.equal(info.target, '_blank');
   assert.equal(info.rel, 'noopener noreferrer');
-  assert.equal(info.getAttribute('aria-label'), 'Find your precinct on the county map');
+  assert.equal(
+    info.getAttribute('aria-label'),
+    'Find your precinct on the county map (opens in a new tab)',
+  );
+  assert.equal(info.title, info.getAttribute('aria-label'));
   b.document.querySelector('[data-precinct-open]').click();
   const input = b.document.querySelector('input');
   input.value = 'Transient address text';

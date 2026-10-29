@@ -243,7 +243,9 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const countyInfo=!!info&&info.href===
         'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a'&&
         info.target==='_blank'&&info.rel==='noopener noreferrer'&&
-        info.getAttribute('aria-label')==='Find your precinct on the county map'&&
+        info.getAttribute('aria-label')===
+          'Find your precinct on the county map (opens in a new tab)'&&
+        info.title===info.getAttribute('aria-label')&&
         !info.href.includes(input.value);
       const footerIcon=document.querySelector(
         '.site-footer-actions a[aria-label="How this works"] svg');
