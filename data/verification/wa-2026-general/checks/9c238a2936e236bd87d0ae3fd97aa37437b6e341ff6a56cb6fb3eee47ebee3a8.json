@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-29T09:47:19.065683Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#the-urbanist; complete bounded current publication review; all stated held/prior qualifications retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-29",
+  "source_id": "the-urbanist",
+  "status": "manual"
+}

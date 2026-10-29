@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-29T10:01:11.394416Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#11th-district-democrats; complete current bounded publication review; all stated current-cycle/prior-row qualifications retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-29",
+  "source_id": "11th-district-democrats",
+  "status": "manual"
+}

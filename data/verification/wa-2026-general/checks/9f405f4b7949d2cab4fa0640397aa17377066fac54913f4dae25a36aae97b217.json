@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "e5517c41a240f9e45e86ee0b00553ebf4a5a9f19c58e94f42170dd2bd127a018"
+  },
+  "checked_at": "2026-10-29T09:38:21.902472Z",
+  "event_id": "refresh-king-county-democrats-20261029T093821Z-9766ce930568",
+  "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-access-failures.json#king-county-democrats",
+  "mode": "human",
+  "recorded_at": "2026-10-29T10:04:33.445317Z",
+  "scheduled_for": "2026-10-29",
+  "source_id": "king-county-democrats",
+  "status": "failed"
+}

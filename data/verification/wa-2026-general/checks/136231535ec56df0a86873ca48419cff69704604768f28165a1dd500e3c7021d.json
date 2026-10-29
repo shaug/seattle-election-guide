@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "0c0fef0a2fdc2bf7aaf73673fa532642fab3e83f48c1c407d0bbf118ee5bdda2"
+  },
+  "checked_at": "2026-10-29T09:40:00.304415Z",
+  "event_id": "refresh-environmental-climate-caucus-wa-democrats-20261029T094000Z-d0225119371f",
+  "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-access-failures.json#environmental-climate-caucus-wa-democrats",
+  "mode": "human",
+  "recorded_at": "2026-10-29T10:04:37.063385Z",
+  "scheduled_for": "2026-10-29",
+  "source_id": "environmental-climate-caucus-wa-democrats",
+  "status": "failed"
+}

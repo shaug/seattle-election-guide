@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "2db4b1a5e0c4a3c0e774bea7db38a438ef654325c407f270dc5d03356bd03ebd"
+  },
+  "checked_at": "2026-10-29T09:39:31.316706Z",
+  "event_id": "refresh-nondriver-action-20261029T093931Z-1e6dd822707b",
+  "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-access-failures.json#nondriver-action",
+  "mode": "human",
+  "recorded_at": "2026-10-29T10:04:36.325359Z",
+  "scheduled_for": "2026-10-29",
+  "source_id": "nondriver-action",
+  "status": "failed"
+}

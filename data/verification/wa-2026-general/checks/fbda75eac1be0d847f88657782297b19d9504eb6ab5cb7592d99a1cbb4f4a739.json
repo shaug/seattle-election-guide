@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "b88c20ed5015338e9ba1443b4bdd59e080582e7c7a2ae25afa96ce53af94c9ab"
+  },
+  "checked_at": "2026-10-29T09:38:22.537657Z",
+  "event_id": "refresh-46th-district-democrats-20261029T093822Z-ac373c104aca",
+  "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-access-failures.json#46th-district-democrats",
+  "mode": "human",
+  "recorded_at": "2026-10-29T10:04:34.906769Z",
+  "scheduled_for": "2026-10-29",
+  "source_id": "46th-district-democrats",
+  "status": "failed"
+}

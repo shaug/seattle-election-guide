@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-29T09:51:47.924710Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-bus; complete current bounded publication review; all stated current-cycle/prior-row qualifications retained",
+  "mode": "human",
+  "scheduled_for": "2026-10-29",
+  "source_id": "washington-bus",
+  "status": "manual"
+}

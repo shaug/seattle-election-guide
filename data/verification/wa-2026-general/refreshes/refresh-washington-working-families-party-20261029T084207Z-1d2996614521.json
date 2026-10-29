@@ -1,0 +1,13 @@
+{
+  "capture_id": "capture-washington-working-families-party-20261029T084207Z-91d9324d1625",
+  "checked_at": "2026-10-29T08:42:07Z",
+  "content_changed": false,
+  "diff": [],
+  "error": null,
+  "id": "refresh-washington-working-families-party-20261029T084207Z-1d2996614521",
+  "previous_snapshot_id": "extraction-washington-working-families-party-20261020T085058Z-27e58e61bbe6",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-washington-working-families-party-20261020T085058Z-27e58e61bbe6",
+  "source_id": "washington-working-families-party",
+  "status": "unchanged"
+}

@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "501e3c2f07e50bdd2fde3e6cac0d04bc1e4c536e310a477c91b70d5d29c1678b"
+  },
+  "checked_at": "2026-10-29T09:38:21.817730Z",
+  "event_id": "refresh-seattle-democratic-socialists-20261029T093821Z-bcbc8438446d",
+  "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-access-failures.json#seattle-democratic-socialists",
+  "mode": "human",
+  "recorded_at": "2026-10-29T10:04:31.981660Z",
+  "scheduled_for": "2026-10-29",
+  "source_id": "seattle-democratic-socialists",
+  "status": "failed"
+}
