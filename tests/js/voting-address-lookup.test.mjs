@@ -21,6 +21,16 @@ const precincts = [
       'seattle-city-council-district-7',
     ],
   },
+  {
+    code: '0321',
+    name: 'SEA 34-0321',
+    jurisdiction_ids: [
+      'congressional-district-7',
+      'legislative-district-34',
+      'county-council-district-8',
+      'seattle-city-council-district-1',
+    ],
+  },
 ];
 const suggestion = {
   text: '600 4TH AVE, Seattle, WA, 98104',
@@ -387,4 +397,65 @@ test('numeric and spaced prefixes are transmitted verbatim without a street-word
     b.calls.map((call) => new URLSearchParams(call.options.body).get('text')),
     ['2857', '2857 n'],
   );
+});
+
+// Synthetic catalog-supported geography, not a claim about the public civic site's ballot.
+const secondDistrict = {
+  VOTDST: '0321',
+  NAME: 'SEA 34-0321',
+  CONGDST: '7',
+  LEGDST: '34',
+  KCCDST: '8',
+  SCC: '1',
+};
+
+test('two individually supported precincts in one intersection fail closed', async () => {
+  const resolve = async (districts) => {
+    const b = boot({
+      edit: (value, url) => {
+        if (url.endsWith('/query') && url.includes('March2026'))
+          value.features = districts.map((attributes) => ({ attributes }));
+        return value;
+      },
+    });
+    return b.lookup.resolve(suggestion, new AbortController().signal);
+  };
+  assert.deepEqual(await resolve([district]), { status: 'resolved', code: '0320' });
+  assert.deepEqual(await resolve([secondDistrict]), { status: 'resolved', code: '0321' });
+  for (const districts of [
+    [district, secondDistrict],
+    [secondDistrict, district],
+  ])
+    assert.deepEqual(await resolve(districts), { status: 'unresolved' });
+});
+
+test('two individually supported precincts across exact Seattle sites fail closed', async () => {
+  const firstSite = structuredClone(sites.features[0]);
+  const secondSite = structuredClone(firstSite);
+  secondSite.attributes.SITEID = 'public-civic-second';
+  secondSite.geometry.x = -122.331;
+  const resolve = async (selectedSites) => {
+    const b = boot({
+      edit: (value, url, form) => {
+        if (url.endsWith('/query') && url.includes('ADDRESS_POINT')) value.features = selectedSites;
+        if (url.endsWith('/query') && url.includes('March2026')) {
+          const point = JSON.parse(form.get('geometry'));
+          value.features = [
+            {
+              attributes: point.x === firstSite.geometry.x ? district : secondDistrict,
+            },
+          ];
+        }
+        return value;
+      },
+    });
+    return b.lookup.resolve(suggestion, new AbortController().signal);
+  };
+  assert.deepEqual(await resolve([firstSite]), { status: 'resolved', code: '0320' });
+  assert.deepEqual(await resolve([secondSite]), { status: 'resolved', code: '0321' });
+  for (const selectedSites of [
+    [firstSite, secondSite],
+    [secondSite, firstSite],
+  ])
+    assert.deepEqual(await resolve(selectedSites), { status: 'unresolved' });
 });
