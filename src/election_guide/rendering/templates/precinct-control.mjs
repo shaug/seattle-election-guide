@@ -51,6 +51,19 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   let composing = false;
   const input = () => /** @type {HTMLInputElement} */ (fields.querySelector('#voting-precinct'));
   const list = () => /** @type {HTMLElement} */ (fields.querySelector('[data-ballot-options]'));
+  const fitOptions = () => {
+    if (!dialog.open) return;
+    const space = dialog.getBoundingClientRect().bottom - input().getBoundingClientRect().bottom;
+    list().style.setProperty('--precinct-options-height', `${Math.max(0, space - 20)}px`);
+  };
+  const viewport = document.defaultView?.visualViewport;
+  const fitViewport = () => {
+    if (viewport) {
+      dialog.style.setProperty('--precinct-viewport-height', `${viewport.height}px`);
+      dialog.style.setProperty('--precinct-viewport-top', `${viewport.offsetTop}px`);
+    }
+    fitOptions();
+  };
   const dismiss = () => {
     options = [];
     active = -1;
@@ -121,6 +134,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
       list(),
     );
     list().hidden = options.length === 0;
+    fitOptions();
     input().setAttribute('aria-expanded', String(options.length > 0));
     if (active >= 0) {
       input().setAttribute('aria-activedescendant', `ballot-option-${active}`);
@@ -149,12 +163,9 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     );
     options = local;
     show();
-    const localStatus =
-      matches.length > local.length
-        ? `${local.length} of ${matches.length} precinct matches. Refine your search for more.`
-        : `${local.length} precinct suggestions.`;
+    const localStatus = local.length ? 'Precinct suggestions available.' : 'No matching precincts.';
     render(
-      html`${localStatus}${lookup && text.length >= 3 ? ' Finding address suggestions…' : ''}`,
+      html`${lookup && text.length >= 3 ? 'Finding address suggestions…' : localStatus}`,
       status,
     );
     if (!lookup || text.length < 3 || text.length > 300) return;
@@ -178,7 +189,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
       active = selected ? options.indexOf(selected) : -1;
       show();
       render(
-        html`${localStatus} ${suggestions.length ? `${suggestions.length} address suggestions. Choose a result.` : 'No address suggestions available. Precinct suggestions remain available.'}`,
+        html`${suggestions.length ? 'Suggestions available.' : local.length ? localStatus : 'No suggestions available.'}`,
         status,
       );
     }, 300);
@@ -222,8 +233,10 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     input().value = draft?.text ?? '';
     submit.disabled = draft === null;
     restoreFocus();
+    fitViewport();
     dialog.showModal();
     input().focus();
+    fitOptions();
   };
   const update = (reset = false) => {
     discard();
@@ -282,6 +295,10 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     restoreFocus();
   });
   dialog.addEventListener('cancel', discard);
+  viewport?.addEventListener('resize', fitViewport);
+  viewport?.addEventListener('scroll', fitViewport);
+  document.defaultView?.addEventListener('resize', fitViewport);
+  dialog.addEventListener('scroll', fitOptions);
   dialog.addEventListener('keydown', (event) => {
     if (event.key !== 'Tab') return;
     const targets = /** @type {HTMLElement[]} */ ([

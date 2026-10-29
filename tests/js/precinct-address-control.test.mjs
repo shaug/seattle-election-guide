@@ -22,7 +22,7 @@ const contract = {
   address_lookup: { election_id: 'wa-2026-general', mapping_hash: 'reviewed' },
   precincts: [{ code: '3230', name: 'SEA 34-3230', contest_ids: ['measure'] }],
 };
-function boot(lookupOverride = {}) {
+function boot(lookupOverride = {}, contractOverride = {}) {
   const doc = installDom();
   doc.body.innerHTML = markup;
   let query = '?precinct=all&races=all';
@@ -36,7 +36,7 @@ function boot(lookupOverride = {}) {
     ...lookupOverride,
   };
   wirePrecinctControl(
-    contract,
+    { ...contract, ...contractOverride },
     {
       controlSearch: () => query,
       replaceControlSearch: (next) => {
@@ -310,4 +310,61 @@ test('a detached suggestion from an older query cannot select the current draft'
   assert.equal(b.doc.querySelector('[data-precinct-submit]').disabled, true);
   assert.equal(input.value, 'Different query');
   b.doc.querySelector('[data-precinct-cancel]').click();
+});
+
+test('numeric and spaced prefixes both reach suggestions after the same debounce', async () => {
+  const sent = [];
+  const b = boot({
+    suggest: async (text) => {
+      sent.push(text);
+      return [];
+    },
+  });
+  const input = b.doc.querySelector('[data-ballot-search]');
+  for (const text of ['2857', '2857 n']) {
+    input.value = text;
+    input.dispatchEvent(new Event('input'));
+    await new Promise((done) => setTimeout(done, 330));
+  }
+  assert.deepEqual(sent, ['2857', '2857 n']);
+});
+
+test('suggestion status omits counts and refinement prompts even for capped precinct lists', () => {
+  const b = boot(
+    {},
+    {
+      precincts: Array.from({ length: 15 }, (_, i) => ({
+        code: `3${i}`,
+        name: `SEA 34-3${i}`,
+        contest_ids: ['measure'],
+      })),
+    },
+  );
+  const input = b.doc.querySelector('[data-ballot-search]');
+  input.value = '3';
+  input.dispatchEvent(new Event('input'));
+  assert.equal(b.doc.querySelectorAll('[role=option]').length, 10);
+  assert.doesNotMatch(
+    b.doc.querySelector('[data-precinct-status]').textContent,
+    /\d|refine|type more/i,
+  );
+});
+
+test('empty or failed suggestions announce availability without claiming the address has no match', async () => {
+  for (const suggest of [
+    async () => [],
+    async () => {
+      throw new Error('private detail');
+    },
+  ]) {
+    const b = boot({ suggest });
+    const input = b.doc.querySelector('[data-ballot-search]');
+    input.value = 'Public civic';
+    input.dispatchEvent(new Event('input'));
+    await new Promise((done) => setTimeout(done, 330));
+    assert.equal(
+      b.doc.querySelector('[data-precinct-status]').textContent,
+      'No suggestions available.',
+    );
+  }
 });

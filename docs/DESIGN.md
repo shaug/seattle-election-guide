@@ -466,7 +466,11 @@ an exact typed code or the first suggestion never silently chooses. Direct preci
 suggestions stay usable for away/overseas voters and lookup failures. No second
 form or device position is requested. Canonical street/building scope does not
 verify an omitted unit or voter registration; ambiguous or unsupported scope fails
-closed. Loading, counts and failures are announced. Arrows activate real options;
+closed. Loading, empty results and failures are announced without result counts or
+prompts to type more. The modal keeps a stable size and position across those states;
+suggestions overlay the content below the field instead of increasing modal height.
+Keep that scrollable surface inside the modal, with usable focus/actions at a narrowed
+visual viewport or when the keyboard changes its height. Arrows activate real options;
 Enter chooses the active option without submitting; Tab never chooses. First Escape
 closes suggestions, next Escape cancels. Composition input must finish before lookup.
 Preserve native modal focus containment/return and usable phone scrolling/wrapping.

@@ -16,12 +16,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
-@pytest.mark.parametrize("width", [390, 1280])
+@pytest.mark.parametrize("width,height", [(390, 844), (1280, 1000), (390, 400)])
 def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
     tmp_path: Path,
     general_view: PublicationViewModel,  # noqa: F811
     page: str,
     width: int,
+    height: int,
 ) -> None:
     html = (
         render_html_document(
@@ -45,8 +46,15 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         const selected=fixture.candidate.candidates[0].address;
         calls.push({url,method:options.method,credentials:options.credentials,cache:options.cache});
         let response;
-        if(url.endsWith('/suggest')) response={suggestions:[{text:selected
-        ,magicKey:'public-fixture',isCollection:false}]};
+        if(url.endsWith('/suggest')) {
+          if(window.suggestionMode==='failure') throw new Error('synthetic unavailable');
+          const values=window.suggestionMode==='long'
+            ?Array.from({length:5},(_,i)=>({text:selected+' '+('Long building label ').repeat(8)+i,
+              magicKey:'synthetic-'+i,isCollection:false}))
+            :window.suggestionMode==='empty'?[]:[{text:selected,
+              magicKey:'public-fixture',isCollection:false}];
+          response={suggestions:values};
+        }
         else if(url.endsWith('/findAddressCandidates')) response=fixture.candidate;
         else if(url.endsWith('/query')) response=url.includes('ADDRESS_POINT')
         ?fixture.site:url.includes('CITY_AREA')?fixture.city:fixture.precinct;
@@ -85,6 +93,21 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
           await new Promise(done=>setTimeout(done,400));
           window.nativeInputVisited=false;window.nativeContained=true;
         })()""")
+        cdp.command(
+            "Emulation.setDeviceMetricsOverride",
+            {"width": width, "height": 320, "deviceScaleFactor": 1, "mobile": width < 500},
+            session_id=session,
+        )
+        evaluate("""(async()=>{
+          await new Promise(requestAnimationFrame);await new Promise(requestAnimationFrame);
+          const d=document.querySelector('dialog').getBoundingClientRect();
+          const l=document.querySelector('[data-ballot-options]').getBoundingClientRect();
+          const v=window.visualViewport;
+          window.nativeViewportFit=d.top>=v.offsetTop&&d.bottom<=v.offsetTop+v.height&&
+            l.top>=d.top&&l.bottom<=d.bottom&&
+            document.querySelector('dialog').style.getPropertyValue(
+              '--precinct-viewport-height')===v.height+'px';
+        })()""")
         press("Escape", 27)
         evaluate("""window.nativePopupEscape=document.querySelector('dialog').open&&
           document.querySelector('[role=listbox]').hidden;""")
@@ -94,6 +117,29 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
               document.querySelector('#voting-precinct');
               window.nativeContained &&=
                 document.querySelector('dialog').contains(document.activeElement);""")
+        evaluate("""(async()=>{
+          const input=document.querySelector('#voting-precinct');input.focus();
+          input.value='323';input.dispatchEvent(new Event('input',{bubbles:true}));
+          await new Promise(done=>setTimeout(done,400));
+        })()""")
+        pointer = cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": """(()=>{const e=document.querySelector('[role=option]');
+              const r=e.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+10}})()""",
+                "returnByValue": True,
+            },
+            session_id=session,
+        )["result"]["value"]
+        for kind in ["mousePressed", "mouseReleased"]:
+            cdp.command(
+                "Input.dispatchMouseEvent",
+                {"type": kind, **pointer, "button": "left", "clickCount": 1},
+                session_id=session,
+            )
+        evaluate("""window.nativePointerDraft=document.querySelector('dialog').open&&
+          !document.querySelector('[data-precinct-submit]').disabled&&
+          document.activeElement.id==='voting-precinct';""")
         press("Escape", 27)
         evaluate("""(async()=>{
           await new Promise(done=>setTimeout(done,0));
@@ -101,6 +147,13 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
           window.nativeFocusReturned=document.activeElement===
             document.querySelector('[data-precinct-open]');
         })()""")
+        cdp.command(
+            "Emulation.setDeviceMetricsOverride",
+            {"width": width, "height": height, "deviceScaleFactor": 1, "mobile": width < 500},
+            session_id=session,
+        )
+        evaluate("""(async()=>{await new Promise(requestAnimationFrame);
+          await new Promise(requestAnimationFrame)})()""")
 
     expression = """(async () => {
       const fixture=FIXTURE;
@@ -113,7 +166,36 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const before=location.search;
       click('[data-precinct-open]');
       const input=document.querySelector('#voting-precinct');
+      const rect=()=>{const r=document.querySelector('dialog').getBoundingClientRect();
+        return [r.x,r.y,r.width,r.height]};
+      const baseline=rect();
+      let stableGeometry=true,containedPopup=true,overlaysContent=true,longScrolls=false;
+      const geometry=()=>{
+        stableGeometry&&=rect().every((n,i)=>Math.abs(n-baseline[i])<1);
+        const list=document.querySelector('[data-ballot-options]');
+        if(!list.hidden){
+          const r=list.getBoundingClientRect();
+          const d=document.querySelector('dialog').getBoundingClientRect();
+          containedPopup&&=r.left>=d.left&&r.right<=d.right&&r.top>=d.top&&r.bottom<=d.bottom;
+          const privacy=document.querySelector('.address-privacy').getBoundingClientRect();
+          const hit=document.elementFromPoint(r.left+r.width/2,r.top+Math.min(15,r.height/2));
+          overlaysContent&&=getComputedStyle(list).position==='absolute'&&r.top<privacy.bottom&&
+            list.contains(hit);
+        }
+      };
+      for(const mode of ['normal','long','empty','failure']){
+        window.suggestionMode=mode;
+        input.value='Public civic '+mode;input.dispatchEvent(new Event('input',{bubbles:true}));
+        geometry();await wait();geometry();
+        if(mode==='long'){
+          const list=document.querySelector('[data-ballot-options]');
+          list.scrollTop=list.scrollHeight;longScrolls=list.scrollTop>0;
+          geometry();
+        }
+      }
+      window.suggestionMode='normal';
       input.value='323';input.dispatchEvent(new Event('input',{bubbles:true}));await wait();
+      geometry();
       const options=[...document.querySelectorAll('[role=option]')];
       const mixed=options.some(o=>o.dataset.kind==='precinct')&&
         options.some(o=>o.dataset.kind==='address');
@@ -132,7 +214,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const fits=bounds.left>=0&&bounds.right<=innerWidth&&
         document.documentElement.scrollWidth<=innerWidth;
       const announced=document.querySelector('[data-precinct-status]')
-        .textContent.includes('suggestions');
+        .textContent.toLowerCase().includes('suggestions');
       const enter=new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true});
       input.dispatchEvent(enter);
       const notFirst=enter.defaultPrevented&&
@@ -172,7 +254,10 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const localWorks=new URLSearchParams(location.search).get('precinct')==='3230'&&
         document.querySelector('[data-precinct-open]').textContent==='SEA 34-3230';
       click('[data-precinct-clear]');
-      return JSON.stringify({mixed,singleEditor,labelsFit,fits,announced,notFirst,draftOnly,
+      return JSON.stringify({nativeViewportFit:window.nativeViewportFit,
+        nativePointerDraft:window.nativePointerDraft,
+        stableGeometry,containedPopup,overlaysContent,longScrolls,
+        mixed,singleEditor,labelsFit,fits,announced,notFirst,draftOnly,
         ready,committed,addressShown,summaryFits,geographic,allExact,popupEscape,cancelPreserved,noLeak,
         historyLabel,localWorks,nativePopupEscape:window.nativePopupEscape,
         nativeDialogEscape:window.nativeDialogEscape,nativeInputVisited:window.nativeInputVisited,
@@ -187,6 +272,6 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         "SELECTOR",
         json.dumps("[data-publication-race-id]" if page == "guide" else "[data-comparison-race]"),
     )
-    result = _evaluate_in_chrome(path, expression, viewport=(width, 1000), interact=keyboard)
+    result = _evaluate_in_chrome(path, expression, viewport=(width, height), interact=keyboard)
     assert result.get("error") is None
     assert result and all(result.values()), json.dumps(result, sort_keys=True)

@@ -377,3 +377,14 @@ test('a stalled native-style request aborts at the bounded deadline without retr
   assert.equal(aborted, true);
   assert.equal(calls, 1);
 });
+
+test('numeric and spaced prefixes are transmitted verbatim without a street-word classifier', async () => {
+  const b = boot();
+  for (const text of ['2857', '2857 n']) {
+    assert.deepEqual(await b.lookup.suggest(text, new AbortController().signal), [suggestion]);
+  }
+  assert.deepEqual(
+    b.calls.map((call) => new URLSearchParams(call.options.body).get('text')),
+    ['2857', '2857 n'],
+  );
+});

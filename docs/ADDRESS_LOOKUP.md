@@ -60,3 +60,21 @@ it, while clear/history/reload/navigation discard it. Restored choices use the
 precinct name, never a saved address. Address text, points and provider identifiers
 never enter SEG URLs, storage, logs or analytics. Only Select commits the existing precinct draft through the
 existing router/store. Cancel/Escape and stale responses cannot commit it.
+
+## Prefix suggestions and stable dialog (#657 revision, October 28)
+
+SEG sends numeric-only and street-word prefixes through the same three-character
+threshold and 300 ms debounce; a space is not an implementation prerequisite.
+In the bounded public City Hall diagnostic, the approved provider returned zero
+suggestions for `600` and three for `600 4th` (both HTTP 200). That observation
+explains this example's context sensitivity; it does not establish that every
+numeric prefix is unsupported or certify a private address. Provider responses
+remain private diagnostic evidence, separate from product logs and factual review.
+Canonical selection, collection rejection and exact geography validation are unchanged.
+
+Suggestions overlay the content below the unified field inside a stable, viewport-bounded
+dialog. Long lists scroll independently; visual-viewport resize/offset changes keep
+it within the visible area. Loading, empty/error and option-selection announcements
+remain, without result counts or instructions to narrow the query. Physical phone
+keyboard behavior still requires actual device acceptance; emulated viewport geometry
+and native browser keyboard/pointer tests do not claim that certification.

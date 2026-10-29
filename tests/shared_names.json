@@ -433,6 +433,7 @@
     ],
     "data-precinct-fields": [
       "template",
+      "stylesheet",
       "client"
     ],
     "data-precinct-link": [
@@ -476,7 +477,8 @@
     ],
     "data-ballot-options": [
       "client",
-      "python"
+      "python",
+      "test"
     ],
     "data-ballot-search": [
       "client",
@@ -1039,7 +1041,8 @@
     "address-privacy": [
       "stylesheet",
       "client",
-      "python"
+      "python",
+      "test"
     ],
     "ballot-option": [
       "stylesheet",
