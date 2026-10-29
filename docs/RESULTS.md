@@ -226,7 +226,7 @@ and structure as any other major page, at the election's own path, rendered — 
 nav — only when that election actually has entries. It lives at
 `/e/<election-id>/updates/`; the former `/corrections/` address permanently redirects there.
 
-**Every change to the published aggregate or a position page gets an entry.** New endorsements
+**Every substantive change to the published aggregate or a position page gets an entry.** New endorsements
 qualify, including newly available publications and endorsements previously missed. So do
 corrections, withdrawals, source membership or eligibility changes, changed counts or shares,
 changed leading choices, changes to which races appear, and certified or amended results.
@@ -243,6 +243,13 @@ Several changes first published together may share a dated entry when the linked
 for every change. Correct an existing date when publication evidence disproves it, retaining the
 underlying change and a citation explaining the correction. Record archive regressions and
 restorations as public changes too; an immutable old bundle is not necessarily the last live guide.
+Minor wording or typography changes that leave election facts, voting guidance, behavior,
+coverage, evidence, and results unchanged do not need public Updates announcements. Keep their
+internal software/release history instead. For example, the Sources and Comparisons subtitle
+changes in general.62 remain recorded in [the complete internal audit](audits/minor-copy-updates-663.json)
+and the immutable release; #663 removes only their unnecessary current public announcement.
+Substantive changes above still require entries. Historical public-feed corrections retain a
+complete internal record and their publication evidence; they never rewrite accepted archives.
 Site changes that do not alter election content belong to the software changelog (O8).
 Tagline: *"We get it right, eventually."*
 
