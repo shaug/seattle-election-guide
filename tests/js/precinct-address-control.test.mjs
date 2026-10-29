@@ -417,3 +417,41 @@ test('changing suggestion lists preserve surviving rows and focus with duplicate
   assert.ok(selected[1] === second);
   assert.ok(selected[2] === first);
 });
+
+test('direct success keeps the live status container and announces selection without visible copy', () => {
+  const b = boot();
+  const status = b.doc.querySelector('[data-precinct-status]');
+  const input = b.doc.querySelector('[data-ballot-search]');
+  input.value = '3230';
+  input.dispatchEvent(new Event('input'));
+  b.doc.querySelector('[role=option][data-kind=precinct]').click();
+  assert.ok(b.doc.querySelector('[data-precinct-status]') === status);
+  assert.equal(status.getAttribute('role'), 'status');
+  assert.equal(status.getAttribute('aria-live'), 'polite');
+  assert.equal(status.hidden, false);
+  const announcement = status.querySelector('.visually-hidden');
+  assert.ok(announcement, 'direct selection needs a nonvisual live announcement');
+  assert.match(announcement.textContent, /SEA 34-3230/);
+  assert.equal(status.textContent.replace(announcement.textContent, '').trim(), '');
+  assert.equal(b.doc.querySelector('[data-precinct-submit]').disabled, false);
+  assert.equal(b.query(), '?precinct=all&races=all');
+});
+
+test('address success names the actual resolved catalog precinct and preserves privacy and loading', async () => {
+  for (const name of ['SEA 34-3230', 'Synthetic alternate catalog name']) {
+    const b = boot({}, { precincts: [{ ...contract.precincts[0], name }] });
+    const status = b.doc.querySelector('[data-precinct-status]');
+    const privacy = b.doc.querySelector('.address-privacy');
+    const notice = privacy.textContent;
+    await chooseAddress(b);
+    assert.match(status.textContent, /Checking the selected canonical address/);
+    b.pending[0]({ status: 'resolved', code: '3230' });
+    await flush();
+    assert.ok(b.doc.querySelector('[data-precinct-status]') === status);
+    assert.equal(status.textContent, `Precinct: ${name}`);
+    assert.equal(status.querySelector('.visually-hidden'), null);
+    assert.equal(privacy.textContent, notice);
+    assert.equal(b.doc.querySelector('[data-precinct-submit]').disabled, false);
+    assert.equal(b.query(), '?precinct=all&races=all');
+  }
+});

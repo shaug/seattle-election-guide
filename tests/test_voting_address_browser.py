@@ -188,6 +188,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const rect=()=>{const r=document.querySelector('dialog').getBoundingClientRect();
         return [r.x,r.y,r.width,r.height]};
       const baseline=rect();
+      const statusContainer=document.querySelector('[data-precinct-status]');
       let stableGeometry=true,containedPopup=true,overlaysContent=true,longScrolls=false;
       let actionsClear=true,compactActions=true,actionsStable=true;
       const initialActionTop=document.querySelector('.precinct-actions')
@@ -274,6 +275,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         key:'Enter',bubbles:true,cancelable:true}));await wait();
       const draftOnly=location.search===before&&document.querySelector('dialog').open;
       geometry();
+      const addressSuccessCopy=statusContainer.textContent==='Precinct: SEA 34-3230';
       const ready=!document.querySelector('[data-precinct-submit]').disabled;
       click('[data-precinct-submit]');
       const committed=new URLSearchParams(location.search).get('precinct')==='3230';
@@ -300,6 +302,18 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       click('[data-precinct-clear]');click('[data-precinct-open]');
       input.value='3230';input.dispatchEvent(new Event('input',{bubbles:true}));
       document.querySelector('[role=option][data-kind=precinct][data-code="3230"]').click();
+      geometry();
+      const announcement=statusContainer.querySelector('.visually-hidden');
+      const directSuccessSilent=!!announcement&&
+        statusContainer.textContent.replace(announcement.textContent,'').trim()===''&&
+        announcement.textContent.includes('SEA 34-3230')&&
+        getComputedStyle(announcement).position==='absolute'&&
+        announcement.getBoundingClientRect().width<=1;
+      const persistentLiveStatus=
+        document.querySelector('[data-precinct-status]')===statusContainer&&
+        statusContainer.getAttribute('role')==='status'&&
+        statusContainer.getAttribute('aria-live')==='polite'&&!statusContainer.hidden&&
+        statusContainer.getBoundingClientRect().height>0;
       click('[data-precinct-submit]');
       const localWorks=new URLSearchParams(location.search).get('precinct')==='3230'&&
         document.querySelector('[data-precinct-open]').textContent==='SEA 34-3230';
@@ -309,7 +323,8 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         nativePointerDraft:window.nativePointerDraft,
         stableGeometry,containedPopup,overlaysContent,longScrolls,actionsClear,compactActions,actionsStable,sharedInfoIcon,
         mixed,singleEditor,countyInfo,infoGeometry,labelsFit,fits,announced,notFirst,draftOnly,
-        ready,committed,addressShown,summaryFits,geographic,allExact,popupEscape,cancelPreserved,noLeak,
+        ready,addressSuccessCopy,directSuccessSilent,persistentLiveStatus,
+        committed,addressShown,summaryFits,geographic,allExact,popupEscape,cancelPreserved,noLeak,
         historyLabel,localWorks,nativePopupEscape:window.nativePopupEscape,
         nativeDialogEscape:window.nativeDialogEscape,nativeInputVisited:window.nativeInputVisited,
         nativeContained:window.nativeContained,nativeFocusReturned:window.nativeFocusReturned,

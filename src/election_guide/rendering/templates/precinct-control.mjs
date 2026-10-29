@@ -120,7 +120,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     if (option.kind === 'precinct') {
       draft = { kind: 'precinct', code: option.code, text: option.text };
       submit.disabled = false;
-      render(html`Precinct selected. Select to apply.`, status);
+      render(html`<span class="visually-hidden">Precinct selected: ${option.text}.</span>`, status);
       return;
     }
     resolving = true;
@@ -140,7 +140,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
       submit.disabled = false;
     }
     render(
-      html`${draft ? `Canonical street/building address maps to ${found?.name}. Units and voter registration are not verified. Select to apply.` : 'Address could not be confirmed. Choose a precinct suggestion or try another address.'}`,
+      html`${draft ? `Precinct: ${found?.name}` : 'Address could not be confirmed. Choose a precinct suggestion or try another address.'}`,
       status,
     );
   };
