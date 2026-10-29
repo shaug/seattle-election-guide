@@ -406,3 +406,21 @@ def test_cli_writes_failure_evidence_when_baseline_is_missing(sites: tuple[Path,
 
     assert result.exit_code == 1
     assert json.loads(report_path.read_text())["error"]
+
+
+@pytest.mark.parametrize("content_changed", [False, True])
+def test_removing_a_history_only_entry_is_reported_and_cannot_excuse_content_changes(
+    sites: tuple[Path, Path], content_changed: bool
+) -> None:
+    baseline, candidate = sites
+    _write(baseline, f"e/{GENERAL}/updates/index.html", _updates(OLD_ENTRY, NEW_ENTRY))
+    _seal(baseline)
+    if content_changed:
+        _write(candidate, f"e/{GENERAL}/index.html", _page("A changed voting decision."))
+    _seal(candidate)
+
+    report = check_updates(baseline, candidate)
+
+    assert report["result"] == ("fail" if content_changed else "pass")
+    assert report["elections"][GENERAL]["previous_entry_identities_retained"] is False
+    assert report["elections"][GENERAL]["new_entries"] == []

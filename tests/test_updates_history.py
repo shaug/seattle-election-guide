@@ -96,3 +96,28 @@ def test_audited_entry_dates_match_publication_evidence_in_pacific_time() -> Non
             assert instant.utcoffset() is not None
             assert instant.astimezone(timezone).date().isoformat() == entry["date"]
             assert evidence["url"].startswith("https://github.com/shaug/seattle-election-guide/")
+
+
+def test_minor_copy_announcement_is_audited_instead_of_publicly_announced() -> None:
+    updates = load_rendering_corrections("wa-2026-general", corrections_dir=UPDATES_DIR)
+    assert updates is not None
+    assert not any(
+        entry.headline == "Updated the Sources and Comparisons subheadings."
+        for entry in updates.entries
+    )
+
+    audit = json.loads((PROJECT_ROOT / "docs/audits/minor-copy-updates-663.json").read_text())
+    assert audit["source_revision"] == "ae819c57ef936d23eacf597fff518dd441e77ad1"
+    assert audit["release"] == "2026-general.62"
+    assert audit["authority"] == "https://github.com/shaug/seattle-election-guide/issues/663"
+    assert audit["original_entry_sha256"] == (
+        "f7da793c4b291f5862a13d0b1b656c709ef48c9e068747feac3e64f70c1367a7"
+    )
+    original = audit["original_entry"]
+    assert original["corrected_on"] == "2026-10-28"
+    assert original["headline"] == "Updated the Sources and Comparisons subheadings."
+    encoded = json.dumps(original, sort_keys=True, separators=(",", ":")).encode()
+    assert hashlib.sha256(encoded).hexdigest() == audit["original_entry_sha256"]
+    prefix = [entry.model_dump(mode="json") for entry in updates.entries[:26]]
+    encoded = json.dumps(prefix, sort_keys=True, separators=(",", ":")).encode()
+    assert hashlib.sha256(encoded).hexdigest() == audit["preserved_public_prefix_sha256"]

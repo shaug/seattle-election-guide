@@ -44,8 +44,10 @@ Neither focused target replaces `make check` before proposing a diff.
 
 After staging election-page changes, run `make check-updates` with an authenticated GitHub CLI.
 This live comparison is separate from offline `make check`; required CI runs it and production
-repeats it before upload. Add a new entry to each affected election's served Updates page in the
-same PR. See [RELEASE.md](docs/RELEASE.md#public-update-log) for the exact comparison contract and
+repeats it before upload. Substantive changes need a new entry in each affected election's served
+Updates page in the same PR; minor wording or typography with unchanged facts and behavior stays
+in internal software/release history. A conservative gate failure still needs an explicit scoped
+contract resolution, never a skipped check or a filler announcement. See [RELEASE.md](docs/RELEASE.md#public-update-log) for the exact comparison contract and
 an offline diagnostic against a retained production artifact.
 
 `make types` regenerates the client payload declarations from the Pydantic

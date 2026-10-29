@@ -15,8 +15,8 @@ limitations and retry counts; none of these release summaries supplies #497 sche
 
 ## Public update log
 
-Compare the candidate with the currently published guide before publication. Every change to
-the published aggregate or a position page requires an entry in
+Compare the candidate with the currently published guide before publication. Every substantive
+change to the published aggregate or a position page requires an entry in
 `data/corrections/<election-id>.yaml`, which renders as **Updates** at the election's
 `/updates/` address. Include the entry in the same change as the publication inputs or rendering
 behavior it describes. The stored `corrections` names remain compatible with existing releases.
@@ -28,9 +28,15 @@ and affected pages. A batch entry must link a complete account of its changes. A
 leaves published content unchanged needs no entry. The editorial rule is in
 [RESULTS.md, The updates page](RESULTS.md#the-updates-page).
 
-The update log ships with the release that publishes the changes. Keep historical entries and
-immutable release bundles intact. An update's date does not assert when a source announced its
-endorsement.
+Minor wording or typography changes with no change to election facts, voting guidance,
+behavior, coverage, evidence, or results belong in internal software/release history, not public
+Updates. Preserve the complete record when correcting an unnecessary announcement; #663's
+[subtitle-entry audit](audits/minor-copy-updates-663.json) records the original entry and its exact
+published source. This is an editorial distinction, not a release-version or admission exemption.
+
+The update log ships with the release that publishes the changes. Keep substantive historical
+entries and all immutable release bundles intact. An update's date does not assert when a source
+announced its endorsement.
 
 `make check-updates` enforces this policy after staging. It compares both elections' aggregate
 and position pages with the last successful production deployment, including the archived
@@ -56,8 +62,16 @@ the data-cutoff date and input-hash labels, and the client's top-level `data_ver
 normalized. Actual source/panel identities, counts, shares, evidence, results, and behavior remain
 compared, including visible word separators, non-breaking spaces, and preformatted text.
 CSS and code comparisons are conservative: a change to their shipped bytes may need
-an entry even when the initial visible text stays the same. An unchanged refresh needs none.
+an entry even when the initial visible text stays the same. The gate cannot classify a change's
+editorial significance. If a minor-copy correction triggers it, reconcile that actual contract
+in the scoped change; do not skip the gate, introduce an unreviewed exception, or invent a public
+announcement merely to pass. This policy adds no automatic fingerprint exemption.
+An unchanged refresh needs none.
 The Updates page itself is excluded, so correcting history does not require a recursive entry.
+An Updates-only correction may remove an unnecessary minor-copy announcement while retaining
+its full internal audit record. The report must still truthfully show that an old public entry
+identity was not retained; it may pass only while the monitored content is unchanged. That
+removal cannot excuse any concurrent substantive content change or stand in for a fresh entry.
 
 A changed election requires an additional dated/headlined entry while retaining existing entry
 identities. Editing a body, replacing an old entry, or adding an entry to another election cannot
