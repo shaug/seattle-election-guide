@@ -112,8 +112,14 @@ keeps delivery incomplete and retryable. Historical two-revision lineage checks 
 
 The November2026 general precinct catalog is a hash-bound publication input.
 Admission validates the entire reviewed electorate and every covered jurisdiction
-before building source-independent contest-ID sets. Publication and the browser
-perform no geography network requests. Voter selection changes displayed membership
+before building source-independent contest-ID sets. Publication performs no geography
+network requests. The optional #657 November2026 browser address path uses only the
+reviewed County GIS locator and County-maintained Esri site/city/precinct services.
+It validates current exact address-site geometry against the pinned catalog and
+source edit identities; detected drift or ambiguity leaves direct entry available.
+No address, coordinate, suggestion identifier or provider response is persisted by
+SEG. Provider logging/retention is undocumented; client no-store is not a claim of
+zero provider retention. See docs/ADDRESS_LOOKUP.md. Voter selection changes displayed membership
 only, preserving canonical inventory, scoring inputs, source eligibility and existing
 section order. The general-only catalog is shared by both list views; primary
 archives and legacy payloads remain readable without the optional contract.

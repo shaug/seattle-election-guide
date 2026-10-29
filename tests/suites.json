@@ -302,7 +302,7 @@
     "suite": "e2e",
     "tests": {
       "test_general_sources_capability_does_not_extend_the_legacy_payload": "contract",
-      "test_modal_lookup_link_is_required_and_does_not_admit_other_links": "integration"
+      "test_modal_requires_exact_county_info_destination": "integration"
     },
     "partition": "integration-rendering"
   },
@@ -654,6 +654,16 @@
     "partition": "integration-comparisons"
   },
   "tests/test_verification_workflows.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-comparisons"
+  },
+  "tests/test_voting_address_browser.py": {
+    "suite": "e2e",
+    "tests": {},
+    "partition": "integration-rendering"
+  },
+  "tests/test_voting_address_contract.py": {
     "suite": "contract",
     "tests": {},
     "partition": "integration-comparisons"

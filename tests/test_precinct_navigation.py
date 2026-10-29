@@ -18,6 +18,7 @@ from election_guide.rendering.documents import (
     render_html_document,
     render_sources_document,
 )
+from tests.address_lookup_fixtures import without_live_address_requests
 from tests.test_precinct_rendering import general_view as general_view
 from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
 
@@ -48,7 +49,7 @@ def navigation_site(
             "'localStorage',{get(){throw new Error('blocked by test')}});</script>",
             1,
         )
-        path.write_text(html)
+        path.write_text(without_live_address_requests(html))
     harness = tmp_path / "harness.html"
     harness.write_text('<!doctype html><iframe id="page"></iframe>')
     handler = functools.partial(SimpleHTTPRequestHandler, directory=str(tmp_path))
@@ -105,7 +106,9 @@ for(const mode of ['empty','blocked','different']) {
    if(query==='precinct=2142') {
     doc().querySelector('[data-precinct-open]').click();
     const input=doc().querySelector('#voting-precinct');input.value='1279';
-    input.dispatchEvent(new (win().Event)('change',{bubbles:true}));
+    input.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+  doc().querySelector('[role=option][data-kind=precinct]')?.click();
+  doc().querySelector('[role=option][data-kind=precinct]')?.click();
     doc().querySelector('[data-precinct-submit]').click();
    }
    const expectedQuery=query==='precinct=2142'?'precinct=1279':query;
@@ -176,7 +179,9 @@ for(const query of ['', 'precinct=all','precinct=unknown']) {
  doc().querySelector('.comparison-presets a').click();
  doc().querySelector('[data-precinct-open]').click();
     const input=doc().querySelector('#voting-precinct');input.value='1279';
- input.dispatchEvent(new (win().Event)('change',{bubbles:true}));
+ input.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+  doc().querySelector('[role=option][data-kind=precinct]')?.click();
+  doc().querySelector('[role=option][data-kind=precinct]')?.click();
     doc().querySelector('[data-precinct-submit]').click();
  const selected={url:win().location.href,ids:ids(),columns:columns()};
  const traverse=direction=>new Promise(resolve=>{
@@ -226,7 +231,9 @@ const original={url:win().location.href,ids:ids(),
 await click('[data-precinct-link="comparisons"]');
 doc().querySelector('[data-precinct-open]').click();
     const input=doc().querySelector('#voting-precinct');input.value='1279';
-input.dispatchEvent(new (win().Event)('change',{bubbles:true}));
+input.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+  doc().querySelector('[role=option][data-kind=precinct]')?.click();
+  doc().querySelector('[role=option][data-kind=precinct]')?.click();
     doc().querySelector('[data-precinct-submit]').click();
 const selected={url:win().location.href,ids:ids(),
   columns:[...doc().querySelectorAll('[data-comparison-head] [data-column-signal]')]
@@ -337,6 +344,7 @@ for(const page of ['', 'comparisons/']) {
   doc().querySelector('[data-precinct-open]').click();
   const input=doc().querySelector('#voting-precinct');input.value='1279';
   input.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+  doc().querySelector('[role=option][data-kind=precinct]')?.click();
   doc().querySelector('[data-precinct-submit]').click();
   observed=observe();
   equal(observed.visible,false,'valid selection clears visible error');
@@ -423,6 +431,7 @@ const choose=code=>{
  doc().querySelector('[data-precinct-open]').click();
  const input=doc().querySelector('#voting-precinct');input.value=code;
  input.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+  doc().querySelector('[role=option][data-kind=precinct]')?.click();
  doc().querySelector('[data-precinct-submit]').click();
 };
 await load('/e/wa-2026-general/START');
@@ -436,6 +445,7 @@ const before=win().location.href;
 doc().querySelector('[data-precinct-open]').click();
 const input=doc().querySelector('#voting-precinct');input.value='1279';
 input.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+  doc().querySelector('[role=option][data-kind=precinct]')?.click();
 doc().querySelector('[data-precinct-cancel]').click();
 equal(win().location.href,before,'Cancel retains All URL');check('2502','all','Cancel');
 choose('1279');check('1279','all','new precinct preserves override');

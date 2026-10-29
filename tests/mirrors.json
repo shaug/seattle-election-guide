@@ -432,6 +432,15 @@
         "text:All Seattle ballot races"
       ],
       "note": "The payload publishes every scope label from the same generator the template renders, so the client reads the label rather than composing it. The literal that remains is a fallback for a select value the payload does not know, which the rendered markup cannot produce."
+    },
+    "precinct-label": {
+      "client": "precinct-control.mjs unified option type label and precinct-only field label",
+      "server": "_precinct_control.html.j2 filter heading",
+      "proof": "shared-literal",
+      "evidence": [
+        "text:Precinct"
+      ],
+      "note": "The existing filter heading and unified-search precinct type badge use the same public vocabulary. This is one constant word, not duplicated arithmetic or selection logic; derived shared-text evidence is its drift check, following comparison-race-heading. The unified controller test also asserts the visible Precinct badge on a real local suggestion. Retaining that badge and existing heading is intentional; changing copy merely to hide the mirror or adding a payload field for one word would not simplify this feature."
     }
   },
   "deleted": {

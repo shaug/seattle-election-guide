@@ -854,3 +854,36 @@ to preserve legacy section-filter membership separately from display headings.
 It is omitted from legacy/primary payloads; old payloads fall back to `section_id`.
 No new client state, storage or lookup is added.
 Validation and preservation checks live in `tests/test_ballot_order.py`.
+
+## Optional address lookup (#657)
+
+The admitted November2026 precinct contract may carry an explicit catalog-bound
+address capability and reviewed jurisdiction/source identities. Primary, legacy,
+unsupported and mismatched capabilities issue no lookup requests. No capability is
+inferred from URL paths, panel labels or the wall clock; general artifacts may retain
+their own pinned binding. Detected source drift fails closed, without claiming an
+atomic public GIS snapshot or fetching entire polygon layers per lookup.
+
+`voting-address-lookup.mjs` is the narrow storage-free network adapter, using fixed
+approved endpoints and bounded anonymous requests (address-bearing form POST;
+fixed address-free metadata GET). `precinct-control.mjs` owns
+one ephemeral address-or-precinct combobox, tagged local/remote suggestions,
+request/session generations and the shared precinct draft. Numeric input does not
+infer a kind. Local matches remain available while address suggestions load or fail.
+The fixed-size dialog adapts to the visual viewport height/offset (including keyboard
+resize); the positioned suggestion list is independently scrollable and capped to
+actual space below the field within the dialog. Results/status lengths never size
+the modal. Announce loading/availability/empty/error states without counts or refine prompts.
+The compact county information anchor reuses the renderer-owned historic destination;
+its static new-tab/no-referrer link joins the modal focus loop without receiving draft text.
+Address text is an ephemeral lookup draft. After Select, both the applied summary
+and reopened editor derive their identity from the resolved precinct, just as direct
+selection does; no address label overrides that state. Cancel preserves the applied
+precinct, and clear/history/reload/navigation use the existing precinct owner.
+Abort and generation checks prevent stale work from changing that
+draft. Only existing Select calls the existing router and precinct-memory owner;
+addresses/points/provider identifiers never enter SEG URLs, storage or logs. Keep
+pure membership/scoring modules offline. Check: `voting-address-lookup.test.mjs`
+and `precinct-address-control.test.mjs` exercise admission, privacy and cancellation;
+browser navigation tests preserve actual general/primary behavior. This adds no
+storage exception or ratchet ceiling.

@@ -10,10 +10,12 @@ const PRECINCT_MARKUP = readFileSync(
     import.meta.url,
   ),
   'utf8',
-).replace(
-  '{{ precinct_lookup_href }}',
-  'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
-);
+)
+  .replace(
+    '{{ precinct_lookup_href }}',
+    'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
+  )
+  .replaceAll('{{ opens_in_new_tab }}', ' (opens in a new tab)');
 installDom();
 const { wirePrecinctControl } = await import(
   '../../src/election_guide/rendering/templates/precinct-control.mjs'
@@ -81,7 +83,8 @@ test('restore, exact search choice, clear, reload link and history preserve trut
   b.document.querySelector('[data-precinct-open]').click();
   const input = b.document.querySelector('input');
   input.value = 'SEA 46-1279';
-  input.dispatchEvent(new Event('change'));
+  input.dispatchEvent(new Event('input'));
+  b.document.querySelector('[role=option][data-kind=precinct]').click();
   b.document
     .querySelector('[data-precinct-form]')
     .dispatchEvent(new Event('submit', { cancelable: true }));
@@ -91,12 +94,32 @@ test('restore, exact search choice, clear, reload link and history preserve trut
   assert.equal(b.calls.at(-1).ids, null);
   assert.equal(input.value, '');
 });
-test('a precinct control has one searchable labeled input and an ordinary official link', () => {
+test('one labelled combobox and styled list has one named static county information link', () => {
   const b = boot();
-  assert.equal(b.document.querySelectorAll('input[list]').length, 1);
+  assert.equal(b.document.querySelectorAll('input[role=combobox]').length, 1);
+  assert.equal(b.document.querySelector('datalist'), null);
+  assert.ok(b.document.querySelector('[role=listbox]'));
   assert.equal(b.document.querySelector('label').htmlFor, b.document.querySelector('input').id);
+  const info = b.document.querySelector('dialog a.precinct-info');
+  assert.ok(info);
+  assert.equal(b.document.querySelectorAll('dialog a').length, 1);
   assert.equal(
-    b.document.querySelector('a[target="_blank"]').href,
+    info.href,
+    'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
+  );
+  assert.equal(info.target, '_blank');
+  assert.equal(info.rel, 'noopener noreferrer');
+  assert.equal(
+    info.getAttribute('aria-label'),
+    'Find your precinct on the county map (opens in a new tab)',
+  );
+  assert.equal(info.title, info.getAttribute('aria-label'));
+  b.document.querySelector('[data-precinct-open]').click();
+  const input = b.document.querySelector('input');
+  input.value = 'Transient address text';
+  input.dispatchEvent(new Event('input'));
+  assert.equal(
+    info.href,
     'https://experience.arcgis.com/experience/1374a449f39f4cd098643466dab0826a',
   );
 });

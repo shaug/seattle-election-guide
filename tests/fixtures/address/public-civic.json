@@ -1,0 +1,397 @@
+{
+  "candidate": {
+    "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+    },
+    "candidates": [
+      {
+        "address": "600 4TH AVE, Seattle, WA, 98104",
+        "location": {
+          "x": -122.33050089610471,
+          "y": 47.603955184986674
+        },
+        "score": 100,
+        "attributes": {
+          "Match_addr": "600 4TH AVE, Seattle, WA, 98104",
+          "Addr_type": "PointAddress",
+          "AddNum": "600",
+          "StName": "4TH",
+          "StType": " AVE",
+          "StDir": "",
+          "UnitType": "",
+          "UnitName": "",
+          "SubAddr": "",
+          "StAddr": "600 4TH AVE",
+          "City": "Seattle",
+          "Postal": "98104"
+        },
+        "extent": {
+          "xmin": -122.33155769499318,
+          "ymin": 47.60295518514466,
+          "xmax": -122.3294441751517,
+          "ymax": 47.60495518482867
+        }
+      }
+    ]
+  },
+  "provenance": [
+    {
+      "file": "civic-selected-suggestion-post.response.json",
+      "sha256": "af2f6179bf823fe90d31dcb67b90c8874ddfcbe5df3ab670ddc4e0cb4af40c71",
+      "scope": "Retained independent review public civic fixtures; no personal voter address or live test request."
+    },
+    {
+      "file": "civic-exact-address-feature-post.response.json",
+      "sha256": "2db9b5d76c35d55f9c303f0774aca2e23e9099111da6bbba2861d2a68480c938",
+      "scope": "Retained independent review public civic fixtures; no personal voter address or live test request."
+    },
+    {
+      "file": "civic-current-site-city.response.json",
+      "sha256": "664b0f8dac476abe523c5301459e9c01a92aea7324076984aa452cb3cec86a7c",
+      "scope": "Retained independent review public civic fixtures; no personal voter address or live test request."
+    },
+    {
+      "file": "civic-current-site-precinct.response.json",
+      "sha256": "c6391e44fd07dc1379ca0dbcf349be6df41e1f7aaa6ea96f89893f7475f019bf",
+      "scope": "Retained independent review public civic fixtures; no personal voter address or live test request."
+    },
+    {
+      "file": "civic-floor.response.json",
+      "sha256": "05c6262b1c8de8a7d80e7af9eef6ef46ba81f922e2f8c47e89bc426b7009cb42",
+      "scope": "Retained independent review public civic fixtures; no personal voter address or live test request."
+    },
+    {
+      "file": "postal-seattle-city.response.json",
+      "sha256": "1fc423ae159c0a6192968e2e21dcdcc14f433100443c8a90144534292b03c808",
+      "scope": "Retained independent review public civic fixtures; no personal voter address or live test request."
+    }
+  ],
+  "site": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "geometryType": "esriGeometryPoint",
+    "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+    },
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "sqlType": "sqlTypeOther",
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "SITEID",
+        "type": "esriFieldTypeGUID",
+        "alias": "ESITEID",
+        "sqlType": "sqlTypeOther",
+        "length": 38,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "ADDR_FULL",
+        "type": "esriFieldTypeString",
+        "alias": "FullAddr",
+        "sqlType": "sqlTypeOther",
+        "length": 120,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "CTYNAME",
+        "type": "esriFieldTypeString",
+        "alias": "CTYNAME",
+        "sqlType": "sqlTypeOther",
+        "length": 28,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "POSTALCTYNAME",
+        "type": "esriFieldTypeString",
+        "alias": "POSTALCTYNAME",
+        "sqlType": "sqlTypeOther",
+        "length": 28,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "ZIP5",
+        "type": "esriFieldTypeString",
+        "alias": "ZIP5",
+        "sqlType": "sqlTypeOther",
+        "length": 5,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "Building",
+        "type": "esriFieldTypeString",
+        "alias": "Building",
+        "sqlType": "sqlTypeOther",
+        "length": 75,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "Unit",
+        "type": "esriFieldTypeString",
+        "alias": "Unit",
+        "sqlType": "sqlTypeOther",
+        "length": 75,
+        "domain": null,
+        "defaultValue": null
+      }
+    ],
+    "features": [
+      {
+        "attributes": {
+          "OBJECTID": 25342,
+          "SITEID": "61a5631f-db20-4549-96d5-f6648e5007ba",
+          "ADDR_FULL": "600 4TH AVE",
+          "CTYNAME": "Seattle",
+          "POSTALCTYNAME": "SEATTLE",
+          "ZIP5": "98104",
+          "Building": null,
+          "Unit": null
+        },
+        "geometry": {
+          "x": -122.33050009124702,
+          "y": 47.6039511211812
+        }
+      }
+    ]
+  },
+  "city": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+      "wkid": 2926,
+      "latestWkid": 2926
+    },
+    "fields": [
+      {
+        "name": "CITYNAME",
+        "type": "esriFieldTypeString",
+        "alias": "CITYNAME",
+        "sqlType": "sqlTypeOther",
+        "length": 75,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "JURIS",
+        "type": "esriFieldTypeString",
+        "alias": "JURIS",
+        "sqlType": "sqlTypeOther",
+        "length": 2,
+        "domain": null,
+        "defaultValue": null
+      }
+    ],
+    "features": [
+      {
+        "attributes": {
+          "CITYNAME": "Seattle",
+          "JURIS": "SE"
+        }
+      }
+    ]
+  },
+  "precinct": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+      "wkid": 2926,
+      "latestWkid": 2926
+    },
+    "fields": [
+      {
+        "name": "VOTDST",
+        "type": "esriFieldTypeString",
+        "alias": "VOTDST",
+        "sqlType": "sqlTypeOther",
+        "length": 4,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "NAME",
+        "type": "esriFieldTypeString",
+        "alias": "NAME",
+        "sqlType": "sqlTypeOther",
+        "length": 50,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "CONGDST",
+        "type": "esriFieldTypeString",
+        "alias": "CONGDST",
+        "sqlType": "sqlTypeOther",
+        "length": 4,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "LEGDST",
+        "type": "esriFieldTypeString",
+        "alias": "LEGDST",
+        "sqlType": "sqlTypeOther",
+        "length": 4,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "KCCDST",
+        "type": "esriFieldTypeString",
+        "alias": "KCCDST",
+        "sqlType": "sqlTypeOther",
+        "length": 4,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "SCC",
+        "type": "esriFieldTypeString",
+        "alias": "SCC",
+        "sqlType": "sqlTypeOther",
+        "length": 5,
+        "domain": null,
+        "defaultValue": null
+      }
+    ],
+    "features": [
+      {
+        "attributes": {
+          "VOTDST": "3230",
+          "NAME": "SEA 34-3230",
+          "CONGDST": "7",
+          "LEGDST": "34",
+          "KCCDST": "8",
+          "SCC": "7"
+        }
+      }
+    ]
+  },
+  "floor": {
+    "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+    },
+    "candidates": [
+      {
+        "address": "600 4TH AVE, Seattle, WA, 98104",
+        "location": {
+          "x": -122.33050089610471,
+          "y": 47.603955184986674
+        },
+        "score": 100,
+        "attributes": {
+          "Status": "M",
+          "Score": 100,
+          "Match_addr": "600 4TH AVE, Seattle, WA, 98104",
+          "LongLabel": "600 4TH AVE, Seattle, WA, 98104",
+          "ShortLabel": "600 4TH AVE",
+          "Addr_type": "PointAddress",
+          "Type": "",
+          "PlaceName": "",
+          "Place_addr": "600 4TH AVE, Seattle, WA, 98104",
+          "Phone": "",
+          "URL": "",
+          "Rank": 20,
+          "AddBldg": "",
+          "AddNum": "600",
+          "AddNumFrom": "",
+          "AddNumTo": "",
+          "AddRange": "",
+          "Side": "",
+          "StPreDir": "",
+          "StPreType": "",
+          "StName": "4TH",
+          "StType": "AVE",
+          "StDir": "",
+          "StPreDir1": "",
+          "StPreType1": "",
+          "StName1": "",
+          "StType1": "",
+          "StDir1": "",
+          "StPreDir2": "",
+          "StPreType2": "",
+          "StName2": "",
+          "StType2": "",
+          "StDir2": "",
+          "BldgType": "",
+          "BldgName": "",
+          "LevelType": "",
+          "LevelName": "",
+          "UnitType": "",
+          "UnitName": "",
+          "SubAddr": "",
+          "StAddr": "600 4TH AVE",
+          "Block": "",
+          "Sector": "",
+          "Nbrhd": "",
+          "District": "",
+          "City": "Seattle",
+          "MetroArea": "",
+          "Subregion": "KING",
+          "Region": "WA",
+          "RegionAbbr": "WA",
+          "Territory": "",
+          "Zone": "",
+          "Postal": "98104",
+          "PostalExt": "1822",
+          "Country": "",
+          "CntryName": "USA",
+          "LangCode": "ENG",
+          "Distance": 0,
+          "X": 1271093.2900157208,
+          "Y": 223897.13733207513,
+          "DisplayX": 1271093.2900157208,
+          "DisplayY": 223897.13733207513,
+          "Xmin": 1270839.5390805444,
+          "Xmax": 1271347.0315354425,
+          "Ymin": 223537.24208192434,
+          "Ymax": 224257.03597892792,
+          "ExInfo": "",
+          "PIN": "0942000810"
+        },
+        "extent": {
+          "xmin": -122.33155769499318,
+          "ymin": 47.60295518514466,
+          "xmax": -122.3294441751517,
+          "ymax": 47.60495518482867
+        }
+      }
+    ]
+  },
+  "postal_city": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+      "name": "OBJECTID",
+      "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "features": []
+  }
+}

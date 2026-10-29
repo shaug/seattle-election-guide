@@ -129,3 +129,17 @@ The following October26 requirement is superseded, retained as decision history:
 > Source-composed geography fixtures support implementation but do not satisfy the
 > release requirement for actual official precinct/part/style ballot examples. A
 > working preview and that separate acceptance remain required before production.
+
+## Optional County address lookup (#657, October28,2026)
+
+After independent adversarial review, Scott explicitly approved sending typed
+voting-address text to King County GIS and selected canonical address/location to
+County-maintained Esri services, with SEG retaining only the precinct. Provider
+logging and retention are undocumented; client controls do not promise zero
+provider retention. This supersedes the earlier deferred-address exclusion only
+for this optional same-dialog path. No World geocoder, credential, paid service,
+SDK, backend proxy or device location is approved. Publication stays deterministic
+and offline. Exact current sites, incorporated Seattle and one matching reviewed
+precinct/district tuple are required; ambiguity and detected drift use direct entry.
+Known addressable-site geography is not unit/voter-registration verification or a
+complete official-ballot certification. Existing source/scoring/primary rules hold.
