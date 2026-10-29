@@ -9,37 +9,19 @@ from election_guide.publication.models import PublicationViewModel
 from election_guide.rendering.browser import _CdpSocket  # pyright: ignore[reportPrivateUsage]
 from election_guide.rendering.config import read_rendering_configuration
 from election_guide.rendering.documents import render_comparison_document, render_html_document
+from tests.test_precinct_navigation import (
+    HARNESS,
+    navigation_site,  # noqa: F401 # pyright: ignore[reportUnusedImport]
+)
 from tests.test_precinct_rendering import general_view  # noqa: F401 # pyright: ignore[reportUnusedImport]
 from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-@pytest.mark.parametrize("page", ["guide", "compare"])
-@pytest.mark.parametrize("width,height", [(390, 844), (1280, 1000), (390, 400)])
-def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
-    tmp_path: Path,
-    general_view: PublicationViewModel,  # noqa: F811
-    page: str,
-    width: int,
-    height: int,
-) -> None:
-    html = (
-        render_html_document(
-            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
-        )
-        if page == "guide"
-        else render_comparison_document(
-            general_view,
-            public_site_url="https://seattleelections.guide",
-            project_url=read_rendering_configuration(
-                ROOT / "config/rendering/guide.yaml"
-            ).project_url,
-        )
-    )
-    path = tmp_path / "address.html"
+def _address_transport_mock() -> str:
     fixture = json.loads((ROOT / "tests/fixtures/address/public-civic.json").read_text())
-    mock = (
+    return (
         "const fixture="
         + json.dumps(fixture)
         + ";"
@@ -73,6 +55,32 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       };
 """
     )
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+@pytest.mark.parametrize("width,height", [(390, 844), (1280, 1000), (390, 400)])
+def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
+    tmp_path: Path,
+    general_view: PublicationViewModel,  # noqa: F811
+    page: str,
+    width: int,
+    height: int,
+) -> None:
+    html = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view,
+            public_site_url="https://seattleelections.guide",
+            project_url=read_rendering_configuration(
+                ROOT / "config/rendering/guide.yaml"
+            ).project_url,
+        )
+    )
+    path = tmp_path / "address.html"
+    mock = _address_transport_mock()
     path.write_text(html.replace("<head>", "<head><script>" + mock + "</script>", 1))
 
     def keyboard(cdp: _CdpSocket, session: str) -> None:
@@ -175,11 +183,9 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
           await new Promise(requestAnimationFrame)})()""")
 
     expression = """(async () => {
-      const fixture=FIXTURE;
       const calls=window.addressCalls;
       const contract=JSON.parse(document.querySelector('[data-client-payload]').textContent)
         .precinct_ballot;
-      const selected=fixture.candidate.candidates[0].address;
       const wait=()=>new Promise(done=>setTimeout(done,400));
       const click=selector=>document.querySelector(selector).click();
       const before=location.search;
@@ -281,7 +287,13 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const ready=!document.querySelector('[data-precinct-submit]').disabled;
       click('[data-precinct-submit]');
       const committed=new URLSearchParams(location.search).get('precinct')==='3230';
-      const addressShown=document.querySelector('[data-precinct-open]').textContent===selected;
+      const precinctShown=document.querySelector('[data-precinct-open]')
+        .textContent==='SEA 34-3230';
+      const filterRect=()=>{const r=document.querySelector('.filter-control-bar')
+        .getBoundingClientRect();
+        const button=document.querySelector('[data-precinct-open]').getBoundingClientRect();
+        return [r.x,r.y,r.width,r.height,button.width,button.height]};
+      const addressFilterRect=filterRect();
       const summaryFits=document.documentElement.scrollWidth<=innerWidth;
       const ids=()=>[...document.querySelectorAll(SELECTOR)].filter(r=>!r.hidden)
         .map(r=>r.dataset.publicationRaceId??r.dataset.comparisonRace).sort();
@@ -290,16 +302,32 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       document.querySelector('#complete-filter,[data-comparison-all-races]').click();
       const allExact=JSON.stringify(ids())===JSON.stringify([...expected].sort());
       click('[data-precinct-open]');
+      const reopenedPrecinct=input.value==='SEA 34-3230';
       input.value='323';input.dispatchEvent(new Event('input',{bubbles:true}));await wait();
       const esc=new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true});
       input.dispatchEvent(esc);
       const popupEscape=esc.defaultPrevented&&document.querySelector('dialog').open;
       click('[data-precinct-cancel]');
       const cancelPreserved=new URLSearchParams(location.search).get('precinct')==='3230'&&
-        input.value===''&&document.querySelector('[data-precinct-open]').textContent===selected;
+        input.value===''&&document.querySelector('[data-precinct-open]')
+          .textContent==='SEA 34-3230';
       const noLeak=!location.href.includes('600')&&
         localStorage.getItem('seg-precinct-v1:wa-2026-general')==='3230';
-      window.dispatchEvent(new Event('popstate'));
+      const traverse=direction=>new Promise((resolve,reject)=>{
+        const timeout=setTimeout(()=>reject(new Error('missing real '+direction)),2000);
+        window.addEventListener('popstate',()=>{clearTimeout(timeout);setTimeout(resolve,20)},
+          {once:true});history[direction]();
+      });
+      history.pushState({},'',location.href);
+      click('[data-precinct-clear]');
+      await traverse('back');
+      const backPrecinct=document.querySelector('[data-precinct-open]')
+        .textContent==='SEA 34-3230'&&
+        new URLSearchParams(location.search).get('precinct')==='3230';
+      await traverse('forward');
+      const forwardClear=new URLSearchParams(location.search).get('precinct')==='all'&&
+        document.querySelector('[data-precinct-clear]')===null;
+      await traverse('back');
       const historyLabel=document.querySelector('[data-precinct-open]').textContent==='SEA 34-3230';
       click('[data-precinct-clear]');click('[data-precinct-open]');
       input.value='3230';input.dispatchEvent(new Event('input',{bubbles:true}));
@@ -319,6 +347,10 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       click('[data-precinct-submit]');
       const localWorks=new URLSearchParams(location.search).get('precinct')==='3230'&&
         document.querySelector('[data-precinct-open]').textContent==='SEA 34-3230';
+      const directFilterRect=filterRect();
+      const sameFilterGeometry=addressFilterRect.every((v,i)=>Math.abs(v-directFilterRect[i])<1);
+      measurements.push({state:'address-applied',filter:addressFilterRect},
+        {state:'direct-applied',filter:directFilterRect});
       click('[data-precinct-clear]');
       return JSON.stringify({nativeInfoFocus:window.nativeInfoFocus,
         nativeViewportFit:window.nativeViewportFit,
@@ -326,7 +358,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         stableGeometry,containedPopup,overlaysContent,longScrolls,actionsClear,compactActions,actionsStable,sharedInfoIcon,
         mixed,singleEditor,countyInfo,infoGeometry,labelsFit,fits,announced,notFirst,draftOnly,
         ready,addressSuccessCopy,directSuccessSilent,persistentLiveStatus,
-        committed,addressShown,summaryFits,geographic,allExact,popupEscape,cancelPreserved,noLeak,
+        committed,precinctShown,reopenedPrecinct,sameFilterGeometry,backPrecinct,forwardClear,summaryFits,geographic,allExact,popupEscape,cancelPreserved,noLeak,
         historyLabel,localWorks,nativePopupEscape:window.nativePopupEscape,
         nativeDialogEscape:window.nativeDialogEscape,nativeInputVisited:window.nativeInputVisited,
         nativeContained:window.nativeContained,nativeFocusReturned:window.nativeFocusReturned,
@@ -335,8 +367,6 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
           c.credentials==='omit'&&c.cache==='no-store'),
         clear:new URLSearchParams(location.search).get('precinct')==='all',measurements});
     })().catch(error=>JSON.stringify({error:String(error.message)}))""".replace(
-        "FIXTURE", json.dumps(fixture)
-    ).replace(
         "SELECTOR",
         json.dumps("[data-publication-race-id]" if page == "guide" else "[data-comparison-race]"),
     )
@@ -348,3 +378,49 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
     assert result and all(result.values()), json.dumps(
         {**result, "measurements": measurements}, sort_keys=True
     )
+
+
+def test_address_applied_precinct_survives_real_reload(
+    navigation_site: tuple[Path, str],  # noqa: F811
+) -> None:
+    path, url = navigation_site
+    for suffix in ["", "comparisons/"]:
+        page = path.parent / "e/wa-2026-general" / suffix / "index.html"
+        page.write_text(
+            page.read_text().replace(
+                "</script>", "</script><script>" + _address_transport_mock() + "</script>", 1
+            )
+        )
+    expression = (
+        "(async()=>{"
+        + HARNESS
+        + """
+for(const suffix of ['', 'comparisons/']) {
+ localStorage.clear();
+ await load('/e/wa-2026-general/'+suffix+'?precinct=all');
+ doc().querySelector('[data-precinct-open]').click();
+ const input=doc().querySelector('#voting-precinct');
+ input.value='Public civic';
+ input.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+ await new Promise(resolve=>setTimeout(resolve,400));
+ doc().querySelector('[role=option][data-kind=address]').click();
+ await new Promise(resolve=>setTimeout(resolve,100));
+ equal(doc().querySelector('[data-precinct-submit]').disabled,false,'resolved address ready');
+ doc().querySelector('[data-precinct-submit]').click();
+ equal(doc().querySelector('[data-precinct-open]').textContent,'SEA 34-3230','address applied');
+ const selectedIds=ids();
+ const selectedURL=win().location.href;
+ await load(selectedURL);
+ equal(win().location.href,selectedURL,'real reload URL');
+ equal(ids(),selectedIds,'real reload membership');
+ equal(doc().querySelector('[data-precinct-open]').textContent,'SEA 34-3230','reload precinct');
+ doc().querySelector('[data-precinct-open]').click();
+ equal(doc().querySelector('#voting-precinct').value,'SEA 34-3230','reload reopened precinct');
+ doc().querySelector('[data-precinct-cancel]').click();
+}
+return JSON.stringify({failures});})()
+.catch(error=>JSON.stringify({harnessError:String(error),stack:error.stack}))"""
+    )
+    result = _evaluate_in_chrome(path, expression, initial_url=url)
+    assert result.get("harnessError") is None, result
+    assert result["failures"] == [], result

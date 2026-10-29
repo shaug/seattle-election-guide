@@ -479,13 +479,14 @@ Enter chooses the active option without submitting; Tab never chooses. First Esc
 closes suggestions, next Escape cancels. Composition input must finish before lookup.
 Preserve native modal focus containment/return and usable phone scrolling/wrapping.
 
-Cancel, close, re-edit and history discard transient draft work. A committed address
-label may appear in the current page's summary and reopened editor; it stays only
-in page memory. Cancel preserves that applied label. Clear, history, reload and
-navigation discard it; restored/shared choices show the precinct name. No address
-enters URL or device memory. Explain County/Esri transmission and possible provider
-retention beside the unified field before lookup. SEG retains only the existing
-precinct code. See ADDRESS_LOOKUP.md.
+An address is only a lookup aid. After Select, the summary and reopened editor show
+its resolved precinct, exactly as direct precinct selection does. Cancel preserves
+the applied precinct. Cancel, close, re-edit and history discard transient address
+drafts; no address label remains as applied state. Clear removes the precinct;
+history, reload and shared links restore precinct identity. No address enters URL
+or device memory. Explain County/Esri transmission and possible provider retention
+beside the unified field before lookup. SEG retains only the existing precinct code.
+See ADDRESS_LOOKUP.md.
 
 ## November 2026 ballot sequence
 

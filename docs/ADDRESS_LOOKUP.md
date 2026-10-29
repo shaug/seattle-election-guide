@@ -53,13 +53,14 @@ King County's [terms](https://kingcounty.gov/en/dept/kcit/data-information-servi
 permit nonsale use of county-owned information subject to third-party limits and
 as-is/no-warranty conditions; they are not an unlimited traffic entitlement.
 
-Draft address text, suggestion identifiers, points and responses are ephemeral and
-cleared on dialog close/history/re-edit. A committed canonical address label may
-remain only in the current page memory for its applied precinct; Cancel preserves
-it, while clear/history/reload/navigation discard it. Restored choices use the
-precinct name, never a saved address. Address text, points and provider identifiers
-never enter SEG URLs, storage, logs or analytics. Only Select commits the existing precinct draft through the
-existing router/store. Cancel/Escape and stale responses cannot commit it.
+Address text is only a lookup aid. Draft text, suggestion identifiers, points and
+responses are ephemeral and cleared on Select, dialog close, history or re-edit.
+The applied summary and reopened editor always show the resolved precinct, exactly
+as direct precinct selection does. Cancel preserves that applied precinct; clear
+removes it, and history/reload/navigation restore only precinct identity. Address
+text, points and provider identifiers never enter SEG URLs, storage, logs or
+analytics. Only Select commits the existing precinct draft through the existing
+router/store. Cancel/Escape and stale responses cannot commit it.
 
 ## Prefix suggestions and stable dialog (#657 revision, October 28)
 

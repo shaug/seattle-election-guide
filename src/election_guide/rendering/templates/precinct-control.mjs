@@ -56,7 +56,6 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
       : null;
   let code = /** @type {string|null} */ (null);
   let draft = /** @type {BallotChoice|null} */ (null);
-  let appliedAddress = /** @type {{code:string,text:string}|null} */ (null);
   let storageWarning = '';
   let generation = 0;
   let debounce = /** @type {ReturnType<typeof setTimeout>|undefined} */ (undefined);
@@ -245,8 +244,8 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     if (area)
       draft = {
         code: area.code,
-        kind: appliedAddress ? 'address' : 'precinct',
-        text: appliedAddress?.text ?? area.name,
+        kind: 'precinct',
+        text: area.name,
       };
     input().value = draft?.text ?? '';
     submit.disabled = draft === null;
@@ -261,9 +260,8 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     const selection = readPrecinctSelection(router.controlSearch(), contract);
     code = selection.code;
     const area = contract.precincts.find((p) => p.code === code);
-    if (appliedAddress?.code !== code) appliedAddress = null;
     render(
-      html`<button class="precinct-open${area ? ' precinct-selected' : ''}" type="button" data-precinct-open aria-haspopup="dialog" aria-controls="precinct-dialog" @click=${open}>${appliedAddress?.text ?? area?.name ?? SELECT_LABEL}</button>${area ? html`<button class="precinct-clear" type="button" data-precinct-clear aria-label="Clear precinct selection" @click=${() => choose(null)}>×</button>` : nothing}`,
+      html`<button class="precinct-open${area ? ' precinct-selected' : ''}" type="button" data-precinct-open aria-haspopup="dialog" aria-controls="precinct-dialog" @click=${open}>${area?.name ?? SELECT_LABEL}</button>${area ? html`<button class="precinct-clear" type="button" data-precinct-clear aria-label="Clear precinct selection" @click=${() => choose(null)}>×</button>` : nothing}`,
       summary,
     );
     const warning =
@@ -275,9 +273,8 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     onSelection(resolvePrecinct(contract, code).contestIds, reset || Boolean(area));
     refreshPrecinctLinks(contract, router.controlSearch());
   };
-  /** @param {string|null} next @param {string|null} [address] */
-  const choose = (next, address = null) => {
-    appliedAddress = next && address ? { code: next, text: address } : null;
+  /** @param {string|null} next */
+  const choose = (next) => {
     const remembered =
       next === null
         ? clearPrecinct(contract.election_id)
@@ -305,7 +302,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   if (heading && lookup) heading.textContent = 'Select an address or precinct';
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    if (draft && !composing) choose(draft.code, draft.kind === 'address' ? draft.text : null);
+    if (draft && !composing) choose(draft.code);
   });
   cancel.addEventListener('click', () => {
     discard();
@@ -349,7 +346,6 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   update();
   router.onHistoryChange(() => {
     storageWarning = '';
-    appliedAddress = null;
     update();
     if (dialog.open) dialog.close();
   });

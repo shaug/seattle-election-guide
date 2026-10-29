@@ -876,8 +876,11 @@ actual space below the field within the dialog. Results/status lengths never siz
 the modal. Announce loading/availability/empty/error states without counts or refine prompts.
 The compact county information anchor reuses the renderer-owned historic destination;
 its static new-tab/no-referrer link joins the modal focus loop without receiving draft text.
-A selected address label may stay in page memory for its applied precinct, but
-clear/history/reload/navigation discard it; only the precinct survives restoration. Abort and generation checks prevent stale work from changing that
+Address text is an ephemeral lookup draft. After Select, both the applied summary
+and reopened editor derive their identity from the resolved precinct, just as direct
+selection does; no address label overrides that state. Cancel preserves the applied
+precinct, and clear/history/reload/navigation use the existing precinct owner.
+Abort and generation checks prevent stale work from changing that
 draft. Only existing Select calls the existing router and precinct-memory owner;
 addresses/points/provider identifiers never enter SEG URLs, storage or logs. Keep
 pure membership/scoring modules offline. Check: `voting-address-lookup.test.mjs`

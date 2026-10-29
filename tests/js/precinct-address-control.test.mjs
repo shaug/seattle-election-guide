@@ -259,23 +259,23 @@ test('a local choice wins over an older in-flight address resolution', async () 
   assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
 });
 
-test('applied address label is ephemeral; cancel retains it and history restores only precinct', async () => {
+test('address application and reopening use precinct identity; cancel preserves it', async () => {
   const b = boot();
   await chooseAddress(b);
   b.pending[0]({ status: 'resolved', code: '3230' });
   await flush();
   b.doc.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true }));
-  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'Public civic building');
+  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
   assert.equal(window.localStorage.getItem('seg-precinct-v1:wa-2026-general'), '3230');
   assert.equal(b.query().includes('Public'), false);
   b.doc.querySelector('[data-precinct-open]').click();
   const input = b.doc.querySelector('[data-ballot-search]');
-  assert.equal(input.value, 'Public civic building');
+  assert.equal(input.value, 'SEA 34-3230');
   input.value = 'Uncommitted query';
   input.dispatchEvent(new Event('input'));
   b.doc.querySelector('[data-precinct-cancel]').click();
   assert.equal(input.value, '');
-  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'Public civic building');
+  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
   b.history();
   assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
 });
