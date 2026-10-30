@@ -182,6 +182,51 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         evaluate("""(async()=>{await new Promise(requestAnimationFrame);
           await new Promise(requestAnimationFrame)})()""")
 
+        evaluate("""(async()=>{
+          document.querySelector('[data-precinct-open]').click();
+          const input=document.querySelector('#voting-precinct');input.value='3230';
+          input.dispatchEvent(new Event('input',{bubbles:true}));
+          document.querySelector('[role=option][data-kind=precinct][data-code="3230"]').click();
+          document.querySelector('[data-precinct-submit]').click();
+          // Native dialog close dispatches a later focus-return event. Wait for it
+          // before starting a separate keyboard interaction with Ballot.
+          await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+          const select=document.querySelector('#race-filter,[data-comparison-section-filter]');
+          select.focus();
+          window.nativeBallotFocused=document.activeElement===select;
+          const r=select.getBoundingClientRect();
+          window.nativeBallotHitTarget=r.width>=40&&r.height>=40&&r.top>=0&&
+            r.bottom<=innerHeight&&document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===select;
+        })()""")
+        # Native select type-ahead: Federal is the only F-prefixed option.
+        cdp.command(
+            "Input.dispatchKeyEvent",
+            {"type": "keyDown", "key": "f", "code": "KeyF", "windowsVirtualKeyCode": 70},
+            session_id=session,
+        )
+        cdp.command(
+            "Input.dispatchKeyEvent",
+            {"type": "char", "text": "f", "unmodifiedText": "f"},
+            session_id=session,
+        )
+        cdp.command(
+            "Input.dispatchKeyEvent",
+            {"type": "keyUp", "key": "f", "code": "KeyF", "windowsVirtualKeyCode": 70},
+            session_id=session,
+        )
+        press("Enter", 13)
+        evaluate("""(()=>{
+          const select=document.querySelector('#race-filter,[data-comparison-section-filter]');
+          const ids=[...document.querySelectorAll('[data-publication-race-id],'+
+            '[data-comparison-race]')].filter(r=>!r.hidden);
+          window.nativeBallotScope=select.value;
+          window.nativeBallotWorks=window.nativeBallotFocused&&!select.disabled&&
+            select.value==='federal'&&ids.length===1&&
+            (ids[0].dataset.publicationRaceId??ids[0].dataset.comparisonRace)==='us-house-7';
+          document.querySelector('[data-precinct-clear]').click();
+          select.value='all';select.dispatchEvent(new Event('change',{bubbles:true}));
+        })()""")
+
     expression = """(async () => {
       const calls=window.addressCalls;
       const contract=JSON.parse(document.querySelector('[data-client-payload]').textContent)
@@ -352,7 +397,10 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       measurements.push({state:'address-applied',filter:addressFilterRect},
         {state:'direct-applied',filter:directFilterRect});
       click('[data-precinct-clear]');
-      return JSON.stringify({nativeInfoFocus:window.nativeInfoFocus,
+      return JSON.stringify({nativeBallotHitTarget:window.nativeBallotHitTarget,
+        nativeBallotWorks:window.nativeBallotWorks,
+        nativeBallotFocused:window.nativeBallotFocused,
+        nativeBallotScope:window.nativeBallotScope,nativeInfoFocus:window.nativeInfoFocus,
         nativeViewportFit:window.nativeViewportFit,
         nativePointerDraft:window.nativePointerDraft,
         stableGeometry,containedPopup,overlaysContent,longScrolls,actionsClear,compactActions,actionsStable,sharedInfoIcon,
@@ -408,6 +456,11 @@ for(const suffix of ['', 'comparisons/']) {
  equal(doc().querySelector('[data-precinct-submit]').disabled,false,'resolved address ready');
  doc().querySelector('[data-precinct-submit]').click();
  equal(doc().querySelector('[data-precinct-open]').textContent,'SEA 34-3230','address applied');
+ const scope=()=>doc().querySelector('#race-filter,[data-comparison-section-filter]');
+ const choices=()=>[...scope().options].map(o=>o.value);
+ const addressChoices=choices();
+ scope().value='city';
+ scope().dispatchEvent(new (win().Event)('change',{bubbles:true}));
  const selectedIds=ids();
  const selectedURL=win().location.href;
  await load(selectedURL);
@@ -417,6 +470,14 @@ for(const suffix of ['', 'comparisons/']) {
  doc().querySelector('[data-precinct-open]').click();
  equal(doc().querySelector('#voting-precinct').value,'SEA 34-3230','reload reopened precinct');
  doc().querySelector('[data-precinct-cancel]').click();
+ doc().querySelector('[data-precinct-open]').click();
+ const direct=doc().querySelector('#voting-precinct');direct.value='3230';
+ direct.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+ doc().querySelector('[role=option][data-kind=precinct][data-code="3230"]').click();
+ doc().querySelector('[data-precinct-submit]').click();
+ equal(choices(),addressChoices,'same address/direct options');
+ equal(scope().value,'city','same address/direct valid scope');
+ equal(ids(),selectedIds,'same address/direct scoped rows');
 }
 return JSON.stringify({failures});})()
 .catch(error=>JSON.stringify({harnessError:String(error),stack:error.stack}))"""

@@ -446,8 +446,12 @@ There is no setup section, district questionnaire or embedded map. The first-ver
 no-address restriction is superseded by the optional #657 voting-address path below.
 Both general list views default to Contested, visibly selected; All remains enabled
 and adds applicable uncontested races within existing public eligibility. Selecting
-a precinct constrains both modes to applicable covered races and measures. Section
-and differences restrictions are disabled while selected; Races remains usable.
+a precinct constrains both modes to applicable covered races and measures. Ballot remains enabled and intersects its original scope with precinct membership.
+Offer only scopes with at least one applicable covered contest, including measures,
+before All/Contested visibility or source preferences. Keep a valid selected scope;
+fall back to All only when it becomes inapplicable, with the control, rows and URL
+agreeing. Clear restores the full scope list and retains a valid scope and race mode.
+Differences restrictions remain disabled while selected; Races remains usable.
 Source choices and comparison columns remain independent. Clear removes geography
 while preserving race mode. Selected precinct text uses stronger weight; control
 bodies and the race count align vertically while headers retain their common row. Unsupported choices never claim an exact ballot. Primary has no

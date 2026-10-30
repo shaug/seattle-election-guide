@@ -1,4 +1,5 @@
 /* General precinct pages only: compact filter slot and ephemeral choice dialog. */
+.segmented-control label:has(> input:checked) > span { background: var(--navy); color: var(--white); }
 .filter-control-bar { align-items: flex-start; }
 .filter-segmented-control { display: grid; gap: .2rem; }
 .filter-select-control, .filter-segmented-control, .precinct-control { grid-template-rows: calc(.72rem * 1.45 + .2rem) 2.7rem; }
