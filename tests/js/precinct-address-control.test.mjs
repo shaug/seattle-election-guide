@@ -256,7 +256,10 @@ test('a local choice wins over an older in-flight address resolution', async () 
   await flush();
   assert.equal(input.value, 'SEA 34-3230');
   b.doc.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true }));
-  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
+  assert.equal(
+    b.doc.querySelector('[data-precinct-open]').getAttribute('aria-label'),
+    'Precinct: SEA 34-3230',
+  );
 });
 
 test('address application and reopening use precinct identity; cancel preserves it', async () => {
@@ -265,7 +268,10 @@ test('address application and reopening use precinct identity; cancel preserves 
   b.pending[0]({ status: 'resolved', code: '3230' });
   await flush();
   b.doc.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true }));
-  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
+  assert.equal(
+    b.doc.querySelector('[data-precinct-open]').getAttribute('aria-label'),
+    'Precinct: SEA 34-3230',
+  );
   assert.equal(window.localStorage.getItem('seg-precinct-v1:wa-2026-general'), '3230');
   assert.equal(b.query().includes('Public'), false);
   b.doc.querySelector('[data-precinct-open]').click();
@@ -275,9 +281,15 @@ test('address application and reopening use precinct identity; cancel preserves 
   input.dispatchEvent(new Event('input'));
   b.doc.querySelector('[data-precinct-cancel]').click();
   assert.equal(input.value, '');
-  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
+  assert.equal(
+    b.doc.querySelector('[data-precinct-open]').getAttribute('aria-label'),
+    'Precinct: SEA 34-3230',
+  );
   b.history();
-  assert.equal(b.doc.querySelector('[data-precinct-open]').textContent, 'SEA 34-3230');
+  assert.equal(
+    b.doc.querySelector('[data-precinct-open]').getAttribute('aria-label'),
+    'Precinct: SEA 34-3230',
+  );
 });
 
 test('IME composition never looks up intermediate text or commits on Enter', async () => {

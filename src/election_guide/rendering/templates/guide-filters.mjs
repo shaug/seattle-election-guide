@@ -13,6 +13,7 @@
 //     (§ State and URLs).
 
 import { availableBallotScopes, makeBallotScopeProjector } from './ballot-scopes.mjs';
+import { projectCompactFilters } from './compact-filters.mjs';
 import { filterStatusParts } from './guide-format.mjs';
 import { readContestedOnly, withContestedOnly } from './precinct-ballot.mjs';
 
@@ -183,6 +184,12 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
       router.replaceControlSearch(
         writeControlState(router.controlSearch(), state, defaultContested),
       );
+    projectCompactFilters({
+      scope: state.scope,
+      scopeLabel: scopeLabels.get(state.scope) ?? 'All Seattle ballot races',
+      view: compact ? 'Compact' : 'Full',
+      races: contestedOnly ? 'Contested' : 'All',
+    });
     onApply();
   };
 

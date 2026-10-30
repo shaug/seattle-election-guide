@@ -104,7 +104,7 @@ def test_general_pages_resolve_every_independent_fixture_without_horizontal_over
           '[role=option][data-kind=precinct]')?.click();
       document.querySelector('[data-precinct-submit]').click();
       const keyboard=document.querySelector('[data-precinct-open]')
-        .textContent==='SEA 46-1279'&&input.value==='';
+        .getAttribute('aria-label')==='Precinct: SEA 46-1279'&&input.value==='';
       const first=fixtures.find(f=>f.name==='SEA 46-1279').ids;
       const second=fixtures.find(f=>f.name==='SEA 46-2142').ids;
       history.pushState({}, '', '?precinct=2142');
@@ -139,7 +139,7 @@ def test_general_pages_resolve_every_independent_fixture_without_horizontal_over
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
 @pytest.mark.parametrize("width", [390, 1280])
-def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
+def test_precinct_modal_draft_focus_clear_and_compact_trigger_alignment(
     tmp_path: Path, general_view: PublicationViewModel, page: str, width: int
 ) -> None:
     html = (
@@ -209,17 +209,13 @@ def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
       const selected=ids();const before=window.location.search;
       const center=el=>{const r=el.getBoundingClientRect();return r.top+r.height/2;};
       const bar=root.parentElement;
-      const ballotCenter=center(bar.querySelector('select'));
-      const viewCenter=center(bar.querySelector('.segmented-control'));
-      const racesCenter=center(bar.querySelectorAll('.segmented-control')[1]);
-      const precinctCenter=center(root.querySelector('.precinct-summary'));
-      const bodiesCentered=Math.abs(ballotCenter-viewCenter)<=1&&
-        Math.abs(racesCenter-precinctCenter)<=1;
-      const countCentered=innerWidth<720||
-        Math.abs(center(bar.querySelector('.filter-control-status'))-viewCenter)<=1;
+      const triggers=[...bar.querySelectorAll('.compact-filter-trigger')];
+      const bodiesCentered=triggers.length===4&&triggers.every(el=>
+        Math.abs(center(el)-center(opener))<=1);
+      const countCentered=bar.getBoundingClientRect().height===46;
       const emphasized=Number(getComputedStyle(opener).fontWeight)>=600;
       const memory=localStorage.getItem('seg-precinct-v1:wa-2026-general');
-      const label=opener.textContent;
+      const label=opener.getAttribute('aria-label');
       const inRow=root.parentElement.classList.contains('filter-control-bar');
       opener.click();
       const input=root.querySelector('#voting-precinct');
@@ -240,10 +236,8 @@ def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
         JSON.stringify(ids())===JSON.stringify(selected);
       const closed=!dialog.open;
       const restored=document.activeElement===root.querySelector('[data-precinct-open]');
-      const headers=[...root.parentElement.querySelectorAll(':scope > div > .filter-control-label')]
-        .map(el=>el.getBoundingClientRect());
-      const aligned=innerWidth<720||Math.max(...headers.map(r=>r.top))-
-        Math.min(...headers.map(r=>r.top))<=1;
+      const headers=triggers.map(el=>el.getBoundingClientRect());
+      const aligned=Math.max(...headers.map(r=>r.top))-Math.min(...headers.map(r=>r.top))<=1;
       const clear=root.querySelector('[data-precinct-clear]');
       const accessibleClear=clear?.getAttribute('aria-label')==='Clear precinct selection';
       clear.click();
@@ -251,9 +245,10 @@ def test_precinct_modal_draft_focus_clear_and_filter_header_alignment(
         cancelUnchanged,aligned,accessibleClear,bodiesCentered,countCentered,emphasized,
         focusContained:window.focusContained,forwardContained:window.forwardContained,escapeClosed:window.escapeClosed,
         escapeRestored:window.escapeRestored,escapeUnchanged:window.escapeUnchanged,
-        keyboardCommitted:before==='?precinct=1279'&&label==='SEA 46-1279',
+        keyboardCommitted:before==='?precinct=1279'&&label==='Precinct: SEA 46-1279',
         clearOrdinary:window.location.search==='?precinct=all'&&ids().length>selected.length,
-        clearLabel:root.querySelector('[data-precinct-open]').textContent==='Select',
+        clearLabel:root.querySelector('[data-precinct-open]').getAttribute('aria-label')
+          ==='Precinct: Select',
         fits:bounds.left>=0&&bounds.right<=innerWidth&&bounds.height<=innerHeight,
         noOverflow:document.documentElement.scrollWidth<=innerWidth,
         headerCount:headers.length===4});
@@ -389,3 +384,180 @@ def test_general_ballot_scopes_publish_original_covered_membership(
     assert "seattle-proposition-1-transit" in scopes["city"]
     assert "seattle-proposition-1-transit" in scopes["Citywide"]
     assert scopes["Congressional District 9"] == ["us-house-9"]
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+def test_compact_bar_owns_four_editors_and_own_scope_indicator(
+    tmp_path: Path, general_view: PublicationViewModel, page: str
+) -> None:
+    html = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / f"compact-{page}.html"
+    path.write_text(without_live_address_requests(html))
+    expression = """(() => {
+      const bar=document.querySelector('[data-compact-filters]');
+      if(!bar)return JSON.stringify({missing:'compact filter bar'});
+      const triggers=()=>[...bar.querySelectorAll('[data-filter-open],[data-precinct-open]')];
+      const order=triggers().map(b=>b.dataset.filterOpen??'precinct');
+      const ballot=()=>bar.querySelector('[data-filter-open=ballot]');
+      const select=bar.querySelector('select');
+      const initial=!ballot().hasAttribute('data-active');
+      select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
+      const active=ballot().hasAttribute('data-active')&&
+        ballot().getAttribute('aria-label').includes('County');
+      select.value='all';select.dispatchEvent(new Event('change',{bubbles:true}));
+      const all=!ballot().hasAttribute('data-active');
+      bar.querySelector('[data-filter-open=races]').click();
+      const editor=bar.querySelector('#compact-races-dialog');
+      const opened=editor.open&&ballot().getAttribute('aria-expanded')==='false';
+      editor.querySelector('[data-filter-cancel]').click();
+      return JSON.stringify({order,initial,active,all,opened,
+        returned:document.activeElement===bar.querySelector('[data-filter-open=races]'),
+        height:bar.getBoundingClientRect().height,
+        targets:triggers().map(b=>({h:b.getBoundingClientRect().height,w:b.getBoundingClientRect().width})),
+        icons:triggers().every(b=>b.querySelector('svg[aria-hidden=true]'))});
+    })()"""
+    result = _evaluate_in_chrome(path, expression, viewport=(390, 900))
+    assert result.get("missing") is None, result
+    assert result["order"] == ["precinct", "view", "races", "ballot"]
+    assert result["initial"] and result["active"] and result["all"], result
+    assert result["opened"] and result["returned"] and result["icons"], result
+    assert result["height"] == 46
+    assert all(t["h"] >= 44 and t["w"] >= 44 for t in result["targets"])
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+def test_compact_bar_fits_real_values_and_measures_container_transition(
+    tmp_path: Path, general_view: PublicationViewModel, page: str
+) -> None:
+    html = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / f"fit-{page}.html"
+    path.write_text(without_live_address_requests(html))
+    expression = """(async () => {
+      await document.fonts.ready;
+      const bar=document.querySelector('[data-compact-filters]');
+      const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      const inspect=()=>{const box=bar.getBoundingClientRect();
+        const buttons=[...bar.querySelectorAll('.compact-filter-trigger')];
+        const values=buttons.flatMap(b=>[...b.querySelectorAll('.compact-filter-value')])
+          .filter(el=>getComputedStyle(el).display!=='none');
+        return {width:box.width,height:box.height,cue:bar.dataset.cues,
+          fits:buttons.every(b=>b.getBoundingClientRect().right<=box.right+.1),
+          values:values.map(el=>el.textContent),
+          allIcons:buttons.every(b=>b.querySelector('svg').getBoundingClientRect().width>=14),
+          targets:buttons.every(b=>b.getBoundingClientRect().height>=44&&b.getBoundingClientRect().width>=44),
+          exclusive:buttons.every(b=>{const value=[...b.querySelectorAll('.compact-filter-value')]
+            .find(el=>getComputedStyle(el).display!=='none');
+            const arrow=getComputedStyle(b.querySelector('.compact-filter-arrow')).display!=='none';
+            return arrow!==getComputedStyle(value).textDecorationLine.includes('underline');})};};
+      document.querySelector('[data-precinct-open]').click();
+      const input=document.querySelector('#voting-precinct');
+      input.value='SEA 46-1279';input.dispatchEvent(new Event('input',{bubbles:true}));
+      document.querySelector('[data-code="1279"]').click();
+      document.querySelector('[data-precinct-submit]').click();
+      const compact=document.querySelector('input[name=ballot-view][value=compact]');
+      if(compact)compact.click();
+      const samples=[];
+      for(const width of [320,360,390]){bar.style.width=width+'px';await settle();
+        samples.push(inspect());}
+      const transitions=[];
+      for(let width=300;width<=450;width++){bar.style.width=width+'px';await settle();
+        if(bar.dataset.cues==='arrows'){transitions.push(inspect());
+          bar.style.width=(width-1)+'px';await settle();
+          transitions.unshift(inspect());break;}}
+      const name=document.querySelector('[data-precinct-open]').getAttribute('aria-label');
+      return JSON.stringify({samples,transitions,name,viewport:innerWidth});
+    })()"""
+    result = _evaluate_in_chrome(path, expression, viewport=(1280, 1000))
+    (tmp_path / f"{page}-fit.json").write_text(json.dumps(result, indent=2) + "\n")
+    assert result["name"] == "Precinct: SEA 46-1279"
+    assert result["viewport"] == 1280
+    assert all(
+        s["fits"] and s["targets"] and s["allIcons"] and s["exclusive"] for s in result["samples"]
+    ), json.dumps(result)
+    assert all(s["height"] == 46 for s in result["samples"]), result
+    assert result["transitions"][0]["cue"] == "underlines", result
+    assert result["transitions"][1]["cue"] == "arrows", result
+    assert all(s["fits"] and s["exclusive"] for s in result["transitions"]), result
+    assert all("46-1279" in s["values"] for s in result["samples"]), result
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+@pytest.mark.parametrize("width", [320, 360, 390])
+def test_compact_editors_support_native_keyboard_and_phone_placement(
+    tmp_path: Path, general_view: PublicationViewModel, page: str, width: int
+) -> None:
+    html = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / f"keyboard-{page}.html"
+    path.write_text(without_live_address_requests(html))
+
+    def keyboard(cdp: _CdpSocket, session: str) -> None:
+        def evaluate(source: str) -> None:
+            cdp.command("Runtime.evaluate", {"expression": source}, session_id=session)
+
+        def key(name: str, code: int) -> None:
+            for kind in ["keyDown", "keyUp"]:
+                cdp.command(
+                    "Input.dispatchKeyEvent",
+                    {
+                        "type": kind,
+                        "key": name,
+                        "windowsVirtualKeyCode": code,
+                        **({"text": "\r"} if name == "Enter" and kind == "keyDown" else {}),
+                    },
+                    session_id=session,
+                )
+
+        evaluate("document.querySelector('[data-filter-open=view]').focus()")
+        key("Enter", 13)
+        evaluate("""window.compactOpened=document.querySelector('#compact-view-dialog').open;
+          window.compactFocus=document.querySelector('#compact-view-dialog').contains(document.activeElement);
+          const rect=document.querySelector('#compact-view-dialog').getBoundingClientRect();
+          window.compactPlaced=rect.left>=0&&rect.right<=innerWidth&&rect.top>=0&&rect.bottom<=innerHeight;""")
+        key("Tab", 9)
+        evaluate(
+            "window.compactContained=document.querySelector('#compact-view-dialog').contains(document.activeElement)"
+        )
+        key("Escape", 27)
+        evaluate("""window.compactReturned=document.activeElement===document.querySelector('[data-filter-open=view]');
+          document.querySelector('[data-filter-open=races]').focus();""")
+        key("Enter", 13)
+        key("ArrowLeft", 37)
+
+    result = _evaluate_in_chrome(
+        path,
+        """(() => JSON.stringify({opened:window.compactOpened,focus:window.compactFocus,
+          placed:window.compactPlaced,contained:window.compactContained,returned:window.compactReturned,
+          closed:!document.querySelector('#compact-races-dialog').open,
+          all:document.querySelector('#complete-filter,[data-comparison-all-races]').checked,
+          racesLabel:document.querySelector('[data-filter-open=races]').getAttribute('aria-label'),
+          noOverflow:document.documentElement.scrollWidth<=innerWidth,
+          bar46:document.querySelector('[data-compact-filters]').getBoundingClientRect().height===46}))()""",
+        viewport=(width, 844),
+        interact=keyboard,
+    )
+    assert result.pop("racesLabel") == "Races: All", result
+    assert all(result.values()), json.dumps(result)

@@ -909,3 +909,30 @@ pure membership/scoring modules offline. Check: `voting-address-lookup.test.mjs`
 and `precinct-address-control.test.mjs` exercise admission, privacy and cancellation;
 browser navigation tests preserve actual general/primary behavior. This adds no
 storage exception or ratchet ceiling.
+
+## Compact general controls (#673)
+
+The precinct-enabled branch of `_filter_controls.html.j2` owns the 46px ordered
+bar and three native editor roots. Legacy primary markup remains in its original
+branch. `compact-filters.mjs` owns only trigger rendering, ephemeral dialog wiring,
+focus return and actual container/content fit. Guide and comparison controllers
+pass resolved scope/View/Races values to `projectCompactFilters`; those controllers
+still own native input intent, URL encoding, scope availability and race updates.
+The compact component has no storage, provider, scoring or ballot-matching role.
+Comparison's admitted section tokens are displayed as title-cased words; their
+six current labels match the server's section vocabulary. Precinct abbreviation
+is catalog-specific and collision-checked by `compactPrecinctName`.
+
+The optional general-only `precinct.css` owns this presentation and preserves the
+Safari `label:has(> input:checked)` selected-state rule inside editors. `base.css`
+and archived primary parts stay unchanged. Font readiness, a ResizeObserver on
+the actual bar and state projection re-evaluate natural unshrunk trigger widths;
+no viewport-only threshold or truncation substitutes for fit. Screenshot audits
+still count the five underlying native filter inputs, excluding compact launchers
+and editor dismissal buttons, and validate the visible Ballot launcher.
+
+*Check: exists — `tests/js/compact-filters.test.mjs` covers scope indicator,
+editor focus and safe naming; `tests/test_precinct_rendering.py` exercises actual
+rendered pages, geometry/cue transition, membership, source independence and
+modal/history behavior. Actual Safari and physical-device coverage are reported
+separately from headless browser results.*

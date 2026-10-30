@@ -1,5 +1,4 @@
 <div class="precinct-control" data-precinct-control hidden>
-  <span class="filter-control-label">Precinct</span>
   <div class="precinct-summary" data-precinct-summary></div>
   <p class="precinct-status" data-precinct-applied-notice role="status" aria-live="polite" hidden></p>
   <dialog id="precinct-dialog" class="precinct-dialog" aria-labelledby="precinct-dialog-title">
@@ -8,6 +7,7 @@
       <h2 id="precinct-dialog-title">Select a precinct</h2>
       <div data-precinct-fields></div>
       <p class="precinct-status" data-precinct-status role="status" aria-live="polite"></p>
+      <div data-precinct-clear-slot></div>
       <div class="precinct-actions">
         <button type="submit" data-precinct-submit></button>
         <button type="button" data-precinct-cancel>Cancel</button>

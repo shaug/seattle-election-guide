@@ -430,17 +430,18 @@ rule or rationale it produced lands here.
 
 ## Voting precinct control (#608)
 
-The November2026 general guide places Precinct in the existing Filters row on
-Endorsements and Comparisons, with all filter headers aligned. An unset choice
-shows a Select action; a selected choice shows its transient selected address
-or its precinct name and a compact × button labeled Clear precinct selection. The action opens a native
+The November2026 general guide places Precinct in the shared filter bar on
+Endorsements and Comparisons. The #673 compact-bar revision below supersedes the
+original wrapping headers and inline clear control. An unset choice shows Select;
+a selected choice shows its precinct identity. Clear precinct selection is inside
+the editor. The action opens a native
 modal with one searchable field and Select and Cancel buttons. The October28
 #657 revision below supersedes the original native precinct suggestions and
 Find my precinct link. Search edits a draft: only Select applies it;
 Cancel and Escape preserve the applied choice, URL and device memory. Opening or
 canceling this ephemeral editor does not change the query or fragment. Opening
 focuses search; native modal focus containment and return focus preserve keyboard
-context. The row wraps within narrow viewports. There is no separate search strip
+context. The compact bar adapts within narrow containers. There is no separate search strip
 or explanatory line above it. (Scott's explicit preview revision, October 25, 2026.)
 There is no setup section, district questionnaire or embedded map. The first-version
 no-address restriction is superseded by the optional #657 voting-address path below.
@@ -454,7 +455,7 @@ agreeing. Clear restores the full scope list and retains a valid scope and race 
 Differences restrictions remain disabled while selected; Races remains usable.
 Source choices and comparison columns remain independent. Clear removes geography
 while preserving race mode. Selected precinct text uses stronger weight; control
-bodies and the race count align vertically while headers retain their common row. Unsupported choices never claim an exact ballot. Primary has no
+bodies align vertically in the compact bar. Unsupported choices never claim an exact ballot. Primary has no
 precinct control.
 
 ## Optional voting-address path (#657, October28,2026)
@@ -511,3 +512,30 @@ independent of the new display grouping; this does not introduce location setup.
 See BALLOT_INVENTORY.md for the source, literal-versus-SEG heading distinctions,
 and the explicit November-only boundary. Historical primary publications do not
 inherit this mapping.
+
+## Adaptive compact general filter bar (#673, approved C v5)
+
+On precinct-enabled general Endorsements and Comparisons, the earlier wrapping
+header row is replaced by one 46px bar: **Precinct → View → Races → Ballot**.
+Each trigger has a matching outline SVG (pin, eye, filter lines, ballot box),
+readable text, a 44px minimum target and visible keyboard focus. Ballot's closed
+text is “Ballot”; its full selected scope is in its accessible name/title and
+native editor. A subtle teal dot marks only a non-All Ballot scope. Merely
+selecting a precinct does not activate it.
+
+The actual container and rendered font/content decide the cue: arrows without
+underlines when the full contents fit, underlines without arrows when constrained.
+Do not use the mockup's measured 354px as a universal viewport breakpoint. Full
+precinct names appear when they fit. Only an exact `SEA DD-NNNN` catalog name
+with a unique shortened form may display `DD-NNNN` under constraint. Keep every
+digit, other prefix and distinguishing suffix; keep the full name in the editor,
+accessible name and title. Applied text is always precinct identity, never an
+address draft. No ellipsis is used to make identity appear to fit.
+
+View, Races and Ballot open named native dialog editors containing the existing
+radio/select controls. A choice applies immediately and returns focus; Cancel or
+Escape dismisses without another change. Precinct retains its existing draft,
+Select, Cancel, address privacy and keyboard behavior. Clear is in that editor.
+The compact surface changes no availability, fallback, race visibility, measures,
+source/scoring, URL/history or precinct-only persistence rule. Primary keeps its
+legacy controls and archive styles.
