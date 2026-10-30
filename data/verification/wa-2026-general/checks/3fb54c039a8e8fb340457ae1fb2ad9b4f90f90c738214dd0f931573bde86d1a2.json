@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-30T10:24:19.871981Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex / oversight01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-30-manual.json#/source_reviews/washington-stonewall-democrats",
+  "mode": "human",
+  "scheduled_for": "2026-10-30",
+  "source_id": "washington-stonewall-democrats",
+  "status": "manual"
+}

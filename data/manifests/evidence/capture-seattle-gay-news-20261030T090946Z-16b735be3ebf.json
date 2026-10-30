@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 55573,
+  "canonical_url": "https://www.sgn.org/story/171606/",
+  "capture_method": "manual_upload",
+  "content_sha256": "cceb41bb61cd05b293c7cec024df38505d548110fa716e5021c5fd3a1302579a",
+  "http_status": null,
+  "id": "capture-seattle-gay-news-20261030T090946Z-16b735be3ebf",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Previously observed official original supplied by delegated reviewer; imported without a new HTTP request. Full third-party bytes remain private in durable primary storage.",
+  "requested_url": "https://www.sgn.org/story/171606/",
+  "retrieved_at": "2026-10-30T09:09:46.974584Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "storage_reference": "sha256/cc/cceb41bb61cd05b293c7cec024df38505d548110fa716e5021c5fd3a1302579a",
+  "storage_scope": "local_only",
+  "title": "SGN Endorsements: Washington Supreme Court Positions 1, 3, 4, 5, 7",
+  "updated_at": null
+}
