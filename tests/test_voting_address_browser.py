@@ -301,7 +301,8 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const options=[...document.querySelectorAll('[role=option]')];
       const mixed=options.some(o=>o.dataset.kind==='precinct')&&
         options.some(o=>o.dataset.kind==='address');
-      const singleEditor=document.querySelectorAll('[data-precinct-control] dialog input').length===1&&
+      const singleEditor=document.querySelectorAll(
+        '[data-precinct-control] dialog input').length===1&&
         input.getAttribute('role')==='combobox'&&!document.querySelector('datalist')&&
         !document.querySelector('[data-address-mode],[data-direct-mode]')&&
         document.querySelectorAll('dialog a').length===1;
