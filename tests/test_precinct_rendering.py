@@ -409,6 +409,11 @@ def test_compact_bar_owns_four_editors_and_own_scope_indicator(
       const ballot=()=>bar.querySelector('[data-filter-open=ballot]');
       const select=bar.querySelector('select');
       const initial=!ballot().hasAttribute('data-active');
+      const labelParity=['view','races'].every(name=>{
+        const editor=bar.querySelector('#compact-'+name+'-dialog');
+        const selected=editor.querySelector('input:checked').nextElementSibling.textContent;
+        return bar.querySelector('[data-filter-open='+name+'] .compact-filter-value')
+          .textContent===selected;});
       select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
       const active=ballot().hasAttribute('data-active')&&
         ballot().getAttribute('aria-label').includes('County');
@@ -418,7 +423,7 @@ def test_compact_bar_owns_four_editors_and_own_scope_indicator(
       const editor=bar.querySelector('#compact-races-dialog');
       const opened=editor.open&&ballot().getAttribute('aria-expanded')==='false';
       editor.querySelector('[data-filter-cancel]').click();
-      return JSON.stringify({order,initial,active,all,opened,
+      return JSON.stringify({order,initial,labelParity,active,all,opened,
         returned:document.activeElement===bar.querySelector('[data-filter-open=races]'),
         height:bar.getBoundingClientRect().height,
         targets:triggers().map(b=>({h:b.getBoundingClientRect().height,w:b.getBoundingClientRect().width})),
@@ -427,7 +432,9 @@ def test_compact_bar_owns_four_editors_and_own_scope_indicator(
     result = _evaluate_in_chrome(path, expression, viewport=(390, 900))
     assert result.get("missing") is None, result
     assert result["order"] == ["precinct", "view", "races", "ballot"]
-    assert result["initial"] and result["active"] and result["all"], result
+    assert result["initial"] and result["labelParity"] and result["active"] and result["all"], (
+        result
+    )
     assert result["opened"] and result["returned"] and result["icons"], result
     assert result["height"] == 46
     assert all(t["h"] >= 44 and t["w"] >= 44 for t in result["targets"])
