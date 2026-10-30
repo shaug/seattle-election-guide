@@ -491,6 +491,56 @@
     "data-kind": [
       "client",
       "test"
+    ],
+    "data-active": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-compact-filters": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-compact-scope-detail": [
+      "template",
+      "client"
+    ],
+    "data-filter-cancel": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-filter-editor": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-filter-open": [
+      "client",
+      "python",
+      "test"
+    ],
+    "data-filter-trigger": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-precinct-clear-slot": [
+      "template",
+      "client"
+    ],
+    "data-precinct-name": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-precinct-short": [
+      "client",
+      "test"
     ]
   },
   "class_names": {
@@ -1073,6 +1123,38 @@
       "stylesheet",
       "python",
       "test"
+    ],
+    "compact-filter-arrow": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "compact-filter-dot": [
+      "stylesheet",
+      "client"
+    ],
+    "compact-filter-icon": [
+      "stylesheet",
+      "client"
+    ],
+    "compact-filter-slot": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "compact-filter-trigger": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "compact-filter-value": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "precinct-short": [
+      "stylesheet",
+      "client"
     ]
   },
   "breakpoints": {
