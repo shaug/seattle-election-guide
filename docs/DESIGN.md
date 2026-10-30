@@ -535,6 +535,11 @@ selecting a precinct does not activate it.
 
 The actual container and rendered font/content decide the cue: arrows without
 underlines when the full contents fit, underlines without arrows when constrained.
+If even the underline layout overflows, reclaim inline padding based on its
+measured deficit. Only if that is insufficient, remove remaining gaps and move
+the scope dot above the text into the Ballot trigger’s top corner; preserve its
+visibility, every label, font size, icon and target minimum. Reset this spacing
+when the container grows.
 Do not use the mockup's measured 354px as a universal viewport breakpoint. Full
 precinct names appear when they fit. Only an exact `SEA DD-NNNN` catalog name
 with a unique shortened form may display `DD-NNNN` under constraint. Keep every

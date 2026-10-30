@@ -441,8 +441,9 @@ def test_compact_bar_owns_four_editors_and_own_scope_indicator(
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
+@pytest.mark.parametrize("screen_sans", [None, "system-ui", "sans-serif"])
 def test_compact_bar_fits_real_values_and_measures_container_transition(
-    tmp_path: Path, general_view: PublicationViewModel, page: str
+    tmp_path: Path, general_view: PublicationViewModel, page: str, screen_sans: str | None
 ) -> None:
     html = (
         render_html_document(
@@ -458,6 +459,7 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
     expression = """(async () => {
       await document.fonts.ready;
       const bar=document.querySelector('[data-compact-filters]');
+      if(SCREEN_SANS)bar.style.setProperty('--screen-sans',SCREEN_SANS);
       const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
       const inspect=()=>{const box=bar.getBoundingClientRect();
         const buttons=[...bar.querySelectorAll('.compact-filter-trigger')];
@@ -466,7 +468,12 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
         return {width:box.width,height:box.height,cue:bar.dataset.cues,
           fits:buttons.every(b=>b.getBoundingClientRect().right<=box.right+.1),
           values:values.map(el=>el.textContent),
+          textFits:values.every(el=>{const r=document.createRange();r.selectNodeContents(el);
+            return r.getBoundingClientRect().width<=el.getBoundingClientRect().width+.1;}),
+          aggregate:buttons.reduce((sum,b)=>sum+b.getBoundingClientRect().width,0)+
+            bar.querySelectorAll('.compact-filter-slot').length,
           allIcons:buttons.every(b=>b.querySelector('svg').getBoundingClientRect().width>=14),
+          fontSize:buttons.every(b=>getComputedStyle(b).fontSize==='14px'),
           targets:buttons.every(b=>b.getBoundingClientRect().height>=44&&b.getBoundingClientRect().width>=44),
           exclusive:buttons.every(b=>{const value=[...b.querySelectorAll('.compact-filter-value')]
             .find(el=>getComputedStyle(el).display!=='none');
@@ -480,28 +487,62 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
       const compact=document.querySelector('input[name=ballot-view][value=compact]');
       if(compact)compact.click();
       const samples=[];
-      for(const width of [320,360,390]){bar.style.width=width+'px';await settle();
+      for(const width of [300,320,360,390]){bar.style.width=width+'px';await settle();
         samples.push(inspect());}
       const transitions=[];
       for(let width=300;width<=450;width++){bar.style.width=width+'px';await settle();
         if(bar.dataset.cues==='arrows'){transitions.push(inspect());
           bar.style.width=(width-1)+'px';await settle();
           transitions.unshift(inspect());break;}}
+      const activeSamples=[];
+      const select=bar.querySelector('select');
+      select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
+      for(const width of [300,320]){bar.style.width=width+'px';await settle();
+        const b=bar.querySelector('[data-filter-open=ballot]');
+        const dot=b.querySelector('.compact-filter-dot'),r=dot.getBoundingClientRect();
+        const text=b.querySelector('.compact-filter-value').getBoundingClientRect();
+        activeSamples.push({...inspect(),indicator:b.hasAttribute('data-active')&&
+          getComputedStyle(dot).visibility==='visible'&&r.width>=5&&r.height>=5&&
+          r.left>=b.getBoundingClientRect().left&&r.right<=b.getBoundingClientRect().right&&
+          (r.bottom<=text.top||r.left>=text.right)});}
       const name=document.querySelector('[data-precinct-open]').getAttribute('aria-label');
-      return JSON.stringify({samples,transitions,name,viewport:innerWidth});
+      const differingSamples=[];
+      const differing=document.querySelector('[data-comparison-differences]');
+      if(differing){document.querySelector('[data-precinct-clear]').click();differing.click();
+        for(const width of [300,320,390]){bar.style.width=width+'px';await settle();
+          differingSamples.push(inspect());}}
+      return JSON.stringify({samples,activeSamples,differingSamples,transitions,name,
+        viewport:innerWidth});
     })()"""
+    expression = expression.replace("SCREEN_SANS", json.dumps(screen_sans))
     result = _evaluate_in_chrome(path, expression, viewport=(1280, 1000))
     (tmp_path / f"{page}-fit.json").write_text(json.dumps(result, indent=2) + "\n")
     assert result["name"] == "Precinct: SEA 46-1279"
     assert result["viewport"] == 1280
     assert all(
-        s["fits"] and s["targets"] and s["allIcons"] and s["exclusive"] for s in result["samples"]
+        s["fits"]
+        and s["textFits"]
+        and s["fontSize"]
+        and s["height"] == 46
+        and s["aggregate"] <= s["width"]
+        and s["targets"]
+        and s["allIcons"]
+        and s["exclusive"]
+        for s in result["samples"] + result["activeSamples"] + result["differingSamples"]
     ), json.dumps(result)
     assert all(s["height"] == 46 for s in result["samples"]), result
     assert result["transitions"][0]["cue"] == "underlines", result
     assert result["transitions"][1]["cue"] == "arrows", result
     assert all(s["fits"] and s["exclusive"] for s in result["transitions"]), result
     assert all("46-1279" in s["values"] for s in result["samples"]), result
+    expected_view = "Compact" if page == "guide" else "Full"
+    assert all(
+        s["values"] == ["46-1279", expected_view, "Contested", "Ballot"]
+        for s in result["samples"] + result["activeSamples"]
+    ), result
+    assert all(s["indicator"] for s in result["activeSamples"]), result
+    if page == "compare":
+        assert all("Differing" in s["values"] for s in result["differingSamples"]), result
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])

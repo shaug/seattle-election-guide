@@ -110,6 +110,8 @@ export function wireCompactFilters() {
     bar.dataset.cues = 'arrows';
     bar.dataset.precinctDisplay = 'full';
     bar.dataset.ballotDetail = 'full';
+    bar.dataset.spacing = 'normal';
+    bar.style.removeProperty('--compact-filter-padding');
     const required = () =>
       [...bar.querySelectorAll('.compact-filter-trigger')].reduce(
         (sum, el) => sum + el.getBoundingClientRect().width,
@@ -120,6 +122,14 @@ export function wireCompactFilters() {
     if (required() > available) bar.dataset.ballotDetail = 'compact';
     if (required() > available) bar.dataset.precinctDisplay = 'short';
     if (required() > available) bar.dataset.cues = 'underlines';
+    // Underlines alone may still overflow with a supported fallback font.
+    // Reclaim only the padding needed; labels, icons and target minima stay put.
+    if (required() > available) {
+      const count = bar.querySelectorAll('.compact-filter-trigger').length;
+      const padding = Math.max(0, 2 - Math.ceil((required() - available) / (2 * count)));
+      bar.style.setProperty('--compact-filter-padding', `${padding}px`);
+    }
+    if (required() > available) bar.dataset.spacing = 'tight';
     placeOpenEditors();
   };
   /** @param {HTMLDialogElement} dialog */

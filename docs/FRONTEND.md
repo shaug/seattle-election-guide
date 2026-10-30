@@ -929,7 +929,13 @@ and archived primary parts stay unchanged. Font readiness, a ResizeObserver on
 the actual bar and state projection re-evaluate natural unshrunk trigger widths,
 including the full Ballot scope. Omit that detail only when the wide content does
 not fit, before applying the existing safe precinct/code and menu-cue fallbacks;
-no viewport-only threshold or truncation substitutes for fit. Screenshot audits
+no viewport-only threshold or truncation substitutes for fit. Recheck the underline
+layout with the resolved font and reclaim inline trigger padding only when its
+measured total still exceeds the container; reset that adjustment on every fit.
+If zero padding still does not fit, remove the remaining gaps and place the
+Ballot scope dot in the trigger’s top corner above its text, reclaiming its flow
+width without hiding it. Reset both adjustments before measuring again. Font
+size, labels, icons and minimum targets remain unchanged. Screenshot audits
 still count the five underlying native filter inputs, excluding compact launchers
 and editor dismissal buttons, and validate the visible Ballot launcher.
 

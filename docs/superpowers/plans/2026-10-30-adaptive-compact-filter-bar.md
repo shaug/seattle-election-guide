@@ -57,3 +57,15 @@ caught clipped radio text; existing radio labels now wrap when content needs it.
 Full engine validation, commit/promotion, committed-head gates and fresh review
 remain the engine/delivery owner's next steps; focused results are not substituted
 for those gates.
+
+### Attempt 2: platform font fit
+
+The original Linux rendering gate exposed 320px overflow after the underline
+fallback. Local browser coverage now includes the approved stack plus explicit
+`system-ui` and `sans-serif` fallback metrics on both pages. The `system-ui`
+Guide reproduced 321px of controls and separators inside a 320px bar. Recheck
+that final mode and reclaim measured inline padding. If that still overflows,
+remove gaps and position the scope dot above the text within its trigger. Reset
+both adjustments before each fresh fit. The 300px container regression proves
+that padding alone is insufficient, independently of a specific platform font.
+Preserve full text, font size, icons, scope-dot visibility and target minima.

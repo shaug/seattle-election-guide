@@ -18,7 +18,9 @@
 [data-precinct-display="short"] .precinct-short { display: inline; }
 [data-precinct-display="short"][data-cues="arrows"] .compact-filter-trigger { padding-inline: 2px; gap: 2px; }
 [data-precinct-display="short"] .compact-filter-arrow { margin-inline: 1px; }
-[data-cues="underlines"] .compact-filter-trigger { padding-inline: 2px; gap: 2px; }
+[data-cues="underlines"] .compact-filter-trigger { padding-inline: var(--compact-filter-padding, 2px); gap: 2px; }
+[data-spacing="tight"] .compact-filter-trigger { padding-inline: 0; gap: 0; }
+[data-spacing="tight"] .compact-filter-dot { position: absolute; top: 4px; right: 4px; }
 [data-cues="underlines"] .compact-filter-value { text-decoration: underline; text-underline-offset: 3px; }
 [data-cues="underlines"] .compact-filter-arrow { display: none; }
 .compact-filter-dot { flex: none; width: 5px; height: 5px; background: var(--teal); border-radius: 50%; visibility: hidden; }

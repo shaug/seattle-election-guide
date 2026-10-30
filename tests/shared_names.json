@@ -1131,7 +1131,8 @@
     ],
     "compact-filter-dot": [
       "stylesheet",
-      "client"
+      "client",
+      "test"
     ],
     "compact-filter-icon": [
       "stylesheet",
@@ -1140,7 +1141,8 @@
     "compact-filter-slot": [
       "template",
       "stylesheet",
-      "client"
+      "client",
+      "test"
     ],
     "compact-filter-trigger": [
       "stylesheet",
