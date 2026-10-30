@@ -652,3 +652,76 @@ return JSON.stringify({failures,observations,expected});})()
     (path.parent / "sources-header-result.json").write_text(json.dumps(result, indent=2) + "\n")
     assert result.get("harnessError") is None, result
     assert result["failures"] == [], result
+
+
+def test_ballot_scope_with_precinct_survives_real_history_and_reload(
+    navigation_site: tuple[Path, str],
+) -> None:
+    path, url = navigation_site
+    expression = (
+        "(async()=>{"
+        + HARNESS
+        + """
+const scope=()=>doc().querySelector('#race-filter,[data-comparison-section-filter]');
+const options=()=>[...scope().options].map(o=>o.value);
+const change=value=>{scope().value=value;
+ scope().dispatchEvent(new (win().Event)('change',{bubbles:true}));};
+const choose=code=>{
+ doc().querySelector('[data-precinct-open]').click();
+ const input=doc().querySelector('#voting-precinct');input.value=code;
+ input.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+ doc().querySelector('[role=option][data-kind=precinct][data-code="'+code+'"]').click();
+ doc().querySelector('[data-precinct-submit]').click();
+};
+const traverse=direction=>new Promise((resolve,reject)=>{
+ const timer=setTimeout(()=>reject(new Error('missing real '+direction)),2000);
+ win().addEventListener('popstate',()=>{clearTimeout(timer);setTimeout(resolve,20)},
+ {once:true});win().history[direction]();
+});
+const general=['all','federal','state','county','state-supreme-court','city','other'];
+const guide3230=[...general,'Citywide','Congressional District 7','Countywide',
+ 'Legislative District 34','Metropolitan King County Council District 8',
+ 'Statewide','West Electoral District'];
+const guide1279=[...general,'Citywide','Congressional District 7','Countywide',
+ 'Legislative District 46','Statewide','West Electoral District'];
+const initiatives=['initiative-26-001','initiative-26-638','initiative-26-645'];
+for(const compare of [false,true]) {
+ localStorage.clear();
+ await load('/e/wa-2026-general/'+(compare?'comparisons/':'')+'?precinct=3230&races=all');
+ equal(scope().disabled,false,'selected enabled');
+ equal(options(),compare?general:guide3230,'eligible options3230');
+ equal(ids().length,24,'complete covered3230');
+ equal([...initiatives,'seattle-proposition-1-transit'].every(id=>ids().includes(id)),
+   true,'all four eligible measures');
+ change('state');
+ equal(initiatives.every(id=>ids().includes(id)),true,'state initiatives retained');
+ equal(ids().includes('supreme-court-justice-1'),!compare,'original State semantics');
+ change('city');equal(ids().includes('seattle-proposition-1-transit'),true,'city measure');
+ equal(ids().some(id=>initiatives.includes(id)),false,'state measures outside city scope');
+ change(compare?'county':'Legislative District 34');
+ const oldURL=win().location.href;const oldIds=ids();
+ win().history.pushState({},'',oldURL);
+ choose('1279');
+ equal(options(),compare?general:guide1279,'eligible options1279');
+ equal(scope().value,compare?'county':'all','valid retention or invalid fallback');
+ equal(ids().length,compare?3:23,'new precinct scope membership');
+ const newURL=win().location.href;const newIds=ids();
+ await traverse('back');equal(win().location.href,oldURL,'Back URL');
+ equal(options(),compare?general:guide3230,'Back options');equal(ids(),oldIds,'Back rows');
+ equal(scope().value,compare?'county':'Legislative District 34','Back selection');
+ await traverse('forward');equal(win().location.href,newURL,'Forward URL');
+ equal(options(),compare?general:guide1279,'Forward options');equal(ids(),newIds,'Forward rows');
+ await load(newURL);equal(win().location.href,newURL,'reload URL');
+ equal(options(),compare?general:guide1279,'reload options');equal(ids(),newIds,'reload rows');
+ equal(scope().value,compare?'county':'all','reload selection');
+ doc().querySelector('[data-precinct-clear]').click();
+ equal(options().length,compare?7:24,'clear complete catalog');
+ equal(scope().value,compare?'county':'all','clear retains valid scope');
+ equal(new URL(win().location.href).searchParams.get('precinct'),'all','clear explicit geography');
+}
+return JSON.stringify({failures});})()
+.catch(error=>JSON.stringify({harnessError:String(error),stack:error.stack}))"""
+    )
+    result = _evaluate_in_chrome(path, expression, initial_url=url)
+    assert result.get("harnessError") is None, result
+    assert result["failures"] == [], result

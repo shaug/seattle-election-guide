@@ -855,6 +855,28 @@ It is omitted from legacy/primary payloads; old payloads fall back to `section_i
 No new client state, storage or lookup is added.
 Validation and preservation checks live in `tests/test_ballot_order.py`.
 
+### Precinct-aware Ballot scope (#668)
+
+The general guide's `CoveredFilterScope` extends its original value/label with
+covered `contest_ids`, computed by the renderer from existing publication filter
+tokens. Legacy/primary `FilterScope` remains value/label only. Comparisons derives
+its scope membership from the existing `filter_section_id` (legacy fallback:
+`section_id`). These page-specific meanings remain distinct: Guide State includes
+Supreme Court through its jurisdiction-kind token; comparison State does not.
+Neither is inferred from the new display headings or source scores.
+
+`ballot-scopes.mjs` intersects that membership with the existing precinct IDs to
+project only nonempty scope options, retaining their original nodes/groups/order.
+Option values identify projection targets; rendered labels and visible rows are
+never read back to decide membership. Availability ignores All/Contested, source
+selection and differences. The enabled Ballot scope then intersects geography and
+existing race visibility. A valid scope survives precinct changes and Clear; an
+invalid scope resolves to All in the same owned query/fragment transition as its
+control and rows. Incoming history resolves precinct eligibility before scope
+normalization. Clear restores the full ordinary scope catalog. Existing differences
+restrictions, source/column independence and precinct-only persistence remain.
+
+
 ## Optional address lookup (#657)
 
 The admitted November2026 precinct contract may carry an explicit catalog-bound

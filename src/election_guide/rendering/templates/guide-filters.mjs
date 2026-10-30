@@ -12,6 +12,7 @@
 //     is handed and hands back; `lens-route.mjs` is what touches `location`
 //     (§ State and URLs).
 
+import { availableBallotScopes, makeBallotScopeProjector } from './ballot-scopes.mjs';
 import { filterStatusParts } from './guide-format.mjs';
 import { readContestedOnly, withContestedOnly } from './precinct-ballot.mjs';
 
@@ -108,7 +109,8 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
   const defaultContested = payload.precinct_ballot?.election_id === 'wa-2026-general';
   let precinctIds = /** @type {Set<string>|null} */ (null);
   const scopeLabels = new Map(payload.filter_scopes.map((scope) => [scope.value, scope.label]));
-  const knownScopes = new Set(scopeLabels.keys());
+  let knownScopes = new Set(scopeLabels.keys());
+  const projectScopes = makeBallotScopeProjector(select);
 
   /** @returns {ControlState} */
   const controlState = () => ({
@@ -133,6 +135,7 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
 
   /** @param {{ syncUrl?: boolean }} [options] */
   const apply = ({ syncUrl = true } = {}) => {
+    if (!knownScopes.has(select.value)) select.value = 'all';
     const state = controlState();
     const contestedOnly = state.raceSet === 'contested';
     const compact = state.view === 'compact';
@@ -145,9 +148,9 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
         JSON.parse(/** @type {string} */ (card.dataset.filterTokens)).includes(state.scope);
       const matchesContest = !contestedOnly || card.dataset.contested === 'true';
       const matches =
-        (precinctIds !== null
-          ? precinctIds.has(card.dataset.publicationRaceId ?? '')
-          : matchesScope) && matchesContest;
+        matchesScope &&
+        (precinctIds === null || precinctIds.has(card.dataset.publicationRaceId ?? '')) &&
+        matchesContest;
       card.hidden = !matches;
       if (matches) visible += 1;
     });
@@ -165,7 +168,7 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
       // payload does not know, which the markup cannot produce.
       scopeLabel:
         precinctIds !== null
-          ? 'Selected precinct'
+          ? `Selected precinct · ${scopeLabels.get(state.scope) ?? 'All Seattle ballot races'}`
           : (scopeLabels.get(state.scope) ?? 'All Seattle ballot races'),
     });
     status.replaceChildren(
@@ -195,11 +198,13 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
     syncFromUrl,
     setPrecinct(ids, reset) {
       precinctIds = ids;
-      select.disabled = ids !== null;
-      if (reset) {
-        select.value = 'all';
-      }
-      apply({ syncUrl: reset });
+      knownScopes = availableBallotScopes(payload.filter_scopes, ids);
+      projectScopes(knownScopes);
+      select.disabled = false;
+      syncFromUrl();
+      const search = router.controlSearch();
+      const normalized = writeControlState(search, controlState(), defaultContested);
+      apply({ syncUrl: reset || normalized !== search });
     },
     showEveryRace() {
       select.value = 'all';

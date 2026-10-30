@@ -371,3 +371,21 @@ def test_general_sources_capability_does_not_extend_the_legacy_payload(
     )
     assert type(legacy) is SourcesPayload
     assert "race_mode_query_enabled" not in legacy.model_dump(mode="json")
+
+
+def test_general_ballot_scopes_publish_original_covered_membership(
+    general_view: PublicationViewModel,
+) -> None:
+    html = render_html_document(
+        general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    )
+    payload = json.loads(html.split("data-client-payload>")[1].split("</script>")[0])
+    scopes = {scope["value"]: scope["contest_ids"] for scope in payload["filter_scopes"]}
+    assert len(scopes["all"]) == 45
+    assert len(scopes["state"]) == 28
+    assert len(scopes["state-supreme-court"]) == 5
+    assert "supreme-court-justice-1" in scopes["state"]
+    assert {"initiative-26-001", "initiative-26-638", "initiative-26-645"} <= set(scopes["state"])
+    assert "seattle-proposition-1-transit" in scopes["city"]
+    assert "seattle-proposition-1-transit" in scopes["Citywide"]
+    assert scopes["Congressional District 9"] == ["us-house-9"]
