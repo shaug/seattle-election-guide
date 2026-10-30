@@ -926,10 +926,19 @@ is catalog-specific and collision-checked by `compactPrecinctName`.
 The optional general-only `precinct.css` owns this presentation and preserves the
 Safari `label:has(> input:checked)` selected-state rule inside editors. `base.css`
 and archived primary parts stay unchanged. Font readiness, a ResizeObserver on
-the actual bar and state projection re-evaluate natural unshrunk trigger widths;
+the actual bar and state projection re-evaluate natural unshrunk trigger widths,
+including the full Ballot scope. Omit that detail only when the wide content does
+not fit, before applying the existing safe precinct/code and menu-cue fallbacks;
 no viewport-only threshold or truncation substitutes for fit. Screenshot audits
 still count the five underlying native filter inputs, excluding compact launchers
 and editor dismissal buttons, and validate the visible Ballot launcher.
+
+While a compact editor is open, one animation-frame tracker reads its anchor and
+current visual viewport, measures the editor after applying available width/height,
+and reclamps its real box. It writes CSS geometry only when values change, and
+stops when no editor is open. This covers rotation, visual viewport zoom/scroll,
+font/container reflow and anchor transforms that emit no resize event, without
+closing the editor, changing focus or inventing another selection state.
 
 *Check: exists — `tests/js/compact-filters.test.mjs` covers scope indicator,
 editor focus and safe naming; `tests/test_precinct_rendering.py` exercises actual

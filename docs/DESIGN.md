@@ -55,8 +55,8 @@ When in doubt, remove ink.
 
 ## Color
 
-Semantics, not decoration. All values are tokens in `base.css`; page CSS
-never introduces a color literal. The families and what they mean:
+Semantics, not decoration. Values are tokens in `base.css`; page CSS never
+introduces a color literal except the three bounded #673 tokens below. The families and what they mean:
 
 | Family | Tokens | Meaning |
 |---|---|---|
@@ -69,11 +69,20 @@ never introduces a color literal. The families and what they mean:
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
 | Meter | `--meter-*` | The segmented meter's own palette (docs/METER_V2.md § Color): track, tie depth, trailing ranks, seam ink. Its majority and no-majority fills are `--teal` and `--amber` themselves |
 | Focus | `--focus` | Every focus ring, everywhere |
+| Compact general controls | `--compact-precinct-surface`, `--compact-expanded-surface`, `--compact-editor-shadow` | Approved C v5 precinct ground, expanded ground and editor shadow; general-only ownership |
 
 **Rule:** a new UI state must first try to inherit an existing family *by
 meaning*. Introducing a new hue amends this table and is a design
 decision, never just a CSS edit. Example: the "No majority" state joined
 the differ/amber family rather than adding a yellow.
+
+The three compact-control tokens are defined only on `[data-compact-filters]` in
+optional `precinct.css`: `#edf4ef` for the precinct ground, `#e7f2ef` for expanded
+controls, and `#102a4326` for the editor shadow. These exact C v5 values were
+already approved. Their local ownership preserves frozen primary/shared
+`base.css` bytes; it does not permit other page color literals or a new palette.
+Consumers use these tokens, and a change to their meanings or values amends this
+contract in the same PR.
 
 ## Typography
 
@@ -518,9 +527,10 @@ inherit this mapping.
 On precinct-enabled general Endorsements and Comparisons, the earlier wrapping
 header row is replaced by one 46px bar: **Precinct → View → Races → Ballot**.
 Each trigger has a matching outline SVG (pin, eye, filter lines, ballot box),
-readable text, a 44px minimum target and visible keyboard focus. Ballot's closed
-text is “Ballot”; its full selected scope is in its accessible name/title and
-native editor. A subtle teal dot marks only a non-All Ballot scope. Merely
+readable text, a 44px minimum target and visible keyboard focus. When the actual
+bar can fit the wide presentation, Ballot shows its full selected scope beside
+“Ballot”. Constrained bars keep the Ballot-only trigger. The full selected scope
+remains in its accessible name/title and native editor in both treatments. A subtle teal dot marks only a non-All Ballot scope. Merely
 selecting a precinct does not activate it.
 
 The actual container and rendered font/content decide the cue: arrows without
@@ -534,7 +544,10 @@ address draft. No ellipsis is used to make identity appear to fit.
 
 View, Races and Ballot open named native dialog editors containing the existing
 radio/select controls. A choice applies immediately and returns focus; Cancel or
-Escape dismisses without another change. Precinct retains its existing draft,
+Escape dismisses without another change. Open compact editors track their anchor
+and the current visual viewport across rotation, zoom and layout movement; their
+choices and Cancel remain reachable without resetting focus or selections.
+Precinct retains its existing draft,
 Select, Cancel, address privacy and keyboard behavior. Clear is in that editor.
 The compact surface changes no availability, fallback, race visibility, measures,
 source/scoring, URL/history or precinct-only persistence rule. Primary keeps its

@@ -568,3 +568,181 @@ def test_compact_editors_support_native_keyboard_and_phone_placement(
     )
     assert result.pop("racesLabel") == "Races: All", result
     assert all(result.values()), json.dumps(result)
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+def test_wide_compact_bar_shows_selected_ballot_scope_and_constrained_bar_keeps_identity(
+    tmp_path: Path, general_view: PublicationViewModel, page: str
+) -> None:
+    document = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / f"wide-scope-{page}.html"
+    path.write_text(without_live_address_requests(document))
+    expression = """(async()=>{
+      await document.fonts.ready;
+      const bar=document.querySelector('[data-compact-filters]');
+      const select=bar.querySelector('select');
+      const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      const inspect=()=>{const b=bar.querySelector('[data-filter-open=ballot]');
+        const visible=[...b.querySelectorAll('span')].filter(e=>
+          getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().width>0);
+        const rect=b.getBoundingClientRect(),box=bar.getBoundingClientRect();
+        return {text:visible.map(e=>e.textContent).join(' '),
+          fits:rect.right<=box.right+.1,height:box.height,active:b.hasAttribute('data-active'),
+          name:b.getAttribute('aria-label')};};
+      const cases=[];
+      for(const scope of ['county','state-supreme-court']){
+        select.value=scope;select.dispatchEvent(new Event('change',{bubbles:true}));
+        await settle();cases.push(inspect());
+      }
+      const wide=inspect();
+      bar.style.width='320px';await settle();const narrow=inspect();
+      const unchanged=select.value==='state-supreme-court';
+      bar.style.width='100%';await settle();const restored=inspect();
+      return JSON.stringify({cases,wide,narrow,restored,unchanged,
+        identity:bar.querySelector('[data-precinct-open]').getAttribute('aria-label')});
+    })()"""
+    result = _evaluate_in_chrome(
+        path, expression, viewport=(1280, 1000), initial_url=path.as_uri() + "?precinct=3230"
+    )
+    assert result["identity"] == "Precinct: SEA 34-3230"
+    assert "County" in result["cases"][0]["text"], result
+    assert "State Supreme Court" in result["wide"]["text"], result
+    assert "State Supreme Court" not in result["narrow"]["text"], result
+    assert "Ballot" in result["narrow"]["text"], result
+    assert "State Supreme Court" in result["restored"]["text"], result
+    assert result["unchanged"], result
+    assert all(
+        x["fits"] and x["height"] == 46 and x["active"]
+        for x in [*result["cases"], result["narrow"], result["restored"]]
+    ), result
+    assert all("State Supreme Court" in result[k]["name"] for k in ["wide", "narrow", "restored"])
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+@pytest.mark.parametrize("editor", ["view", "races", "ballot"])
+def test_open_compact_editor_tracks_viewport_and_anchor_without_changing_choice(
+    tmp_path: Path, general_view: PublicationViewModel, page: str, editor: str
+) -> None:
+    document = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / f"moving-{page}-{editor}.html"
+    path.write_text(without_live_address_requests(document))
+
+    def exercise(cdp: _CdpSocket, session: str) -> None:
+        def evaluate(source: str) -> object:
+            result = cdp.command(
+                "Runtime.evaluate",
+                {"expression": source, "awaitPromise": True, "returnByValue": True},
+                session_id=session,
+            )
+            assert "exceptionDetails" not in result, result
+            return result["result"].get("value")
+
+        evaluate("""const scope=document.querySelector(
+          '#race-filter,[data-comparison-section-filter]');
+          scope.value='state-supreme-court';scope.dispatchEvent(new Event('change',{bubbles:true}));
+          window.editorURL=location.href;
+          window.editorState=[...document.querySelectorAll('input[type=radio]')].map(x=>x.checked);
+          window.editorPhases=[];""")
+        point = evaluate(
+            "(()=>{const b=document.querySelector('[data-filter-open=EDITOR]');"
+            "const r=b.getBoundingClientRect();"
+            "return {x:r.x+r.width/2,y:r.y+r.height/2}})()".replace("EDITOR", editor)
+        )
+        assert isinstance(point, dict)
+        for kind in ["mousePressed", "mouseReleased"]:
+            cdp.command(
+                "Input.dispatchMouseEvent",
+                {"type": kind, **point, "button": "left", "clickCount": 1},
+                session_id=session,
+            )
+        evaluate(
+            """window.openEditor=document.querySelector('#compact-EDITOR-dialog');
+          window.editorFocus=document.activeElement;
+          window.recordEditor=async phase=>{
+            await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+            const d=window.openEditor,v=visualViewport,r=d.getBoundingClientRect();
+            const controls=[...d.querySelectorAll(
+              'select,.segmented-control label,[data-filter-cancel]')];
+            let reachable=true,textFits=true;
+            for(const c of controls){c.scrollIntoView({block:'nearest'});
+              const text=c.querySelector('span');
+              if(text)textFits&&=text.scrollWidth<=text.clientWidth+1;
+              const b=c.getBoundingClientRect();
+              reachable&&=b.top>=Math.max(r.top,v.offsetTop)-.5&&
+                b.bottom<=Math.min(r.bottom,v.offsetTop+v.height)+.5&&
+                b.left>=v.offsetLeft-.5&&b.right<=v.offsetLeft+v.width+.5;}
+            window.editorPhases.push({phase,open:d.open,reachable,textFits,
+              fits:r.left>=v.offsetLeft-.5&&r.right<=v.offsetLeft+v.width+.5&&
+                r.top>=v.offsetTop-.5&&r.bottom<=v.offsetTop+v.height+.5,
+              focus:document.activeElement===window.editorFocus,
+              scope:scope.value,url:location.href===window.editorURL,
+              checked:JSON.stringify(window.editorState)===JSON.stringify(
+                [...document.querySelectorAll('input[type=radio]')].map(x=>x.checked))});
+          };
+          window.recordEditor('opened-before-resize');""".replace("EDITOR", editor)
+        )
+        for width, height in [(390, 844), (844, 320), (320, 240)]:
+            cdp.command(
+                "Emulation.setDeviceMetricsOverride",
+                {"width": width, "height": height, "deviceScaleFactor": 1, "mobile": False},
+                session_id=session,
+            )
+            evaluate(f"window.recordEditor('{width}x{height}')")
+        cdp.command("Emulation.setPageScaleFactor", {"pageScaleFactor": 2}, session_id=session)
+        evaluate("window.recordEditor('visual-viewport-zoom')")
+        cdp.command("Emulation.setPageScaleFactor", {"pageScaleFactor": 1}, session_id=session)
+        cdp.command(
+            "Emulation.setDeviceMetricsOverride",
+            {"width": 1280, "height": 1000, "deviceScaleFactor": 1, "mobile": False},
+            session_id=session,
+        )
+        evaluate("""(async()=>{
+          await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+          const bar=document.querySelector('[data-compact-filters]');
+          window.oldEditorTop=window.openEditor.getBoundingClientRect().top;
+          bar.style.transform='translateY(90px)';
+          await window.recordEditor('anchor-moved-without-resize');
+          window.anchorFollowed=Math.abs(window.openEditor.getBoundingClientRect().top-
+            window.oldEditorTop-90)<1;
+          window.openEditor.querySelector('[data-filter-cancel]').click();
+        })()""")
+
+    result = _evaluate_in_chrome(
+        path,
+        """(()=>JSON.stringify({phases:window.editorPhases,anchor:window.anchorFollowed,
+          closed:!window.openEditor.open,
+          returned:document.activeElement===document.querySelector('[data-filter-open=EDITOR]')}))()""".replace(
+            "EDITOR", editor
+        ),
+        viewport=(1280, 1000),
+        interact=exercise,
+    )
+    assert result["closed"] and result["returned"], result
+    assert all(
+        p["open"]
+        and p["fits"]
+        and p["reachable"]
+        and p["textFits"]
+        and p["focus"]
+        and p["url"]
+        and p["checked"]
+        and p["scope"] == "state-supreme-court"
+        for p in result["phases"]
+    ), json.dumps(result)
+    assert result["anchor"], json.dumps(result)

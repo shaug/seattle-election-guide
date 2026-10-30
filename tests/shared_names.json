@@ -1155,6 +1155,10 @@
     "precinct-short": [
       "stylesheet",
       "client"
+    ],
+    "compact-ballot-scope": [
+      "stylesheet",
+      "client"
     ]
   },
   "breakpoints": {

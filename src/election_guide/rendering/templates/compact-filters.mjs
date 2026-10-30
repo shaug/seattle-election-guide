@@ -14,9 +14,9 @@ export function filterIcon(kind) {
 }
 
 /** @param {string} name @param {string} value @param {string} label
- * @param {boolean} [disabled] @param {boolean} [active] */
-function trigger(name, value, label, disabled = false, active = false) {
-  return html`<button class="compact-filter-trigger" type="button" data-filter-open=${name} aria-haspopup="dialog" aria-controls=${`compact-${name}-dialog`} aria-expanded="false" aria-label=${label} title=${label} ?disabled=${disabled} ?data-active=${active}>${filterIcon(name)}<span class="compact-filter-value">${value}</span>${name === 'ballot' ? html`<span class="compact-filter-dot" aria-hidden="true"></span>` : nothing}<span class="compact-filter-arrow" aria-hidden="true"></span></button>`;
+ * @param {boolean} [disabled] @param {boolean} [active] @param {string} [detail] */
+function trigger(name, value, label, disabled = false, active = false, detail = '') {
+  return html`<button class="compact-filter-trigger" type="button" data-filter-open=${name} aria-haspopup="dialog" aria-controls=${`compact-${name}-dialog`} aria-expanded="false" aria-label=${label} title=${label} ?disabled=${disabled} ?data-active=${active}>${filterIcon(name)}<span class="compact-filter-value">${value}</span>${name === 'ballot' ? html`<span class="compact-ballot-scope">${detail}</span><span class="compact-filter-dot" aria-hidden="true"></span>` : nothing}<span class="compact-filter-arrow" aria-hidden="true"></span></button>`;
 }
 
 /** Project resolved controller state without reading labels or state back from markup.
@@ -45,6 +45,7 @@ export function projectCompactFilters(state) {
           String(label),
           Boolean(disabled),
           name === 'ballot' && state.scope !== 'all',
+          name === 'ballot' ? state.scopeLabel : '',
         ),
         target,
       );
@@ -61,21 +62,65 @@ export function projectCompactFilters(state) {
 /** Wire ephemeral native editors and measure the actual bar after fonts/load/resize. */
 export function wireCompactFilters() {
   const bar = /** @type {HTMLElement|null} */ (document.querySelector('[data-compact-filters]'));
-  if (!bar) return;
+  const view = document.defaultView;
+  if (!bar || !view) return;
+  /** Clamp the editor's real box to the current visual viewport.
+   * @param {HTMLDialogElement} dialog @param {Element} opener */
+  const placeEditor = (dialog, opener) => {
+    const viewport = view.visualViewport;
+    const left = viewport?.offsetLeft ?? 0;
+    const top = viewport?.offsetTop ?? 0;
+    const width = viewport?.width ?? document.documentElement.clientWidth;
+    const height = viewport?.height ?? document.documentElement.clientHeight;
+    /** @param {string} name @param {number} value */
+    const set = (name, value) => {
+      const pixels = `${value}px`;
+      if (dialog.style.getPropertyValue(name) !== pixels) dialog.style.setProperty(name, pixels);
+    };
+    set('--filter-width', Math.max(0, Math.min(320, width - 16)));
+    set('--filter-height', Math.max(0, height - 16));
+    const anchor = opener.getBoundingClientRect();
+    const box = dialog.getBoundingClientRect();
+    set('--filter-left', Math.max(left + 8, Math.min(anchor.left, left + width - box.width - 8)));
+    set(
+      '--filter-top',
+      Math.max(top + 8, Math.min(anchor.bottom + 3, top + height - box.height - 8)),
+    );
+  };
+  const placeOpenEditors = () => {
+    const dialogs = /** @type {NodeListOf<HTMLDialogElement>} */ (
+      bar.querySelectorAll('[data-filter-editor][open]')
+    );
+    for (const dialog of dialogs) {
+      const opener = bar.querySelector(`[data-filter-open="${dialog.dataset.filterEditor}"]`);
+      if (opener) placeEditor(dialog, opener);
+    }
+    return dialogs.length > 0;
+  };
+  // Anchor movement need not emit a resize event (for example a transform).
+  // Track only while a modal is open; unchanged geometry produces no writes.
+  let frame = 0;
+  const trackEditors = () => {
+    frame = 0;
+    if (placeOpenEditors()) frame = view.requestAnimationFrame(trackEditors);
+  };
   const fit = () => {
     // Measure the wide candidates unshrunk. The compact code is already vetted
     // against the catalog; no ellipsis or slicing is used to manufacture fit.
     bar.dataset.cues = 'arrows';
     bar.dataset.precinctDisplay = 'full';
+    bar.dataset.ballotDetail = 'full';
     const required = () =>
       [...bar.querySelectorAll('.compact-filter-trigger')].reduce(
         (sum, el) => sum + el.getBoundingClientRect().width,
         0,
       );
     const separators = bar.querySelectorAll('.compact-filter-slot').length;
-    const available = bar.clientWidth - separators;
+    const available = bar.getBoundingClientRect().width - separators;
+    if (required() > available) bar.dataset.ballotDetail = 'compact';
     if (required() > available) bar.dataset.precinctDisplay = 'short';
     if (required() > available) bar.dataset.cues = 'underlines';
+    placeOpenEditors();
   };
   /** @param {HTMLDialogElement} dialog */
   const restore = (dialog) => {
@@ -93,27 +138,11 @@ export function wireCompactFilters() {
       bar.querySelector(`#${opener.getAttribute('aria-controls')}`)
     );
     if (!dialog) return;
-    const rect = opener.getBoundingClientRect();
-    const viewport = document.defaultView?.visualViewport;
-    const left = viewport?.offsetLeft ?? 0;
-    const top = viewport?.offsetTop ?? 0;
-    const width = viewport?.width ?? document.documentElement.clientWidth;
-    const height = viewport?.height ?? document.documentElement.clientHeight;
-    dialog.style.setProperty(
-      '--filter-left',
-      `${Math.max(left + 8, Math.min(rect.left, left + width - Math.min(320, width - 16) - 8))}px`,
-    );
-    dialog.style.setProperty(
-      '--filter-top',
-      `${Math.max(top + 8, Math.min(rect.bottom + 3, top + height - 220))}px`,
-    );
-    dialog.style.setProperty(
-      '--filter-height',
-      `${Math.max(100, top + height - Number.parseFloat(dialog.style.getPropertyValue('--filter-top')) - 8)}px`,
-    );
     /** @type {HTMLElement} */ (opener).focus();
     opener.setAttribute('aria-expanded', 'true');
     dialog.showModal();
+    placeEditor(dialog, opener);
+    if (!frame) frame = view.requestAnimationFrame(trackEditors);
     /** @type {HTMLElement|null} */ (
       dialog.querySelector(
         'input:checked:not(:disabled),select:not(:disabled),[data-filter-cancel]',
@@ -136,6 +165,10 @@ export function wireCompactFilters() {
     // Native close already returns focus. A delayed close event must not steal
     // it from another trigger the reader has since reached.
     dialog.addEventListener('close', () => {
+      if (!bar.querySelector('[data-filter-editor][open]')) {
+        view.cancelAnimationFrame(frame);
+        frame = 0;
+      }
       if (!dialog.open)
         bar
           .querySelector(`[data-filter-open="${dialog.dataset.filterEditor}"]`)

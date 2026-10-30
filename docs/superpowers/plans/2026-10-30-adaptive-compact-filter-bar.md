@@ -4,7 +4,7 @@
 
 **Goal:** One 46px general-election bar: Precinct → View → Races → Ballot, with readable values, matching SVG icons and mutually exclusive adaptive menu cues.
 
-**Architecture:** Retain the existing select/radio controls and their state owners, URL codecs, precinct resolver and source behavior. On admitted precinct pages only, place View/Races/Ballot controls in native dialog editors and project their existing state onto compact triggers through a shared module. Keep the existing precinct editor and privacy boundary. Use measured container/content fit after fonts settle (and resize), rather than a viewport breakpoint. Fall back to underlines before measurement; wide layout shows arrows and full precinct name when it fits. Ballot closed text stays “Ballot”; its accessible label and editor name the full selection, and only its own non-All scope lights the dot.
+**Architecture:** Retain the existing select/radio controls and their state owners, URL codecs, precinct resolver and source behavior. On admitted precinct pages only, place View/Races/Ballot controls in native dialog editors and project their existing state onto compact triggers through a shared module. Keep the existing precinct editor and privacy boundary. Use measured container/content fit after fonts settle (and resize), rather than a viewport breakpoint. Fall back to underlines before measurement; wide layout shows arrows and full precinct name when it fits. The wide Ballot trigger includes its full selected scope when measured content fits; only the constrained trigger stays “Ballot”. Its accessible label and editor always name the full selection, and only its own non-All scope lights the dot.
 
 **Tech stack:** existing Jinja, lit-html ES modules, optional general-only precinct.css; no dependency, payload or data changes.
 
@@ -37,3 +37,23 @@ Native Safari limitation: lost REPL binding first failed before native access. E
 Gate correction: the first committed-head gate exposed four newly shared control labels and one stale standalone Precinct-header mirror. After 1,199 passes and that one failure, the owned test process was interrupted for correction. The mirror inventory now declares the real constant-label evidence and removes the vanished header claim; actual rendered radio/trigger label parity is tested. This inventory is a required coverage floor, not a ratchet ceiling or exemption list. The corrected committed head receives the complete gate; the first run is retained as failed/interrupted evidence.
 
 Second gate completed with 2,441 passes and nine failures: two required shared-name inventories and seven address-browser cases still targeting the former inline Ballot select or concatenating full/compact name spans. The address tests now open the real Ballot editor by native keyboard, retain native select type-ahead and hit/focus checks, and target the full precinct-name field. The unified address editor still has exactly one input; the four retained filter radios are in their separate editors. All seven address cases and all thirteen shared-name checks pass. The shared-name declaration records actual newly shared hooks, with no scanner/exemption/ceiling change. Product, configuration and data bytes are unchanged by this correction; the new committed head still receives a complete gate and source-bound builds.
+
+## Canonical attempt 1 — accepted #673 correctness corrections
+
+Preserve the approved C v5 palette using three named tokens owned only by the
+general compact-bar component; DESIGN explicitly records that bounded ownership
+while shared base.css remains frozen. Correct the initial implementation's
+unconditional Ballot-only presentation: measure the full scope in the wide bar,
+then omit it only when that real content cannot fit. A two-view regression failed
+before the correction and passed afterward.
+
+Open editor geometry now follows the current visual viewport and anchor while
+open, including movements that emit no resize event. Writes occur only when
+geometry changes; closing ends tracking. No selected state, URL, focus reset or
+forced close is used. Both-view View/Races/Ballot regressions open before resize,
+then exercise portrait/landscape, short viewports, visual zoom and anchor movement.
+They failed before correction and passed after it. An additional real zoom check
+caught clipped radio text; existing radio labels now wrap when content needs it.
+Full engine validation, commit/promotion, committed-head gates and fresh review
+remain the engine/delivery owner's next steps; focused results are not substituted
+for those gates.
