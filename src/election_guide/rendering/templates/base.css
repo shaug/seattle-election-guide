@@ -203,7 +203,7 @@ a { color: var(--blue); text-underline-offset: .15em; }
 .segmented-control label + label { border-left: 1px solid var(--line-strong); }
 .segmented-control input { position: absolute; opacity: 0; }
 .segmented-control span { display: flex; width: 100%; min-width: 0; align-items: center; justify-content: center; padding: .45rem .7rem; white-space: nowrap; }
-.segmented-control input:checked + span { background: var(--navy); color: var(--white); }
+.segmented-control label:has(> input:checked) > span { background: var(--navy); color: var(--white); }
 .segmented-control input:focus-visible + span { outline: .2rem solid var(--focus); outline-offset: -.2rem; }
 
 /* Shared filter controls. Election pages render these through
