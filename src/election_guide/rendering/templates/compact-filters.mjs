@@ -16,7 +16,7 @@ export function filterIcon(kind) {
 /** @param {string} name @param {string} value @param {string} label
  * @param {boolean} [disabled] @param {boolean} [active] @param {string} [detail] */
 function trigger(name, value, label, disabled = false, active = false, detail = '') {
-  return html`<button class="compact-filter-trigger" type="button" data-filter-open=${name} aria-haspopup="dialog" aria-controls=${`compact-${name}-dialog`} aria-expanded="false" aria-label=${label} title=${label} ?disabled=${disabled} ?data-active=${active}>${filterIcon(name)}<span class="compact-filter-value">${value}</span>${name === 'ballot' ? html`<span class="compact-ballot-scope">${detail}</span><span class="compact-filter-dot" aria-hidden="true"></span>` : nothing}<span class="compact-filter-arrow" aria-hidden="true"></span></button>`;
+  return html`<button class="compact-filter-trigger" type="button" data-filter-open=${name} aria-haspopup="dialog" aria-controls=${`compact-${name}-dialog`} aria-expanded="false" aria-label=${label} title=${label} ?disabled=${disabled} ?data-active=${active}>${filterIcon(name)}<span class="compact-filter-value">${value}</span>${name === 'ballot' ? html`<span class="compact-filter-value compact-ballot-scope">${detail}</span><span class="compact-filter-dot" aria-hidden="true"></span>` : nothing}<span class="compact-filter-arrow" aria-hidden="true"></span></button>`;
 }
 
 /** Project resolved controller state without reading labels or state back from markup.
@@ -24,13 +24,14 @@ function trigger(name, value, label, disabled = false, active = false, detail = 
 export function projectCompactFilters(state) {
   const bar = document.querySelector('[data-compact-filters]');
   if (!bar) return;
+  const scopeLabel = state.scope === 'all' ? 'All ballot races' : state.scopeLabel;
   for (const [name, value, label, disabled] of [
     ['view', state.view, `View: ${state.view}`, state.viewDisabled ?? false],
     ['races', state.races, `Races: ${state.races}`, false],
     [
       'ballot',
       'Ballot',
-      `Ballot${state.scope === 'all' ? '' : ' filter active'}: ${state.scopeLabel}`,
+      `Ballot${state.scope === 'all' ? '' : ' filter active'}: ${scopeLabel}`,
       false,
     ],
   ]) {
@@ -45,13 +46,11 @@ export function projectCompactFilters(state) {
           String(label),
           Boolean(disabled),
           name === 'ballot' && state.scope !== 'all',
-          name === 'ballot' ? state.scopeLabel : '',
+          name === 'ballot' ? scopeLabel : '',
         ),
         target,
       );
   }
-  const detail = /** @type {HTMLElement|null} */ (bar.querySelector('[data-compact-scope-detail]'));
-  if (detail) render(html`${state.scopeLabel}`, detail);
   for (const dialog of /** @type {NodeListOf<HTMLDialogElement>} */ (
     bar.querySelectorAll('[data-filter-editor][open]')
   ))
@@ -130,6 +129,16 @@ export function wireCompactFilters() {
       bar.style.setProperty('--compact-filter-padding', `${padding}px`);
     }
     if (required() > available) bar.dataset.spacing = 'tight';
+    const controls = bar.querySelector('.compact-filter-controls');
+    const count = bar.querySelector('.filter-control-status');
+    bar.dataset.countLine = 'separate';
+    if (
+      controls &&
+      count &&
+      controls.getBoundingClientRect().width + 2 * (count.getBoundingClientRect().width + 12) <=
+        bar.getBoundingClientRect().width
+    )
+      bar.dataset.countLine = 'inline';
     placeOpenEditors();
   };
   /** @param {HTMLDialogElement} dialog */

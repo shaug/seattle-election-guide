@@ -636,7 +636,7 @@ for(const blocked of [false,true]) {
    equal(status.textContent.trim().startsWith(String(expected[code].length)),true,
     label+' truthful count');
    equal(doc().querySelector('[data-precinct-name]').textContent.trim(),
-    code==='all'?'Select':'SEA 46-1279',label+' explicit precinct');
+    code==='all'?'Precinct':'SEA 46-1279',label+' explicit precinct');
    equal(localStorage.getItem(key),'2200',label+' header does not change memory');
    if(!comparison)equal(
     doc().querySelector('[data-lens-banner-status]').textContent.includes('Counting all'),

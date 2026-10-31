@@ -69,3 +69,29 @@ remove gaps and position the scope dot above the text within its trigger. Reset
 both adjustments before each fresh fit. The 300px container regression proves
 that padding alone is insufficient, independently of a specific platform font.
 Preserve full text, font size, icons, scope-dot visibility and target minima.
+
+### Attempt 3: Scott’s preview corrections
+
+Center the control group independently of the existing reactive status. Keep the
+whole status phrase on one line beside that group when side space admits it, or
+on its own centered line below. Restore the visible status without another
+count/state owner. Empty Precinct and removal of duplicate Ballot editor text
+preserve native Select/Cancel/naming. Actual native/browser regressions cover
+320/360/390/1280 and filter/Clear/URL/history changes.
+
+The requested full All ballot races value conflicts with the Guide’s narrow
+row: at zero padding/gaps, no arrows and the dot out of text flow, complete
+46-1279 + Compact + Contested + All ballot races needs 348.890625px in Avenir
+and 351.765625px in system-ui. This was a concrete wording/fit tradeoff, preserved as historical diagnostic
+evidence. Scott resolved it explicitly: constrained/mobile shows only Ballot
+and its own-scope active dot, with no selected value. Wide shows only the current
+value (default All ballot races), without a Ballot prefix or redundant Seattle.
+The native select retains the current value without the duplicate paragraph.
+No two-line Ballot, new abbreviation or font/target reduction is introduced.
+
+Final source coverage includes no-precinct All and active County plus All races
+at actual 320/360/390px viewports, under the approved stack, system-ui and
+sans-serif fallback. Wide values, native selected options and Guide payload
+labels agree; the renderer owns the general-only all-scope wording. The release
+status audit compares the published all-scope label while retaining its original
+three-part, whole-text and layout assertions. Legacy primary wording stays intact.

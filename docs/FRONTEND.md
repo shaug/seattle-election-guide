@@ -927,9 +927,13 @@ The optional general-only `precinct.css` owns this presentation and preserves th
 Safari `label:has(> input:checked)` selected-state rule inside editors. `base.css`
 and archived primary parts stay unchanged. Font readiness, a ResizeObserver on
 the actual bar and state projection re-evaluate natural unshrunk trigger widths,
-including the full Ballot scope. Omit that detail only when the wide content does
-not fit, before applying the existing safe precinct/code and menu-cue fallbacks;
-no viewport-only threshold or truncation substitutes for fit. Recheck the underline
+including the full Ballot selected value. The wide trigger shows that value
+without a prefixed Ballot; its all-scope display and general native option use
+“All ballot races”. The rendering context owns that general-only all-scope copy
+for both the Guide payload/select and the Comparisons select, keeping legacy
+primary copy unchanged. Only when the wide content does not fit, show generic Ballot
+and its own-scope active dot instead, before the existing safe precinct/code
+and menu-cue fallbacks; no viewport-only threshold or truncation substitutes for fit. Recheck the underline
 layout with the resolved font and reclaim inline trigger padding only when its
 measured total still exceeds the container; reset that adjustment on every fit.
 If zero padding still does not fit, remove the remaining gaps and place the
@@ -951,3 +955,13 @@ editor focus and safe naming; `tests/test_precinct_rendering.py` exercises actua
 rendered pages, geometry/cue transition, membership, source independence and
 modal/history behavior. Actual Safari and physical-device coverage are reported
 separately from headless browser results.*
+
+Scott’s preview correction keeps the four compact launchers in one centered
+`.compact-filter-controls` row. The bar’s existing live status remains owned by
+the Guide/Comparisons controllers and becomes visible, nowrap, and centered on
+its own line unless the measured side space beside the centered controls admits
+the entire count phrase. Fit runs after the existing count projection; no second
+counter, filter state or observer is introduced. The count line may increase the
+bar height; each control and their row remain 46px. The empty precinct launcher
+says Precinct, while Select inside its editor keeps its existing draft behavior.
+The Ballot editor no longer repeats its selected value above the named select.

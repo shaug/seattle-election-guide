@@ -503,10 +503,6 @@
       "client",
       "test"
     ],
-    "data-compact-scope-detail": [
-      "template",
-      "client"
-    ],
     "data-filter-cancel": [
       "template",
       "stylesheet",
@@ -520,6 +516,7 @@
       "test"
     ],
     "data-filter-open": [
+      "stylesheet",
       "client",
       "python",
       "test"
@@ -680,7 +677,8 @@
     ],
     "filter-status-part": [
       "stylesheet",
-      "client"
+      "client",
+      "test"
     ],
     "insufficient-note": [
       "template",
@@ -1160,7 +1158,20 @@
     ],
     "compact-ballot-scope": [
       "stylesheet",
-      "client"
+      "client",
+      "test"
+    ],
+    "compact-filter-controls": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "filter-control-status": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
     ]
   },
   "breakpoints": {

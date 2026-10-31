@@ -411,7 +411,9 @@ def _capture_emulated_viewport(
                     "controls.fullMetersLeftAligned=meters.every(meter=>"
                     "meterAligned(meter));"
                     "controls.statusAllGrouped=status?.children.length===3&&"
-                    "status.lastElementChild?.textContent===' · All Seattle ballot races'&&"
+                    "status.lastElementChild?.textContent===' · '+JSON.parse("
+                    "document.querySelector('[data-client-payload]').textContent)"
+                    ".filter_scopes.find(scope=>scope.value==='all').label&&"
                     "getComputedStyle(status.lastElementChild).whiteSpace==='nowrap';"
                     # Issue 108: the guide has no page-anchored <details>
                     # disclosures left (both the methodology and sources

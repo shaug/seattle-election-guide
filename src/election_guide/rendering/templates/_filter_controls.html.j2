@@ -51,10 +51,12 @@
 {% set ballot_options = caller() %}
 {% call control_bar(aria_label, extra_class, precinct_enabled) %}
   {% if precinct_enabled %}
+  <div class="compact-filter-controls">
   {% include '_precinct_control.html.j2' %}
   <div class="compact-filter-slot" data-filter-trigger="view"></div>
   <div class="compact-filter-slot" data-filter-trigger="races"></div>
   <div class="compact-filter-slot" data-filter-trigger="ballot"></div>
+  </div>
   <dialog id="compact-view-dialog" class="compact-filter-dialog" data-filter-editor="view" aria-labelledby="compact-view-title">
     <h2 id="compact-view-title">View</h2>
     {{ segmented_radio('View', view_name, view_options, 'view-setting', true) }}
@@ -67,7 +69,6 @@
   </dialog>
   <dialog id="compact-ballot-dialog" class="compact-filter-dialog" data-filter-editor="ballot" aria-labelledby="compact-ballot-title">
     <h2 id="compact-ballot-title">Ballot</h2>
-    <p class="compact-filter-detail" data-compact-scope-detail></p>
     {% call labeled_select('Ballot', ballot_id, ballot_attributes, ballot_extra_class) %}{{ ballot_options | safe }}{% endcall %}
     <button type="button" data-filter-cancel>Cancel</button>
   </dialog>

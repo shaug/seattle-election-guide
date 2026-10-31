@@ -1,8 +1,10 @@
 /* General precinct pages only: compact filter slot and ephemeral choice dialog. */
 .segmented-control label:has(> input:checked) > span { background: var(--navy); color: var(--white); }
 /* The admitted general views share this bar; primary keeps its legacy shell. */
-[data-compact-filters] { --compact-precinct-surface: #edf4ef; --compact-expanded-surface: #e7f2ef; --compact-editor-shadow: #102a4326; position: relative; display: flex; flex-wrap: nowrap; align-items: stretch; gap: 0; height: 46px; min-height: 46px; padding: 0; }
-[data-compact-filters] > .filter-control-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+[data-compact-filters] { --compact-precinct-surface: #edf4ef; --compact-expanded-surface: #e7f2ef; --compact-editor-shadow: #102a4326; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: 0; min-height: 46px; padding: 0; }
+[data-compact-filters] .compact-filter-controls { display: flex; grid-column: 2; grid-row: 1; width: max-content; height: 46px; }
+[data-compact-filters] > .filter-control-status { display: block; grid-column: 1 / -1; grid-row: 2; justify-self: center; width: max-content; min-width: 0; margin: 0; padding: 0 0 8px; text-align: center; white-space: nowrap; }
+[data-count-line="inline"] > .filter-control-status { grid-column: 3; grid-row: 1; justify-self: start; margin-left: 12px; padding: 0; }
 .precinct-control, .compact-filter-slot { display: flex; flex: 0 0 auto; min-width: 0; margin: 0; }
 .precinct-control[hidden] { display: none; }
 .precinct-summary { display: flex; }
@@ -13,6 +15,7 @@
 .compact-filter-icon { display: block; flex: none; width: 14px; height: 14px; color: var(--teal); }
 .compact-filter-arrow { flex: none; width: 6px; height: 6px; border: solid currentColor; border-width: 0 1px 1px 0; transform: rotate(45deg); margin: 0 2px 3px; }
 .precinct-short { display: none; }
+[data-ballot-detail="full"] [data-filter-open="ballot"] > .compact-filter-value:not(.compact-ballot-scope) { display: none; }
 [data-ballot-detail="compact"] .compact-ballot-scope { display: none; }
 [data-precinct-display="short"] [data-precinct-name] { display: none; }
 [data-precinct-display="short"] .precinct-short { display: inline; }

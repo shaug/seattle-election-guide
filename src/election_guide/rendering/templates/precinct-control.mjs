@@ -277,7 +277,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     code = selection.code;
     const area = contract.precincts.find((p) => p.code === code);
     render(
-      html`<button class="precinct-open compact-filter-trigger${area ? ' precinct-selected' : ''}" type="button" data-precinct-open aria-label=${`Precinct: ${area?.name ?? SELECT_LABEL}`} title=${`Precinct: ${area?.name ?? SELECT_LABEL}`} aria-haspopup="dialog" aria-controls="precinct-dialog" aria-expanded="false" @click=${open}>${filterIcon('precinct')}<span class="compact-filter-value" data-precinct-name>${area?.name ?? SELECT_LABEL}</span><span class="compact-filter-value precinct-short" data-precinct-short aria-hidden="true">${area ? compactPrecinctName(area, contract.precincts) : SELECT_LABEL}</span><span class="compact-filter-arrow" aria-hidden="true"></span></button>`,
+      html`<button class="precinct-open compact-filter-trigger${area ? ' precinct-selected' : ''}" type="button" data-precinct-open aria-label=${area ? `Precinct: ${area.name}` : 'Precinct'} title=${area ? `Precinct: ${area.name}` : 'Precinct'} aria-haspopup="dialog" aria-controls="precinct-dialog" aria-expanded="false" @click=${open}>${filterIcon('precinct')}<span class="compact-filter-value" data-precinct-name>${area?.name ?? 'Precinct'}</span><span class="compact-filter-value precinct-short" data-precinct-short aria-hidden="true">${area ? compactPrecinctName(area, contract.precincts) : 'Precinct'}</span><span class="compact-filter-arrow" aria-hidden="true"></span></button>`,
       summary,
     );
     const clearSlot = /** @type {HTMLElement|null} */ (

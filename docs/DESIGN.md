@@ -525,12 +525,22 @@ inherit this mapping.
 ## Adaptive compact general filter bar (#673, approved C v5)
 
 On precinct-enabled general Endorsements and Comparisons, the earlier wrapping
-header row is replaced by one 46px bar: **Precinct → View → Races → Ballot**.
+header row is replaced by one centered 46px control row:
+**Precinct → View → Races → Ballot**. Keep the existing reactive race-count
+phrase visible and intact. It sits beside the centered group when its whole
+phrase fits in the remaining side space; otherwise it occupies its own centered
+line below. The control row remains 46px, while the bar grows for that count line.
+An empty precinct trigger says “Precinct”; the editor retains its “Select” action.
+The Ballot editor uses its heading and named native select, without repeating
+the current selected value in a separate paragraph.
 Each trigger has a matching outline SVG (pin, eye, filter lines, ballot box),
 readable text, a 44px minimum target and visible keyboard focus. When the actual
-bar can fit the wide presentation, Ballot shows its full selected scope beside
-“Ballot”. Constrained bars keep the Ballot-only trigger. The full selected scope
-remains in its accessible name/title and native editor in both treatments. A subtle teal dot marks only a non-All Ballot scope. Merely
+bar can fit the wide presentation, the Ballot trigger shows only its current
+selected value: “All ballot races” by default, without a “Ballot” prefix or
+redundant “Seattle”. Constrained/mobile bars show only “Ballot” and its own-scope
+active dot; the current value is already evident below and in the native select.
+The full selected scope remains in its accessible name/title and native editor
+in both treatments. A subtle teal dot marks only a non-All Ballot scope. Merely
 selecting a precinct does not activate it.
 
 The actual container and rendered font/content decide the cue: arrows without
