@@ -469,7 +469,26 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
           .filter(el=>getComputedStyle(el).display!=='none');
         return {width:box.width,
           height:bar.querySelector('.compact-filter-controls').getBoundingClientRect().height,
-          cue:bar.dataset.cues,
+          cue:bar.dataset.cues,spacing:bar.dataset.spacing,
+          scope:bar.querySelector('select').value,
+          ownActive:bar.querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+          ownDotVisible:getComputedStyle(bar.querySelector('.compact-filter-dot')).visibility==='visible',
+          dotClear:(()=>{const d=bar.querySelector('.compact-filter-dot').getBoundingClientRect();
+            const b=bar.querySelector('[data-filter-open=ballot]'),i=b.querySelector('svg')
+              .getBoundingClientRect();
+            return d.right<=i.left||d.left>=i.right||d.bottom<=i.top||d.top>=i.bottom;})(),
+          labelsSeparated:values.every((el,index)=>{if(!index)return true;
+            const left=document.createRange(),right=document.createRange();
+            left.selectNodeContents(values[index-1]);right.selectNodeContents(el);
+            return right.getBoundingClientRect().left-left.getBoundingClientRect().right>=2;}),
+          wholeLines:values.every(el=>{const r=document.createRange();r.selectNodeContents(el);
+            return r.getClientRects().length===1;}),
+          iconsClear:buttons.every(b=>{const icon=b.querySelector('svg').getBoundingClientRect();
+            return [...b.querySelectorAll('.compact-filter-value')]
+              .filter(e=>getComputedStyle(e).display!=='none').every(e=>{
+                const r=document.createRange();r.selectNodeContents(e);
+                const text=r.getBoundingClientRect();
+                return icon.right<=text.left+.1||icon.bottom<=text.top+.1;});}),
           fits:buttons.every(b=>b.getBoundingClientRect().right<=box.right+.1),
           values:values.map(el=>el.textContent),
           textFits:values.every(el=>{const r=document.createRange();r.selectNodeContents(el);
@@ -491,7 +510,7 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
       const compact=document.querySelector('input[name=ballot-view][value=compact]');
       if(compact)compact.click();
       const samples=[];
-      for(const width of [300,320,360,390]){bar.style.width=width+'px';await settle();
+      for(const width of [280,300,320,360,390]){bar.style.width=width+'px';await settle();
         samples.push(inspect());}
       const transitions=[];
       for(let width=300;width<=450;width++){bar.style.width=width+'px';await settle();
@@ -501,7 +520,7 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
       const activeSamples=[];
       const select=bar.querySelector('select');
       select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
-      for(const width of [300,320]){bar.style.width=width+'px';await settle();
+      for(const width of [280,300,320]){bar.style.width=width+'px';await settle();
         const b=bar.querySelector('[data-filter-open=ballot]');
         const dot=b.querySelector('.compact-filter-dot'),r=dot.getBoundingClientRect();
         const text=b.querySelector('.compact-filter-value').getBoundingClientRect();
@@ -513,7 +532,7 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
       const differingSamples=[];
       const differing=document.querySelector('[data-comparison-differences]');
       if(differing){document.querySelector('[data-precinct-clear]').click();differing.click();
-        for(const width of [300,320,390]){bar.style.width=width+'px';await settle();
+        for(const width of [280,300,320,360,390]){bar.style.width=width+'px';await settle();
           differingSamples.push(inspect());}}
       return JSON.stringify({samples,activeSamples,differingSamples,transitions,name,
         viewport:innerWidth});
@@ -526,6 +545,10 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
     assert all(
         s["fits"]
         and s["textFits"]
+        and s["wholeLines"]
+        and s["labelsSeparated"]
+        and s["iconsClear"]
+        and s["dotClear"]
         and s["fontSize"]
         and s["height"] == 46
         and s["aggregate"] <= s["width"]
@@ -543,6 +566,11 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
     assert all(
         s["values"] == ["46-1279", expected_view, "Contested", "Ballot"]
         for s in result["samples"] + result["activeSamples"]
+    ), result
+    assert all(not s["ownActive"] and not s["ownDotVisible"] for s in result["samples"]), result
+    assert all(
+        s["scope"] == "county" and s["ownActive"] and s["ownDotVisible"]
+        for s in result["activeSamples"] + result["differingSamples"]
     ), result
     assert all(s["indicator"] for s in result["activeSamples"]), result
     if page == "compare":
@@ -843,7 +871,7 @@ def test_scott_preview_empty_precinct_and_ballot_editor_are_unambiguous(
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
-@pytest.mark.parametrize("width", [320, 360, 390, 1280])
+@pytest.mark.parametrize("width", [300, 320, 360, 390, 1280])
 @pytest.mark.parametrize("screen_sans", [None, "system-ui", "sans-serif"])
 def test_scott_preview_centers_controls_and_keeps_reactive_count_together(
     tmp_path: Path,

@@ -95,3 +95,23 @@ sans-serif fallback. Wide values, native selected options and Guide payload
 labels agree; the renderer owns the general-only all-scope wording. The release
 status audit compares the published all-scope label while retaining its original
 three-part, whole-text and layout assertions. Legacy primary wording stays intact.
+
+### Second authorized bounded follow-up: final 300px overflow
+
+The retained Linux 204e measurements are genuine failures: zero-spacing inline
+Guide controls need 318.84375px at300; Comparisons Differing needs319.296875px.
+Local Mac fonts pass300 but reproduce the same intrinsic inline overcommit at
+280. Complete pre-edit glyph/icon/box/padding/gap contributors and the original
+Linux objects were recorded before source edits. No local result is a Linux run.
+
+Recheck after the existing tight fallback. Only if it still overflows, arrange
+icons above one-line values within the unchanged46px controls. Keep14px fonts
+and icons,44px minimum targets, complete labels and own-scope dot. Wider layouts
+remain inline; no platform flag or viewport breakpoint is introduced. Retain
+300/320/360/390 and actual Full/Differing/active-scope coverage, adding280 as a
+local real-geometry regression and actual300px viewport/count cases. Root owns
+new Linux validation; the source correction does not claim that result.
+
+The final stacked state retains a 2px inline inset between adjacent labels.
+The label-separation assertion first failed in four real local cases before
+this inset was applied; earlier zero-inset captures remain intermediate evidence.

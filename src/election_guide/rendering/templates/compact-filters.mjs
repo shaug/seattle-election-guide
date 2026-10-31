@@ -129,6 +129,7 @@ export function wireCompactFilters() {
       bar.style.setProperty('--compact-filter-padding', `${padding}px`);
     }
     if (required() > available) bar.dataset.spacing = 'tight';
+    if (required() > available) bar.dataset.spacing = 'stacked';
     const controls = bar.querySelector('.compact-filter-controls');
     const count = bar.querySelector('.filter-control-status');
     bar.dataset.countLine = 'separate';

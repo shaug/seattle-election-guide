@@ -938,8 +938,13 @@ layout with the resolved font and reclaim inline trigger padding only when its
 measured total still exceeds the container; reset that adjustment on every fit.
 If zero padding still does not fit, remove the remaining gaps and place the
 Ballot scope dot in the trigger’s top corner above its text, reclaiming its flow
-width without hiding it. Reset both adjustments before measuring again. Font
-size, labels, icons and minimum targets remain unchanged. Screenshot audits
+width without hiding it. Remeasure that final inline layout: if it still exceeds
+the actual container, stack each icon above its one-line value inside the same
+46px trigger. Only that final state changes flex direction and uses a 2px vertical
+gap and 2px inline inset to separate adjacent labels; font size, complete labels,
+icons and target minima remain unchanged. Reset
+all spacing states before every fit so wider containers recover their inline
+presentation. Screenshot audits
 still count the five underlying native filter inputs, excluding compact launchers
 and editor dismissal buttons, and validate the visible Ballot launcher.
 

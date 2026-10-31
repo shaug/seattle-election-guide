@@ -548,8 +548,11 @@ underlines when the full contents fit, underlines without arrows when constraine
 If even the underline layout overflows, reclaim inline padding based on its
 measured deficit. Only if that is insufficient, remove remaining gaps and move
 the scope dot above the text into the Ballot trigger’s top corner; preserve its
-visibility, every label, font size, icon and target minimum. Reset this spacing
-when the container grows.
+visibility, every label, font size, icon and target minimum. If that zero-spacing
+inline layout still overflows, place each icon above its single-line value inside
+the same 46px control, with a 2px vertical gap and 2px inline inset separating adjacent labels. Keep 14px icons and text and the
+44px target minimum; this is not wrapped Ballot text. Measure again on every fit
+and return to the inline layout whenever it fits.
 Do not use the mockup's measured 354px as a universal viewport breakpoint. Full
 precinct names appear when they fit. Only an exact `SEA DD-NNNN` catalog name
 with a unique shortened form may display `DD-NNNN` under constraint. Keep every
