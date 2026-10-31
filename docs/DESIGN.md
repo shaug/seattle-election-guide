@@ -581,6 +581,9 @@ immediately, with focus remaining on the select. Native menu navigation and
 dismissal follow the platform; opening or canceling an uncommitted menu creates
 no extra selection state. Do not imitate these menus with a renamed custom popup.
 Escape retains a selection that normal native input has already committed.
+Native menu opening, uncommitted Escape and real option commits require the
+[mandatory interactive acceptance](FRONTEND.md#native-select-verification); automated
+headless selection/state checks do not replace that evidence.
 Precinct alone opens an attached, viewport-clamped native dialog with a transparent
 backdrop. It tracks its anchor and visual viewport across rotation, zoom and
 layout movement, keeping its search, suggestions and actions reachable. It

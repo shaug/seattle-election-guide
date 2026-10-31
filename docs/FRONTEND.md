@@ -1002,12 +1002,43 @@ bar height; each control and their row remain 46px. The empty precinct launcher
 says Precinct, while Select inside its editor keeps its existing draft behavior.
 The native Ballot select exposes its complete current option without a separate
 selected-value paragraph. Browser-managed menu navigation is not a component draft.
-Native input evidence requires a positive browser-native open state in trusted
-keyboard and pointer activation events. Require the actual Escape and option-navigation
-keydown events to begin with the menu open; focus, an input receipt or closed-select
-navigation alone cannot pass. Capture these states synchronously with the real input,
-not from a later CDP snapshot that may follow headless popup closure. Let dismissal
-finish and require the menu closed before fresh pointer activation. Record trusted
-input/change timing, value, URL and focus, and preserve the committed choice through
-Escape. Transient headless popup observations and settled menu usability are reported
-separately.
+
+### Native-select verification
+
+Automated project-Chrome checks exercise the real HTML selects, complete options,
+trusted native input/change, selected values, visible/current accessible values,
+URL/history projection, committed Escape, focus and Tab order. They preserve the
+independent precinct/source/filter/scoring contracts. These checks run on every
+platform without native-menu timing assertions, platform skips or retries.
+
+macOS headless Chromium can cancel a native popup before displaying it: the
+[matching-version popup bridge](https://github.com/chromium/chromium/blob/156.0.8078.74/content/app_shim_remote_cocoa/render_widget_host_ns_view_bridge.mm#L388-L407)
+returns no selection for a headless native window. This standard implementation
+constraint does not trace an individual failed transition. Headless focus, trusted
+input, transient `:open` or green selection tests do not prove interactive menu
+opening, persistence or uncommitted dismissal.
+
+**Reviewer-applied mandatory interactive acceptance:** before accepting the native
+filter feature or its preview, use an existing supported, authorized interactive
+browser on the exact candidate. On both Guide and Comparisons, for View, Races and
+Ballot:
+
+- Positively observe the actual standard native menu opening from keyboard and
+  pointer activation; a focused control or transient headless flag is insufficient.
+- Open the menu and press Escape without selecting another option. Observe actual
+  dismissal, unchanged applied value/URL/result state and retained control focus.
+  Do not call an already committed native choice uncommitted or invent rollback.
+- Reopen and perform a real normal option commit. Observe immediate selected value,
+  visible/accessibility/application/URL agreement and preserved independent filters,
+  rows, source cells and scoring. Escape then retains that committed choice.
+- Confirm full accessible name/current value/options and no extra View/Races/Ballot
+  editor or Cancel; Precinct keeps its separate draft-dialog lifecycle.
+
+Record the actual operator/session/browser/version/mode, candidate head/tree and
+served URL/body binding, actions, before/open/dismissed/committed observations and
+original visual/accessible evidence supported by that authorized session. Missing,
+denied or unsupported cases remain pending with their exact target/reason/outcome;
+a checklist or automated pass cannot replace actual evidence. This requirement
+confers no new browser/session/headful/native access, denial retry or workaround.
+Continue unaffected automated work, but do not call the feature/preview accepted
+while interactive acceptance is incomplete.
