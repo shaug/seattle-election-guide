@@ -656,7 +656,7 @@ def test_complete_filter_families_fit_their_measured_fractional_container(
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
 @pytest.mark.parametrize("width", [320, 360, 390])
-def test_native_commit_and_escape_preserve_selected_value_url_and_focus(
+def test_native_menus_open_before_escape_and_commit_preserve_value_url_and_focus(
     tmp_path: Path, general_view: PublicationViewModel, page: str, width: int
 ) -> None:
     html = (
@@ -703,7 +703,7 @@ def test_native_commit_and_escape_preserve_selected_value_url_and_focus(
                     session_id=session,
                 )
 
-        def observe(phase: str) -> None:
+        def observe(phase: str) -> dict[str, object]:
             value = ev("""(()=>{
               return {value:nativeSelect.value,url:location.href,open:nativeSelect.matches(':open'),
                 retained:document.activeElement===nativeSelect,
@@ -716,17 +716,20 @@ def test_native_commit_and_escape_preserve_selected_value_url_and_focus(
             (tmp_path / f"{page}-native-events.json").write_text(
                 json.dumps(observations, indent=2) + "\n"
             )
+            return value
 
         ev("""window.nativeSelect=document.querySelector('[data-filter-native=view]');
           window.nativeEvents=[];
-          for(const type of ['keydown','keyup','input','change'])nativeSelect.addEventListener(type,
-            e=>nativeEvents.push({type:e.type,key:e.key,trusted:e.isTrusted,value:nativeSelect.value,url:location.href}));
+          for(const type of ['keydown','keyup','mousedown','mouseup','input','change'])
+            nativeSelect.addEventListener(type,e=>nativeEvents.push({
+              type:e.type,key:e.key,trusted:e.isTrusted,open:nativeSelect.matches(':open'),
+              value:nativeSelect.value,url:location.href}));
           nativeSelect.focus();""")
         observe("initial")
         key(" ", 32, " ")
-        observe("after-Space")
         key("Escape", 27)
-        observe("Space-Escape-observed")
+        ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
+        assert not observe("Space-Escape-observed")["open"], observations
         point = ev(
             "(()=>{const r=nativeSelect.getBoundingClientRect();"
             "return {x:r.x+r.width/2,y:r.y+r.height/2}})()"
@@ -738,15 +741,11 @@ def test_native_commit_and_escape_preserve_selected_value_url_and_focus(
                 {"type": kind, **point, "button": "left", "clickCount": 1},
                 session_id=session,
             )
-        observe("after-native-pointer")
-        key("ArrowDown", 40)
-        observe("native-option-navigation")
         key(
             "c" if page == "guide" else "d",
             67 if page == "guide" else 68,
             "c" if page == "guide" else "d",
         )
-        observe("native-choice-input")
         key("Enter", 13, "\r")
         ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
         observe("committed")
@@ -771,18 +770,36 @@ def test_native_commit_and_escape_preserve_selected_value_url_and_focus(
     )
     phases = {v["phase"]: v for v in result["observations"]}
     initial = phases["initial"]
-    # Space/open reporting differs from an actual trusted option commit. Export
-    # those states, but assert the committed value rather than inventing rollback.
-    assert any(
-        e["type"] == "keydown" and e["key"] == " " and e["trusted"]
-        for e in phases["after-Space"]["events"]
-    ), phases
+    # Native opening is captured at the trusted input boundary. A later CDP
+    # snapshot can run after headless Chrome has already closed the popup.
+    # Require the actual Escape and option-navigation keydowns to begin OPEN;
+    # a transient opening followed by closed-select input cannot pass.
     dismissed = phases["Space-Escape-observed"]
     assert (
         dismissed["value"] == initial["value"] == "full" and dismissed["url"] == initial["url"]
     ), phases
-    assert dismissed["retained"], phases
+    assert dismissed["retained"] and not dismissed["open"], phases
+    keyboard_events = dismissed["events"]
+    space = next(e for e in keyboard_events if e["type"] == "keyup" and e["key"] == " ")
+    escape = next(e for e in keyboard_events if e["type"] == "keydown" and e["key"] == "Escape")
+    assert space["trusted"] and space["open"] and escape["trusted"] and escape["open"], phases
+    assert keyboard_events.index(space) < keyboard_events.index(escape), phases
     committed = phases["committed"]
+    pointer_events = committed["events"][len(keyboard_events) :]
+    press = next(e for e in pointer_events if e["type"] == "mousedown")
+    opened = next(
+        e for e in pointer_events[pointer_events.index(press) + 1 :] if e["type"] == "mouseup"
+    )
+    choose = next(
+        e
+        for e in pointer_events
+        if e["type"] == "keydown" and e["key"] == ("c" if page == "guide" else "d")
+    )
+    assert press["trusted"] and not press["open"], phases
+    assert opened["trusted"] and opened["open"] and choose["trusted"] and choose["open"], phases
+    assert (
+        pointer_events.index(press) < pointer_events.index(opened) < pointer_events.index(choose)
+    ), phases
     assert committed["value"] == ("compact" if page == "guide" else "differing"), phases
     assert committed["url"] != initial["url"] and committed["retained"] and not committed["open"], (
         phases

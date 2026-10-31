@@ -1002,7 +1002,12 @@ bar height; each control and their row remain 46px. The empty precinct launcher
 says Precinct, while Select inside its editor keeps its existing draft behavior.
 The native Ballot select exposes its complete current option without a separate
 selected-value paragraph. Browser-managed menu navigation is not a component draft.
-Native keyboard evidence records actual input/change timing, value, URL and focus.
-An Escape assertion uses the committed native choice; focus or a Space-key receipt
-alone does not establish an open menu. Transient headless popup observations and
-settled menu usability are reported separately.
+Native input evidence requires a positive browser-native open state in trusted
+keyboard and pointer activation events. Require the actual Escape and option-navigation
+keydown events to begin with the menu open; focus, an input receipt or closed-select
+navigation alone cannot pass. Capture these states synchronously with the real input,
+not from a later CDP snapshot that may follow headless popup closure. Let dismissal
+finish and require the menu closed before fresh pointer activation. Record trusted
+input/change timing, value, URL and focus, and preserve the committed choice through
+Escape. Transient headless popup observations and settled menu usability are reported
+separately.
