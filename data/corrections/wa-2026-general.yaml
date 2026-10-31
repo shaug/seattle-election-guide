@@ -475,3 +475,20 @@ entries:
         url: /e/wa-2026-general/
       - label: "Comparisons"
         url: /e/wa-2026-general/comparisons/
+
+  - corrected_on: 2026-10-30
+    headline: "Precinct and ballot filters share one compact bar."
+    body: >-
+      Precinct, View, Races and Ballot now open their editors from one compact
+      row on Endorsements and Comparisons. The row keeps each selected value
+      readable and adjusts its menu cues to the available space. Ballot marks
+      an active scope with a small dot; its editor shows the full selection.
+      Clear precinct selection is in the Precinct editor. Ballot membership,
+      endorsement choices, scoring and published order are unchanged.
+    provenance:
+      - label: "Compact filter bar"
+        url: https://github.com/shaug/seattle-election-guide/issues/673
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Comparisons"
+        url: /e/wa-2026-general/comparisons/

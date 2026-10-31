@@ -55,8 +55,8 @@ When in doubt, remove ink.
 
 ## Color
 
-Semantics, not decoration. All values are tokens in `base.css`; page CSS
-never introduces a color literal. The families and what they mean:
+Semantics, not decoration. Values are tokens in `base.css`; page CSS never
+introduces a color literal except the three bounded #673 tokens below. The families and what they mean:
 
 | Family | Tokens | Meaning |
 |---|---|---|
@@ -69,11 +69,20 @@ never introduces a color literal. The families and what they mean:
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
 | Meter | `--meter-*` | The segmented meter's own palette (docs/METER_V2.md § Color): track, tie depth, trailing ranks, seam ink. Its majority and no-majority fills are `--teal` and `--amber` themselves |
 | Focus | `--focus` | Every focus ring, everywhere |
+| Compact general controls | `--compact-precinct-surface`, `--compact-expanded-surface`, `--compact-editor-shadow` | Approved C v5 precinct ground, expanded ground and editor shadow; general-only ownership |
 
 **Rule:** a new UI state must first try to inherit an existing family *by
 meaning*. Introducing a new hue amends this table and is a design
 decision, never just a CSS edit. Example: the "No majority" state joined
 the differ/amber family rather than adding a yellow.
+
+The three compact-control tokens are defined only on `[data-compact-filters]` in
+optional `precinct.css`: `#edf4ef` for the precinct ground, `#e7f2ef` for expanded
+controls, and `#102a4326` for the editor shadow. These exact C v5 values were
+already approved. Their local ownership preserves frozen primary/shared
+`base.css` bytes; it does not permit other page color literals or a new palette.
+Consumers use these tokens, and a change to their meanings or values amends this
+contract in the same PR.
 
 ## Typography
 
@@ -430,17 +439,18 @@ rule or rationale it produced lands here.
 
 ## Voting precinct control (#608)
 
-The November2026 general guide places Precinct in the existing Filters row on
-Endorsements and Comparisons, with all filter headers aligned. An unset choice
-shows a Select action; a selected choice shows its transient selected address
-or its precinct name and a compact × button labeled Clear precinct selection. The action opens a native
+The November2026 general guide places Precinct in the shared filter bar on
+Endorsements and Comparisons. The #673 compact-bar revision below supersedes the
+original wrapping headers and inline clear control. An unset choice shows Select;
+a selected choice shows its precinct identity. Clear precinct selection is inside
+the editor. The action opens a native
 modal with one searchable field and Select and Cancel buttons. The October28
 #657 revision below supersedes the original native precinct suggestions and
 Find my precinct link. Search edits a draft: only Select applies it;
 Cancel and Escape preserve the applied choice, URL and device memory. Opening or
 canceling this ephemeral editor does not change the query or fragment. Opening
 focuses search; native modal focus containment and return focus preserve keyboard
-context. The row wraps within narrow viewports. There is no separate search strip
+context. The compact bar adapts within narrow containers. There is no separate search strip
 or explanatory line above it. (Scott's explicit preview revision, October 25, 2026.)
 There is no setup section, district questionnaire or embedded map. The first-version
 no-address restriction is superseded by the optional #657 voting-address path below.
@@ -454,7 +464,7 @@ agreeing. Clear restores the full scope list and retains a valid scope and race 
 Differences restrictions remain disabled while selected; Races remains usable.
 Source choices and comparison columns remain independent. Clear removes geography
 while preserving race mode. Selected precinct text uses stronger weight; control
-bodies and the race count align vertically while headers retain their common row. Unsupported choices never claim an exact ballot. Primary has no
+bodies align vertically in the compact bar. Unsupported choices never claim an exact ballot. Primary has no
 precinct control.
 
 ## Optional voting-address path (#657, October28,2026)
@@ -511,3 +521,52 @@ independent of the new display grouping; this does not introduce location setup.
 See BALLOT_INVENTORY.md for the source, literal-versus-SEG heading distinctions,
 and the explicit November-only boundary. Historical primary publications do not
 inherit this mapping.
+
+## Adaptive compact general filter bar (#673, approved C v5)
+
+On precinct-enabled general Endorsements and Comparisons, the earlier wrapping
+header row is replaced by one centered 46px control row:
+**Precinct → View → Races → Ballot**. Keep the existing reactive race-count
+phrase visible and intact. It sits beside the centered group when its whole
+phrase fits in the remaining side space; otherwise it occupies its own centered
+line below. The control row remains 46px, while the bar grows for that count line.
+An empty precinct trigger says “Precinct”; the editor retains its “Select” action.
+The Ballot editor uses its heading and named native select, without repeating
+the current selected value in a separate paragraph.
+Each trigger has a matching outline SVG (pin, eye, filter lines, ballot box),
+readable text, a 44px minimum target and visible keyboard focus. When the actual
+bar can fit the wide presentation, the Ballot trigger shows only its current
+selected value: “All ballot races” by default, without a “Ballot” prefix or
+redundant “Seattle”. Constrained/mobile bars show only “Ballot” and its own-scope
+active dot; the current value is already evident below and in the native select.
+The full selected scope remains in its accessible name/title and native editor
+in both treatments. A subtle teal dot marks only a non-All Ballot scope. Merely
+selecting a precinct does not activate it.
+
+The actual container and rendered font/content decide the cue: arrows without
+underlines when the full contents fit, underlines without arrows when constrained.
+If even the underline layout overflows, reclaim inline padding based on its
+measured deficit. Only if that is insufficient, remove remaining gaps and move
+the scope dot above the text into the Ballot trigger’s top corner; preserve its
+visibility, every label, font size, icon and target minimum. If that zero-spacing
+inline layout still overflows, place each icon above its single-line value inside
+the same 46px control, with a 2px vertical gap and 2px inline inset separating adjacent labels. Keep 14px icons and text and the
+44px target minimum; this is not wrapped Ballot text. Measure again on every fit
+and return to the inline layout whenever it fits.
+Do not use the mockup's measured 354px as a universal viewport breakpoint. Full
+precinct names appear when they fit. Only an exact `SEA DD-NNNN` catalog name
+with a unique shortened form may display `DD-NNNN` under constraint. Keep every
+digit, other prefix and distinguishing suffix; keep the full name in the editor,
+accessible name and title. Applied text is always precinct identity, never an
+address draft. No ellipsis is used to make identity appear to fit.
+
+View, Races and Ballot open named native dialog editors containing the existing
+radio/select controls. A choice applies immediately and returns focus; Cancel or
+Escape dismisses without another change. Open compact editors track their anchor
+and the current visual viewport across rotation, zoom and layout movement; their
+choices and Cancel remain reachable without resetting focus or selections.
+Precinct retains its existing draft,
+Select, Cancel, address privacy and keyboard behavior. Clear is in that editor.
+The compact surface changes no availability, fallback, race visibility, measures,
+source/scoring, URL/history or precinct-only persistence rule. Primary keeps its
+legacy controls and archive styles.

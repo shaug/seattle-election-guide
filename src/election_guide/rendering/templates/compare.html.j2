@@ -40,7 +40,7 @@
         comparison_race_count ~ ' of ' ~ comparison_race_count ~ ' races shown · ' ~ comparison_differ_count ~ ' differ',
         precinct_enabled=guide.precinct_ballot is not none
       ) %}
-        <option value="all">All Seattle ballot races</option>
+        <option value="all">{{ all_ballot_scope_label }}</option>
         {% for section_id, section_label in comparison_filter_sections %}<option value="{{ section_id }}">{{ section_label }}</option>{% endfor %}
       {% endcall %}
       </div>

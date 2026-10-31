@@ -1,6 +1,7 @@
 // The endorsements guide's client entry (docs/FRONTEND.md § Modules). esbuild
 // bundles this import graph and guide.html.j2 inlines the result.
 import { requireClientPayload } from './client-payload.mjs';
+import { wireCompactFilters } from './compact-filters.mjs';
 import { wireElectionDay } from './election-day.mjs';
 import { wireGuide } from './guide-client.mjs';
 import { wireMeterTooltips } from './meter-tooltip.mjs';
@@ -22,4 +23,5 @@ export function boot() {
   wireElectionDay();
   wireMeterTooltips();
   wireGuide(/** @type {GuidePayload} */ (requireClientPayload(document)));
+  wireCompactFilters();
 }

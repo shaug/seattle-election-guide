@@ -1,3 +1,4 @@
+import { projectCompactFilters } from './compact-filters.mjs';
 // Interactive comparison-page glue. State is admitted and serialized only by
 // compare-url.mjs; the address bar it lives in is touched only by
 // compare-route.mjs; cell arithmetic is owned only by compare-signals.mjs; the
@@ -771,6 +772,19 @@ export function wireComparisons() {
     toggleInput('[data-comparison-differences]').checked = state.differencesOnly;
     toggleInput('[data-comparison-all-races]').checked = !state.contestedOnly;
     toggleInput('[data-comparison-contested]').checked = state.contestedOnly;
+    projectCompactFilters({
+      scope: state.section,
+      scopeLabel:
+        state.section === 'all'
+          ? 'All Seattle ballot races'
+          : state.section
+              .split('-')
+              .map((word) => word[0].toUpperCase() + word.slice(1))
+              .join(' '),
+      view: state.differencesOnly ? 'Differing' : 'Full',
+      races: state.contestedOnly ? 'Contested' : 'All',
+      viewDisabled: precinctIds !== null,
+    });
   }
 
   // Everything one state change implies: both regions, the controls, the hint.

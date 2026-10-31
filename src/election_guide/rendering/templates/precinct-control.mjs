@@ -1,6 +1,7 @@
 // Compact precinct slot: the modal edits a draft; only Select changes membership.
 import { html, nothing, render } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { filterIcon } from './compact-filters.mjs';
 import {
   ballotQuery,
   readPrecinctSelection,
@@ -26,6 +27,17 @@ export function ballotOptionsTemplate(options, active, select) {
         void select(option);
       }}><span class="ballot-option-text">${option.text}</span><span class="ballot-option-type">${option.kind === 'precinct' ? 'Precinct' : 'Address'}</span></li>`,
   )}`;
+}
+
+/** Only reviewed Seattle names with a unique complete district/code may shorten.
+ * @param {{name:string}} area @param {ReadonlyArray<{name:string}>} precincts */
+export function compactPrecinctName(area, precincts) {
+  const match = /^SEA (\d{2}-\d{4})$/.exec(area.name);
+  if (!match) return area.name;
+  const short = match[1];
+  return precincts.filter((p) => p.name === short || p.name === `SEA ${short}`).length === 1
+    ? short
+    : area.name;
 }
 
 /** @param {PrecinctBallotContract|null|undefined} contract
@@ -236,8 +248,11 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
       else invalidate();
     }
   };
-  const restoreFocus = () =>
-    /** @type {HTMLElement|null} */ (summary.querySelector('button'))?.focus();
+  const restoreFocus = () => {
+    const opener = /** @type {HTMLElement|null} */ (summary.querySelector('button'));
+    opener?.setAttribute('aria-expanded', String(dialog.open));
+    opener?.focus();
+  };
   const open = () => {
     discard();
     const area = contract.precincts.find((p) => p.code === code);
@@ -252,6 +267,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     restoreFocus();
     fitViewport();
     dialog.showModal();
+    summary.querySelector('button')?.setAttribute('aria-expanded', 'true');
     input().focus();
     fitOptions();
   };
@@ -261,9 +277,20 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     code = selection.code;
     const area = contract.precincts.find((p) => p.code === code);
     render(
-      html`<button class="precinct-open${area ? ' precinct-selected' : ''}" type="button" data-precinct-open aria-haspopup="dialog" aria-controls="precinct-dialog" @click=${open}>${area?.name ?? SELECT_LABEL}</button>${area ? html`<button class="precinct-clear" type="button" data-precinct-clear aria-label="Clear precinct selection" @click=${() => choose(null)}>×</button>` : nothing}`,
+      html`<button class="precinct-open compact-filter-trigger${area ? ' precinct-selected' : ''}" type="button" data-precinct-open aria-label=${area ? `Precinct: ${area.name}` : 'Precinct'} title=${area ? `Precinct: ${area.name}` : 'Precinct'} aria-haspopup="dialog" aria-controls="precinct-dialog" aria-expanded="false" @click=${open}>${filterIcon('precinct')}<span class="compact-filter-value" data-precinct-name>${area?.name ?? 'Precinct'}</span><span class="compact-filter-value precinct-short" data-precinct-short aria-hidden="true">${area ? compactPrecinctName(area, contract.precincts) : 'Precinct'}</span><span class="compact-filter-arrow" aria-hidden="true"></span></button>`,
       summary,
     );
+    const clearSlot = /** @type {HTMLElement|null} */ (
+      root.querySelector('[data-precinct-clear-slot]')
+    );
+    if (clearSlot)
+      render(
+        area
+          ? html`<button class="precinct-clear" type="button" data-precinct-clear aria-label="Clear precinct selection" @click=${() => choose(null)}>Clear precinct selection</button>`
+          : nothing,
+        clearSlot,
+      );
+    root.closest('[data-compact-filters]')?.dispatchEvent(new Event('compact-filter-fit'));
     const warning =
       selection.status === 'invalid'
         ? 'Precinct not recognized. Showing ordinary browsing.'

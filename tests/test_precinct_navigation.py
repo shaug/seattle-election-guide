@@ -627,7 +627,7 @@ for(const blocked of [false,true]) {
    const status=doc().querySelector(comparison?'[data-comparison-status]':'#filter-status');
    observations.push({label,header:header.href,url:win().location.href,ids:ids(),
     all:all.checked,contested:contested.checked,status:status.textContent.trim(),
-    precinct:doc().querySelector('[data-precinct-open]').textContent.trim()});
+    precinct:doc().querySelector('[data-precinct-name]').textContent.trim()});
    equal(win().location.pathname,target,label+' actual destination');
    equal(win().location.search,query,label+' explicit query beats memory');
    equal(ids(),expected[code],label+' exact All IDs');
@@ -635,8 +635,8 @@ for(const blocked of [false,true]) {
    equal(contested.checked,false,label+' Contested not selected');
    equal(status.textContent.trim().startsWith(String(expected[code].length)),true,
     label+' truthful count');
-   equal(doc().querySelector('[data-precinct-open]').textContent.trim(),
-    code==='all'?'Select':'SEA 46-1279',label+' explicit precinct');
+   equal(doc().querySelector('[data-precinct-name]').textContent.trim(),
+    code==='all'?'Precinct':'SEA 46-1279',label+' explicit precinct');
    equal(localStorage.getItem(key),'2200',label+' header does not change memory');
    if(!comparison)equal(
     doc().querySelector('[data-lens-banner-status]').textContent.includes('Counting all'),
@@ -691,6 +691,8 @@ for(const compare of [false,true]) {
  equal(scope().disabled,false,'selected enabled');
  equal(options(),compare?general:guide3230,'eligible options3230');
  equal(ids().length,24,'complete covered3230');
+ equal(doc().querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+  false,'precinct alone has no scope dot');
  equal([...initiatives,'seattle-proposition-1-transit'].every(id=>ids().includes(id)),
    true,'all four eligible measures');
  change('state');
@@ -699,11 +701,15 @@ for(const compare of [false,true]) {
  change('city');equal(ids().includes('seattle-proposition-1-transit'),true,'city measure');
  equal(ids().some(id=>initiatives.includes(id)),false,'state measures outside city scope');
  change(compare?'county':'Legislative District 34');
+ equal(doc().querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+  true,'own narrowed scope has dot');
  const oldURL=win().location.href;const oldIds=ids();
  win().history.pushState({},'',oldURL);
  choose('1279');
  equal(options(),compare?general:guide1279,'eligible options1279');
  equal(scope().value,compare?'county':'all','valid retention or invalid fallback');
+ equal(doc().querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+  compare,'fallback projects own scope dot');
  equal(ids().length,compare?3:23,'new precinct scope membership');
  const newURL=win().location.href;const newIds=ids();
  await traverse('back');equal(win().location.href,oldURL,'Back URL');
@@ -717,6 +723,8 @@ for(const compare of [false,true]) {
  doc().querySelector('[data-precinct-clear]').click();
  equal(options().length,compare?7:24,'clear complete catalog');
  equal(scope().value,compare?'county':'all','clear retains valid scope');
+ equal(doc().querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+  compare,'Clear preserves own scope indicator');
  equal(new URL(win().location.href).searchParams.get('precinct'),'all','clear explicit geography');
 }
 return JSON.stringify({failures});})()

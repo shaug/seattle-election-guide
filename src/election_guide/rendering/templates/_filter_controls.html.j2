@@ -1,5 +1,5 @@
-{% macro control_bar(aria_label, extra_class='') -%}
-<section class="{% if extra_class %}{{ extra_class }} {% endif %}filter-control-bar" aria-label="{{ aria_label }}">
+{% macro control_bar(aria_label, extra_class='', compact=false) -%}
+<section{% if compact | default(false) %} data-compact-filters{% endif %} class="{% if extra_class %}{{ extra_class }} {% endif %}filter-control-bar" aria-label="{{ aria_label }}">
   {{ caller() }}
 </section>
 {%- endmacro %}
@@ -30,8 +30,8 @@
 
 {# One election-control composition shared by every election view. Pages may
    supply their ballot options and binary View values, but not rearrange or
-   replace the Ballot / View / Races / status slots. The optional Precinct slot
-   between Races and status belongs only to admitted general precinct views. #}
+   replace its slots. Admitted general precinct views use the approved compact
+   Precinct / View / Races / Ballot composition; other views keep the legacy row. #}
 {% macro election_controls(
   aria_label,
   extra_class,
@@ -49,11 +49,34 @@
   precinct_enabled=false
 ) -%}
 {% set ballot_options = caller() %}
-{% call control_bar(aria_label, extra_class) %}
+{% call control_bar(aria_label, extra_class, precinct_enabled) %}
+  {% if precinct_enabled %}
+  <div class="compact-filter-controls">
+  {% include '_precinct_control.html.j2' %}
+  <div class="compact-filter-slot" data-filter-trigger="view"></div>
+  <div class="compact-filter-slot" data-filter-trigger="races"></div>
+  <div class="compact-filter-slot" data-filter-trigger="ballot"></div>
+  </div>
+  <dialog id="compact-view-dialog" class="compact-filter-dialog" data-filter-editor="view" aria-labelledby="compact-view-title">
+    <h2 id="compact-view-title">View</h2>
+    {{ segmented_radio('View', view_name, view_options, 'view-setting', true) }}
+    <button type="button" data-filter-cancel>Cancel</button>
+  </dialog>
+  <dialog id="compact-races-dialog" class="compact-filter-dialog" data-filter-editor="races" aria-labelledby="compact-races-title">
+    <h2 id="compact-races-title">Races</h2>
+    {{ segmented_radio('Races', race_name, race_options, 'view-setting', true) }}
+    <button type="button" data-filter-cancel>Cancel</button>
+  </dialog>
+  <dialog id="compact-ballot-dialog" class="compact-filter-dialog" data-filter-editor="ballot" aria-labelledby="compact-ballot-title">
+    <h2 id="compact-ballot-title">Ballot</h2>
+    {% call labeled_select('Ballot', ballot_id, ballot_attributes, ballot_extra_class) %}{{ ballot_options | safe }}{% endcall %}
+    <button type="button" data-filter-cancel>Cancel</button>
+  </dialog>
+  {% else %}
   {% call labeled_select('Ballot', ballot_id, ballot_attributes, ballot_extra_class) %}{{ ballot_options | safe }}{% endcall %}
   {{ segmented_radio('View', view_name, view_options, 'view-setting', precinct_enabled) }}
   {{ segmented_radio('Races', race_name, race_options, 'view-setting', precinct_enabled) }}
-  {% if precinct_enabled %}{% include '_precinct_control.html.j2' %}{% endif %}
+  {% endif %}
   {% call control_status(status_id, status_attributes, status_extra_class) %}{{ status_text }}{% endcall %}
 {% endcall %}
 {%- endmacro %}

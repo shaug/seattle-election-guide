@@ -66,6 +66,7 @@ const PURITY_IDENTIFIERS = [
  * this choice deliberately rather than arriving unguarded.
  */
 export const MODULE_KINDS = {
+  'compact-filters.mjs': 'wiring',
   'ballot-scopes.mjs': 'wiring',
   'voting-address-lookup.mjs': 'wiring',
   'precinct-ballot.mjs': 'pure',

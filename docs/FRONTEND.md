@@ -909,3 +909,64 @@ pure membership/scoring modules offline. Check: `voting-address-lookup.test.mjs`
 and `precinct-address-control.test.mjs` exercise admission, privacy and cancellation;
 browser navigation tests preserve actual general/primary behavior. This adds no
 storage exception or ratchet ceiling.
+
+## Compact general controls (#673)
+
+The precinct-enabled branch of `_filter_controls.html.j2` owns the 46px ordered
+bar and three native editor roots. Legacy primary markup remains in its original
+branch. `compact-filters.mjs` owns only trigger rendering, ephemeral dialog wiring,
+focus return and actual container/content fit. Guide and comparison controllers
+pass resolved scope/View/Races values to `projectCompactFilters`; those controllers
+still own native input intent, URL encoding, scope availability and race updates.
+The compact component has no storage, provider, scoring or ballot-matching role.
+Comparison's admitted section tokens are displayed as title-cased words; their
+six current labels match the server's section vocabulary. Precinct abbreviation
+is catalog-specific and collision-checked by `compactPrecinctName`.
+
+The optional general-only `precinct.css` owns this presentation and preserves the
+Safari `label:has(> input:checked)` selected-state rule inside editors. `base.css`
+and archived primary parts stay unchanged. Font readiness, a ResizeObserver on
+the actual bar and state projection re-evaluate natural unshrunk trigger widths,
+including the full Ballot selected value. The wide trigger shows that value
+without a prefixed Ballot; its all-scope display and general native option use
+“All ballot races”. The rendering context owns that general-only all-scope copy
+for both the Guide payload/select and the Comparisons select, keeping legacy
+primary copy unchanged. Only when the wide content does not fit, show generic Ballot
+and its own-scope active dot instead, before the existing safe precinct/code
+and menu-cue fallbacks; no viewport-only threshold or truncation substitutes for fit. Recheck the underline
+layout with the resolved font and reclaim inline trigger padding only when its
+measured total still exceeds the container; reset that adjustment on every fit.
+If zero padding still does not fit, remove the remaining gaps and place the
+Ballot scope dot in the trigger’s top corner above its text, reclaiming its flow
+width without hiding it. Remeasure that final inline layout: if it still exceeds
+the actual container, stack each icon above its one-line value inside the same
+46px trigger. Only that final state changes flex direction and uses a 2px vertical
+gap and 2px inline inset to separate adjacent labels; font size, complete labels,
+icons and target minima remain unchanged. Reset
+all spacing states before every fit so wider containers recover their inline
+presentation. Screenshot audits
+still count the five underlying native filter inputs, excluding compact launchers
+and editor dismissal buttons, and validate the visible Ballot launcher.
+
+While a compact editor is open, one animation-frame tracker reads its anchor and
+current visual viewport, measures the editor after applying available width/height,
+and reclamps its real box. It writes CSS geometry only when values change, and
+stops when no editor is open. This covers rotation, visual viewport zoom/scroll,
+font/container reflow and anchor transforms that emit no resize event, without
+closing the editor, changing focus or inventing another selection state.
+
+*Check: exists — `tests/js/compact-filters.test.mjs` covers scope indicator,
+editor focus and safe naming; `tests/test_precinct_rendering.py` exercises actual
+rendered pages, geometry/cue transition, membership, source independence and
+modal/history behavior. Actual Safari and physical-device coverage are reported
+separately from headless browser results.*
+
+Scott’s preview correction keeps the four compact launchers in one centered
+`.compact-filter-controls` row. The bar’s existing live status remains owned by
+the Guide/Comparisons controllers and becomes visible, nowrap, and centered on
+its own line unless the measured side space beside the centered controls admits
+the entire count phrase. Fit runs after the existing count projection; no second
+counter, filter state or observer is introduced. The count line may increase the
+bar height; each control and their row remain 46px. The empty precinct launcher
+says Precinct, while Select inside its editor keeps its existing draft behavior.
+The Ballot editor no longer repeats its selected value above the named select.
