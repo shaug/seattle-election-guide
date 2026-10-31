@@ -166,3 +166,47 @@ The original audit RED counted zero because it excluded native selectors as old
 launchers; its separate radio-only interaction assumptions also require migration.
 Root owns current-source full gates, clean-head checks, review and publication.
 Headless Chrome evidence is not Safari or physical-device acceptance.
+
+### Fourth authorized bounded follow-up: October31 Linux failures
+
+One separately approved max1 cycle starts from67eecdb; the earlier six spent
+cycles and their authentic Mac successes/Linux failures remain immutable.
+Measure complete-family widths before changing fit: a real fractional-container
+regression first demonstrated254.71875px of complete content reserved as255px.
+Retain layout precision, full labels,14px text/icons,44px bar targets,46px row
+and2px stacked insets. Root owns the new Linux280px result.
+
+Admit every zoom/rotation phase from the same unscrolled editor context and check
+the actual list's clipping box as well as the dialog/visual viewport. Prior action
+scrolling can otherwise enlarge the measured overlay and hide the defect. The
+new local RED reproduces a complete86.953125px suggestion clipped by a68px list.
+Admit one complete option and its borders, using existing outer editor scrolling
+when the fixed actions leave less space. Preserve draft/privacy/focus and anchors.
+
+Reconcile native tests with trusted input/change timing: preserve literal actual
+Compact/Differing commits through Escape, URL, focus and next Tab. Space receipt
+and focus alone never certify menu opening or rollback. Retain raw open/event
+observations; a plain native fixture also closes its popup after frames in this
+headless environment, so transient opening is separate from settled usability.
+No native-control workaround, custom selection draft or platform skip is added.
+Root retains full/focused gates, clean-head readiness, review, Linux CI and the
+same draftPR's verified hosted preview; no production grant is inferred.
+
+### Fifth authorized bounded follow-up: joint suggestion/action limits
+
+One separately approved max1 cycle admits the exact failed fourth patch from
+canonical67. Its three full-gate failures and two focused failures remain genuine
+uncommitted-patch results. The earlier seven spent cycles are not reset.
+
+Regress normal390×400 address results and zoomed complete precinct suggestions
+together on both pages, including an applied precinct with Clear present. Export
+the list, first option, editor/visual viewport and every action boundary before
+assertions. The normal overlay keeps8px before the first action; a complete-row
+minimum belongs only to the viewport-limited outer-scroll fallback. Keep long
+address text scrollable, the fixed modal/loading geometry and draft/privacy/focus
+semantics. Preserve fractional tracks and all prior native/filter/source contracts.
+
+Reconcile the existing ballot-options class declaration with its added test
+consumer in tests/shared_names.json. The scanner, ratchets and exceptions remain
+unchanged. Root owns final full/focused checks, clean-head readiness, constrained
+review, Linux CI and the verified same-draft hosted preview.

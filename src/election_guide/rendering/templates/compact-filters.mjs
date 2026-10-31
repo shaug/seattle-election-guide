@@ -73,7 +73,9 @@ function reserveControlWidths(bar) {
       /** @type {HTMLElement} */ (value).style.whiteSpace = 'pre';
     }
     button.parentElement?.append(probe);
-    const width = Math.ceil(probe.getBoundingClientRect().width);
+    // Keep layout's fractional precision: rounding each track up can invent
+    // overflow even when the complete families fit the actual container.
+    const width = probe.getBoundingClientRect().width;
     probe.remove();
     /** @type {HTMLElement} */ (button).style.width = `${width}px`;
   }

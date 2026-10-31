@@ -940,7 +940,9 @@ trigger styles measures the widest complete family value, including all catalog
 precinct identities. View and Races reserve all their native option labels. The controllers
 supply the original complete scope labels, independent of current availability.
 Within a fitting mode these per-role widths stay stable across selections;
-container/font changes re-admit the fitting mode. The wide trigger shows that value
+container/font changes re-admit the fitting mode. Reservations retain the browser's
+fractional layout precision rather than accumulating an upward rounding loss for
+every role. The wide trigger shows that value
 without a prefixed Ballot; its all-scope display and general native option use
 “All ballot races”. The rendering context owns that general-only all-scope copy
 for both the Guide payload/select and the Comparisons select, keeping legacy
@@ -969,6 +971,11 @@ keeps suggestions overlaid above fixed actions, wrapping their type label withou
 shrinking complete precinct text. Extremely short zoomed editors keep one complete
 suggestion reachable through editor scrolling. It retains its own
 draft/search/async/focus lifecycle, independent of native select changes.
+The normal inner list ends at least 8px before the first action, including Clear;
+long address results remain readable through its scrolling. If the editor's
+viewport boundary is the limit, outer editor scrolling admits a complete first
+option and its borders. That fallback must not override an action-limited list,
+and dialog padding must not clip a complete zoomed option.
 Its open-only tracker also fits suggestion space and stops on close. Precinct
 alone uses the attached presentation and transparent backdrop.
 
@@ -995,3 +1002,7 @@ bar height; each control and their row remain 46px. The empty precinct launcher
 says Precinct, while Select inside its editor keeps its existing draft behavior.
 The native Ballot select exposes its complete current option without a separate
 selected-value paragraph. Browser-managed menu navigation is not a component draft.
+Native keyboard evidence records actual input/change timing, value, URL and focus.
+An Escape assertion uses the committed native choice; focus or a Space-key receipt
+alone does not establish an open menu. Transient headless popup observations and
+settled menu usability are reported separately.

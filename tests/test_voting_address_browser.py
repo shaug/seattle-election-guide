@@ -268,6 +268,10 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
           containedPopup&&=r.left>=d.left&&r.right<=d.right&&r.top>=d.top&&r.bottom<=d.bottom;
           actionsClear&&=r.bottom<=action.top-8;
           measurements.at(-1).listBottom=r.bottom;
+          measurements.at(-1).listTop=r.top;
+          measurements.at(-1).actionGap=action.top-r.bottom;
+          measurements.at(-1).firstOptionHeight=list.firstElementChild
+            ?.getBoundingClientRect().height;
           const privacy=document.querySelector('.address-privacy').getBoundingClientRect();
           const hit=document.elementFromPoint(r.left+r.width/2,r.top+Math.min(15,r.height/2));
           overlaysContent&&=getComputedStyle(list).position==='absolute'&&r.top<privacy.bottom&&
@@ -434,6 +438,103 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
     assert result and all(result.values()), json.dumps(
         {**result, "measurements": measurements}, sort_keys=True
     )
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+def test_short_dialog_action_clearance_and_complete_zoom_option_together(
+    tmp_path: Path,
+    general_view: PublicationViewModel,  # noqa: F811
+    page: str,
+) -> None:
+    document = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / f"joint-clearance-{page}.html"
+    path.write_text(
+        document.replace("<head>", "<head><script>" + _address_transport_mock() + "</script>", 1)
+    )
+
+    def interact(cdp: _CdpSocket, session: str) -> None:
+        def ev(source: str) -> object:
+            result = cdp.command(
+                "Runtime.evaluate",
+                {"expression": source, "awaitPromise": True, "returnByValue": True},
+                session_id=session,
+            )
+            assert "exceptionDetails" not in result, result
+            return result["result"].get("value")
+
+        ev("""window.joint=[];
+          document.querySelector('[data-precinct-open]').click();
+          const input=document.querySelector('#voting-precinct');
+          input.value='1279';input.dispatchEvent(new Event('input',{bubbles:true}));
+          document.querySelector('[data-code="1279"]').click();
+          document.querySelector('[data-precinct-submit]').click();
+          window.appliedURL=location.href;
+          document.querySelector('[data-precinct-open]').click();
+          window.readJoint=async phase=>{
+            const d=document.querySelector('dialog'),l=d.querySelector('[data-ballot-options]');
+            d.scrollTop=0;l.scrollTop=0;
+            await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+            const take=()=>{const box=d.getBoundingClientRect(),list=l.getBoundingClientRect(),
+              first=l.firstElementChild.getBoundingClientRect(),v=visualViewport;
+              const actions=[...d.querySelectorAll('[data-precinct-clear],.precinct-actions')]
+                .map(e=>e.getBoundingClientRect()).filter(r=>r.height>0);
+              return {dialog:box.toJSON(),list:list.toJSON(),first:first.toJSON(),
+                firstText:l.firstElementChild.textContent,
+                viewport:{left:v.offsetLeft,top:v.offsetTop,width:v.width,height:v.height},
+                listClientTop:l.clientTop,listClientHeight:l.clientHeight,
+                listScrollHeight:l.scrollHeight,cap:l.style.getPropertyValue('--precinct-options-height'),
+                actionBoxes:actions.map(r=>r.toJSON()),
+                actionGap:Math.min(...actions.map(r=>r.top))-list.bottom,
+                complete:first.top>=Math.max(box.top,v.offsetTop,list.top+l.clientTop)-.5&&
+                  first.bottom<=Math.min(box.bottom,v.offsetTop+v.height,
+                    list.top+l.clientTop+l.clientHeight)+.5};};
+            const before=take();l.firstElementChild.scrollIntoView({block:'nearest'});
+            const after=take();l.scrollTop=l.scrollHeight;
+            window.joint.push({phase,before,after,listScrolls:l.scrollTop>0,
+              url:location.href,clearPresent:!!d.querySelector('[data-precinct-clear]')});
+          };
+          window.suggestionMode='long';input.value='Public civic long';
+          input.dispatchEvent(new Event('input',{bubbles:true}));""")
+        ev("new Promise(r=>setTimeout(r,400))")
+        ev("readJoint('normal-long-address')")
+        for width in [320, 280]:
+            cdp.command(
+                "Emulation.setDeviceMetricsOverride",
+                {"width": width, "height": 240, "deviceScaleFactor": 1, "mobile": False},
+                session_id=session,
+            )
+            cdp.command("Emulation.setPageScaleFactor", {"pageScaleFactor": 2}, session_id=session)
+            ev("""window.suggestionMode='empty';input.value='1279';
+              input.dispatchEvent(new Event('input',{bubbles:true}));""")
+            ev("new Promise(r=>setTimeout(r,400))")
+            ev(f"readJoint('zoom-{width}')")
+        ev("document.querySelector('[data-precinct-cancel]').click()")
+
+    result = _evaluate_in_chrome(
+        path,
+        """JSON.stringify({rows:joint,url:location.href,appliedURL,
+          focus:document.activeElement===document.querySelector('[data-precinct-open]'),
+          storage:JSON.stringify(localStorage),calls:addressCalls})""",
+        viewport=(390, 400),
+        interact=interact,
+    )
+    (tmp_path / "joint-action-and-zoom.json").write_text(json.dumps(result, indent=2) + "\n")
+    normal, *zoom = result["rows"]
+    assert normal["listScrolls"] and normal["after"]["actionGap"] >= 8, result
+    assert all(r["after"]["complete"] and r["after"]["actionGap"] >= 8 for r in zoom), result
+    assert all(r["clearPresent"] and r["url"] == result["appliedURL"] for r in result["rows"]), (
+        result
+    )
+    assert result["focus"] and result["url"] == result["appliedURL"], result
+    assert "Public civic long" not in result["url"] + result["storage"], result
 
 
 def test_address_applied_precinct_survives_real_reload(

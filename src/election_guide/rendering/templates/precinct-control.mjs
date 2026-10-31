@@ -85,19 +85,19 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   const fitOptions = () => {
     if (!dialog.open) return;
     const actions = form.querySelector('.precinct-actions');
-    const bottom = Math.min(
-      dialog.getBoundingClientRect().bottom,
-      actions?.getBoundingClientRect().top ?? dialog.getBoundingClientRect().bottom,
+    const clear = root.querySelector('[data-precinct-clear]');
+    const actionTop = Math.min(
+      actions?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY,
+      clear?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY,
     );
+    const editorBottom = dialog.getBoundingClientRect().bottom;
+    const bottom = Math.min(editorBottom, actionTop);
     const space = bottom - input().getBoundingClientRect().bottom - 20;
-    const style = view?.getComputedStyle(dialog);
-    const padding =
-      Number.parseFloat(style?.paddingTop ?? '0') + Number.parseFloat(style?.paddingBottom ?? '0');
     const first = list().firstElementChild?.getBoundingClientRect().height ?? 0;
-    // Normally the overlay ends before the fixed actions. In an extremely short
-    // zoomed viewport, keep one complete suggestion reachable by editor scroll.
-    const height =
-      space >= 44 ? space : Math.min(first + 2, Math.max(0, dialog.clientHeight - padding));
+    // Respect the first action, including Clear. Only a viewport-limited editor
+    // uses outer scrolling to reveal a complete option; that minimum must not
+    // extend an action-limited overlay over the buttons.
+    const height = actionTop <= editorBottom ? space : Math.max(first + 2, space);
     list().style.setProperty('--precinct-options-height', `${Math.max(0, height)}px`);
   };
   const view = dialog.ownerDocument.defaultView;

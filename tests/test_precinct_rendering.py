@@ -3,6 +3,7 @@
 import json
 from html.parser import HTMLParser
 from pathlib import Path
+from typing import cast
 
 import pytest
 
@@ -590,8 +591,72 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
+def test_complete_filter_families_fit_their_measured_fractional_container(
+    tmp_path: Path, general_view: PublicationViewModel, page: str
+) -> None:
+    document = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / f"fractional-{page}.html"
+    path.write_text(without_live_address_requests(document))
+    result = _evaluate_in_chrome(
+        path,
+        """(async()=>{
+          await document.fonts.ready;
+          const bar=document.querySelector('[data-compact-filters]');
+          bar.style.setProperty('--screen-sans','system-ui');bar.style.width='280px';
+          const rect=Element.prototype.getBoundingClientRect,probes=[];
+          // Observe real family probes without altering any measured rectangle.
+          Element.prototype.getBoundingClientRect=function(){const box=rect.call(this);
+            if(this.classList.contains('compact-filter-trigger')&&this.style.visibility==='hidden')
+              probes.push({role:this.hasAttribute('data-precinct-open')?'precinct':
+                this.querySelector('[data-filter-native]').dataset.filterNative,
+                width:box.width,spacing:bar.dataset.spacing,font:getComputedStyle(this).font});
+            return box;};
+          bar.dispatchEvent(new Event('compact-filter-fit'));
+          Element.prototype.getBoundingClientRect=rect;
+          const families=[...new Map(probes.filter(p=>p.spacing==='stacked')
+            .map(p=>[p.role,p])).values()];
+          const required=families.reduce((sum,p)=>sum+p.width,0)+
+            bar.querySelectorAll('.compact-filter-slot').length;
+          bar.style.width=required+'px';
+          await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+          const bounds=bar.getBoundingClientRect();
+          const buttons=[...bar.querySelectorAll('.compact-filter-trigger')];
+          return JSON.stringify({families,required,width:bounds.width,
+            row:bar.querySelector('.compact-filter-controls').getBoundingClientRect().toJSON(),
+            buttons:buttons.map(b=>({box:b.getBoundingClientRect().toJSON(),font:getComputedStyle(b).font,
+              inset:getComputedStyle(b).paddingInlineStart,
+              whole:[...b.querySelectorAll('.compact-filter-value')]
+                .filter(e=>getComputedStyle(e).display!=='none').every(e=>{
+                  const r=document.createRange();r.selectNodeContents(e);
+                  return r.getClientRects().length===1&&
+                    r.getBoundingClientRect().width<=e.getBoundingClientRect().width+.1;})})),
+            fits:buttons.every(b=>b.getBoundingClientRect().left>=bounds.left-.1&&
+              b.getBoundingClientRect().right<=bounds.right+.1)});
+        })()""",
+        viewport=(1280, 1000),
+    )
+    (tmp_path / f"{page}-fractional.json").write_text(json.dumps(result, indent=2) + "\n")
+    assert len(result["families"]) == 4, result
+    assert any(p["width"] % 1 for p in result["families"]), result
+    assert result["fits"] and result["row"]["width"] <= result["width"] + 0.1, result
+    assert result["row"]["height"] == 46, result
+    assert all(
+        b["whole"] and b["box"]["width"] >= 44 and b["box"]["height"] >= 44 and b["inset"] == "2px"
+        for b in result["buttons"]
+    ), result
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
 @pytest.mark.parametrize("width", [320, 360, 390])
-def test_native_selection_escape_preserves_value_and_tab_reaches_next_control(
+def test_native_commit_and_escape_preserve_selected_value_url_and_focus(
     tmp_path: Path, general_view: PublicationViewModel, page: str, width: int
 ) -> None:
     html = (
@@ -607,47 +672,136 @@ def test_native_selection_escape_preserves_value_and_tab_reaches_next_control(
     path.write_text(without_live_address_requests(html))
 
     def keyboard(cdp: _CdpSocket, session: str) -> None:
-        def ev(source: str) -> None:
-            result = cdp.command("Runtime.evaluate", {"expression": source}, session_id=session)
-            assert "exceptionDetails" not in result, result
+        observations: list[dict[str, object]] = []
 
-        def key(name: str, code: int) -> None:
+        def ev(source: str) -> object:
+            result = cdp.command(
+                "Runtime.evaluate",
+                {"expression": source, "awaitPromise": True, "returnByValue": True},
+                session_id=session,
+            )
+            assert "exceptionDetails" not in result, result
+            return result["result"].get("value")
+
+        def key(name: str, code: int, text: str | None = None) -> None:
             for kind in ["keyDown", "keyUp"]:
                 cdp.command(
                     "Input.dispatchKeyEvent",
-                    {"type": kind, "key": name, "windowsVirtualKeyCode": code},
+                    {
+                        "type": kind,
+                        "key": name,
+                        "windowsVirtualKeyCode": code,
+                        "code": "Space"
+                        if name == " "
+                        else ("Key" + name.upper() if len(name) == 1 else name),
+                        **(
+                            {"text": text, "unmodifiedText": text}
+                            if text is not None and kind == "keyDown"
+                            else {}
+                        ),
+                    },
                     session_id=session,
                 )
 
-        ev(
-            "window.beforeNative=location.href;document.querySelector('[data-filter-native=view]').focus()"
-        )
-        key(" ", 32)
-        key("ArrowDown", 40)
+        def observe(phase: str) -> None:
+            value = ev("""(()=>{
+              return {value:nativeSelect.value,url:location.href,open:nativeSelect.matches(':open'),
+                retained:document.activeElement===nativeSelect,
+                next:document.activeElement===document.querySelector('[data-filter-native=races]'),
+                events:nativeEvents.slice()};})()""")
+            assert isinstance(value, dict)
+            value = cast(dict[str, object], value)
+            value["phase"] = phase
+            observations.append(value)
+            (tmp_path / f"{page}-native-events.json").write_text(
+                json.dumps(observations, indent=2) + "\n"
+            )
+
+        ev("""window.nativeSelect=document.querySelector('[data-filter-native=view]');
+          window.nativeEvents=[];
+          for(const type of ['keydown','keyup','input','change'])nativeSelect.addEventListener(type,
+            e=>nativeEvents.push({type:e.type,key:e.key,trusted:e.isTrusted,value:nativeSelect.value,url:location.href}));
+          nativeSelect.focus();""")
+        observe("initial")
+        key(" ", 32, " ")
+        observe("after-Space")
         key("Escape", 27)
-        ev(
-            "window.nativeRetained=document.activeElement===document.querySelector('[data-filter-native=view]')"
+        observe("Space-Escape-observed")
+        point = ev(
+            "(()=>{const r=nativeSelect.getBoundingClientRect();"
+            "return {x:r.x+r.width/2,y:r.y+r.height/2}})()"
         )
+        assert isinstance(point, dict)
+        for kind in ["mousePressed", "mouseReleased"]:
+            cdp.command(
+                "Input.dispatchMouseEvent",
+                {"type": kind, **point, "button": "left", "clickCount": 1},
+                session_id=session,
+            )
+        observe("after-native-pointer")
+        key("ArrowDown", 40)
+        observe("native-option-navigation")
+        key(
+            "c" if page == "guide" else "d",
+            67 if page == "guide" else 68,
+            "c" if page == "guide" else "d",
+        )
+        observe("native-choice-input")
+        key("Enter", 13, "\r")
+        ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
+        observe("committed")
+        key("Escape", 27)
+        ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
+        observe("committed-Escape")
         key("Tab", 9)
+        observe("Tab-next")
+        ev("window.nativeObservations=" + json.dumps(observations))
+        (tmp_path / f"{page}-native-AX.json").write_text(
+            json.dumps(cdp.command("Accessibility.getFullAXTree", {}, session_id=session), indent=2)
+            + "\n"
+        )
 
     result = _evaluate_in_chrome(
         path,
-        """JSON.stringify({sameURL:location.href===beforeNative,
-      retained:nativeRetained,next:document.activeElement===document.querySelector('[data-filter-native=races]'),
-      view:document.querySelector('[data-filter-native=view]').value,
+        """JSON.stringify({observations:nativeObservations,
       dialogs:document.querySelectorAll('dialog').length,
       overflow:document.documentElement.scrollWidth>innerWidth})""",
         viewport=(width, 844),
         interact=keyboard,
     )
-    assert result == {
-        "sameURL": True,
-        "retained": True,
-        "next": True,
-        "view": "full",
-        "dialogs": 1,
-        "overflow": False,
-    }, result
+    phases = {v["phase"]: v for v in result["observations"]}
+    initial = phases["initial"]
+    # Space/open reporting differs from an actual trusted option commit. Export
+    # those states, but assert the committed value rather than inventing rollback.
+    assert any(
+        e["type"] == "keydown" and e["key"] == " " and e["trusted"]
+        for e in phases["after-Space"]["events"]
+    ), phases
+    dismissed = phases["Space-Escape-observed"]
+    assert (
+        dismissed["value"] == initial["value"] == "full" and dismissed["url"] == initial["url"]
+    ), phases
+    assert dismissed["retained"], phases
+    committed = phases["committed"]
+    assert committed["value"] == ("compact" if page == "guide" else "differing"), phases
+    assert committed["url"] != initial["url"] and committed["retained"] and not committed["open"], (
+        phases
+    )
+    assert all(
+        any(
+            e["type"] == kind and e["trusted"] and e["value"] == committed["value"]
+            for e in committed["events"]
+        )
+        for kind in ["input", "change"]
+    ), phases
+    escaped = phases["committed-Escape"]
+    assert (
+        escaped["value"] == committed["value"]
+        and escaped["url"] == committed["url"]
+        and escaped["retained"]
+    ), phases
+    assert phases["Tab-next"]["next"], phases
+    assert result["dialogs"] == 1 and not result["overflow"], result
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
@@ -767,21 +921,33 @@ def test_open_precinct_editor_tracks_viewport_and_anchor_without_changing_choice
           window.editorBackdrop=getComputedStyle(window.openEditor,'::backdrop').backgroundColor;
           window.recordEditor=async phase=>{
             await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+            // Admit each viewport from the same unscrolled editor context.
+            // A preceding phase's action-scroll must not enlarge this overlay.
+            window.openEditor.scrollTop=0;
+            window.openEditor.querySelector('.ballot-options').scrollTop=0;
+            await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
             const d=window.openEditor,v=visualViewport,r=d.getBoundingClientRect();
             const controls=[...d.querySelectorAll(
               'select,input[role=combobox],.segmented-control label,'+
               '[data-precinct-submit],.ballot-option,CANCEL')];
-            let reachable=true,textFits=true;const unreachable=[];
+            let reachable=true,textFits=true;const unreachable=[],boxes=[];
             for(const c of controls){c.scrollIntoView({block:'nearest'});
               const text=c.querySelector('span');
               if(text)textFits&&=text.scrollWidth<=text.clientWidth+1;
               const b=c.getBoundingClientRect();
-              const hit=b.top>=Math.max(r.top,v.offsetTop)-.5&&
+              let hit=b.top>=Math.max(r.top,v.offsetTop)-.5&&
                 b.bottom<=Math.min(r.bottom,v.offsetTop+v.height)+.5&&
                 b.left>=v.offsetLeft-.5&&b.right<=v.offsetLeft+v.width+.5;
-              if(!hit)unreachable.push({tag:c.tagName,id:c.id,text:c.textContent,box:b.toJSON()});
+              const list=c.closest('.ballot-options'),clip=list?.getBoundingClientRect();
+              if(list)hit&&=b.top>=clip.top+list.clientTop-.5&&
+                b.bottom<=clip.top+list.clientTop+list.clientHeight+.5;
+              const measured={tag:c.tagName,id:c.id,text:c.textContent,box:b.toJSON(),
+                clip:clip?.toJSON(),clipHeight:list?.clientHeight};boxes.push(measured);
+              if(!hit)unreachable.push(measured);
               reachable&&=hit;}
             window.editorPhases.push({phase,open:d.open,reachable,textFits,unreachable,
+              boxes,viewport:{width:v.width,height:v.height,left:v.offsetLeft,top:v.offsetTop},
+              dialog:{box:r.toJSON(),clientHeight:d.clientHeight,scrollHeight:d.scrollHeight},
               fits:r.left>=v.offsetLeft-.5&&r.right<=v.offsetLeft+v.width+.5&&
                 r.top>=v.offsetTop-.5&&r.bottom<=v.offsetTop+v.height+.5,
               focus:document.activeElement===window.editorFocus,
@@ -802,6 +968,23 @@ def test_open_precinct_editor_tracks_viewport_and_anchor_without_changing_choice
             evaluate(f"window.recordEditor('{width}x{height}')")
         cdp.command("Emulation.setPageScaleFactor", {"pageScaleFactor": 2}, session_id=session)
         evaluate("window.recordEditor('visual-viewport-zoom')")
+        cdp.command(
+            "Emulation.setDeviceMetricsOverride",
+            {"width": 280, "height": 240, "deviceScaleFactor": 1, "mobile": False},
+            session_id=session,
+        )
+        evaluate("window.recordEditor('narrow-visual-viewport-zoom')")
+        evaluate("""document.querySelector('[data-compact-filters]')
+          .style.setProperty('--screen-sans','system-ui');
+          document.querySelector('#precinct-dialog').style.fontFamily='system-ui';
+          window.recordEditor('fallback-font-visual-viewport-zoom');""")
+        cdp.command(
+            "Emulation.setDeviceMetricsOverride",
+            {"width": 390, "height": 360, "deviceScaleFactor": 1, "mobile": False},
+            session_id=session,
+        )
+        cdp.command("Emulation.setPageScaleFactor", {"pageScaleFactor": 3}, session_id=session)
+        evaluate("window.recordEditor('wrapped-option-visual-viewport-zoom')")
         cdp.command("Emulation.setPageScaleFactor", {"pageScaleFactor": 1}, session_id=session)
         cdp.command(
             "Emulation.setDeviceMetricsOverride",
@@ -832,6 +1015,7 @@ def test_open_precinct_editor_tracks_viewport_and_anchor_without_changing_choice
         viewport=(1280, 1000),
         interact=exercise,
     )
+    (tmp_path / f"{page}-editor-geometry.json").write_text(json.dumps(result, indent=2) + "\n")
     assert result["attached"] and result["backdrop"] == "rgba(0, 0, 0, 0)", result
     assert result["closed"] and result["returned"], result
     assert all(

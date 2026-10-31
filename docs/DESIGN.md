@@ -555,6 +555,8 @@ selection changes retain these track widths and edges; font/container changes ma
 select a different fitting mode. These are role-specific measured reservations,
 not four equal columns or fixed mockup breakpoints. Unknown long labels must
 remain complete rather than being clipped to a reservation.
+Retain measured fractional widths; independently rounding each track upward must
+not create overflow where the complete families fit.
 
 The actual container and rendered font/content decide the cue: arrows without
 underlines when the full contents fit, underlines without arrows when constrained.
@@ -578,11 +580,15 @@ filter dialogs: a normal native option commit applies View, Races or Ballot
 immediately, with focus remaining on the select. Native menu navigation and
 dismissal follow the platform; opening or canceling an uncommitted menu creates
 no extra selection state. Do not imitate these menus with a renamed custom popup.
+Escape retains a selection that normal native input has already committed.
 Precinct alone opens an attached, viewport-clamped native dialog with a transparent
 backdrop. It tracks its anchor and visual viewport across rotation, zoom and
 layout movement, keeping its search, suggestions and actions reachable. It
 retains its own draft, Select, Cancel, Clear, address privacy, Escape and focus
 return behavior.
+The normal suggestion overlay keeps at least 8px before the first action,
+including Clear. A complete-option fallback for a zoomed viewport uses editor
+scrolling while preserving that action boundary.
 The compact surface changes no availability, fallback, race visibility, measures,
 source/scoring, URL/history or precinct-only persistence rule. Primary keeps its
 legacy controls and archive styles.
