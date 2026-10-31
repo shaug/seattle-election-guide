@@ -873,8 +873,12 @@ selection and differences. The enabled Ballot scope then intersects geography an
 existing race visibility. A valid scope survives precinct changes and Clear; an
 invalid scope resolves to All in the same owned query/fragment transition as its
 control and rows. Incoming history resolves precinct eligibility before scope
-normalization. Clear restores the full ordinary scope catalog. Existing differences
-restrictions, source/column independence and precinct-only persistence remain.
+normalization. Clear restores the full ordinary scope catalog. Full/Differing stays enabled
+with precincts and its current value survives apply/change/Clear and history.
+The comparison controller intersects geography, Ballot scope and race visibility
+with optional row differences over the selected columns; it does not reset View
+or change membership/scoring. Source/column independence and precinct-only
+persistence remain.
 
 
 ## Optional address lookup (#657)
@@ -913,9 +917,13 @@ storage exception or ratchet ceiling.
 ## Compact general controls (#673)
 
 The precinct-enabled branch of `_filter_controls.html.j2` owns the 46px ordered
-bar and three native editor roots. Legacy primary markup remains in its original
-branch. `compact-filters.mjs` owns only trigger rendering, ephemeral dialog wiring,
-focus return and actual container/content fit. Guide and comparison controllers
+bar and three real HTML selects for View, Races and Ballot. Legacy primary
+markup remains in its original branch. Each full-target select owns native
+pointer/keyboard input and accessibility; an aria-hidden sibling face carries
+the approved icons and compact text. Native option commits apply immediately
+through existing controller change listeners, preserving the select node and focus.
+There are no separate editors or Cancel buttons for those three controls.
+`compact-filters.mjs` owns face projection and actual container/content fit. Guide and comparison controllers
 pass resolved scope/View/Races values to `projectCompactFilters`; those controllers
 still own native input intent, URL encoding, scope availability and race updates.
 The compact component has no storage, provider, scoring or ballot-matching role.
@@ -924,10 +932,15 @@ six current labels match the server's section vocabulary. Precinct abbreviation
 is catalog-specific and collision-checked by `compactPrecinctName`.
 
 The optional general-only `precinct.css` owns this presentation and preserves the
-Safari `label:has(> input:checked)` selected-state rule inside editors. `base.css`
+Safari `label:has(> input:checked)` selected-state rule for supported legacy radios. `base.css`
 and archived primary parts stay unchanged. Font readiness, a ResizeObserver on
-the actual bar and state projection re-evaluate natural unshrunk trigger widths,
-including the full Ballot selected value. The wide trigger shows that value
+the actual bar and state projection re-evaluate unshrunk complete-family trigger reservations,
+including every full Ballot scope label. A hidden multiline probe in the actual
+trigger styles measures the widest complete family value, including all catalog
+precinct identities. View and Races reserve all their native option labels. The controllers
+supply the original complete scope labels, independent of current availability.
+Within a fitting mode these per-role widths stay stable across selections;
+container/font changes re-admit the fitting mode. The wide trigger shows that value
 without a prefixed Ballot; its all-scope display and general native option use
 “All ballot races”. The rendering context owns that general-only all-scope copy
 for both the Guide payload/select and the Comparisons select, keeping legacy
@@ -945,20 +958,31 @@ gap and 2px inline inset to separate adjacent labels; font size, complete labels
 icons and target minima remain unchanged. Reset
 all spacing states before every fit so wider containers recover their inline
 presentation. Screenshot audits
-still count the five underlying native filter inputs, excluding compact launchers
-and editor dismissal buttons, and validate the visible Ballot launcher.
+require exactly three underlying native selects on admitted general pages and
+the original five inputs on legacy/primary pages. They exercise the actual
+selected values, membership, URL and reset behavior in each composition and
+validate the visible Ballot face. No input-count ceiling or exemption grows.
 
-While a compact editor is open, one animation-frame tracker reads its anchor and
+The shared `placeFilterEditor` clamps native editor geometry without owning
+selection or dismissal. Precinct registers complete catalog value families and
+keeps suggestions overlaid above fixed actions, wrapping their type label without
+shrinking complete precinct text. Extremely short zoomed editors keep one complete
+suggestion reachable through editor scrolling. It retains its own
+draft/search/async/focus lifecycle, independent of native select changes.
+Its open-only tracker also fits suggestion space and stops on close. Precinct
+alone uses the attached presentation and transparent backdrop.
+
+While the Precinct editor is open, one animation-frame tracker reads its anchor and
 current visual viewport, measures the editor after applying available width/height,
 and reclamps its real box. It writes CSS geometry only when values change, and
-stops when no editor is open. This covers rotation, visual viewport zoom/scroll,
+stops when Precinct closes. This covers rotation, visual viewport zoom/scroll,
 font/container reflow and anchor transforms that emit no resize event, without
 closing the editor, changing focus or inventing another selection state.
 
 *Check: exists — `tests/js/compact-filters.test.mjs` covers scope indicator,
-editor focus and safe naming; `tests/test_precinct_rendering.py` exercises actual
-rendered pages, geometry/cue transition, membership, source independence and
-modal/history behavior. Actual Safari and physical-device coverage are reported
+native face/name/indicator projection and safe naming; `tests/test_precinct_rendering.py` exercises actual
+rendered native pointer/keyboard commits, accessible roles/names/current values,
+geometry/cue transitions, membership, source independence and Precinct/history behavior. Actual Safari and physical-device coverage are reported
 separately from headless browser results.*
 
 Scott’s preview correction keeps the four compact launchers in one centered
@@ -969,4 +993,5 @@ the entire count phrase. Fit runs after the existing count projection; no second
 counter, filter state or observer is introduced. The count line may increase the
 bar height; each control and their row remain 46px. The empty precinct launcher
 says Precinct, while Select inside its editor keeps its existing draft behavior.
-The Ballot editor no longer repeats its selected value above the named select.
+The native Ballot select exposes its complete current option without a separate
+selected-value paragraph. Browser-managed menu navigation is not a component draft.

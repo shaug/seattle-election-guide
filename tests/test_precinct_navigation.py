@@ -74,6 +74,12 @@ const load=url=>new Promise(resolve=>{
 });
 const doc=()=>frame.contentDocument;
 const win=()=>frame.contentWindow;
+// State/navigation tests set actual native options; trusted input coverage lives
+// in the rendered keyboard/pointer tests.
+const chooseFilter=selector=>{
+ const option=doc().querySelector(selector),select=option.closest('select');
+ select.value=option.value;select.dispatchEvent(new (win().Event)('change',{bubbles:true}));
+};
 const ids=()=>[...doc().querySelectorAll('[data-publication-race-id], [data-comparison-race]')]
   .filter(r=>!r.hidden).map(r=>r.dataset.publicationRaceId??r.dataset.comparisonRace).sort();
 const click=selector=>new Promise(resolve=>{
@@ -170,8 +176,7 @@ for(const query of ['', 'precinct=all','precinct=unknown']) {
  section.value=[...section.options].find(o=>o.value!=='all').value;
  section.dispatchEvent(new (win().Event)('change',{bubbles:true}));
  for(const selector of ['[data-comparison-contested]','[data-comparison-differences]']) {
-  doc().querySelector(selector).checked=true;
-  doc().querySelector(selector).dispatchEvent(new (win().Event)('change',{bubbles:true}));
+  chooseFilter(selector);
  }
  const columns=()=>[...doc().querySelectorAll('[data-comparison-head] [data-column-signal]')]
    .map(h=>h.dataset.columnSignal);
@@ -197,8 +202,8 @@ for(const query of ['', 'precinct=all','precinct=unknown']) {
  equal(columns(),ordinary.columns,'Back columns '+query);
  equal(doc().querySelector('[data-comparison-section-filter]').value,
    ordinary.section,'Back section');
- equal(doc().querySelector('[data-comparison-contested]').checked,true,'Back contested');
- equal(doc().querySelector('[data-comparison-differences]').checked,true,'Back differences');
+ equal(doc().querySelector('[data-comparison-contested]').selected,true,'Back contested');
+ equal(doc().querySelector('[data-comparison-differences]').selected,true,'Back differences');
  await traverse('forward');
  equal(win().location.href,selected.url,'Forward exact selected URL');
  equal(ids(),selected.ids,'Forward selected membership');
@@ -422,8 +427,8 @@ const mode=()=>{
 };
 const check=(code,which,label)=>{
  equal(ids(),expected[code][which],label+' exact IDs');
- equal(mode()[which].checked,true,label+' checked');
- equal(mode().all.disabled||mode().contested.disabled,false,label+' buttons enabled');
+ equal(mode()[which].selected,true,label+' checked');
+ equal(mode().all.closest('select').disabled,false,label+' buttons enabled');
  const status=doc().querySelector('[data-comparison-status],#filter-status').textContent.trim();
  equal(status.startsWith(String(expected[code][which].length)),true,label+' truthful count');
 };
@@ -438,7 +443,7 @@ await load('/e/wa-2026-general/START');
 check('all','contested','ordinary default');
 await load('/e/wa-2026-general/START?precinct=2502');
 check('2502','contested','selected default');
-mode().all.click();check('2502','all','All override');
+chooseFilter('#complete-filter,[data-comparison-all-races]');check('2502','all','All override');
 equal(new URLSearchParams(win().location.search).get('races'),'all','explicit All URL');
 await load(win().location.href);check('2502','all','All reload');
 const before=win().location.href;
@@ -454,7 +459,8 @@ const origin=win().location.href;
 const target=win().location.pathname.endsWith('/comparisons/')?'endorsements':'comparisons';
 await click('[data-precinct-link="'+target+'"]');
 check('2502','all','cross-view All');
-mode().contested.click();check('2502','contested','Contested responds');
+chooseFilter('#contested-filter,[data-comparison-contested]');
+check('2502','contested','Contested responds');
 const destination=win().location.href;
 const traverse=direction=>new Promise(resolve=>{
  const timeout=setTimeout(()=>{
@@ -469,7 +475,7 @@ check('2502','all','Back reload All');
 await traverse('forward');equal(win().location.href,destination,'Forward restores Contested URL');
 check('2502','contested','Forward Contested');
 doc().querySelector('[data-precinct-clear]').click();check('all','contested','Clear default mode');
-mode().all.click();check('all','all','ordinary All');
+chooseFilter('#complete-filter,[data-comparison-all-races]');check('all','all','ordinary All');
 choose('2502');check('2502','all','All retained across Select');
 for(const action of ['save','cancel','page-reset']) {
  await click('nav a[href*="/sources/"]');
@@ -522,11 +528,11 @@ const check=(which,label)=>{
  const all=doc().querySelector('[data-comparison-all-races]');
  const contested=doc().querySelector('[data-comparison-contested]');
  const status=doc().querySelector('[data-comparison-status]').textContent.trim();
- observations.push({label,url:win().location.href,all:all.checked,
-  contested:contested.checked,ids:ids(),status,columns:columns()});
+ observations.push({label,url:win().location.href,all:all.selected,
+  contested:contested.selected,ids:ids(),status,columns:columns()});
  equal(ids(),expected[which],label+' exact IDs');
- equal(all.checked,which==='all',label+' All selected');
- equal(contested.checked,which==='contested',label+' Contested selected');
+ equal(all.selected,which==='all',label+' All selected');
+ equal(contested.selected,which==='contested',label+' Contested selected');
  equal(status.startsWith(String(expected[which].length)+' of '),true,label+' count');
  equal(new URLSearchParams(win().location.search).get('races'),
   which==='all'?'all':null,label+' query mode');
@@ -544,7 +550,7 @@ equal(columns(),['gall','strn','stim'],'initial default columns');
 doc().querySelector('.comparison-presets a').click();
 check('contested','preset retains default mode');
 equal(columns(),['strn','stim'],'preset columns');
-doc().querySelector('[data-comparison-all-races]').click();
+chooseFilter('[data-comparison-all-races]');
 check('all','explicit All after preset');
 const override=win().location.href;
 await traverse('back');
@@ -626,13 +632,13 @@ for(const blocked of [false,true]) {
     comparison?'[data-comparison-contested]':'#contested-filter');
    const status=doc().querySelector(comparison?'[data-comparison-status]':'#filter-status');
    observations.push({label,header:header.href,url:win().location.href,ids:ids(),
-    all:all.checked,contested:contested.checked,status:status.textContent.trim(),
+    all:all.selected,contested:contested.selected,status:status.textContent.trim(),
     precinct:doc().querySelector('[data-precinct-name]').textContent.trim()});
    equal(win().location.pathname,target,label+' actual destination');
    equal(win().location.search,query,label+' explicit query beats memory');
    equal(ids(),expected[code],label+' exact All IDs');
-   equal(all.checked,true,label+' All selected');
-   equal(contested.checked,false,label+' Contested not selected');
+   equal(all.selected,true,label+' All selected');
+   equal(contested.selected,false,label+' Contested not selected');
    equal(status.textContent.trim().startsWith(String(expected[code].length)),true,
     label+' truthful count');
    equal(doc().querySelector('[data-precinct-name]').textContent.trim(),

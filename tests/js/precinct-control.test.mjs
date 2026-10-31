@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import test from 'node:test';
+import test, { afterEach } from 'node:test';
+
+const ownedDialogs = new Set();
+afterEach(() => {
+  for (const dialog of ownedDialogs) dialog.close();
+  ownedDialogs.clear();
+});
+
 import { installDom } from './support/dom.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
@@ -33,6 +40,7 @@ function boot(search = '', saved = null) {
   document.body.innerHTML =
     '<a data-precinct-link="endorsements"></a><a data-precinct-link="comparisons"></a>' +
     PRECINCT_MARKUP;
+  ownedDialogs.add(document.querySelector('dialog'));
   if (saved) window.localStorage.setItem('seg-precinct-v1:wa-2026-general', saved);
   let query = search;
   let listener;

@@ -1,7 +1,7 @@
 // Compact precinct slot: the modal edits a draft; only Select changes membership.
 import { html, nothing, render } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { filterIcon } from './compact-filters.mjs';
+import { filterIcon, placeFilterEditor, reservePrecinctValues } from './compact-filters.mjs';
 import {
   ballotQuery,
   readPrecinctSelection,
@@ -61,6 +61,10 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   );
   const cancel = root.querySelector('[data-precinct-cancel]');
   if (!dialog || !form || !fields || !summary || !status || !notice || !submit || !cancel) return;
+  reservePrecinctValues(
+    contract.precincts.map((p) => p.name),
+    contract.precincts.map((p) => compactPrecinctName(p, contract.precincts)),
+  );
   const lookup =
     contract.address_lookup?.election_id === contract.election_id &&
     contract.address_lookup?.mapping_hash === contract.mapping_hash
@@ -85,16 +89,30 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
       dialog.getBoundingClientRect().bottom,
       actions?.getBoundingClientRect().top ?? dialog.getBoundingClientRect().bottom,
     );
-    const space = bottom - input().getBoundingClientRect().bottom;
-    list().style.setProperty('--precinct-options-height', `${Math.max(0, space - 20)}px`);
+    const space = bottom - input().getBoundingClientRect().bottom - 20;
+    const style = view?.getComputedStyle(dialog);
+    const padding =
+      Number.parseFloat(style?.paddingTop ?? '0') + Number.parseFloat(style?.paddingBottom ?? '0');
+    const first = list().firstElementChild?.getBoundingClientRect().height ?? 0;
+    // Normally the overlay ends before the fixed actions. In an extremely short
+    // zoomed viewport, keep one complete suggestion reachable by editor scroll.
+    const height =
+      space >= 44 ? space : Math.min(first + 2, Math.max(0, dialog.clientHeight - padding));
+    list().style.setProperty('--precinct-options-height', `${Math.max(0, height)}px`);
   };
-  const viewport = document.defaultView?.visualViewport;
+  const view = dialog.ownerDocument.defaultView;
+  const viewport = view?.visualViewport;
   const fitViewport = () => {
-    if (viewport) {
-      dialog.style.setProperty('--precinct-viewport-height', `${viewport.height}px`);
-      dialog.style.setProperty('--precinct-viewport-top', `${viewport.offsetTop}px`);
-    }
+    const opener = summary.querySelector('button');
+    if (dialog.open && opener) placeFilterEditor(dialog, opener, 350);
     fitOptions();
+  };
+  let frame = 0;
+  const trackEditor = () => {
+    frame = 0;
+    if (!dialog.open) return;
+    fitViewport();
+    frame = view?.requestAnimationFrame(trackEditor) ?? 0;
   };
   const dismiss = () => {
     options = [];
@@ -269,7 +287,8 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     dialog.showModal();
     summary.querySelector('button')?.setAttribute('aria-expanded', 'true');
     input().focus();
-    fitOptions();
+    fitViewport();
+    if (!frame) frame = view?.requestAnimationFrame(trackEditor) ?? 0;
   };
   const update = (reset = false) => {
     discard();
@@ -358,6 +377,8 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   });
   dialog.addEventListener('close', () => {
     if (dialog.open) return;
+    view?.cancelAnimationFrame(frame);
+    frame = 0;
     discard();
     restoreFocus();
   });

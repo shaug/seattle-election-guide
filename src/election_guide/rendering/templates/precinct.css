@@ -1,4 +1,4 @@
-/* General precinct pages only: compact filter slot and ephemeral choice dialog. */
+/* General precinct pages only: compact native controls and the Precinct dialog. */
 .segmented-control label:has(> input:checked) > span { background: var(--navy); color: var(--white); }
 /* The admitted general views share this bar; primary keeps its legacy shell. */
 [data-compact-filters] { --compact-precinct-surface: #edf4ef; --compact-expanded-surface: #e7f2ef; --compact-editor-shadow: #102a4326; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: 0; min-height: 46px; padding: 0; }
@@ -15,7 +15,7 @@
 .compact-filter-icon { display: block; flex: none; width: 14px; height: 14px; color: var(--teal); }
 .compact-filter-arrow { flex: none; width: 6px; height: 6px; border: solid currentColor; border-width: 0 1px 1px 0; transform: rotate(45deg); margin: 0 2px 3px; }
 .precinct-short { display: none; }
-[data-ballot-detail="full"] [data-filter-open="ballot"] > .compact-filter-value:not(.compact-ballot-scope) { display: none; }
+[data-ballot-detail="full"] [data-filter-trigger="ballot"] .compact-filter-value:not(.compact-ballot-scope) { display: none; }
 [data-ballot-detail="compact"] .compact-ballot-scope { display: none; }
 [data-precinct-display="short"] [data-precinct-name] { display: none; }
 [data-precinct-display="short"] .precinct-short { display: inline; }
@@ -31,29 +31,19 @@
 [data-active] .compact-filter-dot { visibility: visible; }
 .compact-filter-trigger:disabled { color: var(--muted); cursor: default; }
 .compact-filter-trigger[aria-expanded="true"] { background: var(--compact-expanded-surface); box-shadow: inset 0 -3px var(--teal); }
-.compact-filter-trigger:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
-.compact-filter-dialog { position: fixed; inset: auto; left: var(--filter-left, 8px); top: var(--filter-top, 20vh); box-sizing: border-box; width: min(var(--filter-width, 320px), calc(100vw - 16px)); max-height: var(--filter-height, 70dvh); margin: 0; padding: 16px; overflow: auto; border: 1px solid var(--line-strong); border-top: 3px solid var(--teal); background: var(--paper); color: var(--navy); box-shadow: 0 8px 20px var(--compact-editor-shadow); }
-.compact-filter-dialog::backdrop { background: transparent; }
-.compact-filter-dialog h2 { margin: 0 0 12px; font: 700 1rem/1.4 var(--screen-sans); }
-.compact-filter-detail { margin: 0 0 12px; overflow-wrap: anywhere; }
-.compact-filter-dialog .filter-control-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.compact-filter-dialog .segmented-control { flex-wrap: wrap; }
-.compact-filter-dialog .segmented-control label { flex-basis: max-content; }
-.compact-filter-dialog .filter-select-control { display: block; min-width: 0; }
-.compact-filter-dialog select { width: 100%; max-width: 100%; min-height: 44px; font-size: 1rem; }
-.compact-filter-dialog [data-filter-cancel] { display: block; min-width: 44px; min-height: 44px; margin: 12px 0 0 auto; padding: 4px 12px; background: var(--white); border: 1px solid var(--line); color: var(--navy); font: inherit; cursor: pointer; }
-.compact-filter-dialog button:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+.compact-filter-trigger:focus-visible, .compact-filter-trigger:has(.compact-native-select:focus-visible) { outline: 3px solid var(--focus); outline-offset: -3px; }
+.precinct-dialog { position: fixed; inset: auto; left: var(--filter-left, 8px); top: var(--filter-top, 20vh); box-sizing: border-box; width: min(var(--filter-width, 320px), calc(100vw - 16px)); max-height: var(--filter-height, 70dvh); margin: 0; padding: 16px; overflow: auto; border: 1px solid var(--line-strong); border-top: 3px solid var(--teal); background: var(--paper); color: var(--navy); box-shadow: 0 8px 20px var(--compact-editor-shadow); }
+.precinct-dialog::backdrop { background: transparent; }
 .precinct-clear { min-height: 44px; padding: .3rem .6rem; border: 1px solid var(--line); background: var(--white); color: var(--navy); font: inherit; cursor: pointer; }
 .precinct-control > .precinct-status { position: absolute; top: 46px; z-index: 2; background: var(--paper); }
-.precinct-dialog { box-sizing: border-box; position: fixed; top: calc(var(--precinct-viewport-top, 0px) + var(--precinct-viewport-height, 100dvh) / 2); bottom: auto; margin: 0 auto; transform: translateY(-50%); width: min(28rem, calc(100vw - 2rem)); height: min(26rem, calc(var(--precinct-viewport-height, 100dvh) - 2rem)); max-height: calc(var(--precinct-viewport-height, 100dvh) - 2rem); overflow: auto; padding: 1.5rem; border: 1px solid var(--line-strong); border-radius: .4rem; background: var(--paper); color: var(--ink); }
+.precinct-dialog { height: min(26rem, var(--filter-height, 70dvh)); }
 .precinct-dialog form { display: flex; flex-direction: column; height: 100%; min-height: 0; }
 .precinct-dialog h2, .precinct-dialog [data-precinct-fields], .precinct-dialog .precinct-actions { flex: none; }
 .precinct-dialog .precinct-status { flex: 1; min-height: 1.3em; overflow: auto; }
-.precinct-dialog::backdrop { background: rgba(16,42,67,.45); }
 .precinct-dialog h2 { margin: 0 0 1rem; padding-right: 2.75rem; color: var(--navy); font-size: 1.25rem; }
 .precinct-info { position: absolute; top: .75rem; right: .75rem; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: .3rem; color: var(--navy); text-decoration: none; }
 .precinct-status { min-height: 1.3em; margin: .65rem 0; color: var(--muted); font-size: .85rem; }
-.precinct-actions { display: flex; justify-content: flex-end; gap: .65rem; margin-top: 1.25rem; }
+.precinct-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .65rem; margin-top: 1.25rem; }
 .precinct-actions button { min-height: 2.7rem; padding: .45rem 1rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); color: var(--navy); font: inherit; cursor: pointer; }
 .precinct-actions button[type="submit"] { background: var(--navy); color: var(--white); }
 .precinct-actions button:disabled { opacity: .5; cursor: default; }
@@ -62,11 +52,16 @@
 .precinct-dialog .filter-select-control { position: relative; min-width: 0; }
 .precinct-dialog .filter-select { box-sizing: border-box; width: 100%; }
 .ballot-options { position: absolute; z-index: 2; top: 100%; left: 0; right: 0; list-style: none; margin: .35rem 0 0; padding: 0; max-height: min(12rem, var(--precinct-options-height, 12rem)); overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--line); background: var(--paper); }
-.ballot-option { display: flex; align-items: center; gap: .75rem; padding: .6rem; cursor: pointer; }
-.ballot-option-text { min-width: 0; overflow-wrap: anywhere; }
+.ballot-option { scroll-margin-block: 2px; display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; padding: .6rem .25rem; cursor: pointer; }
+.ballot-option-text { flex: 1 1 10rem; min-width: 0; overflow-wrap: anywhere; }
 .ballot-option-type { flex: none; margin-left: auto; font-size: .75rem; color: var(--muted); }
 .ballot-option[aria-selected="true"], .ballot-option:hover { background: var(--white); outline: 1px solid var(--navy); outline-offset: -1px; }
 .address-privacy { font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; }
 @media (max-height: 480px) {
   .precinct-dialog { padding: 1rem; }
 }
+
+/* The full-sized native select is the actual interactive surface. Its sibling
+   face supplies only the approved compact visual treatment, hidden from AT. */
+.compact-filter-face { display: contents; }
+.compact-native-select { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; min-width: 0; min-height: 44px; margin: 0; opacity: 0; cursor: pointer; font: inherit; appearance: auto; }

@@ -99,6 +99,12 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
   const raceSetInputs = /** @type {HTMLInputElement[]} */ ([
     ...document.querySelectorAll('input[name="race-set"]'),
   ]);
+  const nativeView = /** @type {HTMLSelectElement|null} */ (
+    document.querySelector('[data-filter-native="view"]')
+  );
+  const nativeRaces = /** @type {HTMLSelectElement|null} */ (
+    document.querySelector('[data-filter-native="races"]')
+  );
   const status = /** @type {HTMLElement} */ (document.querySelector('#filter-status'));
   const cards = /** @type {HTMLElement[]} */ ([
     ...document.querySelectorAll('[data-publication-race-id]'),
@@ -116,9 +122,12 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
   /** @returns {ControlState} */
   const controlState = () => ({
     scope: select.value,
-    view: viewInputs.find((input) => input.checked)?.value === 'compact' ? 'compact' : 'full',
+    view:
+      (nativeView?.value ?? viewInputs.find((input) => input.checked)?.value) === 'compact'
+        ? 'compact'
+        : 'full',
     raceSet:
-      raceSetInputs.find((input) => input.checked)?.value === 'contested'
+      (nativeRaces?.value ?? raceSetInputs.find((input) => input.checked)?.value) === 'contested'
         ? 'contested'
         : 'complete',
   });
@@ -126,6 +135,8 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
   const syncFromUrl = () => {
     const state = readControlState(router.controlSearch(), knownScopes, defaultContested);
     select.value = state.scope;
+    if (nativeView) nativeView.value = state.view;
+    if (nativeRaces) nativeRaces.value = state.raceSet;
     viewInputs.forEach((input) => {
       input.checked = input.value === state.view;
     });
@@ -186,6 +197,7 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
       );
     projectCompactFilters({
       scope: state.scope,
+      scopeLabels: [...scopeLabels.values()],
       scopeLabel: scopeLabels.get(state.scope) ?? 'All Seattle ballot races',
       view: compact ? 'Compact' : 'Full',
       races: contestedOnly ? 'Contested' : 'All',
@@ -194,6 +206,8 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
   };
 
   select.addEventListener('change', () => apply());
+  nativeView?.addEventListener('change', () => apply());
+  nativeRaces?.addEventListener('change', () => apply());
   for (const input of [...raceSetInputs, ...viewInputs]) {
     input.addEventListener('change', () => apply());
   }
@@ -215,7 +229,8 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
     },
     showEveryRace() {
       select.value = 'all';
-      completeFilter.checked = true;
+      if (nativeRaces) nativeRaces.value = 'complete';
+      else completeFilter.checked = true;
       apply();
     },
   };

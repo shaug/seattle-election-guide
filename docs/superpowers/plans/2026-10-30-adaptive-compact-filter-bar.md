@@ -4,7 +4,7 @@
 
 **Goal:** One 46px general-election bar: Precinct → View → Races → Ballot, with readable values, matching SVG icons and mutually exclusive adaptive menu cues.
 
-**Architecture:** Retain the existing select/radio controls and their state owners, URL codecs, precinct resolver and source behavior. On admitted precinct pages only, place View/Races/Ballot controls in native dialog editors and project their existing state onto compact triggers through a shared module. Keep the existing precinct editor and privacy boundary. Use measured container/content fit after fonts settle (and resize), rather than a viewport breakpoint. Fall back to underlines before measurement; wide layout shows arrows and full precinct name when it fits. The wide Ballot trigger includes its full selected scope when measured content fits; only the constrained trigger stays “Ballot”. Its accessible label and editor always name the full selection, and only its own non-All scope lights the dot.
+**Architecture (latest October31 refinement):** Retain existing state owners, URL codecs, precinct resolver and source behavior. On admitted precinct pages only, View/Races/Ballot are real HTML selects with native options, applying on normal native commit without a separate dialog or Cancel. Project their resolved state onto aria-hidden compact faces without replacing the native input. Keep the existing precinct editor and privacy boundary. Use measured container/content fit after fonts settle (and resize), rather than a viewport breakpoint. Fall back to underlines before measurement; wide layout shows arrows and full precinct name when it fits. The wide Ballot trigger includes its full selected scope when measured content fits; only the constrained trigger stays “Ballot”. Its accessible name, selected native option and menu always name the full selection, and only its own non-All scope lights the dot.
 
 **Tech stack:** existing Jinja, lit-html ES modules, optional general-only precinct.css; no dependency, payload or data changes.
 
@@ -12,9 +12,9 @@
 
 - Preserve primary.9 archive/pins and derived current-code Comparisons; leave shared base.css unchanged.
 - Preserve complete unique precinct identity: abbreviate only exact reviewed SEA district-code grammar with a unique compact name in the catalog. Other names and differentiating suffixes remain intact; no address display in applied state.
-- Native dialogs must preserve keyboard entry, focus containment, Escape/Cancel and return. Precinct remains draft/Select; other filters apply on choice and dismiss.
+- Native selects preserve platform pointer/keyboard entry, dismissal and focus. Precinct alone retains a draft dialog with Select/Cancel/Clear, focus containment, Escape and return.
 - Preserve applicable scope availability/fallback/Clear, All/Contested measures, independent View/Races/source scoring, URL/history/reload, and Safari checked-state CSS.
-- Real-font fit at 320/360/390, measured boundary either side, constrained bar in a wide viewport, longest catalog names and disabled comparison View. Insufficient space must remain honest/readable, never silently truncate identity.
+- Real-font fit at 320/360/390, measured boundary either side, constrained bar in a wide viewport, longest catalog names and independently usable comparison View. Insufficient space must remain honest/readable, never silently truncate identity.
 
 ## Tasks
 
@@ -115,3 +115,54 @@ new Linux validation; the source correction does not claim that result.
 The final stacked state retains a 2px inline inset between adjacent labels.
 The label-separation assertion first failed in four real local cases before
 this inset was applied; earlier zero-inset captures remain intermediate evidence.
+
+### Third authorized bounded follow-up: October31 interaction corrections
+
+Scope is one separately approved max1 cycle from495f85e, preserving all earlier
+cycles and evidence. The original preservation of a centered Precinct modal and
+precinct-forces-Full policy is superseded by Scott’s explicit October31 feedback.
+Use the existing attached/clamped geometry for Precinct without generic immediate
+dismissal: keep draft/Select/Cancel/Clear, search, stale-result/privacy and focus.
+Reserve per-role complete value families in each actual content/font-fit mode,
+retaining14px text/icons,44px targets,46px row, full unique identity and intact
+centered reactive count. V5’s responsive reservations are reference-specific,
+not a universal equal grid or copied354px threshold.
+Remove Compare’s precinct-specific disabling, Full coercions and Differing bypass
+together; preserve diff/show and source/version/scoring bindings. Test1273/1279,
+independent cumulative filters, exact differing subsets/order, direct/history/
+reload/Clear, sources/scores/measures and all-agree empty behavior. Amend obsolete
+policy expectations while retaining their independent All/preset/Clear coverage.
+Root owns full gates, engine commit/promotion, fresh review and updated samePR
+preview. No native access retry or production grant is inferred.
+
+The new regressions observed genuine disabled-View, moving-track and detached-
+Precinct failures before correction. Short zoomed suggestions exposed a wrapped
+row larger than the editor; wrap its type separately with intact text size,
+preserve the original overlay/fixed-actions behavior, and include borders and
+scroll clearance when admitting a complete-row fallback. The address browser
+assertion follows the shared filter-height binding and retains its actual
+viewport/list/action checks. Shared-name declarations gain the actual test/client
+surfaces for ballot-option and segmented-control; no scanner/ceiling/exemption
+changes. Node fixture tests close their owned dialogs so open-only tracking
+finishes; an interrupted pre-cleanup run remains recorded.
+
+### Same third attempt: October31 native-selection refinement
+
+Scott explicitly replaced the View/Races/Ballot dialogs with standard selection
+controls. Continue the preserved uncommitted attempt; this is no additional
+cycle or budget. The three controls are real HTML selects with complete options,
+full accessible current values and normal native commits. Their decorative
+compact faces retain all fit, width, icon, dot and centered-count rules. Only
+Precinct keeps the attached draft/search dialog and its lifecycle. The older
+three-popup/Cancel descriptions above are retained execution history, superseded
+by this requirement. Primary/legacy radios remain supported.
+
+Migrate positive regressions to native values and actual trusted keyboard/pointer
+commits, including uncommitted-menu Escape, focus, roles and current option text.
+Retain Precinct rotation/zoom/anchor, stale-async/privacy and draft tests. Adapt
+the release screenshot audit to require three actual general selects while
+retaining five legacy inputs and all existing filter/URL/reset assertions.
+The original audit RED counted zero because it excluded native selectors as old
+launchers; its separate radio-only interaction assumptions also require migration.
+Root owns current-source full gates, clean-head checks, review and publication.
+Headless Chrome evidence is not Safari or physical-device acceptance.

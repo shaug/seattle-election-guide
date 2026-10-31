@@ -22,10 +22,10 @@ test('safe names retain non-Seattle prefixes, differentiating suffixes and colli
   assert.equal(compactPrecinctName({ name: 'SEA 37-0001' }, [{ name: 'SEA 37-0001' }]), '37-0001');
 });
 
-test('own scope controls the indicator, and native editor cancel restores its trigger', () => {
+test('own scope controls the native select name and decorative indicator without replacing focus', () => {
   const doc = installDom();
   doc.body.innerHTML =
-    '<section data-compact-filters><div data-filter-trigger="view"></div><div data-filter-trigger="races"></div><div data-filter-trigger="ballot"></div><dialog id="compact-ballot-dialog" data-filter-editor="ballot"><select><option>All</option></select><button data-filter-cancel>Cancel</button></dialog></section>';
+    '<section data-compact-filters><div data-filter-trigger="ballot"><div class="compact-filter-trigger"><span data-filter-face="ballot" aria-hidden="true"></span><select data-filter-native="ballot"><option value="all">All ballot races</option><option value="county">County</option></select></div></div></section>';
   const state = {
     scope: 'all',
     scopeLabel: 'All Seattle ballot races',
@@ -34,19 +34,22 @@ test('own scope controls the indicator, and native editor cancel restores its tr
   };
   projectCompactFilters(state);
   wireCompactFilters();
-  const button = () => doc.querySelector('[data-filter-open=ballot]');
+  const button = () => doc.querySelector('[data-filter-native=ballot]');
+  const select = button();
+  select.focus();
   assert.equal(button().hasAttribute('data-active'), false);
+  select.value = 'county';
   projectCompactFilters({ ...state, scope: 'county', scopeLabel: 'County' });
   assert.equal(button().hasAttribute('data-active'), true);
   assert.match(button().getAttribute('aria-label'), /active: County/);
-  button().click();
-  assert.equal(doc.querySelector('dialog').open, true);
-  doc.querySelector('[data-filter-cancel]').click();
-  assert.equal(doc.querySelector('dialog').open, false);
-  assert.equal(doc.activeElement, button());
-  assert.equal(button().getAttribute('aria-expanded'), 'false');
+  assert.equal(button(), select);
+  assert.equal(doc.activeElement, select);
+  assert.equal(select.value, 'county');
+  assert.equal(doc.querySelector('[data-filter-face]').getAttribute('aria-hidden'), 'true');
+  assert.equal(doc.querySelector('.compact-ballot-scope').textContent, 'County');
   projectCompactFilters(state);
   assert.equal(button().hasAttribute('data-active'), false);
+  assert.equal(button().getAttribute('aria-label'), 'Ballot: All ballot races');
 });
 test('compact filters have no storage capability', () => assertModuleGuard('compact-filters.mjs'));
 

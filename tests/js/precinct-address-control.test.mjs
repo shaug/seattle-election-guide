@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import test from 'node:test';
+import test, { afterEach } from 'node:test';
+
+const ownedDialogs = new Set();
+afterEach(() => {
+  for (const dialog of ownedDialogs) dialog.close();
+  ownedDialogs.clear();
+});
+
 import { installDom } from './support/dom.mjs';
 
 installDom();
@@ -26,6 +33,7 @@ const contract = {
 function boot(lookupOverride = {}, contractOverride = {}) {
   const doc = installDom();
   doc.body.innerHTML = markup;
+  ownedDialogs.add(doc.querySelector('dialog'));
   let query = '?precinct=all&races=all';
   let history;
   const pending = [];

@@ -28,6 +28,16 @@
 <p class="filter-control-status{% if extra_class %} {{ extra_class }}{% endif %}"{% if status_id %} id="{{ status_id }}"{% endif %} role="status" aria-live="polite"{% if attributes %} {{ attributes | safe }}{% endif %}>{{ caller() }}</p>
 {%- endmacro %}
 
+{% macro compact_select(role, label, select_id, attributes='', name='') -%}
+<div class="compact-filter-slot" data-filter-trigger="{{ role }}">
+  <div class="compact-filter-trigger">
+    <span class="compact-filter-face" data-filter-face="{{ role }}" aria-hidden="true"></span>
+    <label class="visually-hidden" for="{{ select_id }}">{{ label }}</label>
+    <select class="filter-select compact-native-select" id="{{ select_id }}" data-filter-native="{{ role }}" data-filter-open="{{ role }}"{% if name %} name="{{ name }}"{% endif %}{% if attributes %} {{ attributes | safe }}{% endif %}>{{ caller() }}</select>
+  </div>
+</div>
+{%- endmacro %}
+
 {# One election-control composition shared by every election view. Pages may
    supply their ballot options and binary View values, but not rearrange or
    replace its slots. Admitted general precinct views use the approved compact
@@ -53,25 +63,14 @@
   {% if precinct_enabled %}
   <div class="compact-filter-controls">
   {% include '_precinct_control.html.j2' %}
-  <div class="compact-filter-slot" data-filter-trigger="view"></div>
-  <div class="compact-filter-slot" data-filter-trigger="races"></div>
-  <div class="compact-filter-slot" data-filter-trigger="ballot"></div>
+  {% call compact_select('view', 'View', 'compact-view-select', name=view_name) %}
+    {% for option in view_options %}<option value="{{ option.value }}"{% if option.id %} id="{{ option.id }}"{% endif %}{% if option.attributes %} {{ option.attributes | safe }}{% endif %}{% if option.checked %} selected{% endif %}>{{ option.label }}</option>{% endfor %}
+  {% endcall %}
+  {% call compact_select('races', 'Races', 'compact-races-select', name=race_name) %}
+    {% for option in race_options %}<option value="{{ option.value }}"{% if option.id %} id="{{ option.id }}"{% endif %}{% if option.attributes %} {{ option.attributes | safe }}{% endif %}{% if option.checked %} selected{% endif %}>{{ option.label }}</option>{% endfor %}
+  {% endcall %}
+  {% call compact_select('ballot', 'Ballot', ballot_id, ballot_attributes) %}{{ ballot_options | safe }}{% endcall %}
   </div>
-  <dialog id="compact-view-dialog" class="compact-filter-dialog" data-filter-editor="view" aria-labelledby="compact-view-title">
-    <h2 id="compact-view-title">View</h2>
-    {{ segmented_radio('View', view_name, view_options, 'view-setting', true) }}
-    <button type="button" data-filter-cancel>Cancel</button>
-  </dialog>
-  <dialog id="compact-races-dialog" class="compact-filter-dialog" data-filter-editor="races" aria-labelledby="compact-races-title">
-    <h2 id="compact-races-title">Races</h2>
-    {{ segmented_radio('Races', race_name, race_options, 'view-setting', true) }}
-    <button type="button" data-filter-cancel>Cancel</button>
-  </dialog>
-  <dialog id="compact-ballot-dialog" class="compact-filter-dialog" data-filter-editor="ballot" aria-labelledby="compact-ballot-title">
-    <h2 id="compact-ballot-title">Ballot</h2>
-    {% call labeled_select('Ballot', ballot_id, ballot_attributes, ballot_extra_class) %}{{ ballot_options | safe }}{% endcall %}
-    <button type="button" data-filter-cancel>Cancel</button>
-  </dialog>
   {% else %}
   {% call labeled_select('Ballot', ballot_id, ballot_attributes, ballot_extra_class) %}{{ ballot_options | safe }}{% endcall %}
   {{ segmented_radio('View', view_name, view_options, 'view-setting', precinct_enabled) }}

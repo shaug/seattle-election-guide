@@ -504,26 +504,18 @@
       "test"
     ],
     "data-filter-cancel": [
-      "template",
-      "stylesheet",
-      "client",
       "python",
       "test"
     ],
-    "data-filter-editor": [
-      "template",
-      "client",
-      "test"
-    ],
     "data-filter-open": [
-      "stylesheet",
-      "client",
+      "template",
       "python",
       "test"
     ],
     "data-filter-trigger": [
       "template",
-      "client",
+      "stylesheet",
+      "python",
       "test"
     ],
     "data-precinct-clear-slot": [
@@ -537,6 +529,17 @@
     ],
     "data-precinct-short": [
       "client",
+      "test"
+    ],
+    "data-filter-face": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-filter-native": [
+      "template",
+      "client",
+      "python",
       "test"
     ]
   },
@@ -1100,7 +1103,8 @@
     ],
     "ballot-option": [
       "stylesheet",
-      "client"
+      "client",
+      "test"
     ],
     "ballot-option-text": [
       "stylesheet",
@@ -1143,8 +1147,10 @@
       "test"
     ],
     "compact-filter-trigger": [
+      "template",
       "stylesheet",
       "client",
+      "python",
       "test"
     ],
     "compact-filter-value": [

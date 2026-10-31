@@ -134,7 +134,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
             l.top>=d.top&&l.bottom<=Math.min(d.bottom,
               document.querySelector('.precinct-actions').getBoundingClientRect().top)-8&&
             document.querySelector('dialog').style.getPropertyValue(
-              '--precinct-viewport-height')===v.height+'px';
+              '--filter-height')===Math.max(0,v.height-16)+'px';
         })()""")
         press("Escape", 27)
         evaluate("""window.nativePopupEscape=document.querySelector('dialog').open&&
@@ -200,9 +200,8 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
           window.nativeBallotHitTarget=r.width>=40&&r.height>=40&&r.top>=0&&
             r.bottom<=innerHeight&&trigger.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));
         })()""")
-        press("Enter", 13)
-        evaluate("""window.nativeBallotFocused&&=document.querySelector('#compact-ballot-dialog').open&&
-          document.activeElement===document.querySelector(
+        press(" ", 32)
+        evaluate("""window.nativeBallotFocused&&=document.activeElement===document.querySelector(
             '#race-filter,[data-comparison-section-filter]');""")
         # Native select type-ahead: Federal is the only F-prefixed option.
         cdp.command(
@@ -220,16 +219,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
             {"type": "keyUp", "key": "f", "code": "KeyF", "windowsVirtualKeyCode": 70},
             session_id=session,
         )
-        still_open = cdp.command(
-            "Runtime.evaluate",
-            {
-                "expression": "document.querySelector('#compact-ballot-dialog').open",
-                "returnByValue": True,
-            },
-            session_id=session,
-        )["result"]["value"]
-        if still_open:
-            press("Enter", 13)
+        press("Enter", 13)
         evaluate("""(()=>{
           const select=document.querySelector('#race-filter,[data-comparison-section-filter]');
           const ids=[...document.querySelectorAll('[data-publication-race-id],'+
@@ -360,7 +350,9 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         .map(r=>r.dataset.publicationRaceId??r.dataset.comparisonRace).sort();
       const expected=contract.precincts.find(p=>p.code==='3230').contest_ids;
       const geographic=ids().length>0&&ids().every(id=>expected.includes(id));
-      document.querySelector('#complete-filter,[data-comparison-all-races]').click();
+      const races=document.querySelector('[data-filter-native=races]');
+      races.value=[...races.options].find(o=>o.textContent.trim()==='All').value;
+      races.dispatchEvent(new Event('change',{bubbles:true}));
       const allExact=JSON.stringify(ids())===JSON.stringify([...expected].sort());
       click('[data-precinct-open]');
       const reopenedPrecinct=input.value==='SEA 34-3230';

@@ -93,10 +93,12 @@ def test_general_pages_resolve_every_independent_fixture_without_horizontal_over
         const actual=ids();
         if(JSON.stringify(actual)!==JSON.stringify(f.ids))
           failures.push({name:f.name,actual,expected:f.ids});
-        document.querySelector('#complete-filter,[data-comparison-all-races]').click();
+        const all=document.querySelector('[data-filter-native=races]');
+        all.value=[...all.options].find(o=>o.textContent.trim()==='All').value;
+        all.dispatchEvent(new Event('change',{bubbles:true}));
         if(JSON.stringify(ids())!==JSON.stringify(f.all_ids))
           failures.push({name:f.name,mode:'all',actual:ids(),expected:f.all_ids});
-        document.querySelector('#contested-filter,[data-comparison-contested]').click();
+        all.value='contested';all.dispatchEvent(new Event('change',{bubbles:true}));
       }
       document.querySelector('[data-precinct-open]').click();
       input.value='1279';input.dispatchEvent(new Event('input',{bubbles:true}));
@@ -167,7 +169,11 @@ def test_precinct_modal_draft_focus_clear_and_compact_trigger_alignment(
                         "key": name,
                         "windowsVirtualKeyCode": code,
                         "modifiers": modifiers,
-                        **({"text": "\r"} if name == "Enter" and kind == "keyDown" else {}),
+                        **(
+                            {"text": "\r" if name == "Enter" else name}
+                            if kind == "keyDown" and (name == "Enter" or len(name) == 1)
+                            else {}
+                        ),
                     },
                     session_id=session,
                 )
@@ -389,7 +395,7 @@ def test_general_ballot_scopes_publish_original_covered_membership(
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
-def test_compact_bar_owns_four_editors_and_own_scope_indicator(
+def test_compact_bar_owns_three_native_selects_and_own_scope_indicator(
     tmp_path: Path, general_view: PublicationViewModel, page: str
 ) -> None:
     html = (
@@ -403,43 +409,45 @@ def test_compact_bar_owns_four_editors_and_own_scope_indicator(
     )
     path = tmp_path / f"compact-{page}.html"
     path.write_text(without_live_address_requests(html))
-    expression = """(() => {
+    result = _evaluate_in_chrome(
+        path,
+        """(()=>{
       const bar=document.querySelector('[data-compact-filters]');
-      if(!bar)return JSON.stringify({missing:'compact filter bar'});
-      const triggers=()=>[...bar.querySelectorAll('[data-filter-open],[data-precinct-open]')];
-      const order=triggers().map(b=>b.dataset.filterOpen??'precinct');
-      const ballot=()=>bar.querySelector('[data-filter-open=ballot]');
-      const select=bar.querySelector('select');
-      const initial=!ballot().hasAttribute('data-active');
-      const labelParity=['view','races'].every(name=>{
-        const editor=bar.querySelector('#compact-'+name+'-dialog');
-        const selected=editor.querySelector('input:checked').nextElementSibling.textContent;
-        return bar.querySelector('[data-filter-open='+name+'] .compact-filter-value')
-          .textContent===selected;});
-      select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
-      const active=ballot().hasAttribute('data-active')&&
-        ballot().getAttribute('aria-label').includes('County');
-      select.value='all';select.dispatchEvent(new Event('change',{bubbles:true}));
-      const all=!ballot().hasAttribute('data-active');
-      bar.querySelector('[data-filter-open=races]').click();
-      const editor=bar.querySelector('#compact-races-dialog');
-      const opened=editor.open&&ballot().getAttribute('aria-expanded')==='false';
-      editor.querySelector('[data-filter-cancel]').click();
-      return JSON.stringify({order,initial,labelParity,active,all,opened,
-        returned:document.activeElement===bar.querySelector('[data-filter-open=races]'),
+      const triggers=[...bar.querySelectorAll('.compact-filter-trigger')];
+      const selects=[...bar.querySelectorAll('[data-filter-native]')];
+      const ballot=bar.querySelector('[data-filter-native=ballot]');
+      const initial=!ballot.hasAttribute('data-active');
+      const parity=['view','races'].every(role=>{
+        const select=bar.querySelector('[data-filter-native='+role+']');
+        return bar.querySelector('[data-filter-face='+role+'] .compact-filter-value')
+          .textContent===select.selectedOptions[0].textContent;});
+      ballot.value='county';ballot.dispatchEvent(new Event('change',{bubbles:true}));
+      const active=ballot.hasAttribute('data-active')&&
+        ballot.getAttribute('aria-label').includes('County');
+      ballot.value='all';ballot.dispatchEvent(new Event('change',{bubbles:true}));
+      return JSON.stringify({initial,parity,active,all:!ballot.hasAttribute('data-active'),
+        roles:selects.map(e=>e.dataset.filterNative),
+        native:selects.every(e=>e instanceof HTMLSelectElement&&e.options.length>=2),
+        dialogs:bar.querySelectorAll('dialog').length,
+        cancel:!!bar.querySelector('[data-filter-cancel]'),
         height:bar.querySelector('.compact-filter-controls').getBoundingClientRect().height,
-        targets:triggers().map(b=>({h:b.getBoundingClientRect().height,w:b.getBoundingClientRect().width})),
-        icons:triggers().every(b=>b.querySelector('svg[aria-hidden=true]'))});
-    })()"""
-    result = _evaluate_in_chrome(path, expression, viewport=(390, 900))
-    assert result.get("missing") is None, result
-    assert result["order"] == ["precinct", "view", "races", "ballot"]
-    assert result["initial"] and result["labelParity"] and result["active"] and result["all"], (
-        result
+        targets:triggers.every(b=>b.getBoundingClientRect().height>=44&&b.getBoundingClientRect().width>=44),
+        icons:triggers.every(b=>b.querySelector('svg[aria-hidden=true]'))});})()""",
+        viewport=(390, 900),
     )
-    assert result["opened"] and result["returned"] and result["icons"], result
-    assert result["height"] == 46
-    assert all(t["h"] >= 44 and t["w"] >= 44 for t in result["targets"])
+    assert result == {
+        "initial": True,
+        "parity": True,
+        "active": True,
+        "all": True,
+        "roles": ["view", "races", "ballot"],
+        "native": True,
+        "dialogs": 1,
+        "cancel": False,
+        "height": 46,
+        "targets": True,
+        "icons": True,
+    }
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
@@ -470,11 +478,12 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
         return {width:box.width,
           height:bar.querySelector('.compact-filter-controls').getBoundingClientRect().height,
           cue:bar.dataset.cues,spacing:bar.dataset.spacing,
-          scope:bar.querySelector('select').value,
-          ownActive:bar.querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
-          ownDotVisible:getComputedStyle(bar.querySelector('.compact-filter-dot')).visibility==='visible',
+          scope:bar.querySelector('[data-filter-native=ballot]').value,
+          ownActive:bar.querySelector('[data-filter-native=ballot]').hasAttribute('data-active'),
+          ownDotVisible:getComputedStyle(bar.querySelector('.compact-filter-dot'))
+            .visibility==='visible',
           dotClear:(()=>{const d=bar.querySelector('.compact-filter-dot').getBoundingClientRect();
-            const b=bar.querySelector('[data-filter-open=ballot]'),i=b.querySelector('svg')
+            const b=bar.querySelector('[data-filter-trigger=ballot] > div'),i=b.querySelector('svg')
               .getBoundingClientRect();
             return d.right<=i.left||d.left>=i.right||d.bottom<=i.top||d.top>=i.bottom;})(),
           labelsSeparated:values.every((el,index)=>{if(!index)return true;
@@ -507,8 +516,9 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
       input.value='SEA 46-1279';input.dispatchEvent(new Event('input',{bubbles:true}));
       document.querySelector('[data-code="1279"]').click();
       document.querySelector('[data-precinct-submit]').click();
-      const compact=document.querySelector('input[name=ballot-view][value=compact]');
-      if(compact)compact.click();
+      const compact=document.querySelector('[data-filter-native=view]');
+      if(compact.options.namedItem('compact')||[...compact.options].some(o=>o.value==='compact')){
+        compact.value='compact';compact.dispatchEvent(new Event('change',{bubbles:true}));}
       const samples=[];
       for(const width of [280,300,320,360,390]){bar.style.width=width+'px';await settle();
         samples.push(inspect());}
@@ -518,10 +528,10 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
           bar.style.width=(width-1)+'px';await settle();
           transitions.unshift(inspect());break;}}
       const activeSamples=[];
-      const select=bar.querySelector('select');
+      const select=bar.querySelector('[data-filter-native=ballot]');
       select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
       for(const width of [280,300,320]){bar.style.width=width+'px';await settle();
-        const b=bar.querySelector('[data-filter-open=ballot]');
+        const b=bar.querySelector('[data-filter-trigger=ballot] > div');
         const dot=b.querySelector('.compact-filter-dot'),r=dot.getBoundingClientRect();
         const text=b.querySelector('.compact-filter-value').getBoundingClientRect();
         activeSamples.push({...inspect(),indicator:b.hasAttribute('data-active')&&
@@ -530,8 +540,10 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
           (r.bottom<=text.top||r.left>=text.right)});}
       const name=document.querySelector('[data-precinct-open]').getAttribute('aria-label');
       const differingSamples=[];
-      const differing=document.querySelector('[data-comparison-differences]');
-      if(differing){document.querySelector('[data-precinct-clear]').click();differing.click();
+      const differing=document.querySelector('[data-filter-native=view]');
+      if([...differing.options].some(o=>o.value==='differing')){
+        document.querySelector('[data-precinct-clear]').click();
+        differing.value='differing';differing.dispatchEvent(new Event('change',{bubbles:true}));
         for(const width of [280,300,320,360,390]){bar.style.width=width+'px';await settle();
           differingSamples.push(inspect());}}
       return JSON.stringify({samples,activeSamples,differingSamples,transitions,name,
@@ -579,7 +591,7 @@ def test_compact_bar_fits_real_values_and_measures_container_transition(
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
 @pytest.mark.parametrize("width", [320, 360, 390])
-def test_compact_editors_support_native_keyboard_and_phone_placement(
+def test_native_selection_escape_preserves_value_and_tab_reaches_next_control(
     tmp_path: Path, general_view: PublicationViewModel, page: str, width: int
 ) -> None:
     html = (
@@ -595,52 +607,47 @@ def test_compact_editors_support_native_keyboard_and_phone_placement(
     path.write_text(without_live_address_requests(html))
 
     def keyboard(cdp: _CdpSocket, session: str) -> None:
-        def evaluate(source: str) -> None:
-            cdp.command("Runtime.evaluate", {"expression": source}, session_id=session)
+        def ev(source: str) -> None:
+            result = cdp.command("Runtime.evaluate", {"expression": source}, session_id=session)
+            assert "exceptionDetails" not in result, result
 
         def key(name: str, code: int) -> None:
             for kind in ["keyDown", "keyUp"]:
                 cdp.command(
                     "Input.dispatchKeyEvent",
-                    {
-                        "type": kind,
-                        "key": name,
-                        "windowsVirtualKeyCode": code,
-                        **({"text": "\r"} if name == "Enter" and kind == "keyDown" else {}),
-                    },
+                    {"type": kind, "key": name, "windowsVirtualKeyCode": code},
                     session_id=session,
                 )
 
-        evaluate("document.querySelector('[data-filter-open=view]').focus()")
-        key("Enter", 13)
-        evaluate("""window.compactOpened=document.querySelector('#compact-view-dialog').open;
-          window.compactFocus=document.querySelector('#compact-view-dialog').contains(document.activeElement);
-          const rect=document.querySelector('#compact-view-dialog').getBoundingClientRect();
-          window.compactPlaced=rect.left>=0&&rect.right<=innerWidth&&rect.top>=0&&rect.bottom<=innerHeight;""")
-        key("Tab", 9)
-        evaluate(
-            "window.compactContained=document.querySelector('#compact-view-dialog').contains(document.activeElement)"
+        ev(
+            "window.beforeNative=location.href;document.querySelector('[data-filter-native=view]').focus()"
         )
+        key(" ", 32)
+        key("ArrowDown", 40)
         key("Escape", 27)
-        evaluate("""window.compactReturned=document.activeElement===document.querySelector('[data-filter-open=view]');
-          document.querySelector('[data-filter-open=races]').focus();""")
-        key("Enter", 13)
-        key("ArrowLeft", 37)
+        ev(
+            "window.nativeRetained=document.activeElement===document.querySelector('[data-filter-native=view]')"
+        )
+        key("Tab", 9)
 
     result = _evaluate_in_chrome(
         path,
-        """(() => JSON.stringify({opened:window.compactOpened,focus:window.compactFocus,
-          placed:window.compactPlaced,contained:window.compactContained,returned:window.compactReturned,
-          closed:!document.querySelector('#compact-races-dialog').open,
-          all:document.querySelector('#complete-filter,[data-comparison-all-races]').checked,
-          racesLabel:document.querySelector('[data-filter-open=races]').getAttribute('aria-label'),
-          noOverflow:document.documentElement.scrollWidth<=innerWidth,
-          bar46:document.querySelector('.compact-filter-controls').getBoundingClientRect().height===46}))()""",
+        """JSON.stringify({sameURL:location.href===beforeNative,
+      retained:nativeRetained,next:document.activeElement===document.querySelector('[data-filter-native=races]'),
+      view:document.querySelector('[data-filter-native=view]').value,
+      dialogs:document.querySelectorAll('dialog').length,
+      overflow:document.documentElement.scrollWidth>innerWidth})""",
         viewport=(width, 844),
         interact=keyboard,
     )
-    assert result.pop("racesLabel") == "Races: All", result
-    assert all(result.values()), json.dumps(result)
+    assert result == {
+        "sameURL": True,
+        "retained": True,
+        "next": True,
+        "view": "full",
+        "dialogs": 1,
+        "overflow": False,
+    }, result
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
@@ -661,9 +668,9 @@ def test_wide_compact_bar_shows_selected_ballot_scope_and_constrained_bar_keeps_
     expression = """(async()=>{
       await document.fonts.ready;
       const bar=document.querySelector('[data-compact-filters]');
-      const select=bar.querySelector('select');
+      const select=bar.querySelector('[data-filter-native=ballot]');
       const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-      const inspect=()=>{const b=bar.querySelector('[data-filter-open=ballot]');
+      const inspect=()=>{const b=bar.querySelector('[data-filter-trigger=ballot] > div');
         const visible=[...b.querySelectorAll('span')].filter(e=>
           getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().width>0);
         const rect=b.getBoundingClientRect(),box=bar.getBoundingClientRect();
@@ -701,10 +708,12 @@ def test_wide_compact_bar_shows_selected_ballot_scope_and_constrained_bar_keeps_
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
-@pytest.mark.parametrize("editor", ["view", "races", "ballot"])
-def test_open_compact_editor_tracks_viewport_and_anchor_without_changing_choice(
-    tmp_path: Path, general_view: PublicationViewModel, page: str, editor: str
+def test_open_precinct_editor_tracks_viewport_and_anchor_without_changing_choice(
+    tmp_path: Path, general_view: PublicationViewModel, page: str
 ) -> None:
+    opener = "[data-precinct-open]"
+    dialog_id = "precinct-dialog"
+    cancel = "[data-precinct-cancel]"
     document = (
         render_html_document(
             general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
@@ -714,7 +723,7 @@ def test_open_compact_editor_tracks_viewport_and_anchor_without_changing_choice(
             general_view, public_site_url="https://seattleelections.guide"
         )
     )
-    path = tmp_path / f"moving-{page}-{editor}.html"
+    path = tmp_path / f"moving-{page}-precinct.html"
     path.write_text(without_live_address_requests(document))
 
     def exercise(cdp: _CdpSocket, session: str) -> None:
@@ -731,12 +740,14 @@ def test_open_compact_editor_tracks_viewport_and_anchor_without_changing_choice(
           '#race-filter,[data-comparison-section-filter]');
           scope.value='state-supreme-court';scope.dispatchEvent(new Event('change',{bubbles:true}));
           window.editorURL=location.href;
-          window.editorState=[...document.querySelectorAll('input[type=radio]')].map(x=>x.checked);
+          window.editorState=[...document.querySelectorAll('[data-filter-native]')].map(x=>x.value);
           window.editorPhases=[];""")
         point = evaluate(
-            "(()=>{const b=document.querySelector('[data-filter-open=EDITOR]');"
+            "(()=>{const b=document.querySelector('OPENER');"
             "const r=b.getBoundingClientRect();"
-            "return {x:r.x+r.width/2,y:r.y+r.height/2}})()".replace("EDITOR", editor)
+            "return {x:r.x+r.width/2,y:r.y+r.height/2}})()".replace("OPENER", opener)
+            .replace("DIALOG", dialog_id)
+            .replace("CANCEL", cancel)
         )
         assert isinstance(point, dict)
         for kind in ["mousePressed", "mouseReleased"]:
@@ -746,30 +757,41 @@ def test_open_compact_editor_tracks_viewport_and_anchor_without_changing_choice(
                 session_id=session,
             )
         evaluate(
-            """window.openEditor=document.querySelector('#compact-EDITOR-dialog');
+            """window.openEditor=document.querySelector('#DIALOG');
+          if(window.openEditor.id==='precinct-dialog'){
+            const input=window.openEditor.querySelector('input');
+            input.value='1279';input.dispatchEvent(new Event('input',{bubbles:true}));}
           window.editorFocus=document.activeElement;
+          const anchor=document.querySelector('OPENER').getBoundingClientRect();
+          window.editorAttached=Math.abs(window.openEditor.getBoundingClientRect().top-anchor.bottom-3)<1;
+          window.editorBackdrop=getComputedStyle(window.openEditor,'::backdrop').backgroundColor;
           window.recordEditor=async phase=>{
             await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
             const d=window.openEditor,v=visualViewport,r=d.getBoundingClientRect();
             const controls=[...d.querySelectorAll(
-              'select,.segmented-control label,[data-filter-cancel]')];
-            let reachable=true,textFits=true;
+              'select,input[role=combobox],.segmented-control label,'+
+              '[data-precinct-submit],.ballot-option,CANCEL')];
+            let reachable=true,textFits=true;const unreachable=[];
             for(const c of controls){c.scrollIntoView({block:'nearest'});
               const text=c.querySelector('span');
               if(text)textFits&&=text.scrollWidth<=text.clientWidth+1;
               const b=c.getBoundingClientRect();
-              reachable&&=b.top>=Math.max(r.top,v.offsetTop)-.5&&
+              const hit=b.top>=Math.max(r.top,v.offsetTop)-.5&&
                 b.bottom<=Math.min(r.bottom,v.offsetTop+v.height)+.5&&
-                b.left>=v.offsetLeft-.5&&b.right<=v.offsetLeft+v.width+.5;}
-            window.editorPhases.push({phase,open:d.open,reachable,textFits,
+                b.left>=v.offsetLeft-.5&&b.right<=v.offsetLeft+v.width+.5;
+              if(!hit)unreachable.push({tag:c.tagName,id:c.id,text:c.textContent,box:b.toJSON()});
+              reachable&&=hit;}
+            window.editorPhases.push({phase,open:d.open,reachable,textFits,unreachable,
               fits:r.left>=v.offsetLeft-.5&&r.right<=v.offsetLeft+v.width+.5&&
                 r.top>=v.offsetTop-.5&&r.bottom<=v.offsetTop+v.height+.5,
               focus:document.activeElement===window.editorFocus,
               scope:scope.value,url:location.href===window.editorURL,
               checked:JSON.stringify(window.editorState)===JSON.stringify(
-                [...document.querySelectorAll('input[type=radio]')].map(x=>x.checked))});
+                [...document.querySelectorAll('[data-filter-native]')].map(x=>x.value))});
           };
-          window.recordEditor('opened-before-resize');""".replace("EDITOR", editor)
+          window.recordEditor('opened-before-resize');""".replace("OPENER", opener)
+            .replace("DIALOG", dialog_id)
+            .replace("CANCEL", cancel)
         )
         for width, height in [(390, 844), (844, 320), (320, 240)]:
             cdp.command(
@@ -786,7 +808,8 @@ def test_open_compact_editor_tracks_viewport_and_anchor_without_changing_choice(
             {"width": 1280, "height": 1000, "deviceScaleFactor": 1, "mobile": False},
             session_id=session,
         )
-        evaluate("""(async()=>{
+        evaluate(
+            """(async()=>{
           await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
           const bar=document.querySelector('[data-compact-filters]');
           window.oldEditorTop=window.openEditor.getBoundingClientRect().top;
@@ -794,19 +817,22 @@ def test_open_compact_editor_tracks_viewport_and_anchor_without_changing_choice(
           await window.recordEditor('anchor-moved-without-resize');
           window.anchorFollowed=Math.abs(window.openEditor.getBoundingClientRect().top-
             window.oldEditorTop-90)<1;
-          window.openEditor.querySelector('[data-filter-cancel]').click();
-        })()""")
+          window.openEditor.querySelector('CANCEL').click();
+        })()""".replace("CANCEL", cancel)
+        )
 
     result = _evaluate_in_chrome(
         path,
-        """(()=>JSON.stringify({phases:window.editorPhases,anchor:window.anchorFollowed,
+        """(()=>JSON.stringify({attached:window.editorAttached,backdrop:window.editorBackdrop,
+          phases:window.editorPhases,anchor:window.anchorFollowed,
           closed:!window.openEditor.open,
-          returned:document.activeElement===document.querySelector('[data-filter-open=EDITOR]')}))()""".replace(
-            "EDITOR", editor
+          returned:document.activeElement===document.querySelector('OPENER')}))()""".replace(
+            "OPENER", opener
         ),
         viewport=(1280, 1000),
         interact=exercise,
     )
+    assert result["attached"] and result["backdrop"] == "rgba(0, 0, 0, 0)", result
     assert result["closed"] and result["returned"], result
     assert all(
         p["open"]
@@ -843,16 +869,14 @@ def test_scott_preview_empty_precinct_and_ballot_editor_are_unambiguous(
           const button=bar.querySelector('[data-precinct-open]');
           const empty=[...button.querySelectorAll('.compact-filter-value')]
             .filter(e=>getComputedStyle(e).display!=='none').map(e=>e.textContent).join(' ');
-          bar.querySelector('[data-filter-open=ballot]').click();
-          const dialog=bar.querySelector('#compact-ballot-dialog');
-          const select=dialog.querySelector('select');
+          const select=bar.querySelector('[data-filter-native=ballot]');
+          select.focus();
           const result={empty,name:button.getAttribute('aria-label'),
-            duplicate:!!dialog.querySelector('[data-compact-scope-detail]'),
+            duplicate:!!bar.querySelector('[data-compact-scope-detail]'),
             selectNamed:[...select.labels].some(l=>l.textContent.trim()==='Ballot'),
-            heading:document.getElementById(dialog.getAttribute('aria-labelledby')).textContent,
+            heading:select.getAttribute('aria-label'),
             value:select.value};
-          dialog.querySelector('[data-filter-cancel]').click();
-          result.returned=document.activeElement===bar.querySelector('[data-filter-open=ballot]');
+          result.returned=document.activeElement===select;
           button.click();result.selectAction=document.querySelector('[data-precinct-submit]').textContent;
           document.querySelector('[data-precinct-cancel]').click();
           return JSON.stringify(result);})()""",
@@ -863,7 +887,7 @@ def test_scott_preview_empty_precinct_and_ballot_editor_are_unambiguous(
         "name": "Precinct",
         "duplicate": False,
         "selectNamed": True,
-        "heading": "Ballot",
+        "heading": "Ballot: All ballot races",
         "value": "all",
         "returned": True,
         "selectAction": "Select",
@@ -899,7 +923,8 @@ def test_scott_preview_centers_controls_and_keeps_reactive_count_together(
     path.write_text(without_live_address_requests(document))
     expression = """(async()=>{await document.fonts.ready;
       const bar=document.querySelector('[data-compact-filters]');
-      const select=bar.querySelector('select'),status=bar.querySelector('.filter-control-status');
+      const select=bar.querySelector('[data-filter-native=ballot]');
+      const status=bar.querySelector('.filter-control-status');
       const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
       const samples=[];
       const inspect=phase=>{const buttons=[...bar.querySelectorAll('.compact-filter-trigger')];
@@ -915,9 +940,10 @@ def test_scott_preview_centers_controls_and_keeps_reactive_count_together(
         const inline=r.bottom<=group.bottom+.1;
         const adjacent=document.querySelector('.site-band').getBoundingClientRect();
         samples.push({phase,reported,visible,countText,
-          ballotValues:[...bar.querySelectorAll('[data-filter-open=ballot] .compact-filter-value')]
+          ballotValues:[...bar.querySelectorAll(
+            '[data-filter-trigger=ballot] .compact-filter-value')]
             .filter(e=>getComputedStyle(e).display!=='none').map(e=>e.textContent),
-          scopeActive:bar.querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+          scopeActive:bar.querySelector('[data-filter-native=ballot]').hasAttribute('data-active'),
           centered:Math.abs((group.left+group.right-box.left-box.right)/2)<.6,
           adjacentCentered:Math.abs((group.left+group.right-adjacent.left-adjacent.right)/2)<.6,
           control46:buttons.every(b=>b.getBoundingClientRect().height===46),
@@ -930,7 +956,9 @@ def test_scott_preview_centers_controls_and_keeps_reactive_count_together(
       select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
       await settle();inspect('county');
       select.value='all';select.dispatchEvent(new Event('change',{bubbles:true}));
-      document.querySelector('#complete-filter,[data-comparison-all-races]').click();
+      const all=document.querySelector('[data-filter-native=races]');
+        all.value=[...all.options].find(o=>o.textContent.trim()==='All').value;
+        all.dispatchEvent(new Event('change',{bubbles:true}));
       await settle();inspect('all-races');
       select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
       await settle();inspect('county-all-races');
@@ -943,8 +971,10 @@ def test_scott_preview_centers_controls_and_keeps_reactive_count_together(
       select.value='legislative-46';select.dispatchEvent(new Event('change',{bubbles:true}));
       await settle();inspect('invalid-scope-fallback');
       document.querySelector('[data-precinct-clear]').click();await settle();inspect('clear');
-      const differing=document.querySelector('[data-comparison-differences]');
-      if(differing){differing.click();await settle();inspect('differing');}
+      const differing=document.querySelector('[data-filter-native=view]');
+      if([...differing.options].some(o=>o.value==='differing')){differing.value='differing';
+        differing.dispatchEvent(new Event('change',{bubbles:true}));
+        await settle();inspect('differing');}
       history.pushState({},'', '?precinct=2142');dispatchEvent(new PopStateEvent('popstate'));
       await settle();inspect('url-precinct');
       const nextPop=()=>new Promise(r=>addEventListener('popstate',r,{once:true}));
@@ -997,39 +1027,39 @@ def test_scott_ballot_value_is_wide_only_and_own_scope_dot_survives_compaction(
     path = tmp_path / f"preview-ballot-{page}.html"
     path.write_text(without_live_address_requests(document))
     expression = """(async()=>{await document.fonts.ready;
-      const bar=document.querySelector('[data-compact-filters]'),select=bar.querySelector('select');
+      const bar=document.querySelector('[data-compact-filters]');
+      const select=bar.querySelector('[data-filter-native=ballot]');
       const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
       const samples=[];
       for(const [scope,label] of [['all','All ballot races'],['county','County'],
         ['state-supreme-court','State Supreme Court']]){
         select.value=scope;select.dispatchEvent(new Event('change',{bubbles:true}));
         for(const width of [1280,320]){bar.style.width=width+'px';await settle();
-          const button=bar.querySelector('[data-filter-open=ballot]');
+          const button=bar.querySelector('[data-filter-trigger=ballot] > div');
           const values=[...button.querySelectorAll('.compact-filter-value,.compact-ballot-scope')]
             .filter(e=>getComputedStyle(e).display!=='none').map(e=>e.textContent);
-          button.click();const dialog=bar.querySelector('#compact-ballot-dialog');
+          select.focus();
           const named=[...select.labels].some(e=>e.textContent.trim()==='Ballot');
           const current=select.selectedOptions[0].textContent.trim();
           const payload=JSON.parse(
             document.querySelector('script[data-client-payload]').textContent);
           const payloadLabel=payload.filter_scopes?.find(s=>s.value===scope)?.label??null;
-          dialog.querySelector('[data-filter-cancel]').click();
           const dot=button.querySelector('.compact-filter-dot');
           samples.push({scope,label,width,values,current,named,payloadLabel,
             active:button.hasAttribute('data-active'),
             dotVisible:getComputedStyle(dot).visibility==='visible',
             name:button.getAttribute('aria-label'),
-            duplicate:!!dialog.querySelector('[data-compact-scope-detail]'),
-            returned:document.activeElement===button,
+            duplicate:!!bar.querySelector('[data-compact-scope-detail]'),
+            returned:document.activeElement===select,
             fits:button.getBoundingClientRect().right<=bar.getBoundingClientRect().right+.1});
         }
       }
       select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
       document.querySelector('[data-precinct-clear]').click();await settle();
       const clearRetainsOwnScope=select.value==='county'&&
-        bar.querySelector('[data-filter-open=ballot]').hasAttribute('data-active');
+        bar.querySelector('[data-filter-trigger=ballot] > div').hasAttribute('data-active');
       select.value='all';select.dispatchEvent(new Event('change',{bubbles:true}));await settle();
-      const allInactive=!bar.querySelector('[data-filter-open=ballot]').hasAttribute('data-active');
+      const allInactive=!select.hasAttribute('data-active');
       return JSON.stringify({samples,clearRetainsOwnScope,allInactive});})()"""
     result = _evaluate_in_chrome(
         path,
@@ -1052,3 +1082,347 @@ def test_scott_ballot_value_is_wide_only_and_own_scope_dot_survives_compaction(
         for s in result["samples"]
     ), json.dumps(result)
     assert result["clearRetainsOwnScope"] and result["allInactive"], result
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+@pytest.mark.parametrize("font", [None, "system-ui", "sans-serif"])
+def test_complete_control_families_keep_track_edges_stable(
+    tmp_path: Path, general_view: PublicationViewModel, page: str, font: str | None
+) -> None:
+    document = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / "stable.html"
+    path.write_text(without_live_address_requests(document))
+    script = """(async()=>{await document.fonts.ready;
+      const bar=document.querySelector('[data-compact-filters]');
+      if(FONT)bar.style.setProperty('--screen-sans',FONT);
+      const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      const read=()=>({mode:[bar.dataset.cues,bar.dataset.spacing,
+        bar.dataset.precinctDisplay,bar.dataset.ballotDetail],
+        edges:[...bar.querySelectorAll('.compact-filter-trigger')].map(e=>{
+          const r=e.getBoundingClientRect();return [r.left,r.right,r.width];})});
+      const samples=[];
+      for(const width of [280,300,320,360,390,1280]){
+        bar.style.width=width+'px';await settle();const before=read();
+        for(const native of bar.querySelectorAll(
+          '[data-filter-native=view],[data-filter-native=races]')){
+          for(const option of native.options){native.value=option.value;
+            native.dispatchEvent(new Event('change',{bubbles:true}));
+            await settle();samples.push({width,before,after:read()});}}
+        const select=bar.querySelector('[data-filter-native=ballot]');
+        for(const value of ['county','all']){select.value=value;
+          select.dispatchEvent(new Event('change',{bubbles:true}));await settle();
+          samples.push({width,before,after:read()});}
+        document.querySelector('[data-precinct-clear]').click();await settle();
+        samples.push({width,before,after:read()});
+        document.querySelector('[data-precinct-open]').click();
+        const input=document.querySelector('#voting-precinct');input.value='1279';
+        input.dispatchEvent(new Event('input',{bubbles:true}));
+        document.querySelector('[data-code="1279"]').click();
+        document.querySelector('[data-precinct-submit]').click();await settle();
+      }return JSON.stringify({samples});})()""".replace("FONT", json.dumps(font))
+    result = _evaluate_in_chrome(
+        path, script, viewport=(1400, 1000), initial_url=path.as_uri() + "?precinct=1279"
+    )
+    assert all(s["before"] == s["after"] for s in result["samples"]), json.dumps(result)
+
+
+@pytest.mark.parametrize("code", ["1273", "1279"])
+def test_precinct_compare_native_view_history_and_shared_sources_remain_independent(
+    tmp_path: Path, general_view: PublicationViewModel, code: str
+) -> None:
+    html = render_comparison_document(
+        general_view, public_site_url="https://seattleelections.guide"
+    )
+    path = tmp_path / "independent-view.html"
+    path.write_text(without_live_address_requests(html))
+    payload = json.loads(html.split("data-client-payload>")[1].split("</script>")[0])
+    panel = payload["personalization"]
+    fragment = (
+        f"#cmp=1&cols=strnstim&panel={panel['panel_id']}&ph={panel['panel_hash'][:12]}"
+        f"&data={payload['data_version']}&scoring=unweighted-progressive-v1&diff=1&show=county"
+    )
+
+    def interact(cdp: _CdpSocket, session: str) -> None:
+        def ev(script: str) -> object:
+            r = cdp.command(
+                "Runtime.evaluate",
+                {"expression": script, "awaitPromise": True, "returnByValue": True},
+                session_id=session,
+            )
+            assert "exceptionDetails" not in r, r
+            return r["result"].get("value")
+
+        def key(name: str, number: int) -> None:
+            for kind in ["keyDown", "keyUp"]:
+                cdp.command(
+                    "Input.dispatchKeyEvent",
+                    {
+                        "type": kind,
+                        "key": name,
+                        "windowsVirtualKeyCode": number,
+                        **(
+                            {"text": "\r" if name == "Enter" else name}
+                            if kind == "keyDown" and (name == "Enter" or len(name) == 1)
+                            else {}
+                        ),
+                    },
+                    session_id=session,
+                )
+
+        observe = """window.take=async phase=>{
+          await document.fonts.ready;
+          await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+          const rows=[...document.querySelectorAll('[data-comparison-race]')];
+          const ids=rows.map(e=>e.dataset.comparisonRace);
+          const cells=Object.fromEntries(rows.map(e=>[e.dataset.comparisonRace,
+            [...e.querySelectorAll('[data-column-signal]')].map(c=>[c.dataset.columnSignal,c.textContent])]));
+          const view=document.querySelector('[data-filter-native=view]');
+          samples.push({phase,url:location.href,ids,cells,columns:[...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]')].map(e=>e.dataset.columnSignal),
+            full:view.value==='full',diff:view.value==='differing',enabled:!view.disabled,
+            scope:document.querySelector('[data-comparison-section-filter]').value,
+            count:document.querySelector('[data-comparison-status]').textContent});}"""
+        ev("window.samples=[];" + observe + ";take('direct-differing-county')")
+        ev("document.querySelector('[data-filter-native=view]').focus()")
+        key("f", 70)
+        assert ev("document.querySelector('[data-filter-native=view]').value") == "full"
+        ev("take('native-full')")
+        ev("document.querySelector('[data-filter-native=view]').focus()")
+        # Native select type-ahead groups rapid letters into one search. Allow
+        # that platform search session to expire before a separate user choice.
+        ev("new Promise(resolve=>setTimeout(resolve,1200))")
+        key("d", 68)
+        assert ev("document.querySelector('[data-filter-native=view]').value") == "differing"
+        ev("take('native-differing')")
+        other = "1279" if code == "1273" else "1273"
+        ev(
+            """(()=>{document.querySelector('[data-precinct-open]').click();
+          const i=document.querySelector('#voting-precinct');i.value='OTHER';
+          i.dispatchEvent(new Event('input',{bubbles:true}));
+          document.querySelector('[data-code="OTHER"]').click();
+          document.querySelector('[data-precinct-submit]').click();})()""".replace("OTHER", other)
+        )
+        ev("take('changed-precinct')")
+        # Filter choices replace their current entry. Establish two explicit shared-URL
+        # entries before exercising real Back/Forward, rather than leaving the document.
+        ev(
+            """(()=>{const forward=location.href,back=samples.find(s=>s.phase==='native-full').url;
+            history.pushState({},'',back);
+            dispatchEvent(new PopStateEvent('popstate'));
+            history.pushState({},'',forward);
+            dispatchEvent(new PopStateEvent('popstate'));
+            })()"""
+        )
+        ev(
+            """(async()=>{const p=new Promise(r=>addEventListener('popstate',r,{once:true}));
+            history.back();
+            await p;
+            await take('back-full');
+            })()"""
+        )
+        ev(
+            """(async()=>{const p=new Promise(r=>addEventListener('popstate',r,{once:true}));
+            history.forward();
+            await p;
+            await take('forward-differing');
+            })()"""
+        )
+        before = ev("JSON.stringify(samples)")
+        cdp.command("Page.reload", {}, session_id=session)
+        cdp.wait_event("Page.loadEventFired", session_id=session)
+        ev("window.samples=" + str(before) + ";")
+        ev(observe + ";take('reloaded')")
+        ev("""(()=>{const view=document.querySelector('[data-filter-native=view]');
+          view.value='full';view.dispatchEvent(new Event('change',{bubbles:true}));
+          const s=document.querySelector('[data-comparison-section-filter]');s.value='all';
+          s.dispatchEvent(new Event('change',{bubbles:true}));})()
+          """)
+        ev("take('full-measures')")
+        ev(
+            "const view=document.querySelector('[data-filter-native=view]');"
+            "view.value='differing';view.dispatchEvent(new Event('change',{bubbles:true}));"
+            "take('differing-measures')"
+        )
+        ev("""(()=>{const s=document.querySelector('[data-comparison-section-filter]');
+          s.value='county';s.dispatchEvent(new Event('change',{bubbles:true}));})()""")
+
+        ev(
+            """document.querySelector('[data-precinct-open]').click();
+            document.querySelector('[data-precinct-clear]').click();
+            take('clear-keeps-differing')"""
+        )
+        ev(
+            """history.replaceState({},'',location.pathname+'?precinct=not-real'+location.hash);
+            dispatchEvent(new PopStateEvent('popstate'));
+            take('invalid-fallback')"""
+        )
+
+    result = _evaluate_in_chrome(
+        path,
+        "JSON.stringify({samples})",
+        viewport=(390, 844),
+        initial_url=path.as_uri() + f"?precinct={code}" + fragment,
+        interact=interact,
+    )
+    samples = result["samples"]
+    assert len(samples) == 11, result
+    measures = {"initiative-26-645", "initiative-26-001", "initiative-26-638"}
+    full = next(s for s in samples if s["phase"] == "full-measures")
+    differing = next(s for s in samples if s["phase"] == "differing-measures")
+    assert all(full["cells"][k] == v for k, v in differing["cells"].items()), result
+    for s in samples:
+        assert s["enabled"] and s["columns"] == ["strn", "stim"], result
+        for binding in [
+            "cols=strnstim",
+            f"panel={panel['panel_id']}",
+            f"ph={panel['panel_hash'][:12]}",
+            f"data={payload['data_version']}",
+            "scoring=unweighted-progressive-v1",
+        ]:
+            assert binding in s["url"], result
+        if s["phase"] == "full-measures":
+            assert s["scope"] == "all" and s["full"] and not s["diff"], result
+            assert measures <= set(s["ids"]), result
+            continue
+        if s["phase"] == "differing-measures":
+            assert s["scope"] == "all" and s["diff"] and not s["full"], result
+            assert not measures & set(s["ids"]), result
+            continue
+        assert s["scope"] == "county" and "show=county" in s["url"], result
+        if s["phase"] in ["native-full", "back-full"]:
+            assert s["full"] and not s["diff"] and s["ids"] == ["king-county-assessor"], result
+        elif s["phase"] in ["clear-keeps-differing", "invalid-fallback"]:
+            assert s["diff"] and s["ids"] == ["king-county-council-2", "king-county-council-8"], (
+                result
+            )
+        else:
+            assert s["diff"] and not s["full"] and s["ids"] == [], result
+            assert "0 of 1" in s["count"], result
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+@pytest.mark.parametrize("width", [300, 390, 1280])
+def test_view_races_ballot_are_real_native_selects_without_editors(
+    tmp_path: Path, general_view: PublicationViewModel, page: str, width: int
+) -> None:
+    html = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / "native-selects.html"
+    path.write_text(without_live_address_requests(html))
+
+    def interact(cdp: _CdpSocket, session: str) -> None:
+        def ev(script: str) -> object:
+            r = cdp.command(
+                "Runtime.evaluate",
+                {"expression": script, "returnByValue": True, "awaitPromise": True},
+                session_id=session,
+            )
+            assert "exceptionDetails" not in r, r
+            return r["result"].get("value")
+
+        def key(name: str, number: int, text: str = "") -> None:
+            for kind in ["keyDown", "keyUp"]:
+                cdp.command(
+                    "Input.dispatchKeyEvent",
+                    {
+                        "type": kind,
+                        "key": name,
+                        "windowsVirtualKeyCode": number,
+                        **({"text": text} if text and kind == "keyDown" else {}),
+                    },
+                    session_id=session,
+                )
+
+        ready = ev("""(()=>{
+          const controls=[...document.querySelectorAll('select[data-filter-native]')];
+          return controls.length===3&&controls.every(e=>e.options.length>=2)&&
+          document.querySelectorAll('dialog').length===1&&!document.querySelector('[data-filter-cancel]');})()""")
+        assert ready, "View/Races/Ballot must be native selects; only Precinct retains a dialog"
+        ev(
+            "document.fonts.ready.then(()=>new Promise(r=>"
+            "requestAnimationFrame(()=>requestAnimationFrame(r))))"
+        )
+        ev("""document.querySelector('[data-compact-filters]').addEventListener('change',e=>{
+          (window.nativeChanges??=[]).push({trusted:e.isTrusted,role:e.target.dataset.filterNative});
+        });document.querySelector('[data-filter-native=view]').focus();""")
+        key(
+            "c" if page == "guide" else "d",
+            67 if page == "guide" else 68,
+            "c" if page == "guide" else "d",
+        )
+        ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
+        ev("window.nativeView=document.querySelector('[data-filter-native=view]').value")
+        ev("document.querySelector('[data-filter-native=races]').focus()")
+        key("a", 65, "a")
+        ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
+        point = ev("""(()=>{const s=document.querySelector('[data-filter-native=ballot]');
+          const r=s.getBoundingClientRect();
+          window.nativeHit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===s;
+          return {x:r.x+r.width/2,y:r.y+r.height/2};})()""")
+        assert isinstance(point, dict)
+        for kind in ["mousePressed", "mouseReleased"]:
+            cdp.command(
+                "Input.dispatchMouseEvent",
+                {"type": kind, **point, "button": "left", "clickCount": 1},
+                session_id=session,
+            )
+        key("c", 67, "c")
+        key("Enter", 13, "\r")
+        ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
+        tree = cdp.command("Accessibility.getFullAXTree", {}, session_id=session)
+        combos = [n for n in tree["nodes"] if n.get("role", {}).get("value") == "combobox"]
+        assert len(combos) == 3, combos
+        assert sorted((n["name"]["value"], n["value"]["value"]) for n in combos) == sorted(
+            [
+                (
+                    "View: Compact" if page == "guide" else "View: Differing",
+                    "Compact" if page == "guide" else "Differing",
+                ),
+                ("Races: All", "All"),
+                ("Ballot filter active: County", "County"),
+            ]
+        ), combos
+
+    result = _evaluate_in_chrome(
+        path,
+        """JSON.stringify({nativeView,hit:nativeHit,nativeChanges,
+      url:location.href,
+      view:document.querySelector('[data-filter-native=view]').value,
+      races:document.querySelector('[data-filter-native=races]').value,
+      ballot:document.querySelector('[data-filter-native=ballot]').value,
+      focus:document.activeElement===document.querySelector('[data-filter-native=ballot]'),
+      row:document.querySelector('.compact-filter-controls').getBoundingClientRect().height,
+      dialogs:document.querySelectorAll('dialog').length,
+      overflow:document.documentElement.scrollWidth>innerWidth})""",
+        viewport=(width, 844),
+        initial_url=path.as_uri() + "?precinct=1273",
+        interact=interact,
+    )
+    assert result["nativeView"] == ("compact" if page == "guide" else "differing"), result
+    assert result["view"] == result["nativeView"] and result["races"] in ["complete", "all"], result
+    assert result["ballot"] == "county" and result["hit"] and result["focus"], result
+    assert result["nativeChanges"] == [
+        {"trusted": True, "role": "view"},
+        {"trusted": True, "role": "races"},
+        {"trusted": True, "role": "ballot"},
+    ], result
+    assert (
+        "races=all" in result["url"]
+        and ("filter=county" if page == "guide" else "show=county") in result["url"]
+    ), result
+    assert result["row"] == 46 and result["dialogs"] == 1 and not result["overflow"], result
