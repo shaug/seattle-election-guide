@@ -1184,7 +1184,7 @@ def test_scott_preview_centers_controls_and_keeps_reactive_count_together(
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
 @pytest.mark.parametrize("screen_sans", [None, "system-ui"])
-def test_scott_ballot_value_is_wide_only_and_own_scope_dot_survives_compaction(
+def test_ballot_closed_summaries_keep_full_native_identity_and_own_scope_dot(
     tmp_path: Path, general_view: PublicationViewModel, page: str, screen_sans: str | None
 ) -> None:
     document = (
@@ -1200,17 +1200,24 @@ def test_scott_ballot_value_is_wide_only_and_own_scope_dot_survives_compaction(
         document = document.replace(
             "<head>", "<head><style>[data-compact-filters]{--screen-sans:system-ui}</style>", 1
         )
+    # Controlled local fixture: state URLs must not refetch nonexistent site icons.
+    document = document.replace('href="/favicon.svg"', 'href="data:,"').replace(
+        'href="/favicon-32.png"', 'href="data:,"'
+    )
     path = tmp_path / f"preview-ballot-{page}.html"
     path.write_text(without_live_address_requests(document))
     expression = """(async()=>{await document.fonts.ready;
       const bar=document.querySelector('[data-compact-filters]');
       const select=bar.querySelector('[data-filter-native=ballot]');
       const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-      const samples=[];
-      for(const [scope,label] of [['all','All ballot races'],['county','County'],
-        ['state-supreme-court','State Supreme Court']]){
+      const expected=EXPECTED;
+      const original=[...select.options].map(o=>[o.value,o.textContent.trim()]);
+      const samples=window.summaryAuditSamples=[];
+      for(const [scope,label] of original){
+        const summary=expected[scope]??label;
         select.value=scope;select.dispatchEvent(new Event('change',{bubbles:true}));
-        for(const width of [1280,320]){bar.style.width=width+'px';await settle();
+        for(const width of [1280,320]){window.summaryAuditCurrent={scope,label,width};
+          bar.style.width=width===1280?'100%':width+'px';await settle();
           const button=bar.querySelector('[data-filter-trigger=ballot] > div');
           const values=[...button.querySelectorAll('.compact-filter-value,.compact-ballot-scope')]
             .filter(e=>getComputedStyle(e).display!=='none').map(e=>e.textContent);
@@ -1221,7 +1228,10 @@ def test_scott_ballot_value_is_wide_only_and_own_scope_dot_survives_compaction(
             document.querySelector('script[data-client-payload]').textContent);
           const payloadLabel=payload.filter_scopes?.find(s=>s.value===scope)?.label??null;
           const dot=button.querySelector('.compact-filter-dot');
-          samples.push({scope,label,width,values,current,named,payloadLabel,
+          samples.push({scope,label,summary,width,actualWidth:bar.getBoundingClientRect().width,
+            overflow:document.documentElement.scrollWidth>innerWidth,values,current,named,payloadLabel,
+            title:select.title,nodeUnchanged:bar.querySelector('[data-filter-native=ballot]')===select,
+            originalOptions:JSON.stringify([...select.options].map(o=>[o.value,o.textContent.trim()]))===JSON.stringify(original),
             active:button.hasAttribute('data-active'),
             dotVisible:getComputedStyle(dot).visibility==='visible',
             name:button.getAttribute('aria-label'),
@@ -1230,23 +1240,61 @@ def test_scott_ballot_value_is_wide_only_and_own_scope_dot_survives_compaction(
             fits:button.getBoundingClientRect().right<=bar.getBoundingClientRect().right+.1});
         }
       }
+      window.summaryAuditCurrent={phase:'apply-1279-before-Clear'};
+      document.querySelector('[data-precinct-open]').click();
+      const precinct=document.querySelector('#voting-precinct');precinct.value='1279';
+      precinct.dispatchEvent(new Event('input',{bubbles:true}));
+      document.querySelector('[data-code="1279"]').click();
+      document.querySelector('[data-precinct-submit]').click();await settle();
+      const appliedForClear=document.querySelector('[data-precinct-open]')
+        .getAttribute('aria-label').includes('1279')&&!!document.querySelector('[data-precinct-clear]');
       select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
+      window.summaryAuditCurrent={phase:'clear-retains-own-scope',value:select.value,
+        clearExists:!!document.querySelector('[data-precinct-clear]')};
       document.querySelector('[data-precinct-clear]').click();await settle();
+      const clearRemovedPrecinct=document.querySelector('[data-precinct-open]')
+        .getAttribute('aria-label')==='Precinct'&&!document.querySelector('[data-precinct-clear]');
       const clearRetainsOwnScope=select.value==='county'&&
         bar.querySelector('[data-filter-trigger=ballot] > div').hasAttribute('data-active');
       select.value='all';select.dispatchEvent(new Event('change',{bubbles:true}));await settle();
       const allInactive=!select.hasAttribute('data-active');
-      return JSON.stringify({samples,clearRetainsOwnScope,allInactive});})()"""
+      return JSON.stringify({original,samples,appliedForClear,clearRemovedPrecinct,
+        clearRetainsOwnScope,allInactive});})()
+      .catch(error=>JSON.stringify({error:String(error),stack:error.stack,
+        current:window.summaryAuditCurrent,samples:window.summaryAuditSamples}))""".replace(
+        "EXPECTED",
+        json.dumps(
+            {
+                "Congressional District 7": "Congressional D7",
+                "Congressional District 9": "Congressional D9",
+                "Legislative District 11": "Legislative D11",
+                "Legislative District 32": "Legislative D32",
+                "Legislative District 34": "Legislative D34",
+                "Legislative District 36": "Legislative D36",
+                "Legislative District 37": "Legislative D37",
+                "Legislative District 43": "Legislative D43",
+                "Legislative District 46": "Legislative D46",
+                "Metropolitan King County Council District 2": "King County Council D2",
+                "Metropolitan King County Council District 4": "King County Council D4",
+                "Metropolitan King County Council District 8": "King County Council D8",
+                "Seattle City Council District 5": "Seattle City Council D5",
+            }
+        ),
+    )
     result = _evaluate_in_chrome(
         path,
         expression,
         viewport=(1280, 1000),
-        initial_url=path.as_uri() + "?precinct=1279",
+        initial_url=path.as_uri() + "?precinct=all&races=all",
     )
     (tmp_path / f"{page}-preview-ballot.json").write_text(json.dumps(result, indent=2) + "\n")
+    assert "error" not in result, result
     assert all(
-        s["values"] == ([s["label"]] if s["width"] == 1280 else ["Ballot"])
+        s["values"] == ([s["summary"]] if s["width"] == 1280 else ["Ballot"])
         and s["current"] == s["label"]
+        and s["nodeUnchanged"]
+        and s["originalOptions"]
+        and s["label"] in s["title"]
         and (s["payloadLabel"] == s["label"] if page == "guide" else True)
         and s["named"]
         and s["active"] == (s["scope"] != "all")
@@ -1255,15 +1303,19 @@ def test_scott_ballot_value_is_wide_only_and_own_scope_dot_survives_compaction(
         and not s["duplicate"]
         and s["returned"]
         and s["fits"]
+        and not s["overflow"]
         for s in result["samples"]
     ), json.dumps(result)
+    assert len(result["original"]) == (24 if page == "guide" else 7), result
+    assert result["appliedForClear"] and result["clearRemovedPrecinct"], result
     assert result["clearRetainsOwnScope"] and result["allInactive"], result
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
 @pytest.mark.parametrize("font", [None, "system-ui", "sans-serif"])
+@pytest.mark.parametrize("width", [280, 300, 320, 360, 390, 1280])
 def test_complete_control_families_keep_track_edges_stable(
-    tmp_path: Path, general_view: PublicationViewModel, page: str, font: str | None
+    tmp_path: Path, general_view: PublicationViewModel, page: str, font: str | None, width: int
 ) -> None:
     document = (
         render_html_document(
@@ -1273,6 +1325,9 @@ def test_complete_control_families_keep_track_edges_stable(
         else render_comparison_document(
             general_view, public_site_url="https://seattleelections.guide"
         )
+    )
+    document = document.replace('href="/favicon.svg"', 'href="data:,"').replace(
+        'href="/favicon-32.png"', 'href="data:,"'
     )
     path = tmp_path / "stable.html"
     path.write_text(without_live_address_requests(document))
@@ -1284,29 +1339,92 @@ def test_complete_control_families_keep_track_edges_stable(
         bar.dataset.precinctDisplay,bar.dataset.ballotDetail],
         edges:[...bar.querySelectorAll('.compact-filter-trigger')].map(e=>{
           const r=e.getBoundingClientRect();return [r.left,r.right,r.width];})});
-      const samples=[];
-      for(const width of [280,300,320,360,390,1280]){
+      await document.fonts.ready;bar.dispatchEvent(new Event('compact-filter-fit'));await settle();
+      const samples=window.familySamples=[],resets=window.familyResets=[],
+        steps=window.familySteps=[];
+      // Widths are independent cases. Packing all24 choices across six widths
+      // into one document exceeds Chromium's history-update protection.
+      const width=WIDTH;
+        window.familyCurrent={phase:'reset',width};
+        const cleanup=document.querySelector('[data-precinct-clear]');
+        const alreadyAll=bar.querySelector('[data-precinct-open]')
+          .getAttribute('aria-label')==='Precinct';
+        resets.push({width,hadClear:!!cleanup,alreadyAll});
+        if(!cleanup&&!alreadyAll)throw new Error('fixture cannot reset unknown precinct state');
+        cleanup?.click();
+        const select=bar.querySelector('[data-filter-native=ballot]');
+        select.value='all';select.dispatchEvent(new Event('change',{bubbles:true}));
+        const races=bar.querySelector('[data-filter-native=races]');
+        races.value=races.querySelector('[value=complete]')?'complete':'all';
+        races.dispatchEvent(new Event('change',{bubbles:true}));
         bar.style.width=width+'px';await settle();const before=read();
         for(const native of bar.querySelectorAll(
           '[data-filter-native=view],[data-filter-native=races]')){
-          for(const option of native.options){native.value=option.value;
+          for(const option of native.options){
+            window.familyCurrent={phase:'native-family',width,role:native.dataset.filterNative,
+              value:option.value,options:[...native.options].map(o=>o.value)};
+            native.value=option.value;
             native.dispatchEvent(new Event('change',{bubbles:true}));
             await settle();samples.push({width,before,after:read()});}}
-        const select=bar.querySelector('[data-filter-native=ballot]');
-        for(const value of ['county','all']){select.value=value;
+        races.value=races.querySelector('[value=complete]')?'complete':'all';
+        races.dispatchEvent(new Event('change',{bubbles:true}));await settle();
+        for(const {value} of [...select.options]){
+          window.familyCurrent={phase:'ballot-family',width,value,options:[...select.options].map(o=>o.value)};
+          select.value=value;
           select.dispatchEvent(new Event('change',{bubbles:true}));await settle();
           samples.push({width,before,after:read()});}
-        document.querySelector('[data-precinct-clear]').click();await settle();
-        samples.push({width,before,after:read()});
-        document.querySelector('[data-precinct-open]').click();
+        window.familyCurrent={phase:'open-1279-draft',width};
+        document.querySelector('[data-precinct-open]').click();await settle();
+        const dialog=document.querySelector('#precinct-dialog');
+        window.familyCurrent={phase:'opened-1279-draft',width,open:dialog.open};
+        steps.push({...window.familyCurrent});
+        if(!dialog.open)throw new Error('Precinct did not open');
         const input=document.querySelector('#voting-precinct');input.value='1279';
-        input.dispatchEvent(new Event('input',{bubbles:true}));
-        document.querySelector('[data-code="1279"]').click();
-        document.querySelector('[data-precinct-submit]').click();await settle();
-      }return JSON.stringify({samples});})()""".replace("FONT", json.dumps(font))
+        input.dispatchEvent(new Event('input',{bubbles:true}));await settle();
+        window.familyCurrent={phase:'choose-1279',width,
+          matches:[...document.querySelectorAll('[data-code]')].map(e=>e.dataset.code)};
+        const option=document.querySelector('[data-code="1279"]');
+        window.familyCurrent.input=input.value;
+        window.familyCurrent.option=option?.textContent;
+        steps.push({...window.familyCurrent});
+        if(!option)throw new Error('1279 suggestion missing');
+        option.click();await settle();
+        const submit=document.querySelector('[data-precinct-submit]');
+        window.familyCurrent={phase:'selected-1279-before-Select',width,open:dialog.open,
+          input:input.value,submitDisabled:submit.disabled};
+        steps.push({...window.familyCurrent});
+        if(!dialog.open||submit.disabled||!input.value.includes('1279'))
+          throw new Error('1279 draft was not selected');
+        submit.click();await settle();
+        samples.push({width,before,after:read()});
+        window.familyCurrent={phase:'clear-applied-1279',width,
+          identity:bar.querySelector('[data-precinct-open]').getAttribute('aria-label'),
+          hasClear:!!document.querySelector('[data-precinct-clear]'),
+          appliedCode:new URL(location.href).searchParams.get('precinct')};
+        steps.push({...window.familyCurrent});
+        if(!window.familyCurrent.identity.includes('1279')||!window.familyCurrent.hasClear||
+          window.familyCurrent.appliedCode!=='1279')throw new Error('1279 was not applied');
+        document.querySelector('[data-precinct-clear]').click();await settle();
+        window.familyCurrent={phase:'cleared-applied-1279',width,
+          identity:bar.querySelector('[data-precinct-open]').getAttribute('aria-label'),
+          hasClear:!!document.querySelector('[data-precinct-clear]')};
+        steps.push({...window.familyCurrent});
+        if(window.familyCurrent.identity!=='Precinct'||window.familyCurrent.hasClear)
+          throw new Error('Applied precinct did not clear');
+        samples.push({width,before,after:read()});
+      return JSON.stringify({samples,resets,steps});})()
+      .catch(error=>JSON.stringify({error:String(error),stack:error.stack,
+        current:window.familyCurrent,samples:window.familySamples,
+        resets:window.familyResets,steps:window.familySteps}))""".replace(
+        "FONT", json.dumps(font)
+    ).replace("WIDTH", str(width))
     result = _evaluate_in_chrome(
         path, script, viewport=(1400, 1000), initial_url=path.as_uri() + "?precinct=1279"
     )
+    (tmp_path / f"{page}-{font}-{width}-family-edges.json").write_text(
+        json.dumps(result, indent=2) + "\n"
+    )
+    assert "error" not in result, result
     assert all(s["before"] == s["after"] for s in result["samples"]), json.dumps(result)
 
 

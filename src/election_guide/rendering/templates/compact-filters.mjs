@@ -7,6 +7,29 @@ const precinctFamilies = new WeakMap();
 /** @type {WeakMap<Element, string[]>} */
 const ballotFamilies = new WeakMap();
 
+// Approved closed faces only. Native tokens and complete labels stay unchanged.
+const ballotSummaries = new Map([
+  ['Congressional District 7', 'Congressional D7'],
+  ['Congressional District 9', 'Congressional D9'],
+  ['Legislative District 11', 'Legislative D11'],
+  ['Legislative District 32', 'Legislative D32'],
+  ['Legislative District 34', 'Legislative D34'],
+  ['Legislative District 36', 'Legislative D36'],
+  ['Legislative District 37', 'Legislative D37'],
+  ['Legislative District 43', 'Legislative D43'],
+  ['Legislative District 46', 'Legislative D46'],
+  ['Metropolitan King County Council District 2', 'King County Council D2'],
+  ['Metropolitan King County Council District 4', 'King County Council D4'],
+  ['Metropolitan King County Council District 8', 'King County Council D8'],
+  ['Seattle City Council District 5', 'Seattle City Council D5'],
+]);
+
+/** Unknown tokens or renamed full labels keep their complete identity.
+ * @param {string} value @param {string} label */
+function ballotSummary(value, label) {
+  return value === label ? (ballotSummaries.get(value) ?? label) : label;
+}
+
 /** @param {string[]} full @param {string[]} short */
 export function reservePrecinctValues(full, short) {
   const bar = document.querySelector('[data-compact-filters]');
@@ -100,12 +123,18 @@ function filterFace(name, value, detail) {
 }
 
 /** Project resolved controller state without reading labels or state back from markup.
- * @param {{scope:string,scopeLabel:string,view:string,races:string,viewDisabled?:boolean,scopeLabels?:string[]}} state */
+ * @param {{scope:string,scopeLabel:string,view:string,races:string,viewDisabled?:boolean,scopeOptions?:{value:string,label:string}[]}} state */
 export function projectCompactFilters(state) {
   const bar = document.querySelector('[data-compact-filters]');
   if (!bar) return;
   const scopeLabel = state.scope === 'all' ? 'All ballot races' : state.scopeLabel;
-  ballotFamilies.set(bar, state.scopeLabels ?? [scopeLabel]);
+  const scopeOptions = state.scopeOptions ?? [{ value: state.scope, label: scopeLabel }];
+  ballotFamilies.set(
+    bar,
+    scopeOptions.map((option) =>
+      ballotSummary(option.value, option.value === 'all' ? 'All ballot races' : option.label),
+    ),
+  );
   for (const [name, value, label, disabled] of [
     ['view', state.view, `View: ${state.view}`, state.viewDisabled ?? false],
     ['races', state.races, `Races: ${state.races}`, false],
@@ -123,7 +152,14 @@ export function projectCompactFilters(state) {
       bar.querySelector(`[data-filter-native="${name}"]`)
     );
     if (target && select) {
-      render(filterFace(String(name), String(value), name === 'ballot' ? scopeLabel : ''), target);
+      render(
+        filterFace(
+          String(name),
+          String(value),
+          name === 'ballot' ? ballotSummary(state.scope, scopeLabel) : '',
+        ),
+        target,
+      );
       select.disabled = Boolean(disabled);
       select.setAttribute('aria-label', String(label));
       select.title = String(label);

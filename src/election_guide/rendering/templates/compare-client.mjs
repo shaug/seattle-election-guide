@@ -133,7 +133,10 @@ export function wireComparisons() {
   const nativeRaces = /** @type {HTMLSelectElement|null} */ (
     document.querySelector('[data-filter-native="races"]')
   );
-  const scopeLabels = [...sectionFilter.options].map((option) => option.textContent?.trim() ?? '');
+  const scopeOptions = [...sectionFilter.options].map((option) => ({
+    value: option.value,
+    label: option.textContent?.trim() ?? '',
+  }));
   const projectScopes = makeBallotScopeProjector(sectionFilter);
   const scopeMembership = new Map([['all', comparisons.display_index.map((row) => row.race_id)]]);
   for (const row of comparisons.display_index) {
@@ -783,7 +786,7 @@ export function wireComparisons() {
     }
     projectCompactFilters({
       scope: state.section,
-      scopeLabels,
+      scopeOptions,
       scopeLabel:
         state.section === 'all'
           ? 'All Seattle ballot races'

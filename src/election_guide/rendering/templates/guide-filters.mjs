@@ -197,7 +197,7 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
       );
     projectCompactFilters({
       scope: state.scope,
-      scopeLabels: [...scopeLabels.values()],
+      scopeOptions: payload.filter_scopes,
       scopeLabel: scopeLabels.get(state.scope) ?? 'All Seattle ballot races',
       view: compact ? 'Compact' : 'Full',
       races: contestedOnly ? 'Contested' : 'All',

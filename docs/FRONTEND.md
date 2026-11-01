@@ -935,14 +935,22 @@ The optional general-only `precinct.css` owns this presentation and preserves th
 Safari `label:has(> input:checked)` selected-state rule for supported legacy radios. `base.css`
 and archived primary parts stay unchanged. Font readiness, a ResizeObserver on
 the actual bar and state projection re-evaluate unshrunk complete-family trigger reservations,
-including every full Ballot scope label. A hidden multiline probe in the actual
+including every approved closed Ballot summary. A hidden multiline probe in the actual
 trigger styles measures the widest complete family value, including all catalog
 precinct identities. View and Races reserve all their native option labels. The controllers
-supply the original complete scope labels, independent of current availability.
+supply the original complete scope value/label pairs, independent of current
+availability. One exact mapping in `compact-filters.mjs` supplies both the current
+aria-hidden face and its complete measured family. Only the 13 approved district
+choices shorten; the other 11 remain unchanged. The mapping requires the exact
+known value and original full label; unknown values or renamed labels retain the
+complete supplied wording. Native options, selected values, accessible names and
+titles always retain the original full identity. Guide keeps its 24 choices;
+Comparisons keeps its own 7 section choices. No schema, controller intent or URL
+token changes are implied.
 Within a fitting mode these per-role widths stay stable across selections;
 container/font changes re-admit the fitting mode. Reservations retain the browser's
 fractional layout precision rather than accumulating an upward rounding loss for
-every role. The wide trigger shows that value
+every role. The wide trigger shows the approved closed summary
 without a prefixed Ballot; its all-scope display and general native option use
 “All ballot races”. The rendering context owns that general-only all-scope copy
 for both the Guide payload/select and the Comparisons select, keeping legacy

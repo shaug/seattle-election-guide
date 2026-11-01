@@ -525,7 +525,7 @@ See BALLOT_INVENTORY.md for the source, literal-versus-SEG heading distinctions,
 and the explicit November-only boundary. Historical primary publications do not
 inherit this mapping.
 
-## Adaptive compact general filter bar (#673, approved C v5)
+## Adaptive compact general filter bar (#673)
 
 On precinct-enabled general Endorsements and Comparisons, the earlier wrapping
 header row is replaced by one centered 46px control row:
@@ -540,16 +540,28 @@ owns pointer/keyboard input, the accessible name and complete current value.
 There is no separate dialog, editor heading, Cancel button or repeated value paragraph.
 Each trigger has a matching outline SVG (pin, eye, filter lines, ballot box),
 readable text, a 44px minimum target and visible keyboard focus. When the actual
-bar can fit the wide presentation, the Ballot trigger shows only its current
-selected value: “All ballot races” by default, without a “Ballot” prefix or
+bar can fit the wide presentation, the Ballot trigger shows only its approved closed
+summary: “All ballot races” by default, without a “Ballot” prefix or
 redundant “Seattle”. Constrained/mobile bars show only “Ballot” and its own-scope
 active dot; the current value is already evident below and in the native select.
 The full selected scope remains in its accessible name/title, selected native
-option and complete option menu in both treatments. A subtle teal dot marks only a non-All Ballot scope. Merely
+option and complete option menu in both treatments. The October31 constrained, centered treatment shortens only 13 exact known closed
+faces: Congressional District 7 and 9 become “Congressional D7” and
+“Congressional D9”; Legislative District 11/32/34/36/37/43/46 become
+“Legislative D11/D32/D34/D36/D37/D43/D46”; Metropolitan King County Council
+District 2/4/8 become “King County Council D2/D4/D8”; Seattle City Council
+District 5 becomes “Seattle City Council D5”. Each choice retains its own number;
+`D` immediately precedes that number without a space, as in `D7`. The other 11 choices keep their full wording. This is a
+presentation mapping, not a change to native labels, values, accessible names or
+titles. Unknown values and changed full labels remain complete; do not derive
+new abbreviations or truncate. Measure the complete closed-summary family in the
+actual font/container, rather than copying the study's 231px reservation. Keep
+the existing centered location and order.
+A subtle teal dot marks only a non-All Ballot scope. Merely
 selecting a precinct does not activate it.
 
 Reserve each control’s width for its complete value family within the admitted
-fit mode: all View and Races alternatives, full scope labels or narrow Ballot,
+fit mode: all View and Races alternatives, approved closed scope summaries or narrow Ballot,
 and the catalog’s complete full or safely shortened precinct identities. Ordinary
 selection changes retain these track widths and edges; font/container changes may
 select a different fitting mode. These are role-specific measured reservations,
