@@ -42,6 +42,13 @@ any remaining lane can execute.
 
 Neither focused target replaces `make check` before proposing a diff.
 
+For native filter changes, also complete the [mandatory interactive native-select
+acceptance](docs/FRONTEND.md#native-select-verification) on the exact candidate.
+Automated green does not establish native menu opening or uncommitted dismissal.
+If the supported authorized interactive session is unavailable, record the specific
+pending acceptance/blocker and continue unaffected checks; do not call the feature
+or preview accepted. This requirement grants no new browser or access route.
+
 After staging election-page changes, run `make check-updates` with an authenticated GitHub CLI.
 This live comparison is separate from offline `make check`; required CI runs it and production
 repeats it before upload. Substantive changes need a new entry in each affected election's served

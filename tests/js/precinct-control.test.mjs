@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import test from 'node:test';
+import test, { afterEach } from 'node:test';
+
+const ownedDialogs = new Set();
+afterEach(() => {
+  for (const dialog of ownedDialogs) dialog.close();
+  ownedDialogs.clear();
+});
+
 import { installDom } from './support/dom.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
@@ -33,6 +40,7 @@ function boot(search = '', saved = null) {
   document.body.innerHTML =
     '<a data-precinct-link="endorsements"></a><a data-precinct-link="comparisons"></a>' +
     PRECINCT_MARKUP;
+  ownedDialogs.add(document.querySelector('dialog'));
   if (saved) window.localStorage.setItem('seg-precinct-v1:wa-2026-general', saved);
   let query = search;
   let listener;
@@ -136,4 +144,17 @@ test('navigation consumes complete server-owned paths without reconstructing ele
   assert.equal(link('comparisons').getAttribute('href'), '/inspection/comparison/?precinct=1279');
   b.document.querySelector('[data-precinct-clear]').click();
   assert.equal(link('comparisons').getAttribute('href'), '/inspection/comparison/?precinct=all');
+});
+
+test('compact precinct identity abbreviates only unique reviewed Seattle names', () => {
+  const b = boot('?precinct=1279');
+  const opener = b.document.querySelector('[data-precinct-open]');
+  assert.equal(opener.getAttribute('aria-label'), 'Precinct: SEA 46-1279');
+  assert.equal(opener.querySelector('[data-precinct-short]').textContent, '46-1279');
+  assert.equal(opener.querySelector('[data-precinct-name]').textContent, 'SEA 46-1279');
+  opener.click();
+  assert.equal(opener.getAttribute('aria-expanded'), 'true');
+  b.document.querySelector('[data-precinct-cancel]').click();
+  assert.equal(opener.getAttribute('aria-expanded'), 'false');
+  assert.equal(b.document.activeElement, opener);
 });

@@ -1,3 +1,4 @@
+import { projectCompactFilters } from './compact-filters.mjs';
 // Interactive comparison-page glue. State is admitted and serialized only by
 // compare-url.mjs; the address bar it lives in is touched only by
 // compare-route.mjs; cell arithmetic is owned only by compare-signals.mjs; the
@@ -126,6 +127,16 @@ export function wireComparisons() {
   const sectionFilter = required('[data-comparison-section-filter]');
   /** @type {HTMLElement} */
   const stickyControls = required('[data-sticky-controls]');
+  const nativeView = /** @type {HTMLSelectElement|null} */ (
+    document.querySelector('[data-filter-native="view"]')
+  );
+  const nativeRaces = /** @type {HTMLSelectElement|null} */ (
+    document.querySelector('[data-filter-native="races"]')
+  );
+  const scopeOptions = [...sectionFilter.options].map((option) => ({
+    value: option.value,
+    label: option.textContent?.trim() ?? '',
+  }));
   const projectScopes = makeBallotScopeProjector(sectionFilter);
   const scopeMembership = new Map([['all', comparisons.display_index.map((row) => row.race_id)]]);
   for (const row of comparisons.display_index) {
@@ -374,7 +385,6 @@ export function wireComparisons() {
     }
     state = snapshot(outcome.state);
     if (generalRaceMode) state.contestedOnly = readContestedOnly(router.controlSearch(), true);
-    if (precinctIds !== null) state.differencesOnly = false;
     normalizeScope();
     linkNotice = outcome.notice;
     changeNotice = '';
@@ -409,7 +419,6 @@ export function wireComparisons() {
    */
   function commit(mode = 'push') {
     normalizeScope();
-    if (precinctIds !== null) state.differencesOnly = false;
     if (writeFragment(mode)) {
       changeNotice = '';
       renderPage();
@@ -686,7 +695,7 @@ export function wireComparisons() {
       const configuredCells = state.columns.map((signal) => engine.resolveColumn(signal, race));
       const differs = rowDiffers(configuredCells);
       if (differs) differCount += 1;
-      if (precinctIds === null && state.differencesOnly && !differs) continue;
+      if (state.differencesOnly && !differs) continue;
       let section = sections.get(display.section_id);
       if (section === undefined) {
         section = {
@@ -764,13 +773,31 @@ export function wireComparisons() {
   function syncControls() {
     projectScopes(availableScopes());
     sectionFilter.disabled = false;
-    for (const selector of ['[data-comparison-full]', '[data-comparison-differences]'])
-      toggleInput(selector).disabled = precinctIds !== null;
     sectionFilter.value = state.section;
-    toggleInput('[data-comparison-full]').checked = !state.differencesOnly;
-    toggleInput('[data-comparison-differences]').checked = state.differencesOnly;
-    toggleInput('[data-comparison-all-races]').checked = !state.contestedOnly;
-    toggleInput('[data-comparison-contested]').checked = state.contestedOnly;
+    if (nativeView) nativeView.value = state.differencesOnly ? 'differing' : 'full';
+    else {
+      toggleInput('[data-comparison-full]').checked = !state.differencesOnly;
+      toggleInput('[data-comparison-differences]').checked = state.differencesOnly;
+    }
+    if (nativeRaces) nativeRaces.value = state.contestedOnly ? 'contested' : 'all';
+    else {
+      toggleInput('[data-comparison-all-races]').checked = !state.contestedOnly;
+      toggleInput('[data-comparison-contested]').checked = state.contestedOnly;
+    }
+    projectCompactFilters({
+      scope: state.section,
+      scopeOptions,
+      scopeLabel:
+        state.section === 'all'
+          ? 'All Seattle ballot races'
+          : state.section
+              .split('-')
+              .map((word) => word[0].toUpperCase() + word.slice(1))
+              .join(' '),
+      view: state.differencesOnly ? 'Differing' : 'Full',
+      races: state.contestedOnly ? 'Contested' : 'All',
+      viewDisabled: false,
+    });
   }
 
   // Everything one state change implies: both regions, the controls, the hint.
@@ -792,22 +819,36 @@ export function wireComparisons() {
     state.section = sectionFilter.value;
     commit('replace');
   });
-  toggleInput('[data-comparison-full]').addEventListener('change', () => {
-    state.differencesOnly = false;
-    commit('replace');
-  });
-  toggleInput('[data-comparison-differences]').addEventListener('change', () => {
-    state.differencesOnly = true;
-    commit('replace');
-  });
-  toggleInput('[data-comparison-all-races]').addEventListener('change', () => {
-    state.contestedOnly = false;
-    commit('replace');
-  });
-  toggleInput('[data-comparison-contested]').addEventListener('change', () => {
-    state.contestedOnly = true;
-    commit('replace');
-  });
+  if (nativeView)
+    nativeView.addEventListener('change', () => {
+      state.differencesOnly = nativeView.value === 'differing';
+      commit('replace');
+    });
+  if (nativeRaces)
+    nativeRaces.addEventListener('change', () => {
+      state.contestedOnly = nativeRaces.value === 'contested';
+      commit('replace');
+    });
+  if (!nativeView)
+    toggleInput('[data-comparison-full]').addEventListener('change', () => {
+      state.differencesOnly = false;
+      commit('replace');
+    });
+  if (!nativeView)
+    toggleInput('[data-comparison-differences]').addEventListener('change', () => {
+      state.differencesOnly = true;
+      commit('replace');
+    });
+  if (!nativeRaces)
+    toggleInput('[data-comparison-all-races]').addEventListener('change', () => {
+      state.contestedOnly = false;
+      commit('replace');
+    });
+  if (!nativeRaces)
+    toggleInput('[data-comparison-contested]').addEventListener('change', () => {
+      state.contestedOnly = true;
+      commit('replace');
+    });
   /** @type {NodeListOf<HTMLAnchorElement>} */
   (document.querySelectorAll('.comparison-presets a')).forEach((link) => {
     link.addEventListener('click', (event) => {
@@ -839,9 +880,7 @@ export function wireComparisons() {
   renderPage();
   wirePrecinctControl(payload.precinct_ballot, router, (ids, reset) => {
     precinctIds = ids;
-    if (reset) {
-      state.differencesOnly = false;
-      commit('replace');
-    } else renderPage();
+    if (reset) commit('replace');
+    else renderPage();
   });
 }

@@ -303,7 +303,7 @@ test('precinct comparison preserves explicit All through presets and Clear', () 
       columns: ['gall', 'strn'],
       section: 'all',
       contestedOnly: true,
-      differencesOnly: true,
+      differencesOnly: false,
     },
     context,
   );
@@ -434,7 +434,7 @@ test('precinct Ballot removes ineligible categories and actually applies its sco
   select.dispatchEvent(new Event('change'));
   assert.deepEqual(ids(), ['king-county-assessor']);
   assert.equal(select.value, 'county');
-  assert.equal(document.querySelector('[data-comparison-differences]').disabled, true);
+  assert.equal(document.querySelector('[data-comparison-differences]').disabled, false);
   const saved = window.location.hash;
   window.dispatchEvent(new Event('hashchange'));
   assert.equal(window.location.hash, saved);
@@ -453,3 +453,68 @@ test('precinct Ballot removes ineligible categories and actually applies its sco
     ['all', 'federal', 'state', 'county', 'state-supreme-court', 'city'],
   );
 });
+
+for (const code of ['1273', '1279']) {
+  test(`precinct ${code} retains effective Differing through native choices, scope and Clear`, () => {
+    const payload = auditedPayload();
+    const context = compareContext(
+      payload.personalization,
+      payload.data_version,
+      payload.comparisons,
+      payload.default_columns,
+    );
+    const encoded = encodeCompareFragment(
+      { columns: ['gall', 'strn'], section: 'all', differencesOnly: true, contestedOnly: false },
+      context,
+    );
+    const doc = boot({
+      search: `?precinct=${code}&races=all`,
+      fragment: `#${encoded.fragment}`,
+      editPayload: (p) => {
+        p.precinct_ballot = {
+          schema_version: '1.0',
+          election_id: 'wa-2026-general',
+          mapping_hash: 'checked',
+          endorsements_path: '/e/wa-2026-general/',
+          comparisons_path: '/e/wa-2026-general/comparisons/',
+          precincts: [
+            {
+              code,
+              name: `SEA ${code === '1273' ? '36' : '46'}-${code}`,
+              contest_ids: ['us-house-7', 'us-house-9', 'ld-11-state-representative-1'],
+            },
+          ],
+        };
+      },
+    });
+    const ids = () =>
+      [...doc.querySelectorAll('[data-comparison-race]')].map((e) => e.dataset.comparisonRace);
+    const differing = doc.querySelector('[data-comparison-differences]');
+    assert.equal(differing.disabled, false);
+    assert.equal(differing.checked, true);
+    assert.deepEqual(ids(), ['us-house-9', 'ld-11-state-representative-1']);
+    doc.querySelector('[data-comparison-full]').click();
+    assert.deepEqual(ids(), ['us-house-7', 'us-house-9', 'ld-11-state-representative-1']);
+    differing.click();
+    const scope = doc.querySelector('[data-comparison-section-filter]');
+    scope.value = 'federal';
+    scope.dispatchEvent(new Event('change'));
+    assert.deepEqual(ids(), ['us-house-9']);
+    const query = window.location.search;
+    const fragment = window.location.hash;
+    window.dispatchEvent(new Event('hashchange'));
+    assert.equal(window.location.search, query);
+    assert.equal(window.location.hash, fragment);
+    assert.deepEqual(ids(), ['us-house-9']);
+    doc.querySelector('[data-precinct-clear]').click();
+    assert.equal(differing.checked, true);
+    assert.equal(scope.value, 'federal');
+    assert.deepEqual(ids(), ['us-house-9']);
+    assert.deepEqual(columns(doc), ['gall', 'strn']);
+    const replay = boot({ search: window.location.search, fragment: window.location.hash });
+    assert.deepEqual(
+      [...replay.querySelectorAll('[data-comparison-race]')].map((e) => e.dataset.comparisonRace),
+      ['us-house-9'],
+    );
+  });
+}

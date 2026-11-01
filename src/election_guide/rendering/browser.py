@@ -52,10 +52,9 @@ def find_chrome() -> Path:
     raise ValueError("Chrome or Chromium is required; set CHROME_PATH to its executable")
 
 
-# The screen controls are one select and four radios. Issue 97 merged the
-# personalization controls into the page-anchored sources tree, so there is
-# no longer a Customize button here. The separately tested general-only precinct
-# modal is a distinct component, not one of these five view/race controls.
+# Legacy screen controls are one select and four radios. Admitted general pages
+# instead use three native selects (#673). Precinct is a separately tested dialog;
+# neither presentation includes the page-anchored source controls.
 EXPECTED_SCREEN_CONTROL_COUNT = 5
 
 # Reset has one exact query representation per admitted page capability. General
@@ -254,7 +253,8 @@ def _capture_emulated_viewport(
                     "meter.getBoundingClientRect().right)<=1;});"
                     "const controlCount=[...document.querySelectorAll("
                     "'.screen-controls button,.screen-controls select,.screen-controls input')]"
-                    ".filter(control=>!control.closest('[data-precinct-control]')).length;"
+                    ".filter(control=>!control.closest('[data-precinct-control]')&&"
+                    "!control.matches('button[data-filter-open],[data-filter-cancel]')).length;"
                     "const precinct=document.querySelector('[data-precinct-control]');"
                     "const precinctExpected=bindings.precinct_ballot?.election_id==="
                     "'wa-2026-general';"
@@ -298,7 +298,12 @@ def _capture_emulated_viewport(
                     "noTimesText:!document.querySelector('.screen-guide')"
                     ".innerHTML.includes('Times comparison'),"
                     "supportAligned:supportAligned(),"
-                    "controlCount});"
+                    "controlCountValid:controlCount===(precinctExpected?3:"
+                    f"{EXPECTED_SCREEN_CONTROL_COUNT})&&(!precinctExpected||"
+                    "['view','races','ballot'].every(role=>{"
+                    "const select=document.querySelector('select[data-filter-native='+role+']');"
+                    "return Boolean(select&&select.options.length>=2&&select.labels.length&&"
+                    "select.getAttribute('aria-label'));}))});"
                     "})()"
                 ),
                 "returnByValue": True,
@@ -316,7 +321,7 @@ def _capture_emulated_viewport(
             "noComparisonRows": True,
             "noTimesText": True,
             "supportAligned": True,
-            "controlCount": EXPECTED_SCREEN_CONTROL_COUNT,
+            "controlCountValid": True,
         }
         if residue_metrics != expected_residue:
             raise ValueError(f"comparison removal validation failed: {residue_metrics}")
@@ -330,20 +335,32 @@ def _capture_emulated_viewport(
                     "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
                     "const guide=document.querySelector('.screen-guide');"
                     "const filter=document.querySelector('#race-filter');"
+                    "const filterTrigger=document.querySelector("
+                    "'[data-filter-trigger=ballot] .compact-filter-trigger')??filter;"
                     "const status=document.querySelector('#filter-status');"
                     "const completeFilter=document.querySelector('#complete-filter');"
                     "const defaultContested=JSON.parse(document.querySelector("
                     "'[data-client-payload]').textContent).precinct_ballot?.election_id==="
                     "'wa-2026-general';"
                     "const contestedFilter=document.querySelector('#contested-filter');"
-                    "const viewInputs=[...document.querySelectorAll('input[name=ballot-view]')];"
+                    "const nativeView=document.querySelector('[data-filter-native=view]');"
+                    "const nativeRaces=document.querySelector('[data-filter-native=races]');"
+                    "const selected=control=>control instanceof HTMLOptionElement?"
+                    "control.selected:Boolean(control?.checked);"
+                    "const choose=control=>{if(control instanceof HTMLOptionElement){"
+                    "const select=control.closest('select');select.value=control.value;"
+                    "select.dispatchEvent(new Event('change',{bubbles:true}));"
+                    "}else control?.click();};"
+                    "const viewInputs=[...document.querySelectorAll("
+                    "'input[name=ballot-view],select[data-filter-native=view] option')];"
                     "const binarySelectors=[...document.querySelectorAll("
                     "'.view-setting .segmented-control')];"
                     "const selectorWidths=binarySelectors.map(control=>"
                     "control.getBoundingClientRect().width);"
-                    "const defaultRaceMode=Boolean(contestedFilter?.checked)===defaultContested;"
-                    "completeFilter?.click();await pause();"
-                    "const allRaceMode=Boolean(completeFilter?.checked)&&!completeFilter?.disabled;"
+                    "const defaultRaceMode=selected(contestedFilter)===defaultContested;"
+                    "choose(completeFilter);await pause();"
+                    "const allRaceMode=selected(completeFilter)&&"
+                    "!(nativeRaces??completeFilter)?.disabled;"
                     "const cards=[...document.querySelectorAll('[data-publication-race-id]')]"
                     ".filter(card=>getComputedStyle(card).display!=='none'&&"
                     "card.getBoundingClientRect().width>0&&card.getBoundingClientRect().height>0);"
@@ -362,7 +379,7 @@ def _capture_emulated_viewport(
                     "const scopedOption=[...filter.options].find(option=>option.value!=='all');"
                     "if(scopedOption){filter.value=scopedOption.value;"
                     "filter.dispatchEvent(new Event('change',{bubbles:true}));}"
-                    "compactInput?.click();contestedFilter?.click();await pause();"
+                    "choose(compactInput);choose(contestedFilter);await pause();"
                     "const compactCards=cards.filter(card=>!card.hidden);"
                     "const expectedCompactCards=cards.filter(card=>"
                     "(!scopedOption||JSON.parse(card.dataset.filterTokens).includes(scopedOption.value))&&"
@@ -378,8 +395,11 @@ def _capture_emulated_viewport(
                     "compact:document.documentElement.dataset.ballotView==='compact',"
                     "scopePreserved:scopedOption?filter.value===scopedOption.value:"
                     "filter.value==='all'&&filter.options.length===1,"
-                    "contested:Boolean(contestedFilter?.checked),"
-                    "pairedSelectors:binarySelectors.length===2&&"
+                    "contested:selected(contestedFilter),"
+                    "pairedSelectors:defaultContested?Boolean(nativeView&&nativeRaces&&"
+                    "[nativeView,nativeRaces].every(select=>!select.disabled&&"
+                    "select.options.length===2&&select.selectedOptions.length===1)):"
+                    "binarySelectors.length===2&&"
                     "Math.abs(selectorWidths[0]-selectorWidths[1])<=1&&"
                     "binarySelectors.every(control=>{"
                     "const inputs=[...control.querySelectorAll('input[type=radio]')];"
@@ -399,16 +419,18 @@ def _capture_emulated_viewport(
                     "const meter=card.querySelector('.screen-meter');"
                     "return Boolean(meter&&meterAligned(meter));}),"
                     "};"
-                    "fullInput?.click();(defaultContested?contestedFilter:completeFilter)?.click();"
+                    "choose(fullInput);choose(defaultContested?contestedFilter:completeFilter);"
                     "filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));"
                     "await pause();controls.reset="
                     "document.documentElement.dataset.ballotView==='full'&&"
-                    "filter.value==='all'&&Boolean(contestedFilter?.checked)===defaultContested&&"
+                    "filter.value==='all'&&selected(contestedFilter)===defaultContested&&"
                     f"{_RESET_QUERY_EXPRESSION};"
                     "controls.fullMetersLeftAligned=meters.every(meter=>"
                     "meterAligned(meter));"
                     "controls.statusAllGrouped=status?.children.length===3&&"
-                    "status.lastElementChild?.textContent===' · All Seattle ballot races'&&"
+                    "status.lastElementChild?.textContent===' · '+JSON.parse("
+                    "document.querySelector('[data-client-payload]').textContent)"
+                    ".filter_scopes.find(scope=>scope.value==='all').label&&"
                     "getComputedStyle(status.lastElementChild).whiteSpace==='nowrap';"
                     # Issue 108: the guide has no page-anchored <details>
                     # disclosures left (both the methodology and sources
@@ -438,8 +460,8 @@ def _capture_emulated_viewport(
                     "scrollWidth:document.documentElement.scrollWidth,"
                     "guideVisible:Boolean(guide&&getComputedStyle(guide).display!=='none'&&"
                     "guide.getBoundingClientRect().width>0&&guide.getBoundingClientRect().height>0),"
-                    "filterVisible:Boolean(filter&&getComputedStyle(filter).display!=='none'&&"
-                    "filter.getBoundingClientRect().width>0&&filter.getBoundingClientRect().height>0),"
+                    "filterVisible:Boolean(filterTrigger&&getComputedStyle(filterTrigger).display!=='none'&&"
+                    "filterTrigger.getBoundingClientRect().width>0&&filterTrigger.getBoundingClientRect().height>0),"
                     "visibleRaceCount:cards.length,"
                     "cardOverflow:cardParts.filter(part=>part.scrollWidth>part.clientWidth+1||"
                     "(!part.matches('.screen-race-result,.screen-race-context')&&"
