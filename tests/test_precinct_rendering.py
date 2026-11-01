@@ -1766,6 +1766,8 @@ def test_guide_sources_and_live_count_share_content_fitted_sticky_rows(
           clear:n.left>=s.right,
           contained:s.left>=b.left-.1&&n.right<=b.right+.1&&c.left>=b.left-.1&&c.right<=b.right+.1,
           targets:[...controls.querySelectorAll('.compact-filter-trigger'),source].every(e=>rect(e).height>=44&&rect(e).width>=44),
+          sourceFaceWhole:[...source.querySelectorAll('svg,.compact-source-label')]
+            .every(e=>rect(e).left>=s.left-.1&&rect(e).right<=s.right+.1),
           stableNative:native.every((e,i)=>bar.querySelectorAll('[data-filter-native]')[i]===initialNative[i]),
           overflow:document.documentElement.scrollWidth>innerWidth,
           sticky:getComputedStyle(sticky).position==='sticky'});
@@ -1780,6 +1782,9 @@ def test_guide_sources_and_live_count_share_content_fitted_sticky_rows(
         scoring:payload.scoring.configuration_id,sel:payload.sources.find(s=>s.panel_role==='consensus').code});
       location.hash=params.toString();await settle();inspect('one-source');
       const sourceIndependent=ballot.value==='county'&&ballot.hasAttribute('data-active');
+      params.set('sel',payload.sources.filter(s=>s.panel_role==='consensus')
+        .slice(1).map(s=>s.code).join(''));
+      location.hash=params.toString();await settle();inspect('almost-all-sources');
       params.set('sel',payload.sources.filter(s=>s.panel_role==='consensus').map(s=>s.code).join(''));
       location.hash=params.toString();await settle();inspect('all-sources');
       ballot.value='all';ballot.dispatchEvent(new Event('change',{bubbles:true}));
@@ -1805,6 +1810,7 @@ def test_guide_sources_and_live_count_share_content_fitted_sticky_rows(
         and s["clear"]
         and s["contained"]
         and s["targets"]
+        and s["sourceFaceWhole"]
         and s["stableNative"]
         and s["sticky"]
         and not s["overflow"]

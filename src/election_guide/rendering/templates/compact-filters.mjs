@@ -34,13 +34,16 @@ function reserveSourceWidth(bar) {
   probe.style.cssText =
     'position:absolute;visibility:hidden;pointer-events:none;width:max-content;padding-inline:12px;';
   const value = /** @type {HTMLElement|null} */ (probe.querySelector('[data-sources-summary]'));
-  if (value) {
-    value.textContent = (sourceFamilies.get(bar) ?? [value.textContent ?? '']).join('\n');
-    value.style.whiteSpace = 'pre';
-    value.removeAttribute('data-sources-summary');
-  }
+  const family = sourceFamilies.get(bar) ?? [value?.textContent ?? ''];
+  value?.removeAttribute('data-sources-summary');
   link.parentElement?.append(probe);
-  const width = probe.getBoundingClientRect().width;
+  let width = 0;
+  // Measure each complete label: an inline multiline value would leave the
+  // Sources prefix on only the first line and under-reserve the longer value.
+  for (const text of family) {
+    if (value) value.textContent = text;
+    width = Math.max(width, probe.getBoundingClientRect().width);
+  }
   probe.remove();
   bar.style.setProperty('--compact-source-width', `${width}px`);
   return width;
