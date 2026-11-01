@@ -55,7 +55,9 @@ class PublishedElection(HostingModel):
     source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     publication_request: PublicationRequest | None = None
     comparison_route_preview: bool = Field(default=False, strict=True)
-    updates_from_current_source: bool = Field(default=False, strict=True)
+    updates_from_current_source: bool = Field(
+        default=False, strict=True, exclude_if=lambda value: not value
+    )
     git_commit: str | None = Field(default=None, pattern=r"^[0-9a-f]{40}$")
     release_manifest_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     bundle_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
@@ -120,7 +122,9 @@ class DeployedElection(HostingModel):
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     release_manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
-    updates_projection: UpdatesProjection | None = None
+    updates_projection: UpdatesProjection | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
 
 class DeploymentManifest(HostingModel):
