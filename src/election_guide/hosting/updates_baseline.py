@@ -14,6 +14,7 @@ from election_guide.hosting.updates import (
     UpdatesSnapshot,
     build_updates_snapshot,
     read_verified_deployment,
+    verify_updates_snapshot,
 )
 from election_guide.release.evidence import latest_production_receipt
 
@@ -150,6 +151,19 @@ def resolve_production_snapshot(destination: Path) -> tuple[UpdatesSnapshot, dic
         raise ValueError("published Updates snapshot election contract differs from manifest")
     if _served_manifest()[0] != served:
         raise ValueError("production manifest changed while resolving baseline; run the gate again")
+    if snapshot.schema_version == "1.0":
+        # Old full-page hashes contain no recoverable semantic projection. Never
+        # compare them to the new policy or infer a baseline from candidate/main.
+        receipt = resolve_production_baseline(destination)
+        if (
+            receipt["manifest_sha256"] != manifest_sha256
+            or receipt["git_commit"] != deployment["sha"]
+        ):
+            raise ValueError("production manifest changed during Updates policy upgrade")
+        verify_updates_snapshot(destination)
+        receipt["policy_upgrade_from"] = "1.0"
+        receipt["snapshot_sha256"] = hashlib.sha256(body).hexdigest()
+        return build_updates_snapshot(destination), receipt
     return snapshot, {
         "repository": REPOSITORY,
         "deployment_id": deployment["id"],

@@ -151,6 +151,7 @@
     ],
     "data-contested": [
       "template",
+      "python",
       "test"
     ],
     "data-coverage-gap-source-id": [
@@ -347,6 +348,7 @@
     "data-source-role": [
       "template",
       "client",
+      "python",
       "test"
     ],
     "data-source-state": [
@@ -540,6 +542,30 @@
       "template",
       "client",
       "python",
+      "test"
+    ],
+    "data-update-controls": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-update-count": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-update-empty": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-update-key": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-update-topic": [
+      "client",
       "test"
     ]
   },
@@ -1175,6 +1201,48 @@
       "test"
     ],
     "filter-control-status": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "filter-control-bar": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "page-head": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "race-detail-certified-result": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "site-band": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "state-action-strip": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "sticky-header": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "topic-button": [
       "template",
       "stylesheet",
       "client",

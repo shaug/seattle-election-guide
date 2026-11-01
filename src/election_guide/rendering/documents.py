@@ -510,6 +510,7 @@ def render_corrections_document(
     *,
     public_site_url: str,
     project_url: str | None = None,
+    updates_provenance: dict[str, str] | None = None,
 ) -> str:
     """Render the per-election Updates page from the legacy corrections field
     (docs/RESULTS.md, "The updates page"; issues #290 and #551).
@@ -532,8 +533,20 @@ def render_corrections_document(
 
     view_model = view_model.public_view()
     environment = template_environment()
-    template = environment.get_template("corrections.html.j2")
-    stylesheet = page_stylesheet("corrections")
+    current_updates = (
+        view_model.corrections is not None and view_model.corrections.schema_version == "1.1"
+    )
+    template = environment.get_template(
+        "updates.html.j2" if current_updates else "corrections.html.j2"
+    )
+    stylesheet = page_stylesheet("updates" if current_updates else "corrections")
+    from election_guide.rendering.payload import updates_payload
+
+    filter_payload = (
+        updates_payload(view_model.corrections)
+        if current_updates and view_model.corrections is not None
+        else None
+    )
     guide_path = f"/e/{view_model.metadata.election_id}/"
     election_display_name, _ = election_names(
         view_model.metadata.election_date,
@@ -551,6 +564,11 @@ def render_corrections_document(
         election_display_name=election_display_name,
         stylesheet=stylesheet,
         shell_entry_script=bundle_entry("shell-entry.mjs", global_name="ShellPage"),
+        updates_entry_script=bundle_entry("updates-entry.mjs", global_name="UpdatesPage")
+        if current_updates
+        else "",
+        updates_payload=filter_payload.model_dump(mode="json") if filter_payload else None,
+        updates_provenance=updates_provenance,
         corrections_entries=entries,
         compare_href=compare_href,
         corrections_href=f"{guide_path}updates/",

@@ -152,7 +152,7 @@
   },
   "tests/test_corrections_rendering.py": {
     "suite": "integration",
-    "tests": {},
+    "tests": {"test_updates_controls_actual_geometry_keyboard_and_history": "e2e"},
     "partition": "integration-rendering"
   },
   "tests/test_current_factual_mappings.py": {

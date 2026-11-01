@@ -85,6 +85,7 @@ def stage_current_candidate(
         expected_current_git_commit=source_sha,
         released_bundle_dir=output_dir.parent / "released-bundles",
         calendar_path=repository / "config/calendar/elections.yaml",
+        updates_dir=repository / "data/corrections",
     )
     verify_staged_pages_site(
         output_dir, repository / SITE_MANIFEST, expected_current_git_commit=source_sha

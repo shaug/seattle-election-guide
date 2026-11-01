@@ -4,7 +4,12 @@ from __future__ import annotations
 
 import pytest
 
-from election_guide.hosting.models import DeploymentManifest, SiteManifest
+from election_guide.hosting.models import (
+    DeployedElection,
+    DeploymentManifest,
+    PublishedElection,
+    SiteManifest,
+)
 
 CURRENT_ID = "wa-2026-primary"
 CURRENT_BUNDLE_ID = "wa-2026-primary-release"
@@ -218,3 +223,32 @@ def test_publication_request_rejects_invalid_review_identity(field: str, value: 
                 "elections": [{**_published_election(), "publication_request": request}],
             }
         )
+
+
+def test_updates_projection_defaults_preserve_legacy_serialized_shapes() -> None:
+    published = PublishedElection.model_validate(_published_election())
+    deployed = DeployedElection.model_validate(_deployed_election())
+
+    assert "updates_from_current_source" not in published.model_dump(mode="json")
+    assert deployed.model_dump(mode="json") == {
+        **_deployed_election(),
+        "source_registry_hash": None,
+    }
+
+
+def test_active_updates_projection_serializes_its_explicit_provenance() -> None:
+    published = PublishedElection.model_validate(
+        {**_published_election(), "updates_from_current_source": True}
+    )
+    projection = {
+        "schema_version": "1.1",
+        "source_git_commit": COMMIT,
+        "authored_sha256": "e" * 64,
+        "archive_release_version": "primary.2",
+    }
+    deployed = DeployedElection.model_validate(
+        {**_deployed_election(), "updates_projection": projection}
+    )
+
+    assert published.model_dump(mode="json")["updates_from_current_source"] is True
+    assert deployed.model_dump(mode="json")["updates_projection"] == projection

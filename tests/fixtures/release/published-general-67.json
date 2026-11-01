@@ -1,0 +1,137 @@
+{
+  "promotion_artifact": {
+    "digest": {
+      "schema_version": "1.0",
+      "sha256": "07ea7103e0533079e3f9f6d380e7008cbc9264fa7c22bda8573f6e423a5743a8",
+      "size": 6819741
+    },
+    "id": 13070183045,
+    "name": "promotion-41273507737-1",
+    "producer": {
+      "repository": "shaug/seattle-election-guide",
+      "run_attempt": 1,
+      "run_id": 41273507737,
+      "schema_version": "1.0",
+      "source_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39",
+      "workflow_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39"
+    },
+    "schema_version": "1.0"
+  },
+  "published": {
+    "archive": {
+      "schema_version": "1.0",
+      "sha256": "900f80eeaa03ca976f1eaddeb263bda101818093a9fd8da87c6aed960a0e20d3",
+      "size": 800374
+    },
+    "asset_id": 697344573,
+    "asset_name": "seattle-election-guide-2026-general.67.zip",
+    "candidate": {
+      "archive": {
+        "schema_version": "1.0",
+        "sha256": "900f80eeaa03ca976f1eaddeb263bda101818093a9fd8da87c6aed960a0e20d3",
+        "size": 800374
+      },
+      "bundle_sha256": "5fb5111a9bf847f0161ae7748a1a8f37c0bf93be416b33716d97843dc2137ff6",
+      "declaration": {
+        "bundle_id": "wa-2026-general-2026-general.67",
+        "bundle_sha256": null,
+        "comparison_route_preview": false,
+        "election_id": "wa-2026-general",
+        "git_commit": null,
+        "publication_request": {
+          "inputs": {
+            "dataset_sha256": "f82c610b44bd99abea5d2beaaaf08330432b8d2d51676487438c78226c72bb0d",
+            "ledger_sha256": "ea625b8b3a580bbadf5e968f9eb1df88a4e61377f53e5c8b0917486d986ae509",
+            "registry_sha256": "0429669e05341808c4e4332ba50784eb20de88e27670a93e747737fd02a90913"
+          },
+          "issue_number": 673,
+          "previous_release_sha": "5df78912816e759bffcf97df7edb35fde2d22e09"
+        },
+        "release_manifest_sha256": null,
+        "release_version": "2026-general.67",
+        "source_panel_hash": "5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569",
+        "source_panel_id": "wa-2026-general-default-sources-v2",
+        "source_registry_hash": "d9c0bfbad3bd963d11b24ee45d1ae3bfe8f2b16a6b489fd80e6cf463efdc1f27"
+      },
+      "deployment_manifest_sha256": "78c149a63ce173df0e74307c81c62b4190b3328093d8c042831a572a306932de",
+      "generated_at": "2026-10-31T21:32:44-07:00",
+      "inputs": {
+        "dataset_sha256": "f82c610b44bd99abea5d2beaaaf08330432b8d2d51676487438c78226c72bb0d",
+        "ledger_sha256": "ea625b8b3a580bbadf5e968f9eb1df88a4e61377f53e5c8b0917486d986ae509",
+        "registry_sha256": "0429669e05341808c4e4332ba50784eb20de88e27670a93e747737fd02a90913"
+      },
+      "producer": {
+        "repository": "shaug/seattle-election-guide",
+        "run_attempt": 1,
+        "run_id": 41273507737,
+        "schema_version": "1.0",
+        "source_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39",
+        "workflow_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39"
+      },
+      "recovered_from": null,
+      "release_artifact": {
+        "digest": {
+          "schema_version": "1.0",
+          "sha256": "9eae67949a805be6dcb0127063506f187edc20715ba1d2d5752936a694297ffe",
+          "size": 777712
+        },
+        "id": 13070745098,
+        "name": "release-41273507737-1",
+        "producer": {
+          "repository": "shaug/seattle-election-guide",
+          "run_attempt": 1,
+          "run_id": 41273507737,
+          "schema_version": "1.0",
+          "source_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39",
+          "workflow_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39"
+        },
+        "schema_version": "1.0"
+      },
+      "schema_version": "1.0",
+      "site_artifact": {
+        "digest": {
+          "schema_version": "1.0",
+          "sha256": "957b81535bf717b77b3bf6183b66c86b6e7168b005a4c9f7222c4b31cfcbc07f",
+          "size": 6819741
+        },
+        "id": 13070263149,
+        "name": "site-41273507737-1",
+        "producer": {
+          "repository": "shaug/seattle-election-guide",
+          "run_attempt": 1,
+          "run_id": 41273507737,
+          "schema_version": "1.0",
+          "source_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39",
+          "workflow_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39"
+        },
+        "schema_version": "1.0"
+      },
+      "site_manifest_sha256": "460fe12b1c342c6e63ed7df987a92b991d1f383e92754281977affafe98ac6a1",
+      "source_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39"
+    },
+    "candidate_artifact": {
+      "digest": {
+        "schema_version": "1.0",
+        "sha256": "993cd20d70a7fadc200c5d88cda5746bc7b380e8b16a04684b3dbe8bfad691cc",
+        "size": 1211
+      },
+      "id": 13069254986,
+      "name": "candidate-41273507737-1",
+      "producer": {
+        "repository": "shaug/seattle-election-guide",
+        "run_attempt": 1,
+        "run_id": 41273507737,
+        "schema_version": "1.0",
+        "source_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39",
+        "workflow_sha": "79ebdd7811599d9073b5eaa5de6097f415aead39"
+      },
+      "schema_version": "1.0"
+    },
+    "canonical_bundle_sha256": "5fb5111a9bf847f0161ae7748a1a8f37c0bf93be416b33716d97843dc2137ff6",
+    "promotion_manifest_sha256": "78c149a63ce173df0e74307c81c62b4190b3328093d8c042831a572a306932de",
+    "release_id": 430367138,
+    "release_manifest_sha256": "1936f716573f2bb6b97e06916ce7f06b19de9efeccdcaed1f348d205dec38fdc",
+    "schema_version": "1.0"
+  },
+  "schema_version": "1.0"
+}
