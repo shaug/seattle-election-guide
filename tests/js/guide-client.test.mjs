@@ -546,3 +546,32 @@ test('actual primary9 HTML and embedded legacy payload retain ordinary primary b
     before,
   );
 });
+
+test('joined Sources projects its own tally and preserves link focus and independent Ballot state', async () => {
+  const document = await wire(GUIDE_URL, payload(), () => {
+    const slot = window.document.querySelector('[data-lens-banner]');
+    slot.setAttribute('data-compact-sources', '');
+    slot.querySelector('a').innerHTML = 'Sources: <span data-sources-summary>All 3</span>';
+    slot.insertAdjacentHTML(
+      'beforeend',
+      '<select data-filter-native="ballot" data-active><option value="county">County</option></select>',
+    );
+  });
+  const link = document.querySelector('[data-lens-banner] a');
+  const ballot = document.querySelector('[data-filter-native=ballot]');
+  assert.equal(link.textContent.trim(), 'Sources: All 3');
+  link.focus();
+  window.location.hash = lensFragment(['strn']);
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.equal(link.textContent.trim(), 'Sources: 1 of 3');
+  assert.equal(link.getAttribute('aria-label'), 'Edit sources. Counting 1 of 3 sources.');
+  assert.equal(document.activeElement, link);
+  assert.equal(document.querySelector('[data-lens-banner] a'), link);
+  assert.equal(ballot.value, 'county');
+  assert.equal(ballot.hasAttribute('data-active'), true);
+  assert.match(sourcesHref(document), /sel=strn/);
+  window.location.hash = lensFragment(['strn', 'urbn', 'mlkl']);
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.equal(link.textContent.trim(), 'Sources: All 3');
+  assert.equal(ballot.hasAttribute('data-active'), true);
+});

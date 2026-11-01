@@ -65,3 +65,25 @@
    face supplies only the approved compact visual treatment, hidden from AT. */
 .compact-filter-face { display: contents; }
 .compact-native-select { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; min-width: 0; min-height: 44px; margin: 0; opacity: 0; cursor: pointer; font: inherit; appearance: auto; }
+
+/* #679 Guide-only joined source navigation; Comparisons keeps its existing bar. */
+.screen-guide .sticky-header:has([data-compact-sources]) { position: sticky; background: var(--paper); }
+[data-compact-sources] { grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr); }
+[data-compact-sources] .compact-filter-controls { grid-column: 1 / -1; justify-self: center; }
+.compact-source-row { display: flex; grid-column: 1 / -1; grid-row: 2; min-width: 0; min-height: 45px; align-items: center; justify-content: center; gap: var(--compact-source-gap, 12px); border-top: 1px solid var(--line-soft); }
+.compact-source-slot { display: flex; flex: none; align-items: center; height: 44px; }
+.compact-source-link { display: inline-flex; align-items: center; justify-content: center; flex: none; gap: 5px; width: calc(var(--compact-source-width, max-content) - 24px); min-height: 44px; padding: 0; color: var(--navy); font: 650 14px/1.4 var(--screen-sans); font-variant-numeric: tabular-nums; white-space: nowrap; text-decoration: none; }
+.compact-source-label { text-decoration: underline; text-underline-offset: 3px; }
+[data-source-face="stacked"] .compact-source-label { display: flex; flex-direction: column; align-items: center; }
+.compact-source-link:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+[data-compact-sources] .filter-control-status { display: block; flex: none; width: max-content; min-width: 0; margin: 0; padding: 0; text-align: center; white-space: nowrap; }
+[data-source-row="single"] .compact-filter-controls { grid-column: 2; }
+[data-source-row="single"] .compact-source-row { display: contents; }
+[data-source-row="single"] .compact-source-slot { grid-column: 3; grid-row: 1; height: 46px; border-top: 0; }
+[data-source-row="single"] .compact-source-slot::before { content: ''; width: 1px; height: 18px; background: var(--line); }
+[data-source-row="single"] .compact-source-link { width: var(--compact-source-width, max-content); padding-inline: 12px; }
+[data-source-row="single"] .filter-control-status { grid-column: 4; grid-row: 1; justify-self: start; margin-left: 12px; }
+.screen-guide:has([data-compact-sources]) :is(.screen-sections, .screen-section, .section-heading, .race-card) { scroll-margin-top: calc(var(--guide-sticky-height, 92px) + 12px); }
+@media (max-width: 400px) {
+  .compact-source-link { font-size: 13px; gap: 4px; }
+}

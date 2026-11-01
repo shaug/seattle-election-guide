@@ -811,7 +811,7 @@ def test_wide_compact_bar_shows_selected_ballot_scope_and_constrained_bar_keeps_
     )
     path = tmp_path / f"wide-scope-{page}.html"
     path.write_text(without_live_address_requests(document))
-    expression = """(async()=>{
+    expression = r"""(async()=>{
       await document.fonts.ready;
       const bar=document.querySelector('[data-compact-filters]');
       const select=bar.querySelector('[data-filter-native=ballot]');
@@ -1106,6 +1106,8 @@ def test_scott_preview_centers_controls_and_keeps_reactive_count_together(
       const inspect=phase=>{const buttons=[...bar.querySelectorAll('.compact-filter-trigger')];
         const first=buttons[0].getBoundingClientRect(),last=buttons.at(-1).getBoundingClientRect();
         const group={left:first.left,right:last.right,top:first.top,bottom:first.bottom};
+        const source=bar.querySelector('[data-sources-link]')?.getBoundingClientRect();
+        if(source&&Math.abs(source.top-first.top)<=1.1)group.right=source.right;
         const box=bar.getBoundingClientRect(),r=status.getBoundingClientRect();
         const count=status.querySelector('.filter-status-part')??status;
         const range=document.createRange();range.selectNodeContents(count);
@@ -1126,7 +1128,7 @@ def test_scott_preview_centers_controls_and_keeps_reactive_count_together(
           countVisible:getComputedStyle(status).clipPath==='none'&&r.width>20&&r.height>10,
           whole:range.getClientRects().length===1&&range.getBoundingClientRect().width<=r.width+.5,
           placed:inline?r.left>=group.right&&r.right<=box.right+.1:
-            r.top>=group.bottom&&Math.abs((r.left+r.right-box.left-box.right)/2)<.6,
+            r.top>=group.bottom&&Math.abs(((source?.left??r.left)+r.right-box.left-box.right)/2)<.6,
           inline,barHeight:box.height,noOverflow:document.documentElement.scrollWidth<=innerWidth});};
       await settle();inspect('initial');
       select.value='county';select.dispatchEvent(new Event('change',{bubbles:true}));
@@ -1720,3 +1722,263 @@ def test_view_races_ballot_are_real_native_selects_without_editors(
         and ("filter=county" if page == "guide" else "show=county") in result["url"]
     ), result
     assert result["row"] == 46 and result["dialogs"] == 1 and not result["overflow"], result
+
+
+@pytest.mark.parametrize("width", [320, 360, 390, 800, 1280])
+def test_guide_sources_and_live_count_share_content_fitted_sticky_rows(
+    tmp_path: Path, general_view: PublicationViewModel, width: int
+) -> None:
+    """Losing sticky Sources, a count row or fit recovery breaks the approved group."""
+    document = render_html_document(
+        general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    )
+    path = tmp_path / "sources-sticky.html"
+    path.write_text(without_live_address_requests(document))
+    expression = r"""(async()=>{
+      await document.fonts.ready;
+      const bar=document.querySelector('[data-compact-filters]');
+      const controls=bar.querySelector('.compact-filter-controls');
+      const source=bar.querySelector('[data-sources-link]');
+      if(!source)return JSON.stringify({joined:false});
+      const count=bar.querySelector('.filter-control-status');
+      const sticky=bar.closest('.sticky-header');
+      const native=[...bar.querySelectorAll('[data-filter-native]')];
+      const initialNative=[...native];
+      const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      const rect=el=>el.getBoundingClientRect();
+      const samples=[];
+      const inspect=phase=>{
+        const b=rect(bar),c=rect(controls),s=rect(source),n=rect(count);
+        const single=Math.abs(c.top-s.top)<=1.1;
+        const groupRight=single?s.right:c.right;
+        const countText=count.querySelector('.filter-status-part').textContent;
+        const range=document.createRange();
+        range.selectNodeContents(count.querySelector('.filter-status-part'));
+        const lineRects=[...range.getClientRects()];
+        const visible=[...document.querySelectorAll('[data-publication-race-id]')]
+          .filter(e=>!e.hidden).length;
+        samples.push({phase,single,height:b.height,sourceText:source.textContent.trim(),
+          countText,reported:Number.parseInt(countText,10),visible,
+          centered:Math.abs((c.left+groupRight-b.left-b.right)/2)<.6,
+          rowCount:single?Math.abs(n.top+n.height/2-(c.top+c.height/2))<1:
+            s.top>=c.bottom&&Math.abs(s.top+s.height/2-n.top-n.height/2)<1,
+          countWhole:lineRects.length===1&&lineRects[0].width<=n.width+.5,
+          clear:n.left>=s.right,
+          contained:s.left>=b.left-.1&&n.right<=b.right+.1&&c.left>=b.left-.1&&c.right<=b.right+.1,
+          targets:[...controls.querySelectorAll('.compact-filter-trigger'),source].every(e=>rect(e).height>=44&&rect(e).width>=44),
+          sourceFaceWhole:[...source.querySelectorAll('svg,.compact-source-label')]
+            .every(e=>rect(e).left>=s.left-.1&&rect(e).right<=s.right+.1),
+          stableNative:native.every((e,i)=>bar.querySelectorAll('[data-filter-native]')[i]===initialNative[i]),
+          overflow:document.documentElement.scrollWidth>innerWidth,
+          sticky:getComputedStyle(sticky).position==='sticky'});
+      };
+      await settle();inspect('initial');
+      const ballot=bar.querySelector('[data-filter-native=ballot]');
+      ballot.value='county';ballot.dispatchEvent(new Event('change',{bubbles:true}));
+      await settle();inspect('county');
+      const payload=JSON.parse(document.querySelector('[data-client-payload]').textContent);
+      const params=new URLSearchParams({lens:'2',mode:'s',panel:payload.panel_id,
+        ph:payload.panel_hash.slice(0,12),data:payload.data_version,
+        scoring:payload.scoring.configuration_id,sel:payload.sources.find(s=>s.panel_role==='consensus').code});
+      location.hash=params.toString();await settle();inspect('one-source');
+      const sourceIndependent=ballot.value==='county'&&ballot.hasAttribute('data-active');
+      params.set('sel',payload.sources.filter(s=>s.panel_role==='consensus')
+        .slice(1).map(s=>s.code).join(''));
+      location.hash=params.toString();await settle();inspect('almost-all-sources');
+      params.set('sel',payload.sources.filter(s=>s.panel_role==='consensus').map(s=>s.code).join(''));
+      location.hash=params.toString();await settle();inspect('all-sources');
+      ballot.value='all';ballot.dispatchEvent(new Event('change',{bubbles:true}));
+      await settle();
+      scrollTo(0,700);await settle();
+      const pinned=Math.abs(rect(sticky).top)<.5&&rect(source).top>=0;
+      const target=document.querySelector('.screen-section:not([hidden])');
+      target.scrollIntoView();await settle();
+      const anchorClear=rect(target).top>=rect(sticky).bottom-.5;
+      const countIdentity=bar.querySelector('.filter-control-status')===count;
+      return JSON.stringify({joined:true,samples,sourceIndependent,pinned,anchorClear,countIdentity,
+        oneSource: samples.find(s=>s.phase==='one-source').sourceText
+          .replace(/\s+/g,' ')==='Sources: 1 of 45',
+        allSources: samples.at(-1).sourceText.replace(/\s+/g,' ')==='Sources: All 45'});
+    })()"""
+    result = _evaluate_in_chrome(path, expression, viewport=(width, 1000))
+    assert result.get("joined"), result
+    assert all(
+        s["reported"] == s["visible"]
+        and s["centered"]
+        and s["rowCount"]
+        and s["countWhole"]
+        and s["clear"]
+        and s["contained"]
+        and s["targets"]
+        and s["sourceFaceWhole"]
+        and s["stableNative"]
+        and s["sticky"]
+        and not s["overflow"]
+        for s in result["samples"]
+    ), result
+    assert result["samples"][0]["single"] == (width == 1280), result
+    assert all(
+        result[k]
+        for k in [
+            "sourceIndependent",
+            "pinned",
+            "anchorClear",
+            "countIdentity",
+            "oneSource",
+            "allSources",
+        ]
+    ), result
+
+
+@pytest.mark.parametrize("font", [None, "system-ui", "sans-serif"])
+def test_guide_joined_row_remeasures_fractional_container_font_and_source_state(
+    tmp_path: Path, general_view: PublicationViewModel, font: str | None
+) -> None:
+    """A viewport threshold, shrinking fit or feedback loop cannot admit this row."""
+    html = render_html_document(
+        general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    )
+    path = tmp_path / "joined-fit.html"
+    path.write_text(without_live_address_requests(html))
+    expression = r"""(async()=>{await document.fonts.ready;
+      const bar=document.querySelector('[data-compact-sources]');
+      if(!bar)return JSON.stringify({joined:false});
+      const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      if(FONT)bar.style.setProperty('--screen-sans',FONT);
+      const controls=bar.querySelector('.compact-filter-controls');
+      const source=bar.querySelector('[data-sources-link]');
+      const count=bar.querySelector('.filter-control-status');
+      const ballot=bar.querySelector('[data-filter-native=ballot]');
+      ballot.focus();
+      bar.dispatchEvent(new Event('compact-filter-fit'));await settle();
+      const rect=e=>e.getBoundingClientRect();
+      const inspect=()=>({row:bar.dataset.sourceRow,width:rect(bar).width,right:rect(bar).right,
+        control:rect(controls).toJSON(),source:rect(source).toJSON(),count:rect(count).toJSON(),
+        focus:document.activeElement===ballot,native:ballot===bar.querySelector('[data-filter-native=ballot]')});
+      // Search the real complete-family boundary, retaining subpixel precision.
+      let low=800,high=bar.getBoundingClientRect().width;
+      for(let n=0;n<15;n++){
+        const mid=(low+high)/2;bar.style.width=mid+'px';
+        bar.dispatchEvent(new Event('compact-filter-fit'));await settle();
+        if(bar.dataset.sourceRow==='single')high=mid;else low=mid;
+      }
+      bar.style.width=(high+.125)+'px';bar.dispatchEvent(new Event('compact-filter-fit'));
+      await settle();const above=inspect();
+      bar.style.width=(low-.125)+'px';bar.dispatchEvent(new Event('compact-filter-fit'));
+      await settle();const below=inspect();
+      bar.style.width='390px';await settle();const constrained=inspect();
+      bar.style.width='';await settle();const recovered=inspect();
+      const rows=[];for(let n=0;n<8;n++){await settle();rows.push(bar.dataset.sourceRow);}
+      const noOverlap=s=>s.count.left>=s.source.right&&s.count.right<=s.right+.5;
+      return JSON.stringify({joined:true,above,below,constrained,recovered,
+        stable:rows.every(v=>v==='single'),contained:[above,below,constrained,recovered].every(noOverlap),
+        focus:[above,below,constrained,recovered].every(s=>s.focus&&s.native)});
+    })()""".replace("FONT", json.dumps(font))
+    result = _evaluate_in_chrome(path, expression, viewport=(1440, 1000))
+    assert result.get("joined"), result
+    assert result["above"]["row"] == "single", result
+    assert result["below"]["row"] == "double", result
+    assert result["constrained"]["row"] == "double", result
+    assert result["recovered"]["row"] == "single", result
+    assert result["stable"] and result["contained"] and result["focus"], result
+
+
+@pytest.mark.parametrize("font", [None, "system-ui", "sans-serif"])
+def test_sources_count_row_fits_actual_small_containers_and_recovers(
+    tmp_path: Path, general_view: PublicationViewModel, font: str | None
+) -> None:
+    """The full source face and count must fit the bar, including in a wide viewport."""
+    html = render_html_document(
+        general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    )
+    path = tmp_path / "small-source-row.html"
+    path.write_text(without_live_address_requests(html))
+    expression = r"""(async()=>{
+      await document.fonts.ready;
+      const bar=document.querySelector('[data-compact-sources]');
+      const source=bar.querySelector('[data-sources-link]');
+      const natives=[...bar.querySelectorAll('[data-filter-native]')];
+      const count=bar.querySelector('.filter-control-status');
+      const payload=JSON.parse(document.querySelector('[data-client-payload]').textContent);
+      const codes=payload.sources.filter(s=>s.panel_role==='consensus').map(s=>s.code);
+      const params=new URLSearchParams({lens:'2',mode:'s',panel:payload.panel_id,
+        ph:payload.panel_hash.slice(0,12),data:payload.data_version,
+        scoring:payload.scoring.configuration_id,sel:codes.slice(1).join('')});
+      const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      if(FONT)bar.style.setProperty('--screen-sans',FONT);
+      location.hash=params.toString();await settle();
+      bar.dispatchEvent(new Event('compact-filter-fit'));await settle();
+      source.focus();
+      const rect=e=>e.getBoundingClientRect();
+      const initialSource=rect(source).toJSON();
+      const samples=[],recoveries=[];
+      const inspect=(scope,width)=>{
+        const b=rect(bar),s=rect(source),n=rect(count),row=rect(
+          bar.querySelector('.compact-filter-controls'));
+        const text=count.querySelector('.filter-status-part');
+        const range=document.createRange();range.selectNodeContents(text);
+        return {scope,width,viewport:innerWidth,bar:b.toJSON(),source:s.toJSON(),count:n.toJSON(),
+          sourceText:source.innerText.replace(/\s+/g,' ').trim(),countText:text.textContent,
+          visible:[...document.querySelectorAll('[data-publication-race-id]')]
+            .filter(e=>!e.hidden).length,
+          fit:s.left>=b.left-.1&&s.right<=b.right+.1&&n.left>=s.right&&n.right<=b.right+.1,
+          face:[...source.querySelectorAll('svg,.compact-source-label')]
+            .every(e=>rect(e).left>=s.left-.1&&rect(e).right<=s.right+.1),
+          icons:[...source.querySelectorAll('svg')].every(e=>rect(e).width===14),
+          wholeCount:range.getClientRects().length===1&&
+            range.getBoundingClientRect().width<=n.width+.1,
+          twoRows:bar.dataset.sourceRow==='double'&&row.height===46&&
+            s.top>=row.bottom&&b.height===92,
+          targets:[...bar.querySelectorAll('.compact-filter-trigger'),source]
+            .every(e=>rect(e).width>=44&&rect(e).height>=44),
+          sourceFont:getComputedStyle(source).fontSize,
+          ownScope:bar.querySelector('[data-filter-native=ballot]').hasAttribute('data-active'),
+          focus:document.activeElement===source,
+          stable:natives.every((e,i)=>bar.querySelectorAll('[data-filter-native]')[i]===e)};
+      };
+      for(const scope of ['all','one-race']){
+        const query=scope==='all'?'':new URLSearchParams({precinct:'1553',races:'all',
+          filter:'Metropolitan King County Council District 2'}).toString();
+        history.pushState({},'',(query?'?'+query:'')+'#'+params.toString());
+        dispatchEvent(new PopStateEvent('popstate'));await settle();
+        for(const width of [300,280]){
+          bar.style.width=width+'px';await settle();samples.push(inspect(scope,width));
+          bar.style.width='';await settle();
+          const s=rect(source),label=source.querySelector('.compact-source-label');
+          recoveries.push({scope,width,row:bar.dataset.sourceRow,
+            sourceWidth:s.width,sameWidth:Math.abs(s.width-initialSource.width)<.1,
+            oneLine:rect(label).height<=parseFloat(getComputedStyle(label).lineHeight)+.1,
+            focus:document.activeElement===source});
+        }
+      }
+      return JSON.stringify({samples,recoveries});
+    })()""".replace("FONT", json.dumps(font))
+    result = _evaluate_in_chrome(path, expression, viewport=(1440, 1000))
+    (tmp_path / "source-row-fit.json").write_text(json.dumps(result, indent=2) + "\n")
+    assert len(result["samples"]) == 4, result
+    for sample in result["samples"]:
+        assert sample["viewport"] == 1440, sample
+        assert sample["sourceText"] == "Sources: 44 of 45", sample
+        assert sample["countText"] == (
+            "31 contested races shown" if sample["scope"] == "all" else "1 race shown"
+        ), sample
+        assert sample["visible"] == (31 if sample["scope"] == "all" else 1), sample
+        assert sample["sourceFont"] == "14px", sample
+        assert sample["ownScope"] == (sample["scope"] == "one-race"), sample
+        assert all(
+            sample[key]
+            for key in [
+                "fit",
+                "face",
+                "icons",
+                "wholeCount",
+                "twoRows",
+                "targets",
+                "focus",
+                "stable",
+            ]
+        ), sample
+    assert all(
+        r["row"] == "single" and r["sameWidth"] and r["oneLine"] and r["focus"]
+        for r in result["recoveries"]
+    ), result

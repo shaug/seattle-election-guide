@@ -608,6 +608,38 @@ The compact surface changes no availability, fallback, race visibility, measures
 source/scoring, URL/history or precinct-only persistence rule. Primary keeps its
 legacy controls and archive styles.
 
+
+## Guide Sources and filters group (#679, November 1, 2026)
+
+Scott approved the existing Sources-group study and its mobile space tradeoff.
+On the precinct-enabled general Endorsements guide, Precinct, View, Races and
+Ballot retain their ordered row. Sources joins that centered group when the
+complete controls, source summary and intact live race-count phrase fit the
+actual container in the resolved font. Otherwise the four controls stay on row
+one and Sources shares row two with the count. Both rows remain sticky at every
+supported width; there is no third count row or auto-hide. This supersedes the
+Guide's separate navy source strip and its previous separate count line, while
+Comparisons keeps its existing composition.
+
+Sources remains an underlined navigation link to the existing Sources page,
+with the shared outline icon family and forward arrow. Its visible summary is
+“All N” or “N of M,” derived from the current source selection; its accessible
+name states the full counting sentence. It has its own source state and does
+not borrow Ballot's scope indicator. Native control targets, complete precinct
+identity, independent menu cues, compact centered Ballot and focus behavior stay
+as specified above. The measured sticky height clears in-page anchors and
+includes visible notices. The study's 47px wide and 92px narrow examples describe
+the approved geometry, not a fixed viewport breakpoint.
+
+
+Within the two-row group, Sources and the count must fit the actual row as well.
+Reclaim only the needed space between them; if that is insufficient, Sources may
+place its unchanged prefix above its complete value inside the existing 44px
+navigation target. The icons keep their size, the count stays on one line, and
+the group keeps two sticky rows. Measure the complete family again in that face
+and restore ordinary spacing and the one-line face when space returns. A wide
+viewport does not grant a minimum size to a constrained Guide container.
+
 ## Election Updates (#676)
 
 The approved version-2 study uses the existing measured election shell and serif entry headlines.
