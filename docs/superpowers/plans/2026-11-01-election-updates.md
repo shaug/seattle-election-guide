@@ -8,14 +8,15 @@
 
 **Tech Stack:** Existing Python/Pydantic/Jinja, ES modules/lit-html, CSS and existing test tools; no dependencies added.
 
-**Spec:** [#676](https://github.com/shaug/seattle-election-guide/issues/676), approved Library `libfile_0e88a23139f0819180fd36f6b0dcda5b` version 2, exact 40,368-byte HTML SHA-256 `eca29635bec9fd4dc988bced59e4342a9f0e36a6cef2c4ac706925bd4d96a18d`. The local design-study scenes are reference only.
+**Spec:** [#676](https://github.com/shaug/seattle-election-guide/issues/676), approved Library `libfile_0e88a23139f0819180fd36f6b0dcda5b` version 2, exact 40,368-byte HTML SHA-256 `eca29635bec9fd4dc988bced59e4342a9f0e36a6cef2c4ac706925bd4d96a18d`. The local design-study scenes are reference only. Scott’s explicit November 1 refinement removes
+the All updates button: exactly three topic toggles, default none selected means all.
 
 ## Global Constraints
 
 - No endorsement, collection, scoring, results-ingestion, #673 or #677 work.
 - No production authority; release coordinator alone publishes. No historical pin activation or immutable primary/archive rewrite.
-- Four visible centered highlight-only controls, minimum 44px, no icon/checkmark space, 320/360/390px reflow.
-- Independent OR topics; none means all; All clears; selecting all three retains selection.
+- Exactly three visible centered highlight-only topic controls, minimum 44px, no icon/checkmark space, 320/360/390px reflow.
+- Independent OR topics; default none means all; clearing the final selection restores all; selecting all three retains selection.
 - Fixed-order deduplicated `topics=endorsements,sources,results`; unknown tokens ignored; preserve unrelated query parameters and history.
 - Complete readable no-JavaScript content, native toggle keyboard behavior, persistent polite count announcement, no focus movement.
 - `Changed` requires evidence of a publisher position change. `Correction` describes guide error. Preserve uncertain dates.
@@ -47,7 +48,7 @@
 
 **Interface:** A typed Updates payload carries topic labels, entry identity/topics and count wording; the client never derives content state from rendered prose. `wireUpdates` preserves server entries and controls while projecting selection/visibility. `updates-route` is the sole location/history owner.
 
-- [x] Add failing all-eight-subsets/reset/final-deselection/canonicalization/history/focus/empty-result tests.
+- [x] Add failing all-eight-subsets/final-deselection/canonicalization/history/focus/empty-result tests.
 - [x] Implement page payload, topic query owner, stable toggle controls and count projection using existing shell and tokens.
 - [x] Add no-JavaScript/rendering assertions and actual browser geometry/screenshots at desktop/320/360/390 after production Safari ownership releases browser phases.
 - [x] Verify all required UI, keyboard, URL/history and deduplication behavior; no illustrative entries.
@@ -72,3 +73,17 @@
 - [ ] Hand exact source/base/tree, check output, classification and remaining acceptance to the sole publisher. No push/PR/deployment by source owner.
 
 Source freeze follows normal #676 preparation. Final complete gate, clean candidate commit, reproducibility/readiness and fresh independent review remain recorded in the delivery evidence outside this source tree; there is no production authority.
+
+### November 1 three-topic refinement
+
+The clean `b3d6e4c` review and preview evidence describe the earlier four-control design.
+They remain historical; they do not qualify the refined head. The same source owner removes
+the All control, its payload field and reserved layout space, preserving the existing route,
+entry metadata, public-projection audit and immutable archive/pin contracts.
+
+- [x] Prove failing three-control/no-script/keyboard/row-geometry regressions, then implement.
+- [ ] Freeze and commit the scoped refinement without rewriting earlier commits.
+- [ ] Run current-head focused/full checks, clean reproducibility/staging, authenticated Updates,
+  request validation and primary preservation; retain raw outcomes and source equality.
+- [ ] Hand the new exact head to the release coordinator for fresh complete review and the same
+  draft PR’s preview. The source owner does not push, launch review or publish.

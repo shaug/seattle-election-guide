@@ -490,7 +490,6 @@ interface ComparisonResultOutcome {
 interface UpdatesPayload {
   schema_version?: "1.0";
   topics: UpdateTopicLabel[];
-  all_label: string;
   count_labels: string[];
   entries: UpdateFilterEntry[];
 }

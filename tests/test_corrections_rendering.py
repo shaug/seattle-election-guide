@@ -96,11 +96,15 @@ def test_current_updates_render_metadata_filters_and_a_complete_no_script_log(
     html = render_corrections_document(view_model, public_site_url=PUBLIC_SITE_URL)
     assert "What changed in this election\u2019s endorsements, sources and results." in html
     markup = html.split("<script", 1)[0]
-    assert markup.count('class="topic-button"') == 4
+    assert markup.count('class="topic-button"') == 3
     assert markup.count("data-update-key=") == 2
     assert "data-client-payload" in html
     assert 'data-update-count role="status" aria-live="polite"' in html
-    assert 'aria-pressed="true"' in html
+    controls = markup.split("data-update-controls", 1)[1].split("</div>", 1)[0]
+    assert controls.count('aria-pressed="false"') == 3
+    assert 'aria-pressed="true"' not in controls
+    assert "all_label" not in html
+    assert ">All updates</button>" not in markup
     assert 'datetime="2026-08-27"' in html
     assert 'class="action-badge action-correction">Correction' in html
     assert "Illustrative example" not in html
@@ -150,10 +154,18 @@ def test_updates_controls_actual_geometry_keyboard_and_history(tmp_path: Path, w
     def keyboard(cdp: _CdpSocket, session: str) -> None:
         cdp.command(
             "Runtime.evaluate",
-            {"expression": "document.querySelector('[data-update-topic=all]').focus()"},
+            {
+                "expression": "document.querySelector('[data-update-topic=endorsements]').focus();"
+                "window.updatesKeyboardFocusTrace=['endorsements']"
+            },
             session_id=session,
         )
-        for key, code, number in [("Tab", "Tab", 9), (" ", "Space", 32), ("Enter", "Enter", 13)]:
+        for key, code, number in [
+            ("Tab", "Tab", 9),
+            (" ", "Space", 32),
+            ("Enter", "Enter", 13),
+            ("Tab", "Tab", 9),
+        ]:
             cdp.command(
                 "Input.dispatchKeyEvent",
                 {
@@ -170,6 +182,14 @@ def test_updates_controls_actual_geometry_keyboard_and_history(tmp_path: Path, w
                 {"type": "keyUp", "key": key, "code": code, "windowsVirtualKeyCode": number},
                 session_id=session,
             )
+            cdp.command(
+                "Runtime.evaluate",
+                {
+                    "expression": "window.updatesKeyboardFocusTrace.push("
+                    "document.activeElement.dataset.updateTopic)"
+                },
+                session_id=session,
+            )
         screenshot = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session)
         (tmp_path / f"updates-{width}.png").write_bytes(
             base64.b64decode(cast(str, screenshot["data"]))
@@ -181,13 +201,16 @@ def test_updates_controls_actual_geometry_keyboard_and_history(tmp_path: Path, w
       const buttons=[...document.querySelectorAll('[data-update-topic]')];
       const active=document.activeElement;
       const keyboard={topic:active.dataset.updateTopic,focused:active.matches(':focus-visible'),
-        all:buttons[0].getAttribute('aria-pressed'),outline:getComputedStyle(active).outlineWidth};
+        pressed:buttons.map(b=>b.getAttribute('aria-pressed')),
+        trace:window.updatesKeyboardFocusTrace,outline:getComputedStyle(active).outlineWidth};
       const geometry=buttons.map(b=>{
         const r=b.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(b);
         const t=range.getBoundingClientRect();return {width:r.width,height:r.height,
-          center:(t.left+t.right-r.left-r.right)/2,children:b.children.length};});
+          center:(t.left+t.right-r.left-r.right)/2,children:b.children.length,
+          left:r.left,right:r.right,top:r.top,textFits:t.width<=r.width};});
+      const control=document.querySelector('[data-update-controls]').getBoundingClientRect();
       const count=document.querySelector('[data-update-count]');
-      buttons[1].click();buttons[3].click();
+      buttons[0].click();buttons[2].click();
       const combined=location.search;
       await new Promise(resolve=>{
         addEventListener('popstate',resolve,{once:true});history.back();});
@@ -197,10 +220,15 @@ def test_updates_controls_actual_geometry_keyboard_and_history(tmp_path: Path, w
         addEventListener('popstate',resolve,{once:true});history.forward();});
       const forwarded=buttons.filter(b=>b.getAttribute('aria-pressed')==='true')
         .map(b=>b.dataset.updateTopic);
-      buttons[0].click();buttons[3].click();
+      buttons[0].click();
       const empty=!document.querySelector('[data-update-empty]').hidden
         &&count.textContent==='0 updates';
-      return JSON.stringify({keyboard,geometry,combined,restored,forwarded,empty,
+      buttons[2].click();
+      const complete=buttons.every(b=>b.getAttribute('aria-pressed')==='false')
+        &&document.querySelector('[data-update-empty]').hidden
+        &&[...document.querySelectorAll('[data-update-key]')].every(e=>!e.hidden);
+      return JSON.stringify({keyboard,geometry,control:{left:control.left,right:control.right},
+        combined,restored,forwarded,empty,complete,
         count:count.textContent,
         final:location.search,sameFocus:document.activeElement===active,
         sameCount:count===document.querySelector('[data-update-count]'),
@@ -210,20 +238,29 @@ def test_updates_controls_actual_geometry_keyboard_and_history(tmp_path: Path, w
         interact=keyboard,
     )
     assert result["keyboard"] == {
-        "topic": "endorsements",
+        "topic": "results",
         "focused": True,
-        "all": "true",
+        "pressed": ["false", "false", "false"],
+        "trace": ["endorsements", "sources", "sources", "sources", "results"],
         "outline": "3px",
     }
     assert result["combined"] == "?topics=endorsements,results"
     assert result["restored"] == ["endorsements"]
     assert result["forwarded"] == ["endorsements", "results"]
-    assert result["empty"] and result["sameFocus"] and result["sameCount"], result
+    assert result["empty"] and result["complete"] and result["sameFocus"] and result["sameCount"], (
+        result
+    )
+    assert result["final"] == "" and result["count"] == "2 updates"
     assert not result["overflow"]
-    assert len(result["geometry"]) == 4
+    assert len(result["geometry"]) == 3
     for button in result["geometry"]:
         assert button["width"] >= 44 and button["height"] >= 44
-        assert abs(button["center"]) < 1 and button["children"] == 0
+        assert abs(button["center"]) < 1 and button["children"] == 0 and button["textFits"]
+    if width < 640:
+        for top in {button["top"] for button in result["geometry"]}:
+            row = [button for button in result["geometry"] if button["top"] == top]
+            assert abs(row[0]["left"] - result["control"]["left"]) < 1
+            assert abs(row[-1]["right"] - result["control"]["right"]) < 1
 
 
 def test_render_corrections_document_raises_without_any_corrections(tmp_path: Path) -> None:

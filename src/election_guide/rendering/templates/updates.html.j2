@@ -22,7 +22,6 @@
     <main id="updates-main" class="updates-main narrow-main">
       <div class="topic-bar">
         <div class="topic-control" data-update-controls role="group" aria-label="Filter updates by topic" aria-describedby="filter-help">
-          <button type="button" class="topic-button" disabled aria-pressed="true">{{ updates_payload.all_label }}</button>
           {% for topic in updates_payload.topics %}<button type="button" class="topic-button" disabled aria-pressed="false">{{ topic.label }}</button>{% endfor %}
         </div>
         <p class="update-count" data-update-count role="status" aria-live="polite" aria-atomic="true">{{ updates_payload.count_labels[corrections_entries | length] }}</p>
@@ -45,7 +44,7 @@
         </article>
         {% endfor %}
       </div>
-      <div class="empty-state" data-update-empty hidden><h2>No updates match these topics.</h2><p>Choose another topic or All updates to read the complete log.</p></div>
+      <div class="empty-state" data-update-empty hidden><h2>No updates match these topics.</h2><p>Choose another topic or clear your selections to read the complete log.</p></div>
       <p class="page-tail">This log covers election information. <a href="https://github.com/shaug/seattle-election-guide/releases"{{ external_link_attributes }}>Website release notes are on GitHub.</a></p>
       {% if updates_provenance %}<p class="page-tail">Current Updates log: <a href="https://github.com/shaug/seattle-election-guide/blob/{{ updates_provenance.source_git_commit }}/data/corrections/{{ guide.metadata.election_id }}.yaml"{{ external_link_attributes }}>authored record</a>. <a href="https://github.com/shaug/seattle-election-guide/releases/tag/{{ updates_provenance.archive_release_version }}"{{ external_link_attributes }}>Original election archive</a>.</p>{% endif %}
     </main>

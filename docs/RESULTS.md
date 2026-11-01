@@ -250,8 +250,9 @@ endorsement does not alone prove when or whether the publisher changed its posit
 Legacy `1.0` snapshots remain readable and serialize without invented metadata.
 
 The index says “What changed in this election’s endorsements, sources and results.” Its topic
-buttons select independent OR matches; no selected topic means all. All updates resets;
-all three selected remain selected. The complete authored log is server-rendered for no-JavaScript
+buttons are exactly Endorsements, Sources and Results, selecting independent OR matches.
+No selected topic is the default and means all; clearing the final selected topic restores the
+complete log. All three selected remain selected. There is no separate All updates button. The complete authored log is server-rendered for no-JavaScript
 readers. See [DESIGN.md](DESIGN.md#election-updates-676) and
 [FRONTEND.md](FRONTEND.md#election-updates-676) for interaction ownership.
 

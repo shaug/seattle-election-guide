@@ -410,7 +410,6 @@ class UpdateFilterEntry(ClientPayloadModel):
 class UpdatesPayload(ClientPayloadModel):
     schema_version: Literal["1.0"] = "1.0"
     topics: list[UpdateTopicLabel]
-    all_label: str
     count_labels: list[str]
     entries: list[UpdateFilterEntry]
 
@@ -423,7 +422,6 @@ def updates_payload(corrections: ElectionCorrections) -> UpdatesPayload:
             UpdateTopicLabel(id="sources", label="Sources"),
             UpdateTopicLabel(id="results", label="Results"),
         ],
-        all_label="All updates",
         count_labels=[
             f"{n} update{'s' if n != 1 else ''}" for n in range(len(corrections.entries) + 1)
         ],

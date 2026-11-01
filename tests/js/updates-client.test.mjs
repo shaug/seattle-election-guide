@@ -19,7 +19,6 @@ function boot(search = '', rows = entries) {
     schema_version: '1.0',
     topics: topics.map((id) => ({ id, label: id })),
     entries: rows,
-    all_label: 'All updates',
     count_labels: ['0 updates', '1 update', '2 updates', '3 updates'],
   };
   doc.body.innerHTML = `<div data-update-controls></div><p data-update-count role="status" aria-live="polite">${rows.length} updates</p><p data-update-empty hidden>No updates match these topics.</p><p data-payload-notice hidden></p>${rows.map((e) => `<article data-update-key="${e.key}">${e.key}</article>`).join('')}<script type="application/json" data-client-payload>${JSON.stringify(payload)}</script>`;
@@ -45,7 +44,10 @@ test('all eight independent OR subsets match once and all three stay selected', 
       doc.querySelector('[data-update-count]').textContent,
       `${expected.length} update${expected.length === 1 ? '' : 's'}`,
     );
-    assert.equal(button(doc, 'all').getAttribute('aria-pressed'), String(mask === 0));
+    assert.deepEqual(
+      [...doc.querySelectorAll('button')].map((element) => element.dataset.updateTopic),
+      topics,
+    );
     for (const topic of topics)
       assert.equal(
         button(doc, topic).getAttribute('aria-pressed'),
@@ -54,7 +56,7 @@ test('all eight independent OR subsets match once and all three stay selected', 
   }
 });
 
-test('toggle, reset, final deselection and history preserve focus and announcing elements', () => {
+test('final deselection and history restore the complete log without moving focus', () => {
   const doc = boot('?keep=yes');
   const active = button(doc, 'endorsements');
   const count = doc.querySelector('[data-update-count]');
@@ -67,10 +69,14 @@ test('toggle, reset, final deselection and history preserve focus and announcing
   window.history.replaceState(null, '', '?keep=yes&topics=sources');
   window.dispatchEvent(new Event('popstate'));
   assert.equal(button(doc, 'sources').getAttribute('aria-pressed'), 'true');
-  button(doc, 'all').click();
+  button(doc, 'sources').click();
+  assert.equal(doc.querySelector('[data-update-count]').textContent, '3 updates');
   active.click();
   active.click();
-  assert.equal(button(doc, 'all').getAttribute('aria-pressed'), 'true');
+  for (const topic of topics)
+    assert.equal(button(doc, topic).getAttribute('aria-pressed'), 'false');
+  assert.equal(doc.activeElement, active);
+  assert.equal(doc.querySelectorAll('[data-update-key]:not([hidden])').length, 3);
   assert.equal(doc.querySelector('[data-update-count]'), count);
   assert.equal(window.location.search, '?keep=yes');
 });
@@ -79,7 +85,7 @@ test('an absent topic has an honest empty result without moving focus', () => {
   const doc = boot('?topics=results', entries.slice(0, 2));
   assert.equal(doc.querySelector('[data-update-empty]').hidden, false);
   assert.equal(doc.querySelector('[data-update-count]').textContent, '0 updates');
-  assert.equal(doc.querySelectorAll('button').length, 4);
+  assert.equal(doc.querySelectorAll('button').length, 3);
   for (const element of doc.querySelectorAll('button')) assert.equal(element.childElementCount, 0);
 });
 

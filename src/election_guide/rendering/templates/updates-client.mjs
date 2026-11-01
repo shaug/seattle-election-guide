@@ -25,24 +25,22 @@ export function wireUpdates() {
   const topics = payload.topics.map((topic) => topic.id);
   const router = createUpdatesRouter(topics);
   let selected = router.read();
-  const choices = [{ id: 'all', label: payload.all_label }, ...payload.topics];
   /** @param {string} topic */
   function toggle(topic) {
-    selected =
-      topic === 'all'
-        ? []
-        : topics.filter((id) => (id === topic ? !selected.includes(id) : selected.includes(id)));
+    selected = topics.filter((id) =>
+      id === topic ? !selected.includes(id) : selected.includes(id),
+    );
     router.commit(selected);
     project();
   }
   function project() {
     render(
       repeat(
-        choices,
+        payload.topics,
         (choice) => choice.id,
         (choice) => html`<button
       type="button" class="topic-button" data-update-topic=${choice.id}
-      aria-pressed=${String(choice.id === 'all' ? !selected.length : selected.includes(choice.id))}
+      aria-pressed=${String(selected.includes(choice.id))}
       @click=${() => toggle(choice.id)}>${choice.label}</button>`,
       ),
       regions.controls,
