@@ -627,6 +627,8 @@ shared focus-token outline. Selection preserves focus and announces the matching
 a persistent polite status element. An empty result says so and explains that clearing selections
 restores the complete log.
 
+Topic-selection and date-explanation helper paragraphs are omitted below the topic bar.
+
 The complete log remains readable without JavaScript; server controls are disabled until enhanced
 and the page explains that filtering needs JavaScript. Topics never inherit ballot, precinct or
 source selections. Software release history is linked to GitHub Releases. This is an additive topic

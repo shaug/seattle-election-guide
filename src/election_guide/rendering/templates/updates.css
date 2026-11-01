@@ -7,8 +7,7 @@
 .topic-button:hover { box-shadow: inset 0 0 0 1px var(--teal); }
 .topic-button:focus-visible { outline: .1875rem solid var(--focus); outline-offset: .125rem; }
 .update-count { margin: 0 0 0 auto; color: var(--muted); font-size: .75rem; white-space: nowrap; }
-.filter-help, .date-note { margin: .5625rem 0 0; color: var(--muted); font-size: .75rem; line-height: 1.55; }
-.date-note { margin-top: .625rem; }
+.filter-help { margin: .5625rem 0 0; color: var(--muted); font-size: .75rem; line-height: 1.55; }
 .update-list { margin-top: .3125rem; }
 .update-entry { padding: 1.5rem 0; border-bottom: 1px solid var(--line-soft); }
 .entry-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4375rem .625rem; margin-bottom: .5rem; }

@@ -21,14 +21,12 @@
     {%+ call shell.page_head('Updates', eyebrow=election_display_name, mode='measured') %}What changed in this election’s endorsements, sources and results.{% endcall +%}
     <main id="updates-main" class="updates-main narrow-main">
       <div class="topic-bar">
-        <div class="topic-control" data-update-controls role="group" aria-label="Filter updates by topic" aria-describedby="filter-help">
+        <div class="topic-control" data-update-controls role="group" aria-label="Filter updates by topic">
           {% for topic in updates_payload.topics %}<button type="button" class="topic-button" disabled aria-pressed="false">{{ topic.label }}</button>{% endfor %}
         </div>
         <p class="update-count" data-update-count role="status" aria-live="polite" aria-atomic="true">{{ updates_payload.count_labels[corrections_entries | length] }}</p>
       </div>
-      <p class="filter-help" id="filter-help">Choose any topics. No topics selected shows all updates.</p>
       <noscript><p class="filter-help">All updates are shown. Topic filtering needs JavaScript.</p></noscript>
-      <p class="date-note">Dates show when an update was published in this guide.</p>
       <p data-payload-notice hidden role="status" aria-live="polite"></p>
       <div class="update-list">
         {% for entry in corrections_entries %}

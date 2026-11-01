@@ -105,6 +105,10 @@ def test_current_updates_render_metadata_filters_and_a_complete_no_script_log(
     assert 'aria-pressed="true"' not in controls
     assert "all_label" not in html
     assert ">All updates</button>" not in markup
+    assert 'role="group" aria-label="Filter updates by topic"' in markup
+    assert "aria-describedby" not in controls
+    assert "Choose any topics. No topics selected shows all updates." not in markup
+    assert "Dates show when an update was published in this guide." not in markup
     assert 'datetime="2026-08-27"' in html
     assert 'class="action-badge action-correction">Correction' in html
     assert "Illustrative example" not in html
@@ -138,6 +142,9 @@ def test_real_general_log_preserves_complete_classified_entries_in_served_markup
         for citation in entry["provenance"]:
             assert f'href="{citation["url"]}"' in markup
     assert "Illustrative example" not in markup
+    assert "Choose any topics. No topics selected shows all updates." not in markup
+    assert "Dates show when an update was published in this guide." not in markup
+    assert 'aria-describedby="filter-help"' not in markup
 
 
 @pytest.mark.parametrize("width", [320, 360, 390, 1280])
@@ -208,7 +215,18 @@ def test_updates_controls_actual_geometry_keyboard_and_history(tmp_path: Path, w
         const t=range.getBoundingClientRect();return {width:r.width,height:r.height,
           center:(t.left+t.right-r.left-r.right)/2,children:b.children.length,
           left:r.left,right:r.right,top:r.top,textFits:t.width<=r.width};});
-      const control=document.querySelector('[data-update-controls]').getBoundingClientRect();
+      const group=document.querySelector('[data-update-controls]');
+      const control=group.getBoundingClientRect();
+      const accessibleGroup={role:group.getAttribute('role'),name:group.getAttribute('aria-label'),
+        describedBy:group.getAttribute('aria-describedby')};
+      const leadIn=[];
+      for(let node=group.parentElement.nextElementSibling;
+        node&&!node.querySelector('[data-update-key]');node=node.nextElementSibling){
+        if(node.tagName!=='NOSCRIPT'&&!node.hidden&&getComputedStyle(node).display!=='none')
+          leadIn.push({tag:node.tagName,copy:node.textContent.trim()});
+      }
+      const dates=[...document.querySelectorAll('[data-update-key] time')]
+        .map(node=>[node.tagName,node.getAttribute('datetime')]);
       const count=document.querySelector('[data-update-count]');
       buttons[0].click();buttons[2].click();
       const combined=location.search;
@@ -228,7 +246,7 @@ def test_updates_controls_actual_geometry_keyboard_and_history(tmp_path: Path, w
         &&document.querySelector('[data-update-empty]').hidden
         &&[...document.querySelectorAll('[data-update-key]')].every(e=>!e.hidden);
       return JSON.stringify({keyboard,geometry,control:{left:control.left,right:control.right},
-        combined,restored,forwarded,empty,complete,
+        combined,restored,forwarded,empty,complete,accessibleGroup,leadIn,dates,
         count:count.textContent,
         final:location.search,sameFocus:document.activeElement===active,
         sameCount:count===document.querySelector('[data-update-count]'),
@@ -244,6 +262,13 @@ def test_updates_controls_actual_geometry_keyboard_and_history(tmp_path: Path, w
         "trace": ["endorsements", "sources", "sources", "sources", "results"],
         "outline": "3px",
     }
+    assert result["accessibleGroup"] == {
+        "role": "group",
+        "name": "Filter updates by topic",
+        "describedBy": None,
+    }
+    assert result["leadIn"] == []
+    assert result["dates"] == [["TIME", "2026-08-27"], ["TIME", "2026-07-22"]]
     assert result["combined"] == "?topics=endorsements,results"
     assert result["restored"] == ["endorsements"]
     assert result["forwarded"] == ["endorsements", "results"]
