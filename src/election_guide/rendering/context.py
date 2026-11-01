@@ -1671,6 +1671,9 @@ class CorrectionEntryView:
     headline: str
     body: str
     provenance: tuple[CorrectionProvenanceLinkView, ...]
+    date_iso: str
+    topics: tuple[str, ...]
+    actions: tuple[tuple[str, str], ...]
 
 
 def corrections_entries_view(
@@ -1695,6 +1698,12 @@ def corrections_entries_view(
             provenance=tuple(
                 CorrectionProvenanceLinkView(label=link.label, url=link.url)
                 for link in entry.provenance
+            ),
+            date_iso=entry.corrected_on.isoformat(),
+            topics=tuple(topic.title() for topic in entry.topics),
+            actions=tuple(
+                (action, "Coverage" if action == "coverage" else action.title())
+                for action in entry.actions
             ),
         )
         for entry in ordered

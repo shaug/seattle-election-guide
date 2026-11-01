@@ -11,12 +11,12 @@ exists and carries at least one entry (docs/RESULTS.md, Rendering: "results
 render as a state, not an option"; the same posture governs Corrections).
 
 The public page is Updates (issue #551; docs/RESULTS.md, "The updates page").
-Every substantive change to the published aggregate or a position page belongs here,
-including additions from routine refreshes even when the leading choice is
-unchanged. Minor wording or typography with unchanged facts and behavior stays
-in internal software/release history instead (#663). Existing storage and field
-names remain compatible with immutable publication view models; `corrected_on`
-is also the date of an addition.
+Election-information changes belong here: endorsements, source coverage and
+results, including information corrections caused by software. Software feature,
+layout, preparation and unchanged verification history belongs with GitHub releases
+(#676). Schema1.1 adds explicit topics/actions; legacy1.0 remains readable without
+invented metadata. Existing storage and `(corrected_on, headline)` identity remain
+compatible with immutable view models; `corrected_on` is guide-publication date.
 
 Entries here are hand-authored (an editor writes a headline and body prose
 directly), which is why nothing here cross-validates against the ballot
@@ -32,9 +32,19 @@ capture links without this schema changing shape underneath it.
 from __future__ import annotations
 
 from datetime import date
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    model_serializer,
+    model_validator,
+)
+
+UpdateTopic = Literal["endorsements", "sources", "results"]
+UpdateAction = Literal["added", "changed", "correction", "withdrawn", "certified", "coverage"]
 
 
 class CorrectionsModel(BaseModel):
@@ -70,17 +80,38 @@ class CorrectionEntry(CorrectionsModel):
     provenance: list[CorrectionProvenanceLink] = Field(
         default_factory=list[CorrectionProvenanceLink]
     )
+    topics: list[UpdateTopic] = Field(default_factory=list[UpdateTopic])
+    actions: list[UpdateAction] = Field(default_factory=list[UpdateAction])
+
+    @model_validator(mode="after")
+    def validate_metadata(self) -> CorrectionEntry:
+        if len(set(self.topics)) != len(self.topics) or len(set(self.actions)) != len(self.actions):
+            raise ValueError("update topics and actions cannot repeat")
+        return self
+
+    @model_serializer(mode="wrap")
+    def serialize_metadata(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        """Legacy snapshots keep their original shape; absent metadata is not invented."""
+        result = handler(self)
+        for field in ("topics", "actions"):
+            if field in result and not result[field]:
+                del result[field]
+        return result
 
 
 class ElectionCorrections(CorrectionsModel):
     """`data/corrections/<election-id>.yaml`'s validated contract."""
 
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.0", "1.1"] = "1.0"
     election_id: str = Field(min_length=1)
     entries: list[CorrectionEntry] = Field(min_length=1)
 
     @model_validator(mode="after")
     def validate_election_corrections(self) -> ElectionCorrections:
+        if self.schema_version == "1.1" and any(
+            not entry.topics or not entry.actions for entry in self.entries
+        ):
+            raise ValueError("election-information updates require topics and actions")
         if len(self.entries) != len(
             {(entry.corrected_on, entry.headline) for entry in self.entries}
         ):

@@ -36,6 +36,7 @@ interface ClientPayloadTypes {
   sources_page: SourcesPayload | GeneralSourcesPayload;
   comparisons_page: ComparisonsPayload;
   computed_grade: ComputedGrade;
+  updates_page: UpdatesPayload;
 }
 /**
  * The endorsements guide's payload.
@@ -485,4 +486,19 @@ interface ComparisonResultOutcome {
   percentage_label: string;
   advanced: boolean;
   chip_label: string | null;
+}
+interface UpdatesPayload {
+  schema_version?: "1.0";
+  topics: UpdateTopicLabel[];
+  all_label: string;
+  count_labels: string[];
+  entries: UpdateFilterEntry[];
+}
+interface UpdateTopicLabel {
+  id: "endorsements" | "sources" | "results";
+  label: string;
+}
+interface UpdateFilterEntry {
+  key: string;
+  topics: ("endorsements" | "sources" | "results")[];
 }

@@ -158,14 +158,11 @@ def test_editing_an_old_entry_does_not_satisfy_the_gate(
 @pytest.mark.parametrize(
     "old,new",
     [
-        ("inspectEndorsements();", "hideEndorsements();"),
-        ("color: navy", "display: none"),
         ('"leader":"A"', '"leader":"B"'),
         ("100%", "90%"),
-        ("<html>", "<!doctype html><html>"),
     ],
 )
-def test_rendering_and_client_changes_require_entries(
+def test_served_election_facts_and_client_facts_require_entries(
     sites: tuple[Path, Path], old: str, new: str
 ) -> None:
     baseline, candidate = sites
@@ -173,6 +170,24 @@ def test_rendering_and_client_changes_require_entries(
     _seal(candidate)
 
     assert check_updates(baseline, candidate)["result"] == "fail"
+
+
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        ("inspectEndorsements();", "hideEndorsements();"),
+        ("color: navy", "display: none"),
+        ("<html>", "<!doctype html><html>"),
+        ("<p>A:", "<div>A:"),
+    ],
+)
+def test_software_markup_styles_and_code_do_not_require_election_entries(
+    sites: tuple[Path, Path], old: str, new: str
+) -> None:
+    baseline, candidate = sites
+    _write(candidate, f"e/{GENERAL}/index.html", _page().replace(old, new))
+    _seal(candidate)
+    assert check_updates(baseline, candidate)["result"] == "pass"
 
 
 def test_build_provenance_and_noop_refresh_need_no_entry(sites: tuple[Path, Path]) -> None:
@@ -263,7 +278,7 @@ def test_textarea_comment_syntax_remains_visible_content(sites: tuple[Path, Path
     assert check_updates(*sites)["result"] == "fail"
 
 
-def test_referenced_client_asset_changes_require_an_entry(sites: tuple[Path, Path]) -> None:
+def test_referenced_software_asset_change_needs_no_election_entry(sites: tuple[Path, Path]) -> None:
     baseline, candidate = sites
     for site in sites:
         _write(site, "assets/race.js", "inspectEndorsements();")
@@ -272,11 +287,11 @@ def test_referenced_client_asset_changes_require_an_entry(sites: tuple[Path, Pat
     _write(candidate, "assets/race.js", "hideEndorsements();")
     _seal(candidate)
 
-    assert check_updates(baseline, candidate)["result"] == "fail"
+    assert check_updates(baseline, candidate)["result"] == "pass"
 
 
 @pytest.mark.parametrize("relation", ["stylesheet", "StyleSheet", "alternate stylesheet"])
-def test_linked_stylesheet_changes_require_an_entry(
+def test_linked_stylesheet_change_needs_no_election_entry(
     sites: tuple[Path, Path], relation: str
 ) -> None:
     baseline, candidate = sites
@@ -291,7 +306,33 @@ def test_linked_stylesheet_changes_require_an_entry(
     _write(candidate, "assets/race.css", ".meter { color: red; }")
     _seal(candidate)
 
+    assert check_updates(baseline, candidate)["result"] == "pass"
+
+
+def test_material_information_correction_still_requires_a_served_entry(
+    sites: tuple[Path, Path],
+) -> None:
+    baseline, candidate = sites
+    for site, content in zip(
+        sites,
+        [
+            '<p>Certified August 19: A 51%</p><a href="https://county.test/old">Evidence</a>',
+            '<p>Certified August 18: A 49%</p><a href="https://county.test/new">Evidence</a>',
+        ],
+        strict=True,
+    ):
+        _write(site, f"e/{GENERAL}/index.html", _page(content))
+        _seal(site)
     assert check_updates(baseline, candidate)["result"] == "fail"
+    _write(candidate, f"e/{GENERAL}/updates/index.html", _updates(NEW_ENTRY, OLD_ENTRY))
+    _seal(candidate)
+    assert check_updates(baseline, candidate)["result"] == "pass"
+
+
+def test_incompatible_snapshot_policies_cannot_be_compared(sites: tuple[Path, Path]) -> None:
+    old = build_updates_snapshot(sites[0]).model_copy(update={"schema_version": "1.0"})
+    with pytest.raises(ValueError, match="policy"):
+        compare_updates_snapshots(old, build_updates_snapshot(sites[1]))
 
 
 @pytest.mark.parametrize("added", [True, False])

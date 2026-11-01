@@ -12,10 +12,12 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from election_guide.calendar import read_election_calendar
+from election_guide.corrections.loader import load_rendering_corrections
 from election_guide.hosting.models import (
     DeploymentManifest,
     PublishedElection,
     SiteManifest,
+    UpdatesProjection,
 )
 from election_guide.hosting.releases import materialize_released_bundle
 from election_guide.hosting.updates import (
@@ -135,6 +137,7 @@ def stage_pages_site(
     expected_current_git_commit: str | None = None,
     released_bundle_dir: Path | None = None,
     calendar_path: Path = DEFAULT_CALENDAR_PATH,
+    updates_dir: Path = Path("data/corrections"),
 ) -> StagedPagesSite:
     """Verify every declared release and atomically stage the complete public archive."""
     site_manifest_path = site_manifest_path.resolve()
@@ -169,7 +172,13 @@ def stage_pages_site(
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
     try:
-        public_paths = _stage_verified_bundles(stage, verified, site_manifest.canonical_origin)
+        public_paths, updates_projections = _stage_verified_bundles(
+            stage,
+            verified,
+            site_manifest.canonical_origin,
+            current=current,
+            updates_dir=updates_dir,
+        )
         # Site-wide pages use the current release's data cutoff and deployed
         # revision timestamp, matching the election-scoped footer.
         current_data_updated_date = current.status.data_as_of.date().isoformat()
@@ -293,6 +302,15 @@ def stage_pages_site(
                         else {}
                     ),
                     "release_manifest_sha256": _sha256(bundle.directory / "release-manifest.json"),
+                    **(
+                        {
+                            "updates_projection": updates_projections[
+                                bundle.declaration.election_id
+                            ].model_dump(mode="json")
+                        }
+                        if bundle.declaration.election_id in updates_projections
+                        else {}
+                    ),
                 }
                 for bundle in verified
             ],
@@ -408,6 +426,28 @@ def _verify_staged_pages_site(
         corrections_asset = f"e/{declared.election_id}/updates/index.html"
         if corrections_asset in deployment.assets:
             required_assets.add(corrections_asset)
+        projection = deployed.updates_projection
+        if declared.updates_from_current_source != (projection is not None):
+            raise ValueError("current Updates projection differs from reviewed declaration")
+        if projection is not None:
+            current_source = next(
+                e.git_commit
+                for e in deployment.elections
+                if e.election_id == deployment.current_election_id
+            )
+            if (
+                projection.source_git_commit != current_source
+                or projection.archive_release_version != deployed.release_version
+            ):
+                raise ValueError("current Updates provenance differs from source/archive identity")
+            html = (site_dir / corrections_asset).read_text(encoding="utf-8")
+            for name, value in (
+                ("seg-updates-source", projection.source_git_commit),
+                ("seg-updates-authored-sha256", projection.authored_sha256),
+                ("seg-updates-archive", projection.archive_release_version),
+            ):
+                if f'<meta name="{name}" content="{value}">' not in html:
+                    raise ValueError("current Updates HTML lacks its declared provenance")
         required_assets.update(_required_race_assets(declared.election_id, deployment.assets))
 
     current = next(
@@ -582,8 +622,12 @@ def _stage_verified_bundles(
     stage: Path,
     bundles: list[_VerifiedBundle],
     canonical_origin: str,
-) -> set[str]:
+    *,
+    current: _VerifiedBundle,
+    updates_dir: Path,
+) -> tuple[set[str], dict[str, UpdatesProjection]]:
     public_paths: set[str] = set()
+    projections: dict[str, UpdatesProjection] = {}
     for bundle in bundles:
         election_root = stage / "e" / bundle.declaration.election_id
         election_root.mkdir(parents=True)
@@ -618,16 +662,42 @@ def _stage_verified_bundles(
                 encoding="utf-8",
             )
             public_paths.update({f"{root_path}comparisons/", f"{root_path}comparisons/index.html"})
-        if bundle.view_model.corrections is not None and bundle.view_model.corrections.entries:
+        updates_view = bundle.view_model
+        provenance = None
+        if bundle.declaration.updates_from_current_source:
+            authored_path = updates_dir / f"{bundle.declaration.election_id}.yaml"
+            authored = load_rendering_corrections(
+                bundle.declaration.election_id, corrections_dir=updates_dir
+            )
+            if authored is None or authored.schema_version != "1.1":
+                raise ValueError("current Updates projection requires an authored schema1.1 log")
+            provenance = UpdatesProjection(
+                source_git_commit=current.status.git_commit,
+                authored_sha256=_sha256(authored_path),
+                archive_release_version=bundle.status.release_version,
+            )
+            projections[bundle.declaration.election_id] = provenance
+            updates_view = bundle.view_model.model_copy(
+                update={
+                    "corrections": authored,
+                    "metadata": bundle.view_model.metadata.model_copy(
+                        update={
+                            "git_commit": current.status.git_commit,
+                            "generated_at": current.status.generated_at,
+                        }
+                    ),
+                }
+            )
+        if updates_view.corrections is not None and updates_view.corrections.entries:
             corrections_dir = election_root / "updates"
             corrections_dir.mkdir()
             (corrections_dir / "index.html").write_text(
-                _corrections_html(bundle.view_model, canonical_origin),
+                _corrections_html(updates_view, canonical_origin, provenance=provenance),
                 encoding="utf-8",
             )
             public_paths.update({f"{root_path}updates/", f"{root_path}updates/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
-    return public_paths
+    return public_paths, projections
 
 
 def _stage_race_pages(
@@ -711,7 +781,12 @@ def _comparison_html(view_model: PublicationViewModel, canonical_origin: str) ->
     )
 
 
-def _corrections_html(view_model: PublicationViewModel, canonical_origin: str) -> str:
+def _corrections_html(
+    view_model: PublicationViewModel,
+    canonical_origin: str,
+    *,
+    provenance: UpdatesProjection | None = None,
+) -> str:
     """Render the per-election corrections page (docs/RESULTS.md, "The
     corrections page"; issue #290) after `_stage_verified_bundles` has
     already gated its existence on this election carrying at least one
@@ -720,6 +795,7 @@ def _corrections_html(view_model: PublicationViewModel, canonical_origin: str) -
         view_model,
         public_site_url=canonical_origin,
         project_url=PROJECT_URL,
+        updates_provenance=provenance.model_dump(mode="json") if provenance is not None else None,
     )
 
 

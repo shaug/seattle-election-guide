@@ -3,11 +3,16 @@ page"; `docs/design/RESULTS_FINALIZATION_2026-08-02.html`; issue #290)."""
 
 from __future__ import annotations
 
+import base64
+import json
 from datetime import date
+from html import unescape
 from pathlib import Path
+from typing import cast
 
 import pytest
 
+from election_guide.corrections.loader import load_rendering_corrections
 from election_guide.corrections.models import (
     CorrectionEntry,
     CorrectionProvenanceLink,
@@ -15,6 +20,7 @@ from election_guide.corrections.models import (
 )
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
+from election_guide.rendering.browser import _CdpSocket  # pyright: ignore[reportPrivateUsage]
 from election_guide.rendering.config import read_rendering_configuration
 from election_guide.rendering.documents import (
     render_comparison_document,
@@ -23,7 +29,11 @@ from election_guide.rendering.documents import (
     render_sources_document,
 )
 from election_guide.rendering.shell import election_names
-from tests.test_rendering import _view_model  # pyright: ignore[reportPrivateUsage]
+from tests.test_precinct_rendering import general_view as general_view
+from tests.test_rendering import (
+    _evaluate_in_chrome,  # pyright: ignore[reportPrivateUsage]
+    _view_model,  # pyright: ignore[reportPrivateUsage]
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_SITE_URL = "https://seattleelections.guide"
@@ -69,6 +79,151 @@ def _with_corrections(view_model: PublicationViewModel) -> PublicationViewModel:
     return view_model.model_copy(
         update={"corrections": _corrections(view_model.metadata.election_id)}
     )
+
+
+def test_current_updates_render_metadata_filters_and_a_complete_no_script_log(
+    tmp_path: Path,
+) -> None:
+    view_model = _view_model(tmp_path)
+    corrections = _corrections(view_model.metadata.election_id)
+    updates = corrections.model_dump(mode="json")
+    updates["schema_version"] = "1.1"
+    for entry in updates["entries"]:
+        entry.update(topics=["endorsements", "results"], actions=["correction"])
+    view_model = view_model.model_copy(
+        update={"corrections": ElectionCorrections.model_validate(updates)}
+    )
+    html = render_corrections_document(view_model, public_site_url=PUBLIC_SITE_URL)
+    assert "What changed in this election\u2019s endorsements, sources and results." in html
+    markup = html.split("<script", 1)[0]
+    assert markup.count('class="topic-button"') == 4
+    assert markup.count("data-update-key=") == 2
+    assert "data-client-payload" in html
+    assert 'data-update-count role="status" aria-live="polite"' in html
+    assert 'aria-pressed="true"' in html
+    assert 'datetime="2026-08-27"' in html
+    assert 'class="action-badge action-correction">Correction' in html
+    assert "Illustrative example" not in html
+    assert "county&#39;s amended canvass" in html
+
+
+def test_real_general_log_preserves_complete_classified_entries_in_served_markup(
+    general_view: PublicationViewModel,
+) -> None:
+    """Actual publication inputs render complete prose, without executing scripts."""
+    general_view = general_view.model_copy(
+        update={
+            "corrections": load_rendering_corrections(
+                "wa-2026-general", corrections_dir=PROJECT_ROOT / "data/corrections"
+            )
+        }
+    )
+    page = render_corrections_document(general_view, public_site_url=PUBLIC_SITE_URL)
+    markup = unescape(page.split("<script", 1)[0])
+    audit = json.loads((PROJECT_ROOT / "docs/audits/updates-676/classification.json").read_text())
+    rows = [r for r in audit["entries"] if r["election_id"] == "wa-2026-general"]
+    assert markup.count('class="corrections-entry update-entry"') == 18
+    assert '<article class="corrections-entry update-entry" hidden' not in markup
+    for row in rows:
+        entry = row["original_entry"]
+        if row["disposition"] == "software_only":
+            assert entry["headline"] not in markup
+            continue
+        assert entry["headline"] in markup and entry["body"] in markup
+        assert f'datetime="{entry["corrected_on"]}"' in markup
+        for citation in entry["provenance"]:
+            assert f'href="{citation["url"]}"' in markup
+    assert "Illustrative example" not in markup
+
+
+@pytest.mark.parametrize("width", [320, 360, 390, 1280])
+def test_updates_controls_actual_geometry_keyboard_and_history(tmp_path: Path, width: int) -> None:
+    view = _view_model(tmp_path)
+    payload = _corrections(view.metadata.election_id).model_dump(mode="json")
+    payload["schema_version"] = "1.1"
+    for entry in payload["entries"]:
+        entry.update(topics=["endorsements"], actions=["correction"])
+    view = view.model_copy(update={"corrections": ElectionCorrections.model_validate(payload)})
+    page = tmp_path / "updates.html"
+    page.write_text(render_corrections_document(view, public_site_url=PUBLIC_SITE_URL))
+
+    def keyboard(cdp: _CdpSocket, session: str) -> None:
+        cdp.command(
+            "Runtime.evaluate",
+            {"expression": "document.querySelector('[data-update-topic=all]').focus()"},
+            session_id=session,
+        )
+        for key, code, number in [("Tab", "Tab", 9), (" ", "Space", 32), ("Enter", "Enter", 13)]:
+            cdp.command(
+                "Input.dispatchKeyEvent",
+                {
+                    "type": "keyDown",
+                    "key": key,
+                    "code": code,
+                    "windowsVirtualKeyCode": number,
+                    **({"text": "\r" if key == "Enter" else " "} if number in {13, 32} else {}),
+                },
+                session_id=session,
+            )
+            cdp.command(
+                "Input.dispatchKeyEvent",
+                {"type": "keyUp", "key": key, "code": code, "windowsVirtualKeyCode": number},
+                session_id=session,
+            )
+        screenshot = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session)
+        (tmp_path / f"updates-{width}.png").write_bytes(
+            base64.b64decode(cast(str, screenshot["data"]))
+        )
+
+    result = _evaluate_in_chrome(
+        page,
+        """(async()=>{
+      const buttons=[...document.querySelectorAll('[data-update-topic]')];
+      const active=document.activeElement;
+      const keyboard={topic:active.dataset.updateTopic,focused:active.matches(':focus-visible'),
+        all:buttons[0].getAttribute('aria-pressed'),outline:getComputedStyle(active).outlineWidth};
+      const geometry=buttons.map(b=>{
+        const r=b.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(b);
+        const t=range.getBoundingClientRect();return {width:r.width,height:r.height,
+          center:(t.left+t.right-r.left-r.right)/2,children:b.children.length};});
+      const count=document.querySelector('[data-update-count]');
+      buttons[1].click();buttons[3].click();
+      const combined=location.search;
+      await new Promise(resolve=>{
+        addEventListener('popstate',resolve,{once:true});history.back();});
+      const restored=buttons.filter(b=>b.getAttribute('aria-pressed')==='true')
+        .map(b=>b.dataset.updateTopic);
+      await new Promise(resolve=>{
+        addEventListener('popstate',resolve,{once:true});history.forward();});
+      const forwarded=buttons.filter(b=>b.getAttribute('aria-pressed')==='true')
+        .map(b=>b.dataset.updateTopic);
+      buttons[0].click();buttons[3].click();
+      const empty=!document.querySelector('[data-update-empty]').hidden
+        &&count.textContent==='0 updates';
+      return JSON.stringify({keyboard,geometry,combined,restored,forwarded,empty,
+        count:count.textContent,
+        final:location.search,sameFocus:document.activeElement===active,
+        sameCount:count===document.querySelector('[data-update-count]'),
+        overflow:document.documentElement.scrollWidth>innerWidth});
+    })()""",
+        viewport=(width, 900),
+        interact=keyboard,
+    )
+    assert result["keyboard"] == {
+        "topic": "endorsements",
+        "focused": True,
+        "all": "true",
+        "outline": "3px",
+    }
+    assert result["combined"] == "?topics=endorsements,results"
+    assert result["restored"] == ["endorsements"]
+    assert result["forwarded"] == ["endorsements", "results"]
+    assert result["empty"] and result["sameFocus"] and result["sameCount"], result
+    assert not result["overflow"]
+    assert len(result["geometry"]) == 4
+    for button in result["geometry"]:
+        assert button["width"] >= 44 and button["height"] >= 44
+        assert abs(button["center"]) < 1 and button["children"] == 0
 
 
 def test_render_corrections_document_raises_without_any_corrections(tmp_path: Path) -> None:

@@ -5,8 +5,10 @@ import json
 import re
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 from urllib.parse import urljoin, urlsplit
+
+from pydantic import model_validator
 
 from election_guide.hosting.models import DeploymentManifest, HostingModel
 from election_guide.serialization import canonical_json_bytes, read_json
@@ -79,12 +81,23 @@ UPDATES_SNAPSHOT = "updates-snapshot.json"
 class ElectionUpdatesSnapshot(HostingModel):
     pages: dict[str, str]
     entries: list[tuple[str, str]]
+    information_pages: dict[str, str] | None = None
 
 
 class UpdatesSnapshot(HostingModel):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.0", "2.0"] = "2.0"
     canonical_origin: str
     elections: dict[str, ElectionUpdatesSnapshot]
+
+    @model_validator(mode="after")
+    def validate_information_policy(self) -> "UpdatesSnapshot":
+        if self.schema_version == "2.0" and any(
+            election.information_pages is None
+            or election.information_pages.keys() != election.pages.keys()
+            for election in self.elections.values()
+        ):
+            raise ValueError("Updates information policy requires every served page fingerprint")
+        return self
 
 
 def read_verified_deployment(site: Path) -> DeploymentManifest:
@@ -222,6 +235,145 @@ def _page_content(site: Path, name: str, manifest: DeploymentManifest) -> bytes:
     return canonical_json_bytes(_without_layout_whitespace(parser.tokens))
 
 
+def _election_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Keep semantic inputs used to display endorsements, coverage and results.
+
+    Page controls, query capabilities and URL limits are software contracts.
+    Verification timestamps are provenance freshness, not new election facts.
+    """
+    keys = {
+        "panel_id",
+        "panel_hash",
+        "sources",
+        "categories",
+        "scoring",
+        "races",
+        "race",
+        "personalization",
+    }
+    freshness = {
+        "data_version",
+        "captured_at",
+        "checked_at",
+        "reviewed_at",
+        "last_checked_at",
+        "schema_version",
+        "maximum_url_characters",
+        "url_schema_version",
+    }
+
+    def factual(value: Any) -> Any:
+        if isinstance(value, dict):
+            return {
+                key: factual(item)
+                for key, item in cast(dict[str, Any], value).items()
+                if key not in freshness
+            }
+        if isinstance(value, list):
+            return [factual(item) for item in cast(list[Any], value)]
+        return value
+
+    return factual({key: value for key, value in payload.items() if key in keys})
+
+
+class _InformationContent(_PageContent):
+    """Read actual election text/evidence and payload facts, independent of paint/code.
+
+    Existing served pages already identify their data regions; no candidate-only
+    marker can exempt a historical baseline. Complete assets are still verified.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.payload: list[str] | None = None
+
+    def _information(self) -> bool:
+        if any(
+            tag in {"head", "script", "style", "footer", "nav", "button", "select", "option", "svg"}
+            for tag, _ in self.stack
+        ):
+            return False
+        if any(
+            self._inside(name)
+            for name in {
+                "site-band",
+                "sticky-header",
+                "page-head",
+                "audit-data",
+                "audit-site",
+                "filter-control-bar",
+                "state-action-strip",
+            }
+        ):
+            return False
+        return (
+            any(tag == "main" for tag, _ in self.stack)
+            or self._inside("race-detail-certified-result")
+            or self._inside("election-day")
+        )
+
+    def handle_decl(self, decl: str) -> None:
+        pass
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attributes = dict(attrs)
+        if tag not in _VOID:
+            self.stack.append((tag, attributes))
+        if tag == "script" and "data-client-payload" in attributes:
+            self.payload = []
+        if not self._information():
+            return
+        if tag in _BLOCK:
+            self._append_text("text", " ")
+        facts = {
+            key: value
+            for key, value in attrs
+            if key
+            in {
+                "href",
+                "data-publication-race-id",
+                "data-contested",
+                "data-race-detail-source-code",
+                "data-source-state",
+                "data-source-role",
+                "data-source-group",
+                "data-endorsed-candidate-id",
+            }
+            or key.startswith("data-election-")
+        }
+        if facts:
+            self.tokens.append(("facts", facts))
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "script" and self.payload is not None:
+            self.tokens.append(("payload", _election_payload(json.loads("".join(self.payload)))))
+            self.payload = None
+        if self._information() and tag in _BLOCK:
+            self._append_text("text", " ")
+        for index in range(len(self.stack) - 1, -1, -1):
+            if self.stack[index][0] == tag:
+                del self.stack[index:]
+                break
+
+    def handle_data(self, data: str) -> None:
+        if self.payload is not None:
+            self.payload.append(data)
+        elif self._information():
+            self._append_text(
+                "literal-text"
+                if any(tag in {"pre", "textarea"} for tag, _ in self.stack)
+                else "text",
+                data,
+            )
+
+
+def _information_content(site: Path, name: str) -> bytes:
+    parser = _InformationContent()
+    parser.feed((site / name).read_text(encoding="utf-8"))
+    parser.close()
+    return canonical_json_bytes(_without_layout_whitespace(parser.tokens))
+
+
 class _Entries(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -237,9 +389,9 @@ class _Entries(HTMLParser):
             self.active = True
             self.date = self.headline = ""
         if self.active:
-            if tag == "p" and "corrections-date" in classes:
+            if tag in {"p", "time"} and "corrections-date" in classes:
                 self.field = "date"
-            elif tag == "strong":
+            elif tag == "strong" or "corrections-headline" in classes:
                 self.field = "headline"
 
     def handle_data(self, data: str) -> None:
@@ -249,7 +401,7 @@ class _Entries(HTMLParser):
             self.headline += data
 
     def handle_endtag(self, tag: str) -> None:
-        if tag in {"p", "strong"}:
+        if tag in {"p", "time", "strong", "h2"}:
             self.field = None
         if tag == "article" and self.active:
             key = (" ".join(self.date.split()), " ".join(self.headline.split()))
@@ -293,6 +445,10 @@ def build_updates_snapshot(site: Path) -> UpdatesSnapshot:
                     for name in sorted(_pages(manifest, election.election_id))
                 },
                 entries=sorted(_entries(site, manifest, election.election_id)),
+                information_pages={
+                    name: hashlib.sha256(_information_content(site, name)).hexdigest()
+                    for name in sorted(_pages(manifest, election.election_id))
+                },
             )
             for election in manifest.elections
         },
@@ -302,7 +458,12 @@ def build_updates_snapshot(site: Path) -> UpdatesSnapshot:
 def verify_updates_snapshot(site: Path) -> None:
     """A hash-valid stale snapshot is still invalid evidence about the staged pages."""
     stored = UpdatesSnapshot.model_validate(read_json(site / UPDATES_SNAPSHOT))
-    if stored != build_updates_snapshot(site):
+    rebuilt = build_updates_snapshot(site)
+    if stored.schema_version == "1.0":
+        rebuilt.schema_version = "1.0"
+        for election in rebuilt.elections.values():
+            election.information_pages = None
+    if stored != rebuilt:
         raise ValueError("Updates snapshot differs from staged election pages")
 
 
@@ -310,18 +471,25 @@ def compare_updates_snapshots(
     published: UpdatesSnapshot, proposed: UpdatesSnapshot
 ) -> dict[str, Any]:
     """Require a fresh served entry for each election whose page fingerprints changed."""
+    if published.schema_version != "2.0" or proposed.schema_version != "2.0":
+        raise ValueError(
+            "Updates snapshot policy differs; verify original baseline pages before upgrading"
+        )
     if published.canonical_origin != proposed.canonical_origin:
         raise ValueError("baseline and candidate canonical origins differ")
     elections: dict[str, Any] = {}
-    empty = ElectionUpdatesSnapshot(pages={}, entries=[])
+    empty = ElectionUpdatesSnapshot(pages={}, entries=[], information_pages={})
     for election in sorted(published.elections.keys() | proposed.elections.keys()):
         old = published.elections.get(election, empty)
         new = proposed.elections.get(election, empty)
-        changed = old.pages.keys() ^ new.pages.keys()
+        old_pages, new_pages = old.information_pages, new.information_pages
+        if old_pages is None or new_pages is None:
+            raise ValueError("Updates information policy has no verified page fingerprints")
+        changed = old_pages.keys() ^ new_pages.keys()
         changed.update(
             page
-            for page in old.pages.keys() & new.pages.keys()
-            if old.pages[page] != new.pages[page]
+            for page in old_pages.keys() & new_pages.keys()
+            if old_pages[page] != new_pages[page]
         )
         before, after = set(old.entries), set(new.entries)
         fresh = after - before

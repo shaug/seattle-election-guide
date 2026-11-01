@@ -226,37 +226,45 @@ and structure as any other major page, at the election's own path, rendered — 
 nav — only when that election actually has entries. It lives at
 `/e/<election-id>/updates/`; the former `/corrections/` address permanently redirects there.
 
-**Every substantive change to the published aggregate or a position page gets an entry.** New endorsements
-qualify, including newly available publications and endorsements previously missed. So do
-corrections, withdrawals, source membership or eligibility changes, changed counts or shares,
-changed leading choices, changes to which races appear, and certified or amended results.
-The leading choice need not change. Routine pre-election refreshes qualify whenever they
-change published content. A check that changes no published content needs no entry.
+**Election Updates records changes to election information (#676).** Include additions,
+changed or withdrawn endorsements, guide corrections, source coverage/eligibility changes,
+and results, certification or amendments. Counts or shares can change without a new leader.
+Batch related decisions and link the complete reviewed account and affected races/sources.
+Dates are publication dates in this guide, not inferred source-announcement dates; preserve
+unknown source dates. Historical backfills use the first evidenced public publication in
+America/Los_Angeles and retain the evidence when correcting a mistaken date.
 
-Each dated entry explains what changed and why, with evidence and links to affected pages.
-A reviewed batch may share an entry if its linked record accounts for every change in the batch.
-An amended result cites the capture it supersedes. Entries accompany the release that first
-publishes the change; they do not imply the organization announced it on that date.
-For a historical backfill, use the first evidenced public release or successful deployment,
-in America/Los_Angeles, rather than the merge or review date. Link that publication evidence.
-Several changes first published together may share a dated entry when the linked audit accounts
-for every change. Correct an existing date when publication evidence disproves it, retaining the
-underlying change and a citation explaining the correction. Record archive regressions and
-restorations as public changes too; an immutable old bundle is not necessarily the last live guide.
-Minor wording or typography changes that leave election facts, voting guidance, behavior,
-coverage, evidence, and results unchanged do not need public Updates announcements. Keep their
-internal software/release history instead. For example, the Sources and Comparisons subtitle
-changes in general.62 remain recorded in [the complete internal audit](audits/minor-copy-updates-663.json)
-and the immutable release; #663 removes only their unnecessary current public announcement.
-Substantive changes above still require entries. Historical public-feed corrections retain a
-complete internal record and their publication evidence; they never rewrite accepted archives.
-Site changes that do not alter election content belong to the software changelog (O8).
-Tagline: *"We get it right, eventually."*
+Website features, interaction/layout fixes, preparation, routine deployments and unchanged
+verification checks belong in GitHub software release history. They do not require election
+entries. A software incident that materially misrepresented election information still warrants
+an information correction explaining the prior displayed facts and the correction. Keep mixed
+historical entries intact rather than deleting their election facts with their implementation prose.
 
-*(2026-10-16, issue #551: Updates replaces Corrections. This supersedes the original exclusion
-of routine refreshes. The guide catches up with reality; the log records that progress as well
-as errors. Existing changes remain recorded; the evidenced-date rule above, added for #556,
-supersedes the earlier requirement to retain dates even when they were wrong.)*
+Schema `1.1` keeps the existing authored YAML and `(corrected_on, headline)` identity and requires
+nonempty, unique `topics` and `actions`. Topics are `endorsements`, `sources`, `results`;
+multiple topics are allowed. Actions are `added`, `changed`, `correction`, `withdrawn`,
+`certified`, `coverage` (displayed as Added, Changed, Correction, Withdrawn, Certified, Coverage).
+Use the smallest accurate set. Changed requires evidence of a publisher changing position;
+Correction means the guide's prior representation was wrong. A new current official dual
+endorsement does not alone prove when or whether the publisher changed its position.
+Legacy `1.0` snapshots remain readable and serialize without invented metadata.
+
+The index says “What changed in this election’s endorsements, sources and results.” Its topic
+buttons select independent OR matches; no selected topic means all. All updates resets;
+all three selected remain selected. The complete authored log is server-rendered for no-JavaScript
+readers. See [DESIGN.md](DESIGN.md#election-updates-676) and
+[FRONTEND.md](FRONTEND.md#election-updates-676) for interaction ownership.
+
+The [66-entry classification](audits/updates-676/classification.json) retains every original
+identity, complete body, date, provenance, disposition and rationale, together with exact
+pre-migration YAML and hashes. Original election facts and mixed corrections are preserved.
+Software-only records leave the current public projection without rewriting accepted immutable
+release archives. The original [#663 subtitle audit](audits/minor-copy-updates-663.json) and
+[#556 publication audit](UPDATES_HISTORY_AUDIT_2026-10-16.md) remain intact and resolvable.
+Historical release activation remains a separate operation, never an effect of editing this log.
+
+*(2026-11-01, #676 supersedes #551/#568's software-announcement requirement and extends #663.
+The earlier tagline and broad rendering-change policy remain recoverable in Git history.)*
 
 ## Decisions record (2026-08-02)
 

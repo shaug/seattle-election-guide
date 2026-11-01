@@ -96,6 +96,35 @@ def test_correction_entry_provenance_defaults_to_empty() -> None:
     assert entry.provenance == []
 
 
+def test_election_updates_metadata_is_required_only_for_the_new_schema() -> None:
+    legacy = _valid_corrections().model_dump(mode="json")
+    assert "topics" not in legacy["entries"][0]
+    assert "actions" not in legacy["entries"][0]
+    legacy["schema_version"] = "1.1"
+    with pytest.raises(ValidationError, match="topics and actions"):
+        ElectionCorrections.model_validate(legacy)
+    for entry in legacy["entries"]:
+        entry.update(topics=["endorsements", "sources"], actions=["correction"])
+    assert ElectionCorrections.model_validate(legacy).model_dump(mode="json") == legacy
+
+
+@pytest.mark.parametrize(
+    "metadata",
+    [
+        {"topics": ["software"], "actions": ["added"]},
+        {"topics": ["endorsements", "endorsements"], "actions": ["added"]},
+        {"topics": ["sources"], "actions": ["deployed"]},
+        {"topics": ["results"], "actions": ["certified", "certified"]},
+    ],
+)
+def test_election_updates_metadata_rejects_unknown_or_duplicate_values(
+    metadata: dict[str, list[str]],
+) -> None:
+    payload = _valid_corrections().model_dump(mode="json")["entries"][0]
+    with pytest.raises(ValidationError):
+        CorrectionEntry.model_validate({**payload, **metadata})
+
+
 def test_load_rendering_corrections_returns_none_without_a_file(tmp_path: Path) -> None:
     assert load_rendering_corrections(ELECTION_ID, corrections_dir=tmp_path / "corrections") is None
 

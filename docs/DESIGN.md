@@ -607,3 +607,25 @@ scrolling while preserving that action boundary.
 The compact surface changes no availability, fallback, race visibility, measures,
 source/scoring, URL/history or precinct-only persistence rule. Primary keeps its
 legacy controls and archive styles.
+
+## Election Updates (#676)
+
+The approved version-2 study uses the existing measured election shell and serif entry headlines.
+The tagline is “What changed in this election’s endorsements, sources and results.” Dates mean
+publication in this guide. Quiet action tags and topic labels accompany each dated chronological
+entry; evidence and affected-page links remain visible. No illustrative events become production data.
+
+Four visible text buttons say All updates, Endorsements, Sources, Results. The three topics toggle
+independently with OR matching. None means all; All updates clears selections; all three selected
+remain selected. Navy/high-contrast highlight and `aria-pressed` expose selection. Buttons have
+centered labels with no checks, icons, placeholders or reserved icon space; targets are at least
+44px. Below 40rem the four choices wrap into two equal columns without horizontal page overflow.
+Keyboard Tab order follows the labels; native Enter/Space activate the focused button with the
+shared focus-token outline. Selection preserves focus and announces the matching count through
+a persistent polite status element. An empty result says so and offers All updates.
+
+The complete log remains readable without JavaScript; server controls are disabled until enhanced
+and the page explains that filtering needs JavaScript. Topics never inherit ballot, precinct or
+source selections. Software release history is linked to GitHub Releases. This is an additive topic
+group, not the shared mutually exclusive radio component. Legacy immutable schema1.0 pages retain
+the original Corrections template and stylesheet until an explicitly scoped current-log migration.
