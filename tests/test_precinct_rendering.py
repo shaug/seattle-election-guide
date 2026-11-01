@@ -1881,3 +1881,104 @@ def test_guide_joined_row_remeasures_fractional_container_font_and_source_state(
     assert result["constrained"]["row"] == "double", result
     assert result["recovered"]["row"] == "single", result
     assert result["stable"] and result["contained"] and result["focus"], result
+
+
+@pytest.mark.parametrize("font", [None, "system-ui", "sans-serif"])
+def test_sources_count_row_fits_actual_small_containers_and_recovers(
+    tmp_path: Path, general_view: PublicationViewModel, font: str | None
+) -> None:
+    """The full source face and count must fit the bar, including in a wide viewport."""
+    html = render_html_document(
+        general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    )
+    path = tmp_path / "small-source-row.html"
+    path.write_text(without_live_address_requests(html))
+    expression = r"""(async()=>{
+      await document.fonts.ready;
+      const bar=document.querySelector('[data-compact-sources]');
+      const source=bar.querySelector('[data-sources-link]');
+      const natives=[...bar.querySelectorAll('[data-filter-native]')];
+      const count=bar.querySelector('.filter-control-status');
+      const payload=JSON.parse(document.querySelector('[data-client-payload]').textContent);
+      const codes=payload.sources.filter(s=>s.panel_role==='consensus').map(s=>s.code);
+      const params=new URLSearchParams({lens:'2',mode:'s',panel:payload.panel_id,
+        ph:payload.panel_hash.slice(0,12),data:payload.data_version,
+        scoring:payload.scoring.configuration_id,sel:codes.slice(1).join('')});
+      const settle=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      if(FONT)bar.style.setProperty('--screen-sans',FONT);
+      location.hash=params.toString();await settle();
+      bar.dispatchEvent(new Event('compact-filter-fit'));await settle();
+      source.focus();
+      const rect=e=>e.getBoundingClientRect();
+      const initialSource=rect(source).toJSON();
+      const samples=[],recoveries=[];
+      const inspect=(scope,width)=>{
+        const b=rect(bar),s=rect(source),n=rect(count),row=rect(
+          bar.querySelector('.compact-filter-controls'));
+        const text=count.querySelector('.filter-status-part');
+        const range=document.createRange();range.selectNodeContents(text);
+        return {scope,width,viewport:innerWidth,bar:b.toJSON(),source:s.toJSON(),count:n.toJSON(),
+          sourceText:source.innerText.replace(/\s+/g,' ').trim(),countText:text.textContent,
+          visible:[...document.querySelectorAll('[data-publication-race-id]')]
+            .filter(e=>!e.hidden).length,
+          fit:s.left>=b.left-.1&&s.right<=b.right+.1&&n.left>=s.right&&n.right<=b.right+.1,
+          face:[...source.querySelectorAll('svg,.compact-source-label')]
+            .every(e=>rect(e).left>=s.left-.1&&rect(e).right<=s.right+.1),
+          icons:[...source.querySelectorAll('svg')].every(e=>rect(e).width===14),
+          wholeCount:range.getClientRects().length===1&&
+            range.getBoundingClientRect().width<=n.width+.1,
+          twoRows:bar.dataset.sourceRow==='double'&&row.height===46&&
+            s.top>=row.bottom&&b.height===92,
+          targets:[...bar.querySelectorAll('.compact-filter-trigger'),source]
+            .every(e=>rect(e).width>=44&&rect(e).height>=44),
+          sourceFont:getComputedStyle(source).fontSize,
+          ownScope:bar.querySelector('[data-filter-native=ballot]').hasAttribute('data-active'),
+          focus:document.activeElement===source,
+          stable:natives.every((e,i)=>bar.querySelectorAll('[data-filter-native]')[i]===e)};
+      };
+      for(const scope of ['all','one-race']){
+        const query=scope==='all'?'':new URLSearchParams({precinct:'1553',races:'all',
+          filter:'Metropolitan King County Council District 2'}).toString();
+        history.pushState({},'',(query?'?'+query:'')+'#'+params.toString());
+        dispatchEvent(new PopStateEvent('popstate'));await settle();
+        for(const width of [300,280]){
+          bar.style.width=width+'px';await settle();samples.push(inspect(scope,width));
+          bar.style.width='';await settle();
+          const s=rect(source),label=source.querySelector('.compact-source-label');
+          recoveries.push({scope,width,row:bar.dataset.sourceRow,
+            sourceWidth:s.width,sameWidth:Math.abs(s.width-initialSource.width)<.1,
+            oneLine:rect(label).height<=parseFloat(getComputedStyle(label).lineHeight)+.1,
+            focus:document.activeElement===source});
+        }
+      }
+      return JSON.stringify({samples,recoveries});
+    })()""".replace("FONT", json.dumps(font))
+    result = _evaluate_in_chrome(path, expression, viewport=(1440, 1000))
+    (tmp_path / "source-row-fit.json").write_text(json.dumps(result, indent=2) + "\n")
+    assert len(result["samples"]) == 4, result
+    for sample in result["samples"]:
+        assert sample["viewport"] == 1440, sample
+        assert sample["sourceText"] == "Sources: 44 of 45", sample
+        assert sample["countText"] == (
+            "31 contested races shown" if sample["scope"] == "all" else "1 race shown"
+        ), sample
+        assert sample["visible"] == (31 if sample["scope"] == "all" else 1), sample
+        assert sample["sourceFont"] == "14px", sample
+        assert sample["ownScope"] == (sample["scope"] == "one-race"), sample
+        assert all(
+            sample[key]
+            for key in [
+                "fit",
+                "face",
+                "icons",
+                "wholeCount",
+                "twoRows",
+                "targets",
+                "focus",
+                "stable",
+            ]
+        ), sample
+    assert all(
+        r["row"] == "single" and r["sameWidth"] and r["oneLine"] and r["focus"]
+        for r in result["recoveries"]
+    ), result

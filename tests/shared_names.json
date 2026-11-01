@@ -552,6 +552,10 @@
       "template",
       "client",
       "test"
+    ],
+    "data-source-face": [
+      "stylesheet",
+      "client"
     ]
   },
   "class_names": {

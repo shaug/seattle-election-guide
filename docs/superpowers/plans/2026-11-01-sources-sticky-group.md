@@ -54,3 +54,22 @@
 ## Self-review
 
 The two tasks cover every issue implementation criterion; hosted preview/CI/fresh constrained review remain root-owned. No new module/state owner, provider request, dependency, generic redesign or new acceptance gate is introduced.
+
+
+### Task 3: Complete actual-container fit
+
+The Guide has no viewport-derived exemption for its narrower actual container.
+The preserved a0 candidate’s full/readiness passes remain authentic; its six
+long-source300/280px container failures require this scoped correction.
+
+- [ ] Pin the exact44of45/31-contested-count failure in300/280px bars inside a1440px
+  viewport across the production, system-ui and sans-serif fonts; separately
+  preserve all six1-race scoped passes and wider recovery/focus/native identities.
+- [ ] Reclaim the second row’s gap only as needed; if no inline gap can fit,
+  stack the complete Sources prefix/value within its44px target and remeasure.
+  Preserve text, font/icon sizes, count phrase, two rows and source/filter owners.
+- [ ] Prove focused geometry, commit, then run the source-bound release/stage
+  and full visual matrix before the expensive final full gate. Resolve any real
+  geometry defect first, then run `make check` alone at the final committed head.
+- [ ] Reuse genuinely current readiness/visual evidence and preserve previous
+  heads’ exact reports; root still owns review and all publication.

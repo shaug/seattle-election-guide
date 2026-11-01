@@ -1066,7 +1066,14 @@ Guide markup and the Comparisons composition retain their original branches.
 complete control families. The complete centered controls-plus-Sources group and
 twice the current count's side reservation must fit before admitting one row.
 Otherwise CSS grid puts Sources and the nowrap count on row two, with the four
-controls centered above. Reflow changes grid placement without moving or replacing
+controls centered above. That second row must also fit its actual container.
+Reclaim only the needed part of its 12px gap first; if the complete inline
+Sources face and count still exceed the row, stack the unchanged Sources prefix
+and value inside the same 44px target and remeasure its complete family. Icons,
+font sizes, labels and the count phrase stay intact. Each fit resets both gap
+and face before measuring, so wider containers recover their original layout.
+No viewport width licenses overflow in a narrower Guide container.
+Reflow changes grid placement without moving or replacing
 focused controls, link or live status roots. The existing ResizeObserver observes
 the Guide sticky group as well as the bar; font readiness/loading completion and
 resolved source/filter projection remeasure it. Its actual height, including

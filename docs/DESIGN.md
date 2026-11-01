@@ -630,3 +630,12 @@ identity, independent menu cues, compact centered Ballot and focus behavior stay
 as specified above. The measured sticky height clears in-page anchors and
 includes visible notices. The study's 47px wide and 92px narrow examples describe
 the approved geometry, not a fixed viewport breakpoint.
+
+
+Within the two-row group, Sources and the count must fit the actual row as well.
+Reclaim only the needed space between them; if that is insufficient, Sources may
+place its unchanged prefix above its complete value inside the existing 44px
+navigation target. The icons keep their size, the count stays on one line, and
+the group keeps two sticky rows. Measure the complete family again in that face
+and restore ordinary spacing and the one-line face when space returns. A wide
+viewport does not grant a minimum size to a constrained Guide container.

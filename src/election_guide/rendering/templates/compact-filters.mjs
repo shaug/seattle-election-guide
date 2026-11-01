@@ -259,13 +259,21 @@ export function wireCompactFilters() {
     const controls = bar.querySelector('.compact-filter-controls');
     const count = bar.querySelector('.filter-control-status');
     if (bar.hasAttribute('data-compact-sources') && controls && count) {
+      bar.setAttribute('data-source-face', 'inline');
+      bar.style.removeProperty('--compact-source-gap');
       const sourceWidth = reserveSourceWidth(bar);
+      const rowWidth = bar.getBoundingClientRect().width;
+      const countWidth = count.getBoundingClientRect().width;
       const groupWidth = controls.getBoundingClientRect().width + sourceWidth + 1;
-      bar.dataset.sourceRow =
-        groupWidth + 2 * (count.getBoundingClientRect().width + 12) <=
-        bar.getBoundingClientRect().width
-          ? 'single'
-          : 'double';
+      bar.dataset.sourceRow = groupWidth + 2 * (countWidth + 12) <= rowWidth ? 'single' : 'double';
+      if (bar.dataset.sourceRow === 'double') {
+        let gap = rowWidth - (sourceWidth - 24) - countWidth;
+        if (gap < 0) {
+          bar.setAttribute('data-source-face', 'stacked');
+          gap = rowWidth - (reserveSourceWidth(bar) - 24) - countWidth;
+        }
+        bar.style.setProperty('--compact-source-gap', `${Math.max(0, Math.min(12, gap))}px`);
+      }
       const sticky = bar.closest('.sticky-header');
       const page = /** @type {HTMLElement|null} */ (bar.closest('.screen-guide'));
       if (sticky && page)
