@@ -1,19 +1,6 @@
 schema_version: "1.0"
 election_id: wa-2026-general
 entries:
-  - corrected_on: 2026-11-01
-    headline: "Sources and filters stay together while scrolling."
-    body: >-
-      Endorsements keeps Precinct, View, Races, Ballot and Sources visible
-      together while you scroll. On wide screens they share one row when the
-      complete controls and race count fit. Narrow screens keep the four
-      filters above Sources and the race count. Sources still opens the same
-      source-selection page; source choices and ballot filters remain independent.
-    provenance:
-      - label: "Endorsements"
-        url: /e/wa-2026-general/
-      - label: "Approved Sources and filters grouping"
-        url: https://github.com/shaug/seattle-election-guide/issues/679
   - corrected_on: 2026-10-24
     headline: "Uncontested races need enough verified endorsements to appear."
     body: >-
@@ -505,3 +492,16 @@ entries:
         url: /e/wa-2026-general/
       - label: "Comparisons"
         url: /e/wa-2026-general/comparisons/
+  - corrected_on: 2026-11-01
+    headline: "Sources and filters stay together while scrolling."
+    body: >-
+      Endorsements keeps Precinct, View, Races, Ballot and Sources visible
+      together while you scroll. On wide screens they share one row when the
+      complete controls and race count fit. Narrow screens keep the four
+      filters above Sources and the race count. Sources still opens the same
+      source-selection page; source choices and ballot filters remain independent.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Approved Sources and filters grouping"
+        url: https://github.com/shaug/seattle-election-guide/issues/679
