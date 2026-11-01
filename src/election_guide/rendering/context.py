@@ -585,6 +585,13 @@ def _filter_options(view_model: PublicationViewModel) -> list[str]:
     )
 
 
+def all_ballot_scope_label(view_model: PublicationViewModel) -> str:
+    """The all-scope copy shared by general selects and their published options."""
+    return (
+        "All ballot races" if view_model.precinct_ballot is not None else "All Seattle ballot races"
+    )
+
+
 def filter_scope_groups(view_model: PublicationViewModel) -> list[FilterScopeGroupView]:
     """The Ballot filter's option groups, in rendered order.
 
@@ -614,7 +621,7 @@ def filter_scope_groups(view_model: PublicationViewModel) -> list[FilterScopeGro
     return [
         FilterScopeGroupView(
             label=None,
-            options=(option("all", "All Seattle ballot races"),),
+            options=(option("all", all_ballot_scope_label(view_model)),),
         ),
         FilterScopeGroupView(
             label="Ballot sections",

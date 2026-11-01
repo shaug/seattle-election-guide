@@ -1,3 +1,4 @@
+import { wireCompactFilters } from './compact-filters.mjs';
 // The Comparisons page's client entry (docs/FRONTEND.md § Modules). Its import
 // graph is the whole of the page's client code; the bundle esbuild builds from
 // it is inlined into compare.html.j2, which does nothing but invoke `boot`.
@@ -10,4 +11,5 @@ export function boot() {
   wireComparisons();
   wireElectionDay();
   wireShellShare();
+  wireCompactFilters();
 }

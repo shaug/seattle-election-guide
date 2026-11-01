@@ -99,6 +99,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
                         "key": name,
                         "windowsVirtualKeyCode": code,
                         "modifiers": modifiers,
+                        **({"text": "\r"} if name == "Enter" and kind == "keyDown" else {}),
                     },
                     session_id=session,
                 )
@@ -133,7 +134,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
             l.top>=d.top&&l.bottom<=Math.min(d.bottom,
               document.querySelector('.precinct-actions').getBoundingClientRect().top)-8&&
             document.querySelector('dialog').style.getPropertyValue(
-              '--precinct-viewport-height')===v.height+'px';
+              '--filter-height')===Math.max(0,v.height-16)+'px';
         })()""")
         press("Escape", 27)
         evaluate("""window.nativePopupEscape=document.querySelector('dialog').open&&
@@ -192,12 +193,16 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
           // before starting a separate keyboard interaction with Ballot.
           await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
           const select=document.querySelector('#race-filter,[data-comparison-section-filter]');
-          select.focus();
-          window.nativeBallotFocused=document.activeElement===select;
-          const r=select.getBoundingClientRect();
+          const trigger=document.querySelector('[data-filter-open=ballot]');
+          trigger.focus();
+          window.nativeBallotFocused=document.activeElement===trigger;
+          const r=trigger.getBoundingClientRect();
           window.nativeBallotHitTarget=r.width>=40&&r.height>=40&&r.top>=0&&
-            r.bottom<=innerHeight&&document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===select;
+            r.bottom<=innerHeight&&trigger.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));
         })()""")
+        press(" ", 32)
+        evaluate("""window.nativeBallotFocused&&=document.activeElement===document.querySelector(
+            '#race-filter,[data-comparison-section-filter]');""")
         # Native select type-ahead: Federal is the only F-prefixed option.
         cdp.command(
             "Input.dispatchKeyEvent",
@@ -263,6 +268,10 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
           containedPopup&&=r.left>=d.left&&r.right<=d.right&&r.top>=d.top&&r.bottom<=d.bottom;
           actionsClear&&=r.bottom<=action.top-8;
           measurements.at(-1).listBottom=r.bottom;
+          measurements.at(-1).listTop=r.top;
+          measurements.at(-1).actionGap=action.top-r.bottom;
+          measurements.at(-1).firstOptionHeight=list.firstElementChild
+            ?.getBoundingClientRect().height;
           const privacy=document.querySelector('.address-privacy').getBoundingClientRect();
           const hit=document.elementFromPoint(r.left+r.width/2,r.top+Math.min(15,r.height/2));
           overlaysContent&&=getComputedStyle(list).position==='absolute'&&r.top<privacy.bottom&&
@@ -286,7 +295,8 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const options=[...document.querySelectorAll('[role=option]')];
       const mixed=options.some(o=>o.dataset.kind==='precinct')&&
         options.some(o=>o.dataset.kind==='address');
-      const singleEditor=document.querySelectorAll('dialog input').length===1&&
+      const singleEditor=document.querySelectorAll(
+        '[data-precinct-control] dialog input').length===1&&
         input.getAttribute('role')==='combobox'&&!document.querySelector('datalist')&&
         !document.querySelector('[data-address-mode],[data-direct-mode]')&&
         document.querySelectorAll('dialog a').length===1;
@@ -332,7 +342,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const ready=!document.querySelector('[data-precinct-submit]').disabled;
       click('[data-precinct-submit]');
       const committed=new URLSearchParams(location.search).get('precinct')==='3230';
-      const precinctShown=document.querySelector('[data-precinct-open]')
+      const precinctShown=document.querySelector('[data-precinct-name]')
         .textContent==='SEA 34-3230';
       const filterRect=()=>{const r=document.querySelector('.filter-control-bar')
         .getBoundingClientRect();
@@ -344,7 +354,9 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         .map(r=>r.dataset.publicationRaceId??r.dataset.comparisonRace).sort();
       const expected=contract.precincts.find(p=>p.code==='3230').contest_ids;
       const geographic=ids().length>0&&ids().every(id=>expected.includes(id));
-      document.querySelector('#complete-filter,[data-comparison-all-races]').click();
+      const races=document.querySelector('[data-filter-native=races]');
+      races.value=[...races.options].find(o=>o.textContent.trim()==='All').value;
+      races.dispatchEvent(new Event('change',{bubbles:true}));
       const allExact=JSON.stringify(ids())===JSON.stringify([...expected].sort());
       click('[data-precinct-open]');
       const reopenedPrecinct=input.value==='SEA 34-3230';
@@ -354,7 +366,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       const popupEscape=esc.defaultPrevented&&document.querySelector('dialog').open;
       click('[data-precinct-cancel]');
       const cancelPreserved=new URLSearchParams(location.search).get('precinct')==='3230'&&
-        input.value===''&&document.querySelector('[data-precinct-open]')
+        input.value===''&&document.querySelector('[data-precinct-name]')
           .textContent==='SEA 34-3230';
       const noLeak=!location.href.includes('600')&&
         localStorage.getItem('seg-precinct-v1:wa-2026-general')==='3230';
@@ -366,14 +378,14 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
       history.pushState({},'',location.href);
       click('[data-precinct-clear]');
       await traverse('back');
-      const backPrecinct=document.querySelector('[data-precinct-open]')
+      const backPrecinct=document.querySelector('[data-precinct-name]')
         .textContent==='SEA 34-3230'&&
         new URLSearchParams(location.search).get('precinct')==='3230';
       await traverse('forward');
       const forwardClear=new URLSearchParams(location.search).get('precinct')==='all'&&
         document.querySelector('[data-precinct-clear]')===null;
       await traverse('back');
-      const historyLabel=document.querySelector('[data-precinct-open]').textContent==='SEA 34-3230';
+      const historyLabel=document.querySelector('[data-precinct-name]').textContent==='SEA 34-3230';
       click('[data-precinct-clear]');click('[data-precinct-open]');
       input.value='3230';input.dispatchEvent(new Event('input',{bubbles:true}));
       document.querySelector('[role=option][data-kind=precinct][data-code="3230"]').click();
@@ -391,7 +403,7 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
         statusContainer.getBoundingClientRect().height>0;
       click('[data-precinct-submit]');
       const localWorks=new URLSearchParams(location.search).get('precinct')==='3230'&&
-        document.querySelector('[data-precinct-open]').textContent==='SEA 34-3230';
+        document.querySelector('[data-precinct-name]').textContent==='SEA 34-3230';
       const directFilterRect=filterRect();
       const sameFilterGeometry=addressFilterRect.every((v,i)=>Math.abs(v-directFilterRect[i])<1);
       measurements.push({state:'address-applied',filter:addressFilterRect},
@@ -428,6 +440,103 @@ def test_address_selection_preserves_real_dialog_commit_and_geographic_views(
     )
 
 
+@pytest.mark.parametrize("page", ["guide", "compare"])
+def test_short_dialog_action_clearance_and_complete_zoom_option_together(
+    tmp_path: Path,
+    general_view: PublicationViewModel,  # noqa: F811
+    page: str,
+) -> None:
+    document = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / f"joint-clearance-{page}.html"
+    path.write_text(
+        document.replace("<head>", "<head><script>" + _address_transport_mock() + "</script>", 1)
+    )
+
+    def interact(cdp: _CdpSocket, session: str) -> None:
+        def ev(source: str) -> object:
+            result = cdp.command(
+                "Runtime.evaluate",
+                {"expression": source, "awaitPromise": True, "returnByValue": True},
+                session_id=session,
+            )
+            assert "exceptionDetails" not in result, result
+            return result["result"].get("value")
+
+        ev("""window.joint=[];
+          document.querySelector('[data-precinct-open]').click();
+          const input=document.querySelector('#voting-precinct');
+          input.value='1279';input.dispatchEvent(new Event('input',{bubbles:true}));
+          document.querySelector('[data-code="1279"]').click();
+          document.querySelector('[data-precinct-submit]').click();
+          window.appliedURL=location.href;
+          document.querySelector('[data-precinct-open]').click();
+          window.readJoint=async phase=>{
+            const d=document.querySelector('dialog'),l=d.querySelector('[data-ballot-options]');
+            d.scrollTop=0;l.scrollTop=0;
+            await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+            const take=()=>{const box=d.getBoundingClientRect(),list=l.getBoundingClientRect(),
+              first=l.firstElementChild.getBoundingClientRect(),v=visualViewport;
+              const actions=[...d.querySelectorAll('[data-precinct-clear],.precinct-actions')]
+                .map(e=>e.getBoundingClientRect()).filter(r=>r.height>0);
+              return {dialog:box.toJSON(),list:list.toJSON(),first:first.toJSON(),
+                firstText:l.firstElementChild.textContent,
+                viewport:{left:v.offsetLeft,top:v.offsetTop,width:v.width,height:v.height},
+                listClientTop:l.clientTop,listClientHeight:l.clientHeight,
+                listScrollHeight:l.scrollHeight,cap:l.style.getPropertyValue('--precinct-options-height'),
+                actionBoxes:actions.map(r=>r.toJSON()),
+                actionGap:Math.min(...actions.map(r=>r.top))-list.bottom,
+                complete:first.top>=Math.max(box.top,v.offsetTop,list.top+l.clientTop)-.5&&
+                  first.bottom<=Math.min(box.bottom,v.offsetTop+v.height,
+                    list.top+l.clientTop+l.clientHeight)+.5};};
+            const before=take();l.firstElementChild.scrollIntoView({block:'nearest'});
+            const after=take();l.scrollTop=l.scrollHeight;
+            window.joint.push({phase,before,after,listScrolls:l.scrollTop>0,
+              url:location.href,clearPresent:!!d.querySelector('[data-precinct-clear]')});
+          };
+          window.suggestionMode='long';input.value='Public civic long';
+          input.dispatchEvent(new Event('input',{bubbles:true}));""")
+        ev("new Promise(r=>setTimeout(r,400))")
+        ev("readJoint('normal-long-address')")
+        for width in [320, 280]:
+            cdp.command(
+                "Emulation.setDeviceMetricsOverride",
+                {"width": width, "height": 240, "deviceScaleFactor": 1, "mobile": False},
+                session_id=session,
+            )
+            cdp.command("Emulation.setPageScaleFactor", {"pageScaleFactor": 2}, session_id=session)
+            ev("""window.suggestionMode='empty';input.value='1279';
+              input.dispatchEvent(new Event('input',{bubbles:true}));""")
+            ev("new Promise(r=>setTimeout(r,400))")
+            ev(f"readJoint('zoom-{width}')")
+        ev("document.querySelector('[data-precinct-cancel]').click()")
+
+    result = _evaluate_in_chrome(
+        path,
+        """JSON.stringify({rows:joint,url:location.href,appliedURL,
+          focus:document.activeElement===document.querySelector('[data-precinct-open]'),
+          storage:JSON.stringify(localStorage),calls:addressCalls})""",
+        viewport=(390, 400),
+        interact=interact,
+    )
+    (tmp_path / "joint-action-and-zoom.json").write_text(json.dumps(result, indent=2) + "\n")
+    normal, *zoom = result["rows"]
+    assert normal["listScrolls"] and normal["after"]["actionGap"] >= 8, result
+    assert all(r["after"]["complete"] and r["after"]["actionGap"] >= 8 for r in zoom), result
+    assert all(r["clearPresent"] and r["url"] == result["appliedURL"] for r in result["rows"]), (
+        result
+    )
+    assert result["focus"] and result["url"] == result["appliedURL"], result
+    assert "Public civic long" not in result["url"] + result["storage"], result
+
+
 def test_address_applied_precinct_survives_real_reload(
     navigation_site: tuple[Path, str],  # noqa: F811
 ) -> None:
@@ -455,7 +564,7 @@ for(const suffix of ['', 'comparisons/']) {
  await new Promise(resolve=>setTimeout(resolve,100));
  equal(doc().querySelector('[data-precinct-submit]').disabled,false,'resolved address ready');
  doc().querySelector('[data-precinct-submit]').click();
- equal(doc().querySelector('[data-precinct-open]').textContent,'SEA 34-3230','address applied');
+ equal(doc().querySelector('[data-precinct-name]').textContent,'SEA 34-3230','address applied');
  const scope=()=>doc().querySelector('#race-filter,[data-comparison-section-filter]');
  const choices=()=>[...scope().options].map(o=>o.value);
  const addressChoices=choices();
@@ -466,7 +575,7 @@ for(const suffix of ['', 'comparisons/']) {
  await load(selectedURL);
  equal(win().location.href,selectedURL,'real reload URL');
  equal(ids(),selectedIds,'real reload membership');
- equal(doc().querySelector('[data-precinct-open]').textContent,'SEA 34-3230','reload precinct');
+ equal(doc().querySelector('[data-precinct-name]').textContent,'SEA 34-3230','reload precinct');
  doc().querySelector('[data-precinct-open]').click();
  equal(doc().querySelector('#voting-precinct').value,'SEA 34-3230','reload reopened precinct');
  doc().querySelector('[data-precinct-cancel]').click();
