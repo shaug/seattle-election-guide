@@ -9,7 +9,7 @@ elections:
   source_panel_hash: 5b9645bcfd45f9749ca6602e70b748e3b45566f9feee1fc67c729cf60a893569
   source_registry_hash: d9c0bfbad3bd963d11b24ee45d1ae3bfe8f2b16a6b489fd80e6cf463efdc1f27
   publication_request:
-    issue_number: 679
+    issue_number: 676
     previous_release_sha: 79ebdd7811599d9073b5eaa5de6097f415aead39
     inputs:
       ledger_sha256: ea625b8b3a580bbadf5e968f9eb1df88a4e61377f53e5c8b0917486d986ae509
@@ -19,6 +19,7 @@ elections:
   release_manifest_sha256: null
   bundle_sha256: null
 - election_id: wa-2026-primary
+  updates_from_current_source: true
   bundle_id: wa-2026-primary-2026-primary.9
   release_version: 2026-primary.9
   source_panel_id: wa-2026-primary-default-sources-v4

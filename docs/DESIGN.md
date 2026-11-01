@@ -639,3 +639,30 @@ navigation target. The icons keep their size, the count stays on one line, and
 the group keeps two sticky rows. Measure the complete family again in that face
 and restore ordinary spacing and the one-line face when space returns. A wide
 viewport does not grant a minimum size to a constrained Guide container.
+
+## Election Updates (#676)
+
+The approved version-2 study uses the existing measured election shell and serif entry headlines.
+The tagline is “What changed in this election’s endorsements, sources and results.” Dates mean
+publication in this guide. Quiet action tags and topic labels accompany each dated chronological
+entry; evidence and affected-page links remain visible. No illustrative events become production data.
+
+Scott’s November 1 refinement replaces the study’s four choices with exactly three text buttons:
+Endorsements, Sources, Results. The topics toggle independently with OR matching. None selected
+is the default and shows all updates; clearing the final selected topic restores the complete log.
+All three selected remain selected. There is no All updates button or extra focus stop. Navy/high-contrast highlight and `aria-pressed` expose selection. Buttons have
+centered labels with no checks, icons, placeholders or reserved icon space; targets are at least
+44px. Below 40rem the three choices wrap naturally, filling each row without a reserved empty
+cell or horizontal page overflow.
+Keyboard Tab order follows the labels; native Enter/Space activate the focused button with the
+shared focus-token outline. Selection preserves focus and announces the matching count through
+a persistent polite status element. An empty result says so and explains that clearing selections
+restores the complete log.
+
+Topic-selection and date-explanation helper paragraphs are omitted below the topic bar.
+
+The complete log remains readable without JavaScript; server controls are disabled until enhanced
+and the page explains that filtering needs JavaScript. Topics never inherit ballot, precinct or
+source selections. Software release history is linked to GitHub Releases. This is an additive topic
+group, not the shared mutually exclusive radio component. Legacy immutable schema1.0 pages retain
+the original Corrections template and stylesheet until an explicitly scoped current-log migration.

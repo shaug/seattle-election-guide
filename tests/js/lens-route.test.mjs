@@ -78,6 +78,7 @@ test('a race redirect from a bare permalink leaves no fragment behind', async ()
 // every exception is recorded here with its argument rather than left implicit,
 // so adding one is a change to this list.
 const LOCATION_OWNERS = {
+  'updates-route.mjs': 'The Updates index owns its independent topics query and history here.',
   'lens-route.mjs':
     'The guide, its race pages, and the sources editor own their address bar here. One ' +
     'fragment schema, one owner: all three read and write the same lens fragment.',

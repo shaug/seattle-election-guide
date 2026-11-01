@@ -43,6 +43,7 @@ PAGE_STYLESHEETS: dict[str, tuple[str, ...]] = {
     "sources": ("base.css", "lens-pages.css", "sources.css"),
     "compare": ("base.css", "compare.css"),
     "corrections": ("base.css", "corrections.css"),
+    "updates": ("base.css", "updates.css"),
     "about": ("base.css", "about.css"),
     "archive": ("base.css", "archive.css"),
     "not-found": ("base.css", "not-found.css"),

@@ -58,6 +58,7 @@
     "rendering/templates/_shell.html.j2 now."
   ],
   "inline_script_ceilings": {
+    "updates.html.j2": 1,
     "about.html.j2": 1,
     "archive.html.j2": 1,
     "compare.html.j2": 1,
@@ -68,6 +69,7 @@
     "sources.html.j2": 1
   },
   "module_injection_placeholders": {
+    "updates.html.j2": ["updates_entry_script"],
     "about.html.j2": [
       "shell_entry_script"
     ],

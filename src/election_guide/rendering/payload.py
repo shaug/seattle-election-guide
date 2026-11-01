@@ -30,6 +30,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, RootModel
 from pydantic.json_schema import GenerateJsonSchema
 
+from election_guide.corrections.models import ElectionCorrections, UpdateTopic
 from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.models import PublicationSource, PublicationViewModel
 from election_guide.publication.personalization import PersonalizationContract
@@ -396,6 +397,43 @@ class ComputedGrade(RootModel[Grade]):
     """
 
 
+class UpdateTopicLabel(ClientPayloadModel):
+    id: UpdateTopic
+    label: str
+
+
+class UpdateFilterEntry(ClientPayloadModel):
+    key: str
+    topics: list[UpdateTopic]
+
+
+class UpdatesPayload(ClientPayloadModel):
+    schema_version: Literal["1.0"] = "1.0"
+    topics: list[UpdateTopicLabel]
+    count_labels: list[str]
+    entries: list[UpdateFilterEntry]
+
+
+def updates_payload(corrections: ElectionCorrections) -> UpdatesPayload:
+    """Metadata only: the complete prose remains the server's readable log."""
+    return UpdatesPayload(
+        topics=[
+            UpdateTopicLabel(id="endorsements", label="Endorsements"),
+            UpdateTopicLabel(id="sources", label="Sources"),
+            UpdateTopicLabel(id="results", label="Results"),
+        ],
+        count_labels=[
+            f"{n} update{'s' if n != 1 else ''}" for n in range(len(corrections.entries) + 1)
+        ],
+        entries=[
+            UpdateFilterEntry(key=str(i), topics=entry.topics)
+            for i, entry in enumerate(
+                sorted(corrections.entries, key=lambda e: e.corrected_on, reverse=True)
+            )
+        ],
+    )
+
+
 class ClientPayloadTypes(ClientPayloadModel):
     """The complete client type surface, in one root.
 
@@ -409,6 +447,7 @@ class ClientPayloadTypes(ClientPayloadModel):
     sources_page: SourcesPayload | GeneralSourcesPayload
     comparisons_page: ComparisonsPayload
     computed_grade: ComputedGrade
+    updates_page: UpdatesPayload
 
 
 class ClientPayloadTypesError(RuntimeError):

@@ -1088,3 +1088,34 @@ clearance, fractional fit boundaries, font/container changes, focus and recovery
 Existing native-control, precinct/address/history and Comparisons regressions
 remain required. Headless geometry does not replace mandatory interactive native
 menu acceptance or establish native Safari/physical-device observations.*
+
+## Election Updates (#676)
+
+`updates-entry.mjs` composes shell Share, the existing `wireElectionDay` calendar behavior,
+and `updates-client.mjs`. The banner utility/calendar behavior stays unchanged; the new election
+entry preserves the major-page shell contract in RESULTS.md. A generated `UpdatesPayload`
+carries fixed topic order/labels, stable per-render entry keys/topics and all possible count labels;
+prose remains fully server-rendered. New schema1.1 records render `updates.html.j2`/`updates.css`;
+legacy1.0 records retain the original template/stylesheet and shape. No permalink identity is added
+(#677 owns that work).
+
+The controls region is taken over at boot and renders exactly three keyed lit topic buttons.
+There is no All control or payload label for one. Empty selection shows the complete log;
+clearing the final selected topic restores it, while selecting all three keeps all three pressed. Count text renders
+into the existing server live region. One resolved selection projects `hidden` on the existing
+server-owned entry roots and empty-state root; bodies are never read back, duplicated or replaced.
+This explicitly extends the existing root-boolean projection shape to Updates without adding
+independent content state. The unenhanced complete log remains readable and controls disabled.
+
+`updates-route.mjs` is the sole reader/writer of this page's `location` and `history`, owning only
+`topics`. It admits recognized tokens from repeated/comma-separated values, deduplicates in payload
+order, ignores unknown tokens and canonicalizes to one query key (omitted for none). Unrelated
+parameters/fragments survive without being interpreted. User changes push history; boot canonicalizes
+with replace; Back/Forward restores controls and matching entries without moving focus. No storage
+or precinct/source capability is involved.
+
+*Check: `updates-client.test.mjs` covers all eight OR subsets, duplicates, exactly three controls, final deselection,
+empty results and persistent focus/live roots; `updates-route.test.mjs` covers admission/query
+ownership. `test_corrections_rendering.py` checks no-script markup plus actual headless browser
+44px geometry, centered checkless labels, no reserved row gap, native Tab/Space/Enter order, focus and history at
+320/360/390/1280px. Actual screen-reader announcements are not claimed from DOM semantics alone.*

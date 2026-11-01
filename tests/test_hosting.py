@@ -951,6 +951,77 @@ def test_enabled_corrections_stage_verify_and_route_exact_asset(tmp_path: Path) 
     assert results[6]["status"] == 404
 
 
+def test_explicit_current_updates_projection_preserves_immutable_election_assets(
+    tmp_path: Path,
+) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    _enable_corrections(current)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    baseline = tmp_path / "before"
+    stage_pages_site(manifest, {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older}, baseline)
+    declaration = yaml.safe_load(manifest.read_text())
+    declaration["elections"][0]["updates_from_current_source"] = True
+    manifest.write_text(yaml.safe_dump(declaration))
+    authored = tmp_path / "authored"
+    authored.mkdir()
+    authored_file = authored / f"{CURRENT_ID}.yaml"
+    authored_file.write_text(
+        yaml.safe_dump(
+            {
+                "schema_version": "1.1",
+                "election_id": CURRENT_ID,
+                "entries": [
+                    {
+                        "corrected_on": "2026-10-11",
+                        "headline": "Restored election records.",
+                        "body": "All historical decisions and certified results are restored.",
+                        "topics": ["endorsements", "results"],
+                        "actions": ["correction"],
+                    }
+                ],
+            }
+        )
+    )
+    bundle_hashes = {
+        p.relative_to(current): hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in current.rglob("*")
+        if p.is_file()
+    }
+    after = tmp_path / "after"
+    stage_pages_site(
+        manifest, {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older}, after, updates_dir=authored
+    )
+    deployed = verify_staged_pages_site(after, manifest)
+    projected = deployed.elections[0].updates_projection
+    assert projected is not None and projected.source_git_commit == COMMIT
+    assert projected.authored_sha256 == hashlib.sha256(authored_file.read_bytes()).hexdigest()
+    root = f"e/{CURRENT_ID}/"
+    for path in (baseline / root).rglob("*"):
+        if (
+            not path.is_file()
+            or path.relative_to(baseline).as_posix() == root + "updates/index.html"
+        ):
+            continue
+        assert (after / path.relative_to(baseline)).read_bytes() == path.read_bytes()
+    assert bundle_hashes == {
+        p.relative_to(current): hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in current.rglob("*")
+        if p.is_file()
+    }
+    log = (after / root / "updates/index.html").read_text()
+    assert "Restored election records." in log and "seg-updates-source" in log
+    assert "Original election archive" in log
+    assert deployed.elections[0].git_commit == COMMIT
+
+    # Self-consistent asset hashes cannot substitute a different overlay source.
+    deployment_path = after / "deployment-manifest.json"
+    raw_deployment = json.loads(deployment_path.read_text())
+    raw_deployment["elections"][0]["updates_projection"]["source_git_commit"] = OLDER_COMMIT
+    deployment_path.write_bytes(canonical_json_bytes(raw_deployment))
+    with pytest.raises(ValueError, match="Updates provenance"):
+        verify_staged_pages_site(after, manifest)
+
+
 def test_disabled_corrections_stage_no_page_or_nav_exposure(tmp_path: Path) -> None:
     """Issue #290, acceptance criterion 1: an election with no corrections
     file renders no page and no nav link -- the default fixture bundle

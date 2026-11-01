@@ -15,6 +15,7 @@ from election_guide.hosting import updates_baseline
 from election_guide.hosting.production_check import Observation
 from election_guide.hosting.updates import UPDATES_SNAPSHOT, build_updates_snapshot
 from election_guide.serialization import canonical_json_bytes
+from tests.test_updates_gate import _seal  # pyright: ignore[reportPrivateUsage]
 from tests.test_updates_gate import sites as sites
 
 
@@ -257,3 +258,49 @@ def test_durable_snapshot_rejects_a_different_manifest_at_the_verified_source(
 
     with pytest.raises(ValueError, match=r"manifest.*verified upload"):
         updates_baseline.resolve_production_snapshot(tmp_path / "download")
+
+
+@pytest.mark.parametrize("available, changed_source", [(False, False), (True, False), (True, True)])
+def test_old_policy_upgrade_requires_the_exact_verified_original_site(
+    tmp_path: Path,
+    sites: tuple[Path, Path],
+    production: dict[str, Any],
+    monkeypatch: pytest.MonkeyPatch,
+    available: bool,
+    changed_source: bool,
+) -> None:
+    snapshot = build_updates_snapshot(sites[0]).model_dump(mode="json")
+    snapshot["schema_version"] = "1.0"
+    for election in snapshot["elections"].values():
+        election.pop("information_pages")
+    payload = canonical_json_bytes(snapshot)
+    (sites[0] / UPDATES_SNAPSHOT).write_bytes(payload)
+    _seal(sites[0])
+    production["live"] = (sites[0] / "deployment-manifest.json").read_bytes()
+    production["download"] = available
+
+    def fetch_asset(base_url: str, path: str, *, timeout: float) -> tuple[Observation, bytes]:
+        return Observation(status=200), payload
+
+    monkeypatch.setattr(updates_baseline, "fetch_asset_body", fetch_asset)
+    if changed_source:
+        resolve = updates_baseline.resolve_production_baseline
+
+        def changed_receipt(destination: Path) -> dict[str, Any]:
+            receipt = resolve(destination)
+            receipt["git_commit"] = "d" * 40
+            return receipt
+
+        monkeypatch.setattr(updates_baseline, "resolve_production_baseline", changed_receipt)
+    if not available:
+        with pytest.raises(ValueError, match="missing"):
+            updates_baseline.resolve_production_snapshot(tmp_path / "download")
+    elif changed_source:
+        with pytest.raises(ValueError, match="changed during"):
+            updates_baseline.resolve_production_snapshot(tmp_path / "download")
+    else:
+        resolved, receipt = updates_baseline.resolve_production_snapshot(tmp_path / "download")
+        assert resolved.schema_version == "2.0"
+        assert receipt["policy_upgrade_from"] == "1.0"
+        assert receipt["git_commit"] == "a" * 40
+        assert resolved == build_updates_snapshot(sites[0])

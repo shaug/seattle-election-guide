@@ -1,74 +1,6 @@
-schema_version: '1.0'
+schema_version: "1.1"
 election_id: wa-2026-primary
 entries:
-- corrected_on: 2026-10-24
-  headline: Applying the verified-endorsement rule to primary races.
-  body: >-
-    Uncontested primary races use the same visibility rule as general-election
-    races: at least two of the guide's progressive sources must have verified
-    endorsements. The full verified source set determines visibility; choosing
-    fewer sources changes displayed scores only. All 32 current primary races
-    qualify, so the race list and recorded endorsements are unchanged. The
-    revised overview is delivered through a new immutable primary archive.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Shared race visibility policy
-    url: https://github.com/shaug/seattle-election-guide/issues/607
-- corrected_on: 2026-10-24
-  headline: Restored earlier borders on primary race pages.
-  body: >-
-    Earlier endorsement-meter borders returned to individual primary race pages.
-    The archived overview is updated in a separate step. Recorded endorsements,
-    counts, colors, allocations, certified results and touch inspection are unchanged.
-  provenance:
-  - label: Primary race pages
-    url: /e/wa-2026-primary/races/ld-32-state-representative-1/
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Meter-border restoration and delivery sequence
-    url: https://github.com/shaug/seattle-election-guide/issues/598
-- corrected_on: 2026-10-24
-  headline: Preparing to restore earlier primary meter borders.
-  body: >-
-    We are preparing to restore the earlier endorsement-meter borders on primary
-    race pages and the overview. The restoration has not reached the website yet.
-    Recorded endorsements, counts, colors, allocations, certified results and
-    touch inspection will stay the same.
-  provenance:
-  - label: Primary race pages
-    url: /e/wa-2026-primary/races/ld-32-state-representative-1/
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Meter-border restoration
-    url: https://github.com/shaug/seattle-election-guide/issues/598
-- corrected_on: 2026-10-23
-  headline: Rounded split borders on the archived primary overview.
-  body: >-
-    The refreshed archived overview shows borders that follow the rounded
-    opening and closing transitions of partial-endorsement meters. Its earlier
-    archive was built before the closing-border correction. Recorded endorsements,
-    counts, colors, allocations and certified results are unchanged.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Split-border correction
-    url: https://github.com/shaug/seattle-election-guide/issues/598
-- corrected_on: 2026-10-22
-  headline: Updated primary race-page meter borders and touch inspection.
-  body: >-
-    Split-endorsement borders on individual race pages follow their rounded opening
-    and closing transitions. Rebuilding the archived overview also brings its touch
-    meters into line with the current guide: percentages remain visible until a
-    press-and-hold reveals individual endorsements. Counts, colors, allocations and
-    certified results are unchanged.
-  provenance:
-  - label: Primary race pages
-    url: /e/wa-2026-primary/races/ld-32-state-representative-1/
-  - label: Split-border correction
-    url: https://github.com/shaug/seattle-election-guide/issues/598
-  - label: Shared touch-meter behavior
-    url: https://github.com/shaug/seattle-election-guide/pull/562
 - corrected_on: 2026-10-16
   headline: Named sparse-race leaders in customized primary views.
   body: >-
@@ -84,6 +16,8 @@ entries:
     url: https://github.com/shaug/seattle-election-guide/pull/533
   - label: New primary release
     url: https://github.com/shaug/seattle-election-guide/releases/tag/2026-primary.4
+  topics: [endorsements]
+  actions: [correction]
 - corrected_on: 2026-10-11
   headline: Restored the completed primary guide.
   body: >-
@@ -102,6 +36,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [endorsements, results]
+  actions: [correction]
 - corrected_on: 2026-10-03
   headline: An older primary snapshot replaced the completed guide.
   body: >-
@@ -121,6 +57,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [endorsements, results]
+  actions: [correction]
 - corrected_on: 2026-09-13
   headline: Completed certified results for all 32 races.
   body: >-
@@ -139,6 +77,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [results]
+  actions: [certified]
 - corrected_on: 2026-08-19
   headline: Published certified results for 24 races and corrected the certification date.
   body: >-
@@ -159,32 +99,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-08-16
-  headline: Kept source-selection context visible on race pages.
-  body: >-
-    The race page’s counted-source strip and Edit sources link stayed visible while readers scrolled
-    through endorsement evidence.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Kept source-selection context visible on race pages
-    url: https://github.com/shaug/seattle-election-guide/pull/376
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-08-09
-  headline: Consolidated the counting notice.
-  body: >-
-    The repeated counting notes were removed from individual race cards. The election banner retained
-    the official-results link and counting status.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Consolidated the counting notice
-    url: https://github.com/shaug/seattle-election-guide/pull/346
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [results]
+  actions: [correction, certified]
 - corrected_on: 2026-08-08
   headline: Added counting status and official results links.
   body: >-
@@ -199,19 +115,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-08-07
-  headline: Added a meter for each endorsed candidate.
-  body: >-
-    Each candidate’s race-page section gained its own static endorsement meter, showing that candidate’s
-    share and split endorsements in context. This replaced the single shared race-page meter.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Added a meter for each endorsed candidate
-    url: https://github.com/shaug/seattle-election-guide/pull/335
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [results]
+  actions: [added]
 - corrected_on: 2026-08-05
   headline: Added 17 previously missed endorsements after election day.
   body: >-
@@ -231,61 +136,8 @@ entries:
   - label: Complete changes, exact shares, and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-data-changes
-- corrected_on: 2026-08-05
-  headline: Showed the endorsement breakdown in the meter.
-  body: >-
-    Endorsement meters gained candidate runs and source blocks, including split endorsements and source
-    tooltips. Captions stated exact endorsement points, including fractions, and race share previews
-    adopted the same breakdown.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Showed the endorsement breakdown in the meter
-    url: https://github.com/shaug/seattle-election-guide/pull/332
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-08-04
-  headline: Gave every race its own page.
-  body: >-
-    Race pages replaced the guide’s dialogs, with individual addresses, page titles and share previews.
-    Existing race-fragment links forwarded to the new pages with the selected sources intact. Sole
-    leaders were named once; ties used separate candidate headings and meters instead of a sole-leader
-    headline.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Gave every race its own page
-    url: https://github.com/shaug/seattle-election-guide/pull/309
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-08-03
-  headline: Explained invalid comparison links.
-  body: >-
-    Unreadable or rejected comparison links began returning to the default comparison with an explanation.
-    A column change that could not be shared was visibly reverted instead of silently doing nothing.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Explained invalid comparison links
-    url: https://github.com/shaug/seattle-election-guide/pull/278
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-08-02
-  headline: Replaced the PDF download with printing from the guide.
-  body: >-
-    The generated PDF edition was retired. Existing PDF links redirected to the primary guide, and
-    browser printing used the guide view the reader was looking at.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Replaced the PDF download with printing from the guide
-    url: https://github.com/shaug/seattle-election-guide/pull/247
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [endorsements]
+  actions: [added]
 - corrected_on: 2026-08-02
   headline: Corrected comparison rounding and selection-link failures.
   body: >-
@@ -300,22 +152,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-08-01
-  headline: Moved Times comparisons to the Comparisons page.
-  body: >-
-    Comparisons joined the public navigation and became the place to compare the Times with the aggregate.
-    Times bars and comparison-only choice sections were removed from the guide and race details; older
-    selection links retained their tallying sources while ignoring the retired comparison toggle.
-    The first comparison column could be removed when three columns were present, and the next column
-    became the reference.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Moved Times comparisons to the Comparisons page
-    url: https://github.com/shaug/seattle-election-guide/pull/231
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [endorsements]
+  actions: [correction]
 - corrected_on: 2026-07-31
   headline: Marked races without a majority.
   body: >-
@@ -330,34 +168,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-07-31
-  headline: Added side-by-side endorsement comparisons.
-  body: >-
-    A direct comparison page let readers compare all sources, organizations or categories, with the
-    first column as the reference. Shared links retained the columns and race, section and differences-only
-    filters. Agreement and disagreement were stated in words, while missing endorsements and out-of-scope
-    sources stayed distinct.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Added side-by-side endorsement comparisons
-    url: https://github.com/shaug/seattle-election-guide/pull/178
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-07-31
-  headline: Kept the counted-source total visible.
-  body: >-
-    The guide’s source strip began showing the sources being counted even with the default selection,
-    with actions to customize sources or restore all sources.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Kept the counted-source total visible
-    url: https://github.com/shaug/seattle-election-guide/pull/188
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [endorsements]
+  actions: [added]
 - corrected_on: 2026-07-30
   headline: Corrected personalized race details and shared links.
   body: >-
@@ -373,6 +185,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [endorsements]
+  actions: [correction]
 - corrected_on: 2026-07-29
   headline: Moved source selection to its own page and corrected its total.
   body: >-
@@ -387,78 +201,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-07-29
-  headline: Clarified the all-sources comparison.
-  body: >-
-    The audited reference was labeled “All sources” with its choice and share, and its agreement or
-    difference from the selected sources was stated in text as well as color. Endorsement meters were
-    made consistent across views.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Clarified the all-sources comparison
-    url: https://github.com/shaug/seattle-election-guide/pull/126
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-07-28
-  headline: Added custom source selections.
-  body: >-
-    Readers could choose source categories or individual organizations and see the resulting choices,
-    shares and counts, with an All sources reference when their selection differed. Source documentation
-    and checkboxes were combined into one tree, including a separate non-tallying Times comparison.
-    The shared-link format changed; earlier links using its previous schema returned to the default
-    with an explanation.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Added custom source selections
-    url: https://github.com/shaug/seattle-election-guide/pull/101
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-07-27
-  headline: Made the Seattle Times comparison optional.
-  body: >-
-    Seattle Times comparison bars, comparison evidence rows and comparison-only choices became hidden
-    by default on the responsive guide. A Customize control could reveal them; showing the Times did
-    not add it to the endorsement tally.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Made the Seattle Times comparison optional
-    url: https://github.com/shaug/seattle-election-guide/pull/88
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-07-25
-  headline: Added a compact ballot and contested-race filter.
-  body: >-
-    Readers could switch between full and compact endorsement views and limit either view to contested
-    races. Contested status came from the official ballot choices, and shared links retained the selected
-    view and race filter.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Added a compact ballot and contested-race filter
-    url: https://github.com/shaug/seattle-election-guide/pull/74
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
-- corrected_on: 2026-07-24
-  headline: Added election links and shareable race details.
-  body: >-
-    The primary received a stable election address and an archive entry. Each recommendation opened
-    candidate-centered endorsement details with evidence links, split-endorsement labels and separate
-    nonendorsement and missing-coverage explanations; race links could be shared and restored.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Added election links and shareable race details
-    url: https://github.com/shaug/seattle-election-guide/pull/73
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [sources]
+  actions: [correction]
 - corrected_on: 2026-07-23
   headline: Added six organizations and 35 recorded decisions.
   body: >-
@@ -475,19 +219,8 @@ entries:
   - label: Complete changes, exact shares, and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-data-changes
-- corrected_on: 2026-07-22
-  headline: Put races in ballot order.
-  body: >-
-    Races were organized by ballot section and jurisdiction, with judicial offices under the jurisdiction
-    they serve.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Put races in ballot order
-    url: https://github.com/shaug/seattle-election-guide/pull/59
-  - label: Complete changes and publication dates
-    url: >-
-      https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [endorsements, sources]
+  actions: [added]
 - corrected_on: 2026-07-21
   headline: Opened the website with 312 additional recorded decisions.
   body: >-
@@ -507,6 +240,8 @@ entries:
   - label: Complete changes, exact shares, and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-data-changes
+  topics: [endorsements, sources]
+  actions: [added, coverage]
 - corrected_on: 2026-07-21
   headline: Simplified endorsement agreement and source disclosures.
   body: >-
@@ -522,6 +257,8 @@ entries:
   - label: Complete changes and publication dates
     url: >-
       https://github.com/shaug/seattle-election-guide/blob/2026-general.10/docs/UPDATES_HISTORY_AUDIT_2026-10-16.md#primary-page-changes
+  topics: [endorsements, sources]
+  actions: [coverage]
 - corrected_on: 2026-07-19
   headline: Published the first downloadable primary guide.
   body: >-
@@ -531,20 +268,5 @@ entries:
   provenance:
   - label: First primary release
     url: https://github.com/shaug/seattle-election-guide/releases/tag/2026-primary.1
-
-- corrected_on: 2026-10-25
-  headline: Preparing manual district setup and saved ballots.
-  body: >-
-    We are preparing a way to choose your districts, save those choices on this
-    device, and see which contests apply to you. This entry records preparation
-    only; the live guide does not yet offer the new district setup. Location
-    lookup and ballot ordering remain separate work. Recorded endorsements,
-    source choices, scores and certified results are unchanged. This is not a
-    new verification of endorsement sources.
-    The archived primary overview will need a separate update before it can
-    offer the new setup.
-  provenance:
-  - label: Primary guide
-    url: /e/wa-2026-primary/
-  - label: Manual ballot membership and delivery scope
-    url: https://github.com/shaug/seattle-election-guide/issues/608
+  topics: [endorsements, sources]
+  actions: [added]

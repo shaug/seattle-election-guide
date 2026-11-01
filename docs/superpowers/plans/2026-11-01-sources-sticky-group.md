@@ -42,11 +42,11 @@
 
 ### Task 2: Candidate declaration and acceptance evidence
 
-**Files:** Owning `config/hosting/site.yaml` current general request; append a faithful general Updates entry for changed persistent controls. Preserve every previous whole entry. All raw receipts and visual evidence stay outside source worktree in the #679 delivery folder.
+**Files:** Owning `config/hosting/site.yaml` current general request. The original M44 candidate appended a software announcement under that policy; M45/#676 supersedes it with election-information-only Updates. Reconciliation retains M45's complete authored logs and durable originals, with the Sources layout change in software history. All raw receipts and visual evidence stay outside source worktree in the #679 delivery folder.
 
-**Interfaces:** Candidate keeps existing ledger/dataset/registry bytes and primary pins. Version is a local unreserved proposal only; root rechecks remote publication/version order. Prohibited tag/collection endpoints remain untouched.
+**Interfaces:** Candidate keeps existing ledger/dataset/registry bytes and primary pins. Version is a local unreserved proposal only; root rechecks remote publication/version order. Normal supported repository CLI preparation/admission and authenticated Updates checks use the settled authority recorded in the delivery evidence. No source-provider or native-browser access is implied.
 
-- [ ] Prepare the issue’s exact input-bound local request and faithful Updates entry; commit final candidate before current-head checks.
+- [ ] Prepare the issue's exact input-bound local request and apply the current Updates editorial contract; commit final candidate before current-head checks.
 - [ ] Run actual committed-head `make check`, reproducibility, resolve/request validation, stage/hosting verify and authenticated `make check-updates` as applicable. Preserve raw commands, times, head/tree, results and failures.
 - [ ] Capture 320/360/390/intermediate/wide, measured transition both sides, constrained-container/font/long-values/source-change screenshots and geometry from the exact candidate. Record headless scope and pending native acceptance honestly.
 - [ ] Recheck clean head/tree and criterion ledger. Return the committed candidate and evidence to root at the exact fresh-review restriction, without launching review or publishing.
@@ -73,3 +73,25 @@ long-source300/280px container failures require this scoped correction.
   geometry defect first, then run `make check` alone at the final committed head.
 - [ ] Reuse genuinely current readiness/visual evidence and preserve previous
   heads’ exact reports; root still owns review and all publication.
+
+### Task 4: Reconcile shipped M45 before preview
+
+- [ ] Preserve the exact clean `0bba623` candidate, failed and successful receipts,
+  ignored release/stage artifacts and canonical blocked handoff; retain the same
+  zero-of-three review-cycle accounting.
+- [ ] Merge shipped `2e93382a14d30798baa43c0f26c39f5c67217385` normally into the
+  existing branch. Retain both owning Guide/Updates contracts, all 66 audit
+  originals, exact 18-general/15-primary authored logs, primary9 pins and its
+  route-only current Updates projection. Remove only the unpublished #679
+  software announcement from the current public log under M45's policy.
+- [ ] Use repository-owned release preparation after merge ancestry is present
+  to capture live main/tag/release ordering and bind a new unused #679 proposal.
+  General68 is published and cannot be reused. Keep the proposal unreserved.
+- [ ] Prove focused source/Updates integration, commit the revised candidate,
+  settle its build/stage and full geometry matrix, then run its required full
+  gate alone and remaining current-head normal readiness. Prior-head successes
+  remain historical evidence.
+- [ ] Root recovers the prior authorized officemini Safari owner/session and
+  exact denied operation before the specifically authorized retry. Bind actual
+  six-control native acceptance to the revised head; fresh review follows that
+  proof. Root owns CI/publication/preview. No #679 production or #677 work.

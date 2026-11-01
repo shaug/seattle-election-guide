@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import subprocess
 import zipfile
 from datetime import UTC, datetime
@@ -111,6 +112,31 @@ def _artifact(producer: Producer, kind: str, artifact_id: int) -> ArtifactRef:
         name=f"{kind}-{producer.run_id}-{producer.run_attempt}",
         digest=FileDigest(sha256="d" * 64, size=123),
         producer=producer,
+    )
+
+
+def test_candidate_staging_binds_current_updates_to_its_repository(
+    prepared: tuple[ResolvedRelease, Producer, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    resolved, producer, output = prepared
+    repository = output.parent
+    calendar = repository / "config/calendar/elections.yaml"
+    calendar.parent.mkdir(parents=True)
+    shutil.copyfile(
+        Path(__file__).resolve().parents[1] / "config/calendar/elections.yaml", calendar
+    )
+
+    def stage(*args: Any, **kwargs: Any) -> Any:
+        assert kwargs.get("updates_dir") == repository / "data/corrections"
+        return stage_pages_site(*args, **kwargs)
+
+    monkeypatch.setattr(candidate, "stage_pages_site", stage)
+    candidate.stage_current_candidate(
+        resolved,
+        repository=repository,
+        bundle_dir=output / "reproducibility-a/bundle",
+        output_dir=output / "bound-stage",
+        source_sha=producer.source_sha,
     )
 
 
