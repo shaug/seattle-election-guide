@@ -1050,3 +1050,34 @@ a checklist or automated pass cannot replace actual evidence. This requirement
 confers no new browser/session/headful/native access, denial retry or workaround.
 Continue unaffected automated work, but do not call the feature/preview accepted
 while interactive acceptance is incomplete.
+
+
+## Guide joined Sources group (#679)
+
+The shared control macro accepts an optional source count/destination only from
+the admitted general Guide. Its source link and two existing announcing roots
+stay server-owned; `projectCompactSources` takes over only the summary span once
+and projects the existing controller's tallying selection and complete accessible
+sentence. It creates no new source/filter state, URL owner or dialog. Legacy
+Guide markup and the Comparisons composition retain their original branches.
+
+`wireCompactFilters` remains the fit owner. The Guide-only source slot reserves
+“All total” and “total of total” in the actual link styles, alongside the existing
+complete control families. The complete centered controls-plus-Sources group and
+twice the current count's side reservation must fit before admitting one row.
+Otherwise CSS grid puts Sources and the nowrap count on row two, with the four
+controls centered above. Reflow changes grid placement without moving or replacing
+focused controls, link or live status roots. The existing ResizeObserver observes
+the Guide sticky group as well as the bar; font readiness/loading completion and
+resolved source/filter projection remeasure it. Its actual height, including
+notices, supplies Guide anchor clearance. Optional `precinct.css` owns these
+Guide-only selectors; shared `base.css`, archived primary and Comparisons layout
+rules stay unchanged. No viewport constant substitutes for actual fit.
+
+*Check: exists — `guide-client.test.mjs` verifies independent source tally,
+focused-link identity and Ballot scope; `test_precinct_rendering.py` exercises
+320/360/390/intermediate/wide sticky rows, reactive source/race counts, anchor
+clearance, fractional fit boundaries, font/container changes, focus and recovery.
+Existing native-control, precinct/address/history and Comparisons regressions
+remain required. Headless geometry does not replace mandatory interactive native
+menu acceptance or establish native Safari/physical-device observations.*

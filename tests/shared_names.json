@@ -541,6 +541,17 @@
       "client",
       "python",
       "test"
+    ],
+    "data-compact-sources": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-sources-summary": [
+      "template",
+      "client",
+      "test"
     ]
   },
   "class_names": {
@@ -1138,6 +1149,7 @@
       "test"
     ],
     "compact-filter-icon": [
+      "template",
       "stylesheet",
       "client"
     ],
@@ -1175,6 +1187,24 @@
       "test"
     ],
     "filter-control-status": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "compact-source-link": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "screen-guide": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "sticky-header": [
       "template",
       "stylesheet",
       "client",

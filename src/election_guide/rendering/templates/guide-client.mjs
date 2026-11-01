@@ -22,6 +22,7 @@
 // names a race, and it now names a page.
 
 import { html, nothing, render } from 'lit-html';
+import { projectCompactSources } from './compact-filters.mjs';
 import { wireGuideFilters } from './guide-filters.mjs';
 import { createGuideLens, lensCountingSummary } from './guide-lens.mjs';
 import { createLensRouter, onLensHistoryChange } from './lens-route.mjs';
@@ -167,7 +168,13 @@ export function wireGuide(payload) {
    */
   const renderChrome = () => {
     const href = sourcesHref();
-    if (bannerStatus) render(html`${lensCountingSummary(payload, selectedCodes)}`, bannerStatus);
+    const summary = lensCountingSummary(payload, selectedCodes);
+    if (bannerStatus) render(html`${summary}`, bannerStatus);
+    projectCompactSources({
+      selected: tallyingCodes.filter((code) => selectedCodes.includes(code)).length,
+      total: tallyingCodes.length,
+      summary,
+    });
     if (lensNotice) {
       lensNotice.hidden = notice === null;
       render(html`${notice ?? nothing}`, lensNotice);

@@ -1,6 +1,51 @@
 // General-only compact presentation. Existing page controllers still own values.
 import { html, nothing, render, svg } from 'lit-html';
 
+/** Complete source summaries for the Guide’s optional navigation slot.
+ * @type {WeakMap<Element, string[]>} */
+const sourceFamilies = new WeakMap();
+
+/** Project source state from its existing controller, independent of filter state.
+ * @param {{selected:number,total:number,summary:string}} state */
+export function projectCompactSources({ selected, total, summary }) {
+  const bar = document.querySelector('[data-compact-sources]');
+  const target = /** @type {HTMLElement|null|undefined} */ (
+    bar?.querySelector('[data-sources-summary]')
+  );
+  const link = bar?.querySelector('[data-sources-link]');
+  if (!bar || !target || !link) return;
+  if (!sourceFamilies.has(bar)) target.replaceChildren();
+  sourceFamilies.set(bar, [`All ${total}`, `${total} of ${total}`]);
+  render(html`${selected === total ? `All ${total}` : `${selected} of ${total}`}`, target);
+  link.setAttribute('aria-label', `Edit sources. ${summary}`);
+  link.setAttribute('title', `Edit sources. ${summary}`);
+  bar.dispatchEvent(new Event('compact-filter-fit'));
+}
+
+/** Reserve a complete source family in its real styles, without moving live nodes.
+ * @param {HTMLElement} bar @returns {number} */
+function reserveSourceWidth(bar) {
+  const link = bar.querySelector('.compact-source-link');
+  if (!link) return 0;
+  const probe = /** @type {HTMLElement} */ (link.cloneNode(true));
+  probe.removeAttribute('data-sources-link');
+  probe.setAttribute('aria-hidden', 'true');
+  probe.setAttribute('tabindex', '-1');
+  probe.style.cssText =
+    'position:absolute;visibility:hidden;pointer-events:none;width:max-content;padding-inline:12px;';
+  const value = /** @type {HTMLElement|null} */ (probe.querySelector('[data-sources-summary]'));
+  if (value) {
+    value.textContent = (sourceFamilies.get(bar) ?? [value.textContent ?? '']).join('\n');
+    value.style.whiteSpace = 'pre';
+    value.removeAttribute('data-sources-summary');
+  }
+  link.parentElement?.append(probe);
+  const width = probe.getBoundingClientRect().width;
+  probe.remove();
+  bar.style.setProperty('--compact-source-width', `${width}px`);
+  return width;
+}
+
 /** Presentation-only complete value families; controllers retain selection ownership.
  * @type {WeakMap<Element, {full:string[],short:string[]}>} */
 const precinctFamilies = new WeakMap();
@@ -210,6 +255,23 @@ export function wireCompactFilters() {
     reserveControlWidths(bar);
     const controls = bar.querySelector('.compact-filter-controls');
     const count = bar.querySelector('.filter-control-status');
+    if (bar.hasAttribute('data-compact-sources') && controls && count) {
+      const sourceWidth = reserveSourceWidth(bar);
+      const groupWidth = controls.getBoundingClientRect().width + sourceWidth + 1;
+      bar.dataset.sourceRow =
+        groupWidth + 2 * (count.getBoundingClientRect().width + 12) <=
+        bar.getBoundingClientRect().width
+          ? 'single'
+          : 'double';
+      const sticky = bar.closest('.sticky-header');
+      const page = /** @type {HTMLElement|null} */ (bar.closest('.screen-guide'));
+      if (sticky && page)
+        page.style.setProperty(
+          '--guide-sticky-height',
+          `${sticky.getBoundingClientRect().height}px`,
+        );
+      return;
+    }
     bar.dataset.countLine = 'separate';
     if (
       controls &&
@@ -222,6 +284,11 @@ export function wireCompactFilters() {
   bar.addEventListener('compact-filter-fit', fit);
   const observer = new ResizeObserver(fit);
   observer.observe(bar);
+  if (bar.hasAttribute('data-compact-sources')) {
+    const sticky = bar.closest('.sticky-header');
+    if (sticky) observer.observe(sticky);
+    document.fonts?.addEventListener('loadingdone', fit);
+  }
   document.fonts?.ready.then(fit);
   fit();
 }
