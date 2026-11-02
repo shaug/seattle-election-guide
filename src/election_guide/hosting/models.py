@@ -55,6 +55,9 @@ class PublishedElection(HostingModel):
     source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     publication_request: PublicationRequest | None = None
     comparison_route_preview: bool = Field(default=False, strict=True)
+    updates_from_current_source: bool = Field(
+        default=False, strict=True, exclude_if=lambda value: not value
+    )
     git_commit: str | None = Field(default=None, pattern=r"^[0-9a-f]{40}$")
     release_manifest_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     bundle_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
@@ -101,6 +104,15 @@ class SiteManifest(HostingModel):
         return self
 
 
+class UpdatesProjection(HostingModel):
+    """Current authored log provenance, separate from immutable election artifacts."""
+
+    schema_version: Literal["1.1"] = "1.1"
+    source_git_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    authored_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    archive_release_version: str = Field(min_length=1)
+
+
 class DeployedElection(HostingModel):
     election_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     bundle_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
@@ -110,6 +122,9 @@ class DeployedElection(HostingModel):
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     release_manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    updates_projection: UpdatesProjection | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
 
 class DeploymentManifest(HostingModel):

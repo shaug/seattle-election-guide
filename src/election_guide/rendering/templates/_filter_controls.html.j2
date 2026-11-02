@@ -1,5 +1,5 @@
-{% macro control_bar(aria_label, extra_class='', compact=false) -%}
-<section{% if compact | default(false) %} data-compact-filters{% endif %} class="{% if extra_class %}{{ extra_class }} {% endif %}filter-control-bar" aria-label="{{ aria_label }}">
+{% macro control_bar(aria_label, extra_class='', compact=false, sources=false) -%}
+<section{% if compact | default(false) %} data-compact-filters{% endif %}{% if sources %} data-compact-sources{% endif %} class="{% if extra_class %}{{ extra_class }} {% endif %}filter-control-bar" aria-label="{{ aria_label }}">
   {{ caller() }}
 </section>
 {%- endmacro %}
@@ -56,10 +56,12 @@
   status_attributes='',
   status_extra_class='',
   status_text='',
-  precinct_enabled=false
+  precinct_enabled=false,
+  sources_count=none,
+  sources_href=''
 ) -%}
 {% set ballot_options = caller() %}
-{% call control_bar(aria_label, extra_class, precinct_enabled) %}
+{% call control_bar(aria_label, extra_class, precinct_enabled, sources_count is not none) %}
   {% if precinct_enabled %}
   <div class="compact-filter-controls">
   {% include '_precinct_control.html.j2' %}
@@ -76,6 +78,18 @@
   {{ segmented_radio('View', view_name, view_options, 'view-setting', precinct_enabled) }}
   {{ segmented_radio('Races', race_name, race_options, 'view-setting', precinct_enabled) }}
   {% endif %}
+  {% if sources_count is not none %}
+  <div class="compact-source-row">
+  <div class="compact-source-slot" data-lens-banner>
+    <span class="visually-hidden" data-lens-banner-status role="status" aria-live="polite">Counting all {{ sources_count }} sources.</span>
+    <a class="compact-source-link" data-sources-link href="{{ sources_href }}" aria-label="Edit sources. Counting all {{ sources_count }} sources.">
+      <svg class="compact-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+      <span class="compact-source-label">Sources: <span data-sources-summary>All {{ sources_count }}</span></span>
+      <svg class="compact-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+    </a>
+  </div>
+  {% endif %}
   {% call control_status(status_id, status_attributes, status_extra_class) %}{{ status_text }}{% endcall %}
+  {% if sources_count is not none %}</div>{% endif %}
 {% endcall %}
 {%- endmacro %}

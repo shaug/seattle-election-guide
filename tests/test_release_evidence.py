@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from datetime import UTC, datetime
 from functools import partial
@@ -11,7 +12,11 @@ from typing import Any
 import pytest
 from typer.testing import CliRunner
 
-from election_guide.release.automation_models import OperationReceipt, UploadReceipt
+from election_guide.release.automation_models import (
+    OperationReceipt,
+    PublicationResult,
+    UploadReceipt,
+)
 from election_guide.serialization import canonical_json_bytes
 from tests.test_release_promotion import (
     promotion_setup,  # noqa: F401 # pyright: ignore[reportUnusedImport]
@@ -21,6 +26,18 @@ from tests.test_release_publication import (
 )
 
 BOT = {"login": "github-actions[bot]", "type": "Bot", "id": 41898282}
+
+
+def test_published_legacy_record_keeps_exact_canonical_shape_and_deployment_digest() -> None:
+    from election_guide.release.evidence import deployment_payload
+
+    raw = (Path(__file__).parent / "fixtures/release/published-general-67.json").read_bytes()
+    original_digest = "74388b410ef1b3893fc70a70c84e329515479f5b02d0e3a73f65718e21ea2b81"
+    assert hashlib.sha256(raw).hexdigest() == original_digest
+    publication = PublicationResult.model_validate_json(raw)
+
+    assert canonical_json_bytes(publication.model_dump(mode="json")) == raw
+    assert deployment_payload(publication)["publication_sha256"] == original_digest
 
 
 class GitHub:

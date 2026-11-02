@@ -30,6 +30,7 @@ TEMPLATE_DIR = REPO_ROOT / "src" / "election_guide" / "rendering" / "templates"
 # The renderer and hosting/pages.py name these same pairs; a page added without
 # an entry has nowhere for its client code to live.
 ENTRIES = {
+    "updates-entry.mjs": "UpdatesPage",
     "compare-entry.mjs": "ComparePage",
     "guide-entry.mjs": "GuidePage",
     "race-entry.mjs": "RacePage",

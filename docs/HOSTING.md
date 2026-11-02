@@ -576,3 +576,19 @@ issue attached so the review is not silently missed: [Cloudflare API token rotat
 2027](https://github.com/shaug/seattle-election-guide/milestone/6), tracked by issue
 [#365](https://github.com/shaug/seattle-election-guide/issues/365). Closing that issue and rolling
 the milestone forward one year is part of completing the rotation.
+
+## Current election-information Updates projection (#676)
+
+An explicit election declaration `updates_from_current_source: true` opts only that election's
+current `/updates/` route into the current source's authored schema1.1 election-information log.
+The primary9 declaration uses this route-only migration; archive bytes, release pins, overview
+and race pages retain their immutable identities. The old archive's embedded corrections remain
+available inside that archive. Staging never writes to a verified input bundle.
+
+`DeployedElection.updates_projection` is separate provenance for this new HTML: current source
+commit, authored-YAML SHA-256 and original archive release. The same values appear in HTML meta
+records and an authored-record/original-archive link. The current deployment's asset manifest hashes
+the projected route. An old election release-manifest hash does not attest its newly authored log.
+Staged verification rejects missing/extra projection provenance, a different current source/archive
+identity, and HTML that lacks its declared provenance. An opted-in missing/legacy log fails closed.
+This creates no historical release activation and no Updates detail pages.

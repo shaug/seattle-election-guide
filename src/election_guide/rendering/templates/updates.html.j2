@@ -1,0 +1,60 @@
+{# Schema 1.1 election-information index. Legacy immutable records retain corrections.html.j2. #}
+{% extends 'base.html.j2' %}
+{% block head_meta %}
+  {% set canonical_url = public_site_url ~ guide_path ~ 'updates/' %}
+  {% set page_description = election_display_name ~ ' updates: endorsements, sources and results.' %}
+  {{ shell.social_meta(document_title, page_description, canonical_url) }}
+  {% if updates_provenance %}
+  <meta name="seg-updates-source" content="{{ updates_provenance.source_git_commit }}">
+  <meta name="seg-updates-authored-sha256" content="{{ updates_provenance.authored_sha256 }}">
+  <meta name="seg-updates-archive" content="{{ updates_provenance.archive_release_version }}">
+  {% endif %}
+{% endblock %}
+{% block body %}
+  <a class="skip-link" href="#updates-main">Skip to content</a>
+  <div class="page">
+    <header>
+      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=compare_href, corrections_href=corrections_href, current='corrections') }}
+      <div class="page-band-rule"></div>
+    </header>
+    {{ election_day_banner | safe }}
+    {%+ call shell.page_head('Updates', eyebrow=election_display_name, mode='measured') %}What changed in this election’s endorsements, sources and results.{% endcall +%}
+    <main id="updates-main" class="updates-main narrow-main">
+      <div class="topic-bar">
+        <div class="topic-control" data-update-controls role="group" aria-label="Filter updates by topic">
+          {% for topic in updates_payload.topics %}<button type="button" class="topic-button" disabled aria-pressed="false">{{ topic.label }}</button>{% endfor %}
+        </div>
+        <p class="update-count" data-update-count role="status" aria-live="polite" aria-atomic="true">{{ updates_payload.count_labels[corrections_entries | length] }}</p>
+      </div>
+      <noscript><p class="filter-help">All updates are shown. Topic filtering needs JavaScript.</p></noscript>
+      <p data-payload-notice hidden role="status" aria-live="polite"></p>
+      <div class="update-list">
+        {% for entry in corrections_entries %}
+        <article class="corrections-entry update-entry" data-update-key="{{ loop.index0 }}">
+          <div class="entry-meta">
+            <time class="corrections-date entry-date" datetime="{{ entry.date_iso }}">{{ entry.date_label }}</time>
+            {% for action, label in entry.actions %}<span class="action-badge action-{{ action }}">{{ label }}</span>{% endfor %}
+            <span class="entry-topics">{% for topic in entry.topics %}{{ topic }}{% if not loop.last %}<span class="topic-dot" aria-hidden="true">·</span>{% endif %}{% endfor %}</span>
+          </div>
+          <h2 class="corrections-headline">{{ entry.headline }}</h2>
+          <p class="entry-impact">{{ entry.body }}</p>
+          {% if entry.provenance %}<ul class="entry-links" aria-label="Affected pages and evidence">{% for link in entry.provenance %}<li><a href="{{ link.url }}"{% if not link.url.startswith('/') %}{{ external_link_attributes }}{% endif %}>{{ link.label }}</a></li>{% endfor %}</ul>{% endif %}
+        </article>
+        {% endfor %}
+      </div>
+      <div class="empty-state" data-update-empty hidden><h2>No updates match these topics.</h2><p>Choose another topic or clear your selections to read the complete log.</p></div>
+      <p class="page-tail">This log covers election information. <a href="https://github.com/shaug/seattle-election-guide/releases"{{ external_link_attributes }}>Website release notes are on GitHub.</a></p>
+      {% if updates_provenance %}<p class="page-tail">Current Updates log: <a href="https://github.com/shaug/seattle-election-guide/blob/{{ updates_provenance.source_git_commit }}/data/corrections/{{ guide.metadata.election_id }}.yaml"{{ external_link_attributes }}>authored record</a>. <a href="https://github.com/shaug/seattle-election-guide/releases/tag/{{ updates_provenance.archive_release_version }}"{{ external_link_attributes }}>Original election archive</a>.</p>{% endif %}
+    </main>
+    <footer class="site-footer">
+      {% if project_url is not none %}{{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}{% endif %}
+    </footer>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script type="application/json" data-client-payload>{{ updates_payload | tojson }}</script>
+  <script type="module">
+{{ updates_entry_script | safe }}
+    UpdatesPage.boot();
+  </script>
+{% endblock %}

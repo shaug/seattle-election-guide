@@ -18,6 +18,7 @@
     <div class="page-band-rule"></div>
     {{ election_day_banner | safe }}
 
+    {% set joined_sources = guide.precinct_ballot is not none and guide.personalization.policy.enabled %}
     <div class="sticky-header">
       {% call election_controls(
         'Guide view and race filters', 'screen-controls',
@@ -30,7 +31,9 @@
           {'value': 'complete', 'label': 'All', 'id': 'complete-filter', 'attributes': '', 'checked': true},
           {'value': 'contested', 'label': 'Contested', 'id': 'contested-filter', 'attributes': '', 'checked': false}
         ],
-        'filter-status', precinct_enabled=guide.precinct_ballot is not none
+        'filter-status', precinct_enabled=guide.precinct_ballot is not none,
+        sources_count=consensus_source_count if joined_sources else none,
+        sources_href=sources_page_url
       ) %}
         {# Rendered from the same `filter_scope_groups` the payload publishes
            flattened, so the status line can name the selected scope without
@@ -49,7 +52,7 @@
          change if it was already in the accessibility tree when the change
          happened — and one that is created and filled in the same task was
          not. #}
-      {% if guide.personalization.policy.enabled %}
+      {% if guide.personalization.policy.enabled and not joined_sources %}
       <div class="lens-banner state-action-strip" data-lens-banner>
         <span data-lens-banner-status role="status" aria-live="polite">Counting all {{ consensus_source_count }} sources.</span>
         <a data-sources-link href="{{ sources_page_url }}">Edit sources</a>

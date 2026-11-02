@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 election_id: wa-2026-general
 entries:
   - corrected_on: 2026-10-24
@@ -15,6 +15,8 @@ entries:
         url: /e/wa-2026-general/
       - label: "Race visibility policy and implementation"
         url: https://github.com/shaug/seattle-election-guide/issues/607
+    topics: [endorsements, sources]
+    actions: [coverage]
   - corrected_on: 2026-10-25
     headline: "Added Cascade Bicycle Club’s No on IL26-638 in the Washington Bikes slot."
     body: >-
@@ -35,19 +37,8 @@ entries:
         url: https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638
       - label: "Reviewed addition and counting policy"
         url: https://github.com/shaug/seattle-election-guide/issues/624
-  - corrected_on: 2026-10-24
-    headline: "Restored earlier endorsement-meter borders."
-    body: >-
-      The general guide and individual race pages again use the earlier
-      endorsement-meter borders. Recorded endorsements, counts, colors,
-      allocations and touch inspection are unchanged.
-    provenance:
-      - label: "Endorsements"
-        url: /e/wa-2026-general/
-      - label: "LD32 House Position 1"
-        url: /e/wa-2026-general/races/ld-32-state-representative-1/
-      - label: "Meter-border restoration"
-        url: https://github.com/shaug/seattle-election-guide/issues/598
+    topics: [endorsements]
+    actions: [added]
   - corrected_on: 2026-10-24
     headline: "Added UFCW’s Jayapal, Smith, Birk and Angelis endorsements."
     body: >-
@@ -74,6 +65,8 @@ entries:
         url: https://ufcw3000.org/endorsements
       - label: "October 24 factual review and limitations"
         url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_UFCW_FACTS_2026-10-24.md
+    topics: [endorsements]
+    actions: [added]
   - corrected_on: 2026-10-23
     headline: "Added SGN’s Adam Smith endorsement and UFCW’s LD37 dual."
     body: >-
@@ -97,18 +90,8 @@ entries:
         url: https://ufcw3000.org/endorsements
       - label: "October 23 checkpoint and limitations"
         url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_VERIFICATION_2026-10-23.md
-  - corrected_on: 2026-10-23
-    headline: "Rounded the closing border of split endorsement meters."
-    body: >-
-      On race pages, the border now follows the curved transition at both ends
-      of a partial-endorsement run. The straight line that crossed the closing
-      split is gone. The opening split, full endorsements, meter sizes, colors,
-      counts and percentages are unchanged.
-    provenance:
-      - label: "Race-page border correction"
-        url: https://github.com/shaug/seattle-election-guide/issues/598
-      - label: "Endorsements"
-        url: /e/wa-2026-general/
+    topics: [endorsements]
+    actions: [added]
   - corrected_on: 2026-10-22
     headline: "Added WashingtonCAN’s LD37 Senate endorsement."
     body: >-
@@ -126,6 +109,8 @@ entries:
         url: https://www.washingtoncan.org/endorsements
       - label: "October 22 review and limitations"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.27/docs/GENERAL_VERIFICATION_2026-10-22.md
+    topics: [endorsements]
+    actions: [added]
   - corrected_on: 2026-10-21
     headline: "Added Transit Riders Union’s four formal measure endorsements."
     body: >-
@@ -148,6 +133,8 @@ entries:
         url: https://transitriders.org/2026-general-election-endorsements/
       - label: "Complete October 21 TRU review and limitations"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.25/docs/GENERAL_RECHECK_2026-10-21_TRU.md
+    topics: [endorsements]
+    actions: [added]
   - corrected_on: 2026-10-21
     headline: "Added Washington Bus’s three No initiative recommendations."
     body: >-
@@ -167,6 +154,8 @@ entries:
         url: https://www.washingtonbus.org/endorsements
       - label: "October 21 review and limitations"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.24/docs/GENERAL_VERIFICATION_2026-10-21.md
+    topics: [endorsements]
+    actions: [added]
   - corrected_on: 2026-10-19
     headline: "Added the 46th District Democrats’ Seattle transit endorsement."
     body: >-
@@ -183,6 +172,8 @@ entries:
         url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_positions
       - label: "October 19 review and limitations"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.19/docs/GENERAL_VERIFICATION_2026-10-19.md
+    topics: [endorsements, sources]
+    actions: [added]
   - corrected_on: 2026-10-19
     headline: "Added 34 source decisions from four publishers."
     body: >-
@@ -208,18 +199,8 @@ entries:
         url: /e/wa-2026-general/races/initiative-26-645/
       - label: "Complete approved decisions and evidence"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.16/docs/GENERAL_VERIFICATION_APPLICATION_2026-10-18.md
-  - corrected_on: 2026-10-17
-    headline: "Mobile meters now show percentages before inspection."
-    body: >-
-      Endorsement meters on mobile now show the same percentage summary as
-      desktop. Press and hold a meter to reveal individual endorsements, then
-      slide across it to see each source’s decision. Lifting your finger restores
-      the summary; ordinary swipes still scroll the page.
-    provenance:
-      - label: "Endorsements"
-        url: /e/wa-2026-general/
-      - label: "Mobile meter interaction change"
-        url: https://github.com/shaug/seattle-election-guide/issues/561
+    topics: [endorsements]
+    actions: [added]
   - corrected_on: 2026-10-16
     headline: "Added two previously unrecorded endorsements."
     body: >-
@@ -234,6 +215,8 @@ entries:
         url: /e/wa-2026-general/races/ld-11-state-representative-1/
       - label: "Reviewed additions and evidence"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.8/docs/GENERAL_VERIFICATION_REMAINING_2026-10-16.md
+    topics: [endorsements]
+    actions: [added]
   - corrected_on: 2026-10-16
     headline: "Added 175 source decisions and revised two endorsements."
     body: >-
@@ -250,6 +233,8 @@ entries:
         url: /e/wa-2026-general/races/ld-43-state-senator/
       - label: "Complete reviewed changes and evidence"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.7/docs/GENERAL_VERIFICATION_APPLICATION_2026-10-16.md
+    topics: [endorsements, sources]
+    actions: [added, correction]
   - corrected_on: 2026-10-12
     headline: "Changed how sparse and unopposed races appear."
     body: >-
@@ -266,6 +251,8 @@ entries:
         url: https://github.com/shaug/seattle-election-guide/pull/529
       - label: "First published October 12"
         url: https://github.com/shaug/seattle-election-guide/actions/runs/38299893950
+    topics: [endorsements]
+    actions: [coverage]
   - corrected_on: 2026-10-12
     headline: "Added three sources and 22 decisions."
     body: >-
@@ -283,6 +270,8 @@ entries:
         url: /e/wa-2026-general/races/initiative-26-645/
       - label: "Complete reviewed additions and evidence"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.6/docs/GENERAL_ADDITIONS_2026-10-12.md
+    topics: [endorsements, sources]
+    actions: [added]
   - corrected_on: 2026-10-11
     headline: "Added 64 endorsements from eight organizations."
     body: >-
@@ -298,6 +287,8 @@ entries:
         url: /e/wa-2026-general/
       - label: "Complete reviewed additions and evidence"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.5/docs/GENERAL_RECONCILIATION_2026-10-10.md
+    topics: [endorsements, sources]
+    actions: [added]
   - corrected_on: 2026-10-11
     headline: "Updated King County Democrats’ LD32 Position 2 endorsement."
     body: >-
@@ -313,6 +304,8 @@ entries:
         url: /e/wa-2026-general/races/ld-32-state-representative-2/
       - label: "First published October 11; reviewed October 10"
         url: https://github.com/shaug/seattle-election-guide/actions/runs/38190528105
+    topics: [endorsements]
+    actions: [correction]
   - corrected_on: 2026-10-04
     headline: "Added WashingtonCAN’s three initiative endorsements."
     body: >-
@@ -331,24 +324,8 @@ entries:
         url: /e/wa-2026-general/races/initiative-26-645/
       - label: "Reviewed additions and evidence"
         url: https://github.com/shaug/seattle-election-guide/blob/2026-general.4/docs/GENERAL_REFRESH_2026-10-03.md
-  - corrected_on: 2026-10-03
-    headline: "Changed how endorsement shares and co-endorsements are shown."
-    body: >-
-      The endorsement bars now expose each organization's contribution and any
-      split endorsement. An initial change kept every segment visible; the later
-      publication restored the percentage label at rest on pointer devices,
-      revealing segments on hover or keyboard focus. Touch and individual
-      candidate bars keep their segments visible. The recorded endorsements,
-      shares, and candidate order did not change.
-    provenance:
-      - label: "Endorsements"
-        url: /e/wa-2026-general/
-      - label: "Visible endorsement segments"
-        url: https://github.com/shaug/seattle-election-guide/pull/484
-      - label: "Restored hover, keyboard, and touch behavior"
-        url: https://github.com/shaug/seattle-election-guide/pull/487
-      - label: "October 3 publication"
-        url: https://github.com/shaug/seattle-election-guide/actions/runs/37163820797
+    topics: [endorsements, sources]
+    actions: [added]
   - corrected_on: 2026-10-03
     headline: "Published the first general-election guide."
     body: >-
@@ -361,54 +338,8 @@ entries:
         url: https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.1
       - label: "First website publication"
         url: https://github.com/shaug/seattle-election-guide/actions/runs/37111424774
-
-  - corrected_on: 2026-10-25
-    headline: Preparing manual district setup and saved ballots.
-    body: >-
-      We are preparing a way to choose your districts, save those choices on this
-      device, and see which contests apply to you. This entry records preparation
-      only; the live guide does not yet offer the new district setup. Location
-      lookup and ballot ordering remain separate work. Recorded endorsements,
-      source choices, scores and certified results are unchanged. This is not a
-      new verification of endorsement sources.
-    provenance:
-    - label: General guide
-      url: /e/wa-2026-general/
-    - label: Manual ballot membership and delivery scope
-      url: https://github.com/shaug/seattle-election-guide/issues/608
-  - corrected_on: 2026-10-25
-    headline: "Reviewed four current automatic-source factual baselines."
-    body: >-
-      Named delegated reviewers checked Transit Riders Union, Sage Leaders,
-      Seattle Gay News and UFCW 3000 against 66 facts from the October 25
-      scheduled check. The dated record preserves their actual source-read
-      and review times, dual endorsements, held omissions and other source
-      qualifications. Four exact baseline attestations are recorded without
-      changing endorsement choices, allocations or the 46-source panel.
-      Later independent normal scheduled reuse is still required; source
-      access failures and finite manual-review obligations remain explicit.
-    provenance:
-      - label: "October 25 factual reviews and limitations"
-        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_BASELINES_2026-10-25.md
-      - label: "Exact reviewed facts and observation metadata"
-        url: https://github.com/shaug/seattle-election-guide/blob/main/data/review/rechecks/wa-2026-general-2026-10-25-automatic.json
-      - label: "Normal scheduled verification run"
-        url: https://github.com/shaug/seattle-election-guide/actions/runs/40177971864
-      - label: "Recurring verification delivery"
-        url: https://github.com/shaug/seattle-election-guide/issues/497
-  - corrected_on: 2026-10-26
-    headline: "Contests follow November ballot order."
-    body: >-
-      State measures now come first, followed by federal, state, county and
-      judicial races, Seattle offices and Seattle measures. Court of Appeals,
-      West Electoral District and Seattle Municipal Court have their own
-      headings. The guide, compact overview, print view and Comparisons use the
-      same sequence. Endorsement sources, scores and race visibility are unchanged.
-    provenance:
-      - label: "Ballot ordering research and implementation"
-        url: https://github.com/shaug/seattle-election-guide/issues/609
-      - label: "King County official sample ballot"
-        url: https://kingcounty.gov/en/dept/elections/election-information/2026/november-general
+    topics: [endorsements, sources]
+    actions: [added]
   - corrected_on: '2026-10-27'
     headline: Added SGN’s No endorsements on all three statewide initiatives.
     body: SGN explicitly recommends No on IL26-001 (parental rights in public schools), IL26-638 (K–12 school
@@ -426,40 +357,8 @@ entries:
       url: /e/wa-2026-general/races/initiative-26-638/
     - label: Initiative IP26-645
       url: /e/wa-2026-general/races/initiative-26-645/
-  - corrected_on: 2026-10-27
-    headline: "Choose your voting precinct to see the guide's covered ballot decisions."
-    body: >-
-      Select a Seattle voting precinct in Endorsements or Comparisons to see
-      geographically applicable races and ballot measures covered by this guide.
-      Contested is selected by default; All also includes applicable uncontested
-      races that meet the verified-source policy. Source choices change scores,
-      not ballot membership. Your precinct and race mode stay with you across
-      the guide and Sources. Ballot ordering remains the published November
-      sequence. Location lookup is not part of this release.
-    provenance:
-      - label: "Choose a precinct"
-        url: /e/wa-2026-general/
-      - label: "Voter ballot membership"
-        url: https://github.com/shaug/seattle-election-guide/issues/608
-
-  - corrected_on: 2026-10-28
-    headline: "Find your precinct from an address or precinct search."
-    body: >-
-      One search field now offers precinct and supported Seattle voting-address
-      suggestions, labelled Precinct or Address. Choose a suggestion to set a
-      draft, then Select to apply it; Cancel keeps your existing choice. Address
-      lookup uses King County GIS and county-maintained Esri services. The guide
-      remembers only the election and precinct. Endorsement records, scoring
-      rules and ballot order are unchanged.
-    provenance:
-      - label: "Choose an address or precinct"
-        url: /e/wa-2026-general/
-      - label: "Compare your covered ballot decisions"
-        url: /e/wa-2026-general/comparisons/
-      - label: "Address lookup scope and safeguards"
-        url: https://github.com/shaug/seattle-election-guide/issues/657
-      - label: "Address lookup data and privacy"
-        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/ADDRESS_LOOKUP.md
+    topics: [endorsements]
+    actions: [added]
   - corrected_on: 2026-10-30
     headline: "Added SGN's five state Supreme Court endorsements."
     body: >-
@@ -484,35 +383,5 @@ entries:
         url: /e/wa-2026-general/races/supreme-court-justice-5/
       - label: "Supreme Court Position 7"
         url: /e/wa-2026-general/races/supreme-court-justice-7/
-
-  - corrected_on: 2026-10-29
-    headline: "Ballot filters work within your precinct"
-    body: >-
-      With a precinct selected, the Ballot dropdown stays available and offers
-      only choices with covered races, initiatives or measures for that precinct.
-      Changing precincts keeps an applicable Ballot choice or returns to All.
-      Clearing the precinct restores the ordinary choices.
-    provenance:
-      - label: "Ballot filters within a precinct"
-        url: https://github.com/shaug/seattle-election-guide/issues/668
-      - label: "Endorsements"
-        url: /e/wa-2026-general/
-      - label: "Comparisons"
-        url: /e/wa-2026-general/comparisons/
-
-  - corrected_on: 2026-10-30
-    headline: "Precinct and ballot filters share one compact bar."
-    body: >-
-      Precinct, View, Races and Ballot now open their editors from one compact
-      row on Endorsements and Comparisons. The row keeps each selected value
-      readable and adjusts its menu cues to the available space. Ballot marks
-      an active scope with a small dot; its editor shows the full selection.
-      Clear precinct selection is in the Precinct editor. Ballot membership,
-      endorsement choices, scoring and published order are unchanged.
-    provenance:
-      - label: "Compact filter bar"
-        url: https://github.com/shaug/seattle-election-guide/issues/673
-      - label: "Endorsements"
-        url: /e/wa-2026-general/
-      - label: "Comparisons"
-        url: /e/wa-2026-general/comparisons/
+    topics: [endorsements]
+    actions: [added]
