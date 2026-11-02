@@ -98,16 +98,25 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
         assert current is not None
         assert current.schema_version == "1.1"
         public = [row for row in rows if row["disposition"] == "election_information"]
-        assert len(current.entries) == len(public) == (15 if election == "wa-2026-primary" else 18)
-        for entry, row in zip(current.entries, public, strict=True):
+        assert len(public) == (15 if election == "wa-2026-primary" else 18)
+        migrated = current.entries[: len(public)]
+        for entry, row in zip(migrated, public, strict=True):
             serialized = entry.model_dump(mode="json")
             assert serialized.pop("topics") == row["topics"]
             assert serialized.pop("actions") == row["actions"]
             assert serialized == row["original_entry"]
         if election == "wa-2026-general":
+            added = current.entries[len(public) :]
+            assert [entry.headline for entry in added] == [
+                "Added SGN's five state Supreme Court endorsements."
+            ]
+            assert added[0].topics == ["endorsements"]
+            assert added[0].actions == ["added"]
             assert next(
                 e for e in current.entries if "Updated King County" in e.headline
             ).actions == ["correction"]
+        else:
+            assert current.entries == migrated
 
 
 def test_every_audited_change_is_bound_to_an_authored_entry() -> None:

@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "2db4b1a5e0c4a3c0e774bea7db38a438ef654325c407f270dc5d03356bd03ebd"
+  },
+  "checked_at": "2026-11-01T15:55:21.778501Z",
+  "event_id": "refresh-nondriver-action-20261101T155521Z-8724cbb72f9b",
+  "evidence": "OpenAI Codex /root/assess_497_native26_records: data/review/rechecks/wa-2026-general-2026-11-01-manual.json#/source_reviews/nondriver-action",
+  "mode": "human",
+  "recorded_at": "2026-11-02T00:18:53.649666Z",
+  "scheduled_for": "2026-11-01",
+  "source_id": "nondriver-action",
+  "status": "failed"
+}
