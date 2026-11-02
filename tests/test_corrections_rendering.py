@@ -142,6 +142,7 @@ def test_real_general_log_preserves_complete_classified_entries_in_served_markup
         for citation in entry["provenance"]:
             assert f'href="{citation["url"]}"' in markup
     assert "Added SGN's five state Supreme Court endorsements." in markup
+    assert 'datetime="2026-11-01"' in markup
     for candidate in (
         "Colleen Melody",
         "Jaime Michelle Hawk",
