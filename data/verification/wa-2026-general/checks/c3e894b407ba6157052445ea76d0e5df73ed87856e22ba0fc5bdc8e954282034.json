@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-30T09:01:22.935507Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root: data/review/rechecks/wa-2026-general-2026-10-30-manual.json#/source_reviews/mlk-labor",
+  "mode": "human",
+  "scheduled_for": "2026-10-30",
+  "source_id": "mlk-labor",
+  "status": "manual"
+}

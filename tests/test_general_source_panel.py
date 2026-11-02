@@ -234,8 +234,20 @@ def test_general_additions_preserve_verified_choices_and_coendorsement_allocatio
         assert row["status"] == "endorsed"
         assert row["candidate_ids"] == [candidate_id]
         assert row["allocation"] == {candidate_id: "1"}
-    assert sum(row["source_id"] == "seattle-gay-news" for row in dataset["endorsements"]) == 11
-    assert len(dataset["endorsements"]) == 933
+    for position, choice in {
+        1: "colleen-melody",
+        3: "jaime-michelle-hawk",
+        4: "ian-birk",
+        5: "theo-angelis",
+        7: "debra-l-stephens",
+    }.items():
+        race = f"supreme-court-justice-{position}"
+        row = by_key["seattle-gay-news", race]
+        assert row["candidate_ids"] == [f"{race}--{choice}"]
+        assert row["allocation"] == {f"{race}--{choice}": "1"}
+        assert row["reviewer"] == "OpenAI Codex /root"
+    assert sum(row["source_id"] == "seattle-gay-news" for row in dataset["endorsements"]) == 16
+    assert len(dataset["endorsements"]) == 938
     assert not {"king-county-republican-party", "progressive-voters-guide"} & {
         row["source_id"] for row in dataset["endorsements"]
     }

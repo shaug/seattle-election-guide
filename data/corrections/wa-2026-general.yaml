@@ -359,3 +359,29 @@ entries:
       url: /e/wa-2026-general/races/initiative-26-645/
     topics: [endorsements]
     actions: [added]
+  - corrected_on: 2026-11-02
+    headline: "Added SGN's five state Supreme Court endorsements."
+    body: >-
+      Added SGN's endorsements of Colleen Melody, Jaime Michelle Hawk, Ian Birk,
+      Theo Angelis and Debra L. Stephens for Supreme Court Positions 1, 3, 4, 5
+      and 7. These five newly included decisions bring SGN's coverage to 16
+      decisions. The complete editorial was independently checked against each
+      position and candidate; the date of first publication remains unknown.
+      All previous decisions and source qualifications are preserved.
+    provenance:
+      - label: "SGN's Supreme Court editorial"
+        url: https://www.sgn.org/story/171606/
+      - label: "Complete factual refresh and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_REFRESH_2026-10-30.md
+      - label: "Supreme Court Position 1"
+        url: /e/wa-2026-general/races/supreme-court-justice-1/
+      - label: "Supreme Court Position 3"
+        url: /e/wa-2026-general/races/supreme-court-justice-3/
+      - label: "Supreme Court Position 4"
+        url: /e/wa-2026-general/races/supreme-court-justice-4/
+      - label: "Supreme Court Position 5"
+        url: /e/wa-2026-general/races/supreme-court-justice-5/
+      - label: "Supreme Court Position 7"
+        url: /e/wa-2026-general/races/supreme-court-justice-7/
+    topics: [endorsements]
+    actions: [added]

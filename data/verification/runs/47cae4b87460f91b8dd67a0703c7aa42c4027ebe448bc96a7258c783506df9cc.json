@@ -1,0 +1,1455 @@
+{
+  "automatic": [
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-seattle-gay-news-20261030T084125Z-7ad348bd921d",
+      "checked_at": "2026-10-30T08:41:25Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-seattle-gay-news-20261030T084125Z-5ba3c0407f63",
+      "previous_snapshot_id": "extraction-seattle-gay-news-20261029T084207Z-0d502828d4ab",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-seattle-gay-news-20261030T084125Z-0f9239e10d79",
+      "source_id": "seattle-gay-news",
+      "status": "updated"
+    },
+    {
+      "baseline_reviewed": true,
+      "capture_id": "capture-washington-working-families-party-20261030T084125Z-1880aaa8ba77",
+      "checked_at": "2026-10-30T08:41:25Z",
+      "consecutive_failures": 0,
+      "content_changed": false,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-washington-working-families-party-20261030T084125Z-d1d14035575f",
+      "previous_snapshot_id": "extraction-washington-working-families-party-20261020T085058Z-27e58e61bbe6",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-washington-working-families-party-20261020T085058Z-27e58e61bbe6",
+      "source_id": "washington-working-families-party",
+      "status": "unchanged"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-sage-leaders-20261030T084125Z-e898651a8c18",
+      "checked_at": "2026-10-30T08:41:25Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-sage-leaders-20261030T084125Z-44fe52d451f2",
+      "previous_snapshot_id": "extraction-sage-leaders-20261029T084207Z-cc1a441d53d3",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-sage-leaders-20261030T084125Z-f04caaab450f",
+      "source_id": "sage-leaders",
+      "status": "updated"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-transit-riders-union-20261030T084125Z-7b266b8d507f",
+      "checked_at": "2026-10-30T08:41:25Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-transit-riders-union-20261030T084125Z-0862be417867",
+      "previous_snapshot_id": "extraction-transit-riders-union-20261029T084207Z-16d724f10b4d",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-transit-riders-union-20261030T084125Z-8a9daa5b8c79",
+      "source_id": "transit-riders-union",
+      "status": "updated"
+    },
+    {
+      "access_disposition": {
+        "disposition": "retained_verified_with_limitation",
+        "effective_from": "2026-10-27",
+        "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+        "qualification_id": "841614e28aeb8e7ab03fe6b4e902f1394cf47458694bc3de77cc6431baf3ef15"
+      },
+      "access_failure": {
+        "category": "http_status",
+        "http_status": 403,
+        "stage": "http_fetch"
+      },
+      "baseline_reviewed": false,
+      "capture_id": null,
+      "checked_at": "2026-10-30T08:41:25Z",
+      "consecutive_failures": 14,
+      "content_changed": null,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": "Source check failed (stage=http_fetch; category=http_status; status=403). Transport observation: response=HTTP_403; followed_redirects=0; redirect_class=SAME_ORIGIN; challenge=UNKNOWN.",
+      "escalated": true,
+      "id": "refresh-seiu-775-20261030T084125Z-740a8fc72875",
+      "previous_snapshot_id": "extraction-seiu-775-20261016T150136Z-d1fe38b533b0",
+      "schema_version": "1.0",
+      "snapshot_id": null,
+      "source_id": "seiu-775",
+      "status": "failed"
+    },
+    {
+      "baseline_reviewed": false,
+      "capture_id": "capture-ufcw-3000-20261030T084125Z-0462e643680f",
+      "checked_at": "2026-10-30T08:41:25Z",
+      "consecutive_failures": 0,
+      "content_changed": true,
+      "diff": [],
+      "election_id": "wa-2026-general",
+      "error": null,
+      "escalated": false,
+      "id": "refresh-ufcw-3000-20261030T084125Z-f9da5df1c2e2",
+      "previous_snapshot_id": "extraction-ufcw-3000-20261029T084207Z-1cdc60260a35",
+      "schema_version": "1.0",
+      "snapshot_id": "extraction-ufcw-3000-20261030T084125Z-1035ed434a78",
+      "source_id": "ufcw-3000",
+      "status": "updated"
+    }
+  ],
+  "checked_at": "2026-10-30T08:41:25+00:00",
+  "coverage": {
+    "as_of": "2026-10-30",
+    "elections": [
+      {
+        "cadence": "daily",
+        "coverage": [
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "access_limited",
+            "freshness_due": true,
+            "freshness_due_at": "2026-10-27T18:57:02.720958Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": true,
+            "lane": "manual",
+            "last_successful_check": "2026-10-26T18:57:02.720958Z",
+            "latest_attempt": {
+              "access_disposition": {
+                "disposition": "retained_verified_with_limitation",
+                "effective_from": "2026-10-27",
+                "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+                "qualification_id": "b074c438e7f78966982412a5368b2a3467c886429587c79b28651ef8a4c89cb3"
+              },
+              "checked_at": "2026-10-29T09:39:29.649874Z",
+              "event_id": "refresh-the-stranger-20261029T093929Z-a617f4fb972a",
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-access-failures.json#the-stranger",
+              "mode": "human",
+              "recorded_at": "2026-10-29T10:04:35.618891Z",
+              "scheduled_for": "2026-10-29",
+              "source_id": "the-stranger",
+              "status": "failed"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "the-stranger"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.065683Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.065683Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.065683Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#the-urbanist; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "the-urbanist",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "the-urbanist"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:45:08.276771Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:45:08.276771Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:45:08.276771Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#fuse-washington; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "fuse-washington",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "fuse-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:55:20.384648Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:55:20.384648Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:55:20.384648Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d (explicitly delegated ordinary-Chrome factual reviewer): data/review/rechecks/wa-2026-general-2026-10-29-manual.json#seattle-democratic-socialists; actual complete current ordinary browser factual review; all recorded qualifications and prior failures retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "seattle-democratic-socialists",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "seattle-democratic-socialists"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:45:08.277373Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:45:08.277373Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:45:08.277373Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#tech-4-housing; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "tech-4-housing",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "tech-4-housing"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.067368Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.067368Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.067368Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#tech-4-taxes; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "tech-4-taxes",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "tech-4-taxes"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:45:08.276168Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:45:08.276168Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:45:08.276168Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-for-peace-and-justice; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-for-peace-and-justice",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-for-peace-and-justice"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.068117Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.068117Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.068117Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-community-action-network; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-community-action-network",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-community-action-network"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "review_required",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T08:42:07Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-29T08:42:07Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-30T08:41:25Z",
+              "event_id": "refresh-seattle-gay-news-20261030T084125Z-5ba3c0407f63",
+              "evidence": null,
+              "mode": "live",
+              "scheduled_for": "2026-10-30",
+              "source_id": "seattle-gay-news",
+              "status": "updated"
+            },
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. Exact live baseline approved October 18; see docs/GENERAL_BASELINES_2026-10-18.md.",
+            "next_due": "2026-10-31",
+            "source_id": "seattle-gay-news"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-31T08:41:25Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-30T08:41:25Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-30T08:41:25Z",
+              "event_id": "refresh-washington-working-families-party-20261030T084125Z-d1d14035575f",
+              "evidence": null,
+              "mode": "live",
+              "scheduled_for": "2026-10-30",
+              "source_id": "washington-working-families-party",
+              "status": "unchanged"
+            },
+            "limitation": "Complete public Washington response covers all ten existing approved decisions; seven reviewed rows are outside the frozen inventory. Every changed response requires review. The exact complete October 20 response received a delegated baseline review; see docs/GENERAL_BASELINE_2026-10-20_WFP.md. Independent native scheduled reuse succeeded October 21; see docs/GENERAL_BASELINE_REUSE_2026-10-21_WFP.md. Other source adoption remains incomplete; October 18 approval covers only the historical initial page.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-working-families-party"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:51:47.924710Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:51:47.924710Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:51:47.924710Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-bus; complete current bounded publication review; all stated current-cycle/prior-row qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-bus",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-bus"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "review_required",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T08:42:07Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-29T08:42:07Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-30T08:41:25Z",
+              "event_id": "refresh-sage-leaders-20261030T084125Z-44fe52d451f2",
+              "evidence": null,
+              "mode": "live",
+              "scheduled_for": "2026-10-30",
+              "source_id": "sage-leaders",
+              "status": "updated"
+            },
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. Exact live baseline approved October 18; see docs/GENERAL_BASELINES_2026-10-18.md.",
+            "next_due": "2026-10-31",
+            "source_id": "sage-leaders"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T10:05:53.702000Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T10:05:53.702000Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T10:05:53.702000Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-state-democrats; actual complete current ordinary browser factual review; all recorded qualifications and prior failures retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-state-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-state-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T10:06:06.117000Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T10:06:06.117000Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T10:06:06.117000Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#king-county-democrats; actual complete current ordinary browser factual review; all recorded qualifications and prior failures retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "king-county-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "king-county-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T10:01:11.394416Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T10:01:11.394416Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T10:01:11.394416Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#11th-district-democrats; complete current bounded publication review; all stated current-cycle/prior-row qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "11th-district-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "11th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T10:06:41.366000Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T10:06:41.366000Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T10:06:41.366000Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#32nd-district-democrats; actual complete current ordinary browser factual review; all recorded qualifications and prior failures retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "32nd-district-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "32nd-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:51:47.929594Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:51:47.929594Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:51:47.929594Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#34th-district-democrats; complete current bounded publication review; all stated current-cycle/prior-row qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "34th-district-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "34th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T10:06:40.818000Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T10:06:40.818000Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T10:06:40.818000Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#36th-district-democrats; actual complete current ordinary browser factual review; all recorded qualifications and prior failures retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "36th-district-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "36th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:49:05.566200Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:49:05.566200Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:49:05.566200Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#37th-district-democrats; complete current bounded publication review; all stated current-cycle/prior-row qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "37th-district-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "37th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:51:47.934332Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:51:47.934332Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:51:47.934332Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#43rd-district-democrats; complete current bounded publication review; all stated current-cycle/prior-row qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "43rd-district-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "43rd-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T10:07:13.734000Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T10:07:13.734000Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T10:07:13.734000Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#46th-district-democrats; actual complete current ordinary browser factual review; all recorded qualifications and prior failures retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "46th-district-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "46th-district-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:57:30.905759Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:57:30.905759Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:57:30.905759Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-stonewall-democrats; complete current bounded publication review; all stated current-cycle/prior-row qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-stonewall-democrats",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-stonewall-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "review_required",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T08:42:07Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-29T08:42:07Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-30T08:41:25Z",
+              "event_id": "refresh-transit-riders-union-20261030T084125Z-0862be417867",
+              "evidence": null,
+              "mode": "live",
+              "scheduled_for": "2026-10-30",
+              "source_id": "transit-riders-union",
+              "status": "updated"
+            },
+            "limitation": "Complete official WordPress archives to the reviewed September boundary, both known and newly learned current-general articles, and the exact linked October graphic are captured. Learned article obligations survive failed checks and link rotation. Only twelve reviewed formal facts are mapped from the designated October article; qualified recommendations stay held. Full HTML/image changes require review. The expanded composite requires its own exact live baseline approval and later independent native scheduled reuse; neither is asserted here. Prior failures and the unresolved exact October 20 baseline remain intact. See docs/GENERAL_RECHECK_2026-10-21_TRU.md.",
+            "next_due": "2026-10-31",
+            "source_id": "transit-riders-union"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.069089Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.069089Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.069089Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-bikes; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-bikes",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-bikes"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:38:50.192238Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:38:50.192238Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:38:50.192238Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#seattle-subway; complete bounded publication review; stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "seattle-subway",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "seattle-subway"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:38:50.192238Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:38:50.192238Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:38:50.192238Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-conservation-action; complete bounded publication review; stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-conservation-action",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-conservation-action"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:45:08.275449Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:45:08.275449Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:45:08.275449Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#sierra-club-washington; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "sierra-club-washington",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "sierra-club-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "access_limited",
+            "freshness_due": true,
+            "freshness_due_at": "2026-10-29T10:52:47.881043Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": true,
+            "lane": "manual",
+            "last_successful_check": "2026-10-28T10:52:47.881043Z",
+            "latest_attempt": {
+              "access_disposition": {
+                "disposition": "retained_verified_with_limitation",
+                "effective_from": "2026-10-27",
+                "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+                "qualification_id": "0c0fef0a2fdc2bf7aaf73673fa532642fab3e83f48c1c407d0bbf118ee5bdda2"
+              },
+              "checked_at": "2026-10-29T09:40:00.304415Z",
+              "event_id": "refresh-environmental-climate-caucus-wa-democrats-20261029T094000Z-d0225119371f",
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-access-failures.json#environmental-climate-caucus-wa-democrats",
+              "mode": "human",
+              "recorded_at": "2026-10-29T10:04:37.063385Z",
+              "scheduled_for": "2026-10-29",
+              "source_id": "environmental-climate-caucus-wa-democrats",
+              "status": "failed"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "environmental-climate-caucus-wa-democrats"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:38:50.192238Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:38:50.192238Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:38:50.192238Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#mlk-labor; complete bounded publication review; stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "mlk-labor",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "mlk-labor"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.069905Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.069905Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.069905Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-state-labor-council; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-state-labor-council",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-state-labor-council"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "access_limited",
+            "freshness_due": true,
+            "freshness_due_at": "2026-10-17T15:01:36.094004Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": true,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-16T15:01:36.094004Z",
+            "latest_attempt": {
+              "access_disposition": {
+                "disposition": "retained_verified_with_limitation",
+                "effective_from": "2026-10-27",
+                "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+                "qualification_id": "841614e28aeb8e7ab03fe6b4e902f1394cf47458694bc3de77cc6431baf3ef15"
+              },
+              "checked_at": "2026-10-30T08:41:25Z",
+              "event_id": "refresh-seiu-775-20261030T084125Z-740a8fc72875",
+              "evidence": null,
+              "mode": "live",
+              "scheduled_for": "2026-10-30",
+              "source_id": "seiu-775",
+              "status": "failed"
+            },
+            "limitation": "Conservative reviewed fact mappings; every changed publication requires human review. Exact live baseline approved October 18; see docs/GENERAL_BASELINES_2026-10-18.md.",
+            "next_due": "2026-10-31",
+            "source_id": "seiu-775"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.070942Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.070942Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.070942Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#seiu-925; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "seiu-925",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "seiu-925"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "review_required",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T08:42:07Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "automatic",
+            "last_successful_check": "2026-10-29T08:42:07Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-30T08:41:25Z",
+              "event_id": "refresh-ufcw-3000-20261030T084125Z-f9da5df1c2e2",
+              "evidence": null,
+              "mode": "live",
+              "scheduled_for": "2026-10-30",
+              "source_id": "ufcw-3000",
+              "status": "updated"
+            },
+            "limitation": "Conservative reviewed fact mappings; complete landing page and relevant official articles require human review. The expanded composite needs exact baseline review; the October 18 approval covers the earlier landing page. Independent scheduled reuse remains adoption work.",
+            "next_due": "2026-10-31",
+            "source_id": "ufcw-3000"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:38:50.192238Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:38:50.192238Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:38:50.192238Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#aft-washington; complete bounded publication review; stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "aft-washington",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "aft-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": true,
+            "freshness_due_at": "2026-10-27T18:57:02.720958Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": true,
+            "lane": "manual",
+            "last_successful_check": "2026-10-26T18:57:02.720958Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-26T18:57:02.720958Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex, Coordinate election guide oversight (thread01a16b99-eb6e-723d-a935-dbd24a22e03d): current October26 supplied-snapshot review; data/review/rechecks/wa-2026-general-2026-10-26-supplied-snapshots.json#sources/washington-education-association; acknowledgement written now by OpenAI Codex /root at 2026-10-26T20:03:48.256117+00:00. Actual source reviewer and review time preserved. Later review does not reconstruct the earlier scheduled date's source state. Supplied snapshots support retained choices only; underlying capture/publisher-update times remain unknown. No successful live fetch or exhaustive later/linked publication discovery is asserted. Prior qualifications and genuine access failures remain unchanged. No canonical decision, automatic baseline approval or scheduled adoption credit.",
+              "mode": "human",
+              "scheduled_for": "2026-10-26",
+              "source_id": "washington-education-association",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-education-association"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.071673Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.071673Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.071673Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-state-building-trades; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-state-building-trades",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-state-building-trades"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.072330Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.072330Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.072330Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#protec17; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "protec17",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "protec17"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T10:10:17.608000Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T10:10:17.608000Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T10:10:17.608000Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#planned-parenthood-alliance-advocates; actual complete current ordinary browser factual review; all prior failures and stated qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "planned-parenthood-alliance-advocates",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "planned-parenthood-alliance-advocates"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.073012Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.073012Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.073012Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#oneamerica-votes; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "oneamerica-votes",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "oneamerica-votes"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.073765Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.073765Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.073765Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#alliance-for-gun-responsibility; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "alliance-for-gun-responsibility",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "alliance-for-gun-responsibility"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.074596Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.074596Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.074596Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#washington-housing-alliance; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "washington-housing-alliance",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "washington-housing-alliance"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:38:50.192238Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:38:50.192238Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:38:50.192238Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#nwpc-washington; complete bounded publication review; stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "nwpc-washington",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "nwpc-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:47:19.075385Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:47:19.075385Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:47:19.075385Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#seattle-times-editorial-board; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "seattle-times-editorial-board",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "seattle-times-editorial-board"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:45:56.786886Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:45:56.786886Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:45:56.786886Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#young-democrats-of-washington; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "young-democrats-of-washington",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "young-democrats-of-washington"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T10:09:24.576000Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T10:09:24.576000Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T10:09:24.576000Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex / oversight task 01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#nondriver-action; actual complete current ordinary browser factual review; all prior failures and stated qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "nondriver-action",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "nondriver-action"
+          },
+          {
+            "cadence": "daily",
+            "due": false,
+            "freshness": "current",
+            "freshness_due": false,
+            "freshness_due_at": "2026-10-30T09:45:08.277877Z",
+            "freshness_evaluated_at": "2026-10-30T08:41:25Z",
+            "freshness_overdue": false,
+            "lane": "manual",
+            "last_successful_check": "2026-10-29T09:45:08.277877Z",
+            "latest_attempt": {
+              "checked_at": "2026-10-29T09:45:08.277877Z",
+              "event_id": null,
+              "evidence": "OpenAI Codex /root/performance_651: data/review/rechecks/wa-2026-general-2026-10-29-manual.json#citizens-against-aipac-corruption; complete bounded current publication review; all stated held/prior qualifications retained",
+              "mode": "human",
+              "scheduled_for": "2026-10-29",
+              "source_id": "citizens-against-aipac-corruption",
+              "status": "manual"
+            },
+            "limitation": "Manual official-publication review required.",
+            "next_due": "2026-10-31",
+            "source_id": "citizens-against-aipac-corruption"
+          }
+        ],
+        "election_id": "wa-2026-general"
+      }
+    ],
+    "missed": []
+  },
+  "manual": [
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "the-stranger"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "the-urbanist"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "fuse-washington"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seattle-democratic-socialists"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "tech-4-housing"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-community-action-network"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-bus"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-state-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "king-county-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "11th-district-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "32nd-district-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "34th-district-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "36th-district-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "37th-district-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "43rd-district-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "46th-district-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-bikes"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seattle-subway"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-conservation-action"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "sierra-club-washington"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "environmental-climate-caucus-wa-democrats"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "mlk-labor"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-state-labor-council"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seiu-925"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "aft-washington"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-education-association"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-state-building-trades"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "protec17"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "planned-parenthood-alliance-advocates"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "oneamerica-votes"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "alliance-for-gun-responsibility"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "washington-housing-alliance"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "nwpc-washington"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "seattle-times-editorial-board"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "young-democrats-of-washington"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "nondriver-action"
+    },
+    {
+      "due": "2026-10-30",
+      "election_id": "wa-2026-general",
+      "limitation": "Manual official-publication review required.",
+      "source_id": "citizens-against-aipac-corruption"
+    }
+  ],
+  "missed": [],
+  "mode": "live",
+  "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+  "revision": "aafbafe4b76205e04992e482c025a93da2aceb7b",
+  "source_tree_dirty": false
+}

@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-11-01T15:43:14.788690Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/assess_497_native26_records: data/review/rechecks/wa-2026-general-2026-11-01-manual.json#/source_reviews/seiu-925",
+  "mode": "human",
+  "scheduled_for": "2026-11-01",
+  "source_id": "seiu-925",
+  "status": "manual"
+}

@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-30T10:30:26.140228Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex / oversight01a16b99-eb6e-723d-a935-dbd24a22e03d: data/review/rechecks/wa-2026-general-2026-10-30-manual.json#/source_reviews/king-county-democrats",
+  "mode": "human",
+  "scheduled_for": "2026-10-30",
+  "source_id": "king-county-democrats",
+  "status": "manual"
+}

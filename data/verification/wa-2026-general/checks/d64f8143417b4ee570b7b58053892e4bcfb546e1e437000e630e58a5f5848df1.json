@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "37c79ebb1eab4dd6d31a1d3b44da6b7a42bab88e99daacdeda69f77d6d3bdb97"
+  },
+  "checked_at": "2026-10-30T08:55:12.624117Z",
+  "event_id": "refresh-citizens-against-aipac-corruption-20261030T085512Z-d1b2a635296c",
+  "evidence": "/root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-30-manual.json#/source_reviews/citizens-against-aipac-corruption",
+  "mode": "human",
+  "recorded_at": "2026-10-30T11:02:17.352056Z",
+  "scheduled_for": "2026-10-30",
+  "source_id": "citizens-against-aipac-corruption",
+  "status": "failed"
+}

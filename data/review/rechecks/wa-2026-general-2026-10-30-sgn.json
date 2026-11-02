@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "record_type": "actual_current_SGN_five_decision_dual_factual_review_and_normal_admission",
+  "election_id": "wa-2026-general",
+  "issues": [
+    505
+  ],
+  "recorded_by": "OpenAI Codex /root/canonical_659_ba680db (composer; actual source reviewers below)",
+  "recorded_at": "2026-10-30T10:59:45.214799+00:00",
+  "source_id": "seattle-gay-news",
+  "official_url": "https://www.sgn.org/story/171606/",
+  "actual_source_observation": {
+    "source_id": "seattle-gay-news",
+    "requested_url": "https://www.sgn.org/story/171606/",
+    "kind": "article",
+    "check_started_at": "2026-10-30T09:09:46.731304+00:00",
+    "actual_actor": "OpenAI Codex /root/assess_497_native26_records",
+    "attempt": 1,
+    "checked_at": "2026-10-30T09:09:46.974584+00:00",
+    "http_status": 200,
+    "canonical_url": "https://www.sgn.org/story/171606/",
+    "redirect_chain": [],
+    "media_type": "text/html; charset=utf-8",
+    "byte_length": 55573,
+    "sha256": "cceb41bb61cd05b293c7cec024df38505d548110fa716e5021c5fd3a1302579a",
+    "outcome": "HTTP_RESPONSE_OBSERVED",
+    "parser_status": "parsed",
+    "native_manifest_id": "capture-seattle-gay-news-20261030T084125Z-f1a3bc650e77",
+    "native_sha256": "d478a00a7e001f2070d683fc0413348f814f935cde1288cfc5832ba57c889fbd",
+    "native_byte_length": 55573,
+    "same_hash_as_native": false,
+    "same_byte_length_as_native": true
+  },
+  "actual_transcriber": "OpenAI Codex /root/assess_497_native26_records",
+  "actual_transcribed_at": "2026-10-30T09:14:42.468760+00:00",
+  "actual_verifier": "OpenAI Codex /root",
+  "actual_verified_at": "2026-10-30T09:19:49.574335+00:00",
+  "retained_original_capture_id": "capture-seattle-gay-news-20261030T090946Z-16b735be3ebf",
+  "verified_manual_record": "data/review/manual/manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3.json",
+  "source_original_custody": "Full current original retained privately in durable primary storage; public capture is an offline manual upload with no invented HTTP status. Original actual HTTP metadata is separately preserved above.",
+  "new_decisions": [
+    {
+      "race_id": "supreme-court-justice-1",
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "evidence_excerpt": "Vote Melody.",
+      "evidence_locator": "story171606 .entry-content; Pos. 1: Colleen Melody subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "captured_at": "2026-10-30T09:09:46.974584+00:00",
+      "reviewed_at": "2026-10-30T09:19:49.574335+00:00",
+      "reviewer": "OpenAI Codex /root",
+      "review_note": "Issue #505: actual complete editorial transcription by OpenAI Codex /root/assess_497_native26_records at 2026-10-30T09:14:42.468760+00:00; independent factual verification by OpenAI Codex /root at 2026-10-30T09:19:49.574335+00:00. Only this new decision receives current provenance. Caption Jamie/body Jaime qualified by unique Position3 and explicit Vote instruction, not global alias. Publication and first appearance unknown. Native08:41 SGN11 remains incomplete/unapproved; no executed16livebaseline or personal Scott source read."
+    },
+    {
+      "race_id": "supreme-court-justice-3",
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "evidence_excerpt": "Vote Hawk.",
+      "evidence_locator": "story171606 .entry-content; Pos. 3: Jaime Michelle Hawk subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "captured_at": "2026-10-30T09:09:46.974584+00:00",
+      "reviewed_at": "2026-10-30T09:19:49.574335+00:00",
+      "reviewer": "OpenAI Codex /root",
+      "review_note": "Issue #505: actual complete editorial transcription by OpenAI Codex /root/assess_497_native26_records at 2026-10-30T09:14:42.468760+00:00; independent factual verification by OpenAI Codex /root at 2026-10-30T09:19:49.574335+00:00. Only this new decision receives current provenance. Caption Jamie/body Jaime qualified by unique Position3 and explicit Vote instruction, not global alias. Publication and first appearance unknown. Native08:41 SGN11 remains incomplete/unapproved; no executed16livebaseline or personal Scott source read."
+    },
+    {
+      "race_id": "supreme-court-justice-4",
+      "candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "evidence_excerpt": "Vote Birk.",
+      "evidence_locator": "story171606 .entry-content; Pos. 4: Ian Birk subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "captured_at": "2026-10-30T09:09:46.974584+00:00",
+      "reviewed_at": "2026-10-30T09:19:49.574335+00:00",
+      "reviewer": "OpenAI Codex /root",
+      "review_note": "Issue #505: actual complete editorial transcription by OpenAI Codex /root/assess_497_native26_records at 2026-10-30T09:14:42.468760+00:00; independent factual verification by OpenAI Codex /root at 2026-10-30T09:19:49.574335+00:00. Only this new decision receives current provenance. Caption Jamie/body Jaime qualified by unique Position3 and explicit Vote instruction, not global alias. Publication and first appearance unknown. Native08:41 SGN11 remains incomplete/unapproved; no executed16livebaseline or personal Scott source read."
+    },
+    {
+      "race_id": "supreme-court-justice-5",
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "evidence_excerpt": "Vote Angelis.",
+      "evidence_locator": "story171606 .entry-content; Pos. 5: Theo Angelis subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "captured_at": "2026-10-30T09:09:46.974584+00:00",
+      "reviewed_at": "2026-10-30T09:19:49.574335+00:00",
+      "reviewer": "OpenAI Codex /root",
+      "review_note": "Issue #505: actual complete editorial transcription by OpenAI Codex /root/assess_497_native26_records at 2026-10-30T09:14:42.468760+00:00; independent factual verification by OpenAI Codex /root at 2026-10-30T09:19:49.574335+00:00. Only this new decision receives current provenance. Caption Jamie/body Jaime qualified by unique Position3 and explicit Vote instruction, not global alias. Publication and first appearance unknown. Native08:41 SGN11 remains incomplete/unapproved; no executed16livebaseline or personal Scott source read."
+    },
+    {
+      "race_id": "supreme-court-justice-7",
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "evidence_excerpt": "Vote Stephens.",
+      "evidence_locator": "story171606 .entry-content; Pos. 7: Debra L. Stephens subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "captured_at": "2026-10-30T09:09:46.974584+00:00",
+      "reviewed_at": "2026-10-30T09:19:49.574335+00:00",
+      "reviewer": "OpenAI Codex /root",
+      "review_note": "Issue #505: actual complete editorial transcription by OpenAI Codex /root/assess_497_native26_records at 2026-10-30T09:14:42.468760+00:00; independent factual verification by OpenAI Codex /root at 2026-10-30T09:19:49.574335+00:00. Only this new decision receives current provenance. Caption Jamie/body Jaime qualified by unique Position3 and explicit Vote instruction, not global alias. Publication and first appearance unknown. Native08:41 SGN11 remains incomplete/unapproved; no executed16livebaseline or personal Scott source read."
+    }
+  ],
+  "prior_933_decisions": "Every prior canonical dictionary and historical provenance must remain exact; normal compile and verification establish admission.",
+  "qualifications": {
+    "caption_body": "Caption Jamie Michelle Hawk versus position/body Jaime Michelle Hawk; only unique frozen Position3/body/Vote mapping used. No global alias.",
+    "publication_or_first_appearance": "UNKNOWN; current discovery/check/review times are not original publication dates.",
+    "native_snapshot": "extraction-seattle-gay-news-20261030T084125Z-0f9239e10d79 remains incomplete/unapproved11. Native original08:41 bytes differ from current09:09 supplied body and are not replaced.",
+    "future_comparison": "Adapter/body coverage prepared for sixteen; no new live run or sixteen-fact baseline approval performed."
+  }
+}

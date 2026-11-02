@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-11-01T15:54:07.727401Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/assess_497_native26_records: data/review/rechecks/wa-2026-general-2026-11-01-manual.json#/source_reviews/36th-district-democrats",
+  "mode": "human",
+  "scheduled_for": "2026-11-01",
+  "source_id": "36th-district-democrats",
+  "status": "manual"
+}

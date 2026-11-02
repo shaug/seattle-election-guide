@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "8b8665d4836aeccafcafdf5b5eae51bcee96250cde4405940374c19972131fb5"
+  },
+  "checked_at": "2026-10-30T08:55:12.624340Z",
+  "event_id": "refresh-oneamerica-votes-20261030T085512Z-f850eb5450fa",
+  "evidence": "/root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-30-manual.json#/source_reviews/oneamerica-votes",
+  "mode": "human",
+  "recorded_at": "2026-10-30T11:02:18.728235Z",
+  "scheduled_for": "2026-10-30",
+  "source_id": "oneamerica-votes",
+  "status": "failed"
+}

@@ -444,6 +444,23 @@ def test_stylesheet_visibility_requires_review_and_hidden_void_tags_do_not_leak(
     assert decisions[0].extraction_confidence == "0.99"
 
 
+@pytest.mark.parametrize("kind", ["static_html", "dynamic_html"])
+@pytest.mark.parametrize("void_markup", ["<br/>", "<br></br>", '<img src="fixture.png"/>'])
+def test_hidden_html_parent_survives_void_end_callbacks(kind: str, void_markup: str) -> None:
+    spec = _spec(kind, "Visible Candidate")
+    artifact = (
+        f"<p hidden>{void_markup}Visible Candidate</p><p><br/>Visible Candidate</p>"
+    ).encode()
+
+    decisions = extract_decisions(spec, artifact, media_type="text/html")
+
+    assert [decision.candidate_ids for decision in decisions] == [
+        ["seattle-city-council-5--nilu-jenks"]
+    ]
+    assert decisions[0].requires_review is True
+    assert decisions[0].extraction_confidence == "0.99"
+
+
 def test_adapter_validation_uses_canonical_eligibility_and_discovery_media() -> None:
     inventory = read_inventory(
         PROJECT_ROOT / "data" / "normalized" / "wa-2026-primary-inventory.json"

@@ -1,0 +1,915 @@
+{
+  "schema_version": "1.0",
+  "record_type": "exact_native_baselines_with_later_complete_official_factual_reviews",
+  "election_id": "wa-2026-general",
+  "issues": [
+    505
+  ],
+  "recorded_by": "OpenAI Codex /root/canonical_659_ba680db (normal writer only; original actual reviewers below)",
+  "recorded_at": "2026-10-30T11:01:44.258710+00:00",
+  "native_run": 41028107415,
+  "native_attempt": 1,
+  "native_archive": "301f5efee04599f4c9d8a4ed5dbc2e2edae0d880",
+  "native_actual_clock": "2026-10-30T08:41:25Z",
+  "native_elapsed_seconds": 86358,
+  "native_short_of_24h_seconds": 42,
+  "timing": "Six actual Pacificcalendar-slot attempts; no elapsed24hour credit or backdating. Source read/review clocks below are genuinely later. #497 adoption remains closed.",
+  "source_reviews": {
+    "sage-leaders": {
+      "source_id": "sage-leaders",
+      "actual_reviewer": "OpenAI Codex /root",
+      "actual_reviewed_at": "2026-10-30T09:13:47.902188+00:00",
+      "native_checked_at": "2026-10-30T08:41:25+00:00",
+      "native_snapshot_id": "extraction-sage-leaders-20261030T084125Z-f04caaab450f",
+      "native_complete_decision_count": 13,
+      "full_native_decisions": [
+        {
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "evidence_excerpt": "✅ Rebecca Saldaña, King County Council District 2",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "king-county-council-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "king-county-council-4--jorge-l-baron"
+          ],
+          "evidence_excerpt": "✅ Jorge Baron, King County Council, District 4",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "king-county-council-4",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "evidence_excerpt": "✅ Teresa Mosqueda, King County Council, District 8",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "king-county-council-8",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "evidence_excerpt": "✅ Imraan Sidiqqi, State Rep. 32nd LD Position 2",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-32-state-representative-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-32-state-senator--cindy-ryu"
+          ],
+          "evidence_excerpt": "✅ Cindy Ryu, State Senate 32nd LD",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-32-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-34-state-senator--emily-alvarado"
+          ],
+          "evidence_excerpt": "✅ Emily Alvarado, State Senate 34th LD",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-34-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "evidence_excerpt": "✅ Julia Reed, State Rep. 36th LD Position 1",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-36-state-representative-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "evidence_excerpt": "✅ Kelabe Tewolde, State Rep. 37th LD Position 1",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-37-state-representative-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "evidence_excerpt": "✅ Jaelynn Scott, State Rep. 37th LD Position 2",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-37-state-representative-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-37-state-senator--chipalo-street",
+            "ld-37-state-senator--tatiana-brown"
+          ],
+          "evidence_excerpt": "✅ Chipalo Street, State Senate 37th LD ✅ Tatiana Brown, State Senate 37th LD",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-37-state-senator",
+          "requires_review": true,
+          "status": "dual_endorsement"
+        },
+        {
+          "candidate_ids": [
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "evidence_excerpt": "✅ Hannah Sabio-Howell, State Senate 43rd LD",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-43-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "evidence_excerpt": "✅ Darya Farivar, State Rep. 46th LD Position 2",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-46-state-representative-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "evidence_excerpt": "✅ Nilu Jenks, Seattle City Council, District 5",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "seattle-city-council-5",
+          "requires_review": true,
+          "status": "endorsed"
+        }
+      ],
+      "current_official_observations": [
+        {
+          "source_id": "sage-leaders",
+          "requested_url": "https://www.sageleaders.org/2026-endorsements",
+          "actual_actor": "OpenAI Codex /root",
+          "check_started_at": "2026-10-30T09:09:52.291184+00:00",
+          "attempt": 1,
+          "scheduled_for": "2026-10-30",
+          "checked_at": "2026-10-30T09:09:53.033439+00:00",
+          "http_status": 200,
+          "canonical_url": "https://www.sageleaders.org/2026-endorsements",
+          "redirect_chain": [],
+          "media_type": "text/html;charset=utf-8",
+          "byte_length": 148177,
+          "sha256": "de1072ecd7465f8f3d76d6be41fc946ac11b03283f90c990f6eab69e6a3876bf",
+          "outcome": "HTTP_RESPONSE_OBSERVED"
+        }
+      ],
+      "official_urls": [
+        "https://www.sageleaders.org/2026-endorsements"
+      ],
+      "current_factual_review_result": "complete_supported_existing_mapping_set_matches_current_publication",
+      "source_first_appearance": "UNKNOWN; no inference from this read",
+      "complete_current_publication_scope": "Full2026 current maintained official endorsement page before OurPastEndorsements boundary; all King/Pierce/Snohomish/Clark/Clallam/Chelan/Yakima/Spokane/Mason/Kitsap groups and historical-year separation inspected.",
+      "findings": [
+        "All13 native mapped decisions exactly supported by current2026 rows; LD37 Senate existing ChipaloStreet/TatianaBrown dual remains equal, no expansion from historical2025/2024/2023 lists.",
+        "Current-cycle maintained publication after primary; top process text about primary capacity and August general contact is preserved, not described as independently separate general slate. Existing current-cycle qualification remains.",
+        "Literal Sidiqqi/JorgeBaron/JuliaReed variants use exact district/office/position; no alias/schema/normalizer or new correction approval."
+      ],
+      "new_or_changed_supported_fact_leads": []
+    },
+    "transit-riders-union": {
+      "source_id": "transit-riders-union",
+      "actual_reviewer": "OpenAI Codex /root",
+      "actual_reviewed_at": "2026-10-30T09:13:47.902188+00:00",
+      "native_checked_at": "2026-10-30T08:41:25+00:00",
+      "native_snapshot_id": "extraction-transit-riders-union-20261030T084125Z-8a9daa5b8c79",
+      "native_complete_decision_count": 12,
+      "full_native_decisions": [
+        {
+          "candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "evidence_excerpt": "No on IP26-001 (Force schools to out trans children)",
+          "evidence_locator": "October article formal list: No on IP26-001 (Force schools to out trans children). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+          "extraction_confidence": "0.99",
+          "race_id": "initiative-26-001",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "evidence_excerpt": "No on IP26-638 (Force women into genital exams to play sports)",
+          "evidence_locator": "October article formal list: No on IP26-638 (Force women into genital exams to play sports). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+          "extraction_confidence": "0.99",
+          "race_id": "initiative-26-638",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "evidence_excerpt": "No on/Reject IP26-645 (repeal of Millionaires Tax)",
+          "evidence_locator": "October article formal list: No on/Reject IP26-645 (repeal of Millionaires Tax). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+          "extraction_confidence": "0.99",
+          "race_id": "initiative-26-645",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "king-county-council-2--toshiko-grace-hasegawa",
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "evidence_excerpt": "King County Council District 2: Toshiko Grace Hasegawa and Rebecca Saldaña",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "king-county-council-2",
+          "requires_review": true,
+          "status": "dual_endorsement"
+        },
+        {
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ],
+          "evidence_excerpt": "32nd Legislative District, Washington State House Position 1: Danica Noble",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-32-state-representative-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "evidence_excerpt": "32nd Legislative District, Washington State House Position 2: Imraan Siddiqi",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-32-state-representative-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "evidence_excerpt": "37th Legislative District, Washington State House Position 1: Kelabe Tewolde",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-37-state-representative-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-37-state-senator--tatiana-brown"
+          ],
+          "evidence_excerpt": "37th Legislative District, Washington State Senate: Tatiana Brown",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-37-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "evidence_excerpt": "43rd Legislative District, Washington State Senate: Hannah Sabio-Howell",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-43-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "evidence_excerpt": "Seattle City Council District 5: Nilu Jenks",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "seattle-city-council-5",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "seattle-municipal-court-judge-5--gabe-rothstein"
+          ],
+          "evidence_excerpt": "Seattle Municipal Court Judge: Gabe Rothstein",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "seattle-municipal-court-judge-5",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "seattle-proposition-1-transit--yes"
+          ],
+          "evidence_excerpt": "Yes on City of Seattle Proposition 1 (Seattle Transit Measure renewal)",
+          "evidence_locator": "October article formal list: Yes on City of Seattle Proposition 1 (Seattle Transit Measure renewal). Four-only delegated approval #593; data/review/approvals/wa-2026-general-2026-10-21-tru.json. No held recommendation conversion.",
+          "extraction_confidence": "0.99",
+          "race_id": "seattle-proposition-1-transit",
+          "requires_review": true,
+          "status": "endorsed"
+        }
+      ],
+      "current_official_observations": [
+        {
+          "source_id": "transit-riders-union",
+          "requested_url": "https://transitriders.org/",
+          "actual_actor": "OpenAI Codex /root",
+          "check_started_at": "2026-10-30T09:09:53.049524+00:00",
+          "attempt": 1,
+          "scheduled_for": "2026-10-30",
+          "checked_at": "2026-10-30T09:09:53.280516+00:00",
+          "http_status": 200,
+          "canonical_url": "https://transitriders.org/",
+          "redirect_chain": [],
+          "media_type": "text/html; charset=UTF-8",
+          "byte_length": 104600,
+          "sha256": "1bb879b32308dc7cd32f7b81be3db2e31dd6a9777100fd782dbe7c058c8609e6",
+          "outcome": "HTTP_RESPONSE_OBSERVED"
+        },
+        {
+          "source_id": "transit-riders-union",
+          "requested_url": "https://transitriders.org/2026-general-election-endorsements/",
+          "actual_actor": "OpenAI Codex /root",
+          "check_started_at": "2026-10-30T09:09:53.291887+00:00",
+          "attempt": 1,
+          "scheduled_for": "2026-10-30",
+          "checked_at": "2026-10-30T09:09:53.447568+00:00",
+          "http_status": 200,
+          "canonical_url": "https://transitriders.org/2026-general-election-endorsements/",
+          "redirect_chain": [],
+          "media_type": "text/html; charset=UTF-8",
+          "byte_length": 64661,
+          "sha256": "8128d94d947775c9f51f4389bb540f5f63fcba5b3847a817a35bd7a68243ed90",
+          "outcome": "HTTP_RESPONSE_OBSERVED"
+        },
+        {
+          "source_id": "transit-riders-union",
+          "requested_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+          "actual_actor": "OpenAI Codex /root",
+          "check_started_at": "2026-10-30T09:09:53.454454+00:00",
+          "attempt": 1,
+          "scheduled_for": "2026-10-30",
+          "checked_at": "2026-10-30T09:09:53.617626+00:00",
+          "http_status": 200,
+          "canonical_url": "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+          "redirect_chain": [],
+          "media_type": "text/html; charset=UTF-8",
+          "byte_length": 50933,
+          "sha256": "b630c0e5c6ace9edd22c76975b81c37fcff0b50b0155d855ed06a4d2f0158a43",
+          "outcome": "HTTP_RESPONSE_OBSERVED"
+        },
+        {
+          "source_id": "transit-riders-union",
+          "requested_url": "https://transitriders.sfo3.digitaloceanspaces.com/transitriders.org/wp-content/uploads/2026/10/17022007/TRU_November_2026_General_Endorsements-1024x581.jpg",
+          "actual_actor": "OpenAI Codex /root",
+          "check_started_at": "2026-10-30T09:09:53.625358+00:00",
+          "attempt": 1,
+          "scheduled_for": "2026-10-30",
+          "checked_at": "2026-10-30T09:09:53.868358+00:00",
+          "http_status": 200,
+          "canonical_url": "https://transitriders.sfo3.digitaloceanspaces.com/transitriders.org/wp-content/uploads/2026/10/17022007/TRU_November_2026_General_Endorsements-1024x581.jpg",
+          "redirect_chain": [],
+          "media_type": "image/jpeg",
+          "byte_length": 124600,
+          "sha256": "f2098de7c78a04884437437fa2cbe38c10598f65dfbe336cc4ca9f3d34ee5b32",
+          "outcome": "HTTP_RESPONSE_OBSERVED"
+        }
+      ],
+      "official_urls": [
+        "https://transitriders.org/",
+        "https://transitriders.org/2026-general-election-endorsements/",
+        "https://transitriders.org/transit-riders-union-2026-general-election-endorsements/",
+        "https://transitriders.sfo3.digitaloceanspaces.com/transitriders.org/wp-content/uploads/2026/10/17022007/TRU_November_2026_General_Endorsements-1024x581.jpg"
+      ],
+      "current_factual_review_result": "complete_supported_existing_mapping_set_matches_current_publication",
+      "source_first_appearance": "UNKNOWN; no inference from this read",
+      "complete_current_publication_scope": "Current full home/index through September reviewed boundary (continues to2025), both actual listed2026 general articles and exact linked October graphic; all known/new listed current article obligations inspected, no relevant new article ignored.",
+      "findings": [
+        "All12 native formal facts supported: threeNo statewide initiatives,SeattleTransitYes,seven single candidate facts plus one KCC2 dual decision. Exact native mapped array unchanged; no unreviewed recommendation converted.",
+        "October article explicitly separates formal endorsement slate from10 recommended candidates who did not undergo process. Actual graphic legend says underlined candidates endorsed; every newly viewed recommendation distinction remains held.",
+        "KCC2 Hasegawa/Saldaña formal dual retained from both general articles even though graphic omits it; no removal inferred from graphic omission.",
+        "Native source literalIP26-001/IP26-638 versus frozenIL labels remains exact original delegated593 four-only qualification, no rewritten source or new typo authority. Prior rawsource/history preserved."
+      ],
+      "new_or_changed_supported_fact_leads": []
+    },
+    "ufcw-3000": {
+      "source_id": "ufcw-3000",
+      "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+      "actual_reviewed_at": "2026-10-30T09:14:42.471401+00:00",
+      "native_checked_at": "2026-10-30T08:41:25+00:00",
+      "native_snapshot_id": "extraction-ufcw-3000-20261030T084125Z-1035ed434a78",
+      "native_complete_decision_count": 33,
+      "full_native_decisions": [
+        {
+          "candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "evidence_excerpt": "Vote NO on I-638 and I-001 — Protect Kids. Reject Hate.",
+          "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+          "extraction_confidence": "0.99",
+          "race_id": "initiative-26-001",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "evidence_excerpt": "Vote NO on I-638 and I-001 — Protect Kids. Reject Hate.",
+          "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+          "extraction_confidence": "0.99",
+          "race_id": "initiative-26-638",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "evidence_excerpt": "Vote NO on I-645 — Protect Tax Relief for Working People",
+          "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+          "extraction_confidence": "0.99",
+          "race_id": "initiative-26-645",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "king-county-assessor--rob-foxcurran"
+          ],
+          "evidence_excerpt": "Rob Foxcurran, County Assessor",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "king-county-assessor",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "king-county-council-2--rebecca-saldana"
+          ],
+          "evidence_excerpt": "Rebecca Saldana, County Council District 2",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "king-county-council-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "king-county-council-4--jorge-l-baron"
+          ],
+          "evidence_excerpt": "Jorge Baron, County Council District 4",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "king-county-council-4",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "evidence_excerpt": "Teresa Mosqueda, County Council District 8",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "king-county-council-8",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "king-county-prosecuting-attorney--leesa-manion"
+          ],
+          "evidence_excerpt": "Leesa Manion, County Prosecuting Attorney",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "king-county-prosecuting-attorney",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ],
+          "evidence_excerpt": "Danica Noble, State Representative Pos 1",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-32-state-representative-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis",
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "evidence_excerpt": "Lauren Davis, State Representative Pos 2 (Dual) Imraan Siddiqi, State Representative Pos 2 (Dual)",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-32-state-representative-2",
+          "requires_review": true,
+          "status": "dual_endorsement"
+        },
+        {
+          "candidate_ids": [
+            "ld-32-state-senator--jesse-salomon"
+          ],
+          "evidence_excerpt": "Jesse Salomon, State Senate",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-32-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-34-state-representative-1--brianna-k-thomas"
+          ],
+          "evidence_excerpt": "Brianna Thomas, State Representative Pos 1",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-34-state-representative-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ],
+          "evidence_excerpt": "Joe Fitzgibbon, State Representative Pos 2",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-34-state-representative-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-34-state-senator--emily-alvarado"
+          ],
+          "evidence_excerpt": "Emily Alvarado, State Senate",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-34-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "evidence_excerpt": "Julia Reed, State Representative Pos 1",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-36-state-representative-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-36-state-representative-2--liz-berry"
+          ],
+          "evidence_excerpt": "Liz Berry, State Representative Pos 2",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-36-state-representative-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-36-state-senator--noel-c-frame"
+          ],
+          "evidence_excerpt": "Noel Frame, State Senate",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-36-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde",
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ],
+          "evidence_excerpt": "Kelabe Tewolde, State Representative Pos. 1 (Dual) Sharon Tomiko Santos, State Representative Pos. 1 (Dual)",
+          "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-37-state-representative-1",
+          "requires_review": true,
+          "status": "dual_endorsement"
+        },
+        {
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "evidence_excerpt": "Jaelynn Scott, State Representative Pos 2",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-37-state-representative-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "evidence_excerpt": "Chipalo Street, State Senate",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-37-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-43-state-representative-1--nicole-macri"
+          ],
+          "evidence_excerpt": "Nicole Macri, State Representative Pos 1",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-43-state-representative-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-43-state-representative-2--shaun-scott"
+          ],
+          "evidence_excerpt": "Shaun Scott, State Representative Pos 2",
+          "evidence_locator": "Official current UFCW 3000 publication; exact factual mapping reviewed for #472 on October 23, 2026. Changed publication requires renewed review; this mapping grants no baseline approval.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-43-state-representative-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen"
+          ],
+          "evidence_excerpt": "Jamie Pederson, State Senate",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-43-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "evidence_excerpt": "Gerry Pollet, State Representative Pos 1",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-46-state-representative-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-46-state-representative-2--darya-farivar"
+          ],
+          "evidence_excerpt": "Darya Farivar, State Representative Pos 2",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-46-state-representative-2",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "evidence_excerpt": "Javier Valdez, State Senate",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "ld-46-state-senator",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "seattle-city-council-5--nilu-jenks"
+          ],
+          "evidence_excerpt": "Nilu Jenks, District 5",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "seattle-city-council-5",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "supreme-court-justice-1--colleen-melody"
+          ],
+          "evidence_excerpt": "Colleen Melody, Position 1",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "supreme-court-justice-1",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "evidence_excerpt": "Jaime Hawk, Position 3",
+          "evidence_locator": "Current official publication; mapping reviewed in #474. Full changed bytes require renewed review.",
+          "extraction_confidence": "0.99",
+          "race_id": "supreme-court-justice-3",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "supreme-court-justice-4--ian-birk"
+          ],
+          "evidence_excerpt": "Ian Birk, Position 4",
+          "evidence_locator": "Official current UFCW 3000 endorsements > Ian Birk, Position 4; complete current factual review by OpenAI Codex /root/verify_497_ufcw_current33 at 2026-10-24T09:55:41.998064Z for #497. First appearance unknown; this mapping grants no baseline approval.",
+          "extraction_confidence": "0.99",
+          "race_id": "supreme-court-justice-4",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "supreme-court-justice-5--theo-angelis"
+          ],
+          "evidence_excerpt": "Theo Angelis, Position 5",
+          "evidence_locator": "Official current UFCW 3000 endorsements > Theo Angelis, Position 5; complete current factual review by OpenAI Codex /root/verify_497_ufcw_current33 at 2026-10-24T09:55:41.998064Z for #497. First appearance unknown; this mapping grants no baseline approval.",
+          "extraction_confidence": "0.99",
+          "race_id": "supreme-court-justice-5",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "evidence_excerpt": "Pramila Jayapal, Congressional District 7",
+          "evidence_locator": "Official current UFCW 3000 endorsements > Pramila Jayapal, Congressional District 7; complete current factual review by OpenAI Codex /root/verify_497_ufcw_current33 at 2026-10-24T09:55:41.998064Z for #497. First appearance unknown; this mapping grants no baseline approval.",
+          "extraction_confidence": "0.99",
+          "race_id": "us-house-7",
+          "requires_review": true,
+          "status": "endorsed"
+        },
+        {
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "evidence_excerpt": "Adam Smith, Congressional District 9",
+          "evidence_locator": "Official current UFCW 3000 endorsements > Adam Smith, Congressional District 9; complete current factual review by OpenAI Codex /root/verify_497_ufcw_current33 at 2026-10-24T09:55:41.998064Z for #497. First appearance unknown; this mapping grants no baseline approval.",
+          "extraction_confidence": "0.99",
+          "race_id": "us-house-9",
+          "requires_review": true,
+          "status": "endorsed"
+        }
+      ],
+      "current_official_observations": [
+        {
+          "source_id": "ufcw-3000",
+          "requested_url": "https://ufcw3000.org/endorsements",
+          "kind": "landing",
+          "check_started_at": "2026-10-30T09:09:46.980953+00:00",
+          "actual_actor": "OpenAI Codex /root/assess_497_native26_records",
+          "attempt": 1,
+          "checked_at": "2026-10-30T09:09:47.480380+00:00",
+          "http_status": 200,
+          "canonical_url": "https://ufcw3000.org/endorsements",
+          "redirect_chain": [],
+          "media_type": "text/html;charset=utf-8",
+          "byte_length": 220714,
+          "sha256": "d6b0943a9e19ce4bcb49e183e2ad280d82648bea1c3b33b8201df35f9e04c673",
+          "outcome": "HTTP_RESPONSE_OBSERVED",
+          "parser_status": "parsed",
+          "native_manifest_id": "capture-ufcw-3000-20261030T084125Z-4fdc5d4825ea",
+          "native_sha256": "a6e73fb9407bccaff4b5a38d60731e57b668b860472c57e7d7527785b444aafc",
+          "native_byte_length": 220714,
+          "same_hash_as_native": false,
+          "same_byte_length_as_native": true
+        },
+        {
+          "source_id": "ufcw-3000",
+          "requested_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+          "kind": "article",
+          "check_started_at": "2026-10-30T09:09:47.500511+00:00",
+          "actual_actor": "OpenAI Codex /root/assess_497_native26_records",
+          "attempt": 1,
+          "checked_at": "2026-10-30T09:09:48.158178+00:00",
+          "http_status": 200,
+          "canonical_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+          "redirect_chain": [],
+          "media_type": "text/html;charset=utf-8",
+          "byte_length": 327151,
+          "sha256": "5ea61fd6115190fda33b0ba26a31d66a6182900172766589cea483ab5918b3c5",
+          "outcome": "HTTP_RESPONSE_OBSERVED",
+          "parser_status": "parsed",
+          "native_manifest_id": "capture-ufcw-3000-20261030T084125Z-ffa417ddace1",
+          "native_sha256": "5ea61fd6115190fda33b0ba26a31d66a6182900172766589cea483ab5918b3c5",
+          "native_byte_length": 327151,
+          "same_hash_as_native": true,
+          "same_byte_length_as_native": true
+        },
+        {
+          "source_id": "ufcw-3000",
+          "requested_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote",
+          "kind": "article",
+          "check_started_at": "2026-10-30T09:09:48.181462+00:00",
+          "actual_actor": "OpenAI Codex /root/assess_497_native26_records",
+          "attempt": 1,
+          "checked_at": "2026-10-30T09:09:48.892841+00:00",
+          "http_status": 200,
+          "canonical_url": "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote",
+          "redirect_chain": [],
+          "media_type": "text/html;charset=utf-8",
+          "byte_length": 321126,
+          "sha256": "d358a42107b307cb8ba3ec1b80dd4c593253a8fcb564abc59e176e276d2c4c82",
+          "outcome": "HTTP_RESPONSE_OBSERVED",
+          "parser_status": "parsed",
+          "native_manifest_id": "capture-ufcw-3000-20261030T084125Z-b093f3abea46",
+          "native_sha256": "d358a42107b307cb8ba3ec1b80dd4c593253a8fcb564abc59e176e276d2c4c82",
+          "native_byte_length": 321126,
+          "same_hash_as_native": true,
+          "same_byte_length_as_native": true
+        }
+      ],
+      "complete_current_publication_scope": {
+        "landing": "https://ufcw3000.org/endorsements",
+        "known_native_articles": [
+          "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+          "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote"
+        ],
+        "current_listed_articles": [
+          "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+          "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote"
+        ],
+        "newly_discovered": [],
+        "remembered_not_currently_listed": [],
+        "current_discovery_complete": true,
+        "required_native_input_urls": [
+          "https://ufcw3000.org/endorsements",
+          "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-638-and-i-001-endorses-no-hate-campaign",
+          "https://ufcw3000.org/news/2026/10/15/ufcw-3000-executive-board-unanimously-rejects-i-645-endorses-no-vote"
+        ]
+      },
+      "findings": [
+        "Entire current landing and both relevant known/listedOctober15articles read; no new/rotated required input, no unbounded news crawl.",
+        "All88individual candidate rows accounted for:32target names form30candidate decisions;56outside inventory. Three explicitNo measures produce exact33; distinctTacomaYes excluded.",
+        "Both duals retain equal halves:LD32House2Davis/Siddiqi andLD37House1Tewolde/Santos.",
+        "TheoAngelis uniquely matches frozenSupremeCourtPosition5unexpired2year term; all district/office/position matching preserved.",
+        "Preserve Saldana/Saldaña,JorgeBaron/JorgeL.Barón,JaimeHawk/JaimeMichelleHawk,JuliaReed/JuliaGrantReed,NoelFrame/NoelC.Frame,JamiePederson/JamiePedersen,BriannaThomas/BriannaK.Thomas fixed identities.",
+        "Four later additionsJayapalCD7,SmithCD9,BirkSupremeCourt4,AngelisSupremeCourt5 andLD37dual first appearances remain unknown.",
+        "Canonical34thHackneyLD11House1 remains held. Current absence supplies neither new endorsement nor withdrawal/replacement. Historical incomplete29factUFCW limitations/approvals remain unchanged.",
+        "No mandatory image or uniquely relied-on image-only fact in installedUFCWscope.",
+        "Actual current facts/reviewer/times are separately recorded; previous exact approval is not transferred. No current writer substitutes for prior or personal maintainer review.",
+        "Root alone may separately write the exact33baseline approval through normal protected/versioned review; no release/source/ledgerapproval is created here."
+      ],
+      "new_or_changed_supported_fact_leads": {
+        "new_or_rotated_required_articles": [],
+        "new_unrecognized_target_choice": [],
+        "affirmative_withdrawals_or_replacements": []
+      },
+      "current_factual_review_result": "SUPPORT_EXACT_NATIVE30_UFCW33_BASELINE_APPROVAL_WITH_STATED_QUALIFICATIONS"
+    }
+  },
+  "not_approved": {
+    "seattle-gay-news": "Executed SGN11 incomplete, unchanged unapproved. Five current court facts admitted separately; no fabricated executed16livebaseline.",
+    "seiu-775": "Genuine current403/failure14 preserves priorautomatic29 and separate suppliedPDF; no successful current automatic recovery inferred."
+  },
+  "unchanged_approved_reuse": {
+    "washington-working-families-party": "Actual native ten-decision reuse references its exact older approved snapshot/reviewer/time; no new personal source read or approval written."
+  }
+}

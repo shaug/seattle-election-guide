@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-gay-news-20261030T090946Z-16b735be3ebf",
+  "entered_at": "2026-10-30T09:14:42.468760Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official SGN story171606 .entry-content, Pos.1/3/4/5/7 explicit position headings and Vote instructions; full actual current original SHA256 cceb41bb61cd05b293c7cec024df38505d548110fa716e5021c5fd3a1302579a.",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3",
+  "review_note": "Materializes the actual prior delegated transcription and independent whole-editorial verification, not a new source read. Photo caption Jamie versus body Jaime is preserved; unique Position3/body/Vote mapping only, no global alias. Publication/first-appearance date unknown. Separate from incomplete native08:41 SGN11; no current or future16livebaseline approval. data/review/rechecks/wa-2026-general-2026-10-30-sgn.json.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-30T09:19:49.574335Z",
+  "reviewed_by": "OpenAI Codex /root",
+  "reviewer": "OpenAI Codex /root/assess_497_native26_records",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "transcription": "Pos. 1: Colleen Melody — Vote Melody.\nPos. 3: Jaime Michelle Hawk — Vote Hawk.\nPos. 4: Ian Birk — Vote Birk.\nPos. 5: Theo Angelis — Vote Angelis.\nPos. 7: Debra L. Stephens — Vote Stephens."
+}
