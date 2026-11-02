@@ -17,7 +17,7 @@ Normal baseline approvals apply only to the exact three complete executed
 snapshots. SGN's actual11-decision snapshot remains incomplete and unapproved;
 no automatic16-decision check or approval is fabricated.
 
-The new SGN Updates entry uses November 1 as its proposed guide-publication date
+The new SGN Updates entry uses November 2 as its proposed guide-publication date
 in America/Los_Angeles. This is distinct from the genuine October 30 factual
 admission and the publisher's unknown announcement/first-appearance dates. The
 original unpublished October 30 entry remains in source history. If delivery

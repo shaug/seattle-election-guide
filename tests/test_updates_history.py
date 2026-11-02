@@ -110,7 +110,7 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             assert [entry.headline for entry in added] == [
                 "Added SGN's five state Supreme Court endorsements."
             ]
-            assert added[0].corrected_on == date(2026, 11, 1)
+            assert added[0].corrected_on == date(2026, 11, 2)
             assert added[0].topics == ["endorsements"]
             assert added[0].actions == ["added"]
             assert next(
