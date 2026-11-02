@@ -66,6 +66,9 @@ const PURITY_IDENTIFIERS = [
  * this choice deliberately rather than arriving unguarded.
  */
 export const MODULE_KINDS = {
+  'updates-client.mjs': 'wiring',
+  'updates-route.mjs': 'wiring',
+  'updates-entry.mjs': 'wiring',
   'compact-filters.mjs': 'wiring',
   'ballot-scopes.mjs': 'wiring',
   'voting-address-lookup.mjs': 'wiring',

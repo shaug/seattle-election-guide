@@ -1050,3 +1050,72 @@ a checklist or automated pass cannot replace actual evidence. This requirement
 confers no new browser/session/headful/native access, denial retry or workaround.
 Continue unaffected automated work, but do not call the feature/preview accepted
 while interactive acceptance is incomplete.
+
+
+## Guide joined Sources group (#679)
+
+The shared control macro accepts an optional source count/destination only from
+the admitted general Guide. Its source link and two existing announcing roots
+stay server-owned; `projectCompactSources` takes over only the summary span once
+and projects the existing controller's tallying selection and complete accessible
+sentence. It creates no new source/filter state, URL owner or dialog. Legacy
+Guide markup and the Comparisons composition retain their original branches.
+
+`wireCompactFilters` remains the fit owner. The Guide-only source slot reserves
+“All total” and “total of total” in the actual link styles, alongside the existing
+complete control families. The complete centered controls-plus-Sources group and
+twice the current count's side reservation must fit before admitting one row.
+Otherwise CSS grid puts Sources and the nowrap count on row two, with the four
+controls centered above. That second row must also fit its actual container.
+Reclaim only the needed part of its 12px gap first; if the complete inline
+Sources face and count still exceed the row, stack the unchanged Sources prefix
+and value inside the same 44px target and remeasure its complete family. Icons,
+font sizes, labels and the count phrase stay intact. Each fit resets both gap
+and face before measuring, so wider containers recover their original layout.
+No viewport width licenses overflow in a narrower Guide container.
+Reflow changes grid placement without moving or replacing
+focused controls, link or live status roots. The existing ResizeObserver observes
+the Guide sticky group as well as the bar; font readiness/loading completion and
+resolved source/filter projection remeasure it. Its actual height, including
+notices, supplies Guide anchor clearance. Optional `precinct.css` owns these
+Guide-only selectors; shared `base.css`, archived primary and Comparisons layout
+rules stay unchanged. No viewport constant substitutes for actual fit.
+
+*Check: exists — `guide-client.test.mjs` verifies independent source tally,
+focused-link identity and Ballot scope; `test_precinct_rendering.py` exercises
+320/360/390/intermediate/wide sticky rows, reactive source/race counts, anchor
+clearance, fractional fit boundaries, font/container changes, focus and recovery.
+Existing native-control, precinct/address/history and Comparisons regressions
+remain required. Headless geometry does not replace mandatory interactive native
+menu acceptance or establish native Safari/physical-device observations.*
+
+## Election Updates (#676)
+
+`updates-entry.mjs` composes shell Share, the existing `wireElectionDay` calendar behavior,
+and `updates-client.mjs`. The banner utility/calendar behavior stays unchanged; the new election
+entry preserves the major-page shell contract in RESULTS.md. A generated `UpdatesPayload`
+carries fixed topic order/labels, stable per-render entry keys/topics and all possible count labels;
+prose remains fully server-rendered. New schema1.1 records render `updates.html.j2`/`updates.css`;
+legacy1.0 records retain the original template/stylesheet and shape. No permalink identity is added
+(#677 owns that work).
+
+The controls region is taken over at boot and renders exactly three keyed lit topic buttons.
+There is no All control or payload label for one. Empty selection shows the complete log;
+clearing the final selected topic restores it, while selecting all three keeps all three pressed. Count text renders
+into the existing server live region. One resolved selection projects `hidden` on the existing
+server-owned entry roots and empty-state root; bodies are never read back, duplicated or replaced.
+This explicitly extends the existing root-boolean projection shape to Updates without adding
+independent content state. The unenhanced complete log remains readable and controls disabled.
+
+`updates-route.mjs` is the sole reader/writer of this page's `location` and `history`, owning only
+`topics`. It admits recognized tokens from repeated/comma-separated values, deduplicates in payload
+order, ignores unknown tokens and canonicalizes to one query key (omitted for none). Unrelated
+parameters/fragments survive without being interpreted. User changes push history; boot canonicalizes
+with replace; Back/Forward restores controls and matching entries without moving focus. No storage
+or precinct/source capability is involved.
+
+*Check: `updates-client.test.mjs` covers all eight OR subsets, duplicates, exactly three controls, final deselection,
+empty results and persistent focus/live roots; `updates-route.test.mjs` covers admission/query
+ownership. `test_corrections_rendering.py` checks no-script markup plus actual headless browser
+44px geometry, centered checkless labels, no reserved row gap, native Tab/Space/Enter order, focus and history at
+320/360/390/1280px. Actual screen-reader announcements are not claimed from DOM semantics alone.*

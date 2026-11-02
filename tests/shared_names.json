@@ -43,9 +43,23 @@
     "vocabulary two generators."
   ],
   "data_attributes": {
+    "data-active": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "data-agreement": [
       "template",
       "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-ballot-options": [
+      "client",
+      "python",
+      "test"
+    ],
+    "data-ballot-search": [
       "client",
       "test"
     ],
@@ -61,12 +75,28 @@
       "python",
       "test"
     ],
+    "data-code": [
+      "client",
+      "test"
+    ],
     "data-column-label": [
       "template",
       "stylesheet",
       "client"
     ],
     "data-column-signal": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-compact-filters": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-compact-sources": [
       "template",
       "stylesheet",
       "client",
@@ -151,6 +181,7 @@
     ],
     "data-contested": [
       "template",
+      "python",
       "test"
     ],
     "data-coverage-gap-source-id": [
@@ -213,6 +244,26 @@
       "client",
       "test"
     ],
+    "data-filter-cancel": [
+      "python",
+      "test"
+    ],
+    "data-filter-face": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-filter-native": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-filter-open": [
+      "template",
+      "python",
+      "test"
+    ],
     "data-filter-section": [
       "template",
       "client",
@@ -220,6 +271,16 @@
     ],
     "data-filter-tokens": [
       "template",
+      "test"
+    ],
+    "data-filter-trigger": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "data-kind": [
+      "client",
       "test"
     ],
     "data-leading-pick-ids": [
@@ -276,6 +337,73 @@
       "template",
       "client",
       "test"
+    ],
+    "data-precinct-applied-notice": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-precinct-cancel": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-precinct-clear": [
+      "client",
+      "test"
+    ],
+    "data-precinct-clear-slot": [
+      "template",
+      "client"
+    ],
+    "data-precinct-control": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-precinct-fields": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "data-precinct-form": [
+      "template",
+      "test"
+    ],
+    "data-precinct-link": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-precinct-name": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-precinct-open": [
+      "client",
+      "test"
+    ],
+    "data-precinct-short": [
+      "client",
+      "test"
+    ],
+    "data-precinct-status": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-precinct-submit": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-precinct-summary": [
+      "template",
+      "client"
     ],
     "data-publication-race-id": [
       "template",
@@ -338,6 +466,10 @@
       "client",
       "python"
     ],
+    "data-source-face": [
+      "stylesheet",
+      "client"
+    ],
     "data-source-group": [
       "template",
       "client",
@@ -347,6 +479,7 @@
     "data-source-role": [
       "template",
       "client",
+      "python",
       "test"
     ],
     "data-source-state": [
@@ -411,6 +544,11 @@
       "client",
       "test"
     ],
+    "data-sources-summary": [
+      "template",
+      "client",
+      "test"
+    ],
     "data-sources-tree": [
       "template",
       "client",
@@ -421,133 +559,111 @@
       "client",
       "test"
     ],
-    "data-precinct-clear": [
-      "client",
-      "test"
-    ],
-    "data-precinct-control": [
-      "template",
-      "client",
-      "python",
-      "test"
-    ],
-    "data-precinct-fields": [
-      "template",
-      "stylesheet",
-      "client"
-    ],
-    "data-precinct-link": [
+    "data-update-controls": [
       "template",
       "client",
       "test"
     ],
-    "data-precinct-status": [
+    "data-update-count": [
       "template",
       "client",
       "test"
     ],
-    "data-precinct-cancel": [
-      "template",
-      "client",
-      "python",
-      "test"
-    ],
-    "data-precinct-form": [
-      "template",
-      "test"
-    ],
-    "data-precinct-open": [
-      "client",
-      "test"
-    ],
-    "data-precinct-submit": [
-      "template",
-      "client",
-      "python",
-      "test"
-    ],
-    "data-precinct-summary": [
-      "template",
-      "client"
-    ],
-    "data-precinct-applied-notice": [
+    "data-update-empty": [
       "template",
       "client",
       "test"
     ],
-    "data-ballot-options": [
-      "client",
-      "python",
-      "test"
-    ],
-    "data-ballot-search": [
-      "client",
-      "test"
-    ],
-    "data-code": [
-      "client",
-      "test"
-    ],
-    "data-kind": [
-      "client",
-      "test"
-    ],
-    "data-active": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "data-compact-filters": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "data-filter-cancel": [
-      "python",
-      "test"
-    ],
-    "data-filter-open": [
-      "template",
-      "python",
-      "test"
-    ],
-    "data-filter-trigger": [
-      "template",
-      "stylesheet",
-      "python",
-      "test"
-    ],
-    "data-precinct-clear-slot": [
-      "template",
-      "client"
-    ],
-    "data-precinct-name": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "data-precinct-short": [
-      "client",
-      "test"
-    ],
-    "data-filter-face": [
+    "data-update-key": [
       "template",
       "client",
       "test"
     ],
-    "data-filter-native": [
-      "template",
+    "data-update-topic": [
       "client",
-      "python",
       "test"
     ]
   },
   "class_names": {
+    "address-privacy": [
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "ballot-option": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "ballot-option-text": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "ballot-option-type": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "ballot-options": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "compact-ballot-mode": [
       "stylesheet",
       "client",
       "test"
+    ],
+    "compact-ballot-scope": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "compact-filter-arrow": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "compact-filter-controls": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "compact-filter-dot": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "compact-filter-icon": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "compact-filter-slot": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "compact-filter-trigger": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "compact-filter-value": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "compact-source-link": [
+      "template",
+      "stylesheet",
+      "client"
     ],
     "comparison-cell": [
       "template",
@@ -677,6 +793,36 @@
     "election-day-soon": [
       "stylesheet",
       "client"
+    ],
+    "filter-control-bar": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "filter-control-label": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "filter-control-status": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "filter-select": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "filter-select-control": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
     ],
     "filter-status-part": [
       "stylesheet",
@@ -811,6 +957,46 @@
       "client",
       "test"
     ],
+    "page-head": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "precinct-actions": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "precinct-clear": [
+      "stylesheet",
+      "client"
+    ],
+    "precinct-dialog": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "precinct-info": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "precinct-open": [
+      "stylesheet",
+      "client"
+    ],
+    "precinct-selected": [
+      "stylesheet",
+      "client"
+    ],
+    "precinct-short": [
+      "stylesheet",
+      "client"
+    ],
     "race-card-foot": [
       "template",
       "stylesheet",
@@ -888,6 +1074,12 @@
       "client",
       "test"
     ],
+    "race-detail-certified-result": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
     "race-detail-result-chip": [
       "template",
       "stylesheet",
@@ -947,6 +1139,13 @@
       "python",
       "test"
     ],
+    "screen-guide": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
     "screen-meter": [
       "template",
       "stylesheet",
@@ -981,6 +1180,12 @@
       "test"
     ],
     "segmented-control": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "site-band": [
       "template",
       "stylesheet",
       "python",
@@ -1027,6 +1232,19 @@
       "client",
       "test"
     ],
+    "state-action-strip": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "sticky-header": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
     "support-compact": [
       "template",
       "stylesheet",
@@ -1046,138 +1264,17 @@
       "python",
       "test"
     ],
+    "topic-button": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "visually-hidden": [
       "template",
       "stylesheet",
       "client",
       "python",
-      "test"
-    ],
-    "filter-control-label": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "filter-select": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "filter-select-control": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "precinct-actions": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "precinct-clear": [
-      "stylesheet",
-      "client"
-    ],
-    "precinct-dialog": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "precinct-open": [
-      "stylesheet",
-      "client"
-    ],
-    "precinct-selected": [
-      "stylesheet",
-      "client"
-    ],
-    "address-privacy": [
-      "stylesheet",
-      "client",
-      "python",
-      "test"
-    ],
-    "ballot-option": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "ballot-option-text": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "ballot-option-type": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "ballot-options": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "precinct-info": [
-      "template",
-      "stylesheet",
-      "python",
-      "test"
-    ],
-    "compact-filter-arrow": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "compact-filter-dot": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "compact-filter-icon": [
-      "stylesheet",
-      "client"
-    ],
-    "compact-filter-slot": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "compact-filter-trigger": [
-      "template",
-      "stylesheet",
-      "client",
-      "python",
-      "test"
-    ],
-    "compact-filter-value": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "precinct-short": [
-      "stylesheet",
-      "client"
-    ],
-    "compact-ballot-scope": [
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "compact-filter-controls": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "filter-control-status": [
-      "template",
-      "stylesheet",
-      "client",
       "test"
     ]
   },

@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 import pytest
 
 from election_guide.corrections.loader import load_rendering_corrections
+from election_guide.serialization import read_yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 UPDATES_DIR = PROJECT_ROOT / "data/corrections"
@@ -56,7 +57,57 @@ def _authored_entries() -> set[tuple[str, str, str]]:
         entries.update(
             (election, entry.corrected_on.isoformat(), entry.headline) for entry in updates.entries
         )
+    # Old audits bind authored history, including originals now retained internally.
+    migration = json.loads(
+        (PROJECT_ROOT / "docs/audits/updates-676/classification.json").read_text()
+    )
+    entries.update((row["election_id"], *row["identity"]) for row in migration["entries"])
     return entries
+
+
+def test_election_only_migration_preserves_every_complete_original() -> None:
+    audit_dir = PROJECT_ROOT / "docs/audits/updates-676"
+    audit = json.loads((audit_dir / "classification.json").read_text())
+    assert audit["source_revision"] == "79ebdd7811599d9073b5eaa5de6097f415aead39"
+    assert len(audit["entries"]) == 66
+    original_hashes = {
+        "wa-2026-general": "26db6352d9773f693db813a246897654067e1fbbdc5b5ca45232a5161cad3964",
+        "wa-2026-primary": "8230910341e2af3c458eb164ff0cd49787b9470d9cfef26ee8dee350f8a9514f",
+    }
+    for original_file in audit["original_files"]:
+        election = Path(original_file["path"]).stem
+        original = audit_dir / f"original-{election}.yaml"
+        assert original_file["sha256"] == original_hashes[election]
+        assert hashlib.sha256(original.read_bytes()).hexdigest() == original_file["sha256"]
+        raw = read_yaml(original)
+        rows = [row for row in audit["entries"] if row["election_id"] == election]
+        assert [row["original_entry"] for row in rows] == json.loads(
+            json.dumps(raw["entries"], default=str)
+        )
+        for row in rows:
+            encoded = json.dumps(
+                row["original_entry"], sort_keys=True, separators=(",", ":")
+            ).encode()
+            assert hashlib.sha256(encoded).hexdigest() == row["original_entry_sha256"]
+            assert row["identity"] == [
+                row["original_entry"]["corrected_on"],
+                row["original_entry"]["headline"],
+            ]
+            assert row["rationale"]
+        current = load_rendering_corrections(election, corrections_dir=UPDATES_DIR)
+        assert current is not None
+        assert current.schema_version == "1.1"
+        public = [row for row in rows if row["disposition"] == "election_information"]
+        assert len(current.entries) == len(public) == (15 if election == "wa-2026-primary" else 18)
+        for entry, row in zip(current.entries, public, strict=True):
+            serialized = entry.model_dump(mode="json")
+            assert serialized.pop("topics") == row["topics"]
+            assert serialized.pop("actions") == row["actions"]
+            assert serialized == row["original_entry"]
+        if election == "wa-2026-general":
+            assert next(
+                e for e in current.entries if "Updated King County" in e.headline
+            ).actions == ["correction"]
 
 
 def test_every_audited_change_is_bound_to_an_authored_entry() -> None:
@@ -118,6 +169,7 @@ def test_minor_copy_announcement_is_audited_instead_of_publicly_announced() -> N
     assert original["headline"] == "Updated the Sources and Comparisons subheadings."
     encoded = json.dumps(original, sort_keys=True, separators=(",", ":")).encode()
     assert hashlib.sha256(encoded).hexdigest() == audit["original_entry_sha256"]
-    prefix = [entry.model_dump(mode="json") for entry in updates.entries[:26]]
+    original = read_yaml(PROJECT_ROOT / "docs/audits/updates-676/original-wa-2026-general.yaml")
+    prefix = json.loads(json.dumps(original["entries"][:26], default=str))
     encoded = json.dumps(prefix, sort_keys=True, separators=(",", ":")).encode()
     assert hashlib.sha256(encoded).hexdigest() == audit["preserved_public_prefix_sha256"]

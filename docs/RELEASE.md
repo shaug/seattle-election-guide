@@ -15,69 +15,61 @@ limitations and retry counts; none of these release summaries supplies #497 sche
 
 ## Public update log
 
-Compare the candidate with the currently published guide before publication. Every substantive
-change to the published aggregate or a position page requires an entry in
-`data/corrections/<election-id>.yaml`, which renders as **Updates** at the election's
-`/updates/` address. Include the entry in the same change as the publication inputs or rendering
-behavior it describes. The stored `corrections` names remain compatible with existing releases.
+Compare the candidate with the currently published guide before publication. An actual change
+to election information requires a fresh dated/headlined entry in the affected election's served
+`/updates/` page. Additions, changed counts/shares, source/evidence coverage and results qualify
+even when the leader is unchanged. Software-only changes and unchanged verification do not.
+The [editorial/schema contract](RESULTS.md#the-updates-page) owns the distinction. Information
+corrections caused by software still require an entry; explain the incorrect displayed facts.
 
-Newly published or previously missed endorsements count, even if the leading choice stays
-the same. Record changed counts, shares, source coverage, evidence, displayed races, and results
-as well as corrected or withdrawn endorsements. Explain what changed and why; link the evidence
-and affected pages. A batch entry must link a complete account of its changes. A refresh that
-leaves published content unchanged needs no entry. The editorial rule is in
-[RESULTS.md, The updates page](RESULTS.md#the-updates-page).
+`make check-updates` runs in required Publication build CI and again before serialized upload.
+It authenticates the complete baseline and candidate deployment asset sets and every asset hash.
+No missing baseline, unavailable production, hash mismatch, expired upgrade artifact or mismatched
+served source falls back to a tag, candidate inputs or newer main. The production manifest must
+match the last verified automatic-release upload, not a later successful job that skipped upload.
 
-Minor wording or typography changes with no change to election facts, voting guidance,
-behavior, coverage, evidence, or results belong in internal software/release history, not public
-Updates. Preserve the complete record when correcting an unnecessary announcement; #663's
-[subtitle-entry audit](audits/minor-copy-updates-663.json) records the original entry and its exact
-published source. This is an editorial distinction, not a release-version or admission exemption.
+Snapshot schema `2.0` retains full aggregate/race page hashes for audit and adds a separate
+information fingerprint for every monitored page. The admission comparison uses actual served
+election text, evidence/affected-page destinations, election/certification dates, race membership,
+contested status and source-row facts, plus semantic panel/source/race/personalization payload
+facts. Markup structure, CSS, executable code, software assets, shell controls, URL capabilities
+and observation/review freshness are software history and do not independently demand entries.
+Source panel identity, decisions, allocations, actual counts/shares, coverage, evidence and
+certified-result text remain compared. Formatting whitespace/comments and build stamps are
+normalized. Literal preformatted text and visible inline word separators remain significant.
 
-The update log ships with the release that publishes the changes. Keep substantive historical
-entries and all immutable release bundles intact. An update's date does not assert when a source
-announced its endorsement.
+This is a narrow information-presence gate, not a proof of the meaning of arbitrary CSS or code.
+Required rendering/client/visual validation and independent review still verify that software does
+not materially misrepresent election information. When it does, the editorial correction rule
+applies even if identical static facts remain embedded in the page. Never invent a filler entry,
+skip a failed check or weaken another rendering/validation contract.
 
-`make check-updates` enforces this policy after staging. It compares both elections' aggregate
-and position pages with the last successful production deployment, including the archived
-election's pages rendered by current code. It runs in the required Publication build lane and
-again before the serialized production upload. Its JSON report lists changed pages and the new
-entries actually present in each affected election's served `/updates/` page. Editing repository
-YAML that is absent from an immutable archived bundle does not satisfy the gate: publish a new
-archive containing the entry and update its reviewed pins.
+Version `1.0` snapshots cannot be compared to new information fingerprints. The first upgrade
+must obtain the exact successful production artifact, verify it against the still-served manifest
+and verified upload receipt, validate its original snapshot against its actual pages, then derive
+version `2.0` from those bytes. An unavailable/expired original artifact blocks this transition.
+After version `2.0` ships, its authenticated durable snapshot again avoids artifact-expiry dependence.
+Existing immutable release and deployment identities are unchanged.
 
-Each staged site carries `updates-snapshot.json`, protected by the deployment manifest's asset
-hash. It records content fingerprints and dated/headlined entry identities, so the next check
-does not depend on short-lived Actions artifacts. The served source and manifest hash must match
-the last verified automatic-release upload. Before the first snapshot is deployed, the
-gate downloads and verifies the legacy `cloudflare-site` artifact for the successful production
-revision, or the exact promotion artifact bound to a verified automatic-release receipt. A
-successful job that skipped uploading cannot replace that baseline. Missing or expired bootstrap
-evidence, unavailable production, a hash mismatch, or a
-different served revision blocks publication; none falls back to a release tag or newer main.
+The primary declaration explicitly opts into `updates_from_current_source`. Only its current
+`/updates/` route uses the migrated authored schema1.1 log from this source. The immutable
+primary9 ZIP, selected release/pins, original overview and race pages remain unchanged. The
+separate deployment `updates_projection` records the current source commit, authored-YAML hash
+and original archive version; matching HTML meta records and an authored-record/archive link
+make the distinction explicit. The deployment asset hash protects this new HTML. The original
+primary release-manifest hash covers its original archive, never this new current-log projection.
+Missing, mismatched or legacy authored overlay data fails closed; it cannot activate a historical
+release or silently fall back to the embedded software feed. General Updates is authored in the
+new current release normally. Staging tests compare every other election asset and original bundle
+byte before/after an overlay and independently check projection provenance.
 
-The comparison includes rendered markup, CSS, client payloads, bundled code and referenced local
-script/stylesheets. Only HTML comments/formatting whitespace, the footer's site-build stamp,
-the data-cutoff date and input-hash labels, and the client's top-level `data_version` are
-normalized. Actual source/panel identities, counts, shares, evidence, results, and behavior remain
-compared, including visible word separators, non-breaking spaces, and preformatted text.
-CSS and code comparisons are conservative: a change to their shipped bytes may need
-an entry even when the initial visible text stays the same. The gate cannot classify a change's
-editorial significance. If a minor-copy correction triggers it, reconcile that actual contract
-in the scoped change; do not skip the gate, introduce an unreviewed exception, or invent a public
-announcement merely to pass. This policy adds no automatic fingerprint exemption.
-An unchanged refresh needs none.
-The Updates page itself is excluded, so correcting history does not require a recursive entry.
-An Updates-only correction may remove an unnecessary minor-copy announcement while retaining
-its full internal audit record. The report must still truthfully show that an old public entry
-identity was not retained; it may pass only while the monitored content is unchanged. That
-removal cannot excuse any concurrent substantive content change or stand in for a fresh entry.
-
-A changed election requires an additional dated/headlined entry while retaining existing entry
-identities. Editing a body, replacing an old entry, or adding an entry to another election cannot
-satisfy it. Correct historical dates/headlines separately from a content change so those repairs
-cannot masquerade as its new entry. Review still verifies that the prose and linked batch record
-explain every change; the mechanical gate enforces presence and election scope.
+Updates itself is excluded from recursive information comparison. A reviewed history-only
+migration may remove software announcements while retaining their complete original text, date,
+provenance and identity in [the durable audit](audits/updates-676/classification.json). The report
+truthfully states when previous public identities were removed. Such a removal cannot excuse
+concurrent changed election information: a changed election still requires a fresh served entry
+and retention of previous entry identities. Editing an old body or adding to another election
+cannot satisfy that requirement. Review verifies that the entry explains the actual changes.
 
 For an offline diagnostic against a retained production artifact:
 
