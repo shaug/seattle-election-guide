@@ -12,6 +12,8 @@
 //     is handed and hands back; `lens-route.mjs` is what touches `location`
 //     (§ State and URLs).
 
+import { availableBallotScopes, makeBallotScopeProjector } from './ballot-scopes.mjs';
+import { projectCompactFilters } from './compact-filters.mjs';
 import { filterStatusParts } from './guide-format.mjs';
 import { readContestedOnly, withContestedOnly } from './precinct-ballot.mjs';
 
@@ -97,6 +99,12 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
   const raceSetInputs = /** @type {HTMLInputElement[]} */ ([
     ...document.querySelectorAll('input[name="race-set"]'),
   ]);
+  const nativeView = /** @type {HTMLSelectElement|null} */ (
+    document.querySelector('[data-filter-native="view"]')
+  );
+  const nativeRaces = /** @type {HTMLSelectElement|null} */ (
+    document.querySelector('[data-filter-native="races"]')
+  );
   const status = /** @type {HTMLElement} */ (document.querySelector('#filter-status'));
   const cards = /** @type {HTMLElement[]} */ ([
     ...document.querySelectorAll('[data-publication-race-id]'),
@@ -108,14 +116,18 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
   const defaultContested = payload.precinct_ballot?.election_id === 'wa-2026-general';
   let precinctIds = /** @type {Set<string>|null} */ (null);
   const scopeLabels = new Map(payload.filter_scopes.map((scope) => [scope.value, scope.label]));
-  const knownScopes = new Set(scopeLabels.keys());
+  let knownScopes = new Set(scopeLabels.keys());
+  const projectScopes = makeBallotScopeProjector(select);
 
   /** @returns {ControlState} */
   const controlState = () => ({
     scope: select.value,
-    view: viewInputs.find((input) => input.checked)?.value === 'compact' ? 'compact' : 'full',
+    view:
+      (nativeView?.value ?? viewInputs.find((input) => input.checked)?.value) === 'compact'
+        ? 'compact'
+        : 'full',
     raceSet:
-      raceSetInputs.find((input) => input.checked)?.value === 'contested'
+      (nativeRaces?.value ?? raceSetInputs.find((input) => input.checked)?.value) === 'contested'
         ? 'contested'
         : 'complete',
   });
@@ -123,6 +135,8 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
   const syncFromUrl = () => {
     const state = readControlState(router.controlSearch(), knownScopes, defaultContested);
     select.value = state.scope;
+    if (nativeView) nativeView.value = state.view;
+    if (nativeRaces) nativeRaces.value = state.raceSet;
     viewInputs.forEach((input) => {
       input.checked = input.value === state.view;
     });
@@ -133,6 +147,7 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
 
   /** @param {{ syncUrl?: boolean }} [options] */
   const apply = ({ syncUrl = true } = {}) => {
+    if (!knownScopes.has(select.value)) select.value = 'all';
     const state = controlState();
     const contestedOnly = state.raceSet === 'contested';
     const compact = state.view === 'compact';
@@ -145,9 +160,9 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
         JSON.parse(/** @type {string} */ (card.dataset.filterTokens)).includes(state.scope);
       const matchesContest = !contestedOnly || card.dataset.contested === 'true';
       const matches =
-        (precinctIds !== null
-          ? precinctIds.has(card.dataset.publicationRaceId ?? '')
-          : matchesScope) && matchesContest;
+        matchesScope &&
+        (precinctIds === null || precinctIds.has(card.dataset.publicationRaceId ?? '')) &&
+        matchesContest;
       card.hidden = !matches;
       if (matches) visible += 1;
     });
@@ -165,7 +180,7 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
       // payload does not know, which the markup cannot produce.
       scopeLabel:
         precinctIds !== null
-          ? 'Selected precinct'
+          ? `Selected precinct · ${scopeLabels.get(state.scope) ?? 'All Seattle ballot races'}`
           : (scopeLabels.get(state.scope) ?? 'All Seattle ballot races'),
     });
     status.replaceChildren(
@@ -180,10 +195,19 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
       router.replaceControlSearch(
         writeControlState(router.controlSearch(), state, defaultContested),
       );
+    projectCompactFilters({
+      scope: state.scope,
+      scopeOptions: payload.filter_scopes,
+      scopeLabel: scopeLabels.get(state.scope) ?? 'All Seattle ballot races',
+      view: compact ? 'Compact' : 'Full',
+      races: contestedOnly ? 'Contested' : 'All',
+    });
     onApply();
   };
 
   select.addEventListener('change', () => apply());
+  nativeView?.addEventListener('change', () => apply());
+  nativeRaces?.addEventListener('change', () => apply());
   for (const input of [...raceSetInputs, ...viewInputs]) {
     input.addEventListener('change', () => apply());
   }
@@ -195,15 +219,18 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
     syncFromUrl,
     setPrecinct(ids, reset) {
       precinctIds = ids;
-      select.disabled = ids !== null;
-      if (reset) {
-        select.value = 'all';
-      }
-      apply({ syncUrl: reset });
+      knownScopes = availableBallotScopes(payload.filter_scopes, ids);
+      projectScopes(knownScopes);
+      select.disabled = false;
+      syncFromUrl();
+      const search = router.controlSearch();
+      const normalized = writeControlState(search, controlState(), defaultContested);
+      apply({ syncUrl: reset || normalized !== search });
     },
     showEveryRace() {
       select.value = 'all';
-      completeFilter.checked = true;
+      if (nativeRaces) nativeRaces.value = 'complete';
+      else completeFilter.checked = true;
       apply();
     },
   };

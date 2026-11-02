@@ -214,6 +214,12 @@ class FilterScope(ClientPayloadModel):
     label: str
 
 
+class CoveredFilterScope(FilterScope):
+    """A general Ballot scope's original covered-contest membership."""
+
+    contest_ids: list[str]
+
+
 class AuditedRace(ClientPayloadModel):
     """What every page publishes about one race, whatever depth it renders it at.
 
@@ -285,7 +291,7 @@ class GuidePayload(LensPayload):
     precinct_ballot: PrecinctBallotContract | None
 
     races: list[RaceDisplay]
-    filter_scopes: list[FilterScope]
+    filter_scopes: list[FilterScope | CoveredFilterScope]
     """Every Ballot-filter token the page offers, with the label the select
     renders for it, in rendered order. The filter status line used to read the
     selected option's text back out of the select (issue #239), and the set of
@@ -494,7 +500,7 @@ def guide_payload(
     view_model: PublicationViewModel,
     *,
     races: list[RaceDisplay],
-    filter_scopes: list[FilterScope],
+    filter_scopes: list[FilterScope | CoveredFilterScope],
     sources_page_path: str,
     endorsements_path: str | None = None,
     comparisons_path: str | None = None,

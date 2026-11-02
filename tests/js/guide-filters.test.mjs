@@ -91,7 +91,7 @@ function guideMarkup() {
 }
 
 /** @param {string} url */
-async function wire(url) {
+async function wire(url, precinct = false) {
   const document = installDom(url);
   document.body.innerHTML = guideMarkup();
   const { wireGuideFilters } = await import(
@@ -100,7 +100,16 @@ async function wire(url) {
   const { createLensRouter } = await import(
     '../../src/election_guide/rendering/templates/lens-route.mjs'
   );
-  const payload = /** @type {any} */ ({ filter_scopes: FILTER_SCOPES });
+  const payload = /** @type {any} */ ({
+    filter_scopes: precinct
+      ? FILTER_SCOPES.map((scope) => ({
+          ...scope,
+          contest_ids:
+            scope.value === 'all' ? ['mayor', 'ld'] : scope.value === 'city' ? ['mayor'] : ['ld'],
+        }))
+      : FILTER_SCOPES,
+    precinct_ballot: precinct ? { election_id: 'wa-2026-general' } : null,
+  });
   return { document, filters: wireGuideFilters(payload, createLensRouter()) };
 }
 
@@ -157,4 +166,60 @@ test('showing every race clears the filter, so a linked race is reachable', asyn
 
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('guide-filters.mjs');
+});
+
+test('selected precinct keeps Ballot enabled and intersects the selected scope', async () => {
+  const { document, filters } = await wire(`${GUIDE_URL}?races=all`, true);
+  filters.setPrecinct(new Set(['mayor', 'ld']), true);
+  const select = document.querySelector('#race-filter');
+  assert.equal(select.disabled, false);
+  assert.deepEqual(
+    [...select.options].map((o) => o.value),
+    ['all', 'city', 'ld-43'],
+  );
+  assert.equal(document.getElementById('race-ld').hidden, false);
+  select.value = 'city';
+  select.dispatchEvent(new Event('change'));
+  assert.equal(document.getElementById('race-mayor').hidden, false);
+  assert.equal(document.getElementById('race-ld').hidden, true);
+  assert.equal(new URLSearchParams(window.location.search).get('filter'), 'city');
+  assert.match(document.querySelector('#filter-status').textContent, /City of Seattle/);
+});
+
+test('precinct scope fallback and clear keep URL and valid selection coherent', async () => {
+  const { document, filters } = await wire(`${GUIDE_URL}?filter=ld-43&races=all`, true);
+  const select = document.querySelector('#race-filter');
+  filters.setPrecinct(new Set(['mayor']), true);
+  assert.equal(select.value, 'all');
+  assert.equal(new URLSearchParams(window.location.search).has('filter'), false);
+  filters.setPrecinct(new Set(['ld']), true);
+  assert.deepEqual(
+    [...select.options].map((o) => o.value),
+    ['all', 'ld-43'],
+  );
+  select.value = 'ld-43';
+  select.dispatchEvent(new Event('change'));
+  filters.setPrecinct(null, true);
+  assert.deepEqual(
+    [...select.options].map((o) => o.value),
+    ['all', 'city', 'ld-43'],
+  );
+  assert.equal(select.value, 'ld-43');
+  assert.equal(new URLSearchParams(window.location.search).get('filter'), 'ld-43');
+  assert.equal(document.getElementById('race-ld').hidden, false);
+});
+
+test('an eligible only-uncontested scope stays offered in Contested mode', async () => {
+  const { document, filters } = await wire(GUIDE_URL, true);
+  filters.setPrecinct(new Set(['ld']), true);
+  const select = document.querySelector('#race-filter');
+  assert.deepEqual(
+    [...select.options].map((o) => o.value),
+    ['all', 'ld-43'],
+  );
+  select.value = 'ld-43';
+  select.dispatchEvent(new Event('change'));
+  assert.equal(select.value, 'ld-43');
+  assert.equal(document.getElementById('race-ld').hidden, true);
+  assert.match(document.querySelector('#filter-status').textContent, /0 contested races shown/);
 });

@@ -1,6 +1,7 @@
 // Compact precinct slot: the modal edits a draft; only Select changes membership.
 import { html, nothing, render } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { filterIcon, placeFilterEditor, reservePrecinctValues } from './compact-filters.mjs';
 import {
   ballotQuery,
   readPrecinctSelection,
@@ -28,6 +29,17 @@ export function ballotOptionsTemplate(options, active, select) {
   )}`;
 }
 
+/** Only reviewed Seattle names with a unique complete district/code may shorten.
+ * @param {{name:string}} area @param {ReadonlyArray<{name:string}>} precincts */
+export function compactPrecinctName(area, precincts) {
+  const match = /^SEA (\d{2}-\d{4})$/.exec(area.name);
+  if (!match) return area.name;
+  const short = match[1];
+  return precincts.filter((p) => p.name === short || p.name === `SEA ${short}`).length === 1
+    ? short
+    : area.name;
+}
+
 /** @param {PrecinctBallotContract|null|undefined} contract
  * @param {{controlSearch:()=>string,replaceControlSearch:(search:string)=>void,onHistoryChange:(fn:()=>void)=>void}} router
  * @param {(ids:Set<string>|null, reset:boolean)=>void} onSelection
@@ -49,6 +61,10 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   );
   const cancel = root.querySelector('[data-precinct-cancel]');
   if (!dialog || !form || !fields || !summary || !status || !notice || !submit || !cancel) return;
+  reservePrecinctValues(
+    contract.precincts.map((p) => p.name),
+    contract.precincts.map((p) => compactPrecinctName(p, contract.precincts)),
+  );
   const lookup =
     contract.address_lookup?.election_id === contract.election_id &&
     contract.address_lookup?.mapping_hash === contract.mapping_hash
@@ -69,20 +85,34 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   const fitOptions = () => {
     if (!dialog.open) return;
     const actions = form.querySelector('.precinct-actions');
-    const bottom = Math.min(
-      dialog.getBoundingClientRect().bottom,
-      actions?.getBoundingClientRect().top ?? dialog.getBoundingClientRect().bottom,
+    const clear = root.querySelector('[data-precinct-clear]');
+    const actionTop = Math.min(
+      actions?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY,
+      clear?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY,
     );
-    const space = bottom - input().getBoundingClientRect().bottom;
-    list().style.setProperty('--precinct-options-height', `${Math.max(0, space - 20)}px`);
+    const editorBottom = dialog.getBoundingClientRect().bottom;
+    const bottom = Math.min(editorBottom, actionTop);
+    const space = bottom - input().getBoundingClientRect().bottom - 20;
+    const first = list().firstElementChild?.getBoundingClientRect().height ?? 0;
+    // Respect the first action, including Clear. Only a viewport-limited editor
+    // uses outer scrolling to reveal a complete option; that minimum must not
+    // extend an action-limited overlay over the buttons.
+    const height = actionTop <= editorBottom ? space : Math.max(first + 2, space);
+    list().style.setProperty('--precinct-options-height', `${Math.max(0, height)}px`);
   };
-  const viewport = document.defaultView?.visualViewport;
+  const view = dialog.ownerDocument.defaultView;
+  const viewport = view?.visualViewport;
   const fitViewport = () => {
-    if (viewport) {
-      dialog.style.setProperty('--precinct-viewport-height', `${viewport.height}px`);
-      dialog.style.setProperty('--precinct-viewport-top', `${viewport.offsetTop}px`);
-    }
+    const opener = summary.querySelector('button');
+    if (dialog.open && opener) placeFilterEditor(dialog, opener, 350);
     fitOptions();
+  };
+  let frame = 0;
+  const trackEditor = () => {
+    frame = 0;
+    if (!dialog.open) return;
+    fitViewport();
+    frame = view?.requestAnimationFrame(trackEditor) ?? 0;
   };
   const dismiss = () => {
     options = [];
@@ -236,8 +266,11 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
       else invalidate();
     }
   };
-  const restoreFocus = () =>
-    /** @type {HTMLElement|null} */ (summary.querySelector('button'))?.focus();
+  const restoreFocus = () => {
+    const opener = /** @type {HTMLElement|null} */ (summary.querySelector('button'));
+    opener?.setAttribute('aria-expanded', String(dialog.open));
+    opener?.focus();
+  };
   const open = () => {
     discard();
     const area = contract.precincts.find((p) => p.code === code);
@@ -252,8 +285,10 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     restoreFocus();
     fitViewport();
     dialog.showModal();
+    summary.querySelector('button')?.setAttribute('aria-expanded', 'true');
     input().focus();
-    fitOptions();
+    fitViewport();
+    if (!frame) frame = view?.requestAnimationFrame(trackEditor) ?? 0;
   };
   const update = (reset = false) => {
     discard();
@@ -261,9 +296,20 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     code = selection.code;
     const area = contract.precincts.find((p) => p.code === code);
     render(
-      html`<button class="precinct-open${area ? ' precinct-selected' : ''}" type="button" data-precinct-open aria-haspopup="dialog" aria-controls="precinct-dialog" @click=${open}>${area?.name ?? SELECT_LABEL}</button>${area ? html`<button class="precinct-clear" type="button" data-precinct-clear aria-label="Clear precinct selection" @click=${() => choose(null)}>×</button>` : nothing}`,
+      html`<button class="precinct-open compact-filter-trigger${area ? ' precinct-selected' : ''}" type="button" data-precinct-open aria-label=${area ? `Precinct: ${area.name}` : 'Precinct'} title=${area ? `Precinct: ${area.name}` : 'Precinct'} aria-haspopup="dialog" aria-controls="precinct-dialog" aria-expanded="false" @click=${open}>${filterIcon('precinct')}<span class="compact-filter-value" data-precinct-name>${area?.name ?? 'Precinct'}</span><span class="compact-filter-value precinct-short" data-precinct-short aria-hidden="true">${area ? compactPrecinctName(area, contract.precincts) : 'Precinct'}</span><span class="compact-filter-arrow" aria-hidden="true"></span></button>`,
       summary,
     );
+    const clearSlot = /** @type {HTMLElement|null} */ (
+      root.querySelector('[data-precinct-clear-slot]')
+    );
+    if (clearSlot)
+      render(
+        area
+          ? html`<button class="precinct-clear" type="button" data-precinct-clear aria-label="Clear precinct selection" @click=${() => choose(null)}>Clear precinct selection</button>`
+          : nothing,
+        clearSlot,
+      );
+    root.closest('[data-compact-filters]')?.dispatchEvent(new Event('compact-filter-fit'));
     const warning =
       selection.status === 'invalid'
         ? 'Precinct not recognized. Showing ordinary browsing.'
@@ -331,6 +377,8 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
   });
   dialog.addEventListener('close', () => {
     if (dialog.open) return;
+    view?.cancelAnimationFrame(frame);
+    frame = 0;
     discard();
     restoreFocus();
   });

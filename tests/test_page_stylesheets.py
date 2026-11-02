@@ -12,8 +12,10 @@ exemption below covers without knowing how many there are.
 
 from __future__ import annotations
 
+import gzip
 import re
 from collections import Counter
+from pathlib import Path
 
 import pytest
 
@@ -258,3 +260,27 @@ def test_precinct_styles_are_opt_in_only_for_declared_general_list_pages() -> No
     for page in set(PAGE_STYLESHEETS) - set(OPTIONAL_STYLESHEETS):
         with pytest.raises(StylesheetError, match="does not render a precinct control"):
             page_stylesheet(page, precinct=True)
+
+
+def test_precinct_selected_styles_preserve_the_archived_shared_shell() -> None:
+    """A general filter fix must not alter rerendered primary race-page CSS."""
+    archived = gzip.decompress(
+        (Path(__file__).parent / "fixtures/ballot/primary9-guide.html.gz").read_bytes()
+    ).decode()
+    (archived_styles,) = re.findall(r"<style>(.*?)</style>", archived, re.S)
+    archived_shell, boundary, _ = archived_styles.partition(
+        "/* The rules every lens-aware page renders,"
+    )
+    assert boundary
+    for page in PAGE_STYLESHEETS:
+        assert page_stylesheet(page).startswith(archived_shell), (
+            f"{page} changed archived primary shared-shell bytes; "
+            f"general precinct rules must stay optional ({RULE})"
+        )
+    selected_rule = (
+        ".segmented-control label:has(> input:checked) > span "
+        "{ background: var(--navy); color: var(--white); }"
+    )
+    for page in ("guide", "compare"):
+        assert selected_rule in page_stylesheet(page, precinct=True)
+        assert selected_rule not in page_stylesheet(page)

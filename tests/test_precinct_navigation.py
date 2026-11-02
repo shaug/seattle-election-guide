@@ -74,6 +74,12 @@ const load=url=>new Promise(resolve=>{
 });
 const doc=()=>frame.contentDocument;
 const win=()=>frame.contentWindow;
+// State/navigation tests set actual native options; trusted input coverage lives
+// in the rendered keyboard/pointer tests.
+const chooseFilter=selector=>{
+ const option=doc().querySelector(selector),select=option.closest('select');
+ select.value=option.value;select.dispatchEvent(new (win().Event)('change',{bubbles:true}));
+};
 const ids=()=>[...doc().querySelectorAll('[data-publication-race-id], [data-comparison-race]')]
   .filter(r=>!r.hidden).map(r=>r.dataset.publicationRaceId??r.dataset.comparisonRace).sort();
 const click=selector=>new Promise(resolve=>{
@@ -170,8 +176,7 @@ for(const query of ['', 'precinct=all','precinct=unknown']) {
  section.value=[...section.options].find(o=>o.value!=='all').value;
  section.dispatchEvent(new (win().Event)('change',{bubbles:true}));
  for(const selector of ['[data-comparison-contested]','[data-comparison-differences]']) {
-  doc().querySelector(selector).checked=true;
-  doc().querySelector(selector).dispatchEvent(new (win().Event)('change',{bubbles:true}));
+  chooseFilter(selector);
  }
  const columns=()=>[...doc().querySelectorAll('[data-comparison-head] [data-column-signal]')]
    .map(h=>h.dataset.columnSignal);
@@ -197,8 +202,8 @@ for(const query of ['', 'precinct=all','precinct=unknown']) {
  equal(columns(),ordinary.columns,'Back columns '+query);
  equal(doc().querySelector('[data-comparison-section-filter]').value,
    ordinary.section,'Back section');
- equal(doc().querySelector('[data-comparison-contested]').checked,true,'Back contested');
- equal(doc().querySelector('[data-comparison-differences]').checked,true,'Back differences');
+ equal(doc().querySelector('[data-comparison-contested]').selected,true,'Back contested');
+ equal(doc().querySelector('[data-comparison-differences]').selected,true,'Back differences');
  await traverse('forward');
  equal(win().location.href,selected.url,'Forward exact selected URL');
  equal(ids(),selected.ids,'Forward selected membership');
@@ -422,8 +427,8 @@ const mode=()=>{
 };
 const check=(code,which,label)=>{
  equal(ids(),expected[code][which],label+' exact IDs');
- equal(mode()[which].checked,true,label+' checked');
- equal(mode().all.disabled||mode().contested.disabled,false,label+' buttons enabled');
+ equal(mode()[which].selected,true,label+' checked');
+ equal(mode().all.closest('select').disabled,false,label+' buttons enabled');
  const status=doc().querySelector('[data-comparison-status],#filter-status').textContent.trim();
  equal(status.startsWith(String(expected[code][which].length)),true,label+' truthful count');
 };
@@ -438,7 +443,7 @@ await load('/e/wa-2026-general/START');
 check('all','contested','ordinary default');
 await load('/e/wa-2026-general/START?precinct=2502');
 check('2502','contested','selected default');
-mode().all.click();check('2502','all','All override');
+chooseFilter('#complete-filter,[data-comparison-all-races]');check('2502','all','All override');
 equal(new URLSearchParams(win().location.search).get('races'),'all','explicit All URL');
 await load(win().location.href);check('2502','all','All reload');
 const before=win().location.href;
@@ -454,7 +459,8 @@ const origin=win().location.href;
 const target=win().location.pathname.endsWith('/comparisons/')?'endorsements':'comparisons';
 await click('[data-precinct-link="'+target+'"]');
 check('2502','all','cross-view All');
-mode().contested.click();check('2502','contested','Contested responds');
+chooseFilter('#contested-filter,[data-comparison-contested]');
+check('2502','contested','Contested responds');
 const destination=win().location.href;
 const traverse=direction=>new Promise(resolve=>{
  const timeout=setTimeout(()=>{
@@ -469,7 +475,7 @@ check('2502','all','Back reload All');
 await traverse('forward');equal(win().location.href,destination,'Forward restores Contested URL');
 check('2502','contested','Forward Contested');
 doc().querySelector('[data-precinct-clear]').click();check('all','contested','Clear default mode');
-mode().all.click();check('all','all','ordinary All');
+chooseFilter('#complete-filter,[data-comparison-all-races]');check('all','all','ordinary All');
 choose('2502');check('2502','all','All retained across Select');
 for(const action of ['save','cancel','page-reset']) {
  await click('nav a[href*="/sources/"]');
@@ -522,11 +528,11 @@ const check=(which,label)=>{
  const all=doc().querySelector('[data-comparison-all-races]');
  const contested=doc().querySelector('[data-comparison-contested]');
  const status=doc().querySelector('[data-comparison-status]').textContent.trim();
- observations.push({label,url:win().location.href,all:all.checked,
-  contested:contested.checked,ids:ids(),status,columns:columns()});
+ observations.push({label,url:win().location.href,all:all.selected,
+  contested:contested.selected,ids:ids(),status,columns:columns()});
  equal(ids(),expected[which],label+' exact IDs');
- equal(all.checked,which==='all',label+' All selected');
- equal(contested.checked,which==='contested',label+' Contested selected');
+ equal(all.selected,which==='all',label+' All selected');
+ equal(contested.selected,which==='contested',label+' Contested selected');
  equal(status.startsWith(String(expected[which].length)+' of '),true,label+' count');
  equal(new URLSearchParams(win().location.search).get('races'),
   which==='all'?'all':null,label+' query mode');
@@ -544,7 +550,7 @@ equal(columns(),['gall','strn','stim'],'initial default columns');
 doc().querySelector('.comparison-presets a').click();
 check('contested','preset retains default mode');
 equal(columns(),['strn','stim'],'preset columns');
-doc().querySelector('[data-comparison-all-races]').click();
+chooseFilter('[data-comparison-all-races]');
 check('all','explicit All after preset');
 const override=win().location.href;
 await traverse('back');
@@ -626,17 +632,17 @@ for(const blocked of [false,true]) {
     comparison?'[data-comparison-contested]':'#contested-filter');
    const status=doc().querySelector(comparison?'[data-comparison-status]':'#filter-status');
    observations.push({label,header:header.href,url:win().location.href,ids:ids(),
-    all:all.checked,contested:contested.checked,status:status.textContent.trim(),
-    precinct:doc().querySelector('[data-precinct-open]').textContent.trim()});
+    all:all.selected,contested:contested.selected,status:status.textContent.trim(),
+    precinct:doc().querySelector('[data-precinct-name]').textContent.trim()});
    equal(win().location.pathname,target,label+' actual destination');
    equal(win().location.search,query,label+' explicit query beats memory');
    equal(ids(),expected[code],label+' exact All IDs');
-   equal(all.checked,true,label+' All selected');
-   equal(contested.checked,false,label+' Contested not selected');
+   equal(all.selected,true,label+' All selected');
+   equal(contested.selected,false,label+' Contested not selected');
    equal(status.textContent.trim().startsWith(String(expected[code].length)),true,
     label+' truthful count');
-   equal(doc().querySelector('[data-precinct-open]').textContent.trim(),
-    code==='all'?'Select':'SEA 46-1279',label+' explicit precinct');
+   equal(doc().querySelector('[data-precinct-name]').textContent.trim(),
+    code==='all'?'Precinct':'SEA 46-1279',label+' explicit precinct');
    equal(localStorage.getItem(key),'2200',label+' header does not change memory');
    if(!comparison)equal(
     doc().querySelector('[data-lens-banner-status]').textContent.includes('Counting all'),
@@ -650,5 +656,86 @@ return JSON.stringify({failures,observations,expected});})()
     ).replace("EXPECTED", json.dumps(expected))
     result = _evaluate_in_chrome(path, expression, initial_url=url)
     (path.parent / "sources-header-result.json").write_text(json.dumps(result, indent=2) + "\n")
+    assert result.get("harnessError") is None, result
+    assert result["failures"] == [], result
+
+
+def test_ballot_scope_with_precinct_survives_real_history_and_reload(
+    navigation_site: tuple[Path, str],
+) -> None:
+    path, url = navigation_site
+    expression = (
+        "(async()=>{"
+        + HARNESS
+        + """
+const scope=()=>doc().querySelector('#race-filter,[data-comparison-section-filter]');
+const options=()=>[...scope().options].map(o=>o.value);
+const change=value=>{scope().value=value;
+ scope().dispatchEvent(new (win().Event)('change',{bubbles:true}));};
+const choose=code=>{
+ doc().querySelector('[data-precinct-open]').click();
+ const input=doc().querySelector('#voting-precinct');input.value=code;
+ input.dispatchEvent(new (win().Event)('input',{bubbles:true}));
+ doc().querySelector('[role=option][data-kind=precinct][data-code="'+code+'"]').click();
+ doc().querySelector('[data-precinct-submit]').click();
+};
+const traverse=direction=>new Promise((resolve,reject)=>{
+ const timer=setTimeout(()=>reject(new Error('missing real '+direction)),2000);
+ win().addEventListener('popstate',()=>{clearTimeout(timer);setTimeout(resolve,20)},
+ {once:true});win().history[direction]();
+});
+const general=['all','federal','state','county','state-supreme-court','city','other'];
+const guide3230=[...general,'Citywide','Congressional District 7','Countywide',
+ 'Legislative District 34','Metropolitan King County Council District 8',
+ 'Statewide','West Electoral District'];
+const guide1279=[...general,'Citywide','Congressional District 7','Countywide',
+ 'Legislative District 46','Statewide','West Electoral District'];
+const initiatives=['initiative-26-001','initiative-26-638','initiative-26-645'];
+for(const compare of [false,true]) {
+ localStorage.clear();
+ await load('/e/wa-2026-general/'+(compare?'comparisons/':'')+'?precinct=3230&races=all');
+ equal(scope().disabled,false,'selected enabled');
+ equal(options(),compare?general:guide3230,'eligible options3230');
+ equal(ids().length,24,'complete covered3230');
+ equal(doc().querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+  false,'precinct alone has no scope dot');
+ equal([...initiatives,'seattle-proposition-1-transit'].every(id=>ids().includes(id)),
+   true,'all four eligible measures');
+ change('state');
+ equal(initiatives.every(id=>ids().includes(id)),true,'state initiatives retained');
+ equal(ids().includes('supreme-court-justice-1'),!compare,'original State semantics');
+ change('city');equal(ids().includes('seattle-proposition-1-transit'),true,'city measure');
+ equal(ids().some(id=>initiatives.includes(id)),false,'state measures outside city scope');
+ change(compare?'county':'Legislative District 34');
+ equal(doc().querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+  true,'own narrowed scope has dot');
+ const oldURL=win().location.href;const oldIds=ids();
+ win().history.pushState({},'',oldURL);
+ choose('1279');
+ equal(options(),compare?general:guide1279,'eligible options1279');
+ equal(scope().value,compare?'county':'all','valid retention or invalid fallback');
+ equal(doc().querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+  compare,'fallback projects own scope dot');
+ equal(ids().length,compare?3:23,'new precinct scope membership');
+ const newURL=win().location.href;const newIds=ids();
+ await traverse('back');equal(win().location.href,oldURL,'Back URL');
+ equal(options(),compare?general:guide3230,'Back options');equal(ids(),oldIds,'Back rows');
+ equal(scope().value,compare?'county':'Legislative District 34','Back selection');
+ await traverse('forward');equal(win().location.href,newURL,'Forward URL');
+ equal(options(),compare?general:guide1279,'Forward options');equal(ids(),newIds,'Forward rows');
+ await load(newURL);equal(win().location.href,newURL,'reload URL');
+ equal(options(),compare?general:guide1279,'reload options');equal(ids(),newIds,'reload rows');
+ equal(scope().value,compare?'county':'all','reload selection');
+ doc().querySelector('[data-precinct-clear]').click();
+ equal(options().length,compare?7:24,'clear complete catalog');
+ equal(scope().value,compare?'county':'all','clear retains valid scope');
+ equal(doc().querySelector('[data-filter-open=ballot]').hasAttribute('data-active'),
+  compare,'Clear preserves own scope indicator');
+ equal(new URL(win().location.href).searchParams.get('precinct'),'all','clear explicit geography');
+}
+return JSON.stringify({failures});})()
+.catch(error=>JSON.stringify({harnessError:String(error),stack:error.stack}))"""
+    )
+    result = _evaluate_in_chrome(path, expression, initial_url=url)
     assert result.get("harnessError") is None, result
     assert result["failures"] == [], result

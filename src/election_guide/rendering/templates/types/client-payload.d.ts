@@ -51,7 +51,7 @@ interface GuidePayload {
   sources: LensSource[];
   precinct_ballot: PrecinctBallotContract | null;
   races: RaceDisplay[];
-  filter_scopes: FilterScope[];
+  filter_scopes: (FilterScope | CoveredFilterScope)[];
   sources_page_path: string;
   personalization: PersonalizationContract | null;
 }
@@ -142,6 +142,14 @@ interface RaceCandidateDisplay {
 interface FilterScope {
   value: string;
   label: string;
+}
+/**
+ * A general Ballot scope's original covered-contest membership.
+ */
+interface CoveredFilterScope {
+  value: string;
+  label: string;
+  contest_ids: string[];
 }
 /**
  * The complete versioned payload consumed by the client lens modules.
