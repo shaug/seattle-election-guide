@@ -565,7 +565,15 @@ def test_sgn_obligation_reader_rejects_invalid_public_evidence(
 
 
 @pytest.mark.parametrize(
-    "court_change", ["complete", "hidden-vote", "unknown-choice", "missing-body"]
+    "court_change",
+    [
+        "complete",
+        "hidden-vote",
+        "hidden-vote-after-void",
+        "visible-vote-after-void",
+        "unknown-choice",
+        "missing-body",
+    ],
 )
 def test_current_sgn_court_body_adds_five_reviewed_positions_without_caption_inference(
     court_change: str,
@@ -597,6 +605,12 @@ def test_current_sgn_court_body_adds_five_reviewed_positions_without_caption_inf
     if court_change == "hidden-vote":
         pages[court] = pages[court].replace(
             b"<strong>Vote Hawk.</strong>", b"<strong hidden>Vote Hawk.</strong>"
+        )
+    elif court_change in {"hidden-vote-after-void", "visible-vote-after-void"}:
+        attribute = b" hidden" if court_change == "hidden-vote-after-void" else b""
+        pages[court] = pages[court].replace(
+            b"<p>Reviewed candidate commentary. <strong>Vote Hawk.</strong></p>",
+            b"<p" + attribute + b"><br/>Vote Hawk.</p>",
         )
     elif court_change == "unknown-choice":
         pages[court] = pages[court].replace(
@@ -633,7 +647,7 @@ def test_current_sgn_court_body_adds_five_reviewed_positions_without_caption_inf
     )
     assert result.exit_code == 0, result.output
     event = json.loads(result.output)["automatic"][0]
-    if court_change != "complete":
+    if court_change not in {"complete", "visible-vote-after-void"}:
         assert event["status"] == "failed", event
         assert event["snapshot_id"] is None
         return
