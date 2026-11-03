@@ -562,3 +562,103 @@ def test_sgn_obligation_reader_rejects_invalid_public_evidence(
     path.write_text(json.dumps(record))
     with pytest.raises((ValueError, OSError)):
         read_sgn_discovery_obligation(path)
+
+
+@pytest.mark.parametrize(
+    "court_change",
+    [
+        "complete",
+        "hidden-vote",
+        "hidden-vote-after-void",
+        "visible-vote-after-void",
+        "unknown-choice",
+        "missing-body",
+    ],
+)
+def test_current_sgn_court_body_adds_five_reviewed_positions_without_caption_inference(
+    court_change: str,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A title-only composite loses five explicit position/body decisions."""
+    policy = cast(dict[str, Any], yaml.safe_load((ROOT / "config/verification.yaml").read_text()))
+    election = policy["elections"][0]
+    election["sources"] = [s for s in election["sources"] if s["source_id"] == "seattle-gay-news"]
+    policy_path = tmp_path / "policy.yaml"
+    policy_path.write_text(yaml.safe_dump(policy))
+    titles = re.findall(
+        r"<p>(.*?)</p>",
+        (ROOT / "tests/fixtures/verification/seattle-gay-news-current-measures.html").read_text(),
+    )
+    pages = {
+        f"https://www.sgn.org/story/{168513 + i}/": f"<h1>{t}</h1>".encode()
+        for i, t in enumerate(titles)
+        if "Adam Smith" not in t
+    }
+    pages["https://www.sgn.org/story/171425/"] = (
+        b"<h1>SGN Endorsements: Adam Smith (US House of Representatives, 9th District)</h1>"
+    )
+    court = "https://www.sgn.org/story/171606/"
+    pages[court] = (
+        ROOT / "tests/fixtures/verification/seattle-gay-news-court-positions.html"
+    ).read_bytes()
+    if court_change == "hidden-vote":
+        pages[court] = pages[court].replace(
+            b"<strong>Vote Hawk.</strong>", b"<strong hidden>Vote Hawk.</strong>"
+        )
+    elif court_change in {"hidden-vote-after-void", "visible-vote-after-void"}:
+        attribute = b" hidden" if court_change == "hidden-vote-after-void" else b""
+        pages[court] = pages[court].replace(
+            b"<p>Reviewed candidate commentary. <strong>Vote Hawk.</strong></p>",
+            b"<p" + attribute + b"><br/>Vote Hawk.</p>",
+        )
+    elif court_change == "unknown-choice":
+        pages[court] = pages[court].replace(
+            b"Pos. 3: Jaime Michelle Hawk", b"Pos. 3: Unreviewed Candidate"
+        )
+    elif court_change == "missing-body":
+        pages[court] = pages[court].replace(b'class="entry-content"', b'class="unrelated"')
+    pages["https://www.sgn.org/ch/News/Seattle"] = (
+        "".join(f'<a href="{url}">SGN Endorsements</a>' for url in pages)
+    ).encode()
+
+    def fetch(url: str, *, timeout_seconds: float = 30) -> HttpArtifact:
+        return HttpArtifact(
+            content=pages[url],
+            status=200,
+            canonical_url=url,
+            redirect_chain=[],
+            media_type="text/html",
+        )
+
+    monkeypatch.setattr("election_guide.collection.discovery.fetch_http", fetch)
+    result = runner.invoke(
+        app,
+        [
+            "verification",
+            "run",
+            str(policy_path),
+            "--live",
+            "--state-root",
+            str(tmp_path / "state"),
+            "--checked-at",
+            "2026-10-30T12:00:00Z",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    event = json.loads(result.output)["automatic"][0]
+    if court_change not in {"complete", "visible-vote-after-void"}:
+        assert event["status"] == "failed", event
+        assert event["snapshot_id"] is None
+        return
+    assert event["status"] == "created", event
+    decisions = {d["race_id"]: d["after"]["candidate_ids"] for d in event["diff"]}
+    assert len(decisions) == 16
+    assert {r: c for r, c in decisions.items() if r.startswith("supreme-court-")} == {
+        "supreme-court-justice-1": ["supreme-court-justice-1--colleen-melody"],
+        "supreme-court-justice-3": ["supreme-court-justice-3--jaime-michelle-hawk"],
+        "supreme-court-justice-4": ["supreme-court-justice-4--ian-birk"],
+        "supreme-court-justice-5": ["supreme-court-justice-5--theo-angelis"],
+        "supreme-court-justice-7": ["supreme-court-justice-7--debra-l-stephens"],
+    }
+    assert event["baseline_reviewed"] is False

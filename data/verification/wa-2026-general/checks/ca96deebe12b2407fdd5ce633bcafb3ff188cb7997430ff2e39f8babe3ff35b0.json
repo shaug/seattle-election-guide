@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-11-01T15:48:09.955451Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/assess_497_native26_records: data/review/rechecks/wa-2026-general-2026-11-01-manual.json#/source_reviews/washington-state-building-trades",
+  "mode": "human",
+  "scheduled_for": "2026-11-01",
+  "source_id": "washington-state-building-trades",
+  "status": "manual"
+}

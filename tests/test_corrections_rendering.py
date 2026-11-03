@@ -130,7 +130,7 @@ def test_real_general_log_preserves_complete_classified_entries_in_served_markup
     markup = unescape(page.split("<script", 1)[0])
     audit = json.loads((PROJECT_ROOT / "docs/audits/updates-676/classification.json").read_text())
     rows = [r for r in audit["entries"] if r["election_id"] == "wa-2026-general"]
-    assert markup.count('class="corrections-entry update-entry"') == 18
+    assert markup.count('class="corrections-entry update-entry"') == 19
     assert '<article class="corrections-entry update-entry" hidden' not in markup
     for row in rows:
         entry = row["original_entry"]
@@ -141,6 +141,17 @@ def test_real_general_log_preserves_complete_classified_entries_in_served_markup
         assert f'datetime="{entry["corrected_on"]}"' in markup
         for citation in entry["provenance"]:
             assert f'href="{citation["url"]}"' in markup
+    assert "Added SGN's five state Supreme Court endorsements." in markup
+    assert 'datetime="2026-11-02"' in markup
+    for candidate in (
+        "Colleen Melody",
+        "Jaime Michelle Hawk",
+        "Ian Birk",
+        "Theo Angelis",
+        "Debra L. Stephens",
+    ):
+        assert candidate in markup
+    assert 'href="https://www.sgn.org/story/171606/"' in markup
     assert "Illustrative example" not in markup
     assert "Choose any topics. No topics selected shows all updates." not in markup
     assert "Dates show when an update was published in this guide." not in markup

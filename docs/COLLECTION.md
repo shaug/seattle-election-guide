@@ -257,6 +257,14 @@ against the current observed index before later pagination or article work can f
 They remain required across independent runners and link rotation; these obligations
 assert neither a complete successful comparison nor baseline approval.
 
+The reviewed SGN Supreme Court article171606 also retains its complete editorial
+body markup for the existing visible-text extractor. Five exact position headings
+require their matching explicit Vote instruction before mapping; photo captions,
+hidden text and unknown choices cannot supply a decision. Current learned article
+membership remains an obligation after index rotation. The prior eleven-fact live
+baseline is not complete or approved by this adapter correction. A future actual
+sixteen-fact baseline requires its own full official-source review and exact approval.
+
 UFCW 3000 monitoring (#584) captures the complete endorsements landing page and
 its relevant current-year official news articles, including the two October 15
 initiative publications. The finite landing-page scan follows endorsement links;

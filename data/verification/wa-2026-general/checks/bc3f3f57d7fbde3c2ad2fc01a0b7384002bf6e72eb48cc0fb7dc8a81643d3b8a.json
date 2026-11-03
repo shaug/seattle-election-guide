@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-30T09:12:25.145347Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-30-manual.json#/source_reviews/washington-housing-alliance",
+  "mode": "human",
+  "scheduled_for": "2026-10-30",
+  "source_id": "washington-housing-alliance",
+  "status": "manual"
+}

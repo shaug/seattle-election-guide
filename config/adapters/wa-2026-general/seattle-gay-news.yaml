@@ -2,9 +2,9 @@
 schema_version: '1.0'
 source_id: seattle-gay-news
 adapter_kind: static_html
-extractor_version: 1.0.2
+extractor_version: 1.0.3
 complete: true
-decision_pattern: (?:^SGN\s+Endorsements\s+Pramila\s+Jayapal\s+\(US\s+House\s+of\s+Representatives\s+7th\s+District\)$|^SGN\s+Endorsements\s+Tatiana\s+Brown\s+\(Washington\s+State\s+Senate\s+37th\s+District\)$|^SGN\s+Endorsements\s+Kelabe\s+Tewolde\s+\(Washington\s+State\s+Legislative\s+District\s+37\s+Position\s+1\)$|^SGN\s+Endorsements\s+Jaelynn\s+Scott\s+\(Washington\s+State\s+House\s+of\s+Representatives\s+37th\s+District\s+Position\s+2\)$|^SGN\s+Endorsements\s+Hannah\s+Sabio\-Howell\s+\(Washington\s+State\s+Senate\s+43rd\s+District\)$|^SGN\s+Endorsements\s+Rebecca\s+Saldaña\s+\(King\s+County\s+Council\s+District\s+2\)$|^SGN\s+Endorsements\s+Nilu\s+Jenks\s+\(Seattle\s+City\s+Council\s+District\s+5\)$|^SGN\s+Endorsements:\s+Adam\s+Smith\s+\(US\s+House\s+of\s+Representatives,\s+9th\s+District\)$|^SGN\s+Endorsements:\s+Washington\s+State\s+Ballot\s+Initiatives\s+\(IP26-645,\s+IL26-001,\s+IL26-638\)$)
+decision_pattern: (?:^SGN\s+Endorsements\s+Pramila\s+Jayapal\s+\(US\s+House\s+of\s+Representatives\s+7th\s+District\)$|^SGN\s+Endorsements\s+Tatiana\s+Brown\s+\(Washington\s+State\s+Senate\s+37th\s+District\)$|^SGN\s+Endorsements\s+Kelabe\s+Tewolde\s+\(Washington\s+State\s+Legislative\s+District\s+37\s+Position\s+1\)$|^SGN\s+Endorsements\s+Jaelynn\s+Scott\s+\(Washington\s+State\s+House\s+of\s+Representatives\s+37th\s+District\s+Position\s+2\)$|^SGN\s+Endorsements\s+Hannah\s+Sabio\-Howell\s+\(Washington\s+State\s+Senate\s+43rd\s+District\)$|^SGN\s+Endorsements\s+Rebecca\s+Saldaña\s+\(King\s+County\s+Council\s+District\s+2\)$|^SGN\s+Endorsements\s+Nilu\s+Jenks\s+\(Seattle\s+City\s+Council\s+District\s+5\)$|^SGN\s+Endorsements:\s+Adam\s+Smith\s+\(US\s+House\s+of\s+Representatives,\s+9th\s+District\)$|^SGN\s+Endorsements:\s+Washington\s+State\s+Ballot\s+Initiatives\s+\(IP26-645,\s+IL26-001,\s+IL26-638\)$|^Pos\.\s+[0-9]+:[^\n]+$)
 rules:
 - race_id: us-house-7
   pattern: ^SGN\s+Endorsements\s+Pramila\s+Jayapal\s+\(US\s+House\s+of\s+Representatives\s+7th\s+District\)$
@@ -91,3 +91,43 @@ rules:
     review2026-10-27T11:02:37.944401+00:00 by OpenAI Codex/root/review_608_code_c340.
     First appearance unknown. Changed full bytes require renewed review; no native8
     or future baseline approval.
+- race_id: supreme-court-justice-1
+  pattern: ^Pos\.\s+1:\s+Colleen\s+Melody$(?=(?s:(?:(?!^Pos\.).)*?\bVote\s+Melody\.))
+  status: endorsed
+  candidate_ids:
+  - supreme-court-justice-1--colleen-melody
+  evidence_locator: 'Official SGN story171606 editorial body: Pos. 1: Colleen Melody, followed by explicit
+    Vote Melody. Caption spelling alone supplies no mapping. Whole changed publication requires renewed review;
+    no executed sixteen-fact baseline approval.'
+- race_id: supreme-court-justice-3
+  pattern: ^Pos\.\s+3:\s+Jaime\s+Michelle\s+Hawk$(?=(?s:(?:(?!^Pos\.).)*?\bVote\s+Hawk\.))
+  status: endorsed
+  candidate_ids:
+  - supreme-court-justice-3--jaime-michelle-hawk
+  evidence_locator: 'Official SGN story171606 editorial body: Pos. 3: Jaime Michelle Hawk, followed by explicit
+    Vote Hawk. Caption spelling alone supplies no mapping. Whole changed publication requires renewed review;
+    no executed sixteen-fact baseline approval.'
+- race_id: supreme-court-justice-4
+  pattern: ^Pos\.\s+4:\s+Ian\s+Birk$(?=(?s:(?:(?!^Pos\.).)*?\bVote\s+Birk\.))
+  status: endorsed
+  candidate_ids:
+  - supreme-court-justice-4--ian-birk
+  evidence_locator: 'Official SGN story171606 editorial body: Pos. 4: Ian Birk, followed by explicit Vote Birk.
+    Caption spelling alone supplies no mapping. Whole changed publication requires renewed review; no executed
+    sixteen-fact baseline approval.'
+- race_id: supreme-court-justice-5
+  pattern: ^Pos\.\s+5:\s+Theo\s+Angelis$(?=(?s:(?:(?!^Pos\.).)*?\bVote\s+Angelis\.))
+  status: endorsed
+  candidate_ids:
+  - supreme-court-justice-5--theo-angelis
+  evidence_locator: 'Official SGN story171606 editorial body: Pos. 5: Theo Angelis, followed by explicit Vote
+    Angelis. Caption spelling alone supplies no mapping. Whole changed publication requires renewed review;
+    no executed sixteen-fact baseline approval.'
+- race_id: supreme-court-justice-7
+  pattern: ^Pos\.\s+7:\s+Debra\s+L\.\s+Stephens$(?=(?s:(?:(?!^Pos\.).)*?\bVote\s+Stephens\.))
+  status: endorsed
+  candidate_ids:
+  - supreme-court-justice-7--debra-l-stephens
+  evidence_locator: 'Official SGN story171606 editorial body: Pos. 7: Debra L. Stephens, followed by explicit
+    Vote Stephens. Caption spelling alone supplies no mapping. Whole changed publication requires renewed review;
+    no executed sixteen-fact baseline approval.'

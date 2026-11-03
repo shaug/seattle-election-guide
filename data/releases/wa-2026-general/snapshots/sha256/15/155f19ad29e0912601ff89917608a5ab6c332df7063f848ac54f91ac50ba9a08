@@ -1,0 +1,59 @@
+{
+  "captured_at": "2026-10-30T09:09:46.974584Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": "Vote Melody.",
+      "evidence_locator": "story171606 .entry-content; Pos. 1: Colleen Melody subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_excerpt": "Vote Hawk.",
+      "evidence_locator": "story171606 .entry-content; Pos. 3: Jaime Michelle Hawk subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-4--ian-birk"
+      ],
+      "evidence_excerpt": "Vote Birk.",
+      "evidence_locator": "story171606 .entry-content; Pos. 4: Ian Birk subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "race_id": "supreme-court-justice-4",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "evidence_excerpt": "Vote Angelis.",
+      "evidence_locator": "story171606 .entry-content; Pos. 5: Theo Angelis subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "race_id": "supreme-court-justice-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "evidence_excerpt": "Vote Stephens.",
+      "evidence_locator": "story171606 .entry-content; Pos. 7: Debra L. Stephens subsection and its explicit concluding Vote instruction; capture-seattle-gay-news-20261030T090946Z-16b735be3ebf; manual-seattle-gay-news-20261030T091442Z-4df9489a6ab3; data/review/rechecks/wa-2026-general-2026-10-30-sgn.json",
+      "evidence_url": "https://www.sgn.org/story/171606/",
+      "race_id": "supreme-court-justice-7",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "October 23 whole-source-block review and exact official locators: data/review/rechecks/wa-2026-general-2026-10-23-checkpoint.json; data/review/approvals/wa-2026-general-2026-10-23-confirmed.json. Prior locator: Official Seattle news index listing the editorial board's 2026 endorsement articles. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.",
+  "review_note": "Issue #505: actual complete editorial transcription by OpenAI Codex /root/assess_497_native26_records at 2026-10-30T09:14:42.468760+00:00; independent factual verification by OpenAI Codex /root at 2026-10-30T09:19:49.574335+00:00. Only this new decision receives current provenance. Caption Jamie/body Jaime qualified by unique Position3 and explicit Vote instruction, not global alias. Publication and first appearance unknown. Native08:41 SGN11 remains incomplete/unapproved; no executed16livebaseline or personal Scott source read.",
+  "reviewer": "OpenAI Codex /root",
+  "source_id": "seattle-gay-news"
+}

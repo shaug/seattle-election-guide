@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "d6ff9f9a2864d70acf0ae5d38bd2acd16e931aae05c58572ed01e7f716e63878"
+  },
+  "checked_at": "2026-10-30T08:55:12.874107Z",
+  "event_id": "refresh-sierra-club-washington-20261030T085512Z-93ae522be85b",
+  "evidence": "/root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-30-manual.json#/source_reviews/sierra-club-washington",
+  "mode": "human",
+  "recorded_at": "2026-10-30T11:02:21.822049Z",
+  "scheduled_for": "2026-10-30",
+  "source_id": "sierra-club-washington",
+  "status": "failed"
+}
