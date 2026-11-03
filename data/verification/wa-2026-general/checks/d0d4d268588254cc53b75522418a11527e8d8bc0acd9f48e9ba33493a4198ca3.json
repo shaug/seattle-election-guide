@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-11-03T16:55:37.395948Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/assess_497_native26_records: data/review/rechecks/wa-2026-general-2026-11-03-current-factual-review.json#washington-housing-alliance",
+  "mode": "human",
+  "scheduled_for": "2026-11-03",
+  "source_id": "washington-housing-alliance",
+  "status": "manual"
+}
