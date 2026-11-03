@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-11-03T16:55:09.620425Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/assess_497_native26_records: data/review/rechecks/wa-2026-general-2026-11-03-current-factual-review.json#protec17",
+  "mode": "human",
+  "scheduled_for": "2026-11-03",
+  "source_id": "protec17",
+  "status": "manual"
+}

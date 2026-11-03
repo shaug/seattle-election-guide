@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-11-03T17:01:45.163337Z",
+  "event_id": null,
+  "evidence": "OpenAI Codex /root/assess_497_native26_records: data/review/rechecks/wa-2026-general-2026-11-03-current-factual-review.json#seattle-democratic-socialists",
+  "mode": "human",
+  "scheduled_for": "2026-11-03",
+  "source_id": "seattle-democratic-socialists",
+  "status": "manual"
+}
