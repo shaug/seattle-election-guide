@@ -1,0 +1,94 @@
+{
+  "capture_id": "capture-seattle-gay-news-20261103T084109Z-a066833fcee1",
+  "checked_at": "2026-11-03T08:41:09Z",
+  "content_changed": true,
+  "diff": [
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "evidence_excerpt": "Pos. 1: Colleen Melody",
+        "evidence_locator": "Official SGN story171606 editorial body: Pos. 1: Colleen Melody, followed by explicit Vote Melody. Caption spelling alone supplies no mapping. Whole changed publication requires renewed review; no executed sixteen-fact baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-1",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-1"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "evidence_excerpt": "Pos. 3: Jaime Michelle Hawk",
+        "evidence_locator": "Official SGN story171606 editorial body: Pos. 3: Jaime Michelle Hawk, followed by explicit Vote Hawk. Caption spelling alone supplies no mapping. Whole changed publication requires renewed review; no executed sixteen-fact baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-3",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-3"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-4--ian-birk"
+        ],
+        "evidence_excerpt": "Pos. 4: Ian Birk",
+        "evidence_locator": "Official SGN story171606 editorial body: Pos. 4: Ian Birk, followed by explicit Vote Birk. Caption spelling alone supplies no mapping. Whole changed publication requires renewed review; no executed sixteen-fact baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-4",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-4"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "evidence_excerpt": "Pos. 5: Theo Angelis",
+        "evidence_locator": "Official SGN story171606 editorial body: Pos. 5: Theo Angelis, followed by explicit Vote Angelis. Caption spelling alone supplies no mapping. Whole changed publication requires renewed review; no executed sixteen-fact baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-5",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-5"
+    },
+    {
+      "after": {
+        "candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "evidence_excerpt": "Pos. 7: Debra L. Stephens",
+        "evidence_locator": "Official SGN story171606 editorial body: Pos. 7: Debra L. Stephens, followed by explicit Vote Stephens. Caption spelling alone supplies no mapping. Whole changed publication requires renewed review; no executed sixteen-fact baseline approval.",
+        "extraction_confidence": "0.99",
+        "race_id": "supreme-court-justice-7",
+        "requires_review": true,
+        "status": "endorsed"
+      },
+      "before": null,
+      "kind": "added",
+      "race_id": "supreme-court-justice-7"
+    }
+  ],
+  "error": null,
+  "id": "refresh-seattle-gay-news-20261103T084109Z-c841b0961048",
+  "previous_snapshot_id": "extraction-seattle-gay-news-20261102T084053Z-37a86dad2590",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-seattle-gay-news-20261103T084109Z-6e115e50ed9c",
+  "source_id": "seattle-gay-news",
+  "status": "updated"
+}
