@@ -1,0 +1,18 @@
+{
+  "access_failure": {
+    "category": "http_status",
+    "http_status": 403,
+    "stage": "http_fetch"
+  },
+  "capture_id": null,
+  "checked_at": "2026-10-30T08:55:12.624340Z",
+  "content_changed": null,
+  "diff": [],
+  "error": "Manual source access failed; observation evidence is in its scheduled check.",
+  "id": "refresh-oneamerica-votes-20261030T085512Z-f850eb5450fa",
+  "previous_snapshot_id": null,
+  "schema_version": "1.0",
+  "snapshot_id": null,
+  "source_id": "oneamerica-votes",
+  "status": "failed"
+}

@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "0263e8fa246917e77582f8ad25d859710b2768de31af8f8b7457ef41f4d54257"
+  },
+  "checked_at": "2026-10-30T08:55:12.857059Z",
+  "event_id": "refresh-seattle-times-editorial-board-20261030T085512Z-55a88b1ba355",
+  "evidence": "/root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-30-manual.json#/source_reviews/seattle-times-editorial-board",
+  "mode": "human",
+  "recorded_at": "2026-10-30T11:02:20.174670Z",
+  "scheduled_for": "2026-10-30",
+  "source_id": "seattle-times-editorial-board",
+  "status": "failed"
+}

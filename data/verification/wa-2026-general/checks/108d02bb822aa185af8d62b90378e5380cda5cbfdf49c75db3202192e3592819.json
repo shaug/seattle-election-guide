@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "c997bcba4c1144a07d6239286b2b55026956bc588f7ca2becc3fb1516feed5b1"
+  },
+  "checked_at": "2026-10-30T08:55:12.623654Z",
+  "event_id": "refresh-alliance-for-gun-responsibility-20261030T085512Z-aa784cd4a63e",
+  "evidence": "/root/canonical_659_ba680db: data/review/rechecks/wa-2026-general-2026-10-30-manual.json#/source_reviews/alliance-for-gun-responsibility",
+  "mode": "human",
+  "recorded_at": "2026-10-30T11:02:15.734327Z",
+  "scheduled_for": "2026-10-30",
+  "source_id": "alliance-for-gun-responsibility",
+  "status": "failed"
+}

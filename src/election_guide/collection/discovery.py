@@ -35,6 +35,7 @@ from election_guide.serialization import canonical_json_bytes, read_json
 
 # Exact reviewed current article; retain membership after index rotation.
 SGN_ARTICLES = ("https://www.sgn.org/story/171425/",)
+SGN_COURT_ARTICLE = "https://www.sgn.org/story/171606/"
 
 UFCW_INDEX = "https://ufcw3000.org/endorsements"
 UFCW_ARTICLES = (
@@ -245,6 +246,46 @@ class PublicationParser(HTMLParser):
             self.heading.append(data)
 
 
+class SgnCourtParser(PublicationParser):
+    """Retain the reviewed court article's body markup for visible-text rules."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.content_depth = 0
+        self.content_count = 0
+        self.content: list[str] = []
+        self.has_content = False
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        super().handle_starttag(tag, attrs)
+        classes = set((dict(attrs).get("class") or "").split())
+        markup = self.get_starttag_text()
+        if markup is None:
+            raise PublicationReviewRequired("parse", "SGN body start tag is unavailable")
+        if tag == "div" and not self.content_depth and "entry-content" in classes:
+            self.content_depth = 1
+            self.content_count += 1
+            self.content.append(markup)
+            return
+        if self.content_depth:
+            self.content.append(markup)
+            if tag == "div":
+                self.content_depth += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        super().handle_endtag(tag)
+        if self.content_depth:
+            if tag == "div":
+                self.content_depth -= 1
+            self.content.append(f"</{tag}>")
+
+    def handle_data(self, data: str) -> None:
+        super().handle_data(data)
+        if self.content_depth:
+            self.content.append(html.escape(data))
+            self.has_content = self.has_content or bool(data.strip())
+
+
 class PublicationCollector:
     """Bounded HTML GETs with the original HTTP capture metadata and private bytes."""
 
@@ -443,7 +484,8 @@ def discover_publication(
     headings: list[str] = []
     article_hashes: dict[str, str] = {}
     for article in articles:
-        raw, page = fetch(article)
+        court = SgnCourtParser() if article == SGN_COURT_ARTICLE else None
+        raw, page = collector.fetch(article, court)
         if page.heading_count != 1:
             raise PublicationReviewRequired(
                 "parse", "endorsement article must have exactly one heading"
@@ -455,6 +497,12 @@ def discover_publication(
                 "known endorsement article no longer has an endorsement heading",
             )
         headings.append(f"<p>{html.escape(title)}</p>")
+        if court is not None:
+            if court.content_count != 1 or court.content_depth or not court.has_content:
+                raise PublicationReviewRequired(
+                    "parse", "SGN court article requires one complete editorial body"
+                )
+            headings.append("".join(court.content))
         article_hashes[article] = hashlib.sha256(raw).hexdigest()
     # This derived comparison binds article/body and index fingerprints to
     # their independently identified HTTP observation metadata.

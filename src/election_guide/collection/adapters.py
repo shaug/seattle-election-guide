@@ -77,6 +77,8 @@ class _VisibleTextParser(HTMLParser):
             self.parts.append("\n")
 
     def handle_endtag(self, tag: str) -> None:
+        if tag in _HTML_VOID_TAGS:
+            return
         if not self.hidden_depth and tag in {"p", "li", "tr", "h1", "h2", "h3", "h4"}:
             self.parts.append("\n")
         if self.hidden_stack and self.hidden_stack.pop():

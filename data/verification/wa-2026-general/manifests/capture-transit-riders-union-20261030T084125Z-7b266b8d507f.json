@@ -1,0 +1,21 @@
+{
+  "availability": "observed",
+  "browser_required": false,
+  "byte_length": 64732,
+  "canonical_url": "https://transitriders.org/",
+  "capture_method": "manual_upload",
+  "content_sha256": "0ff7c8360cf482d94ca2e2d26d4458301e545b23cb6c4a68dad89b6d14ec958c",
+  "http_status": null,
+  "id": "capture-transit-riders-union-20261030T084125Z-7b266b8d507f",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Generated comparison; public observations identify transient HTTP inputs.",
+  "requested_url": "https://transitriders.org/",
+  "retrieved_at": "2026-10-30T08:41:25Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "title": "Derived TRU publication comparison; inputs linked by discovery record",
+  "updated_at": null
+}

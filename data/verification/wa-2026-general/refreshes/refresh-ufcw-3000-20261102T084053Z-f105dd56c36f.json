@@ -1,0 +1,13 @@
+{
+  "capture_id": "capture-ufcw-3000-20261102T084053Z-8e3b64036120",
+  "checked_at": "2026-11-02T08:40:53Z",
+  "content_changed": true,
+  "diff": [],
+  "error": null,
+  "id": "refresh-ufcw-3000-20261102T084053Z-f105dd56c36f",
+  "previous_snapshot_id": "extraction-ufcw-3000-20261101T084017Z-5da829bc0636",
+  "schema_version": "1.0",
+  "snapshot_id": "extraction-ufcw-3000-20261102T084053Z-8684f39a016f",
+  "source_id": "ufcw-3000",
+  "status": "updated"
+}

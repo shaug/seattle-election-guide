@@ -1,0 +1,16 @@
+{
+  "access_disposition": {
+    "disposition": "retained_verified_with_limitation",
+    "effective_from": "2026-10-27",
+    "policy_fingerprint": "be9b7bedfd56f9b4eebd173ec6ddde5538376cf4a0f29b43a29735696f42690d",
+    "qualification_id": "0ed4151332688a54ded6450eb9e6d4bcb739e295bc9e0bca8b114b16d638b852"
+  },
+  "checked_at": "2026-11-01T15:55:21.856628Z",
+  "event_id": "refresh-washington-state-democrats-20261101T155521Z-79e8d6eeff86",
+  "evidence": "OpenAI Codex /root/assess_497_native26_records: data/review/rechecks/wa-2026-general-2026-11-01-manual.json#/source_reviews/washington-state-democrats",
+  "mode": "human",
+  "recorded_at": "2026-11-02T00:19:08.917761Z",
+  "scheduled_for": "2026-11-01",
+  "source_id": "washington-state-democrats",
+  "status": "failed"
+}
