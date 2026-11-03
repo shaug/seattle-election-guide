@@ -1,0 +1,2405 @@
+{
+  "schema_version": 1,
+  "record_type": "remaining_scope_factual_review_and_normal_manual_acknowledgement_proposal",
+  "owning_issue": 688,
+  "election_id": "wa-2026-general",
+  "scheduled_for": "2026-11-03",
+  "written_by": "OpenAI Codex /root/canonical_659_ba680db",
+  "written_at": "2026-11-03T20:06:28.822199+00:00",
+  "writer_role": "Records already completed delegated factual reviews; did not fetch or personally re-read official publications, alter canonical facts, approve baselines or conduct initial qualification.",
+  "source_base": {
+    "sha": "a171c41fbe890b4bde563c32a76efacba734e406",
+    "tree": "acc37b001547a8306364e70b677a48704d7cb2ed",
+    "published_release": "2026-general.73"
+  },
+  "prior_published_factual_record": {
+    "path": "data/review/rechecks/wa-2026-general-2026-11-03-current-factual-review.json",
+    "bytes": 3451495,
+    "sha256": "dd1e8d74f2ec1ee15111f4495c9ee7064bd71cef99b56668bb3871535df8f87f",
+    "treatment": "Immutable prior record; its four baseline approvals,25 normal manual admissions, original factual/HTTP/native clocks and retained qualifications are neither replayed nor rewritten."
+  },
+  "sources": {
+    "11th-district-democrats": {
+      "source_id": "11th-district-democrats",
+      "scheduled_for": "2026-11-03",
+      "actual_factual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+      "actual_review_completed_at": "2026-11-03T19:42:45.874570+00:00",
+      "current_scope": "Complete bounded registered October newsletter, cumulative earlier HTML plus all nine remaining media; not a whole-site or initial-review attestation.",
+      "publication_coverage_complete": true,
+      "coverage_and_distinct_original_clocks": {
+        "registered_current_publication": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+        "earlier_current_HTML_check_start": "2026-11-03T16:59:01.686697+00:00",
+        "earlier_current_HTML_checked_at": "2026-11-03T16:59:02.277851+00:00",
+        "earlier_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+        "new_unique_media_requests": 9,
+        "new_static_images_read": 7,
+        "new_GIFs_read": 2,
+        "new_GIF_frames_read": 136,
+        "registered_remaining_media_coverage_complete": true,
+        "genuinely_unread_in_scope_media": [],
+        "excluded_components": "Already completed header, social icons and duplicate image tags; no successful header/HTML replay. The originally timed-out index5GIF was later read once under new timeout-only applicability clarification; original timeout record remains unchanged.",
+        "current_eligible_discovery": "All current registered Octobernewsletter HTML factual sections were read earlier; all nine unfinished event/graphic/GIF components now read. No additional supported frozen candidate or initiative choice identified. Whole-site or future newsletter exhaustiveness is not asserted."
+      },
+      "media_observations": [
+        {
+          "media_ordinal": 0,
+          "official_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/17298b55-d64b-41c8-8d15-7deaae7e3116.png",
+          "actual_check_started_at": "2026-11-03T19:29:40.414543+00:00",
+          "actual_checked_at": "2026-11-03T19:29:40.599136+00:00",
+          "observed_http_status": 200,
+          "observed_bytes": 1488581,
+          "observed_sha256": "e8a9322cb2bb7092b2a7dd966262554b66774e071902488b7af92898bcc88ffd",
+          "frames_read": 1,
+          "kind": "GOTV question-and-ballot event",
+          "factual_observation": "Oct27 event hosted by11thLDDems; generic criticism of three initiatives, no numbered new direction or candidate decision.",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.874570+00:00"
+        },
+        {
+          "media_ordinal": 1,
+          "official_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/db1a3597-0c5f-17be-f8eb-357185605c03.gif",
+          "actual_check_started_at": "2026-11-03T19:29:40.608373+00:00",
+          "actual_checked_at": "2026-11-03T19:29:40.775662+00:00",
+          "observed_http_status": 200,
+          "observed_bytes": 291546,
+          "observed_sha256": "369c988a564b4a5deeaf0bdad2bca348aa32cac53d88888b2c2b3769632e95aa",
+          "frames_read": 16,
+          "kind": "Decorative animation",
+          "factual_observation": "All16frames inspected; cartoon cat holding a green clock/check-like object. No candidate, office, measure number or endorsement wording.",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.874570+00:00"
+        },
+        {
+          "media_ordinal": 2,
+          "official_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/ae867dda-808b-350e-6e67-5ec5343af4e2.png",
+          "actual_check_started_at": "2026-11-03T19:29:40.882157+00:00",
+          "actual_checked_at": "2026-11-03T19:29:41.080234+00:00",
+          "observed_http_status": 200,
+          "observed_bytes": 464780,
+          "observed_sha256": "f371a18bd8ea3e3eaf3892e795cff83ad4219a0542b075173d4a6198c383978e",
+          "frames_read": 1,
+          "kind": "Holiday event",
+          "factual_observation": "Dec5 holiday party invitation. No candidate or ballot decision.",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.874570+00:00"
+        },
+        {
+          "media_ordinal": 3,
+          "official_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/34b57977-6c5a-b694-8ff3-5d97400ad838.png",
+          "actual_check_started_at": "2026-11-03T19:29:41.081944+00:00",
+          "actual_checked_at": "2026-11-03T19:29:41.240428+00:00",
+          "observed_http_status": 200,
+          "observed_bytes": 1640837,
+          "observed_sha256": "d8773d4e830be3b014e9029a538fe05a2db564d048b9e2953b2bb0263b931ce5",
+          "frames_read": 1,
+          "kind": "Decorative call-to-action",
+          "factual_observation": "11thLDDems call-to-action graphic without a candidate, office or ballot choice.",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.874570+00:00"
+        },
+        {
+          "media_ordinal": 4,
+          "official_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/5b335b25-f809-e39f-da47-f2fdaea34df8.png",
+          "actual_check_started_at": "2026-11-03T19:29:41.242516+00:00",
+          "actual_checked_at": "2026-11-03T19:29:41.461299+00:00",
+          "observed_http_status": 200,
+          "observed_bytes": 2267265,
+          "observed_sha256": "505447d338dddeeaf0b4ae99316e978c80006549a4c788277446f21efb1f9718",
+          "frames_read": 1,
+          "kind": "Civic event",
+          "factual_observation": "Oct17 NoKings/voters event; no candidate or numbered ballot decision.",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.874570+00:00"
+        },
+        {
+          "media_ordinal": 5,
+          "official_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/4790b2d9-8f78-dd12-2def-a2681f4344c9.png",
+          "actual_check_started_at": "2026-11-03T19:29:41.463501+00:00",
+          "actual_checked_at": "2026-11-03T19:29:41.689813+00:00",
+          "observed_http_status": 200,
+          "observed_bytes": 371748,
+          "observed_sha256": "218ee38308ccf23b8b77db453be971e777fff0f30942202dad4814afa3d7fe84",
+          "frames_read": 1,
+          "kind": "Adam Smith event invitation",
+          "factual_observation": "TasteoftheNinth community celebration/fundraiser, Oct27, organized/paid by AdamSmithforCongress. Named hosts/guests are event participation, not an explicit11D CD9 endorsement or NoEndorsement declaration.",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.874570+00:00"
+        },
+        {
+          "media_ordinal": 6,
+          "official_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/1dd741e1-c725-9aab-f7f5-6152207dbcc9.png",
+          "actual_check_started_at": "2026-11-03T19:29:41.690833+00:00",
+          "actual_checked_at": "2026-11-03T19:29:41.861548+00:00",
+          "observed_http_status": 200,
+          "observed_bytes": 970021,
+          "observed_sha256": "25bc6220cd62efac5deb3290216352c4064eec926a637a7a396422b4a1aa931d",
+          "frames_read": 1,
+          "kind": "Canvassing event and existing initiatives",
+          "factual_observation": "Nov1 WADems canvass with AdamSmith/PattyMurray; graphic expressly says No on IL26-001 and IL26-638. Both already match the current11D text directions; appearance is not an additional candidate endorsement. Printed party/labor branding is retained as event context.",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.874570+00:00"
+        },
+        {
+          "media_ordinal": 7,
+          "official_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/171df8e2-963d-1179-8899-c3ba95e2a3fe.jpg",
+          "actual_check_started_at": "2026-11-03T19:29:41.863311+00:00",
+          "actual_checked_at": "2026-11-03T19:29:42.076444+00:00",
+          "observed_http_status": 200,
+          "observed_bytes": 359715,
+          "observed_sha256": "0c2f266cdf3529943ca3fb3463f6f1838e1895005936e514454509a24f22adcd",
+          "frames_read": 1,
+          "kind": "Theater benefit",
+          "factual_observation": "Nov1 DetentionLottery immigrant-support theater benefit; no candidate or ballot decision.",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.874570+00:00"
+        },
+        {
+          "media_ordinal": 8,
+          "official_url": "https://mcusercontent.com/c75f17fe2b6e715cad36922d4/images/d9a25f91-55e5-59da-3639-1f78c1f0fdd4.gif",
+          "actual_check_started_at": "2026-11-03T19:36:25.152751+00:00",
+          "actual_checked_at": "2026-11-03T19:36:25.447192+00:00",
+          "observed_http_status": 200,
+          "observed_bytes": 1207020,
+          "observed_sha256": "755a7d84a1349add5e787e97f2be219da5b34e4c377ae29094be39164c1693a4",
+          "frames_read": 120,
+          "kind": "Generic voting animation",
+          "factual_observation": "All120frames inspected in six indexed contact sheets. Repeats voting as voice/power/right with animated check mark. No candidate, office, measure number, endorsement, withdrawal or changed supported mapping.",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.874570+00:00"
+        }
+      ],
+      "complete_retained16_comparison": [
+        {
+          "canonical_endorsement_id": "endorsement-fafc2cbc532cadf4",
+          "race_id": "us-house-9",
+          "status": "no_endorsement",
+          "candidate_ids": [],
+          "allocation": {},
+          "original_current_HTML_support": false,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [],
+          "new_media_effect": "No new formal candidate decision. CD9 remains uncorroborated by current newsletter; retain old NoEndorsement held, not withdrawn.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-bfa7a3f3119824a2",
+          "race_id": "ld-11-state-representative-1",
+          "status": "dual_endorsement",
+          "candidate_ids": [
+            "ld-11-state-representative-1--david-hackney",
+            "ld-11-state-representative-1--ashley-fedan"
+          ],
+          "allocation": {
+            "ld-11-state-representative-1--ashley-fedan": "1/2",
+            "ld-11-state-representative-1--david-hackney": "1/2"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "David Hackney",
+              "matched_text_offset": 2323
+            },
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Ashley Fedan",
+              "matched_text_offset": 2337
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-908379e872d7b701",
+          "race_id": "ld-11-state-representative-2",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-11-state-representative-2--steve-bergquist"
+          ],
+          "allocation": {
+            "ld-11-state-representative-2--steve-bergquist": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Steve Bergquist",
+              "matched_text_offset": 2394
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-b44d787535e2c840",
+          "race_id": "king-county-prosecuting-attorney",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-prosecuting-attorney--leesa-manion"
+          ],
+          "allocation": {
+            "king-county-prosecuting-attorney--leesa-manion": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Leesa Manion",
+              "matched_text_offset": 2443
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-f94491f4ad1b8d6d",
+          "race_id": "king-county-assessor",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-assessor--rob-foxcurran"
+          ],
+          "allocation": {
+            "king-county-assessor--rob-foxcurran": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Rob Foxcurran",
+              "matched_text_offset": 2477
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-8fc7b8e361485ecf",
+          "race_id": "king-county-council-2",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-council-2--toshiko-grace-hasegawa"
+          ],
+          "allocation": {
+            "king-county-council-2--toshiko-grace-hasegawa": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Toshiko Hasegawa",
+              "matched_text_offset": 2536
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-d69f853ecdfef2d6",
+          "race_id": "king-county-council-8",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ],
+          "allocation": {
+            "king-county-council-8--teresa-mosqueda": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Teresa Mosqueda",
+              "matched_text_offset": 2579
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-9d4975d9adb82806",
+          "race_id": "supreme-court-justice-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-1--colleen-melody"
+          ],
+          "allocation": {
+            "supreme-court-justice-1--colleen-melody": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Colleen Melody",
+              "matched_text_offset": 2690
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-6da6e8bb23dffa99",
+          "race_id": "supreme-court-justice-3",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-3--jaime-michelle-hawk"
+          ],
+          "allocation": {
+            "supreme-court-justice-3--jaime-michelle-hawk": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Jaime Hawk",
+              "matched_text_offset": 2717
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-764dc4b81bfe78e7",
+          "race_id": "supreme-court-justice-4",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-4--ian-birk"
+          ],
+          "allocation": {
+            "supreme-court-justice-4--ian-birk": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Ian Birk",
+              "matched_text_offset": 2746
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-6ede2f0086a0a01e",
+          "race_id": "supreme-court-justice-5",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-5--theo-angelis"
+          ],
+          "allocation": {
+            "supreme-court-justice-5--theo-angelis": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Theo Angelis",
+              "matched_text_offset": 2802
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-0e12bfd6cc820c5b",
+          "race_id": "supreme-court-justice-7",
+          "status": "endorsed",
+          "candidate_ids": [
+            "supreme-court-justice-7--debra-l-stephens"
+          ],
+          "allocation": {
+            "supreme-court-justice-7--debra-l-stephens": "1"
+          },
+          "original_current_HTML_support": "QUALIFIED_PRIOR_INTERPRETATION_RETAINED",
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Debra Stephens",
+              "matched_text_offset": 2841
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-43b5fa9853f2a916",
+          "race_id": "initiative-26-001",
+          "status": "endorsed",
+          "candidate_ids": [
+            "initiative-26-001--no"
+          ],
+          "allocation": {
+            "initiative-26-001--no": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Initiative-001: Vote No",
+              "matched_text_offset": 3067
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-c708be616f2ed639",
+          "race_id": "initiative-26-638",
+          "status": "endorsed",
+          "candidate_ids": [
+            "initiative-26-638--no"
+          ],
+          "allocation": {
+            "initiative-26-638--no": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Initiative-638: Vote No",
+              "matched_text_offset": 3091
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-2bce31e218e10e2d",
+          "race_id": "initiative-26-645",
+          "status": "endorsed",
+          "candidate_ids": [
+            "initiative-26-645--no"
+          ],
+          "allocation": {
+            "initiative-26-645--no": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Initiative-645: Vote No",
+              "matched_text_offset": 3115
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        },
+        {
+          "canonical_endorsement_id": "endorsement-9b8c2da0786cc0a0",
+          "race_id": "king-county-director-of-elections",
+          "status": "endorsed",
+          "candidate_ids": [
+            "king-county-director-of-elections--julie-wise"
+          ],
+          "allocation": {
+            "king-county-director-of-elections--julie-wise": "1"
+          },
+          "original_current_HTML_support": true,
+          "original_current_HTML_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "original_current_HTML_reviewed_at": "2026-11-03T17:00:04.798067+00:00",
+          "original_current_HTML_evidence": [
+            {
+              "official_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=65cbd68a41",
+              "literal_factual_phrase": "Julie Wise",
+              "matched_text_offset": 2639
+            }
+          ],
+          "new_media_effect": "No contradictory or additional target decision; existing qualified source interpretation/allocation preserved.",
+          "new_component_reviewed_at": "2026-11-03T19:42:45.874570+00:00",
+          "published_at": null
+        }
+      ],
+      "retained_count": 16,
+      "current_qualified_supported_count": 15,
+      "current_held_prior_count": 1,
+      "held_prior_fact": {
+        "race_id": "us-house-9",
+        "status": "no_endorsement",
+        "reason": "Prior September NoEndorsement is not affirmed by current October text or any newly read media. AdamSmith event invitation and canvass appearance are not a new formal endorsement, revocation or withdrawal.",
+        "treatment": "Retain prior approved fact and original provenance without new current factual support/date credit."
+      },
+      "qualifications": [
+        "Publication coverage completion is distinct from support for every retained fact. Do not keep the old partial-media label merely because CD9 is held.",
+        "Preserve exact Hackney/Fedan House1 dual, literal DebraStephens Position6/prior frozen7 qualification, TheoAngelis and exclusion of nonadvancing Amamilo; no new alias or mapping approval.",
+        "The current registered publication is reviewed cumulatively at the actual separate HTML and media clocks. It is not personally read at native08:41:09Z and does not rewrite the old Oct30/Nov1 partial findings.",
+        "All first appearances remain unknown; current event dates/voting deadlines do not supply publication first-appearance dates.",
+        "No claim that source bytes were generated uncached at access time; hashes do not establish publisher authorship or continued original retention."
+      ],
+      "new_correction_or_withdrawal": false,
+      "original_native_obligation": {
+        "path": "data/verification/wa-2026-general/checks/c3ed3c991a344158abfd4eaff878eafc74732841c86156156b9705b8debdecec.json",
+        "bytes": 202,
+        "sha256": "c3ed3c991a344158abfd4eaff878eafc74732841c86156156b9705b8debdecec",
+        "literal_observation": {
+          "checked_at": "2026-11-03T08:41:09Z",
+          "event_id": null,
+          "evidence": null,
+          "mode": "live",
+          "scheduled_for": "2026-11-03",
+          "source_id": "11th-district-democrats",
+          "status": "manual_due"
+        },
+        "treatment": "Original manual_due observation remains immutable; this is not a typed HTTP failure or a source-review qualification."
+      },
+      "normal_manual_acknowledgement": "PROPOSED: completed bounded review with held CD9 explicitly preserved; no canonical reapproval or withdrawal.",
+      "sealed_factual_record": {
+        "record_name": "11D-REMAINING-MEDIA-FACTUAL-DISPOSITION.json",
+        "bytes": 27701,
+        "sha256": "cd11a19a84535ea336571341b82e195819bfe8f3ac5f4b5e3a695db49eb812e5"
+      }
+    },
+    "environmental-climate-caucus-wa-democrats": {
+      "source_id": "environmental-climate-caucus-wa-democrats",
+      "scheduled_for": "2026-11-03",
+      "actual_factual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+      "actual_review_completed_at": "2026-11-03T19:42:45.887106+00:00",
+      "official_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+      "actual_current_observation": {
+        "source_id": "environmental-climate-caucus-wa-democrats",
+        "actual_actor": "OpenAI Codex /root/assess_497_native26_records",
+        "requested_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+        "actual_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+        "attempt": 1,
+        "actual_checked_at": "2026-11-03T19:36:28.165726+00:00",
+        "http_status": 200,
+        "canonical_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+        "redirect_chain": [],
+        "media_type": "text/html; charset=UTF-8",
+        "byte_length": 211925,
+        "sha256": "0ba49fc379a1fab53843b34078ecd571b9e8027631628ff10f27dbecb6bb5759",
+        "outcome": "HTTP_RESPONSE_OBSERVED"
+      },
+      "current_registered_publication_scope": "Full visible2026EndorsedCandidates page: all64 name/office captions, explicit general-election Sep8-15 voting statement, explicit primary-to-general carry-forward, and five nonadvancing asterisks. All supported frozen mappings compared. Embedded candidate-image pixel data was not requested or claimed read; factual name/office/asterisk decisions are explicit in HTML headings/captions, not inferred from image filenames. No whole-site/initial-attestation assertion.",
+      "publication_coverage_complete": true,
+      "caption_count": 64,
+      "all64_name_office_caption_facts": [
+        {
+          "caption_ordinal": 1,
+          "name": "Suzan DelBene",
+          "source_office": "Congressional District 1",
+          "derived_exact_office_race_id": "us-house-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card1"
+        },
+        {
+          "caption_ordinal": 2,
+          "name": "Brent Hennrich*",
+          "source_office": "Congressional District 3",
+          "derived_exact_office_race_id": "us-house-3",
+          "not_advanced_asterisk": true,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card2"
+        },
+        {
+          "caption_ordinal": 3,
+          "name": "John Duresky",
+          "source_office": "Congressional District 4",
+          "derived_exact_office_race_id": "us-house-4",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card3"
+        },
+        {
+          "caption_ordinal": 4,
+          "name": "Kevin Fagan*",
+          "source_office": "Congressional District 5",
+          "derived_exact_office_race_id": "us-house-5",
+          "not_advanced_asterisk": true,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card4"
+        },
+        {
+          "caption_ordinal": 5,
+          "name": "Pramila Jayapal",
+          "source_office": "Congressional District 7",
+          "derived_exact_office_race_id": "us-house-7",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Pramila Jayapal",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Congressional District 7'; Office='U.S. Representative'; Candidate='Pramila Jayapal'; Ballot Order='1'",
+              "id": "us-house-7--pramila-jayapal",
+              "official_name": "Pramila Jayapal",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "us-house-7",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card5"
+        },
+        {
+          "caption_ordinal": 6,
+          "name": "Adam Smith",
+          "source_office": "Congressional District 9",
+          "derived_exact_office_race_id": "us-house-9",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Adam Smith",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='CONGRESSIONAL DISTRICT 9'; Office='U.S. Representative'; Candidate='Adam Smith'; Ballot Order='1'",
+              "id": "us-house-9--adam-smith",
+              "official_name": "Adam Smith",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "us-house-9",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card6"
+        },
+        {
+          "caption_ordinal": 7,
+          "name": "Marilyn Strickland",
+          "source_office": "Congressional District 10",
+          "derived_exact_office_race_id": "us-house-10",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card7"
+        },
+        {
+          "caption_ordinal": 8,
+          "name": "Sharlett Mena",
+          "source_office": "State Senate District 29",
+          "derived_exact_office_race_id": "ld-29-state-senator",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card8"
+        },
+        {
+          "caption_ordinal": 9,
+          "name": "Claire Wilson",
+          "source_office": "State Senate District 30",
+          "derived_exact_office_race_id": "ld-30-state-senator",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card9"
+        },
+        {
+          "caption_ordinal": 10,
+          "name": "Cindy Ryu",
+          "source_office": "State Senate District 32",
+          "derived_exact_office_race_id": "ld-32-state-senator",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Cindy Ryu",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Senator'; Candidate='Cindy Ryu'; Ballot Order='1'",
+              "id": "ld-32-state-senator--cindy-ryu",
+              "official_name": "Cindy Ryu",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-32-state-senator",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card10"
+        },
+        {
+          "caption_ordinal": 11,
+          "name": "Chipalo Street",
+          "source_office": "State Senate District 37",
+          "derived_exact_office_race_id": "ld-37-state-senator",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Chipalo Street",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Senator'; Candidate='Chipalo Street'; Ballot Order='1'",
+              "id": "ld-37-state-senator--chipalo-street",
+              "official_name": "Chipalo Street",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-37-state-senator",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card11"
+        },
+        {
+          "caption_ordinal": 12,
+          "name": "Michael Shepard",
+          "source_office": "State Senate District 42",
+          "derived_exact_office_race_id": "ld-42-state-senator",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card12"
+        },
+        {
+          "caption_ordinal": 13,
+          "name": "Jamie Pedersen",
+          "source_office": "State Senate District 43",
+          "derived_exact_office_race_id": "ld-43-state-senator",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Jamie Pedersen",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Senator'; Candidate='Jamie Pedersen'; Ballot Order='1'",
+              "id": "ld-43-state-senator--jamie-pedersen",
+              "official_name": "Jamie Pedersen",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-43-state-senator",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card13"
+        },
+        {
+          "caption_ordinal": 14,
+          "name": "Hannah Sabio-Howell",
+          "source_office": "State Senate District 43",
+          "derived_exact_office_race_id": "ld-43-state-senator",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 2,
+              "choice_type": "candidate",
+              "display_name": "Hannah Sabio-Howell",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Senator'; Candidate='Hannah Sabio-Howell'; Ballot Order='2'",
+              "id": "ld-43-state-senator--hannah-sabio-howell",
+              "official_name": "Hannah Sabio-Howell",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-43-state-senator",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card14"
+        },
+        {
+          "caption_ordinal": 15,
+          "name": "Javier Valdez",
+          "source_office": "State Senate District 46",
+          "derived_exact_office_race_id": "ld-46-state-senator",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Javier Valdez",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Senator'; Candidate='Javier Valdez'; Ballot Order='1'",
+              "id": "ld-46-state-senator--javier-valdez",
+              "official_name": "Javier Valdez",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-46-state-senator",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card15"
+        },
+        {
+          "caption_ordinal": 16,
+          "name": "Vandana Slatter",
+          "source_office": "State Senate District 48",
+          "derived_exact_office_race_id": "ld-48-state-senator",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card16"
+        },
+        {
+          "caption_ordinal": 17,
+          "name": "William Dehnel",
+          "source_office": "State Representative District 2 Position 1",
+          "derived_exact_office_race_id": "ld-2-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card17"
+        },
+        {
+          "caption_ordinal": 18,
+          "name": "Angela Taylor",
+          "source_office": "State Representative District 2 Position 2",
+          "derived_exact_office_race_id": "ld-2-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card18"
+        },
+        {
+          "caption_ordinal": 19,
+          "name": "Luc Jasmin III",
+          "source_office": "State Representative District 3 Position 2",
+          "derived_exact_office_race_id": "ld-3-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card19"
+        },
+        {
+          "caption_ordinal": 20,
+          "name": "Rob Tupper",
+          "source_office": "State Representative District 4 Position 2",
+          "derived_exact_office_race_id": "ld-4-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card20"
+        },
+        {
+          "caption_ordinal": 21,
+          "name": "Karina Wallace",
+          "source_office": "State Representative District 9 Position 2",
+          "derived_exact_office_race_id": "ld-9-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card21"
+        },
+        {
+          "caption_ordinal": 22,
+          "name": "Clyde Shavers",
+          "source_office": "State Representative District 10 Position 1",
+          "derived_exact_office_race_id": "ld-10-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card22"
+        },
+        {
+          "caption_ordinal": 23,
+          "name": "Dave Paul",
+          "source_office": "State Representative District 10 Position 2",
+          "derived_exact_office_race_id": "ld-10-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card23"
+        },
+        {
+          "caption_ordinal": 24,
+          "name": "Stacy Willoughby",
+          "source_office": "State Representative District 12 Position 1",
+          "derived_exact_office_race_id": "ld-12-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card24"
+        },
+        {
+          "caption_ordinal": 25,
+          "name": "Chelsea Dimas",
+          "source_office": "State Representative District 14 Position 1",
+          "derived_exact_office_race_id": "ld-14-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card25"
+        },
+        {
+          "caption_ordinal": 26,
+          "name": "Ben Christly",
+          "source_office": "State Representative District 17 Position 1",
+          "derived_exact_office_race_id": "ld-17-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card26"
+        },
+        {
+          "caption_ordinal": 27,
+          "name": "Diana H. Perez",
+          "source_office": "State Representative District 17 Position 2",
+          "derived_exact_office_race_id": "ld-17-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card27"
+        },
+        {
+          "caption_ordinal": 28,
+          "name": "Randi Knott",
+          "source_office": "State Representative District 18 Position 1",
+          "derived_exact_office_race_id": "ld-18-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card28"
+        },
+        {
+          "caption_ordinal": 29,
+          "name": "Kevin Moynihan",
+          "source_office": "State Representative District 19 Position 1",
+          "derived_exact_office_race_id": "ld-19-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card29"
+        },
+        {
+          "caption_ordinal": 30,
+          "name": "Andy Zahn",
+          "source_office": "State Representative District 20 Position 1",
+          "derived_exact_office_race_id": "ld-20-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card30"
+        },
+        {
+          "caption_ordinal": 31,
+          "name": "Strom Peterson",
+          "source_office": "State Representative District 21 Position 1",
+          "derived_exact_office_race_id": "ld-21-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card31"
+        },
+        {
+          "caption_ordinal": 32,
+          "name": "Lillian Ortiz-Self",
+          "source_office": "State Representative District 21 Position 2",
+          "derived_exact_office_race_id": "ld-21-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card32"
+        },
+        {
+          "caption_ordinal": 33,
+          "name": "Lisa Parshley",
+          "source_office": "State Representative District 22 Position 2",
+          "derived_exact_office_race_id": "ld-22-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card33"
+        },
+        {
+          "caption_ordinal": 34,
+          "name": "Jamie Keenan-deVargas",
+          "source_office": "State Representative District 22 Position 2",
+          "derived_exact_office_race_id": "ld-22-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card34"
+        },
+        {
+          "caption_ordinal": 35,
+          "name": "Tarra Simmons",
+          "source_office": "State Representative District 23 Position 1",
+          "derived_exact_office_race_id": "ld-23-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card35"
+        },
+        {
+          "caption_ordinal": 36,
+          "name": "Greg Nance",
+          "source_office": "State Representative District 23 Position 2",
+          "derived_exact_office_race_id": "ld-23-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card36"
+        },
+        {
+          "caption_ordinal": 37,
+          "name": "Adam Bernbaum",
+          "source_office": "State Representative District 24 Position 1",
+          "derived_exact_office_race_id": "ld-24-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card37"
+        },
+        {
+          "caption_ordinal": 38,
+          "name": "David Berg",
+          "source_office": "State Representative District 25 Position 1",
+          "derived_exact_office_race_id": "ld-25-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card38"
+        },
+        {
+          "caption_ordinal": 39,
+          "name": "Jenn Marie Strickling",
+          "source_office": "State Representative District 25 Position 2",
+          "derived_exact_office_race_id": "ld-25-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card39"
+        },
+        {
+          "caption_ordinal": 40,
+          "name": "Renee Hernandez Greenfield",
+          "source_office": "State Representative District 26 Position 2",
+          "derived_exact_office_race_id": "ld-26-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card40"
+        },
+        {
+          "caption_ordinal": 41,
+          "name": "Tedd Wetherbee*",
+          "source_office": "State Representative District 26 Position 2",
+          "derived_exact_office_race_id": "ld-26-state-representative-2",
+          "not_advanced_asterisk": true,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card41"
+        },
+        {
+          "caption_ordinal": 42,
+          "name": "Mari Leavitt",
+          "source_office": "State Representative District 28 Position 1",
+          "derived_exact_office_race_id": "ld-28-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card42"
+        },
+        {
+          "caption_ordinal": 43,
+          "name": "Melanie Morgan",
+          "source_office": "State Representative District 29 Position 1",
+          "derived_exact_office_race_id": "ld-29-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card43"
+        },
+        {
+          "caption_ordinal": 44,
+          "name": "Joe Bushnell",
+          "source_office": "State Representative District 29 Position 2",
+          "derived_exact_office_race_id": "ld-29-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card44"
+        },
+        {
+          "caption_ordinal": 45,
+          "name": "Patrick Stickney",
+          "source_office": "State Representative District 29 Position 2",
+          "derived_exact_office_race_id": "ld-29-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card45"
+        },
+        {
+          "caption_ordinal": 46,
+          "name": "Natasha Laitila*",
+          "source_office": "State Representative District 29 Position 2",
+          "derived_exact_office_race_id": "ld-29-state-representative-2",
+          "not_advanced_asterisk": true,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card46"
+        },
+        {
+          "caption_ordinal": 47,
+          "name": "Chris Bloomquist*",
+          "source_office": "State Representative District 32 Position 1",
+          "derived_exact_office_race_id": "ld-32-state-representative-1",
+          "not_advanced_asterisk": true,
+          "frozen_race_present": true,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card47"
+        },
+        {
+          "caption_ordinal": 48,
+          "name": "Keith Scully",
+          "source_office": "State Representative District 32 Position 1",
+          "derived_exact_office_race_id": "ld-32-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Keith Scully",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Representative Pos. 1'; Candidate='Keith Scully'; Ballot Order='1'",
+              "id": "ld-32-state-representative-1--keith-scully",
+              "official_name": "Keith Scully",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-32-state-representative-1",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card48"
+        },
+        {
+          "caption_ordinal": 49,
+          "name": "Imraan Siddiqi",
+          "source_office": "State Representative District 32 Position 2",
+          "derived_exact_office_race_id": "ld-32-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 2,
+              "choice_type": "candidate",
+              "display_name": "Imraan Siddiqi",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Representative Pos. 2'; Candidate='Imraan Siddiqi'; Ballot Order='2'",
+              "id": "ld-32-state-representative-2--imraan-siddiqi",
+              "official_name": "Imraan Siddiqi",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-32-state-representative-2",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card49"
+        },
+        {
+          "caption_ordinal": 50,
+          "name": "Mary Anito",
+          "source_office": "State Representative District 34 Position 2",
+          "derived_exact_office_race_id": "ld-34-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 2,
+              "choice_type": "candidate",
+              "display_name": "Mary Anito",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 34'; Office='State Representative Pos. 2'; Candidate='Mary Anito'; Ballot Order='2'",
+              "id": "ld-34-state-representative-2--mary-anito",
+              "official_name": "Mary Anito",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-34-state-representative-2",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card50"
+        },
+        {
+          "caption_ordinal": 51,
+          "name": "Jim Pierson",
+          "source_office": "State Representative District 35 Position 2",
+          "derived_exact_office_race_id": "ld-35-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card51"
+        },
+        {
+          "caption_ordinal": 52,
+          "name": "Julia Grant Reed",
+          "source_office": "State Representative District 36 Position 1",
+          "derived_exact_office_race_id": "ld-36-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Julia Grant Reed",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 36'; Office='State Representative Pos. 1'; Candidate='Julia Grant Reed'; Ballot Order='1'",
+              "id": "ld-36-state-representative-1--julia-grant-reed",
+              "official_name": "Julia Grant Reed",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-36-state-representative-1",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card52"
+        },
+        {
+          "caption_ordinal": 53,
+          "name": "Kelabe Tewolde",
+          "source_office": "State Representative District 37 Position 1",
+          "derived_exact_office_race_id": "ld-37-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Kelabe Tewolde",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 1'; Candidate='Kelabe Tewolde'; Ballot Order='1'",
+              "id": "ld-37-state-representative-1--kelabe-tewolde",
+              "official_name": "Kelabe Tewolde",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-37-state-representative-1",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card53"
+        },
+        {
+          "caption_ordinal": 54,
+          "name": "Jaelynn Scott",
+          "source_office": "State Representative District 37 Position 2",
+          "derived_exact_office_race_id": "ld-37-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Jaelynn Scott",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 2'; Candidate='Jaelynn Scott'; Ballot Order='1'",
+              "id": "ld-37-state-representative-2--jaelynn-scott",
+              "official_name": "Jaelynn Scott",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-37-state-representative-2",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card54"
+        },
+        {
+          "caption_ordinal": 55,
+          "name": "Julio Cortes",
+          "source_office": "State Representative District 38 Position 1",
+          "derived_exact_office_race_id": "ld-38-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card55"
+        },
+        {
+          "caption_ordinal": 56,
+          "name": "Ida Keeley",
+          "source_office": "State Representative District 39 Position 2",
+          "derived_exact_office_race_id": "ld-39-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card56"
+        },
+        {
+          "caption_ordinal": 57,
+          "name": "Janice Zahn",
+          "source_office": "State Representative District 41 Position 1",
+          "derived_exact_office_race_id": "ld-41-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card57"
+        },
+        {
+          "caption_ordinal": 58,
+          "name": "My-Linh Thai",
+          "source_office": "State Representative District 41 Position 2",
+          "derived_exact_office_race_id": "ld-41-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card58"
+        },
+        {
+          "caption_ordinal": 59,
+          "name": "Joe Timmons",
+          "source_office": "State Representative District 42 Position 2",
+          "derived_exact_office_race_id": "ld-42-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card59"
+        },
+        {
+          "caption_ordinal": 60,
+          "name": "Nicole Macri",
+          "source_office": "State Representative District 43 Position 1",
+          "derived_exact_office_race_id": "ld-43-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Nicole Macri",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Representative Pos. 1'; Candidate='Nicole Macri'; Ballot Order='1'",
+              "id": "ld-43-state-representative-1--nicole-macri",
+              "official_name": "Nicole Macri",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-43-state-representative-1",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card60"
+        },
+        {
+          "caption_ordinal": 61,
+          "name": "Brandy Donaghy",
+          "source_office": "State Representative District 44 Position 1",
+          "derived_exact_office_race_id": "ld-44-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card61"
+        },
+        {
+          "caption_ordinal": 62,
+          "name": "Vanessa Kritzer",
+          "source_office": "State Representative District 45 Position 2",
+          "derived_exact_office_race_id": "ld-45-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card62"
+        },
+        {
+          "caption_ordinal": 63,
+          "name": "Gerry Pollet",
+          "source_office": "State Representative District 46 Position 1",
+          "derived_exact_office_race_id": "ld-46-state-representative-1",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": true,
+          "exact_choice_matches": [
+            {
+              "aliases": [],
+              "ballot_order": 1,
+              "choice_type": "candidate",
+              "display_name": "Gerry Pollet",
+              "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Representative Pos. 1'; Candidate='Gerry Pollet'; Ballot Order='1'",
+              "id": "ld-46-state-representative-1--gerry-pollet",
+              "official_name": "Gerry Pollet",
+              "party_preference": "(Prefers Democratic Party)",
+              "race_id": "ld-46-state-representative-1",
+              "source_ids": [
+                "king-county-2026-general-ballot"
+              ]
+            }
+          ],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card63"
+        },
+        {
+          "caption_ordinal": 64,
+          "name": "Jessica Forsythe",
+          "source_office": "State Representative District 48 Position 2",
+          "derived_exact_office_race_id": "ld-48-state-representative-2",
+          "not_advanced_asterisk": false,
+          "frozen_race_present": false,
+          "exact_choice_matches": [],
+          "locator": "Our2026Endorsements; consecutive h3 name and office captions; card64"
+        }
+      ],
+      "asterisked_nonadvancers": 5,
+      "frozen_eligible_matched_choices": 15,
+      "current_supported_decisions": 14,
+      "complete_current_comparisons": [
+        {
+          "canonical_endorsement_id": "endorsement-7c7374c1a021dfdd",
+          "race_id": "ld-32-state-senator",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-32-state-senator--cindy-ryu"
+          ],
+          "allocation": {
+            "ld-32-state-senator--cindy-ryu": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 10,
+              "name": "Cindy Ryu",
+              "source_office": "State Senate District 32",
+              "derived_exact_office_race_id": "ld-32-state-senator",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Cindy Ryu",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Senator'; Candidate='Cindy Ryu'; Ballot Order='1'",
+                  "id": "ld-32-state-senator--cindy-ryu",
+                  "official_name": "Cindy Ryu",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-32-state-senator",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card10"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-32-state-senator--cindy-ryu": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.886970+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-94093d8202ee0766",
+          "race_id": "ld-32-state-representative-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-32-state-representative-1--keith-scully"
+          ],
+          "allocation": {
+            "ld-32-state-representative-1--keith-scully": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 48,
+              "name": "Keith Scully",
+              "source_office": "State Representative District 32 Position 1",
+              "derived_exact_office_race_id": "ld-32-state-representative-1",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Keith Scully",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Representative Pos. 1'; Candidate='Keith Scully'; Ballot Order='1'",
+                  "id": "ld-32-state-representative-1--keith-scully",
+                  "official_name": "Keith Scully",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-32-state-representative-1",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card48"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-32-state-representative-1--keith-scully": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.886987+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-d7a3e3889c09aae4",
+          "race_id": "ld-32-state-representative-2",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ],
+          "allocation": {
+            "ld-32-state-representative-2--imraan-siddiqi": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 49,
+              "name": "Imraan Siddiqi",
+              "source_office": "State Representative District 32 Position 2",
+              "derived_exact_office_race_id": "ld-32-state-representative-2",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 2,
+                  "choice_type": "candidate",
+                  "display_name": "Imraan Siddiqi",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Representative Pos. 2'; Candidate='Imraan Siddiqi'; Ballot Order='2'",
+                  "id": "ld-32-state-representative-2--imraan-siddiqi",
+                  "official_name": "Imraan Siddiqi",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-32-state-representative-2",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card49"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-32-state-representative-2--imraan-siddiqi": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.886998+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-a75a16b29d5e420a",
+          "race_id": "ld-37-state-senator",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "allocation": {
+            "ld-37-state-senator--chipalo-street": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 11,
+              "name": "Chipalo Street",
+              "source_office": "State Senate District 37",
+              "derived_exact_office_race_id": "ld-37-state-senator",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Chipalo Street",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Senator'; Candidate='Chipalo Street'; Ballot Order='1'",
+                  "id": "ld-37-state-senator--chipalo-street",
+                  "official_name": "Chipalo Street",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-37-state-senator",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card11"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-37-state-senator--chipalo-street": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887007+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-a5e7fdd50ffe193e",
+          "race_id": "ld-37-state-representative-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ],
+          "allocation": {
+            "ld-37-state-representative-1--kelabe-tewolde": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 53,
+              "name": "Kelabe Tewolde",
+              "source_office": "State Representative District 37 Position 1",
+              "derived_exact_office_race_id": "ld-37-state-representative-1",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Kelabe Tewolde",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 1'; Candidate='Kelabe Tewolde'; Ballot Order='1'",
+                  "id": "ld-37-state-representative-1--kelabe-tewolde",
+                  "official_name": "Kelabe Tewolde",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-37-state-representative-1",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card53"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-37-state-representative-1--kelabe-tewolde": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887017+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-0f346829897a4ed9",
+          "race_id": "ld-37-state-representative-2",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-37-state-representative-2--jaelynn-scott"
+          ],
+          "allocation": {
+            "ld-37-state-representative-2--jaelynn-scott": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 54,
+              "name": "Jaelynn Scott",
+              "source_office": "State Representative District 37 Position 2",
+              "derived_exact_office_race_id": "ld-37-state-representative-2",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Jaelynn Scott",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 2'; Candidate='Jaelynn Scott'; Ballot Order='1'",
+                  "id": "ld-37-state-representative-2--jaelynn-scott",
+                  "official_name": "Jaelynn Scott",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-37-state-representative-2",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card54"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-37-state-representative-2--jaelynn-scott": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887027+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-068b5f710a00bf21",
+          "race_id": "ld-43-state-senator",
+          "status": "dual_endorsement",
+          "candidate_ids": [
+            "ld-43-state-senator--jamie-pedersen",
+            "ld-43-state-senator--hannah-sabio-howell"
+          ],
+          "allocation": {
+            "ld-43-state-senator--hannah-sabio-howell": "1/2",
+            "ld-43-state-senator--jamie-pedersen": "1/2"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 13,
+              "name": "Jamie Pedersen",
+              "source_office": "State Senate District 43",
+              "derived_exact_office_race_id": "ld-43-state-senator",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Jamie Pedersen",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Senator'; Candidate='Jamie Pedersen'; Ballot Order='1'",
+                  "id": "ld-43-state-senator--jamie-pedersen",
+                  "official_name": "Jamie Pedersen",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-43-state-senator",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card13"
+            },
+            {
+              "caption_ordinal": 14,
+              "name": "Hannah Sabio-Howell",
+              "source_office": "State Senate District 43",
+              "derived_exact_office_race_id": "ld-43-state-senator",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 2,
+                  "choice_type": "candidate",
+                  "display_name": "Hannah Sabio-Howell",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Senator'; Candidate='Hannah Sabio-Howell'; Ballot Order='2'",
+                  "id": "ld-43-state-senator--hannah-sabio-howell",
+                  "official_name": "Hannah Sabio-Howell",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-43-state-senator",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card14"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-43-state-senator--hannah-sabio-howell": "1/2",
+            "ld-43-state-senator--jamie-pedersen": "1/2"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887036+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-d5716a95d0697cf6",
+          "race_id": "ld-43-state-representative-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-43-state-representative-1--nicole-macri"
+          ],
+          "allocation": {
+            "ld-43-state-representative-1--nicole-macri": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 60,
+              "name": "Nicole Macri",
+              "source_office": "State Representative District 43 Position 1",
+              "derived_exact_office_race_id": "ld-43-state-representative-1",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Nicole Macri",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Representative Pos. 1'; Candidate='Nicole Macri'; Ballot Order='1'",
+                  "id": "ld-43-state-representative-1--nicole-macri",
+                  "official_name": "Nicole Macri",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-43-state-representative-1",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card60"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-43-state-representative-1--nicole-macri": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887046+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-857a70e160dc6f7c",
+          "race_id": "ld-46-state-senator",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-46-state-senator--javier-valdez"
+          ],
+          "allocation": {
+            "ld-46-state-senator--javier-valdez": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 15,
+              "name": "Javier Valdez",
+              "source_office": "State Senate District 46",
+              "derived_exact_office_race_id": "ld-46-state-senator",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Javier Valdez",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Senator'; Candidate='Javier Valdez'; Ballot Order='1'",
+                  "id": "ld-46-state-senator--javier-valdez",
+                  "official_name": "Javier Valdez",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-46-state-senator",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card15"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-46-state-senator--javier-valdez": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887055+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-1bc1416d0faaa3f4",
+          "race_id": "ld-46-state-representative-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-46-state-representative-1--gerry-pollet"
+          ],
+          "allocation": {
+            "ld-46-state-representative-1--gerry-pollet": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 63,
+              "name": "Gerry Pollet",
+              "source_office": "State Representative District 46 Position 1",
+              "derived_exact_office_race_id": "ld-46-state-representative-1",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Gerry Pollet",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Representative Pos. 1'; Candidate='Gerry Pollet'; Ballot Order='1'",
+                  "id": "ld-46-state-representative-1--gerry-pollet",
+                  "official_name": "Gerry Pollet",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-46-state-representative-1",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card63"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-46-state-representative-1--gerry-pollet": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887065+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-ca1ffad8e8720594",
+          "race_id": "us-house-7",
+          "status": "endorsed",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ],
+          "allocation": {
+            "us-house-7--pramila-jayapal": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 5,
+              "name": "Pramila Jayapal",
+              "source_office": "Congressional District 7",
+              "derived_exact_office_race_id": "us-house-7",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Pramila Jayapal",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Congressional District 7'; Office='U.S. Representative'; Candidate='Pramila Jayapal'; Ballot Order='1'",
+                  "id": "us-house-7--pramila-jayapal",
+                  "official_name": "Pramila Jayapal",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "us-house-7",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card5"
+            }
+          ],
+          "allocation_unchanged": {
+            "us-house-7--pramila-jayapal": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887076+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-0f129af8a8d172ae",
+          "race_id": "us-house-9",
+          "status": "endorsed",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ],
+          "allocation": {
+            "us-house-9--adam-smith": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 6,
+              "name": "Adam Smith",
+              "source_office": "Congressional District 9",
+              "derived_exact_office_race_id": "us-house-9",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Adam Smith",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='CONGRESSIONAL DISTRICT 9'; Office='U.S. Representative'; Candidate='Adam Smith'; Ballot Order='1'",
+                  "id": "us-house-9--adam-smith",
+                  "official_name": "Adam Smith",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "us-house-9",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card6"
+            }
+          ],
+          "allocation_unchanged": {
+            "us-house-9--adam-smith": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887085+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-bf21fbe64d679bab",
+          "race_id": "ld-34-state-representative-2",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-34-state-representative-2--mary-anito"
+          ],
+          "allocation": {
+            "ld-34-state-representative-2--mary-anito": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 50,
+              "name": "Mary Anito",
+              "source_office": "State Representative District 34 Position 2",
+              "derived_exact_office_race_id": "ld-34-state-representative-2",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 2,
+                  "choice_type": "candidate",
+                  "display_name": "Mary Anito",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 34'; Office='State Representative Pos. 2'; Candidate='Mary Anito'; Ballot Order='2'",
+                  "id": "ld-34-state-representative-2--mary-anito",
+                  "official_name": "Mary Anito",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-34-state-representative-2",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card50"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-34-state-representative-2--mary-anito": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887094+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        },
+        {
+          "canonical_endorsement_id": "endorsement-de0215317a763874",
+          "race_id": "ld-36-state-representative-1",
+          "status": "endorsed",
+          "candidate_ids": [
+            "ld-36-state-representative-1--julia-grant-reed"
+          ],
+          "allocation": {
+            "ld-36-state-representative-1--julia-grant-reed": "1"
+          },
+          "published_at": null,
+          "prior_approved_reviewer": "shaug",
+          "prior_approved_reviewed_at": "2026-10-16T15:48:50.280092Z",
+          "prior_source_capture_id": "capture-environmental-climate-caucus-wa-democrats-20261016T154440Z-ce67cd01b7a1",
+          "current_source_support": true,
+          "current_source_fact_rows": [
+            {
+              "caption_ordinal": 52,
+              "name": "Julia Grant Reed",
+              "source_office": "State Representative District 36 Position 1",
+              "derived_exact_office_race_id": "ld-36-state-representative-1",
+              "not_advanced_asterisk": false,
+              "frozen_race_present": true,
+              "exact_choice_matches": [
+                {
+                  "aliases": [],
+                  "ballot_order": 1,
+                  "choice_type": "candidate",
+                  "display_name": "Julia Grant Reed",
+                  "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 36'; Office='State Representative Pos. 1'; Candidate='Julia Grant Reed'; Ballot Order='1'",
+                  "id": "ld-36-state-representative-1--julia-grant-reed",
+                  "official_name": "Julia Grant Reed",
+                  "party_preference": "(Prefers Democratic Party)",
+                  "race_id": "ld-36-state-representative-1",
+                  "source_ids": [
+                    "king-county-2026-general-ballot"
+                  ]
+                }
+              ],
+              "locator": "Our2026Endorsements; consecutive h3 name and office captions; card52"
+            }
+          ],
+          "allocation_unchanged": {
+            "ld-36-state-representative-1--julia-grant-reed": "1"
+          },
+          "actual_current_source_check_started_at": "2026-11-03T19:36:26.863287+00:00",
+          "actual_current_source_checked_at": "2026-11-03T19:36:28.165726+00:00",
+          "actual_reviewer": "OpenAI Codex /root/assess_497_native26_records",
+          "actual_reviewed_at": "2026-11-03T19:42:45.887104+00:00",
+          "first_appearance": "unknown; original published_at remains null"
+        }
+      ],
+      "qualifications": [
+        "Both JamiePedersen and HannahSabio-Howell remain under the explicit primary-to-general carry-forward statement; preserve existing equal1/2 allocations.",
+        "ChrisBloomquist* is in a frozen office but marked not advancing and absent from eligible frozen choices; exclude without replacement or invented nomination. Four other asterisked candidates are outside frozen offices.",
+        "No new supported frozen choice, affirmative contradiction or withdrawal found. Preserve original canonical notes/reviewer/date and unknown first appearances; Sep8-15 voting dates are not first-publication dates.",
+        "Historical Nov1 ordinary30s timeout/statusnull and Oct29 browser-navigation timeout remain unchanged with unknown causes. The new200 does not retroactively convert any old check or scheduled manual_due observation into success.",
+        "This is actual newly authorized factual publication review, not an initialqualification/attestation/admission or approval transfer."
+      ],
+      "historical_timeout_preserved": {
+        "scheduled_for": "2026-11-01",
+        "request_timeout_seconds": 30,
+        "http_status": null,
+        "cause": "unknown",
+        "treatment": "Prior ordinary timeout/status-null and original clocks remain unchanged in the prior factual record; the later current HTTP200 is not a retroactive repair."
+      },
+      "new_correction_or_withdrawal": false,
+      "original_native_obligation": {
+        "path": "data/verification/wa-2026-general/checks/b834e1374c3ff6aad209faf343d646f6c86cc942941a613c74959c57b460adee.json",
+        "bytes": 220,
+        "sha256": "b834e1374c3ff6aad209faf343d646f6c86cc942941a613c74959c57b460adee",
+        "literal_observation": {
+          "checked_at": "2026-11-03T08:41:09Z",
+          "event_id": null,
+          "evidence": null,
+          "mode": "live",
+          "scheduled_for": "2026-11-03",
+          "source_id": "environmental-climate-caucus-wa-democrats",
+          "status": "manual_due"
+        },
+        "treatment": "Original manual_due observation remains immutable; this is not a typed HTTP failure or a source-review qualification."
+      },
+      "normal_manual_acknowledgement": "PROPOSED: complete bounded caption/current-cycle mapping review; no image-pixel, whole-site, initial-review or collector-baseline approval claim.",
+      "sealed_factual_record": {
+        "record_name": "ECC-CURRENT-FACTUAL-DISPOSITION.json",
+        "bytes": 87733,
+        "sha256": "5ebb4351824c9dc1f5ab236e05010c2f864c3ce548bc185f7c1f48696cf15867"
+      },
+      "caption_fact_record": {
+        "record_name": "ECC-CAPTION-FACTS.json",
+        "bytes": 36216,
+        "sha256": "5f03d6edaa8d78995d740ed81df89e782fb9c705e28b835bf1e246a0fac3e9c4"
+      }
+    }
+  },
+  "other_remaining_scopes_not_acknowledged": [
+    {
+      "source_id": "planned-parenthood-alliance-advocates",
+      "retained_count": 26,
+      "current_disposition": "PARTIAL_HTML_SUPPORTED_BADGE403_YEAR_CONTEXT_HELD",
+      "exact_missing_evidence_or_resolved_gap": "Exact linked endorsement-badge pixels/year remain unread. Current HTML supports26 qualified facts; alt says Endorsed2025 while asset filename includes2026. Image year/content cannot be inferred from filename or current initiative directions.",
+      "retained_fact_treatment": "Retain26 facts and original reviewers/dates. Preserve Mosqueda literalDistrict6/prior approvedDistrict8 interpretation and office-scoped unnumbered House positions. Starred federal endorsements belong to ActionFund, not new regional admissions.",
+      "next_check_trigger": "Material change to the originating403 boundary or genuinely new permissible official evidence, assessed by root; no scheduled retry assumed."
+    },
+    {
+      "source_id": "alliance-for-gun-responsibility",
+      "retained_count": 24,
+      "current_disposition": "PROTECTED_PRIOR_HTTP403",
+      "exact_missing_evidence_or_resolved_gap": "Current entire official2026 endorsement publication, supported frozen mappings, new/unrecognized choices and withdrawals remain unobserved.",
+      "retained_fact_treatment": "Retain24 accepted facts and old source/review clocks; access failure is not withdrawal.",
+      "next_check_trigger": "Material originating-access change/new legitimate official evidence; not a blind refresh or alternate route."
+    },
+    {
+      "source_id": "citizens-against-aipac-corruption",
+      "retained_count": 1,
+      "current_disposition": "PROTECTED_PRIOR_HTTP403",
+      "exact_missing_evidence_or_resolved_gap": "Current official endorsement list and supported frozen mapping/new eligible choices remain unobserved.",
+      "retained_fact_treatment": "Retain1 accepted fact, old reviewer/check/review times; no absence or withdrawal inference.",
+      "next_check_trigger": "Material originating-access change or new legitimate official evidence; no automatic retry."
+    },
+    {
+      "source_id": "oneamerica-votes",
+      "retained_count": 17,
+      "current_disposition": "PROTECTED_PRIOR_HTTP403",
+      "exact_missing_evidence_or_resolved_gap": "Current official2026 endorsement publication and all frozen/new/qualified decisions remain unobserved.",
+      "retained_fact_treatment": "Retain17 accepted facts with original approvals and unknown first appearances.",
+      "next_check_trigger": "Material originating-access change/new legitimate official evidence; no automatic replay."
+    },
+    {
+      "source_id": "seattle-times-editorial-board",
+      "retained_count": 29,
+      "current_disposition": "PROTECTED_PRIOR_HTTP403",
+      "exact_missing_evidence_or_resolved_gap": "Current editorial endorsement membership/articles and full supported frozen mappings/new or withdrawn positions remain unobserved.",
+      "retained_fact_treatment": "Retain29 facts and exact historical approvals/qualifications; lack of access is not withdrawal.",
+      "next_check_trigger": "Material originating-access change/new legitimate evidence, not another actor/browser/provider."
+    },
+    {
+      "source_id": "sierra-club-washington",
+      "retained_count": 24,
+      "current_disposition": "PROTECTED_PRIOR_HTTP403",
+      "exact_missing_evidence_or_resolved_gap": "Current official2026 endorsement list, all supported mappings and current changes/withdrawals remain unread.",
+      "retained_fact_treatment": "Retain24 accepted facts with prior dates and approvals; no absence/withdrawal inference.",
+      "next_check_trigger": "Material new legitimate evidence or normal access restoration; no automatic request."
+    },
+    {
+      "source_id": "nondriver-action",
+      "retained_count": 4,
+      "current_disposition": "PROTECTED_PRIOR_HTTP403",
+      "exact_missing_evidence_or_resolved_gap": "Current official2026 publication, full frozen mapping scope and changes remain unobserved.",
+      "retained_fact_treatment": "Retain4 accepted facts and all original provenance/qualifications; no withdrawal.",
+      "next_check_trigger": "Material normal-access change/new legitimate official evidence, not alternate transport/actor."
+    },
+    {
+      "source_id": "washington-state-democrats",
+      "retained_count": 3,
+      "current_disposition": "PROTECTED_PRIOR_HTTP403",
+      "exact_missing_evidence_or_resolved_gap": "Current official campaign-resource publication and its three supported No directions/new eligible decisions remain unobserved.",
+      "retained_fact_treatment": "Retain3 accepted No decisions with old clocks/actors; no speculative court import.",
+      "next_check_trigger": "Material normal-access change/new legitimate official evidence; no automatic retry."
+    },
+    {
+      "source_id": "washington-stonewall-democrats",
+      "retained_count": 29,
+      "current_disposition": "HELD_CURRENT_RENDERED_PUBLICATION_REVIEW_EXACT_ESTABLISHED_CHROME_SURFACE_UNAVAILABLE",
+      "exact_missing_evidence_or_resolved_gap": "Current rendered full guide remains unread. Exact documented historical Chrome extension browser1/tab2046301711 is now not found; Oct30 successful URL clocks record no separately explicit live tab/session locator.",
+      "retained_fact_treatment": "Retain29 decisions/30 choices, equal LD43 dual and old118-card/3No review with actual old actors/clocks. UpdatedOct2 is not first appearance. Do not claim access403 at successful official shell.",
+      "next_check_trigger": "Actually available already-established permitted ordinary source surface established by existing controlling owner, or materially new legitimate official factual evidence; no missing-tab replay."
+    },
+    {
+      "source_id": "the-stranger",
+      "retained_count": 31,
+      "current_disposition": "PROTECTED_SITESAFETY_STOP",
+      "exact_missing_evidence_or_resolved_gap": "Whole current official cheat-sheet/article membership and all supported/qualified choices remain unread.",
+      "retained_fact_treatment": "Retain31 facts with original approvals/notes; unknown current changes are not withdrawals.",
+      "next_check_trigger": "Material legitimate resolution of originating SiteSafety boundary or new lawful official factual evidence under existing policy."
+    },
+    {
+      "source_id": "washington-education-association",
+      "retained_count": 20,
+      "current_disposition": "PROTECTED_MEMBERSHIP_CERTIFICATION_BOUNDARY",
+      "exact_missing_evidence_or_resolved_gap": "Actual endorsement publication behind the eligibility/certification boundary remains unread; observed public boundary is not endorsement facts.",
+      "retained_fact_treatment": "Retain20 prior accepted facts/actors/dates; do not relabel boundary200 as complete endorsement read.",
+      "next_check_trigger": "Actual publisher-public evidence or legitimate policy-compliant source evidence supplied; no repeated membership check."
+    },
+    {
+      "source_id": "washington-for-peace-and-justice",
+      "retained_count": 31,
+      "current_disposition": "CURRENT_PROFILE_DISCOVERY_LOGIN_LIMITED_HISTORICAL_POST_COMPLETE",
+      "exact_missing_evidence_or_resolved_gap": "Registered12-slide post has an actual Oct30 complete review; current profile/new publication discovery remains login-limited. No evidence proves the old post remains exhaustive today.",
+      "retained_fact_treatment": "Retain31 decisions:29 green affirmative plus2 red explicit declines, prior District/Position/LD11 mapping qualifications, grey SupremeCourt1/4 held. Old check09:09:11.802Z/review09:21:38.260419Z Oct30 by canonical659 remain old.",
+      "next_check_trigger": "New legitimate official publication evidence or normal public discovery capability genuinely restored; no post replay for freshness."
+    },
+    {
+      "source_id": "young-democrats-of-washington",
+      "retained_count": 16,
+      "current_disposition": "CURRENT_PROFILE_DISCOVERY_LOGIN_LIMITED_HISTORICAL_POST_COMPLETE",
+      "exact_missing_evidence_or_resolved_gap": "Registered3 slides/caption had an actual Oct30 complete review; current newer-post discovery remains signup/login-limited. Old12-post inventory does not prove current completeness.",
+      "retained_fact_treatment": "Retain16 facts and original dates; old check09:04:34.274Z/read09:05:56.725Z/review09:14:06.489484Z Oct30 by canonical659 are not transferred to today.",
+      "next_check_trigger": "Genuinely new legitimate official evidence or public discovery restoration, not old-post replay or another actor."
+    }
+  ],
+  "whole_source_recovery_complete": false,
+  "preserved_all821_manual_and_all_canonical_facts": true,
+  "transient_originals": {
+    "new_discarded_file_count": 154,
+    "new_discarded_bytes": 41766431,
+    "all_discarded": true,
+    "discarded_by": "OpenAI Codex /root/assess_497_native26_records",
+    "discard_completed_at": "2026-11-03T19:46:49.983361+00:00",
+    "original_response_count": 10,
+    "derived_GIF_frames": 136,
+    "discard_receipt": {
+      "record_name": "NEW-TRANSIENT-DISCARD-RECEIPT.json",
+      "bytes": 58401,
+      "sha256": "bf88971ab0ffe0066c3e89f87a82a6727dba7265adfb6c2bcf82958f584c9427"
+    },
+    "prior172_discarded_files_unchanged": true,
+    "custody": "Facts/URLs/actual transport/check/review metadata and hashes only. No full publisher bytes, restoration, source-fetch promise or hash-based publisher-authorship assertion."
+  },
+  "boundaries": [
+    "Exactly two ordinary manual acknowledgements may be proposed for these completed bounded recurring reviews.",
+    "No PPAA or12 standing acknowledgements, handled access failures, source-review qualifications, collector baseline approvals, new endorsements, withdrawals, aliases, source settings or historical-clock changes.",
+    "The native08:41:09 manual_due/null-event/null-evidence records remain exact; actual HTTP/media and review times are distinct.",
+    "All accepted source qualifications, equal duals, Stephens literalPosition6/prior7, held CD9 and unknown first appearances survive.",
+    "This record grants no public release or factual approval; normal protected validation and independent review remain required."
+  ]
+}
