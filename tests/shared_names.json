@@ -405,6 +405,26 @@
       "template",
       "client"
     ],
+    "data-preliminary-check-at": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-preliminary-checked-label": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-preliminary-refresh-failed": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-preliminary-stale-after": [
+      "template",
+      "client",
+      "test"
+    ],
     "data-publication-race-id": [
       "template",
       "client",
@@ -783,6 +803,7 @@
     "election-day-counting": [
       "stylesheet",
       "client",
+      "python",
       "test"
     ],
     "election-day-past": [
