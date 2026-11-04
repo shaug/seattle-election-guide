@@ -1010,6 +1010,7 @@ def test_cli_results_ingest_checks_calendar_certification_date(
         return
     assert output_path.is_file()
     results = read_results(output_path)
+    assert isinstance(results, ElectionResults)
     assert results.certified_on is not None
     assert results.certified_on.isoformat() == certified_on
     reject_committed_counting_status(results)

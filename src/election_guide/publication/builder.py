@@ -74,7 +74,7 @@ from election_guide.publication.personalization import (
     PersonalizationSource,
 )
 from election_guide.publication.precinct_ballot import build_precinct_ballot
-from election_guide.results.models import ElectionResults
+from election_guide.results.models import ResultsDocument
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import Source
@@ -122,7 +122,7 @@ def build_publication_bundle(
     git_commit: str,
     snapshot_root: Path,
     data_as_of: datetime | None = None,
-    results: ElectionResults | None = None,
+    results: ResultsDocument | None = None,
     certification_date: str | None = None,
     results_capture_urls: dict[str, str] | None = None,
     corrections: ElectionCorrections | None = None,
@@ -319,7 +319,7 @@ def _build_view_model(
     unresolved: list[ReviewItem],
     git_commit: str,
     data_as_of: datetime,
-    results: ElectionResults | None,
+    results: ResultsDocument | None,
     certification_date: str | None = None,
     results_capture_urls: dict[str, str] | None = None,
     corrections: ElectionCorrections | None = None,

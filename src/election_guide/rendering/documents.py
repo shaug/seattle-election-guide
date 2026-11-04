@@ -45,6 +45,7 @@ from election_guide.rendering.shell import (
     site_icon_svg,
 )
 from election_guide.rendering.stylesheets import page_stylesheet
+from election_guide.results.models import PreliminaryElectionResults
 
 
 def _election_day_banner(view_model: PublicationViewModel) -> str:
@@ -55,6 +56,13 @@ def _election_day_banner(view_model: PublicationViewModel) -> str:
     require `certified_on`, so its mere presence is the "results exist"
     signal `election_day_banner_html` gates its certified state on."""
     results = view_model.results
+    if isinstance(results, PreliminaryElectionResults):
+        # No single County calendar date or count clock describes all authorities.
+        return (
+            '<p class="election-day election-day-counting">'
+            '<span class="election-day-when"><b>Unofficial results · counting continues</b>'
+            "<br>Count times and official sources are shown with each contest.</span></p>"
+        )
     certified_on = results.certified_on if results is not None else None
     return election_day_banner_html(
         view_model.metadata.election_date,
@@ -457,7 +465,10 @@ def render_comparison_document(
     payload = comparisons_payload(
         view_model,
         default_columns=["gall", "strn", "stim"],
-        results_available=view_model.results is not None,
+        results_available=(
+            view_model.results is not None
+            and not isinstance(view_model.results, PreliminaryElectionResults)
+        ),
         race_results=context.comparison_result_outcomes(view_model),
         endorsements_path=guide_path,
         comparisons_path=f"{guide_path}comparisons/",

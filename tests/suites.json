@@ -152,7 +152,9 @@
   },
   "tests/test_corrections_rendering.py": {
     "suite": "integration",
-    "tests": {"test_updates_controls_actual_geometry_keyboard_and_history": "e2e"},
+    "tests": {
+      "test_updates_controls_actual_geometry_keyboard_and_history": "e2e"
+    },
     "partition": "integration-rendering"
   },
   "tests/test_current_factual_mappings.py": {
@@ -305,6 +307,11 @@
       "test_modal_requires_exact_county_info_destination": "integration"
     },
     "partition": "integration-rendering"
+  },
+  "tests/test_preliminary_results.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
   },
   "tests/test_preview_teardown.py": {
     "suite": "integration",

@@ -81,6 +81,7 @@
 /* Certified reads on the agree-tone family (a settled fact) -- the only
    state this badge renders (docs/RESULTS.md, Rendering § Race cards). */
 .race-results-status { display: inline-block; padding: .08rem .5rem; border: 1px solid var(--tone-agree-border); border-radius: 1rem; background: var(--tone-agree-bg); color: var(--tone-agree-text); font-size: .68rem; font-weight: 700; letter-spacing: .02em; }
+.race-results-status-preliminary { border-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
 .race-results-tally { display: grid; gap: .3rem; }
 .race-results-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .15rem .6rem; }
 /* The outcome chip is the shared `.race-detail-result-chip` above,

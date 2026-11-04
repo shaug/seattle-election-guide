@@ -160,3 +160,84 @@ class ElectionResults(ResultsModel):
                 f"{self.status} results for {self.election_id!r} require a certification date"
             )
         return self
+
+
+class PreliminaryCapture(ResultsModel):
+    """A current official observation; its retrieval clock is not the count clock."""
+
+    kind: Literal["preliminary"] = "preliminary"
+    authority_id: str = Field(min_length=1)
+    captured_at: AwareDatetime
+    evidence: str = Field(min_length=1)
+
+
+class PreliminaryOutcome(ResultsModel):
+    """A named choice's count-so-far, never a called outcome or stored percentage."""
+
+    choice_id: str = Field(min_length=1)
+    votes: int = Field(ge=0, strict=True)
+
+
+class PreliminaryRaceResults(ResultsModel):
+    """Whole-contest geography does not imply finished reporting or counting.
+
+    Coverage is a reviewed assertion backed by a separate official evidence
+    reference, not inferred from empty county metadata or a matching name.
+    """
+
+    race_id: str = Field(min_length=1)
+    jurisdiction_id: str = Field(min_length=1)
+    source_contest_id: str = Field(min_length=1)
+    coverage: Literal["whole_jurisdiction"]
+    coverage_evidence: str = Field(min_length=1)
+    authority_id: str = Field(min_length=1)
+    authority: str = Field(min_length=1)
+    capture_evidence: str = Field(min_length=1)
+    reported_at: AwareDatetime
+    reporting_complete: bool = Field(strict=True)
+    ballots_counted: int | None = Field(default=None, ge=0, strict=True)
+    votes_counted: int | None = Field(default=None, ge=0, strict=True)
+    write_in_votes: int = Field(ge=0, strict=True)
+    outcomes: list[PreliminaryOutcome] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_tally(self) -> PreliminaryRaceResults:
+        choices = [outcome.choice_id for outcome in self.outcomes]
+        if len(choices) != len(set(choices)):
+            raise ValueError(f"race {self.race_id!r} repeats a named ballot choice")
+        if (self.ballots_counted is None) == (self.votes_counted is None):
+            raise ValueError("state exactly one of contest ballots or votes, never infer ballots")
+        votes = sum(outcome.votes for outcome in self.outcomes) + self.write_in_votes
+        if self.votes_counted is not None and self.votes_counted != votes:
+            raise ValueError("authority vote total must include every named choice and write-ins")
+        if self.ballots_counted is not None and self.ballots_counted < votes:
+            raise ValueError("contest ballots cannot be less than the single-vote contest tally")
+        return self
+
+
+class PreliminaryElectionResults(ResultsModel):
+    """Explicit unofficial admission; legacy certified schema 1.0 stays unchanged."""
+
+    schema_version: Literal["1.1"] = "1.1"
+    election_id: str = Field(min_length=1)
+    status: Literal["preliminary"] = "preliminary"
+    captures: list[PreliminaryCapture] = Field(min_length=1)
+    races: list[PreliminaryRaceResults] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_admission(self) -> PreliminaryElectionResults:
+        captures = {capture.evidence: capture for capture in self.captures}
+        if len(captures) != len(self.captures):
+            raise ValueError("preliminary results repeat a capture reference")
+        if len({race.race_id for race in self.races}) != len(self.races):
+            raise ValueError("preliminary results repeat a race id")
+        for race in self.races:
+            capture = captures.get(race.capture_evidence)
+            if capture is None or capture.authority_id != race.authority_id:
+                raise ValueError(f"race {race.race_id!r} must cite its own authority capture")
+            if race.reported_at > capture.captured_at:
+                raise ValueError("publisher count timestamp cannot follow the observation")
+        return self
+
+
+type ResultsDocument = ElectionResults | PreliminaryElectionResults

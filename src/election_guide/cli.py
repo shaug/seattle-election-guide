@@ -143,7 +143,7 @@ from election_guide.results.loader import (
     read_results,
     reject_committed_counting_status,
 )
-from election_guide.results.models import ResultsCapture
+from election_guide.results.models import ElectionResults, ResultsCapture
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 from election_guide.scoring import (
     ConsensusReport,
@@ -1815,8 +1815,8 @@ def results_validate(
         typer.Argument(exists=True, dir_okay=False, readable=True),
     ],
     inventory_path: Annotated[
-        Path, typer.Option(exists=True, dir_okay=False, readable=True)
-    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+        Path | None, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = None,
 ) -> None:
     """Validate one committed results file: schema, inventory, and evidence.
 
@@ -1827,6 +1827,11 @@ def results_validate(
     try:
         results = read_results(results_path)
         reject_committed_counting_status(results)
+        if inventory_path is None:
+            # An election identity is never an arbitrary filesystem path.
+            if results.election_id not in {"wa-2026-primary", "wa-2026-general"}:
+                raise ValueError("provide --inventory-path for an undeclared election")
+            inventory_path = Path("data/normalized") / f"{results.election_id}-inventory.json"
         inventory = read_inventory(inventory_path)
         validate_results_inventory(results, inventory)
         validate_results_evidence(results)
@@ -2031,6 +2036,8 @@ def results_ingest_secretary_of_state(
                 f"{output_path} does not exist; run 'results ingest' first to produce it"
             )
         existing = read_results(output_path)
+        if not isinstance(existing, ElectionResults):
+            raise ValueError("certified ingestion cannot merge into preliminary results")
         if existing.election_id != election_id:
             raise ValueError(
                 f"{output_path} belongs to {existing.election_id!r}, not {election_id!r}"

@@ -1,5 +1,15 @@
 # Seattle Elections Guide — UI/UX Guidelines
 
+## Preliminary results (#696)
+
+Reuse the existing Guide/race result block: names, one-decimal named-choice percentages,
+.45rem navy tally bars and compact contest-count/authority/evidence provenance. The adjacent
+amber status says **Unofficial** plus the actual publisher count timestamp. All candidates
+retain equal emphasis; no winner/outcome chips or trailing treatment. Center the counting
+banner. Different authorities retain their own clocks and certification evidence; a County
+date is not an election-wide promise. Four approved County examples are a visual excerpt,
+not a coverage limit or replacement for functional product controls.
+
 How to build UI that belongs on this site. Rules here are decidable — each
 one can reject a real design. When a proposal and this document disagree,
 either follow the document or change it; never silently diverge.

@@ -4,32 +4,39 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 from pydantic import ValidationError
 
 from election_guide.inventory.models import Inventory
-from election_guide.results.models import ElectionResults
+from election_guide.results.models import (
+    ElectionResults,
+    PreliminaryElectionResults,
+    ResultsDocument,
+)
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 from election_guide.serialization import read_yaml
 
-RENDERED_STATUSES = frozenset({"certified", "amended"})
+CERTIFIED_STATUSES = frozenset({"certified", "amended"})
+RENDERED_STATUSES = CERTIFIED_STATUSES | {"preliminary"}
 """Results render as a state, not an option (docs/RESULTS.md, Rendering):
 `load_rendering_results` surfaces a file only once it is in one of these
 statuses."""
 
 
-def read_results(path: Path) -> ElectionResults:
+def read_results(path: Path) -> ResultsDocument:
     """Load a YAML results file and expose validation as a stable value error."""
     try:
         raw: Any = read_yaml(path)
+        if isinstance(raw, dict) and cast(dict[str, Any], raw).get("schema_version") == "1.1":
+            return PreliminaryElectionResults.model_validate(raw)
         return ElectionResults.model_validate(raw)
     except (OSError, UnicodeError, yaml.YAMLError, ValidationError) as error:
         raise ValueError(str(error)) from error
 
 
-def reject_committed_counting_status(results: ElectionResults) -> None:
+def reject_committed_counting_status(results: ResultsDocument) -> None:
     """Committed results files are only ever `certified` or `amended`
     (docs/RESULTS.md, Data model). `status: counting` stays in the schema for
     forward compatibility, but a file that has actually been committed to
@@ -48,7 +55,7 @@ def load_rendering_results(
     *,
     results_dir: Path = Path("data/results"),
     repository_root: Path = Path("."),
-) -> ElectionResults | None:
+) -> ResultsDocument | None:
     """The rendering pipeline's one hook onto post-election results.
 
     Returns the validated results for `election_id` when a `certified` or

@@ -1,5 +1,14 @@
 # Seattle Elections Guide — Front-End Code Guidelines
 
+## Preliminary results (#696)
+
+The VM carries strict preliminary schema 1.1 separately from certified schema 1.0. One
+status-aware context view feeds the shared Guide/race macro; no duplicate percentage/scoring
+implementation or live client results fetch. Preliminary presence never enables the
+explicitly Certified result comparison column. SSR contains count/status/provenance;
+publisher strings remain autoescaped and no raw-HTML exception is widened. Legacy certified
+payload values/serialization and immutable archives retain their contract.
+
 How to structure the code that builds and runs the site's pages. DESIGN.md
 governs what the UI looks like and how it behaves; this document governs how
 that behavior is implemented: modules, rendering, state, contracts, and

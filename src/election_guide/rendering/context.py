@@ -12,6 +12,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from fractions import Fraction
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from election_guide.corrections.models import ElectionCorrections
 from election_guide.publication.ballot_order import BALLOT_ORDER_FILES
@@ -39,7 +40,7 @@ from election_guide.rendering.payload import (
     RaceSourceRow,
 )
 from election_guide.rendering.shell import month_day_year
-from election_guide.results.models import ElectionResults
+from election_guide.results.models import PreliminaryElectionResults, ResultsDocument
 
 
 @dataclass(frozen=True)
@@ -537,6 +538,8 @@ def comparison_result_outcomes(
     results file exists or this race's ingested file names no entry for it --
     `race_results_view`'s own `None` gate.
     """
+    if isinstance(view_model.results, PreliminaryElectionResults):
+        return {}
     race_by_id = {race.id: race for section in view_model.sections for race in section.races}
     outcomes_by_race: dict[str, list[ComparisonResultOutcome]] = {}
     for display in view_model.comparisons.display_index:
@@ -1418,11 +1421,13 @@ class RaceResultsView:
     authority: str
     capture_url: str | None
     outcomes: tuple[RaceResultOutcomeView, ...]
+    preliminary: bool = False
+    reported_at_label: str = ""
 
 
 def race_results_view(
     race: PublicationRace,
-    results: ElectionResults | None,
+    results: ResultsDocument | None,
     *,
     election_type: str | None,
     capture_urls: dict[str, str] | None,
@@ -1451,6 +1456,8 @@ def race_results_view(
     """
     if results is None:
         return None
+    if isinstance(results, PreliminaryElectionResults):
+        return _preliminary_race_view(race, results, capture_urls=capture_urls)
     outcome_set = next((item for item in results.races if item.race_id == race.id), None)
     certified_on = results.certified_on
     if outcome_set is None or certified_on is None:
@@ -1489,6 +1496,46 @@ def race_results_view(
                 chip_label=chip_label if outcome.advanced else None,
             )
             for outcome in sorted_outcomes
+        ),
+    )
+
+
+def _preliminary_race_view(
+    race: PublicationRace,
+    results: PreliminaryElectionResults,
+    *,
+    capture_urls: dict[str, str] | None,
+) -> RaceResultsView | None:
+    tally = next((item for item in results.races if item.race_id == race.id), None)
+    if tally is None:
+        return None
+    labels = {candidate.id: candidate.label for candidate in race.candidates}
+    named_total = sum(outcome.votes for outcome in tally.outcomes)
+    stamp = tally.reported_at.astimezone(ZoneInfo("America/Los_Angeles"))
+    clock = f"{stamp.hour % 12 or 12}:{stamp:%M:%S} {'a.m.' if stamp.hour < 12 else 'p.m.'}"
+    count_label = (
+        f"{tally.ballots_counted:,} ballots"
+        if tally.ballots_counted is not None
+        else f"{tally.votes_counted:,} votes"
+    )
+    return RaceResultsView(
+        certified_on_label="",
+        count_label=count_label,
+        authority=tally.authority,
+        capture_url=(capture_urls or {}).get(race.id),
+        preliminary=True,
+        reported_at_label=f"{stamp:%b} {stamp.day}, {clock} {stamp:%Z}",
+        outcomes=tuple(
+            RaceResultOutcomeView(
+                candidate_id=outcome.choice_id,
+                candidate_label=labels[outcome.choice_id],
+                percentage_label=f"{outcome.votes / named_total * 100:.1f}%"
+                if named_total
+                else "—",
+                advanced=False,
+                chip_label=None,
+            )
+            for outcome in sorted(tally.outcomes, key=lambda item: item.votes, reverse=True)
         ),
     )
 

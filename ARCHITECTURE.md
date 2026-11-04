@@ -1,5 +1,14 @@
 # Architecture
 
+## Preliminary official results (#696)
+
+Official acquisition stays separate from deterministic publication. Retained authority bytes,
+an explicit whole-jurisdiction contest/choice mapping and publisher count clocks feed a strict
+preliminary document. The publication VM carries it into shared SSR result components.
+Legacy certified schema 1.0 and historical bundles retain their shape. No client results
+requests, endorsement/scoring changes or certification by date. `docs/RESULTS.md` owns status
+and admission semantics; normal evidence/release gates apply.
+
 ## System boundary
 
 The project converts official election inventories and captured endorsement evidence into
