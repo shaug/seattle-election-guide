@@ -102,6 +102,7 @@ is not listed here (issue 242):
 | `rendering/documents.py` | The Jinja environment and the four document renderers. |
 | `rendering/validation.py` | Reparsing a rendered document and checking it against the view model. |
 | `rendering/browser.py` | Chrome process management, the CDP client, and screenshot capture. |
+| `rendering/startup_diagnostics.py` | Bounded Linux process facts after a failed Chrome startup. |
 | `rendering/pipeline.py` | `build_rendered_guide`: render, capture, validate, publish. |
 
 `rendering/__init__.py` re-exports the build entry points (`build_rendered_guide`,
@@ -114,6 +115,19 @@ a caller's import names the concern it depends on.
 Chrome or Chromium, used for the rendering validation captures. Set `CHROME_PATH` or pass
 `--chrome-path` when it is not discoverable. Install the locked Python environment with
 `uv sync --frozen`.
+
+When Chrome exits or misses its 15-second DevTools startup deadline, the original error
+includes a bounded diagnostic note. On Linux it samples the launched process and at most
+two descendants, including numeric resource facts and up to three thread wait channels per
+process. It does not read command lines or environment values. Missing or inaccessible
+process records remain unavailable; the sample is a momentary observation before cleanup,
+not proof of the cause or a count of every Chrome process. `fd_slots` is the process's
+allocated descriptor-table size, not the number of open descriptors. Successful startup,
+the deadline, browser flags, cleanup, and page assertions are unchanged.
+
+The branch-scoped `chrome-startup-diagnostic.yml` workflow runs the two original failure
+cases once and retains their log plus the exact source, imported module, Python, and Chrome
+identities. It is diagnostic evidence and does not replace the complete publication gates.
 
 ## Build
 

@@ -969,6 +969,9 @@ def test_column_native_picker_preserves_internal_focus_escape_and_choice(
         if not observations["first_escape"]["connected"]:
             return
         key("Escape", 27)
+        # onCancel deliberately restores focus in a zero-delay timer after the
+        # removed picker's keydown dispatch. Observe after that task boundary.
+        ev("new Promise(resolve=>setTimeout(resolve,0))")
         observations["second_escape"] = (
             ev("""({editor:!!document.querySelector('[data-comparison-column="1"]'),
           focus:document.activeElement?.dataset.comparisonTitle,hash:location.hash})""")
@@ -1015,7 +1018,7 @@ def test_column_native_picker_preserves_internal_focus_escape_and_choice(
         observations
     )
     assert observations["second_escape"]["editor"] is False, observations
-    assert observations["second_escape"]["focus"] == "1", observations
+    assert observations["second_escape"].get("focus") == "1", observations
     assert observations["disabled"]["disabled"], observations
     assert observations["after_disabled"]["value"] == "strn", observations
     assert observations["chosen"]["signals"] == ["gall", "Glab", "stim"], observations
