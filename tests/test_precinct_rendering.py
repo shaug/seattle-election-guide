@@ -658,7 +658,15 @@ def test_shared_selection_surfaces_preserve_native_picker_and_fallback(
             )
         observations["ballot_open"] = ev("""({open:selectionTestSelect.matches(':open'),
           options:[...selectionTestSelect.options].map(o=>({text:o.textContent.trim(),
-            height:o.getBoundingClientRect().height,clientWidth:o.clientWidth,scrollWidth:o.scrollWidth}))})""")
+            height:o.getBoundingClientRect().height,clientWidth:o.clientWidth,scrollWidth:o.scrollWidth,
+            words:(()=>{const words=[],walker=document.createTreeWalker(o,NodeFilter.SHOW_TEXT);
+              let node;while((node=walker.nextNode()))
+              for(const match of node.textContent.matchAll(/\\S+/g)){
+                const range=document.createRange();range.setStart(node,match.index);
+                range.setEnd(node,match.index+match[0].length);
+                const rects=[...range.getClientRects()].filter(r=>r.width>0&&r.height>0);
+                words.push({text:match[0],lines:new Set(rects.map(r=>r.top)).size});
+              }return words;})()}))})""")
         screenshot("ballot-open.png")
         picker_box("ballot_picker_box")
         for kind in ["keyDown", "keyUp"]:
@@ -726,6 +734,12 @@ def test_shared_selection_surfaces_preserve_native_picker_and_fallback(
         assert len(observations["ballot_open"]["options"]) > 3, observations
         assert all(
             o["height"] >= 44 and o["scrollWidth"] <= o["clientWidth"] + 1
+            for o in observations["ballot_open"]["options"]
+        ), observations
+        # A menu can be unclipped yet unusable when ordinary words wrap into
+        # letter columns. The real painted text must keep these words whole.
+        assert all(
+            o["words"] and all(word["lines"] == 1 for word in o["words"])
             for o in observations["ballot_open"]["options"]
         ), observations
         for name in ["view_picker_box", "ballot_picker_box"]:

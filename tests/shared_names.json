@@ -708,7 +708,8 @@
     ],
     "comparison-column-picker": [
       "stylesheet",
-      "client"
+      "client",
+      "test"
     ],
     "comparison-column-plain": [
       "stylesheet",

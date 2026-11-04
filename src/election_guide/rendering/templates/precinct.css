@@ -74,7 +74,7 @@
   /* Only the transparent closed face is clipped; its top-layer picker keeps
      the full option text without widening the compact page underneath. */
   .compact-native-select { overflow: clip; }
-  .compact-native-select::picker(select), .comparison-column-picker::picker(select) { box-sizing: border-box; max-inline-size: calc(100dvw - 16px); max-block-size: min(24rem, calc(100dvh - 16px)); overflow: auto; margin-block: 4px; padding: 4px; border: 1px solid var(--line); background: var(--paper); color: var(--navy); opacity: 1; font: 400 14px/1.4 var(--screen-sans); box-shadow: 0 4px 12px var(--compact-editor-shadow); }
+  .compact-native-select::picker(select), .comparison-column-picker::picker(select) { box-sizing: border-box; inline-size: max-content; max-inline-size: calc(100dvw - 16px); max-block-size: min(24rem, calc(100dvh - 16px)); overflow: auto; margin-block: 4px; padding: 4px; border: 1px solid var(--line); background: var(--paper); color: var(--navy); opacity: 1; font: 400 14px/1.4 var(--screen-sans); box-shadow: 0 4px 12px var(--compact-editor-shadow); }
   .compact-native-select option, .comparison-column-picker option { box-sizing: border-box; min-height: 44px; padding: .6rem .5rem; white-space: normal; overflow-wrap: anywhere; background: var(--paper); color: var(--navy); font: 400 14px/1.4 var(--screen-sans); }
   .compact-native-select optgroup, .comparison-column-picker optgroup { color: var(--navy); font: 400 14px/1.4 var(--screen-sans); }
   .compact-native-select option:checked, .comparison-column-picker option:checked { font-weight: 700; }
