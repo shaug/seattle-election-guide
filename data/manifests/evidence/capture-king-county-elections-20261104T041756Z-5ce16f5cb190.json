@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 771116,
+  "canonical_url": "https://results.votewa.gov/results/public/api/elections/king-county-wa/20261103/data",
+  "capture_method": "manual_upload",
+  "content_sha256": "eba2d525d864dc57a546b6552c8dffa629746a65351b7002b18b0819c115f68f",
+  "http_status": null,
+  "id": "capture-king-county-elections-20261104T041756Z-5ce16f5cb190",
+  "media_type": "application/json; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Official public record; bytes retained in the repository. Decoded response entity from the actual ordinary browser request, not a guessed endpoint or independently fetched export. HTTP provenance retained separately; CLI ingest makes no HTTP-observation claim.",
+  "requested_url": "https://results.votewa.gov/results/public/api/elections/king-county-wa/20261103/data",
+  "retrieved_at": "2026-11-04T04:17:56.823912Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-elections",
+  "storage_reference": "sha256/eb/eba2d525d864dc57a546b6552c8dffa629746a65351b7002b18b0819c115f68f",
+  "storage_scope": "repository",
+  "title": "2026 Washington November General election-night results (King County browser-loaded count data JSON; decoded HTTP entity)",
+  "updated_at": null
+}
