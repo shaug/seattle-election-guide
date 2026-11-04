@@ -27,6 +27,27 @@ are not legally certified November3 effective dates or voter ballot-part guarant
 Current public civic fixture responses and their hashes are retained under
 `tests/fixtures/address/public-civic.json`; they are not residential voter evidence.
 
+### Reviewed ADDRESS context refresh (#691)
+
+The November 4 UTC observation (November 3 Pacific) found a newer ADDRESS schema
+identity on the same service item. The delegated reviewer compared all 45 complete
+field definitions and the remaining metadata contract, then exercised the unchanged
+adapter on the public civic case. The 11 successful requests resolved `SEA 34-3230`;
+each layer's complete before/after metadata responses were equal. Only the ADDRESS
+recorded data and schema epochs were refreshed. City/precinct identities and the
+entire reviewed catalog remain unchanged.
+
+The [structured review record](../data/review/geography/wa-2026-general-address-context-2026-11-04.json)
+separates the actual retrieval, delegated review and later recording clocks, and
+retains official URLs, response hashes and scope limits. Raw response bodies,
+headers, forms and provider suggestion keys remain private. The earlier October 28
+evidence is preserved. This bounded civic observation is not universal address
+coverage, an atomic GIS snapshot or evidence of a deployed repair.
+
+The production-binding regression uses retained responses offline. Wrong item/schema
+identities and address data changing during resolution still reject; no drift,
+exact-site, unit, Seattle or precinct/district guard is relaxed.
+
 ## Failure and privacy boundaries
 
 Explicit candidate selection, PointAddress scope, exact current site data and one
