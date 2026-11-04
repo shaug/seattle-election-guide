@@ -606,7 +606,9 @@ def test_shared_selection_surfaces_preserve_native_picker_and_fallback(
         screenshot("native-open.png")
         (evidence / "observations.json").write_text(json.dumps(observations, indent=2) + "\n")
         picker_box("view_picker_box")
-        if observations["compact"]["supportsBase"] and observations["compact"]["supportsPicker"]:
+        compact = observations["compact"]
+        assert isinstance(compact, dict)
+        if compact["supportsBase"] and compact["supportsPicker"]:
             hover = ev("""(()=>{const o=[...selectionTestSelect.options].find(o=>!o.selected);
               const r=o.getBoundingClientRect();
               return {x:r.x+r.width/2,y:r.y+r.height/2};})()""")
