@@ -196,3 +196,82 @@ Stop and flag a human when:
   capture-time verification that was already true at the moment the bytes died. The four
   artifacts above remain unrecoverable — those URLs serve a later drop — so this table stays
   their only record.
+
+- **2026-11-03 execution (`wa-2026-general`, election-night initial capture; #535).**
+  The existing accountable root operator used the authorized hourly backup in the proper window.
+  The one-time wake had fired early at 14:24 Pacific and was rejected by the real-clock guard;
+  it did not capture results. The exclusive capture guard began at 20:15:43 Pacific. Actual
+  official navigation began at 20:16:15, and the retained representations were obtained between
+  20:16:38 and 20:18:28 Pacific (2026-11-04 UTC). These are actual later retrieval times, not an
+  exact 20:15 download or proof of the earliest publication ever served.
+
+  Discovery followed the official Elections homepage → Results → 2026 → November General:
+  <https://kingcounty.gov/en/dept/elections/results/2026/november-general>.
+  This page offered its PDF and CSV links and “View Results” at
+  <https://results.votewa.gov/results/public/king-county-wa/elections/20261103>.
+  The PDF/CSV landing hosts returned HTTP 200 HTML with client-side meta-refresh targets,
+  observed this evening, of `https://election-results-01.kingcounty.gov/results.pdf` and
+  `https://election-results-01.kingcounty.gov/webresults.csv`. Each target was fetched directly;
+  these were not HTTP redirects, and neither URL was guessed from the August capture.
+  All retained direct responses were HTTP 200; no HTTP redirect was observed.
+
+  The delegated results page required ordinary browser rendering. A single supported automated
+  Chrome navigation, with passive Network observation enabled before navigation, retained its
+  original HTTP shell, browser-produced full DOM HTML and full-page PNG, and the actual
+  browser-loaded County count-data response. The DOM/PNG are browser artifacts, distinct from
+  original HTTP entity bytes. Their manifests use `browser`, `browser_required: true`, and the
+  observed underlying page HTTP 200; no separate image HTTP GET is claimed. The browser page
+  displayed **UNOFFICIAL RESULTS**, “Last Updated Tuesday, November 3, 2026 at 8:12:12 PM”,
+  535,712 ballots cast, and 1,460,414 registered voters. The PDF is 17 pages and separately
+  prints `2026-11-03 20:08:11`; that producer clock is retained rather than substituted for the
+  page update or retrieval time. The CSV has 286 choice rows across 115 contest IDs.
+
+  The rendered page also actually offered “Media Export” at
+  <https://results.votewa.gov/cdn/results/washington/export-20261103.json>.
+  This statewide JSON was captured as Secretary of State corroboration. It reports
+  `electionDate: 2026-11-03`, `electionName: 2026 General`, and its own
+  `createdAt: 2026-11-04T04:16:52.5976406Z`; that is not the retrieval clock.
+  It was served as `application/octet-stream`, which is preserved. The County CSV was served
+  as `application/vnd.ms-excel`, also preserved. The browser-loaded County JSON was an actual
+  application response, not an independently guessed or fetched export URL. The three offered
+  export formats were PDF, CSV and statewide JSON; no XML export link was observed. Future
+  daily-report and precinct-report labels on the County landing page did not offer downloadable
+  links at this observation; no future or inferred URLs were requested.
+
+  The supported evidence CLI ran from the primary checkout on an ordinary capture branch from
+  actual main M51. The original `codex/hide-uncontested-races` branch/2433376 head and unrelated
+  `.claude` work were preserved. The current configuration uses `official_url` rather than the
+  runbook's older `ballot_data_sources` description; explicit supported authority-registry,
+  manifest-directory and official-storage arguments resolved capture inputs without changing
+  factual/product configuration. Machine-readable exports use `manual_upload` with no manifest
+  HTTP status; the observed HTTP 200 and exact retrieval provenance are recorded in this table.
+
+  | Representation / capture ID | Retrieved UTC | Observed HTTP / media type | Bytes | SHA-256 |
+  |---|---|---|---:|---|
+  | King County official results landing HTML<br>`capture-king-county-elections-20261104T041638Z-e677f9a12054` | 2026-11-04T04:16:38.859970Z | 200 / `text/html; charset=utf-8` | 54106 | `e90985f82c66f9cfbd520ec7bdfc9399424c8b18dc9d0e53617260a0d9a57756` |
+  | King County PDF<br>`capture-king-county-elections-20261104T041704Z-d9f6ee0af95e` | 2026-11-04T04:17:04.631324Z | 200 / `application/pdf` | 49528 | `37ea544fff8c4763bb499e07a475747b106e70399b6afa1b48dc18a939c475d9` |
+  | King County CSV<br>`capture-king-county-elections-20261104T041704Z-c65326f14ea0` | 2026-11-04T04:17:04.615486Z | 200 / `application/vnd.ms-excel` | 38447 | `0a6ebe9ab5289cc665d8b68a4a17a7343e7ae62ee38af43e37a5d87cdfcdde7c` |
+  | King County delegated results HTTP shell; no count content<br>`capture-king-county-elections-20261104T041651Z-a505e0e0843a` | 2026-11-04T04:16:51.645421Z | 200 / `text/html` | 9684 | `d70a5009efd290a24fc9ba9a4db29533b367c0a8fee4e9710d3c2a51802bdc52` |
+  | King County rendered results DOM HTML<br>`capture-king-county-elections-20261104T041756Z-d7aa8bfc51bf` | 2026-11-04T04:17:56.108586Z | 200 / `text/html` | 504302 | `c9b58eac9402e1543e78dc9f06d85a9784d109fcb22a5c83f4e8ccd680b7f116` |
+  | King County rendered results full-page PNG<br>`capture-king-county-elections-20261104T041756Z-d20ed36bafde` | 2026-11-04T04:17:56.108586Z | 200 / `image/png` | 2617060 | `aee24ca1fe23e0f7369f7c8303ab298286c012665969bcfeced3a7f12fece69e` |
+  | King County browser-loaded count data JSON; decoded HTTP entity<br>`capture-king-county-elections-20261104T041756Z-5ce16f5cb190` | 2026-11-04T04:17:56.823912Z | 200 / `application/json; charset=utf-8` | 771116 | `eba2d525d864dc57a546b6552c8dffa629746a65351b7002b18b0819c115f68f` |
+  | WA Secretary of State offered Media Export JSON, statewide corroboration<br>`capture-wa-secretary-of-state-20261104T041828Z-dfc19a67eb1f` | 2026-11-04T04:18:28.818844Z | 200 / `application/octet-stream` | 848195 | `3de8a3aba113b76f933774e4b6f2de8319f370b329951ed0b8ca1242b62d4b8e` |
+
+  All eight captures passed `evidence verify`; `evidence verify-all` passed with 588 manifests:
+  507 present, 22 expected-absent restricted artifacts, and 59 no-artifact records. Every new
+  artifact is under tracked `data/evidence/official/sha256/`, with its immutable manifest under
+  `data/manifests/evidence/`. Original HTTP entity bytes and decoded browser response entities
+  retain their respective provenance; no compressed-wire or global network proof is claimed.
+  No results ingestion, `data/results/`, election facts, UI, or production publication changed.
+  The evidence commit/PR is the durability handoff; bytes are not claimed to be on main until
+  an authorized merge is actually observed. Certification and the November 24/25 follow-up
+  remain separate future work.
+
+  During evidence-PR preparation, Git treated the extensionless, content-addressed PDF as text:
+  its ReportLab binary marker contains non-UTF-8 bytes, but the file has no NUL byte for Git's
+  binary heuristic. The standard review runner therefore stopped while decoding the default
+  Git diff, before creating a review invocation. That failure remains recorded. The PDF's exact
+  immutable path is now classified as `binary` in `.gitattributes`, matching the existing
+  `*.pdf binary` policy. This disables text conversion and text diff/merge handling for that
+  one PDF; its original bytes, Git blob, capture manifest and SHA-256 remain unchanged. No
+  review-runner, diff-producer, decoding or evidence-verification rule was changed.

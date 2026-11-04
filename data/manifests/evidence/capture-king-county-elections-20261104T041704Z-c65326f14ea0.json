@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 38447,
+  "canonical_url": "https://election-results-01.kingcounty.gov/webresults.csv",
+  "capture_method": "manual_upload",
+  "content_sha256": "0a6ebe9ab5289cc665d8b68a4a17a7343e7ae62ee38af43e37a5d87cdfcdde7c",
+  "http_status": null,
+  "id": "capture-king-county-elections-20261104T041704Z-c65326f14ea0",
+  "media_type": "application/vnd.ms-excel",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Official public record; bytes retained in the repository.",
+  "requested_url": "https://election-results-01.kingcounty.gov/webresults.csv",
+  "retrieved_at": "2026-11-04T04:17:04.615486Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-elections",
+  "storage_reference": "sha256/0a/0a6ebe9ab5289cc665d8b68a4a17a7343e7ae62ee38af43e37a5d87cdfcdde7c",
+  "storage_scope": "repository",
+  "title": "2026 Washington November General election-night results (King County CSV)",
+  "updated_at": null
+}
