@@ -65,6 +65,12 @@ jobs:
               path = Path(module.__file__).resolve()
               assert path.is_relative_to(Path.cwd() / 'src')
               origins[module.__name__] = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+          chrome_version = None
+          chrome_version_error = None
+          try:
+              chrome_version = subprocess.check_output([str(chrome), '--version'], text=True, timeout=5).strip()
+          except (OSError, subprocess.SubprocessError) as error:
+              chrome_version_error = type(error).__name__
           record = {
               'evidence_kind': 'diagnostic-only-not-production-acceptance',
               'source_sha': os.environ['CAPTURED_SOURCE_SHA'],
@@ -74,7 +80,8 @@ jobs:
               'python_executable': sys.executable,
               'python_version': sys.version,
               'chrome_executable': str(chrome.resolve()),
-              'chrome_version': subprocess.check_output([str(chrome), '--version'], text=True, timeout=5).strip(),
+              'chrome_version': chrome_version,
+              'chrome_version_error': chrome_version_error,
               'startup_timeout_seconds': browser._STARTUP_TIMEOUT_SECONDS,
               'actual_imported_origins': origins,
           }
