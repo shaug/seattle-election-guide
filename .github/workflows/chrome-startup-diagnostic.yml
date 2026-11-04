@@ -1,0 +1,106 @@
+name: Chrome startup diagnostic (focused)
+'on':
+  push:
+    branches:
+      - codex/672-linux-startup-diagnostics
+
+# This diagnostic has no publication, deployment, issue or pull-request writes.
+# It cannot replace the required complete CI workflow.
+permissions:
+  contents: read
+
+concurrency:
+  group: chrome-startup-diagnostic-${{ github.ref }}
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  focused:
+    name: Two original Chrome startup failure cases
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CAPTURED_SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Require the exact diagnostic source
+        shell: bash
+        run: |
+          [[ "$CAPTURED_SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$GITHUB_REF" = refs/heads/codex/672-linux-startup-diagnostics
+          test "$(git rev-parse HEAD)" = "$CAPTURED_SOURCE_SHA"
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install the unchanged locked toolchains
+        run: |
+          uv python install 3.12
+          uv sync --frozen
+          npm ci
+      - name: Retain current diagnostic runtime identity
+        run: |
+          mkdir -p dist/chrome-startup-diagnostic
+          uv run python - <<'PY'
+          import datetime
+          import hashlib
+          import json
+          import os
+          import platform
+          import subprocess
+          import sys
+          from pathlib import Path
+          from election_guide.rendering import browser, startup_diagnostics
+
+          assert platform.system() == 'Linux'
+          chrome = browser.find_chrome()
+          origins = {}
+          for module in (browser, startup_diagnostics):
+              path = Path(module.__file__).resolve()
+              assert path.is_relative_to(Path.cwd() / 'src')
+              origins[module.__name__] = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+          record = {
+              'evidence_kind': 'diagnostic-only-not-production-acceptance',
+              'source_sha': os.environ['CAPTURED_SOURCE_SHA'],
+              'run_id': os.environ['GITHUB_RUN_ID'],
+              'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'recorded_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              'python_executable': sys.executable,
+              'python_version': sys.version,
+              'chrome_executable': str(chrome.resolve()),
+              'chrome_version': subprocess.check_output([str(chrome), '--version'], text=True, timeout=5).strip(),
+              'startup_timeout_seconds': browser._STARTUP_TIMEOUT_SECONDS,
+              'actual_imported_origins': origins,
+          }
+          Path('dist/chrome-startup-diagnostic/runtime.json').write_text(json.dumps(record, indent=2) + '\n')
+          print(json.dumps(record, indent=2))
+          PY
+      - name: Execute each original failure case once
+        shell: bash
+        run: |
+          set -o pipefail
+          uv run pytest -vv --tb=long \
+            tests/test_hosting.py::test_about_page_share_button_uses_web_share_then_falls_back_to_copy \
+            'tests/test_corrections_rendering.py::test_updates_controls_actual_geometry_keyboard_and_history[320]' \
+            2>&1 | tee dist/chrome-startup-diagnostic/pytest.log
+      - name: Require unchanged diagnostic source after execution
+        if: always()
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "$CAPTURED_SOURCE_SHA"
+          git diff --exit-code "$CAPTURED_SOURCE_SHA"
+          test -z "$(git ls-files --others --exclude-standard)"
+      - name: Retain original diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-startup-diagnostic-${{ github.run_id }}-${{ github.run_attempt }}
+          path: dist/chrome-startup-diagnostic
+          if-no-files-found: error
+          retention-days: 7
