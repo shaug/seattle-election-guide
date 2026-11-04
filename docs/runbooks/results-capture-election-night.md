@@ -266,3 +266,12 @@ Stop and flag a human when:
   The evidence commit/PR is the durability handoff; bytes are not claimed to be on main until
   an authorized merge is actually observed. Certification and the November 24/25 follow-up
   remain separate future work.
+
+  During evidence-PR preparation, Git treated the extensionless, content-addressed PDF as text:
+  its ReportLab binary marker contains non-UTF-8 bytes, but the file has no NUL byte for Git's
+  binary heuristic. The standard review runner therefore stopped while decoding the default
+  Git diff, before creating a review invocation. That failure remains recorded. The PDF's exact
+  immutable path is now classified as `binary` in `.gitattributes`, matching the existing
+  `*.pdf binary` policy. This disables text conversion and text diff/merge handling for that
+  one PDF; its original bytes, Git blob, capture manifest and SHA-256 remain unchanged. No
+  review-runner, diff-producer, decoding or evidence-verification rule was changed.

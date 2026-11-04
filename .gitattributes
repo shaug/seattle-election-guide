@@ -1,1 +1,4 @@
 *.pdf binary
+
+# Content-addressed official PDF: preserve its original binary representation.
+data/evidence/official/sha256/37/37ea544fff8c4763bb499e07a475747b106e70399b6afa1b48dc18a939c475d9 binary
