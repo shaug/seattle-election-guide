@@ -640,6 +640,33 @@ the group keeps two sticky rows. Measure the complete family again in that face
 and restore ordinary spacing and the one-line face when space returns. A wide
 viewport does not grant a minimum size to a constrained Guide container.
 
+## Shared selection styling (#672)
+
+The current general Guide and Comparisons keep the one-field custom Precinct
+search and their real finite HTML selects. There is no second Results control,
+datalist, new provider behavior or additional selection state. Shared selection
+surfaces use paper ground, navy text, the screen-sans family at 14px and existing
+borders. Hover/active options use a white surface and navy outline, without a navy
+fill. Amber remains the keyboard-focus cue; a native checked option retains its
+checkmark and stronger weight, independently of hover or focus. Options have a
+44px minimum target, complete readable text, native groups and disabled semantics.
+
+Progressive styling opts both the select and `::picker(select)` into
+`appearance: base-select` only when that value and the picker selector are
+supported. It uses the browser's real select and picker, not a custom menu
+imitating one. The ordinary native menu remains the fallback. A customizable
+picker can replace an OS-specific mobile sheet; pixel-identical menus across
+operating systems are not promised. The existing compact face, measured tracks,
+full accessible values, Sources fit, sticky count and independent filters remain
+unchanged. Picker geometry is bounded to the actual viewport without a copied
+demo offset or clipped option labels.
+
+Actual candidate-bound interaction and visual acceptance remain required under
+FRONTEND's native-select verification. Headless geometry/pixels can establish the
+enhanced app surface they actually measure, not physical-device, spoken
+screen-reader, IME or unavailable interactive-session results. Immutable primary
+archives and their existing presentation are preserved.
+
 ## Election Updates (#676)
 
 The approved version-2 study uses the existing measured election shell and serif entry headlines.

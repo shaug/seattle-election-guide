@@ -168,6 +168,57 @@ test('the picker replaces the title without disturbing the column beside it', ()
   assert.ok(document.activeElement === neighbour, 'focus left a control that did not change');
 });
 
+test('native option focus stays inside the column editor while outside focus dismisses it', () => {
+  const { head } = freshTable();
+  const dismissed = [];
+  render(
+    comparisonHeadTemplate(headView(['gall', 'strn', 'stim'], 1), {
+      ...noActions,
+      onDismiss: (index) => dismissed.push(index),
+    }),
+    head,
+  );
+  const picker = /** @type {HTMLSelectElement} */ (
+    head.querySelector('[data-comparison-column="1"]')
+  );
+  const option = picker.options[0];
+  option.tabIndex = -1;
+  picker.focus();
+  option.focus();
+  assert.deepEqual(dismissed, []);
+  document.body.tabIndex = -1;
+  document.body.focus();
+  assert.deepEqual(dismissed, [1]);
+});
+
+test('unsupported open selector retains ordinary Escape cancellation', () => {
+  const { head } = freshTable();
+  const cancelled = [];
+  render(
+    comparisonHeadTemplate(headView(['gall', 'strn', 'stim'], 1), {
+      ...noActions,
+      onCancel: (index) => cancelled.push(index),
+    }),
+    head,
+  );
+  const picker = /** @type {HTMLSelectElement} */ (
+    head.querySelector('[data-comparison-column="1"]')
+  );
+  const matches = picker.matches.bind(picker);
+  picker.matches = (selector) => {
+    if (selector === ':open') throw new DOMException('Unsupported selector', 'SyntaxError');
+    return matches(selector);
+  };
+  const escapeEvent = new KeyboardEvent('keydown', {
+    key: 'Escape',
+    bubbles: true,
+    cancelable: true,
+  });
+  picker.dispatchEvent(escapeEvent);
+  assert.deepEqual(cancelled, [1]);
+  assert.equal(escapeEvent.defaultPrevented, true);
+});
+
 test('a row that survives a filter change is the same row', () => {
   const { table } = freshTable();
   render(

@@ -2,18 +2,22 @@
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import html
 import json
+import os
 import re
 import tempfile
 from html import unescape
 from pathlib import Path
+from typing import Any
 from urllib.parse import parse_qs, urlencode
 
 import pytest
 
 from election_guide.publication.comparisons import ComparisonsPolicy
+from election_guide.publication.models import PublicationViewModel
 from election_guide.rendering.config import read_rendering_configuration
 from election_guide.rendering.context import ComparisonCellView, comparison_row_differs
 from election_guide.rendering.documents import (
@@ -22,12 +26,14 @@ from election_guide.rendering.documents import (
     render_sources_document,
 )
 from election_guide.results.models import RaceOutcome, RaceResults
+from tests.address_lookup_fixtures import without_live_address_requests
 from tests.compare_parity import (
     AUDITED_PAGE_PATH,
     build_audited_comparison_page,
 )
 from tests.compare_parity import enabled_view_model as _enabled_view_model
 from tests.test_comparisons import _bundle  # pyright: ignore[reportPrivateUsage]
+from tests.test_precinct_rendering import general_view as general_view
 from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
 from tests.test_results import RACE_ID as RESULTS_RACE_ID
 from tests.test_results import _valid_results  # pyright: ignore[reportPrivateUsage]
@@ -842,6 +848,179 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
     assert result["referenceHasPickerAtRest"] is False
     assert result["referenceHasTitle"] is True
     assert result["referenceHasRemove"] is True
+
+
+def test_column_native_picker_preserves_internal_focus_escape_and_choice(
+    tmp_path: Path, general_view: PublicationViewModel
+) -> None:
+    """Native option focus must not destroy the column editor that owns the picker."""
+    path = tmp_path / "general-column-picker.html"
+    path.write_text(
+        without_live_address_requests(
+            render_comparison_document(
+                general_view, public_site_url="https://seattleelections.guide"
+            )
+        )
+    )
+    evidence = Path(os.environ.get("SEG_672_EVIDENCE_DIR", str(tmp_path))) / "column-picker"
+    evidence.mkdir(parents=True, exist_ok=True)
+    observations: dict[str, Any] = {
+        "html_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "method": "normal current General; any test-only opt-in is reported separately",
+    }
+
+    def interact(cdp: Any, session: str) -> None:
+        def ev(script: str) -> Any:
+            result = cdp.command(
+                "Runtime.evaluate",
+                {"expression": script, "returnByValue": True, "awaitPromise": True},
+                session_id=session,
+            )
+            assert "exceptionDetails" not in result, result
+            return result["result"].get("value")
+
+        def save(name: str) -> None:
+            shot = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session)
+            (evidence / name).write_bytes(base64.b64decode(shot["data"]))
+            (evidence / "observations.json").write_text(json.dumps(observations, indent=2) + "\n")
+
+        def key(name: str, code: int) -> None:
+            for kind in ["keyDown", "keyUp"]:
+                cdp.command(
+                    "Input.dispatchKeyEvent",
+                    {"type": kind, "key": name, "windowsVirtualKeyCode": code},
+                    session_id=session,
+                )
+
+        def click(script: str) -> None:
+            point = ev(script)
+            assert point["height"] > 0 and point["width"] > 0, point
+            for kind in ["mousePressed", "mouseReleased"]:
+                cdp.command(
+                    "Input.dispatchMouseEvent",
+                    {
+                        "type": kind,
+                        "x": point["x"],
+                        "y": point["y"],
+                        "button": "left",
+                        "clickCount": 1,
+                    },
+                    session_id=session,
+                )
+
+        observations["browser"] = cdp.command("Browser.getVersion")
+        ev(
+            "document.fonts.ready.then(()=>new Promise(r=>"
+            "requestAnimationFrame(()=>requestAnimationFrame(r))))"
+        )
+        observations["setup"] = ev("""(()=>{
+          window.columnEvents=[];
+          window.columnBefore={hash:location.hash,signals:[...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]')].map(e=>e.dataset.columnSignal)};
+          document.querySelector('[data-comparison-title="1"]').click();
+          window.columnSelect=document.querySelector('[data-comparison-column="1"]');
+          const testOnlyOptIn=getComputedStyle(columnSelect).appearance!=='base-select';
+          if(testOnlyOptIn){const style=document.createElement('style');
+            style.dataset.testOnlyPickerOptIn='';
+            style.textContent='@supports (appearance:base-select) and selector(::picker(select)) {'+
+              '.comparison-column-picker,.comparison-column-picker::picker(select){appearance:base-select}}';
+            document.head.append(style);}
+          for(const type of ['focus','blur','focusin','focusout','keydown','input','change'])
+            columnSelect.addEventListener(type,e=>columnEvents.push({type,key:e.key,trusted:e.isTrusted,
+              target:e.target.tagName,related:e.relatedTarget?.tagName,value:columnSelect.value}));
+          return {supportsBase:CSS.supports('appearance','base-select'),
+            supportsPicker:CSS.supports('selector(::picker(select))'),
+            testOnlyOptIn,
+            appearance:getComputedStyle(columnSelect).appearance,
+            disabledDuplicate:[...columnSelect.options].some(o=>o.value==='stim'&&o.disabled)};})()""")
+        click("""(()=>{const r=columnSelect.getBoundingClientRect();
+          return {x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height};})()""")
+        key("ArrowDown", 40)
+        observations["opened"] = ev("""({connected:columnSelect.isConnected,
+          editor:!!document.querySelector('[data-comparison-column="1"]'),
+          open:columnSelect.matches(':open'),active:document.activeElement.tagName,
+          optionRows:[...columnSelect.options].map(o=>({text:o.textContent.trim(),disabled:o.disabled,
+            checked:o.selected,height:o.getBoundingClientRect().height})),
+          groups:[...columnSelect.querySelectorAll('optgroup')].map(g=>g.label),
+          events:columnEvents.slice(),hash:location.hash})""")
+        save("opened.png")
+        if not observations["opened"]["connected"]:
+            return
+        observations["outside_focus"] = ev("""(()=>{
+          const from=document.activeElement.tagName;
+          document.querySelector('[data-precinct-open]').focus();
+          return {method:'actual HTMLElement.focus, not a synthetic FocusEvent',from,
+            connected:columnSelect.isConnected,
+            editor:!!document.querySelector('[data-comparison-column="1"]'),
+            opener:document.activeElement.hasAttribute('data-precinct-open'),
+            hash:location.hash,beforeHash:columnBefore.hash,events:columnEvents.slice()};})()""")
+        save("outside-focus.png")
+        if observations["outside_focus"]["connected"]:
+            return
+        ev("""document.querySelector('[data-comparison-title="1"]').click();
+          window.columnSelect=document.querySelector('[data-comparison-column="1"]')""")
+        click("""(()=>{const r=columnSelect.getBoundingClientRect();
+          return {x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height};})()""")
+        key("ArrowDown", 40)
+        key("Escape", 27)
+        observations["first_escape"] = ev("""({connected:columnSelect.isConnected,
+          open:columnSelect.matches(':open'),hash:location.hash,events:columnEvents.slice()})""")
+        save("first-escape.png")
+        if not observations["first_escape"]["connected"]:
+            return
+        key("Escape", 27)
+        observations["second_escape"] = (
+            ev("""({editor:!!document.querySelector('[data-comparison-column="1"]'),
+          focus:document.activeElement?.dataset.comparisonTitle,hash:location.hash})""")
+        )
+        ev("""document.querySelector('[data-comparison-title="1"]').click();
+          window.columnSelect=document.querySelector('[data-comparison-column="1"]')""")
+        click("""(()=>{const r=columnSelect.getBoundingClientRect();
+          return {x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height};})()""")
+        observations["disabled"] = (
+            ev("""(()=>{const o=[...columnSelect.options].find(o=>o.value==='stim');
+          o.scrollIntoView({block:'nearest'});const r=o.getBoundingClientRect();
+          return {disabled:o.disabled,value:o.value,rect:r.toJSON()};})()""")
+        )
+        click("""(()=>{const o=[...columnSelect.options].find(o=>o.value==='stim');
+          const r=o.getBoundingClientRect();
+          return {x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height};})()""")
+        observations["after_disabled"] = ev(
+            "({connected:columnSelect.isConnected,value:columnSelect.value,hash:location.hash})"
+        )
+        click("""(()=>{const o=[...columnSelect.options].find(o=>o.value==='Glab');
+          o.scrollIntoView({block:'nearest'});const r=o.getBoundingClientRect();
+          return {x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height};})()""")
+        observations["chosen"] = ev("""({signals:[...document.querySelectorAll(
+          '[data-comparison-head] [data-column-signal]')].map(e=>e.dataset.columnSignal),
+          hash:location.hash,editor:!!document.querySelector('[data-comparison-column="1"]')})""")
+        save("chosen.png")
+
+    _evaluate_in_chrome(
+        path, "JSON.stringify({done:true})", viewport=(1280, 900), interact=interact
+    )
+    assert observations["setup"]["disabledDuplicate"], observations
+    assert observations["setup"]["testOnlyOptIn"] is False, observations
+    assert observations["opened"]["connected"] and observations["opened"]["editor"], observations
+    assert observations["outside_focus"]["from"] == "OPTION", observations
+    assert observations["outside_focus"]["connected"] is False, observations
+    assert observations["outside_focus"]["editor"] is False, observations
+    assert observations["outside_focus"]["opener"], observations
+    assert observations["outside_focus"]["hash"] == observations["outside_focus"]["beforeHash"], (
+        observations
+    )
+    assert len(observations["opened"]["groups"]) > 1, observations
+    assert all(row["height"] >= 44 for row in observations["opened"]["optionRows"]), observations
+    assert observations["first_escape"]["connected"] and not observations["first_escape"]["open"], (
+        observations
+    )
+    assert observations["second_escape"]["editor"] is False, observations
+    assert observations["second_escape"]["focus"] == "1", observations
+    assert observations["disabled"]["disabled"], observations
+    assert observations["after_disabled"]["value"] == "strn", observations
+    assert observations["chosen"]["signals"] == ["gall", "Glab", "stim"], observations
+    assert "cols=gallGlabstim" in observations["chosen"]["hash"], observations
+    assert observations["chosen"]["editor"] is False, observations
 
 
 def test_compare_client_removes_the_first_column_and_promotes_the_next_reference(
