@@ -1052,6 +1052,44 @@ Continue unaffected automated work, but do not call the feature/preview accepted
 while interactive acceptance is incomplete.
 
 
+### Shared selection styling (#672)
+
+General-only `precinct.css` shares the approved paper/navy/border/type treatment,
+white active/hover surface with navy outline, and amber keyboard focus between
+the custom Precinct suggestions and finite select pickers. The capability
+gate requires both `appearance: base-select` and `selector(::picker(select))`;
+both the real select and its picker opt in. Plain options/groups/disabled state
+remain native. No selectedcontent markup, `::field-content`, browser flag,
+provider/query change or new selection owner is introduced. Unsupported browsers
+retain the ordinary native select rather than receiving a JavaScript replacement.
+
+The compact select remains the actual full-sized pointer/keyboard/accessible
+surface: absolute/inset0/opacity0 above its `aria-hidden` decorative face. The
+enhanced picker owns its separate opaque top-layer paint. Tests exercise that
+exact structure in the normal rendered application, not a simplified standalone
+select. They retain actual browser/default feature state, painted screenshots,
+option/control/viewport geometry and explicit fallback-method limits. A
+test-only removal of the enhancement block does not prove an actual unsupported
+Firefox or mobile browser. Optional internal browser-node inspection is diagnostic,
+not an acceptance gate.
+
+Comparisons column editors have a separate lifecycle from compact filters. A
+focus move into an option inside their own native picker must not dismiss the
+editor. Bubbling focusout covers an option moving outside the select while the
+same internal-relatedTarget guard preserves internal navigation. Escape while
+that picker is open follows native dismissal first; Escape
+with the picker closed retains the existing editor-cancel behavior. An engine
+that rejects `:open` with a selector SyntaxError retains that ordinary cancellation
+path; unrelated errors are not swallowed. Ordinary
+outside focus and exact enabled-token commits retain their existing semantics.
+The controller gains no picker draft or duplicated selection state.
+
+The ordinary interaction/geometry suites preserve complete values, 44px targets,
+checked/checkmark versus hover/focus, Sources/count fit, independent filter and
+Precinct/history behavior. They do not replace the mandatory interactive
+acceptance above. Missing or denied cases retain their exact target/reason and
+remain pending while unaffected local checks continue.
+
 ## Guide joined Sources group (#679)
 
 The shared control macro accepts an optional source count/destination only from

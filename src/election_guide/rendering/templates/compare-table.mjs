@@ -250,11 +250,25 @@ function pickerTemplate(column, actions) {
     }}
     @keydown=${(/** @type {KeyboardEvent} */ event) => {
       if (event.key !== 'Escape') return;
-      event.preventDefault();
       event.stopPropagation();
+      const picker = /** @type {HTMLSelectElement} */ (event.currentTarget);
+      try {
+        if (picker.matches(':open')) return;
+      } catch (error) {
+        if (
+          !(error && typeof error === 'object' && 'name' in error && error.name === 'SyntaxError')
+        ) {
+          throw error;
+        }
+      }
+      event.preventDefault();
       actions.onCancel(column.index);
     }}
-    @blur=${() => actions.onDismiss(column.index)}
+    @focusout=${(/** @type {FocusEvent} */ event) => {
+      const picker = /** @type {HTMLSelectElement} */ (event.currentTarget);
+      if (picker.contains(/** @type {Node|null} */ (event.relatedTarget))) return;
+      actions.onDismiss(column.index);
+    }}
   >${repeat(
     column.groups,
     (group) => group.label,

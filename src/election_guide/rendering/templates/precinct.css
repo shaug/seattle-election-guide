@@ -51,8 +51,8 @@
 /* One suggestion surface for optional addresses and reviewed precincts. */
 .precinct-dialog .filter-select-control { position: relative; min-width: 0; }
 .precinct-dialog .filter-select { box-sizing: border-box; width: 100%; }
-.ballot-options { position: absolute; z-index: 2; top: 100%; left: 0; right: 0; list-style: none; margin: .35rem 0 0; padding: 0; max-height: min(12rem, var(--precinct-options-height, 12rem)); overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--line); background: var(--paper); }
-.ballot-option { scroll-margin-block: 2px; display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; padding: .6rem .25rem; cursor: pointer; }
+.ballot-options { position: absolute; z-index: 2; top: 100%; left: 0; right: 0; list-style: none; margin: .35rem 0 0; padding: 0; max-height: min(12rem, var(--precinct-options-height, 12rem)); overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--line); background: var(--paper); color: var(--navy); font: 400 14px/1.4 var(--screen-sans); }
+.ballot-option { box-sizing: border-box; min-height: 44px; scroll-margin-block: 2px; display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; padding: .6rem .25rem; cursor: pointer; }
 .ballot-option-text { flex: 1 1 10rem; min-width: 0; overflow-wrap: anywhere; }
 .ballot-option-type { flex: none; margin-left: auto; font-size: .75rem; color: var(--muted); }
 .ballot-option[aria-selected="true"], .ballot-option:hover { background: var(--white); outline: 1px solid var(--navy); outline-offset: -1px; }
@@ -65,6 +65,24 @@
    face supplies only the approved compact visual treatment, hidden from AT. */
 .compact-filter-face { display: contents; }
 .compact-native-select { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; min-width: 0; min-height: 44px; margin: 0; opacity: 0; cursor: pointer; font: inherit; appearance: auto; }
+
+/* Preserve ordinary native menus unless the picker itself can be styled.
+   The compact select stays transparent over its decorative face; the picker
+   has its own opaque top-layer surface, without replacing the real control. */
+@supports (appearance: base-select) and selector(::picker(select)) {
+  .compact-native-select, .compact-native-select::picker(select), .comparison-column-picker, .comparison-column-picker::picker(select) { appearance: base-select; }
+  /* Only the transparent closed face is clipped; its top-layer picker keeps
+     the full option text without widening the compact page underneath. */
+  .compact-native-select { overflow: clip; }
+  .compact-native-select::picker(select), .comparison-column-picker::picker(select) { box-sizing: border-box; inline-size: max-content; max-inline-size: calc(100dvw - 16px); max-block-size: min(24rem, calc(100dvh - 16px)); overflow: auto; margin-block: 4px; padding: 4px; border: 1px solid var(--line); background: var(--paper); color: var(--navy); opacity: 1; font: 400 14px/1.4 var(--screen-sans); box-shadow: 0 4px 12px var(--compact-editor-shadow); }
+  .compact-native-select option, .comparison-column-picker option { box-sizing: border-box; min-height: 44px; padding: .6rem .5rem; white-space: normal; overflow-wrap: anywhere; background: var(--paper); color: var(--navy); font: 400 14px/1.4 var(--screen-sans); }
+  .compact-native-select optgroup, .comparison-column-picker optgroup { color: var(--navy); font: 400 14px/1.4 var(--screen-sans); }
+  .compact-native-select option:checked, .comparison-column-picker option:checked { font-weight: 700; }
+  .compact-native-select option::checkmark, .comparison-column-picker option::checkmark { color: currentColor; }
+  .compact-native-select option:disabled, .comparison-column-picker option:disabled { color: var(--muted); opacity: .65; }
+  .compact-native-select option:hover, .comparison-column-picker option:hover { background: var(--white); outline: 1px solid var(--navy); outline-offset: -1px; }
+  .compact-native-select option:focus-visible, .comparison-column-picker option:focus-visible { background: var(--white); outline: 3px solid var(--focus); outline-offset: -3px; }
+}
 
 /* #679 Guide-only joined source navigation; Comparisons keeps its existing bar. */
 .screen-guide .sticky-header:has([data-compact-sources]) { position: sticky; background: var(--paper); }

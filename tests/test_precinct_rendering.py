@@ -1,9 +1,12 @@
 """Actual headless general-page behavior against independently sourced exact sets."""
 
+import base64
+import hashlib
 import json
+import os
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pytest
 
@@ -449,6 +452,303 @@ def test_compact_bar_owns_three_native_selects_and_own_scope_indicator(
         "targets": True,
         "icons": True,
     }
+
+
+@pytest.mark.parametrize("page", ["guide", "compare"])
+@pytest.mark.parametrize("width", [320, 1280])
+def test_shared_selection_surfaces_preserve_native_picker_and_fallback(
+    tmp_path: Path, general_view: PublicationViewModel, page: str, width: int
+) -> None:
+    """A painted picker must work over the real transparent compact-select surface."""
+    html = (
+        render_html_document(
+            general_view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_comparison_document(
+            general_view, public_site_url="https://seattleelections.guide"
+        )
+    )
+    path = tmp_path / "selection-surfaces.html"
+    path.write_text(without_live_address_requests(html))
+    evidence = Path(os.environ.get("SEG_672_EVIDENCE_DIR", str(tmp_path))) / f"{page}-{width}"
+    evidence.mkdir(parents=True, exist_ok=True)
+    observations: dict[str, Any] = {
+        "html_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "html_path": str(path),
+        "viewport": [width, 844],
+        "mode": "project Chrome default features; fallback counterfactual is not Firefox evidence",
+    }
+
+    def interact(cdp: _CdpSocket, session: str) -> None:
+        def ev(script: str) -> object:
+            result = cdp.command(
+                "Runtime.evaluate",
+                {"expression": script, "returnByValue": True, "awaitPromise": True},
+                session_id=session,
+            )
+            assert "exceptionDetails" not in result, result
+            return result["result"].get("value")
+
+        def screenshot(name: str) -> None:
+            shot = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session)
+            (evidence / name).write_bytes(base64.b64decode(shot["data"]))
+
+        def picker_box(name: str) -> None:
+            # Internal node inspection is optional diagnostics; rendered boxes
+            # and saved pixels remain the primary evidence on every browser.
+            try:
+                remote = cdp.command(
+                    "Runtime.evaluate", {"expression": "selectionTestSelect"}, session_id=session
+                )["result"]
+                described = cdp.command(
+                    "DOM.describeNode",
+                    {"objectId": remote["objectId"], "depth": -1, "pierce": True},
+                    session_id=session,
+                )
+                pending = [described["node"]]
+                while pending:
+                    node = pending.pop()
+                    attributes = node.get("attributes", [])
+                    if any(
+                        attributes[index : index + 2] == ["pseudo", "picker(select)"]
+                        for index in range(0, len(attributes), 2)
+                    ):
+                        observations[name] = cdp.command(
+                            "DOM.getBoxModel",
+                            {"backendNodeId": node["backendNodeId"]},
+                            session_id=session,
+                        )["model"]
+                        return
+                    for children in ["children", "shadowRoots", "pseudoElements"]:
+                        pending.extend(node.get(children, []))
+                observations[name] = {"unavailable": "picker node not exposed"}
+            except ValueError as error:
+                observations[name] = {"unavailable": str(error)}
+
+        observations["browser"] = cdp.command("Browser.getVersion")
+        ev("""window.selectionTestEvents=[];
+          window.selectionFocusState=()=>{const e=document.activeElement;
+            return {tag:e.tagName,id:e.id,classes:e.className,
+              text:e.textContent?.trim().slice(0,100),
+              filter:e.dataset.filterNative??null,opener:e.hasAttribute('data-precinct-open'),
+              connected:e.isConnected,documentFocused:document.hasFocus(),at:performance.now()};};
+          for(const type of ['focusin','focusout','keydown','keyup','pointerdown','pointerup'])
+            document.addEventListener(type,e=>selectionTestEvents.push({type,key:e.key,
+              target:e.target.tagName,id:e.target.id,classes:e.target.className,
+              filter:e.target.dataset?.filterNative??null,trusted:e.isTrusted,
+              related:e.relatedTarget?.tagName,at:performance.now()}),true);
+          document.querySelector('dialog').addEventListener('close',e=>selectionTestEvents.push({
+            type:'dialog-close',trusted:e.isTrusted,active:selectionFocusState(),at:performance.now()}));""")
+        ev(
+            "document.fonts.ready.then(()=>new Promise(r=>"
+            "requestAnimationFrame(()=>requestAnimationFrame(r))))"
+        )
+        ev("""document.querySelector('[data-precinct-open]').click();
+          const input=document.querySelector('#voting-precinct');
+          input.value='1279';input.dispatchEvent(new Event('input',{bubbles:true}));
+          input.focus();""")
+        for kind in ["keyDown", "keyUp"]:
+            cdp.command(
+                "Input.dispatchKeyEvent",
+                {"type": kind, "key": "ArrowDown", "windowsVirtualKeyCode": 40},
+                session_id=session,
+            )
+        observations["custom"] = ev(r"""(()=>{
+          const option=document.querySelector('.ballot-option[aria-selected=true]');
+          const rect=option.getBoundingClientRect(),style=getComputedStyle(option);
+          const luminance=color=>color.match(/\d+/g).slice(0,3).map(Number)
+            .map(c=>c/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4)
+            .reduce((sum,c,i)=>sum+c*[.2126,.7152,.0722][i],0);
+          const foreground=luminance(style.color),background=luminance(style.backgroundColor);
+          return {height:rect.height,outline:style.outlineColor,outlineWidth:style.outlineWidth,
+            background:style.backgroundColor,color:style.color,fontSize:style.fontSize,
+            contrast:(Math.max(foreground,background)+.05)/(Math.min(foreground,background)+.05),
+            text:option.innerText,optionRight:rect.right,viewport:innerWidth,
+            inputCount:document.querySelectorAll('input[role=combobox]').length,
+            datalistCount:document.querySelectorAll('datalist').length};})()""")
+        screenshot("custom-active.png")
+        ev("""new Promise(resolve=>{
+          document.querySelector('dialog').addEventListener('close',resolve,{once:true});
+          document.querySelector('[data-precinct-cancel]').click();
+        })""")
+        observations["after_cancel"] = ev("selectionFocusState()")
+        observations["compact"] = ev("""(()=>{
+          const select=document.querySelector('[data-filter-native=view]');
+          const face=select.parentElement.querySelector('[data-filter-face]');
+          const r=select.getBoundingClientRect();window.selectionTestSelect=select;
+          return {supportsBase:CSS.supports('appearance','base-select'),
+            supportsPicker:CSS.supports('selector(::picker(select))'),
+            appearance:getComputedStyle(select).appearance,opacity:getComputedStyle(select).opacity,
+            faceHidden:face.getAttribute('aria-hidden'),rect:r.toJSON(),
+            hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===select,
+            pickerAppearance:getComputedStyle(select,'::picker(select)').appearance,
+            optionTexts:[...select.options].map(o=>o.textContent.trim())};})()""")
+        point = ev("""(()=>{const r=selectionTestSelect.getBoundingClientRect();
+          return {x:r.x+r.width/2,y:r.y+r.height/2};})()""")
+        assert isinstance(point, dict)
+        for kind in ["mousePressed", "mouseReleased"]:
+            cdp.command(
+                "Input.dispatchMouseEvent",
+                {"type": kind, **point, "button": "left", "clickCount": 1},
+                session_id=session,
+            )
+        observations["open"] = ev("""(()=>{
+          const s=selectionTestSelect;return {open:s.matches(':open'),
+            options:[...s.options].map(o=>({text:o.textContent.trim(),checked:o.selected,
+              disabled:o.disabled,rect:o.getBoundingClientRect().toJSON(),
+              background:getComputedStyle(o).backgroundColor,color:getComputedStyle(o).color,
+              fontSize:getComputedStyle(o).fontSize,fontWeight:getComputedStyle(o).fontWeight,
+              checkmark:getComputedStyle(o,'::checkmark').content,
+              checkmarkVisibility:getComputedStyle(o,'::checkmark').visibility,
+              checkmarkDisplay:getComputedStyle(o,'::checkmark').display})),
+            active:document.activeElement.tagName,viewport:[innerWidth,innerHeight]};})()""")
+        screenshot("native-open.png")
+        (evidence / "observations.json").write_text(json.dumps(observations, indent=2) + "\n")
+        picker_box("view_picker_box")
+        compact = observations["compact"]
+        assert isinstance(compact, dict)
+        if compact["supportsBase"] and compact["supportsPicker"]:
+            hover = ev("""(()=>{const o=[...selectionTestSelect.options].find(o=>!o.selected);
+              const r=o.getBoundingClientRect();
+              return {x:r.x+r.width/2,y:r.y+r.height/2};})()""")
+            assert isinstance(hover, dict)
+            cdp.command(
+                "Input.dispatchMouseEvent", {"type": "mouseMoved", **hover}, session_id=session
+            )
+            observations["hover"] = (
+                ev("""(()=>{const s=selectionTestSelect,o=[...s.options].find(o=>!o.selected);
+              const c=getComputedStyle(o);
+              return {background:c.backgroundColor,outline:c.outlineColor,value:s.value};})()""")
+            )
+            screenshot("native-hover.png")
+            observations["before_keyboard"] = ev(
+                "({focus:selectionFocusState(),open:selectionTestSelect.matches(':open'),events:selectionTestEvents.slice()})"
+            )
+            for kind in ["keyDown", "keyUp"]:
+                cdp.command(
+                    "Input.dispatchKeyEvent",
+                    {"type": kind, "key": "ArrowDown", "windowsVirtualKeyCode": 40},
+                    session_id=session,
+                )
+            observations["focus"] = (
+                ev("""(()=>{const o=document.activeElement,c=getComputedStyle(o);
+              return {tag:o.tagName,outline:c.outlineColor,value:selectionTestSelect.value};})()""")
+            )
+            observations["focus_identity"] = ev(
+                "({focus:selectionFocusState(),open:selectionTestSelect.matches(':open'),events:selectionTestEvents.slice()})"
+            )
+            screenshot("native-focus.png")
+        for kind in ["keyDown", "keyUp"]:
+            cdp.command(
+                "Input.dispatchKeyEvent",
+                {"type": kind, "key": "Escape", "windowsVirtualKeyCode": 27},
+                session_id=session,
+            )
+        point = ev("""(()=>{
+          window.selectionTestSelect=document.querySelector('[data-filter-native=ballot]');
+          const r=selectionTestSelect.getBoundingClientRect();
+          return {x:r.x+r.width/2,y:r.y+r.height/2};})()""")
+        assert isinstance(point, dict)
+        for kind in ["mousePressed", "mouseReleased"]:
+            cdp.command(
+                "Input.dispatchMouseEvent",
+                {"type": kind, **point, "button": "left", "clickCount": 1},
+                session_id=session,
+            )
+        observations["ballot_open"] = ev("""({open:selectionTestSelect.matches(':open'),
+          options:[...selectionTestSelect.options].map(o=>({text:o.textContent.trim(),
+            height:o.getBoundingClientRect().height,clientWidth:o.clientWidth,scrollWidth:o.scrollWidth,
+            words:(()=>{const words=[],walker=document.createTreeWalker(o,NodeFilter.SHOW_TEXT);
+              let node;while((node=walker.nextNode()))
+              for(const match of node.textContent.matchAll(/\\S+/g)){
+                const range=document.createRange();range.setStart(node,match.index);
+                range.setEnd(node,match.index+match[0].length);
+                const rects=[...range.getClientRects()].filter(r=>r.width>0&&r.height>0);
+                words.push({text:match[0],lines:new Set(rects.map(r=>r.top)).size});
+              }return words;})()}))})""")
+        screenshot("ballot-open.png")
+        picker_box("ballot_picker_box")
+        for kind in ["keyDown", "keyUp"]:
+            cdp.command(
+                "Input.dispatchKeyEvent",
+                {"type": kind, "key": "Escape", "windowsVirtualKeyCode": 27},
+                session_id=session,
+            )
+        observations["fallback"] = ev("""(()=>{
+          let removed=0;
+          for(const sheet of document.styleSheets)for(let i=sheet.cssRules.length-1;i>=0;i--){
+            const rule=sheet.cssRules[i];
+            if(rule instanceof CSSSupportsRule&&rule.conditionText.includes('base-select')){
+              sheet.deleteRule(i);removed++;
+            }
+          }
+          const s=selectionTestSelect,r=s.getBoundingClientRect();s.focus();
+          return {method:'test-only removal of enhancement block, not an unsupported-browser run',
+            removed,appearance:getComputedStyle(s).appearance,opacity:getComputedStyle(s).opacity,
+            focused:document.activeElement===s,rect:r.toJSON(),
+            hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===s,
+            fullValue:s.selectedOptions[0].textContent.trim()};})()""")
+        screenshot("fallback-closed.png")
+        (evidence / "observations.json").write_text(json.dumps(observations, indent=2) + "\n")
+
+    result = _evaluate_in_chrome(
+        path, "JSON.stringify({done:true})", viewport=(width, 844), interact=interact
+    )
+    assert result["done"], observations
+    custom = observations["custom"]
+    compact = observations["compact"]
+    fallback = observations["fallback"]
+    assert custom["height"] >= 44, observations
+    assert custom["outline"] == "rgb(16, 42, 67)", observations
+    assert custom["background"] == "rgb(255, 255, 255)", observations
+    assert custom["color"] == "rgb(16, 42, 67)" and custom["fontSize"] == "14px", observations
+    assert custom["contrast"] >= 7, observations
+    assert custom["inputCount"] == 1 and custom["datalistCount"] == 0, observations
+    assert custom["optionRight"] <= width, observations
+    assert compact["faceHidden"] == "true" and compact["hit"], observations
+    assert compact["rect"]["height"] >= 44 and compact["rect"]["width"] >= 44, observations
+    if compact["supportsBase"] and compact["supportsPicker"]:
+        assert compact["appearance"] == compact["pickerAppearance"] == "base-select", observations
+        opened = observations["open"]
+        assert opened["open"], observations
+        for option in opened["options"]:
+            assert option["rect"]["height"] >= 44, observations
+            assert 0 <= option["rect"]["left"] < option["rect"]["right"] <= width, observations
+            assert option["fontSize"] == "14px", observations
+        checked = [option for option in opened["options"] if option["checked"]]
+        assert len(checked) == 1 and int(checked[0]["fontWeight"]) >= 700, observations
+        assert checked[0]["checkmarkVisibility"] == "visible", observations
+        assert checked[0]["checkmarkDisplay"] != "none", observations
+        assert observations["hover"] == {
+            "background": "rgb(255, 255, 255)",
+            "outline": "rgb(16, 42, 67)",
+            "value": "full",
+        }, observations
+        assert observations["focus"] == {
+            "tag": "OPTION",
+            "outline": "rgb(240, 169, 40)",
+            "value": "full",
+        }, observations
+        assert observations["ballot_open"]["open"], observations
+        assert len(observations["ballot_open"]["options"]) > 3, observations
+        assert all(
+            o["height"] >= 44 and o["scrollWidth"] <= o["clientWidth"] + 1
+            for o in observations["ballot_open"]["options"]
+        ), observations
+        # A menu can be unclipped yet unusable when ordinary words wrap into
+        # letter columns. The real painted text must keep these words whole.
+        assert all(
+            o["words"] and all(word["lines"] == 1 for word in o["words"])
+            for o in observations["ballot_open"]["options"]
+        ), observations
+        for name in ["view_picker_box", "ballot_picker_box"]:
+            if "border" in observations[name]:
+                border = observations[name]["border"]
+                assert min(border[::2]) >= 0 and max(border[::2]) <= width, observations
+                assert min(border[1::2]) >= 0 and max(border[1::2]) <= 844, observations
+    assert fallback["appearance"] == "auto" and fallback["opacity"] == "0", observations
+    assert fallback["focused"] and fallback["hit"], observations
 
 
 @pytest.mark.parametrize("page", ["guide", "compare"])
