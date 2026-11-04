@@ -1,0 +1,124 @@
+{
+  "electionDate": "2026-11-03",
+  "electionName": "2026 General",
+  "createdAt": "2026-11-04T04:16:52.5976406Z",
+  "results": {
+    "id": "01000000-f977-1a83-1ed4-08ddd69e9e69",
+    "name": "Washington",
+    "ballotItems": [
+      {
+        "type": "State",
+        "id": "7325",
+        "name": "Initiative Measure No. IP26-645",
+        "voteFor": 1,
+        "ballotOrder": 1,
+        "precinctsParticipating": null,
+        "precinctsReporting": null,
+        "contestType": "BallotMeasure",
+        "ballotOptions": [
+          {
+            "id": "Yes-1-",
+            "name": "Yes",
+            "ballotOrder": 1,
+            "voteCount": 481470,
+            "politicalParty": null,
+            "groupResults": null,
+            "precinctResults": null
+          },
+          {
+            "id": "No-2-",
+            "name": "No",
+            "ballotOrder": 2,
+            "voteCount": 699277,
+            "politicalParty": null,
+            "groupResults": null,
+            "precinctResults": null
+          }
+        ],
+        "rankedChoiceResults": null
+      },
+      {
+        "type": "State",
+        "id": "186955",
+        "name": "Congressional District 9 - U.S. Representative",
+        "voteFor": 1,
+        "ballotOrder": 12,
+        "precinctsParticipating": null,
+        "precinctsReporting": null,
+        "contestType": "Candidate",
+        "ballotOptions": [
+          {
+            "id": "1601906",
+            "name": "Adam Smith",
+            "ballotOrder": 1,
+            "voteCount": 105825,
+            "politicalParty": "(Prefers Democratic Party)",
+            "groupResults": null,
+            "precinctResults": null
+          },
+          {
+            "id": "1601905",
+            "name": "Doug Basler",
+            "ballotOrder": 2,
+            "voteCount": 34118,
+            "politicalParty": "(Prefers Republican Party)",
+            "groupResults": null,
+            "precinctResults": null
+          },
+          {
+            "id": "9910",
+            "name": "Write-in",
+            "ballotOrder": 99,
+            "voteCount": 939,
+            "politicalParty": null,
+            "groupResults": null,
+            "precinctResults": null
+          }
+        ],
+        "rankedChoiceResults": null
+      },
+      {
+        "type": "State",
+        "id": "187081",
+        "name": "Supreme Court - Justice Position #04",
+        "voteFor": 1,
+        "ballotOrder": 138,
+        "precinctsParticipating": null,
+        "precinctsReporting": null,
+        "contestType": "Candidate",
+        "ballotOptions": [
+          {
+            "id": "1602270",
+            "name": "Ian Birk",
+            "ballotOrder": 1,
+            "voteCount": 546750,
+            "politicalParty": null,
+            "groupResults": null,
+            "precinctResults": null
+          },
+          {
+            "id": "1602271",
+            "name": "Sean O'Donnell",
+            "ballotOrder": 2,
+            "voteCount": 535008,
+            "politicalParty": null,
+            "groupResults": null,
+            "precinctResults": null
+          },
+          {
+            "id": "Write-in-99-",
+            "name": "Write-In",
+            "ballotOrder": 99,
+            "voteCount": 4049,
+            "politicalParty": null,
+            "groupResults": null,
+            "precinctResults": null
+          }
+        ],
+        "rankedChoiceResults": null
+      }
+    ],
+    "reportingStatuses": null
+  },
+  "localResults": []
+}

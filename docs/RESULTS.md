@@ -34,7 +34,7 @@ candidate votes never become a ballot count. Preliminary tallies have no advance
 Guide/race pages reuse the existing slim navy tally block, equal candidate emphasis,
 amber **Unofficial · [actual count time]**, and compact count/authority/evidence provenance.
 No outcome chips appear for preliminary data. The centered banner says **Unofficial results
-· counting continues**; each contest retains its own clock. The comparison column remains
+· counts may change**; each contest retains its own clock. The comparison column remains
 explicitly **Certified result**, unavailable for preliminary data.
 
 Verify update schedules and certification status/timing per authority. A County calendar

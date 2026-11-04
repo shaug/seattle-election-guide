@@ -30,6 +30,23 @@ multi-county total. This runbook does not reopen #535 or perform future #692/#69
 
 ## Refresh and failures
 
+The local producer consumes an explicitly reviewed mapping and already captured bytes:
+
+```sh
+uv run --offline --frozen election-guide results ingest-preliminary <mapping.yaml> \
+  --inventory-path data/normalized/wa-2026-general-inventory.json
+uv run --offline --frozen election-guide results validate data/results/wa-2026-general.yaml
+```
+
+`PreliminaryAdmissionPlan` binds each source format, registered authority and immutable
+capture; every inventory race then binds its exact source contest ID/name, jurisdiction,
+whole-scope proof and every named source choice ID/name to the frozen ballot choice.
+There is no name-only discovery or partial-inventory production mode. The parser preserves
+unknown fields: the historical statewide Media Export's `createdAt` is generation time,
+not count-as-of, and that payload does not independently establish unofficial status or
+an explicit authority contest total. It cannot pass this producer without those proofs.
+An existing certified file cannot be overwritten with preliminary results.
+
 Use an operator-triggered capture/admission/diff/review/publication sequence after official
 announced releases. Check at least daily during active counting, grounding the actual schedule
 in publisher evidence. No live client polling, scheduled automatic commit or direct deploy.
@@ -43,6 +60,22 @@ zero, advance their publisher clock, erase endorsement facts or manufacture a su
 check. A successful unchanged official recheck can update verification time separately; it
 cannot advance count-as-of. All changed count/share information passes normal exact-head
 checks, substantive Election Updates, independent review and protected release gates.
+
+Record a genuine failed retrieval with the normal evidence-unavailable writer, then attach
+that retained unavailable manifest with:
+
+```sh
+uv run --offline --frozen election-guide results record-refresh-failure \
+  data/results/wa-2026-general.yaml <unavailable-manifest.json>
+```
+
+The source identity and actual check clock must match the manifest. This is not a way to
+label a mapping/validation error as an HTTP failure. Counts and their publisher timestamps
+remain unchanged. A later successful capture can clear the visible warning while keeping
+failure history. The displayed verification time ages to **Stale** after 24 hours; a later
+failed retrieval displays **Refresh unavailable**. Reader-side aging makes no requests,
+writes no storage and cannot certify data. The count-as-of remains visible throughout.
+None of these result checks refreshes endorsement publisher-access clocks or `data_as_of`.
 
 ## Certification
 

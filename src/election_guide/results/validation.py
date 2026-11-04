@@ -11,7 +11,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from election_guide.authorities.registry import read_authority_registry
-from election_guide.evidence.models import CapturedManifest
+from election_guide.evidence.models import CapturedManifest, UnavailableManifest
 from election_guide.evidence.storage import read_capture_manifest, verify_capture
 from election_guide.inventory.models import Inventory
 from election_guide.results.models import PreliminaryElectionResults, ResultsDocument
@@ -111,3 +111,11 @@ def validate_results_evidence(
             authority = authorities.get(race.authority_id)
             if authority is None or race.authority != authority.name:
                 raise ValueError("preliminary race must retain the registered authority identity")
+        for failure in results.failed_refreshes:
+            manifest = read_capture_manifest(repository_root / failure.evidence)
+            if (
+                not isinstance(manifest, UnavailableManifest)
+                or manifest.source_id != failure.authority_id
+                or manifest.retrieved_at != failure.checked_at
+            ):
+                raise ValueError("refresh failure must retain its actual unavailable observation")

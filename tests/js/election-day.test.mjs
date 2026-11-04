@@ -174,3 +174,34 @@ test('wireElectionDay leaves a certified banner alone', () => {
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('election-day.mjs');
 });
+
+test('a preliminary count ages by its check clock without changing its publisher timestamp', () => {
+  installBanner(
+    '<p>Unofficial · Nov 3, 8:00 p.m. PST</p>' +
+      '<span data-preliminary-stale-after="86400" data-preliminary-check-at="2026-11-04T05:00:00Z" ' +
+      'data-preliminary-checked-label="Nov 3, 9:00:00 p.m. PST" ' +
+      'data-preliminary-refresh-failed="false">Last checked Nov 3, 9:00:00 p.m. PST</span>',
+  );
+  wireElectionDay(new Date('2026-11-05T05:00:00Z'));
+  assert.match(document.body.textContent, /Stale · last checked Nov 3, 9:00:00 p.m. PST/);
+  assert.match(document.body.textContent, /Unofficial · Nov 3, 8:00 p.m. PST/);
+});
+
+test('a failed refresh stays unavailable instead of becoming a fresh count', () => {
+  installBanner(
+    '<span data-preliminary-stale-after="86400" data-preliminary-check-at="2026-11-04T05:00:00Z" ' +
+      'data-preliminary-checked-label="Nov 3, 9:00:00 p.m. PST" ' +
+      'data-preliminary-refresh-failed="true">Last checked Nov 3, 9:00:00 p.m. PST</span>',
+  );
+  wireElectionDay(new Date('2026-11-04T06:00:00Z'));
+  assert.match(document.body.textContent, /Refresh unavailable · last checked/);
+});
+
+test('an untrusted reader clock cannot make a future preliminary check look fresh', () => {
+  installBanner(
+    '<span data-preliminary-stale-after="86400" data-preliminary-check-at="2026-11-04T05:00:00Z" ' +
+      'data-preliminary-checked-label="Nov 3, 9:00:00 p.m. PST">Last checked</span>',
+  );
+  wireElectionDay(new Date('2026-11-04T04:00:00Z'));
+  assert.match(document.body.textContent, /Check time unavailable/);
+});

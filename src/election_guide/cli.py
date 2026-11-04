@@ -58,7 +58,12 @@ from election_guide.evidence.manual import (
     read_manual_draft,
     validate_manual_draft,
 )
-from election_guide.evidence.models import CapturedManifest, CaptureRequest, UnavailableRequest
+from election_guide.evidence.models import (
+    CapturedManifest,
+    CaptureRequest,
+    UnavailableManifest,
+    UnavailableRequest,
+)
 from election_guide.evidence.storage import (
     captured_artifact_path,
     read_capture_manifest,
@@ -143,7 +148,13 @@ from election_guide.results.loader import (
     read_results,
     reject_committed_counting_status,
 )
-from election_guide.results.models import ElectionResults, ResultsCapture
+from election_guide.results.models import (
+    ElectionResults,
+    PreliminaryElectionResults,
+    PreliminaryRefreshFailure,
+    ResultsCapture,
+)
+from election_guide.results.preliminary import PreliminaryAdmissionPlan, build_preliminary_results
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 from election_guide.scoring import (
     ConsensusReport,
@@ -153,7 +164,7 @@ from election_guide.scoring import (
     score_dataset,
     summarize_consensus_payload,
 )
-from election_guide.serialization import canonical_json_bytes, read_json
+from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from election_guide.sources.catalog import (
     PanelSnapshotCatalog,
     appended_panel_snapshot,
@@ -1841,6 +1852,95 @@ def results_validate(
     typer.echo(
         f"results: valid ({results.election_id}, {results.status}, {len(results.races)} races)"
     )
+
+
+@results_app.command("ingest-preliminary")
+def results_ingest_preliminary(
+    mapping_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    inventory_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)],
+    repository_root: Annotated[Path, typer.Option(exists=True, file_okay=False)] = Path("."),
+    output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/results"),
+) -> None:
+    """Admit a reviewed whole-jurisdiction mapping from retained official captures.
+
+    Offline only. This neither obtains official bytes nor certifies data, and
+    it never downgrades a certified file or substitutes capture time for count time.
+    """
+    try:
+        plan = PreliminaryAdmissionPlan.model_validate(read_yaml(mapping_path))
+        inventory = read_inventory(inventory_path)
+        results = build_preliminary_results(plan, inventory, repository_root=repository_root)
+        output_path = output_dir / f"{results.election_id}.yaml"
+        if output_path.exists():
+            previous = read_results(output_path)
+            if not isinstance(previous, PreliminaryElectionResults):
+                raise ValueError(
+                    "cannot overwrite a legacy/certified results file with preliminary data"
+                )
+            if previous.election_id != results.election_id:
+                raise ValueError("existing preliminary file belongs to a different election")
+            previous_races = {race.race_id: race for race in previous.races}
+            if any(
+                race.race_id in previous_races
+                and race.reported_at < previous_races[race.race_id].reported_at
+                for race in results.races
+            ):
+                raise ValueError(
+                    "publisher count timestamp regressed; retain the previous snapshot"
+                )
+            captures = {capture.evidence: capture for capture in previous.captures}
+            captures.update({capture.evidence: capture for capture in results.captures})
+            results = PreliminaryElectionResults.model_validate(
+                {
+                    **results.model_dump(),
+                    "captures": list(captures.values()),
+                    "failed_refreshes": previous.failed_refreshes,
+                }
+            )
+            validate_results_evidence(results, repository_root=repository_root)
+        _write_generated_yaml(output_path, results.model_dump(mode="json"))
+    except (OSError, ValidationError, ValueError) as error:
+        typer.echo(f"preliminary ingest failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"preliminary results: {output_path} ({len(results.races)} whole-jurisdiction races)"
+    )
+
+
+@results_app.command("record-refresh-failure")
+def results_record_refresh_failure(
+    results_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    failure_capture: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    repository_root: Annotated[Path, typer.Option(exists=True, file_okay=False)] = Path("."),
+) -> None:
+    """Append an actual access observation without changing counts or their clocks."""
+    try:
+        results = read_results(results_path)
+        if not isinstance(results, PreliminaryElectionResults):
+            raise ValueError("refresh failure metadata applies only to preliminary results")
+        manifest = read_capture_manifest(failure_capture)
+        if not isinstance(manifest, UnavailableManifest):
+            raise ValueError("refresh failure requires an actual unavailable observation")
+        reference = failure_capture.resolve().relative_to(repository_root.resolve()).as_posix()
+        if any(item.evidence == reference for item in results.failed_refreshes):
+            raise ValueError("refresh failure is already recorded")
+        failure = PreliminaryRefreshFailure(
+            authority_id=manifest.source_id,
+            checked_at=manifest.retrieved_at,
+            evidence=reference,
+        )
+        updated = PreliminaryElectionResults.model_validate(
+            {
+                **results.model_dump(),
+                "failed_refreshes": [*results.failed_refreshes, failure],
+            }
+        )
+        validate_results_evidence(updated, repository_root=repository_root)
+        _write_generated_yaml(results_path, updated.model_dump(mode="json"))
+    except (OSError, ValidationError, ValueError) as error:
+        typer.echo(f"preliminary refresh record failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"preliminary refresh failure recorded: {results_path}")
 
 
 @results_app.command("ingest")

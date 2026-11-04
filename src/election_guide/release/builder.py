@@ -16,7 +16,6 @@ from pathlib import Path
 from election_guide.calendar import read_election_calendar
 from election_guide.corrections.loader import load_rendering_corrections
 from election_guide.evidence.models import CapturedManifest
-from election_guide.evidence.storage import read_capture_manifest
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import build_publication_bundle, write_publication_bundle
 from election_guide.release.comparison import verify_release_bundle_artifacts
@@ -30,8 +29,9 @@ from election_guide.release.models import (
     SourceAccessStatus,
     release_archive_name,
 )
-from election_guide.rendering import build_rendered_guide
-from election_guide.results.loader import load_rendering_results
+from election_guide.rendering import build_rendered_guide, read_rendering_configuration
+from election_guide.results.loader import load_rendering_results, resolve_results_capture_urls
+from election_guide.results.models import PreliminaryElectionResults
 from election_guide.scoring import ConsensusReport, read_scoring_configuration, score_dataset
 from election_guide.serialization import canonical_json_bytes
 
@@ -145,18 +145,17 @@ def build_release(
         certification_date = scheduled.isoformat() if scheduled is not None else None
     results_capture_urls: dict[str, str] | None = None
     if results is not None:
-        url_by_evidence: dict[str, str] = {}
-        for capture in results.captures:
-            if capture.kind == "election_night" or capture.evidence in url_by_evidence:
-                continue
-            manifest = read_capture_manifest(repository_root / capture.evidence)
-            if isinstance(manifest, CapturedManifest) and manifest.canonical_url is not None:
-                url_by_evidence[capture.evidence] = manifest.canonical_url
-        results_capture_urls = {
-            race.race_id: url_by_evidence[race.capture_evidence]
-            for race in results.races
-            if race.capture_evidence in url_by_evidence
-        }
+        project_url = (
+            read_rendering_configuration(rendering_config_path).project_url
+            if isinstance(results, PreliminaryElectionResults)
+            else ""
+        )
+        results_capture_urls = resolve_results_capture_urls(
+            results,
+            repository_root=repository_root,
+            source_commit=git_commit,
+            project_url=project_url,
+        )
 
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))

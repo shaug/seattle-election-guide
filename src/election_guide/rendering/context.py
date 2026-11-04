@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
+from datetime import datetime
 from fractions import Fraction
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -40,7 +41,11 @@ from election_guide.rendering.payload import (
     RaceSourceRow,
 )
 from election_guide.rendering.shell import month_day_year
-from election_guide.results.models import PreliminaryElectionResults, ResultsDocument
+from election_guide.results.models import (
+    PRELIMINARY_STALE_AFTER_SECONDS,
+    PreliminaryElectionResults,
+    ResultsDocument,
+)
 
 
 @dataclass(frozen=True)
@@ -1423,6 +1428,11 @@ class RaceResultsView:
     outcomes: tuple[RaceResultOutcomeView, ...]
     preliminary: bool = False
     reported_at_label: str = ""
+    captured_at_iso: str = ""
+    checked_at_label: str = ""
+    recency_label: str = ""
+    refresh_unavailable: bool = False
+    stale_after_seconds: int = PRELIMINARY_STALE_AFTER_SECONDS
 
 
 def race_results_view(
@@ -1431,6 +1441,7 @@ def race_results_view(
     *,
     election_type: str | None,
     capture_urls: dict[str, str] | None,
+    as_of: datetime | None = None,
 ) -> RaceResultsView | None:
     """The certified RESULT block for one race -- the race card's strip and
     the race-detail page's own block both -- or `None` while none is
@@ -1457,7 +1468,7 @@ def race_results_view(
     if results is None:
         return None
     if isinstance(results, PreliminaryElectionResults):
-        return _preliminary_race_view(race, results, capture_urls=capture_urls)
+        return _preliminary_race_view(race, results, capture_urls=capture_urls, as_of=as_of)
     outcome_set = next((item for item in results.races if item.race_id == race.id), None)
     certified_on = results.certified_on
     if outcome_set is None or certified_on is None:
@@ -1505,14 +1516,28 @@ def _preliminary_race_view(
     results: PreliminaryElectionResults,
     *,
     capture_urls: dict[str, str] | None,
+    as_of: datetime | None,
 ) -> RaceResultsView | None:
     tally = next((item for item in results.races if item.race_id == race.id), None)
     if tally is None:
         return None
     labels = {candidate.id: candidate.label for candidate in race.candidates}
     named_total = sum(outcome.votes for outcome in tally.outcomes)
-    stamp = tally.reported_at.astimezone(ZoneInfo("America/Los_Angeles"))
-    clock = f"{stamp.hour % 12 or 12}:{stamp:%M:%S} {'a.m.' if stamp.hour < 12 else 'p.m.'}"
+    capture = next(item for item in results.captures if item.evidence == tally.capture_evidence)
+    checked_label = _results_clock_label(capture.captured_at)
+    recency = f"Last checked {checked_label}"
+    if as_of is not None:
+        age = (as_of - capture.captured_at).total_seconds()
+        if age < 0:
+            recency = "Check time unavailable"
+        elif age >= PRELIMINARY_STALE_AFTER_SECONDS:
+            recency = f"Stale · last checked {checked_label}"
+    failed = any(
+        failure.authority_id == tally.authority_id and failure.checked_at > capture.captured_at
+        for failure in results.failed_refreshes
+    )
+    if failed:
+        recency = f"Refresh unavailable · last checked {checked_label}"
     count_label = (
         f"{tally.ballots_counted:,} ballots"
         if tally.ballots_counted is not None
@@ -1524,12 +1549,16 @@ def _preliminary_race_view(
         authority=tally.authority,
         capture_url=(capture_urls or {}).get(race.id),
         preliminary=True,
-        reported_at_label=f"{stamp:%b} {stamp.day}, {clock} {stamp:%Z}",
+        reported_at_label=_results_clock_label(tally.reported_at),
+        captured_at_iso=capture.captured_at.isoformat(),
+        checked_at_label=checked_label,
+        recency_label=recency,
+        refresh_unavailable=failed,
         outcomes=tuple(
             RaceResultOutcomeView(
                 candidate_id=outcome.choice_id,
                 candidate_label=labels[outcome.choice_id],
-                percentage_label=f"{outcome.votes / named_total * 100:.1f}%"
+                percentage_label=f"{round(outcome.votes / named_total, 4) * 100:.1f}%"
                 if named_total
                 else "—",
                 advanced=False,
@@ -1538,6 +1567,12 @@ def _preliminary_race_view(
             for outcome in sorted(tally.outcomes, key=lambda item: item.votes, reverse=True)
         ),
     )
+
+
+def _results_clock_label(value: datetime) -> str:
+    stamp = value.astimezone(ZoneInfo("America/Los_Angeles"))
+    clock = f"{stamp.hour % 12 or 12}:{stamp:%M:%S} {'a.m.' if stamp.hour < 12 else 'p.m.'}"
+    return f"{stamp:%b} {stamp.day}, {clock} {stamp:%Z}"
 
 
 def race_result_outcomes_by_candidate_id(

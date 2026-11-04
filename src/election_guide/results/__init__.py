@@ -23,6 +23,7 @@ from election_guide.results.loader import (
     reject_committed_counting_status,
 )
 from election_guide.results.models import ElectionResults, RaceOutcome, RaceResults, ResultsCapture
+from election_guide.results.preliminary import build_preliminary_results, parse_preliminary_feed
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 
 __all__ = [
@@ -34,10 +35,12 @@ __all__ = [
     "ResultsCapture",
     "ResultsIngestError",
     "build_election_results",
+    "build_preliminary_results",
     "build_sos_race_results",
     "load_rendering_results",
     "merge_race_results",
     "parse_certified_csv",
+    "parse_preliminary_feed",
     "parse_statewide_export",
     "read_results",
     "reject_committed_counting_status",

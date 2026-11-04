@@ -308,9 +308,16 @@
     },
     "partition": "integration-rendering"
   },
+  "tests/test_preliminary_feeds.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "unit"
+  },
   "tests/test_preliminary_results.py": {
     "suite": "integration",
-    "tests": {},
+    "tests": {
+      "test_preliminary_general_result_is_readable_in_the_actual_application": "e2e"
+    },
     "partition": "integration-artifacts"
   },
   "tests/test_preview_teardown.py": {

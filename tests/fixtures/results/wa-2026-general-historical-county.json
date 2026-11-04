@@ -1,0 +1,909 @@
+{
+  "jurisdiction": {
+    "id": "01000000-f977-1a83-d40f-08ddd6a09cb2",
+    "name": [
+      {
+        "languageId": "en",
+        "text": "King County"
+      }
+    ],
+    "shortName": "king-county-wa"
+  },
+  "election": {
+    "ballotItemCount": 1,
+    "dateText": [
+      {
+        "languageId": "en",
+        "text": "November 3, 2026"
+      }
+    ],
+    "id": "01000000-3a7f-6232-5ca2-08df23219415",
+    "jurisdictionId": "01000000-f977-1a83-d40f-08ddd6a09cb2",
+    "name": [
+      {
+        "languageId": "en",
+        "text": "2026 General"
+      }
+    ],
+    "isOfficialResults": false,
+    "electionDate": "2026-11-03",
+    "isProduction": true,
+    "asOf": "2026-11-04T04:12:12.4190615Z",
+    "lastUpdated": "2026-11-04T04:11:05.3140356Z",
+    "publishDate": "2026-11-04T04:16:51.0491093Z",
+    "publishVersionId": "78f1a263-e0ec-4f91-9b93-46a896a1ebcf",
+    "publicReportCategories": [],
+    "groupReportingStatus": [],
+    "precinctReportingStatus": [],
+    "contestGroups": [
+      {
+        "id": "01000000-91b7-fa5d-724f-08df254552c4",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "State"
+          }
+        ],
+        "groupSubHeading": [
+          {
+            "languageId": "en",
+            "text": "Measures"
+          }
+        ],
+        "hideIfEmpty": false,
+        "order": 70,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "9",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "Federal"
+          }
+        ],
+        "groupSubHeading": [
+          {
+            "languageId": "en",
+            "text": "Congressional"
+          }
+        ],
+        "hideIfEmpty": false,
+        "order": 75,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "8",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "State"
+          }
+        ],
+        "groupSubHeading": [
+          {
+            "languageId": "en",
+            "text": "Legislative"
+          }
+        ],
+        "hideIfEmpty": false,
+        "order": 80,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "10",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "County"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 100,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "10",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "County Council"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 100,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "11",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "State Supreme Court"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 110,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "12",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "Court of Appeals, Division No. 1, District No. 1"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 120,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "30",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "Northeast Electoral District Court"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 135,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "31",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "Shoreline Electoral District Court"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 137,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "14",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "Southeast Electoral District Court"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 140,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "32",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "Southwest Electoral District Court"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 142,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "33",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "West Electoral District Court"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 144,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "16",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "City"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 160,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "17",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "School"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 170,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "18",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "Fire"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 180,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "18",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "Cemetery"
+          }
+        ],
+        "groupSubHeading": [],
+        "hideIfEmpty": false,
+        "order": 190,
+        "showInPublicResultsFilters": false
+      },
+      {
+        "id": "other",
+        "groupHeading": [
+          {
+            "languageId": "en",
+            "text": "Other Contests"
+          }
+        ],
+        "groupSubHeading": null,
+        "hideIfEmpty": true,
+        "order": 191,
+        "showInPublicResultsFilters": null
+      }
+    ],
+    "countGroups": null,
+    "precinctsReporting": null,
+    "map": {
+      "enabled": false,
+      "styleUrl": null,
+      "featureIdField": null,
+      "disclaimer": [],
+      "showMapLegend": true
+    },
+    "totalVoters": 1460414.0,
+    "ballotsCast": 535712.0,
+    "redactingPrecinctCountGroups": false,
+    "precinctResultsProtected": false,
+    "reportingStatusBy": 0,
+    "customPublicMessages": [],
+    "closeRaceThreshold": null,
+    "closeRaceThresholdDisclaimer": [],
+    "hasStateWideCloseRaces": false,
+    "nextUpdateAt": {
+      "time": "2026-11-05T00:00:00Z"
+    },
+    "hidePrecincts": true,
+    "includePrecinctResults": false,
+    "includePrecinctStatuses": false,
+    "showOverUnderVotes": false,
+    "isPrimary": false,
+    "parties": [
+      {
+        "id": "01000000-f0b7-9b6a-c2d8-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "Nonpartisan"
+          }
+        ],
+        "abbreviation": "<NP>",
+        "standardName": "Nonpartisan",
+        "color": "#2D6657",
+        "textColor": "#FFFFFF",
+        "showInPublicResultsFilters": true
+      },
+      {
+        "id": "01000000-f0b7-9b6a-cb8f-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "(Prefers Cascade Party)"
+          }
+        ],
+        "abbreviation": "CAC",
+        "standardName": "(Prefers Cascade Party)",
+        "color": "#2D6657",
+        "textColor": "#000000",
+        "showInPublicResultsFilters": true
+      },
+      {
+        "id": "01000000-f0b7-9b6a-cb9a-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "(Prefers Democrat Party)"
+          }
+        ],
+        "abbreviation": "DE2",
+        "standardName": "(Prefers Democrat Party)",
+        "color": "#2D6657",
+        "textColor": "#000000",
+        "showInPublicResultsFilters": true
+      },
+      {
+        "id": "01000000-f0b7-9b6a-cb9d-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "(Prefers Democratic Party)"
+          }
+        ],
+        "abbreviation": "DEM",
+        "standardName": "(Prefers Democratic Party)",
+        "color": "#2D6657",
+        "textColor": "#ffffff",
+        "showInPublicResultsFilters": true
+      },
+      {
+        "id": "01000000-f0b7-9b6a-cb9f-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "(Prefers Independent Party)"
+          }
+        ],
+        "abbreviation": "IND",
+        "standardName": "(Prefers Independent Party)",
+        "color": "#2D6657",
+        "textColor": "#000000",
+        "showInPublicResultsFilters": true
+      },
+      {
+        "id": "01000000-f0b7-9b6a-cbaa-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "(Prefers Labor Democrat Party)"
+          }
+        ],
+        "abbreviation": "LDP",
+        "standardName": "(Prefers Labor Democrat Party)",
+        "color": "#2D6657",
+        "textColor": "#FFFFFF",
+        "showInPublicResultsFilters": true
+      },
+      {
+        "id": "01000000-f0b7-9b6a-cbac-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "(Prefers Libertarian Party)"
+          }
+        ],
+        "abbreviation": "LIB",
+        "standardName": "(Prefers Libertarian Party)",
+        "color": "#2D6657",
+        "textColor": "#000000",
+        "showInPublicResultsFilters": true
+      },
+      {
+        "id": "01000000-f0b7-9b6a-cbae-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "(Prefers Nonpartisan Party)"
+          }
+        ],
+        "abbreviation": "NON",
+        "standardName": "(Prefers Nonpartisan Party)",
+        "color": "#2D6657",
+        "textColor": "#FFFFFF",
+        "showInPublicResultsFilters": true
+      },
+      {
+        "id": "01000000-f0b7-9b6a-cbaf-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "(Prefers Republican Party)"
+          }
+        ],
+        "abbreviation": "REP",
+        "standardName": "(Prefers Republican Party)",
+        "color": "#2D6657",
+        "textColor": "#ffffff",
+        "showInPublicResultsFilters": true
+      },
+      {
+        "id": "01000000-f0b7-9b6a-cbb1-08df232198c4",
+        "name": [
+          {
+            "languageId": "en",
+            "text": "(States No Party Preference)"
+          }
+        ],
+        "abbreviation": "NO",
+        "standardName": "(States No Party Preference)",
+        "color": "#2D6657",
+        "textColor": "#FFFFFF",
+        "showInPublicResultsFilters": true
+      }
+    ]
+  },
+  "ballotItems": [
+    {
+      "id": "01000000-f0b7-9b6a-3bd4-08df232198dc",
+      "parentId": "01000000-c099-693d-d4e5-08df1b1fe635",
+      "parentJurisdictionName": "washington",
+      "publishPublicElectionId": "20261103",
+      "relatedIds": null,
+      "name": [
+        {
+          "languageId": "en",
+          "text": "Initiative Measure No. IP26-645"
+        }
+      ],
+      "voteFor": [],
+      "referendum": [
+        {
+          "languageId": "en",
+          "text": "<p>Initiative Measure No. IP26-645 concerns state and local taxes.</p><p class=\"text-start\">This measure would repeal a 9.9% tax on annual individual income over $1,000,000; prohibit taxes measured by individual income and taxes on individual income or the receipt of individual income; and define “income.” This measure would decrease funding for public K-12 education, higher education (including universities and community colleges), and human services (primarily healthcare).</p>"
+        }
+      ],
+      "turnout": null,
+      "reportingStatus": {
+        "reportingUnits": 0,
+        "totalUnits": 0,
+        "asOf": "2026-11-04T04:12:12.4190615Z",
+        "reportingStatusDetails": [
+          {
+            "groupName": [
+              {
+                "languageId": null,
+                "text": "Fully Reported"
+              }
+            ],
+            "reportingStatusClientTextKey": "reporting-status-fully-reported",
+            "order": 1,
+            "value": 0
+          },
+          {
+            "groupName": [
+              {
+                "languageId": null,
+                "text": "Partially Reported"
+              }
+            ],
+            "reportingStatusClientTextKey": "reporting-status-partially-reported",
+            "order": 3,
+            "value": 0
+          },
+          {
+            "groupName": [
+              {
+                "languageId": null,
+                "text": "Not Reported"
+              }
+            ],
+            "reportingStatusClientTextKey": "reporting-status-not-reported",
+            "order": 4,
+            "value": 0
+          }
+        ]
+      },
+      "voteTotal": 527766,
+      "underVoteCount": null,
+      "overVoteCount": null,
+      "contestGroupId": "01000000-91b7-fa5d-724f-08df254552c4",
+      "contestType": "BallotMeasure",
+      "summaryResults": {
+        "ballotOptions": [
+          {
+            "id": "01000000-f0b7-9b6a-3bf7-08df232198dc",
+            "nativeId": "31",
+            "name": [
+              {
+                "languageId": "en",
+                "text": "Yes"
+              }
+            ],
+            "voteCount": 176731,
+            "party": {
+              "id": null,
+              "name": null,
+              "abbreviation": null,
+              "standardName": null,
+              "color": "#2d6657",
+              "textColor": null,
+              "showInPublicResultsFilters": null
+            },
+            "groupResults": null,
+            "isWriteIn": false,
+            "isQualifiedWriteIn": false,
+            "isWinner": null
+          },
+          {
+            "id": "01000000-f0b7-9b6a-3c08-08df232198dc",
+            "nativeId": "32",
+            "name": [
+              {
+                "languageId": "en",
+                "text": "No"
+              }
+            ],
+            "voteCount": 351035,
+            "party": {
+              "id": null,
+              "name": null,
+              "abbreviation": null,
+              "standardName": null,
+              "color": "#2d6657",
+              "textColor": null,
+              "showInPublicResultsFilters": null
+            },
+            "groupResults": null,
+            "isWriteIn": false,
+            "isQualifiedWriteIn": false,
+            "isWinner": null
+          }
+        ]
+      },
+      "rankedChoiceSummaryResults": null,
+      "hasBreakdownResults": false,
+      "crossCounties": [
+        "Skamania County",
+        "Skagit County",
+        "Cowlitz County",
+        "Columbia County",
+        "Clark County",
+        "Clallam County",
+        "Chelan County",
+        "Benton County",
+        "Asotin County",
+        "Adams County",
+        "San Juan County",
+        "Pierce County",
+        "Pend Oreille County",
+        "Pacific County",
+        "Okanogan County",
+        "Mason County",
+        "Lincoln County",
+        "Lewis County",
+        "Klickitat County",
+        "Kittitas County",
+        "Kitsap County",
+        "King County",
+        "Jefferson County",
+        "Island County",
+        "Grays Harbor County",
+        "Grant County",
+        "Garfield County",
+        "Franklin County",
+        "Ferry County",
+        "Douglas County",
+        "Yakima County",
+        "Whitman County",
+        "Whatcom County",
+        "Walla Walla County",
+        "Wahkiakum County",
+        "Thurston County",
+        "Stevens County",
+        "Spokane County",
+        "Snohomish County"
+      ],
+      "isCloseRace": null,
+      "partyName": null
+    },
+    {
+      "id": "01000000-f0b7-9b6a-127e-08df232198dc",
+      "parentId": "54c40000-9064-bbec-bd9b-08df15c0a82a",
+      "parentJurisdictionName": "washington",
+      "publishPublicElectionId": "20261103",
+      "relatedIds": null,
+      "name": [
+        {
+          "languageId": "en",
+          "text": "Congressional District 9 - U.S. Representative"
+        }
+      ],
+      "voteFor": [
+        {
+          "languageId": "en",
+          "text": "CONGRESSIONAL"
+        }
+      ],
+      "referendum": [],
+      "turnout": null,
+      "reportingStatus": {
+        "reportingUnits": 0,
+        "totalUnits": 0,
+        "asOf": "2026-11-04T04:12:12.4190615Z",
+        "reportingStatusDetails": [
+          {
+            "groupName": [
+              {
+                "languageId": null,
+                "text": "Fully Reported"
+              }
+            ],
+            "reportingStatusClientTextKey": "reporting-status-fully-reported",
+            "order": 1,
+            "value": 0
+          },
+          {
+            "groupName": [
+              {
+                "languageId": null,
+                "text": "Partially Reported"
+              }
+            ],
+            "reportingStatusClientTextKey": "reporting-status-partially-reported",
+            "order": 3,
+            "value": 0
+          },
+          {
+            "groupName": [
+              {
+                "languageId": null,
+                "text": "Not Reported"
+              }
+            ],
+            "reportingStatusClientTextKey": "reporting-status-not-reported",
+            "order": 4,
+            "value": 0
+          }
+        ]
+      },
+      "voteTotal": 140882,
+      "underVoteCount": null,
+      "overVoteCount": null,
+      "contestGroupId": "9",
+      "contestType": "Candidate",
+      "summaryResults": {
+        "ballotOptions": [
+          {
+            "id": "01000000-f0b7-9b6a-1299-08df232198dc",
+            "nativeId": "80",
+            "name": [
+              {
+                "languageId": "en",
+                "text": "Adam Smith"
+              }
+            ],
+            "voteCount": 105825,
+            "party": {
+              "id": "01000000-f0b7-9b6a-cb9d-08df232198c4",
+              "name": [
+                {
+                  "languageId": "en",
+                  "text": "(Prefers Democratic Party)"
+                }
+              ],
+              "abbreviation": "DEM",
+              "standardName": null,
+              "color": "#2D6657",
+              "textColor": "#ffffff",
+              "showInPublicResultsFilters": null
+            },
+            "groupResults": null,
+            "isWriteIn": false,
+            "isQualifiedWriteIn": false,
+            "isWinner": null
+          },
+          {
+            "id": "01000000-f0b7-9b6a-12cd-08df232198dc",
+            "nativeId": "176",
+            "name": [
+              {
+                "languageId": "en",
+                "text": "Doug Basler"
+              }
+            ],
+            "voteCount": 34118,
+            "party": {
+              "id": "01000000-f0b7-9b6a-cbaf-08df232198c4",
+              "name": [
+                {
+                  "languageId": "en",
+                  "text": "(Prefers Republican Party)"
+                }
+              ],
+              "abbreviation": "REP",
+              "standardName": null,
+              "color": "#2D6657",
+              "textColor": "#ffffff",
+              "showInPublicResultsFilters": null
+            },
+            "groupResults": null,
+            "isWriteIn": false,
+            "isQualifiedWriteIn": false,
+            "isWinner": null
+          },
+          {
+            "id": "01000000-f0b7-9b6a-134d-08df232198dc",
+            "nativeId": "249",
+            "name": [
+              {
+                "languageId": "en",
+                "text": "Write-in"
+              }
+            ],
+            "voteCount": 939,
+            "party": {
+              "id": null,
+              "name": null,
+              "abbreviation": null,
+              "standardName": null,
+              "color": "#2D6657",
+              "textColor": null,
+              "showInPublicResultsFilters": null
+            },
+            "groupResults": null,
+            "isWriteIn": true,
+            "isQualifiedWriteIn": false,
+            "isWinner": null
+          }
+        ]
+      },
+      "rankedChoiceSummaryResults": null,
+      "hasBreakdownResults": false,
+      "crossCounties": [],
+      "isCloseRace": null,
+      "partyName": null
+    },
+    {
+      "id": "01000000-f0b7-9b6a-6d8b-08df232198db",
+      "parentId": null,
+      "parentJurisdictionName": "washington",
+      "publishPublicElectionId": "20261103",
+      "relatedIds": null,
+      "name": [
+        {
+          "languageId": "en",
+          "text": "Assessor"
+        }
+      ],
+      "voteFor": [],
+      "referendum": [],
+      "turnout": null,
+      "reportingStatus": {
+        "reportingUnits": 0,
+        "totalUnits": 0,
+        "asOf": "2026-11-04T04:12:12.4190615Z",
+        "reportingStatusDetails": [
+          {
+            "groupName": [
+              {
+                "languageId": null,
+                "text": "Fully Reported"
+              }
+            ],
+            "reportingStatusClientTextKey": "reporting-status-fully-reported",
+            "order": 1,
+            "value": 0
+          },
+          {
+            "groupName": [
+              {
+                "languageId": null,
+                "text": "Partially Reported"
+              }
+            ],
+            "reportingStatusClientTextKey": "reporting-status-partially-reported",
+            "order": 3,
+            "value": 0
+          },
+          {
+            "groupName": [
+              {
+                "languageId": null,
+                "text": "Not Reported"
+              }
+            ],
+            "reportingStatusClientTextKey": "reporting-status-not-reported",
+            "order": 4,
+            "value": 0
+          }
+        ]
+      },
+      "voteTotal": 466113,
+      "underVoteCount": null,
+      "overVoteCount": null,
+      "contestGroupId": "10",
+      "contestType": "Candidate",
+      "summaryResults": {
+        "ballotOptions": [
+          {
+            "id": "01000000-f0b7-9b6a-6e5a-08df232198db",
+            "nativeId": "38",
+            "name": [
+              {
+                "languageId": "en",
+                "text": "Rob Foxcurran"
+              }
+            ],
+            "voteCount": 337166,
+            "party": {
+              "id": null,
+              "name": null,
+              "abbreviation": null,
+              "standardName": null,
+              "color": "#2D6657",
+              "textColor": null,
+              "showInPublicResultsFilters": null
+            },
+            "groupResults": null,
+            "isWriteIn": false,
+            "isQualifiedWriteIn": false,
+            "isWinner": null
+          },
+          {
+            "id": "01000000-f0b7-9b6a-6e6c-08df232198db",
+            "nativeId": "189",
+            "name": [
+              {
+                "languageId": "en",
+                "text": "Dominique M Scarimbolo"
+              }
+            ],
+            "voteCount": 126531,
+            "party": {
+              "id": null,
+              "name": null,
+              "abbreviation": null,
+              "standardName": null,
+              "color": "#2D6657",
+              "textColor": null,
+              "showInPublicResultsFilters": null
+            },
+            "groupResults": null,
+            "isWriteIn": false,
+            "isQualifiedWriteIn": false,
+            "isWinner": null
+          },
+          {
+            "id": "01000000-f0b7-9b6a-6e81-08df232198db",
+            "nativeId": "237",
+            "name": [
+              {
+                "languageId": "en",
+                "text": "Write-in"
+              }
+            ],
+            "voteCount": 2416,
+            "party": {
+              "id": null,
+              "name": null,
+              "abbreviation": null,
+              "standardName": null,
+              "color": "#2D6657",
+              "textColor": null,
+              "showInPublicResultsFilters": null
+            },
+            "groupResults": null,
+            "isWriteIn": true,
+            "isQualifiedWriteIn": false,
+            "isWinner": null
+          }
+        ]
+      },
+      "rankedChoiceSummaryResults": null,
+      "hasBreakdownResults": false,
+      "crossCounties": [],
+      "isCloseRace": null,
+      "partyName": null
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 """Offline preliminary admission; all counts and source IDs below are synthetic."""
 
+import base64
+import hashlib
 import json
+import os
 from copy import deepcopy
 from datetime import UTC, datetime
 from pathlib import Path
@@ -12,16 +15,26 @@ from typer.testing import CliRunner
 
 from election_guide.calendar.watch import read_repository_artifacts
 from election_guide.cli import app
-from election_guide.evidence.models import CaptureRequest
-from election_guide.evidence.storage import record_capture
+from election_guide.evidence.models import CaptureRequest, UnavailableRequest
+from election_guide.evidence.storage import record_capture, record_unavailable
 from election_guide.inventory.importer import read_inventory
 from election_guide.publication.models import PublicationViewModel
+from election_guide.rendering.browser import _CdpSocket  # pyright: ignore[reportPrivateUsage]
 from election_guide.rendering.config import read_rendering_configuration
-from election_guide.rendering.documents import render_comparison_document, render_html_document
+from election_guide.rendering.documents import (
+    render_comparison_document,
+    render_html_document,
+    render_race_document,
+)
 from election_guide.results.loader import read_results, reject_committed_counting_status
 from election_guide.results.validation import validate_results_inventory
+from tests.address_lookup_fixtures import without_live_address_requests
 from tests.test_precinct_rendering import general_view as general_view
-from tests.test_rendering import _client_payload, _race_card_html  # pyright: ignore[reportPrivateUsage]
+from tests.test_rendering import (  # pyright: ignore[reportPrivateUsage]
+    _client_payload,  # pyright: ignore[reportPrivateUsage]
+    _evaluate_in_chrome,  # pyright: ignore[reportPrivateUsage]
+    _race_card_html,  # pyright: ignore[reportPrivateUsage]
+)
 
 ROOT = Path(__file__).parents[1]
 INVENTORY = ROOT / "data/normalized/wa-2026-general-inventory.json"
@@ -132,6 +145,15 @@ def test_preliminary_zero_count_and_write_ins_remain_separate(tmp_path: Path) ->
     assert "share" not in results.model_dump(mode="json")["races"][0]["outcomes"][0]
 
 
+def test_unknown_reporting_completion_does_not_invalidate_whole_jurisdiction_counts(
+    tmp_path: Path,
+) -> None:
+    document = preliminary_document()
+    document["races"][0]["reporting_complete"] = None
+    results = read_document(tmp_path, document)
+    assert results.model_dump(mode="json")["races"][0]["reporting_complete"] is None
+
+
 def test_preliminary_general_result_reuses_tally_without_calling_outcomes(
     tmp_path: Path, general_view: PublicationViewModel
 ) -> None:
@@ -142,14 +164,85 @@ def test_preliminary_general_result_reuses_tally_without_calling_outcomes(
     )
     card = _race_card_html(html, "king-county-assessor")
     assert "Unofficial · Nov 3, 8:00:00 p.m. PST" in card
+
     assert card.count('class="race-results-row"') == 2
     assert card.count('style="width:50.0%"') == 2
     assert "220 ballots" in card
     assert "race-results-row-trailing" not in card
     assert "race-detail-result-chip" not in card
-    assert "Unofficial results · counting continues" in html
+    assert "Unofficial results · counts may change" in html
     # County's scheduled certification date is not a proved statewide promise.
     assert "Results certify November 24" not in html
+
+
+def test_failed_refresh_keeps_count_asof_and_later_success_clears_only_the_warning(
+    tmp_path: Path, general_view: PublicationViewModel
+) -> None:
+    document = preliminary_document()
+    document["failed_refreshes"] = [
+        {
+            "authority_id": "wa-secretary-of-state",
+            "checked_at": "2026-11-04T05:30:00Z",
+            "evidence": "data/manifests/evidence/synthetic-unavailable.json",
+        }
+    ]
+    metadata = general_view.metadata.model_copy(
+        update={
+            "generated_at": datetime(2026, 11, 4, 7, tzinfo=UTC),
+        }
+    )
+
+    def rendered_card() -> str:
+        view = general_view.model_copy(
+            update={"results": read_document(tmp_path, document), "metadata": metadata}
+        )
+        assert view.metadata.data_as_of == general_view.metadata.data_as_of
+        return _race_card_html(
+            render_html_document(
+                view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+            ),
+            "king-county-assessor",
+        )
+
+    card = rendered_card()
+    assert "Refresh unavailable · last checked Nov 3, 9:00:00 p.m. PST" in card
+    assert "Unofficial · Nov 3, 8:00:00 p.m. PST" in card
+    document["captures"][0]["captured_at"] = "2026-11-04T06:00:00Z"
+    card = rendered_card()
+    assert "Refresh unavailable" not in card
+    assert "Last checked Nov 3, 10:00:00 p.m. PST" in card
+    assert "Unofficial · Nov 3, 8:00:00 p.m. PST" in card
+
+
+def test_preliminary_percentage_rounding_matches_the_existing_certified_convention(
+    tmp_path: Path, general_view: PublicationViewModel
+) -> None:
+    from election_guide.results.ingest import rank_tallies_into_outcomes
+
+    inventory_race = next(
+        item for item in read_inventory(INVENTORY).races if item.id == "king-county-assessor"
+    )
+    certified = rank_tallies_into_outcomes(
+        [(inventory_race.choices[0].id, 129899), (inventory_race.choices[1].id, 70101)],
+        {choice.id: choice.ballot_order for choice in inventory_race.choices},
+        200000,
+        top_count=1,
+    )
+    reference = next(item for item in certified if item.choice_id == inventory_race.choices[0].id)
+    expected = f"{reference.share * 100:.1f}%"
+    assert expected == "65.0%"
+    document = preliminary_document()
+    race = next(item for item in document["races"] if item["race_id"] == inventory_race.id)
+    race["outcomes"][0]["votes"], race["outcomes"][1]["votes"] = 129899, 70101
+    race["write_in_votes"], race["ballots_counted"] = 0, 200000
+    view = general_view.model_copy(update={"results": read_document(tmp_path, document)})
+    card = _race_card_html(
+        render_html_document(
+            view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        ),
+        inventory_race.id,
+    )
+    assert expected in card
 
 
 def test_preliminary_results_never_enable_the_certified_comparison_column(
@@ -174,6 +267,124 @@ def test_preliminary_file_does_not_satisfy_future_certified_ingestion(tmp_path: 
         results_dir=directory,
     )
     assert "wa-2026-general" not in artifacts.ingested_election_ids
+
+
+@pytest.mark.parametrize("page", ["guide", "race"])
+@pytest.mark.parametrize("width", [320, 390, 1280])
+def test_preliminary_general_result_is_readable_in_the_actual_application(
+    tmp_path: Path, general_view: PublicationViewModel, page: str, width: int
+) -> None:
+    view = general_view.model_copy(
+        update={"results": read_document(tmp_path, preliminary_document())}
+    )
+    html = (
+        render_html_document(
+            view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        )
+        if page == "guide"
+        else render_race_document(
+            view, "king-county-assessor", public_site_url="https://seattleelections.guide"
+        )
+    )
+    html = without_live_address_requests(html)
+    path = tmp_path / f"preliminary-{page}-{width}.html"
+    path.write_text(html)
+    evidence_root = os.environ.get("SEG_RESULTS_EVIDENCE_DIR")
+    case = Path(evidence_root) / f"{page}-{width}" if evidence_root else None
+    if case is not None:
+        case.mkdir(parents=True, exist_ok=True)
+        (case / "application.html").write_text(html)
+
+    def capture(cdp: _CdpSocket, session_id: str) -> None:
+        if case is None:
+            return
+        version = cdp.command("Browser.getVersion")
+        (case / "browser-version.json").write_text(json.dumps(version, indent=2))
+        cdp.command(
+            "Runtime.evaluate",
+            {"expression": "document.fonts.ready", "awaitPromise": True},
+            session_id=session_id,
+        )
+        image = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session_id)
+        (case / "top.png").write_bytes(base64.b64decode(str(image["data"])))
+        cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    'document.querySelector(\'[data-publication-race-id="king-county-assessor"]'
+                    " .race-results,.race-detail-certified-result .race-results')"
+                    "?.scrollIntoView({block:'center'})"
+                )
+            },
+            session_id=session_id,
+        )
+        image = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session_id)
+        (case / "tally.png").write_bytes(base64.b64decode(str(image["data"])))
+
+    observed = _evaluate_in_chrome(
+        path,
+        """(async () => {
+      await document.fonts.ready;
+      const selector='[data-publication-race-id="king-county-assessor"]';
+      const block=document.querySelector(selector+' .race-results')
+        ??document.querySelector('.race-detail-certified-result .race-results');
+      if(!block)return JSON.stringify({error:'missing result block'});
+      const box=block.getBoundingClientRect();
+      const rows=[...block.querySelectorAll('.race-results-row')].map(row=>{
+        const name=row.querySelector('.race-results-name');
+        const share=row.querySelector('.race-results-share');
+        const bar=row.querySelector('.race-results-bar'),fill=bar.querySelector('i');
+        const a=name.getBoundingClientRect(),b=share.getBoundingClientRect();
+        return {name:name.textContent.trim(),percentage:share.textContent.trim(),
+          color:getComputedStyle(name).color,weight:getComputedStyle(name).fontWeight,
+          fillColor:getComputedStyle(fill).backgroundColor,
+          fillRatio:fill.getBoundingClientRect().width/bar.getBoundingClientRect().width,
+          readable:a.width>0&&a.right<=b.left+1&&a.height>=parseFloat(getComputedStyle(name).fontSize),
+          inside:a.left>=box.left-1&&b.right<=box.right+1};
+      });
+      const badge=block.querySelector('.race-results-status'),r=badge.getBoundingClientRect();
+      const banner=document.querySelector('.election-day'),t=document.createRange();
+      t.selectNodeContents(banner);
+      const text=t.getBoundingClientRect(),bb=banner.getBoundingClientRect();
+      return JSON.stringify({viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,
+        rows,provenance:block.querySelector('.race-results-provenance').textContent,
+        status:badge.textContent,amber:getComputedStyle(badge).color,
+        badgeInside:r.left>=box.left-1&&r.right<=box.right+1,
+        bannerCentered:Math.abs((text.left+text.right)-(bb.left+bb.right))<4,
+        outcomes:block.querySelectorAll('.race-detail-result-chip').length,
+        trailing:block.querySelectorAll('.race-results-row-trailing').length});
+    })()""",
+        mobile_width=width if width < 720 else None,
+        viewport=(width, 900) if width >= 720 else None,
+        interact=capture,
+    )
+    if case is not None:
+        (case / "observed.json").write_text(
+            json.dumps(
+                {
+                    "input_sha256": hashlib.sha256(html.encode()).hexdigest(),
+                    "method": (
+                        "actual headless Chrome normal rendered application; "
+                        "synthetic offline counts; GIS blocked"
+                    ),
+                    "observed": observed,
+                },
+                indent=2,
+            )
+        )
+    assert "error" not in observed, observed
+    assert observed["documentWidth"] <= observed["viewport"]
+    assert observed["badgeInside"] is True
+    assert observed["bannerCentered"] is True
+    assert "Unofficial" in observed["status"] and "PST" in observed["status"]
+    assert observed["amber"] == "rgb(138, 75, 0)"
+    assert observed["outcomes"] == observed["trailing"] == 0
+    assert "220 ballots" in observed["provenance"]
+    rows = observed["rows"]
+    assert len(rows) == 2
+    assert all(row["percentage"] == "50.0%" and row["readable"] and row["inside"] for row in rows)
+    assert len({(row["color"], row["weight"], row["fillColor"]) for row in rows}) == 1
+    assert all(row["fillRatio"] == pytest.approx(0.5, abs=0.01) for row in rows)
 
 
 def captured_document(tmp_path: Path) -> dict[str, Any]:
@@ -209,6 +420,144 @@ def captured_document(tmp_path: Path) -> dict[str, Any]:
     return document
 
 
+def test_preliminary_evidence_links_the_immutable_source_bytes_not_a_changing_feed(
+    tmp_path: Path,
+) -> None:
+    from election_guide.results.loader import resolve_results_capture_urls
+    from tests.test_results import _valid_results  # pyright: ignore[reportPrivateUsage]
+
+    document = captured_document(tmp_path)
+    manifest = json.loads((tmp_path / document["captures"][0]["evidence"]).read_text())
+    urls = resolve_results_capture_urls(
+        read_document(tmp_path, document),
+        repository_root=tmp_path,
+        source_commit="a" * 40,
+        project_url="https://github.com/example/fixture",
+    )
+    expected = (
+        "https://github.com/example/fixture/blob/"
+        + "a" * 40
+        + "/data/evidence/official/"
+        + manifest["storage_reference"]
+    )
+    assert urls["king-county-assessor"] == expected
+    assert "example.org/synthetic-results" not in urls.values()
+    legacy = resolve_results_capture_urls(
+        _valid_results(tmp_path / "legacy"),
+        repository_root=tmp_path / "legacy",
+        source_commit="a" * 40,
+        project_url="https://github.com/example/fixture",
+    )
+    assert legacy == {"king-county-assessor": "https://example.org/results/certified"}
+
+
+def test_preliminary_ingest_binds_source_ids_names_scope_and_original_vote_meaning(
+    tmp_path: Path,
+) -> None:
+    from election_guide.results import build_preliminary_results
+    from election_guide.results.ingest import resolve_ballot_choice
+
+    inventory = read_inventory(INVENTORY)
+    race = next(item for item in inventory.races if item.id == "king-county-assessor")
+    # One-race inventory is a bounded producer fixture, NOT full General admission.
+    fixture_inventory = inventory.model_copy(update={"races": [race], "coverage_checks": []})
+    body = (ROOT / "tests/fixtures/results/wa-2026-general-historical-county.json").read_bytes()
+    artifact = tmp_path / "historical-count-excerpt.json"
+    artifact.write_bytes(body)
+    reference = (
+        record_capture(
+            CaptureRequest(
+                source_id="king-county-elections",
+                requested_url="https://example.org/historical-fixture",
+                canonical_url="https://example.org/historical-fixture",
+                retrieved_at=datetime(2026, 11, 4, 5, tzinfo=UTC),
+                media_type="application/json",
+                title="Historical fixture, not current",
+                capture_method="manual_upload",
+                redistribution="permitted",
+                redistribution_note="Historical excerpt for offline producer test.",
+            ),
+            artifact,
+            tmp_path / "data/evidence/official",
+            tmp_path / "data/manifests/evidence",
+            repository_storage_root=tmp_path / "data/evidence/official",
+        )
+        .relative_to(tmp_path)
+        .as_posix()
+    )
+    registry = tmp_path / "config/authorities/default.yaml"
+    registry.parent.mkdir(parents=True)
+    registry.write_bytes((ROOT / "config/authorities/default.yaml").read_bytes())
+    source = next(
+        item for item in json.loads(body)["ballotItems"] if item["name"][0]["text"] == "Assessor"
+    )
+    binding = {
+        "race_id": race.id,
+        "jurisdiction_id": race.jurisdiction_id,
+        "source_jurisdiction": "king-county-wa",
+        "source_contest_id": source["id"],
+        "coverage": "whole_jurisdiction",
+        "source_contest_name": "Assessor",
+        "capture_evidence": reference,
+        "coverage_evidence": reference,
+        "choices": [
+            {
+                "source_choice_id": option["id"],
+                "source_name": option["name"][0]["text"],
+                "choice_id": resolve_ballot_choice(option["name"][0]["text"], race).id,
+            }
+            for option in source["summaryResults"]["ballotOptions"]
+            if not option["isWriteIn"]
+        ],
+    }
+    plan = {
+        "election_id": inventory.election.id,
+        "sources": [
+            {"authority_id": "king-county-elections", "format": "county", "evidence": reference}
+        ],
+        "races": [binding],
+    }
+    result = build_preliminary_results(plan, fixture_inventory, repository_root=tmp_path)
+    assert result.status == "preliminary"
+    assert result.races[0].votes_counted == 466113
+    assert result.races[0].ballots_counted is None
+    assert result.races[0].write_in_votes == 2416
+    assert sorted(item.votes for item in result.races[0].outcomes) == [126531, 337166]
+    assert result.races[0].reported_at.isoformat() == "2026-11-04T04:12:12.419061+00:00"
+    with pytest.raises(ValueError, match="every inventory race"):
+        build_preliminary_results(plan, inventory, repository_root=tmp_path)
+    mapping_path = tmp_path / "admission-map.yaml"
+    mapping_path.write_text(yaml.safe_dump(plan))
+    inventory_path = tmp_path / "one-race-fixture-inventory.json"
+    inventory_path.write_text(fixture_inventory.model_dump_json())
+    output_dir = tmp_path / "produced-results"
+    argv = [
+        "results",
+        "ingest-preliminary",
+        str(mapping_path),
+        "--inventory-path",
+        str(inventory_path),
+        "--repository-root",
+        str(tmp_path),
+        "--output-dir",
+        str(output_dir),
+    ]
+    command = CliRunner().invoke(app, argv)
+    assert command.exit_code == 0, command.output
+    output = output_dir / "wa-2026-general.yaml"
+    assert read_results(output) == result
+    # A certified file cannot be downgraded, even through a wrong election filename.
+    certified_bytes = (ROOT / "data/results/wa-2026-primary.yaml").read_bytes()
+    output.write_bytes(certified_bytes)
+    command = CliRunner().invoke(app, argv)
+    assert command.exit_code != 0
+    assert "certified" in command.output
+    assert output.read_bytes() == certified_bytes
+    binding["source_jurisdiction"] = "washington"
+    with pytest.raises(ValueError, match="jurisdiction"):
+        build_preliminary_results(plan, fixture_inventory, repository_root=tmp_path)
+
+
 def test_cli_selects_general_inventory_and_validates_real_capture_clock(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -229,6 +578,28 @@ def test_cli_selects_general_inventory_and_validates_real_capture_clock(
     assert "actual capture clock" in result.output
 
 
+def test_server_preliminary_staleness_preserves_the_original_count_time(
+    tmp_path: Path, general_view: PublicationViewModel
+) -> None:
+    view = general_view.model_copy(
+        update={
+            "results": read_document(tmp_path, preliminary_document()),
+            "metadata": general_view.metadata.model_copy(
+                update={
+                    "generated_at": datetime(2026, 11, 5, 5, tzinfo=UTC),
+                }
+            ),
+        }
+    )
+    html = render_html_document(
+        view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    )
+    card = _race_card_html(html, "king-county-assessor")
+    assert "Stale · last checked Nov 3, 9:00:00 p.m. PST" in card
+    assert "Unofficial · Nov 3, 8:00:00 p.m. PST" in card
+    assert "counting continues" not in html
+
+
 def test_preliminary_admission_requires_original_bytes_and_registered_authority(
     tmp_path: Path,
 ) -> None:
@@ -241,3 +612,55 @@ def test_preliminary_admission_requires_original_bytes_and_registered_authority(
     original.write_text("corrupted synthetic original")
     with pytest.raises(ValueError, match="hash mismatch"):
         validate_results_evidence(results, repository_root=tmp_path)
+
+
+def test_failed_refresh_is_bound_to_the_actual_unavailable_record(tmp_path: Path) -> None:
+    from election_guide.results.validation import validate_results_evidence
+
+    document = captured_document(tmp_path)
+    failure = record_unavailable(
+        UnavailableRequest(
+            source_id="wa-secretary-of-state",
+            requested_url="https://example.org/synthetic-results",
+            retrieved_at=datetime(2026, 11, 4, 6, tzinfo=UTC),
+            http_status=403,
+            redistribution="permitted",
+            redistribution_note="Synthetic unavailable fixture, no live request.",
+            unavailable_reason="Synthetic HTTP403; cause unknown.",
+        ),
+        tmp_path / "data/manifests/evidence",
+    )
+    document["failed_refreshes"] = [
+        {
+            "authority_id": "wa-secretary-of-state",
+            "checked_at": "2026-11-04T06:00:00Z",
+            "evidence": failure.relative_to(tmp_path).as_posix(),
+        }
+    ]
+    original = deepcopy(document)
+    original.pop("failed_refreshes")
+    result_path = tmp_path / "results.yaml"
+    result_path.write_text(yaml.safe_dump(original))
+    command = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "record-refresh-failure",
+            str(result_path),
+            str(failure),
+            "--repository-root",
+            str(tmp_path),
+        ],
+    )
+    assert command.exit_code == 0, command.output
+    recorded = read_results(result_path).model_dump(mode="json")
+    assert recorded["failed_refreshes"][0]["checked_at"] == "2026-11-04T06:00:00Z"
+    assert recorded["races"] == read_document(tmp_path, original).model_dump(mode="json")["races"]
+    assert (
+        recorded["captures"]
+        == read_document(tmp_path, original).model_dump(mode="json")["captures"]
+    )
+    validate_results_evidence(read_document(tmp_path, document), repository_root=tmp_path)
+    document["failed_refreshes"][0]["checked_at"] = "2026-11-04T06:01:00Z"
+    with pytest.raises(ValueError, match="actual unavailable observation"):
+        validate_results_evidence(read_document(tmp_path, document), repository_root=tmp_path)

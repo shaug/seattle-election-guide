@@ -60,7 +60,7 @@ def _election_day_banner(view_model: PublicationViewModel) -> str:
         # No single County calendar date or count clock describes all authorities.
         return (
             '<p class="election-day election-day-counting">'
-            '<span class="election-day-when"><b>Unofficial results · counting continues</b>'
+            '<span class="election-day-when"><b>Unofficial results · counts may change</b>'
             "<br>Count times and official sources are shown with each contest.</span></p>"
         )
     certified_on = results.certified_on if results is not None else None
@@ -225,6 +225,7 @@ def render_html_document(
             results=view_model.results,
             election_type=view_model.metadata.election_type,
             capture_urls=view_model.metadata.results_capture_urls,
+            as_of=view_model.metadata.generated_at,
         ),
     )
 
@@ -297,6 +298,7 @@ def render_race_document(
         results=view_model.results,
         election_type=view_model.metadata.election_type,
         capture_urls=view_model.metadata.results_capture_urls,
+        as_of=view_model.metadata.generated_at,
     )
     race_result_outcomes_by_candidate_id = context.race_result_outcomes_by_candidate_id(
         race_results

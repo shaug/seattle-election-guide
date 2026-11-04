@@ -34,6 +34,7 @@ CaptureKind = Literal["election_night", "certified", "amended"]
 # one. One percentage point absorbs ordinary rounding and undeclared write-ins
 # without letting an actually wrong or incomplete race pass.
 SHARE_SUM_TOLERANCE = 0.01
+PRELIMINARY_STALE_AFTER_SECONDS = 24 * 60 * 60
 
 
 class ResultsModel(BaseModel):
@@ -194,7 +195,7 @@ class PreliminaryRaceResults(ResultsModel):
     authority: str = Field(min_length=1)
     capture_evidence: str = Field(min_length=1)
     reported_at: AwareDatetime
-    reporting_complete: bool = Field(strict=True)
+    reporting_complete: bool | None = Field(strict=True)
     ballots_counted: int | None = Field(default=None, ge=0, strict=True)
     votes_counted: int | None = Field(default=None, ge=0, strict=True)
     write_in_votes: int = Field(ge=0, strict=True)
@@ -215,6 +216,14 @@ class PreliminaryRaceResults(ResultsModel):
         return self
 
 
+class PreliminaryRefreshFailure(ResultsModel):
+    """An actual failed attempt, never a successful observation or a new count."""
+
+    authority_id: str = Field(min_length=1)
+    checked_at: AwareDatetime
+    evidence: str = Field(min_length=1)
+
+
 class PreliminaryElectionResults(ResultsModel):
     """Explicit unofficial admission; legacy certified schema 1.0 stays unchanged."""
 
@@ -223,6 +232,9 @@ class PreliminaryElectionResults(ResultsModel):
     status: Literal["preliminary"] = "preliminary"
     captures: list[PreliminaryCapture] = Field(min_length=1)
     races: list[PreliminaryRaceResults] = Field(min_length=1)
+    failed_refreshes: list[PreliminaryRefreshFailure] = Field(
+        default_factory=list[PreliminaryRefreshFailure]
+    )
 
     @model_validator(mode="after")
     def validate_admission(self) -> PreliminaryElectionResults:
@@ -237,6 +249,9 @@ class PreliminaryElectionResults(ResultsModel):
                 raise ValueError(f"race {race.race_id!r} must cite its own authority capture")
             if race.reported_at > capture.captured_at:
                 raise ValueError("publisher count timestamp cannot follow the observation")
+        authority_ids = {capture.authority_id for capture in self.captures}
+        if any(failure.authority_id not in authority_ids for failure in self.failed_refreshes):
+            raise ValueError("refresh failure must belong to an admitted authority")
         return self
 
 
