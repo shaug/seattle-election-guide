@@ -154,10 +154,12 @@ function wirePreliminaryRecency(now) {
     const age = now.getTime() - checked;
     const limit = Number(element.getAttribute('data-preliminary-stale-after'));
     const label = element.getAttribute('data-preliminary-checked-label');
-    if (!Number.isFinite(age) || age < 0 || !Number.isFinite(limit) || limit <= 0 || !label) {
+    if (!Number.isFinite(checked) || !Number.isFinite(limit) || limit <= 0 || !label) {
       element.textContent = 'Check time unavailable';
     } else if (element.getAttribute('data-preliminary-refresh-failed') === 'true') {
       element.textContent = `Refresh unavailable · last checked ${label}`;
+    } else if (!Number.isFinite(age) || age < 0) {
+      element.textContent = 'Check time unavailable';
     } else if (age >= limit * 1000) {
       element.textContent = `Stale · last checked ${label}`;
     } else {

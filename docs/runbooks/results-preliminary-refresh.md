@@ -30,6 +30,18 @@ multi-county total. This runbook does not reopen #535 or perform future #692/#69
 
 ## Refresh and failures
 
+### Autonomous delivery requirement and current capability
+
+#696 requires supported autonomous acquisition, admission, scheduled refresh and normal
+protected publication. The local producer commands below are component interfaces; an
+operator-triggered daily recipe, a requested user download or an unexecuted schedule does
+not complete that requirement. Before activation, bind legitimate publisher-supported
+machine access and prove the complete jurisdiction map, count clocks/status and actual
+authority update schedules. No scheduled job may retry a held denial through a different
+client, identity, route or host. Retain the existing snapshot and unavailable/stale state.
+Transport/provider integration and end-to-end scheduled publication remain unverified
+until those bindings and the actual normal gates execute successfully.
+
 The local producer consumes an explicitly reviewed mapping and already captured bytes:
 
 ```sh
@@ -47,9 +59,10 @@ not count-as-of, and that payload does not independently establish unofficial st
 an explicit authority contest total. It cannot pass this producer without those proofs.
 An existing certified file cannot be overwritten with preliminary results.
 
-Use an operator-triggered capture/admission/diff/review/publication sequence after official
-announced releases. Check at least daily during active counting, grounding the actual schedule
-in publisher evidence. No live client polling, scheduled automatic commit or direct deploy.
+The autonomous capture/admission/diff/review/publication sequence follows official announced
+releases, grounding its cadence in publisher evidence. It must use the repository's normal
+append-only candidate and protected release gates. No live client polling or direct upload
+may bypass those gates. The manual component commands are also available for diagnosis.
 Compare every named count/share, reporting state, coverage and source clock. A lower corrected
 count is a reviewable revision, not a value to silently clamp or discard. A timestamp regression
 or changed election/schema/scope must stop new admission and preserve the previous snapshot.

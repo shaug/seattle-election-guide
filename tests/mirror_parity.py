@@ -63,6 +63,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import UTC, datetime, timedelta
 from fractions import Fraction
 from pathlib import Path
 from typing import Any
@@ -78,6 +79,13 @@ from election_guide.publication.models import (
 from election_guide.rendering import context
 from election_guide.rendering.validation import (
     _html_semantic_values,  # pyright: ignore[reportPrivateUsage]
+)
+from election_guide.results.models import (
+    PreliminaryCapture,
+    PreliminaryElectionResults,
+    PreliminaryOutcome,
+    PreliminaryRaceResults,
+    PreliminaryRefreshFailure,
 )
 from election_guide.serialization import read_json
 from tests.page_parity import race_parity_fixture_ids
@@ -1134,6 +1142,81 @@ def _deduplicate(cases: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
 
 
+def _preliminary_recency_cases(race: PublicationRace) -> list[dict[str, Any]]:
+    """Synthetic clock boundaries through the shipped result view, not source admission."""
+    captured_at = datetime(2026, 11, 4, 5, tzinfo=UTC)
+    cases: list[dict[str, Any]] = []
+    for age, failed in [
+        (0, False),
+        (86399, False),
+        (86400, False),
+        (86401, False),
+        (-1, False),
+        (7200, True),
+        (-1, True),
+    ]:
+        as_of = captured_at + timedelta(seconds=age)
+        evidence = "synthetic-clock-fixture"
+        results = PreliminaryElectionResults(
+            election_id="synthetic-clock-fixture",
+            captures=[
+                PreliminaryCapture(
+                    authority_id="fixture", captured_at=captured_at, evidence=evidence
+                )
+            ],
+            races=[
+                PreliminaryRaceResults(
+                    race_id=race.id,
+                    jurisdiction_id="fixture",
+                    source_contest_id="fixture",
+                    coverage="whole_jurisdiction",
+                    coverage_evidence=evidence,
+                    authority_id="fixture",
+                    authority="Synthetic fixture",
+                    capture_evidence=evidence,
+                    reported_at=captured_at,
+                    reporting_complete=None,
+                    votes_counted=0,
+                    write_in_votes=0,
+                    outcomes=[
+                        PreliminaryOutcome(choice_id=candidate.id, votes=0)
+                        for candidate in race.candidates
+                    ],
+                )
+            ],
+            failed_refreshes=[
+                PreliminaryRefreshFailure(
+                    authority_id="fixture",
+                    checked_at=captured_at + timedelta(minutes=1),
+                    evidence="synthetic-unavailable-fixture",
+                )
+            ]
+            if failed
+            else [],
+        )
+        view = context.race_results_view(
+            race, results, election_type="general", capture_urls=None, as_of=as_of
+        )
+        assert view is not None
+        cases.append(
+            {
+                "mirror": "preliminary-check-recency",
+                "input": {
+                    "now": as_of.isoformat(),
+                    "checkedAt": view.captured_at_iso,
+                    "checkedLabel": view.checked_at_label,
+                    "staleAfter": view.stale_after_seconds,
+                    "failed": view.refresh_unavailable,
+                },
+                "expected": view.recency_label,
+                "source": "context.race_results_view, synthetic retained-check clock boundary",
+                "note": f"age={age}s; failed refresh={failed}; "
+                "no production capture or coverage claim.",
+            }
+        )
+    return cases
+
+
 def build_mirror_parity_fixture(dataset: CanonicalDataset) -> dict[str, Any]:
     """Emit every golden case, computed by the server implementations."""
     panels = _panel_view_models(dataset)
@@ -1148,6 +1231,7 @@ def build_mirror_parity_fixture(dataset: CanonicalDataset) -> dict[str, Any]:
             *_row_differs_cases(),
             *_fragment_cases(view_model),
             *_counting_cases(),
+            *_preliminary_recency_cases(_races(view_model)[0]),
         ]
     )
     return {

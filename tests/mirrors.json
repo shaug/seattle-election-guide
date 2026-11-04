@@ -27,6 +27,18 @@
     "                       and the client reads it rather than recomputing it."
   ],
   "mirrors": {
+    "preliminary-check-recency": {
+      "client": "election-day.mjs wireElectionDay reader-clock aging",
+      "server": "rendering/context.py race_results_view preliminary check recency",
+      "proof": "parity-fixture",
+      "evidence": [
+        "text:Check time unavailable",
+        "text:Last checked",
+        "text:Refresh unavailable · last checked",
+        "text:Stale · last checked"
+      ],
+      "note": "The server states recency at build time and the reader ages it without requests. Generated cases call the shipped result view at the exact24h boundary, before/after it, with a future reader clock and with an actual failed-refresh state. The threshold and formatted check label are server-carried, not recalculated by JavaScript. Synthetic clock fixtures admit no real source or coverage."
+    },
     "share-percentage-label": {
       "client": "guide-format.mjs percentageLabel",
       "server": "publication/models.py _percentage_whole, via builder.py percentage_label",

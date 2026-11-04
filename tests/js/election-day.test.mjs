@@ -205,3 +205,22 @@ test('an untrusted reader clock cannot make a future preliminary check look fres
   wireElectionDay(new Date('2026-11-04T04:00:00Z'));
   assert.match(document.body.textContent, /Check time unavailable/);
 });
+
+test('a failed-refresh flag cannot bypass invalid preliminary check metadata', () => {
+  for (const [attribute, value] of [
+    ['data-preliminary-check-at', 'invalid'],
+    ['data-preliminary-stale-after', '0'],
+    ['data-preliminary-checked-label', ''],
+  ]) {
+    installBanner(
+      '<span data-preliminary-stale-after="86400" data-preliminary-check-at="2026-11-04T05:00:00Z" ' +
+        'data-preliminary-checked-label="Nov 3, 9:00:00 p.m. PST" ' +
+        'data-preliminary-refresh-failed="true">Last checked</span>',
+    );
+    const element = document.querySelector('[data-preliminary-check-at]');
+    assert.ok(element);
+    element.setAttribute(attribute, value);
+    wireElectionDay(new Date('2026-11-04T06:00:00Z'));
+    assert.equal(element.textContent, 'Check time unavailable', attribute);
+  }
+});

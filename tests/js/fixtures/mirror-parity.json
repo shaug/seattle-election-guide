@@ -10634,6 +10634,97 @@
       "note": "One source falls below the explicit-source floor, so every race is insufficient and the races it did not cover have no share at all."
     },
     {
+      "mirror": "preliminary-check-recency",
+      "input": {
+        "now": "2026-11-04T04:59:59+00:00",
+        "checkedAt": "2026-11-04T05:00:00+00:00",
+        "checkedLabel": "Nov 3, 9:00:00 p.m. PST",
+        "staleAfter": 86400,
+        "failed": false
+      },
+      "expected": "Check time unavailable",
+      "source": "context.race_results_view, synthetic retained-check clock boundary",
+      "note": "age=-1s; failed refresh=False; no production capture or coverage claim."
+    },
+    {
+      "mirror": "preliminary-check-recency",
+      "input": {
+        "now": "2026-11-04T05:00:00+00:00",
+        "checkedAt": "2026-11-04T05:00:00+00:00",
+        "checkedLabel": "Nov 3, 9:00:00 p.m. PST",
+        "staleAfter": 86400,
+        "failed": false
+      },
+      "expected": "Last checked Nov 3, 9:00:00 p.m. PST",
+      "source": "context.race_results_view, synthetic retained-check clock boundary",
+      "note": "age=0s; failed refresh=False; no production capture or coverage claim."
+    },
+    {
+      "mirror": "preliminary-check-recency",
+      "input": {
+        "now": "2026-11-05T04:59:59+00:00",
+        "checkedAt": "2026-11-04T05:00:00+00:00",
+        "checkedLabel": "Nov 3, 9:00:00 p.m. PST",
+        "staleAfter": 86400,
+        "failed": false
+      },
+      "expected": "Last checked Nov 3, 9:00:00 p.m. PST",
+      "source": "context.race_results_view, synthetic retained-check clock boundary",
+      "note": "age=86399s; failed refresh=False; no production capture or coverage claim."
+    },
+    {
+      "mirror": "preliminary-check-recency",
+      "input": {
+        "now": "2026-11-05T05:00:00+00:00",
+        "checkedAt": "2026-11-04T05:00:00+00:00",
+        "checkedLabel": "Nov 3, 9:00:00 p.m. PST",
+        "staleAfter": 86400,
+        "failed": false
+      },
+      "expected": "Stale · last checked Nov 3, 9:00:00 p.m. PST",
+      "source": "context.race_results_view, synthetic retained-check clock boundary",
+      "note": "age=86400s; failed refresh=False; no production capture or coverage claim."
+    },
+    {
+      "mirror": "preliminary-check-recency",
+      "input": {
+        "now": "2026-11-05T05:00:01+00:00",
+        "checkedAt": "2026-11-04T05:00:00+00:00",
+        "checkedLabel": "Nov 3, 9:00:00 p.m. PST",
+        "staleAfter": 86400,
+        "failed": false
+      },
+      "expected": "Stale · last checked Nov 3, 9:00:00 p.m. PST",
+      "source": "context.race_results_view, synthetic retained-check clock boundary",
+      "note": "age=86401s; failed refresh=False; no production capture or coverage claim."
+    },
+    {
+      "mirror": "preliminary-check-recency",
+      "input": {
+        "now": "2026-11-04T04:59:59+00:00",
+        "checkedAt": "2026-11-04T05:00:00+00:00",
+        "checkedLabel": "Nov 3, 9:00:00 p.m. PST",
+        "staleAfter": 86400,
+        "failed": true
+      },
+      "expected": "Refresh unavailable · last checked Nov 3, 9:00:00 p.m. PST",
+      "source": "context.race_results_view, synthetic retained-check clock boundary",
+      "note": "age=-1s; failed refresh=True; no production capture or coverage claim."
+    },
+    {
+      "mirror": "preliminary-check-recency",
+      "input": {
+        "now": "2026-11-04T07:00:00+00:00",
+        "checkedAt": "2026-11-04T05:00:00+00:00",
+        "checkedLabel": "Nov 3, 9:00:00 p.m. PST",
+        "staleAfter": 86400,
+        "failed": true
+      },
+      "expected": "Refresh unavailable · last checked Nov 3, 9:00:00 p.m. PST",
+      "source": "context.race_results_view, synthetic retained-check clock boundary",
+      "note": "age=7200s; failed refresh=True; no production capture or coverage claim."
+    },
+    {
       "mirror": "race-detail-accessible-summary",
       "input": {
         "scored": {
