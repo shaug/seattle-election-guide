@@ -104,7 +104,7 @@ class CaptureMetadata(EvidenceModel):
 
 
 class CaptureRequest(CaptureMetadata):
-    capture_method: Literal["static_html", "pdf", "image", "browser", "manual_upload"]
+    capture_method: Literal["static_html", "pdf", "image", "browser", "manual_upload", "json"]
 
     @model_validator(mode="after")
     def validate_capture_request(self) -> CaptureRequest:
@@ -115,7 +115,7 @@ class CaptureRequest(CaptureMetadata):
         if self.media_type is None:
             raise ValueError("captured evidence requires a media type")
         essence = media_type_essence(self.media_type)
-        if self.capture_method in {"static_html", "pdf", "image", "browser"}:
+        if self.capture_method in {"static_html", "pdf", "image", "browser", "json"}:
             if self.http_status is None:
                 raise ValueError("direct captures require an HTTP status")
             if not 200 <= self.http_status < 300:
@@ -127,6 +127,11 @@ class CaptureRequest(CaptureMetadata):
             raise ValueError("static_html capture requires an HTML media type")
         if self.capture_method == "pdf" and essence != "application/pdf":
             raise ValueError("pdf capture requires application/pdf")
+        if self.capture_method == "json" and essence not in {
+            "application/json",
+            "application/octet-stream",
+        }:
+            raise ValueError("json capture requires JSON or binary export media type")
         if self.capture_method == "image" and not essence.startswith("image/"):
             raise ValueError("image capture requires an image media type")
         if self.capture_method == "browser" and not self.browser_required:

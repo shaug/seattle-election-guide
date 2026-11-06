@@ -1854,6 +1854,28 @@ def results_validate(
     )
 
 
+@results_app.command("acquire-preliminary")
+def results_acquire_preliminary(
+    source: Annotated[str, typer.Argument(help="Reviewed feed: county or statewide.")],
+    repository_root: Annotated[Path, typer.Option(exists=True, file_okay=False)] = Path("."),
+    live: Annotated[
+        bool, typer.Option(help="Explicitly enable one live official request.")
+    ] = False,
+) -> None:
+    """Capture one official export; never ingest counts or publish a release."""
+    from election_guide.results.acquisition import acquire_preliminary
+
+    if not live:
+        typer.echo("preliminary acquisition requires explicit --live", err=True)
+        raise typer.Exit(code=1)
+    try:
+        manifest = acquire_preliminary(source, repository_root=repository_root)
+    except (OSError, ValueError) as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"preliminary capture: {manifest}")
+
+
 @results_app.command("ingest-preliminary")
 def results_ingest_preliminary(
     mapping_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],

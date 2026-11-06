@@ -1,6 +1,7 @@
 """Post-election results: schema, loader, adapter, and validator
 (docs/RESULTS.md)."""
 
+from election_guide.results.acquisition import acquire_preliminary
 from election_guide.results.ingest import (
     ContestRows,
     ResultsIngestError,
@@ -34,6 +35,7 @@ __all__ = [
     "RaceResults",
     "ResultsCapture",
     "ResultsIngestError",
+    "acquire_preliminary",
     "build_election_results",
     "build_preliminary_results",
     "build_sos_race_results",

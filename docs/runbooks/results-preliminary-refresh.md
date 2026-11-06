@@ -30,6 +30,31 @@ multi-county total. This runbook does not reopen #535 or perform future #692/#69
 
 ## Refresh and failures
 
+### Explicit autonomous acquisition interface
+
+The fixed reviewed November 3 feeds can be fetched without a user download:
+
+```sh
+uv run --offline --frozen election-guide results acquire-preliminary county --live
+uv run --offline --frozen election-guide results acquire-preliminary statewide --live
+```
+
+Each permitted invocation makes one request through the existing identifying SEG Python HTTP
+transport. The results-only profile has a 128 MiB byte budget, a 60-second total deadline
+and no redirect following. The ordinary endorsement collector retains its 25 MiB budget.
+There is no automatic retry or alternate-client fallback. A real denial/error writes an
+unavailable manifest and exits unsuccessfully. Successful supported JSON is retained in
+the tracked official evidence store with the actual HTTP status, retrieval clock and hash;
+`capture_method: json` does not claim a browser read or a manual user download.
+
+An acquisition command never writes `data/results`, changes a publisher count timestamp,
+certifies an election or publishes the site. Its caller must stop on failure. A retained
+401/403 or unreviewed redirect holds subsequent invocations for that exact source/URL;
+another scheduler tick cannot release it. A legitimate reviewed access disposition is
+required. Scheduling and protected publication are not activated
+by these commands. See the [November 6 client experiment](../audits/2026-11-06-preliminary-http-clients.md)
+for observed client differences and remaining data-admission limits.
+
 ### Autonomous delivery requirement and current capability
 
 #696 requires supported autonomous acquisition, admission, scheduled refresh and normal

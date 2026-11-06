@@ -313,6 +313,11 @@
     },
     "partition": "integration-rendering"
   },
+  "tests/test_preliminary_acquisition.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
   "tests/test_preliminary_feeds.py": {
     "suite": "unit",
     "tests": {},

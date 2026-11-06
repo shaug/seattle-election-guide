@@ -46,8 +46,10 @@ Raw captures are addressed by content hash and governed by `SOURCE_POLICY.md`.
 ## Components
 
 - **Configuration:** elections, jurisdictions, sources, scoring, and rendering policy.
-- **Collection:** HTTPX for static content and Playwright only when browser rendering is
-  necessary. Collection never runs as an implicit part of publication.
+- **Collection:** the bounded Python HTTP transport for static content and an explicit
+  browser only when rendered evidence is necessary. Official results have a separate
+  bounded download profile; both share public-address, TLS and deadline checks.
+  Collection never runs as an implicit part of publication.
 - **Evidence storage:** Retained restricted plaintext artifacts are stored by SHA-256 outside Git.
   Recurring verification explicitly selects `facts_only`: private temporary responses produce
   observed-only manifests, factual snapshots, checks and approvals in Git, without new full-page

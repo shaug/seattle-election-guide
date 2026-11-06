@@ -377,6 +377,11 @@ def _validate_staged_artifact(request: CaptureRequest, artifact_path: Path) -> N
     essence = media_type_essence(request.media_type)
     with artifact_path.open("rb") as artifact:
         header = artifact.read(4096)
+    if request.capture_method == "json":
+        try:
+            json.loads(artifact_path.read_bytes())
+        except (UnicodeError, json.JSONDecodeError) as error:
+            raise ValueError("JSON capture bytes are not a valid JSON document") from error
     if essence == "application/pdf" and not header.startswith(b"%PDF-"):
         raise ValueError("PDF capture bytes do not begin with a PDF signature")
     if essence.startswith("image/") and not _matches_image_signature(

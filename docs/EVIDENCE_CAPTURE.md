@@ -99,7 +99,7 @@ uv run election-guide evidence capture tmp/local-page.html \
   --redistribution-note "Full third-party page retained locally for review only."
 ```
 
-Capture methods are `static_html`, `pdf`, `image`, `browser`, and `manual_upload`. Direct capture
+Capture methods are `static_html`, `pdf`, `image`, `browser`, `json`, and `manual_upload`. Direct capture
 methods require a successful HTTP status. Browser captures must explicitly record
 `--browser-required`. A changed canonical URL requires one or more `--redirect-url` options that
 begin with the requested URL and end with the canonical URL.
