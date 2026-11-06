@@ -108,8 +108,18 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
         if election == "wa-2026-general":
             added = current.entries[len(public) :]
             assert [entry.headline for entry in added] == [
-                "Added SGN's five state Supreme Court endorsements."
+                "Added SGN's five state Supreme Court endorsements.",
+                "Added unofficial election-wide counts to the general guide.",
             ]
+            assert added[1].corrected_on == date(2026, 11, 6)
+            assert added[1].topics == ["results"]
+            assert added[1].actions == ["added"]
+            assert {link.url for link in added[1].provenance} == {
+                "/e/wa-2026-general/",
+                "https://results.votewa.gov/cdn/results/washington/export-20261103.json",
+                "https://results.votewa.gov/results/public/api/elections/king-county-wa/20261103/data",
+                "https://github.com/shaug/seattle-election-guide/issues/696",
+            }
             assert added[0].corrected_on == date(2026, 11, 2)
             assert added[0].topics == ["endorsements"]
             assert added[0].actions == ["added"]
