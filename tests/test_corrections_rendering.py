@@ -130,7 +130,15 @@ def test_real_general_log_preserves_complete_classified_entries_in_served_markup
     markup = unescape(page.split("<script", 1)[0])
     audit = json.loads((PROJECT_ROOT / "docs/audits/updates-676/classification.json").read_text())
     rows = [r for r in audit["entries"] if r["election_id"] == "wa-2026-general"]
-    assert markup.count('class="corrections-entry update-entry"') == 19
+    assert general_view.corrections is not None
+    assert markup.count('class="corrections-entry update-entry"') == len(
+        general_view.corrections.entries
+    )
+    for current in general_view.corrections.entries:
+        assert current.headline in markup and current.body in markup
+        assert f'datetime="{current.corrected_on}"' in markup
+        for citation in current.provenance:
+            assert f'href="{citation.url}"' in markup
     assert '<article class="corrections-entry update-entry" hidden' not in markup
     for row in rows:
         entry = row["original_entry"]
