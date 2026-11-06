@@ -385,3 +385,25 @@ entries:
         url: /e/wa-2026-general/races/supreme-court-justice-7/
     topics: [endorsements]
     actions: [added]
+  - corrected_on: 2026-11-06
+    headline: "Added unofficial election-wide counts to the general guide."
+    body: >-
+      Preliminary results now show the official count-so-far for each contest's
+      complete jurisdiction. Statewide and multi-county contests use Washington's
+      aggregate results; contests wholly within King County use its official
+      count. The results remain unofficial, with equal emphasis for all choices
+      and no winner calls. King County supplies a count timestamp. Washington's
+      export supplies a generation timestamp instead, which is labeled separately
+      with a notice that its count timestamp is not provided. Percentages exclude
+      write-ins, and the retained evidence preserves the original source counts.
+    provenance:
+      - label: "General election guide"
+        url: /e/wa-2026-general/
+      - label: "Washington Secretary of State official aggregate"
+        url: https://results.votewa.gov/cdn/results/washington/export-20261103.json
+      - label: "King County official results"
+        url: https://results.votewa.gov/results/public/api/elections/king-county-wa/20261103/data
+      - label: "Coverage, source mapping and preliminary-results policy"
+        url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics: [results]
+    actions: [added]
