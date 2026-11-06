@@ -25,6 +25,7 @@ from election_guide.results.loader import (
 )
 from election_guide.results.models import ElectionResults, RaceOutcome, RaceResults, ResultsCapture
 from election_guide.results.preliminary import build_preliminary_results, parse_preliminary_feed
+from election_guide.results.refresh import prepare_preliminary_refresh
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 
 __all__ = [
@@ -44,6 +45,7 @@ __all__ = [
     "parse_certified_csv",
     "parse_preliminary_feed",
     "parse_statewide_export",
+    "prepare_preliminary_refresh",
     "read_results",
     "reject_committed_counting_status",
     "resolve_ballot_choice",

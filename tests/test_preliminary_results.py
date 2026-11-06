@@ -27,6 +27,7 @@ from election_guide.rendering.documents import (
     render_race_document,
 )
 from election_guide.results.loader import read_results, reject_committed_counting_status
+from election_guide.results.models import PreliminaryElectionResults
 from election_guide.results.validation import validate_results_inventory
 from tests.address_lookup_fixtures import without_live_address_requests
 from tests.test_precinct_rendering import general_view as general_view
@@ -77,10 +78,12 @@ def preliminary_document() -> dict[str, Any]:
     }
 
 
-def read_document(tmp_path: Path, document: dict[str, Any]):
+def read_document(tmp_path: Path, document: dict[str, Any]) -> PreliminaryElectionResults:
     path = tmp_path / "results.yaml"
     path.write_text(yaml.safe_dump(document))
-    return read_results(path)
+    results = read_results(path)
+    assert isinstance(results, PreliminaryElectionResults)
+    return results
 
 
 def test_whole_jurisdiction_count_so_far_is_admitted_without_certification(tmp_path: Path) -> None:
@@ -271,12 +274,16 @@ def test_preliminary_file_does_not_satisfy_future_certified_ingestion(tmp_path: 
 
 @pytest.mark.parametrize("page", ["guide", "race"])
 @pytest.mark.parametrize("width", [320, 390, 1280])
+@pytest.mark.parametrize("clock_basis", ["count", "export"])
 def test_preliminary_general_result_is_readable_in_the_actual_application(
-    tmp_path: Path, general_view: PublicationViewModel, page: str, width: int
+    tmp_path: Path, general_view: PublicationViewModel, page: str, width: int, clock_basis: str
 ) -> None:
-    view = general_view.model_copy(
-        update={"results": read_document(tmp_path, preliminary_document())}
-    )
+    document = preliminary_document()
+    if clock_basis == "export":
+        target = next(r for r in document["races"] if r["race_id"] == "king-county-assessor")
+        target["reported_at"] = None
+        target["export_generated_at"] = "2026-11-04T04:15:00Z"
+    view = general_view.model_copy(update={"results": read_document(tmp_path, document)})
     html = (
         render_html_document(
             view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
@@ -290,7 +297,7 @@ def test_preliminary_general_result_is_readable_in_the_actual_application(
     path = tmp_path / f"preliminary-{page}-{width}.html"
     path.write_text(html)
     evidence_root = os.environ.get("SEG_RESULTS_EVIDENCE_DIR")
-    case = Path(evidence_root) / f"{page}-{width}" if evidence_root else None
+    case = Path(evidence_root) / f"{clock_basis}-{page}-{width}" if evidence_root else None
     if case is not None:
         case.mkdir(parents=True, exist_ok=True)
         (case / "application.html").write_text(html)
@@ -377,6 +384,9 @@ def test_preliminary_general_result_is_readable_in_the_actual_application(
     assert observed["badgeInside"] is True
     assert observed["bannerCentered"] is True
     assert "Unofficial" in observed["status"] and "PST" in observed["status"]
+    if clock_basis == "export":
+        assert "Export generated" in observed["status"]
+        assert "Count timestamp not provided" in observed["provenance"]
     assert observed["amber"] == "rgb(138, 75, 0)"
     assert observed["outcomes"] == observed["trailing"] == 0
     assert "220 ballots" in observed["provenance"]
@@ -523,6 +533,7 @@ def test_preliminary_ingest_binds_source_ids_names_scope_and_original_vote_meani
     assert result.races[0].ballots_counted is None
     assert result.races[0].write_in_votes == 2416
     assert sorted(item.votes for item in result.races[0].outcomes) == [126531, 337166]
+    assert result.races[0].reported_at is not None
     assert result.races[0].reported_at.isoformat() == "2026-11-04T04:12:12.419061+00:00"
     with pytest.raises(ValueError, match="every inventory race"):
         build_preliminary_results(plan, inventory, repository_root=tmp_path)
@@ -664,3 +675,34 @@ def test_failed_refresh_is_bound_to_the_actual_unavailable_record(tmp_path: Path
     document["failed_refreshes"][0]["checked_at"] = "2026-11-04T06:01:00Z"
     with pytest.raises(ValueError, match="actual unavailable observation"):
         validate_results_evidence(read_document(tmp_path, document), repository_root=tmp_path)
+
+
+def test_export_clock_keeps_missing_count_clock_and_approved_wording(
+    tmp_path: Path, general_view: PublicationViewModel
+) -> None:
+    document = preliminary_document()
+    row = next(r for r in document["races"] if r["race_id"] == "king-county-assessor")
+    row["reported_at"] = None
+    row["export_generated_at"] = "2026-11-04T04:15:00Z"
+    row["vote_total_basis"] = "complete_choice_sum"
+    row["ballots_counted"] = None
+    row["votes_counted"] = sum(o["votes"] for o in row["outcomes"]) + row["write_in_votes"]
+    results = read_document(tmp_path, document)
+    assert next(r for r in results.races if r.race_id == "king-county-assessor").reported_at is None
+    html = render_html_document(
+        general_view.model_copy(update={"results": results}),
+        read_rendering_configuration(ROOT / "config/rendering/guide.yaml"),
+    )
+    assert "Unofficial · Export generated Nov 3, 8:15:00 p.m. PST" in html
+    assert "Count timestamp not provided" in html
+    assert "Certified ·" not in html
+
+
+def test_generation_clock_cannot_follow_capture_or_replace_no_clock(tmp_path: Path) -> None:
+    document = preliminary_document()
+    document["races"][0]["reported_at"] = None
+    with pytest.raises(ValueError, match="timestamp"):
+        read_document(tmp_path, document)
+    document["races"][0]["export_generated_at"] = "2026-11-04T06:00:00Z"
+    with pytest.raises(ValueError, match="timestamp"):
+        read_document(tmp_path, document)

@@ -8,6 +8,9 @@ implementation or live client results fetch. Preliminary presence never enables 
 explicitly Certified result comparison column. SSR contains count/status/provenance;
 publisher strings remain autoescaped and no raw-HTML exception is widened. Legacy certified
 payload values/serialization and immutable archives retain their contract.
+State export generation and missing count time use the exact approved wording from DESIGN.md;
+County count time is preserved. Nullable publisher status and tagged calculated vote totals
+stay in the typed provenance contract. The browser does not infer these facts or fetch results.
 
 How to structure the code that builds and runs the site's pages. DESIGN.md
 governs what the UI looks like and how it behaves; this document governs how

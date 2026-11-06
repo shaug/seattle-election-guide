@@ -165,6 +165,7 @@ from election_guide.scoring import (
     summarize_consensus_payload,
 )
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
+from election_guide.serialization import write_generated_bytes as _write_generated_bytes
 from election_guide.sources.catalog import (
     PanelSnapshotCatalog,
     appended_panel_snapshot,
@@ -1899,26 +1900,9 @@ def results_ingest_preliminary(
                 raise ValueError(
                     "cannot overwrite a legacy/certified results file with preliminary data"
                 )
-            if previous.election_id != results.election_id:
-                raise ValueError("existing preliminary file belongs to a different election")
-            previous_races = {race.race_id: race for race in previous.races}
-            if any(
-                race.race_id in previous_races
-                and race.reported_at < previous_races[race.race_id].reported_at
-                for race in results.races
-            ):
-                raise ValueError(
-                    "publisher count timestamp regressed; retain the previous snapshot"
-                )
-            captures = {capture.evidence: capture for capture in previous.captures}
-            captures.update({capture.evidence: capture for capture in results.captures})
-            results = PreliminaryElectionResults.model_validate(
-                {
-                    **results.model_dump(),
-                    "captures": list(captures.values()),
-                    "failed_refreshes": previous.failed_refreshes,
-                }
-            )
+            from election_guide.results.refresh import merge_preliminary_history
+
+            results = merge_preliminary_history(results, previous)
             validate_results_evidence(results, repository_root=repository_root)
         _write_generated_yaml(output_path, results.model_dump(mode="json"))
     except (OSError, ValidationError, ValueError) as error:
@@ -1927,6 +1911,29 @@ def results_ingest_preliminary(
     typer.echo(
         f"preliminary results: {output_path} ({len(results.races)} whole-jurisdiction races)"
     )
+
+
+@results_app.command("prepare-refresh")
+def results_prepare_refresh(
+    mapping_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    inventory_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)],
+    repository_root: Annotated[Path, typer.Option(exists=True, file_okay=False)] = Path("."),
+    live: Annotated[bool, typer.Option()] = False,
+) -> None:
+    """Prepare a full official snapshot once; do not publish or certify it."""
+    from election_guide.results.refresh import prepare_preliminary_refresh
+
+    if not live:
+        typer.echo("preliminary refresh requires explicit --live", err=True)
+        raise typer.Exit(code=1)
+    try:
+        report = prepare_preliminary_refresh(
+            mapping_path, inventory_path, repository_root=repository_root
+        )
+    except (OSError, ValueError) as error:
+        typer.echo(canonical_json_bytes({"status": "blocked", "reason": str(error)}).decode())
+        raise typer.Exit(code=1) from error
+    typer.echo(canonical_json_bytes(report).decode())
 
 
 @results_app.command("record-refresh-failure")
@@ -2700,24 +2707,6 @@ def _write_generated_json(path: Path, value: object) -> None:
 
 def _write_generated_yaml(path: Path, value: object) -> None:
     _write_generated_bytes(path, yaml.safe_dump(value, sort_keys=True).encode())
-
-
-def _write_generated_bytes(path: Path, payload: bytes) -> None:
-    """Write generated output atomically: stage in the destination directory,
-    fsync, then `os.replace` so a reader never observes a partial file."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
-            temporary_path = Path(temporary.name)
-            temporary.write(payload)
-            temporary.flush()
-            os.fsync(temporary.fileno())
-        os.replace(temporary_path, path)
-        temporary_path = None
-    finally:
-        if temporary_path is not None:
-            temporary_path.unlink(missing_ok=True)
 
 
 def _parse_json_value(value: str) -> Any:

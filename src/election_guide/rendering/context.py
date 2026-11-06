@@ -1428,6 +1428,7 @@ class RaceResultsView:
     outcomes: tuple[RaceResultOutcomeView, ...]
     preliminary: bool = False
     reported_at_label: str = ""
+    export_generated_at_label: str = ""
     captured_at_iso: str = ""
     checked_at_label: str = ""
     recency_label: str = ""
@@ -1549,7 +1550,12 @@ def _preliminary_race_view(
         authority=tally.authority,
         capture_url=(capture_urls or {}).get(race.id),
         preliminary=True,
-        reported_at_label=_results_clock_label(tally.reported_at),
+        reported_at_label=_results_clock_label(tally.reported_at)
+        if tally.reported_at is not None
+        else "",
+        export_generated_at_label=_results_clock_label(tally.export_generated_at)
+        if tally.export_generated_at is not None
+        else "",
         captured_at_iso=capture.captured_at.isoformat(),
         checked_at_label=checked_label,
         recency_label=recency,

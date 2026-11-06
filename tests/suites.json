@@ -323,11 +323,21 @@
     "tests": {},
     "partition": "unit"
   },
+  "tests/test_preliminary_refresh.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
   "tests/test_preliminary_results.py": {
     "suite": "integration",
     "tests": {
       "test_preliminary_general_result_is_readable_in_the_actual_application": "e2e"
     },
+    "partition": "integration-artifacts"
+  },
+  "tests/test_preliminary_workflow.py": {
+    "suite": "contract",
+    "tests": {},
     "partition": "integration-artifacts"
   },
   "tests/test_preview_teardown.py": {

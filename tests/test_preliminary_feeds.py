@@ -12,6 +12,60 @@ from election_guide.results import parse_preliminary_feed
 FIXTURES = Path(__file__).parent / "fixtures/results"
 
 
+def test_retained_nov6_pair_admits_complete_scope_without_fabricating_state_metadata() -> None:
+    from election_guide.inventory.importer import read_inventory
+    from election_guide.results import build_preliminary_results
+    from election_guide.serialization import read_yaml
+
+    root = Path(__file__).parents[1]
+    plan = read_yaml(root / "config/results/wa-2026-general-preliminary.yaml")
+    inventory = read_inventory(root / "data/normalized/wa-2026-general-inventory.json")
+    results = build_preliminary_results(plan, inventory, repository_root=root)
+    assert len(results.races) == 52 and sum(len(r.outcomes) for r in results.races) == 83
+    ld32 = next(r for r in results.races if r.race_id == "ld-32-state-representative-1")
+    assert ld32.authority_id == "wa-secretary-of-state"
+    assert ld32.votes_counted == 49043  # Retained Nov6 State aggregate, not County's 24461.
+    assert ld32.reported_at is None and ld32.export_generated_at is not None
+    assert ld32.vote_total_basis == "complete_choice_sum"
+    state = next(c for c in results.captures if c.authority_id == "wa-secretary-of-state")
+    assert state.publisher_is_official_results is None
+    council = next(r for r in results.races if r.race_id == "seattle-city-council-5")
+    assert council.write_in_votes == 146 and len(council.outcomes) == 2
+    assert council.write_in_overrides[0].publisher_is_write_in is False
+
+
+@pytest.mark.parametrize("mutation", ["missing_override", "changed_flag", "changed_publisher"])
+def test_reviewed_mapping_stops_on_unresolved_classification_or_identity(mutation: str) -> None:
+    from election_guide.inventory.importer import read_inventory
+    from election_guide.results import build_preliminary_results
+    from election_guide.serialization import read_yaml
+
+    root = Path(__file__).parents[1]
+    plan = read_yaml(root / "config/results/wa-2026-general-preliminary.yaml")
+    council = next(r for r in plan["races"] if r["race_id"] == "seattle-city-council-5")
+    if mutation == "missing_override":
+        council["write_in_overrides"] = []
+    elif mutation == "changed_flag":
+        council["write_in_overrides"][0]["publisher_is_write_in"] = True
+    else:
+        plan["sources"][0]["publisher_jurisdiction_id"] = "wrong-publisher"
+    with pytest.raises(ValueError, match=r"mapping|Write-in|identity"):
+        build_preliminary_results(
+            plan,
+            read_inventory(root / "data/normalized/wa-2026-general-inventory.json"),
+            repository_root=root,
+        )
+
+
+def test_state_source_preserves_an_explicit_official_flag_if_one_is_supplied() -> None:
+    raw = json.loads((FIXTURES / "wa-2026-general-historical-state.json").read_bytes())
+    raw["isOfficialResults"] = True
+    assert (
+        parse_preliminary_feed(json.dumps(raw).encode(), format="statewide").is_official_results
+        is True
+    )
+
+
 def test_county_feed_keeps_publisher_clock_and_county_scope_without_calling_winners() -> None:
     feed = parse_preliminary_feed(
         (FIXTURES / "wa-2026-general-historical-county.json").read_bytes(), format="county"

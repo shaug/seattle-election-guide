@@ -1,0 +1,1119 @@
+{
+  "schema_version": "1.0",
+  "election_id": "wa-2026-general",
+  "sources": [
+    {
+      "authority_id": "king-county-elections",
+      "format": "county",
+      "evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "publisher_jurisdiction_id": "01000000-f977-1a83-d40f-08ddd6a09cb2"
+    },
+    {
+      "authority_id": "wa-secretary-of-state",
+      "format": "statewide",
+      "evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "publisher_jurisdiction_id": "01000000-f977-1a83-1ed4-08ddd69e9e69"
+    }
+  ],
+  "races": [
+    {
+      "race_id": "court-of-appeals-division-1-district-1-judge-5",
+      "jurisdiction_id": "court-of-appeals-division-1-district-1",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187084",
+      "source_contest_name": "Court of Appeals, Division 1, District 1 - Judge Position 5",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602259",
+          "source_name": "David S. Mann",
+          "choice_id": "court-of-appeals-division-1-district-1-judge-5--david-s-mann"
+        }
+      ]
+    },
+    {
+      "race_id": "court-of-appeals-division-1-district-1-judge-6",
+      "jurisdiction_id": "court-of-appeals-division-1-district-1",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187085",
+      "source_contest_name": "Court of Appeals, Division 1, District 1 - Judge Position 6",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602260",
+          "source_name": "Bill A. Bowman",
+          "choice_id": "court-of-appeals-division-1-district-1-judge-6--bill-a-bowman"
+        }
+      ]
+    },
+    {
+      "race_id": "initiative-26-001",
+      "jurisdiction_id": "washington-state",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "7326",
+      "source_contest_name": "Initiative Measure No. IL26-001",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "Yes-1-",
+          "source_name": "Yes",
+          "choice_id": "initiative-26-001--yes"
+        },
+        {
+          "source_choice_id": "No-2-",
+          "source_name": "No",
+          "choice_id": "initiative-26-001--no"
+        }
+      ]
+    },
+    {
+      "race_id": "initiative-26-638",
+      "jurisdiction_id": "washington-state",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "7327",
+      "source_contest_name": "Initiative Measure No. IL26-638",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "Yes-1-",
+          "source_name": "Yes",
+          "choice_id": "initiative-26-638--yes"
+        },
+        {
+          "source_choice_id": "No-2-",
+          "source_name": "No",
+          "choice_id": "initiative-26-638--no"
+        }
+      ]
+    },
+    {
+      "race_id": "initiative-26-645",
+      "jurisdiction_id": "washington-state",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "7325",
+      "source_contest_name": "Initiative Measure No. IP26-645",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "Yes-1-",
+          "source_name": "Yes",
+          "choice_id": "initiative-26-645--yes"
+        },
+        {
+          "source_choice_id": "No-2-",
+          "source_name": "No",
+          "choice_id": "initiative-26-645--no"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-assessor",
+      "jurisdiction_id": "king-county",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-6d8b-08df232198db",
+      "source_contest_name": "Assessor",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-6e5a-08df232198db",
+          "source_name": "Rob Foxcurran",
+          "choice_id": "king-county-assessor--rob-foxcurran"
+        },
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-6e6c-08df232198db",
+          "source_name": "Dominique M Scarimbolo",
+          "choice_id": "king-county-assessor--dominique-m-scarimbolo"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-council-2",
+      "jurisdiction_id": "county-council-district-2",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-73aa-08df232198db",
+      "source_contest_name": "Metropolitan King County - Council District No. 2",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-73c7-08df232198db",
+          "source_name": "Rebecca Saldaña",
+          "choice_id": "king-county-council-2--rebecca-saldana"
+        },
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-73cd-08df232198db",
+          "source_name": "Toshiko Grace Hasegawa",
+          "choice_id": "king-county-council-2--toshiko-grace-hasegawa"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-council-4",
+      "jurisdiction_id": "county-council-district-4",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-7402-08df232198db",
+      "source_contest_name": "Metropolitan King County - Council District No. 4",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7467-08df232198db",
+          "source_name": "Jorge L. Barón",
+          "choice_id": "king-county-council-4--jorge-l-baron"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-council-8",
+      "jurisdiction_id": "county-council-district-8",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-74ea-08df232198db",
+      "source_contest_name": "Metropolitan King County - Council District No. 8",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7502-08df232198db",
+          "source_name": "Teresa Mosqueda",
+          "choice_id": "king-county-council-8--teresa-mosqueda"
+        },
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7507-08df232198db",
+          "source_name": "Nick Duda",
+          "choice_id": "king-county-council-8--nick-duda"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-director-of-elections",
+      "jurisdiction_id": "king-county",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-731b-08df232198db",
+      "source_contest_name": "Director of Elections",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-737b-08df232198db",
+          "source_name": "Julie Wise",
+          "choice_id": "king-county-director-of-elections--julie-wise"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-district-court-west-judge-1",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-7a99-08df232198db",
+      "source_contest_name": "West Electoral District - Judge Position No. 1",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7ab2-08df232198db",
+          "source_name": "Bardi Martin",
+          "choice_id": "king-county-district-court-west-judge-1--bardi-martin"
+        },
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7ab8-08df232198db",
+          "source_name": "Nyjat Rose-Akins",
+          "choice_id": "king-county-district-court-west-judge-1--nyjat-rose-akins"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-district-court-west-judge-2",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-7ae0-08df232198db",
+      "source_contest_name": "West Electoral District - Judge Position No. 2",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7af5-08df232198db",
+          "source_name": "Kuljinder K. Dhillon",
+          "choice_id": "king-county-district-court-west-judge-2--kuljinder-k-dhillon"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-district-court-west-judge-3",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-7b20-08df232198db",
+      "source_contest_name": "West Electoral District - Judge Position No. 3",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7b36-08df232198db",
+          "source_name": "Rebecca Robertson",
+          "choice_id": "king-county-district-court-west-judge-3--rebecca-robertson"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-district-court-west-judge-4",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-7b5c-08df232198db",
+      "source_contest_name": "West Electoral District - Judge Position No. 4",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7b73-08df232198db",
+          "source_name": "Yvonne Chin",
+          "choice_id": "king-county-district-court-west-judge-4--yvonne-chin"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-district-court-west-judge-5",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-7b91-08df232198db",
+      "source_contest_name": "West Electoral District - Judge Position No. 5",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7bc0-08df232198db",
+          "source_name": "Kristin Shotwell",
+          "choice_id": "king-county-district-court-west-judge-5--kristin-shotwell"
+        }
+      ]
+    },
+    {
+      "race_id": "king-county-prosecuting-attorney",
+      "jurisdiction_id": "king-county",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-40ed-08df232198db",
+      "source_contest_name": "Prosecuting Attorney",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-560f-08df232198db",
+          "source_name": "Leesa Manion",
+          "choice_id": "king-county-prosecuting-attorney--leesa-manion"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-11-state-representative-1",
+      "jurisdiction_id": "legislative-district-11",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "186980",
+      "source_contest_name": "Legislative District 11 - State Representative Pos. 1",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1601949",
+          "source_name": "David Hackney",
+          "choice_id": "ld-11-state-representative-1--david-hackney"
+        },
+        {
+          "source_choice_id": "1601950",
+          "source_name": "Ashley Fedan",
+          "choice_id": "ld-11-state-representative-1--ashley-fedan"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-11-state-representative-2",
+      "jurisdiction_id": "legislative-district-11",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "186981",
+      "source_contest_name": "Legislative District 11 - State Representative Pos. 2",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1601951",
+          "source_name": "Steve Bergquist",
+          "choice_id": "ld-11-state-representative-2--steve-bergquist"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-32-state-representative-1",
+      "jurisdiction_id": "legislative-district-32",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187030",
+      "source_contest_name": "Legislative District 32 - State Representative Pos. 1",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602045",
+          "source_name": "Keith Scully",
+          "choice_id": "ld-32-state-representative-1--keith-scully"
+        },
+        {
+          "source_choice_id": "1602044",
+          "source_name": "Danica Noble",
+          "choice_id": "ld-32-state-representative-1--danica-noble"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-32-state-representative-2",
+      "jurisdiction_id": "legislative-district-32",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187031",
+      "source_contest_name": "Legislative District 32 - State Representative Pos. 2",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602046",
+          "source_name": "Lauren Davis",
+          "choice_id": "ld-32-state-representative-2--lauren-davis"
+        },
+        {
+          "source_choice_id": "1602047",
+          "source_name": "Imraan Siddiqi",
+          "choice_id": "ld-32-state-representative-2--imraan-siddiqi"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-32-state-senator",
+      "jurisdiction_id": "legislative-district-32",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187029",
+      "source_contest_name": "Legislative District 32 - State Senator",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602042",
+          "source_name": "Cindy Ryu",
+          "choice_id": "ld-32-state-senator--cindy-ryu"
+        },
+        {
+          "source_choice_id": "1602043",
+          "source_name": "Jesse Salomon",
+          "choice_id": "ld-32-state-senator--jesse-salomon"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-34-state-representative-1",
+      "jurisdiction_id": "legislative-district-34",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187036",
+      "source_contest_name": "Legislative District 34 - State Representative Pos. 1",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602054",
+          "source_name": "Brianna K. Thomas",
+          "choice_id": "ld-34-state-representative-1--brianna-k-thomas"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-34-state-representative-2",
+      "jurisdiction_id": "legislative-district-34",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187037",
+      "source_contest_name": "Legislative District 34 - State Representative Pos. 2",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602055",
+          "source_name": "Joe Fitzgibbon",
+          "choice_id": "ld-34-state-representative-2--joe-fitzgibbon"
+        },
+        {
+          "source_choice_id": "1602056",
+          "source_name": "Mary Anito",
+          "choice_id": "ld-34-state-representative-2--mary-anito"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-34-state-senator",
+      "jurisdiction_id": "legislative-district-34",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187035",
+      "source_contest_name": "Legislative District 34 - State Senator",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602053",
+          "source_name": "Emily Alvarado",
+          "choice_id": "ld-34-state-senator--emily-alvarado"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-36-state-representative-1",
+      "jurisdiction_id": "legislative-district-36",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187042",
+      "source_contest_name": "Legislative District 36 - State Representative Pos. 1",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602065",
+          "source_name": "Julia Grant Reed",
+          "choice_id": "ld-36-state-representative-1--julia-grant-reed"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-36-state-representative-2",
+      "jurisdiction_id": "legislative-district-36",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187043",
+      "source_contest_name": "Legislative District 36 - State Representative Pos. 2",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602066",
+          "source_name": "Liz Berry",
+          "choice_id": "ld-36-state-representative-2--liz-berry"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-36-state-senator",
+      "jurisdiction_id": "legislative-district-36",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187041",
+      "source_contest_name": "Legislative District 36 - State Senator",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602063",
+          "source_name": "Noel C. Frame",
+          "choice_id": "ld-36-state-senator--noel-c-frame"
+        },
+        {
+          "source_choice_id": "1602064",
+          "source_name": "Jillian England",
+          "choice_id": "ld-36-state-senator--jillian-england"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-37-state-representative-1",
+      "jurisdiction_id": "legislative-district-37",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187045",
+      "source_contest_name": "Legislative District 37 - State Representative Pos. 1",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602069",
+          "source_name": "Kelabe Tewolde",
+          "choice_id": "ld-37-state-representative-1--kelabe-tewolde"
+        },
+        {
+          "source_choice_id": "1602070",
+          "source_name": "Sharon Tomiko Santos",
+          "choice_id": "ld-37-state-representative-1--sharon-tomiko-santos"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-37-state-representative-2",
+      "jurisdiction_id": "legislative-district-37",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187046",
+      "source_contest_name": "Legislative District 37 - State Representative Pos. 2",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602071",
+          "source_name": "Jaelynn Scott",
+          "choice_id": "ld-37-state-representative-2--jaelynn-scott"
+        },
+        {
+          "source_choice_id": "1602072",
+          "source_name": "Evon McCorkle",
+          "choice_id": "ld-37-state-representative-2--evon-mccorkle"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-37-state-senator",
+      "jurisdiction_id": "legislative-district-37",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187044",
+      "source_contest_name": "Legislative District 37 - State Senator",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602067",
+          "source_name": "Chipalo Street",
+          "choice_id": "ld-37-state-senator--chipalo-street"
+        },
+        {
+          "source_choice_id": "1602068",
+          "source_name": "Tatiana Brown",
+          "choice_id": "ld-37-state-senator--tatiana-brown"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-43-state-representative-1",
+      "jurisdiction_id": "legislative-district-43",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187060",
+      "source_contest_name": "Legislative District 43 - State Representative Pos. 1",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602099",
+          "source_name": "Nicole Macri",
+          "choice_id": "ld-43-state-representative-1--nicole-macri"
+        },
+        {
+          "source_choice_id": "1602098",
+          "source_name": "Alby Clendennin",
+          "choice_id": "ld-43-state-representative-1--alby-clendennin"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-43-state-representative-2",
+      "jurisdiction_id": "legislative-district-43",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187061",
+      "source_contest_name": "Legislative District 43 - State Representative Pos. 2",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602100",
+          "source_name": "Shaun Scott",
+          "choice_id": "ld-43-state-representative-2--shaun-scott"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-43-state-senator",
+      "jurisdiction_id": "legislative-district-43",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187059",
+      "source_contest_name": "Legislative District 43 - State Senator",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602096",
+          "source_name": "Jamie Pedersen",
+          "choice_id": "ld-43-state-senator--jamie-pedersen"
+        },
+        {
+          "source_choice_id": "1602097",
+          "source_name": "Hannah Sabio-Howell",
+          "choice_id": "ld-43-state-senator--hannah-sabio-howell"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-46-state-representative-1",
+      "jurisdiction_id": "legislative-district-46",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187069",
+      "source_contest_name": "Legislative District 46 - State Representative Pos. 1",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602113",
+          "source_name": "Gerry Pollet",
+          "choice_id": "ld-46-state-representative-1--gerry-pollet"
+        },
+        {
+          "source_choice_id": "1602114",
+          "source_name": "Will Dreher",
+          "choice_id": "ld-46-state-representative-1--will-dreher"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-46-state-representative-2",
+      "jurisdiction_id": "legislative-district-46",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187070",
+      "source_contest_name": "Legislative District 46 - State Representative Pos. 2",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602116",
+          "source_name": "Darya Farivar",
+          "choice_id": "ld-46-state-representative-2--darya-farivar"
+        },
+        {
+          "source_choice_id": "1602115",
+          "source_name": "Rodney 'Star' Thornley",
+          "choice_id": "ld-46-state-representative-2--rodney-star-thornley"
+        }
+      ]
+    },
+    {
+      "race_id": "ld-46-state-senator",
+      "jurisdiction_id": "legislative-district-46",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187068",
+      "source_contest_name": "Legislative District 46 - State Senator",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602111",
+          "source_name": "Javier Valdez",
+          "choice_id": "ld-46-state-senator--javier-valdez"
+        },
+        {
+          "source_choice_id": "1602112",
+          "source_name": "Sandra Stephens",
+          "choice_id": "ld-46-state-senator--sandra-stephens"
+        }
+      ]
+    },
+    {
+      "race_id": "seattle-city-council-5",
+      "jurisdiction_id": "seattle-city-council-district-5",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-7bdf-08df232198db",
+      "source_contest_name": "City of Seattle - Council District No. 5",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7bf9-08df232198db",
+          "source_name": "Nilu Jenks",
+          "choice_id": "seattle-city-council-5--nilu-jenks"
+        },
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7bff-08df232198db",
+          "source_name": "Julie Kang",
+          "choice_id": "seattle-city-council-5--julie-kang"
+        }
+      ],
+      "write_in_overrides": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7c0c-08df232198db",
+          "source_name": "Write-in",
+          "publisher_is_write_in": false,
+          "reason": "Explicit generic Write-in label outside the frozen named ballot. County nativeId 207 equals State King County contest 186703 option 207 with the same literal name and votes in the retained Nov6 pair; preserve the contradictory false source flag."
+        }
+      ]
+    },
+    {
+      "race_id": "seattle-municipal-court-judge-1",
+      "jurisdiction_id": "city-of-seattle",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-7c24-08df232198db",
+      "source_contest_name": "Seattle Municipal Court - Judge Position No. 1",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-7c3a-08df232198db",
+          "source_name": "Cat McDowall",
+          "choice_id": "seattle-municipal-court-judge-1--cat-mcdowall"
+        }
+      ]
+    },
+    {
+      "race_id": "seattle-municipal-court-judge-2",
+      "jurisdiction_id": "city-of-seattle",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-0cdb-08df232198dc",
+      "source_contest_name": "Seattle Municipal Court - Judge Position No. 2",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-0da5-08df232198dc",
+          "source_name": "Katharine Edwards",
+          "choice_id": "seattle-municipal-court-judge-2--katharine-edwards"
+        }
+      ]
+    },
+    {
+      "race_id": "seattle-municipal-court-judge-3",
+      "jurisdiction_id": "city-of-seattle",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-0e1b-08df232198dc",
+      "source_contest_name": "Seattle Municipal Court - Judge Position No. 3",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-0e34-08df232198dc",
+          "source_name": "Pooja Vaddadi",
+          "choice_id": "seattle-municipal-court-judge-3--pooja-vaddadi"
+        }
+      ]
+    },
+    {
+      "race_id": "seattle-municipal-court-judge-4",
+      "jurisdiction_id": "city-of-seattle",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-0e69-08df232198dc",
+      "source_contest_name": "Seattle Municipal Court - Judge Position No. 4",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-0e83-08df232198dc",
+          "source_name": "Anita Crawford-Willis",
+          "choice_id": "seattle-municipal-court-judge-4--anita-crawford-willis"
+        }
+      ]
+    },
+    {
+      "race_id": "seattle-municipal-court-judge-5",
+      "jurisdiction_id": "city-of-seattle",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-0eaf-08df232198dc",
+      "source_contest_name": "Seattle Municipal Court - Judge Position No. 5",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-0ec5-08df232198dc",
+          "source_name": "Gabe Rothstein",
+          "choice_id": "seattle-municipal-court-judge-5--gabe-rothstein"
+        },
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-0ecc-08df232198dc",
+          "source_name": "Garmon Newsom",
+          "choice_id": "seattle-municipal-court-judge-5--garmon-newsom"
+        }
+      ]
+    },
+    {
+      "race_id": "seattle-municipal-court-judge-6",
+      "jurisdiction_id": "city-of-seattle",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-0ef7-08df232198dc",
+      "source_contest_name": "Seattle Municipal Court - Judge Position No. 6",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-0f13-08df232198dc",
+          "source_name": "Shantrice Anderson",
+          "choice_id": "seattle-municipal-court-judge-6--shantrice-anderson"
+        }
+      ]
+    },
+    {
+      "race_id": "seattle-municipal-court-judge-7",
+      "jurisdiction_id": "city-of-seattle",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-0f38-08df232198dc",
+      "source_contest_name": "Seattle Municipal Court - Judge Position No. 7",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-0f5e-08df232198dc",
+          "source_name": "Damon Shadid",
+          "choice_id": "seattle-municipal-court-judge-7--damon-shadid"
+        }
+      ]
+    },
+    {
+      "race_id": "seattle-proposition-1-transit",
+      "jurisdiction_id": "city-of-seattle",
+      "source_jurisdiction": "king-county-wa",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "county_containment",
+      "coverage_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "source_contest_id": "01000000-f0b7-9b6a-3ad7-08df232198dc",
+      "source_contest_name": "City of Seattle - Proposition No. 1",
+      "capture_evidence": "data/manifests/evidence/capture-king-county-elections-20261106T183857Z-71b8875172cc.json",
+      "choices": [
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-3af9-08df232198dc",
+          "source_name": "Yes",
+          "choice_id": "seattle-proposition-1-transit--yes"
+        },
+        {
+          "source_choice_id": "01000000-f0b7-9b6a-3afe-08df232198dc",
+          "source_name": "No",
+          "choice_id": "seattle-proposition-1-transit--no"
+        }
+      ]
+    },
+    {
+      "race_id": "supreme-court-justice-1",
+      "jurisdiction_id": "washington-state",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187079",
+      "source_contest_name": "Supreme Court - Justice Position #01",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602132",
+          "source_name": "Colleen Melody",
+          "choice_id": "supreme-court-justice-1--colleen-melody"
+        },
+        {
+          "source_choice_id": "1602133",
+          "source_name": "Scott Edwards",
+          "choice_id": "supreme-court-justice-1--scott-edwards"
+        }
+      ]
+    },
+    {
+      "race_id": "supreme-court-justice-3",
+      "jurisdiction_id": "washington-state",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187080",
+      "source_contest_name": "Supreme Court - Justice Position #03",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602134",
+          "source_name": "David Stevens",
+          "choice_id": "supreme-court-justice-3--david-stevens"
+        },
+        {
+          "source_choice_id": "1602135",
+          "source_name": "Jaime Michelle Hawk",
+          "choice_id": "supreme-court-justice-3--jaime-michelle-hawk"
+        }
+      ]
+    },
+    {
+      "race_id": "supreme-court-justice-4",
+      "jurisdiction_id": "washington-state",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187081",
+      "source_contest_name": "Supreme Court - Justice Position #04",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602270",
+          "source_name": "Ian Birk",
+          "choice_id": "supreme-court-justice-4--ian-birk"
+        },
+        {
+          "source_choice_id": "1602271",
+          "source_name": "Sean O'Donnell",
+          "choice_id": "supreme-court-justice-4--sean-odonnell"
+        }
+      ]
+    },
+    {
+      "race_id": "supreme-court-justice-5",
+      "jurisdiction_id": "washington-state",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187082",
+      "source_contest_name": "Supreme Court - Justice Position #05",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602136",
+          "source_name": "Theo Angelis",
+          "choice_id": "supreme-court-justice-5--theo-angelis"
+        },
+        {
+          "source_choice_id": "1602137",
+          "source_name": "Dave Larson",
+          "choice_id": "supreme-court-justice-5--dave-larson"
+        }
+      ]
+    },
+    {
+      "race_id": "supreme-court-justice-7",
+      "jurisdiction_id": "washington-state",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "187083",
+      "source_contest_name": "Supreme Court - Justice Position #07",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1602139",
+          "source_name": "Debra L. Stephens",
+          "choice_id": "supreme-court-justice-7--debra-l-stephens"
+        },
+        {
+          "source_choice_id": "1602138",
+          "source_name": "Todd A. Bloom",
+          "choice_id": "supreme-court-justice-7--todd-a-bloom"
+        }
+      ]
+    },
+    {
+      "race_id": "us-house-7",
+      "jurisdiction_id": "congressional-district-7",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "186953",
+      "source_contest_name": "Congressional District 7 - U.S. Representative",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1601900",
+          "source_name": "Pramila Jayapal",
+          "choice_id": "us-house-7--pramila-jayapal"
+        },
+        {
+          "source_choice_id": "1601901",
+          "source_name": "Nirav Sheth",
+          "choice_id": "us-house-7--nirav-sheth"
+        }
+      ]
+    },
+    {
+      "race_id": "us-house-9",
+      "jurisdiction_id": "congressional-district-9",
+      "source_jurisdiction": "washington",
+      "coverage": "whole_jurisdiction",
+      "coverage_basis": "state_aggregate",
+      "coverage_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "source_contest_id": "186955",
+      "source_contest_name": "Congressional District 9 - U.S. Representative",
+      "capture_evidence": "data/manifests/evidence/capture-wa-secretary-of-state-20261106T184728Z-a6a268211d1a.json",
+      "choices": [
+        {
+          "source_choice_id": "1601906",
+          "source_name": "Adam Smith",
+          "choice_id": "us-house-9--adam-smith"
+        },
+        {
+          "source_choice_id": "1601905",
+          "source_name": "Doug Basler",
+          "choice_id": "us-house-9--doug-basler"
+        }
+      ]
+    }
+  ]
+}

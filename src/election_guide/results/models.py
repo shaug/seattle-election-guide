@@ -12,7 +12,7 @@ supersedes. Unmatched names fail loudly, never guessed.
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 from typing import Literal
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
@@ -170,6 +170,7 @@ class PreliminaryCapture(ResultsModel):
     authority_id: str = Field(min_length=1)
     captured_at: AwareDatetime
     evidence: str = Field(min_length=1)
+    publisher_is_official_results: bool | None = Field(default=None, strict=True)
 
 
 class PreliminaryOutcome(ResultsModel):
@@ -177,6 +178,15 @@ class PreliminaryOutcome(ResultsModel):
 
     choice_id: str = Field(min_length=1)
     votes: int = Field(ge=0, strict=True)
+
+
+class PreliminaryWriteInOverride(ResultsModel):
+    """Reviewed generic-row classification; the publisher's flag remains literal."""
+
+    source_choice_id: str = Field(min_length=1)
+    source_name: Literal["Write-in", "Write in"]
+    publisher_is_write_in: bool | None = Field(strict=True)
+    reason: str = Field(min_length=1)
 
 
 class PreliminaryRaceResults(ResultsModel):
@@ -194,15 +204,26 @@ class PreliminaryRaceResults(ResultsModel):
     authority_id: str = Field(min_length=1)
     authority: str = Field(min_length=1)
     capture_evidence: str = Field(min_length=1)
-    reported_at: AwareDatetime
+    reported_at: AwareDatetime | None = None
+    export_generated_at: AwareDatetime | None = None
+    vote_total_basis: Literal["authority_stated", "complete_choice_sum"] = "authority_stated"
     reporting_complete: bool | None = Field(strict=True)
     ballots_counted: int | None = Field(default=None, ge=0, strict=True)
     votes_counted: int | None = Field(default=None, ge=0, strict=True)
     write_in_votes: int = Field(ge=0, strict=True)
+    write_in_overrides: list[PreliminaryWriteInOverride] = Field(
+        default_factory=list[PreliminaryWriteInOverride]
+    )
     outcomes: list[PreliminaryOutcome] = Field(min_length=1)
 
     @model_validator(mode="after")
     def validate_tally(self) -> PreliminaryRaceResults:
+        if self.reported_at is None and self.export_generated_at is None:
+            raise ValueError(
+                "preliminary tally requires a publisher timestamp with its actual basis"
+            )
+        if self.vote_total_basis == "complete_choice_sum" and self.ballots_counted is not None:
+            raise ValueError("a complete choice sum is votes, never contest ballots")
         choices = [outcome.choice_id for outcome in self.outcomes]
         if len(choices) != len(set(choices)):
             raise ValueError(f"race {self.race_id!r} repeats a named ballot choice")
@@ -214,6 +235,13 @@ class PreliminaryRaceResults(ResultsModel):
         if self.ballots_counted is not None and self.ballots_counted < votes:
             raise ValueError("contest ballots cannot be less than the single-vote contest tally")
         return self
+
+    @property
+    def source_timestamp(self) -> datetime:
+        timestamp = self.reported_at or self.export_generated_at
+        if timestamp is None:
+            raise ValueError("preliminary tally has no publisher timestamp")
+        return timestamp
 
 
 class PreliminaryRefreshFailure(ResultsModel):
@@ -239,6 +267,8 @@ class PreliminaryElectionResults(ResultsModel):
     @model_validator(mode="after")
     def validate_admission(self) -> PreliminaryElectionResults:
         captures = {capture.evidence: capture for capture in self.captures}
+        if any(capture.publisher_is_official_results is True for capture in self.captures):
+            raise ValueError("official results require the separate certified admission path")
         if len(captures) != len(self.captures):
             raise ValueError("preliminary results repeat a capture reference")
         if len({race.race_id for race in self.races}) != len(self.races):
@@ -247,8 +277,14 @@ class PreliminaryElectionResults(ResultsModel):
             capture = captures.get(race.capture_evidence)
             if capture is None or capture.authority_id != race.authority_id:
                 raise ValueError(f"race {race.race_id!r} must cite its own authority capture")
-            if race.reported_at > capture.captured_at:
-                raise ValueError("publisher count timestamp cannot follow the observation")
+            if any(
+                timestamp is not None and timestamp > capture.captured_at
+                for timestamp in (race.reported_at, race.export_generated_at)
+            ):
+                raise ValueError(
+                    "publisher count timestamp or generation timestamp "
+                    "cannot follow the observation"
+                )
         authority_ids = {capture.authority_id for capture in self.captures}
         if any(failure.authority_id not in authority_ids for failure in self.failed_refreshes):
             raise ValueError("refresh failure must belong to an admitted authority")

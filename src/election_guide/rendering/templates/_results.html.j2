@@ -48,7 +48,7 @@
 <div class="race-results">
               <div class="race-results-head">
                 <span class="race-results-eyebrow">Result</span>
-                <span class="race-results-status{{ ' race-results-status-preliminary' if view.preliminary else '' }}">{% if view.preliminary %}Unofficial · {{ view.reported_at_label }}{% else %}Certified · {{ view.certified_on_label }}{% endif %}</span>
+                <span class="race-results-status{{ ' race-results-status-preliminary' if view.preliminary else '' }}">{% if view.preliminary %}Unofficial · {% if view.reported_at_label %}{{ view.reported_at_label }}{% else %}Export generated {{ view.export_generated_at_label }}{% endif %}{% else %}Certified · {{ view.certified_on_label }}{% endif %}</span>
               </div>
               <div class="race-results-tally">
                 {% for outcome in view.outcomes %}
@@ -60,6 +60,6 @@
                 </div>
                 {% endfor %}
               </div>
-              <p class="race-results-provenance">{{ view.count_label }} · {{ view.authority }}{% if view.capture_url %} · <a href="{{ view.capture_url }}"{{ external_link_attributes }}>evidence</a>{% endif %}{% if view.preliminary %}<br><span data-preliminary-check-at="{{ view.captured_at_iso }}" data-preliminary-checked-label="{{ view.checked_at_label }}" data-preliminary-refresh-failed="{{ 'true' if view.refresh_unavailable else 'false' }}" data-preliminary-stale-after="{{ view.stale_after_seconds }}">{{ view.recency_label }}</span>{% endif %}</p>
+              <p class="race-results-provenance">{{ view.count_label }} · {{ view.authority }}{% if view.capture_url %} · <a href="{{ view.capture_url }}"{{ external_link_attributes }}>evidence</a>{% endif %}{% if view.preliminary %}<br>{% if not view.reported_at_label %}Count timestamp not provided · {% endif %}<span data-preliminary-check-at="{{ view.captured_at_iso }}" data-preliminary-checked-label="{{ view.checked_at_label }}" data-preliminary-refresh-failed="{{ 'true' if view.refresh_unavailable else 'false' }}" data-preliminary-stale-after="{{ view.stale_after_seconds }}">{{ view.recency_label }}</span>{% endif %}</p>
             </div>
 {%- endmacro %}

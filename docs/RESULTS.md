@@ -26,10 +26,21 @@ or matching name does not prove coverage. The approved four County examples are 
 a County-only rollout does not complete #696.
 
 The timezone-aware publisher count timestamp stays separate from capture/export clocks.
+When the State export supplies only `createdAt`, admission retains a null count timestamp
+and uses the approved **Unofficial · Export generated [time]** label plus **Count timestamp
+not provided**. It never substitutes generation or retrieval time for count-as-of.
+Missing publisher certification flags remain null in provenance. `preliminary` describes
+SEG's uncertified reproduction; it is not an assertion that the State supplied a false flag.
+An explicit true official-status flag stops preliminary ingestion for the separate certified path.
 Historical captures never become current without fresh official verification. Named-choice
 percentages exclude write-ins; zero named votes have no percentage, not a fabricated 100%.
 Contest-ballots, total votes including write-ins and the named denominator remain distinct:
 candidate votes never become a ballot count. Preliminary tallies have no advanced/winner flag.
+When a State export omits its own total, the producer may sum its complete, exactly mapped
+choice rows as **votes**, including write-ins, with `vote_total_basis: complete_choice_sum`.
+This calculated sum is distinct from a publisher-stated total and never becomes ballots.
+A contradictory generic Write-in flag requires an exact ID/name/flag override and retained
+reason in the reviewed map. The original source flag and bytes remain unchanged.
 
 Guide/race pages reuse the existing slim navy tally block, equal candidate emphasis,
 amber **Unofficial · [actual count time]**, and compact count/authority/evidence provenance.

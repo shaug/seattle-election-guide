@@ -29,6 +29,7 @@ from election_guide.results.models import (
     PreliminaryElectionResults,
     PreliminaryOutcome,
     PreliminaryRaceResults,
+    PreliminaryWriteInOverride,
     ResultsModel,
 )
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
@@ -181,7 +182,13 @@ def parse_preliminary_feed(
         jurisdiction = "washington"
         election_date = date.fromisoformat(_text(raw.get("electionDate"), "election date"))
         generated_at = _clock(raw.get("createdAt"))
-        official = None
+        official_flags = [raw.get("isOfficialResults"), publisher.get("isOfficialResults")]
+        if any(value is not None and type(value) is not bool for value in official_flags):
+            raise ValueError("State official status must be an explicit boolean or absent")
+        stated = {value for value in official_flags if value is not None}
+        if len(stated) > 1:
+            raise ValueError("State official-status fields disagree")
+        official = next(iter(stated), None)
         items = publisher.get("ballotItems")
     else:
         raise ValueError("unsupported preliminary source format")
@@ -207,6 +214,7 @@ class PreliminarySourceBinding(ResultsModel):
     authority_id: str = Field(min_length=1)
     format: Literal["county", "statewide"]
     evidence: str = Field(min_length=1)
+    publisher_jurisdiction_id: str | None = Field(default=None, min_length=1)
 
 
 class PreliminaryChoiceBinding(ResultsModel):
@@ -225,6 +233,10 @@ class PreliminaryRaceBinding(ResultsModel):
     source_contest_name: str = Field(min_length=1)
     capture_evidence: str = Field(min_length=1)
     choices: list[PreliminaryChoiceBinding] = Field(min_length=1)
+    coverage_basis: Literal["state_aggregate", "county_containment"] | None = None
+    write_in_overrides: list[PreliminaryWriteInOverride] = Field(
+        default_factory=list[PreliminaryWriteInOverride]
+    )
 
 
 class PreliminaryAdmissionPlan(ResultsModel):
@@ -249,8 +261,9 @@ def build_preliminary_results(
 ) -> PreliminaryElectionResults:
     """Build only from retained official bytes and an explicit whole-inventory map.
 
-    Missing source count time, official status or authority total is an
-    admission gap, never filled from generation/retrieval time or vote sums.
+    Missing publisher metadata stays missing. Generation is explicitly labeled;
+    a complete-choice sum is tagged as calculated votes, never ballots or a
+    publisher-stated total. No certification is inferred from the calendar.
     This function performs no requests and writes nothing.
     """
     plan = PreliminaryAdmissionPlan.model_validate(plan)
@@ -287,13 +300,19 @@ def build_preliminary_results(
         feed = parse_preliminary_feed(path.read_bytes(), format=binding.format)
         if feed.election_date != inventory.election.election_date:
             raise ValueError("source feed belongs to a different election date")
-        if feed.is_official_results is not False:
-            raise ValueError("source unofficial/certification status is unproved; do not infer it")
+        if feed.is_official_results is True:
+            raise ValueError("official results require separate certified admission")
+        if (
+            binding.publisher_jurisdiction_id is not None
+            and binding.publisher_jurisdiction_id != feed.publisher_jurisdiction_id
+        ):
+            raise ValueError("publisher jurisdiction identity changed")
         feeds[binding.evidence] = feed
         captures[binding.evidence] = PreliminaryCapture(
             authority_id=binding.authority_id,
             captured_at=manifest.retrieved_at,
             evidence=binding.evidence,
+            publisher_is_official_results=feed.is_official_results,
         )
     result_races: list[PreliminaryRaceResults] = []
     for race in inventory.races:
@@ -313,13 +332,11 @@ def build_preliminary_results(
         expected_kind = "BallotMeasure" if race.race_type == "measure" else "Candidate"
         if contest.kind != expected_kind:
             raise ValueError("source contest type disagrees with the frozen race")
-        if contest.reported_at is None:
-            raise ValueError(
-                "publisher count timestamp is unavailable; generation time is not as-of"
-            )
-        if contest.votes_counted is None:
-            raise ValueError("authority contest total is unavailable; do not manufacture it")
+        _validate_coverage(binding, feed, inventory)
+        if contest.reported_at is None and feed.generated_at is None:
+            raise ValueError("publisher timestamp unavailable; do not substitute retrieval time")
         outcomes = _mapped_outcomes(binding, contest, race)
+        _, write_ins = _classified_choices(binding, contest)
         result_races.append(
             PreliminaryRaceResults(
                 race_id=race.id,
@@ -331,11 +348,16 @@ def build_preliminary_results(
                 authority=authorities[capture.authority_id].name,
                 capture_evidence=capture.evidence,
                 reported_at=contest.reported_at,
+                export_generated_at=feed.generated_at,
                 reporting_complete=contest.reporting_complete,
-                votes_counted=contest.votes_counted,
-                write_in_votes=sum(
-                    item.votes for item in contest.choices if item.is_write_in is True
-                ),
+                votes_counted=contest.votes_counted
+                if contest.votes_counted is not None
+                else sum(item.votes for item in contest.choices),
+                vote_total_basis="authority_stated"
+                if contest.votes_counted is not None
+                else "complete_choice_sum",
+                write_in_votes=sum(item.votes for item in write_ins),
+                write_in_overrides=binding.write_in_overrides,
                 outcomes=outcomes,
             )
         )
@@ -354,7 +376,7 @@ def _mapped_outcomes(
     contest: SourceContest,
     race: Race,
 ) -> list[PreliminaryOutcome]:
-    choices = {item.id: item for item in contest.choices if item.is_write_in is not True}
+    choices, _ = _classified_choices(binding, contest)
     if (
         {item.source_choice_id for item in binding.choices} != set(choices)
         or len(binding.choices) != len(choices)
@@ -375,3 +397,49 @@ def _mapped_outcomes(
     return [
         mapped[item.id] for item in sorted(race.choices, key=lambda choice: choice.ballot_order)
     ]
+
+
+def _classified_choices(
+    binding: PreliminaryRaceBinding, contest: SourceContest
+) -> tuple[dict[str, SourceChoice], list[SourceChoice]]:
+    original = {item.id: item for item in contest.choices}
+    overrides = {item.source_choice_id: item for item in binding.write_in_overrides}
+    if len(overrides) != len(binding.write_in_overrides):
+        raise ValueError("mapping repeats a Write-in classification")
+    for key, item in overrides.items():
+        source = original.get(key)
+        if (
+            source is None
+            or source.name != item.source_name
+            or source.is_write_in is not item.publisher_is_write_in
+        ):
+            raise ValueError("Write-in source identity/name/flag changed; review the mapping")
+    write_ins = [
+        item for item in contest.choices if item.is_write_in is True or item.id in overrides
+    ]
+    return (
+        {item.id: item for item in contest.choices if item not in write_ins},
+        write_ins,
+    )
+
+
+def _validate_coverage(
+    binding: PreliminaryRaceBinding, feed: PreliminaryFeed, inventory: Inventory
+) -> None:
+    if feed.jurisdiction == "washington":
+        if binding.coverage_basis not in {None, "state_aggregate"}:
+            raise ValueError("State aggregate disagrees with coverage basis")
+        return
+    if feed.jurisdiction != "king-county-wa":
+        raise ValueError("unsupported source jurisdiction for whole-contest coverage")
+    if binding.coverage_basis not in {None, "county_containment"}:
+        raise ValueError("County source disagrees with coverage basis")
+    parents = {item.id: item.parent_id for item in inventory.jurisdictions}
+    current: str | None = binding.jurisdiction_id
+    seen: set[str] = set()
+    while current is not None and current not in seen:
+        if current == "king-county":
+            return
+        seen.add(current)
+        current = parents.get(current)
+    raise ValueError("County source does not prove the whole contest jurisdiction")

@@ -1,0 +1,129 @@
+name: Prepare preliminary election results
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: preliminary-results-refresh
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: vars.PRELIMINARY_RESULTS_REFRESH_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - name: Find the prior attempted preparation
+        id: prior
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/artifacts?name=preliminary-intent&per_page=100" \
+            --jq '.artifacts[].workflow_run.id' > "$RUNNER_TEMP/prior-intents.txt"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          rows = Path(os.environ['RUNNER_TEMP'], 'prior-intents.txt').read_text().splitlines()
+          prior = [int(row) for row in rows if row != os.environ['GITHUB_RUN_ID']]
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('run=' + (str(max(prior)) if prior else '') + '\n')
+          PY
+      - name: Restore the exact prior completion state
+        id: state
+        if: steps.prior.outputs.run != ''
+        uses: actions/cache/restore@v4
+        with:
+          path: output/preliminary-state
+          key: preliminary-complete-${{ steps.prior.outputs.run }}
+      - name: Validate state before any publisher request
+        env:
+          PRIOR_RUN: ${{ steps.prior.outputs.run }}
+          CACHE_HIT: ${{ steps.state.outputs.cache-hit }}
+        run: |
+          uv run --offline --frozen python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from election_guide.evidence.models import UnavailableManifest
+          from election_guide.evidence.storage import write_manifest
+          from election_guide.results.acquisition import FEEDS
+          path = Path('output/preliminary-state/state.json')
+          if os.environ['PRIOR_RUN'] and os.environ['CACHE_HIT'] != 'true':
+              raise SystemExit('Prior outcome/state unavailable; recover that run before another publisher request.')
+          state = json.loads(path.read_text()) if path.exists() else {'phase': 'complete', 'holds': []}
+          if state['phase'] != 'complete':
+              raise SystemExit('Prior source operation is uncertain; recover its artifacts first.')
+          for raw in state['holds']:
+              manifest = UnavailableManifest.model_validate(raw)
+              if not any(manifest.source_id == source and manifest.requested_url == url for source, url, _ in FEEDS.values()):
+                  raise SystemExit('Held source identity is invalid.')
+              write_manifest(manifest, Path('data/manifests/evidence'))
+          path.parent.mkdir(parents=True, exist_ok=True)
+          path.write_text(json.dumps({'phase': 'in_progress', 'run_id': os.environ['GITHUB_RUN_ID'], 'holds': state['holds']}, indent=2) + '\n')
+          PY
+      - name: Persist source intent before acquisition
+        id: intent
+        uses: actions/upload-artifact@v4
+        with:
+          name: preliminary-intent
+          path: output/preliminary-state/state.json
+          if-no-files-found: error
+      - name: Prepare one full reviewed-source snapshot
+        id: refresh
+        continue-on-error: true
+        run: |
+          uv run --offline --frozen election-guide results prepare-refresh \
+            config/results/wa-2026-general-preliminary.yaml \
+            --inventory-path data/normalized/wa-2026-general-inventory.json --live \
+            > output/preliminary-refresh-report.json
+      - name: Record only a known source outcome
+        id: completion
+        if: always() && steps.intent.outcome == 'success'
+        run: |
+          uv run --offline --frozen python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from election_guide.evidence.models import UnavailableManifest
+          from election_guide.evidence.storage import read_capture_manifest
+          from election_guide.results.acquisition import FEEDS
+          report = json.loads(Path('output/preliminary-refresh-report.json').read_text())
+          if report['status'] not in {'prepared', 'blocked'}:
+              raise SystemExit('Unknown outcome; preserve the in-progress intent.')
+          holds = []
+          for path in Path('data/manifests/evidence').glob('*.json'):
+              item = read_capture_manifest(path)
+              if isinstance(item, UnavailableManifest) and item.http_status is not None and (item.http_status in {401, 403} or 300 <= item.http_status < 400):
+                  if any(item.source_id == source and item.requested_url == url for source, url, _ in FEEDS.values()):
+                      holds.append(item.model_dump(mode='json'))
+          Path('output/preliminary-state/state.json').write_text(json.dumps({'phase': 'complete', 'run_id': os.environ['GITHUB_RUN_ID'], 'holds': holds}, indent=2) + '\n')
+          PY
+      - name: Retain the candidate and exact original evidence
+        id: artifact
+        if: always() && steps.completion.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: preliminary-candidate-${{ github.run_id }}
+          path: |
+            output/preliminary-refresh-report.json
+            output/preliminary-state/state.json
+            data/evidence/official
+            data/manifests/evidence
+            data/results
+          if-no-files-found: error
+      - name: Preserve denial holds for the next tick
+        if: always() && steps.artifact.outcome == 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: output/preliminary-state
+          key: preliminary-complete-${{ github.run_id }}
+      - name: Keep a failed preparation failed
+        if: always() && steps.refresh.outcome == 'failure'
+        run: exit 1

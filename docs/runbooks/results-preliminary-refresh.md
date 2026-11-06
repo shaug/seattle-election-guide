@@ -16,12 +16,13 @@ multi-county total. This runbook does not reopen #535 or perform future #692/#69
 3. Prove every frozen race's full official contest scope and choice mapping. Statewide and
    cross-county races need their complete authoritative count-so-far. Prefer the official
    aggregate; never sum selected counties or infer scope from empty `crossCounties`.
-4. Bind each tally to its actual publisher count timestamp and original capture. Verify
+4. Bind each tally to its actual publisher count timestamp, or explicitly labeled export
+   generation when count time is absent, and original capture. Verify
    reported update schedules and certification status/timing separately for each authority.
    County November24 and existing calendar tickets do not prove State certification timing.
 5. Preserve all named choices and separate write-ins. Percentages use named-choice votes.
-   The countline uses only the authority's stated contest-ballots or explicitly stated vote
-   total, with the correct noun; never derive a ballot count by adding candidate votes.
+   The countline uses authority-stated contest ballots/votes, or a tagged complete-choice
+   vote sum when the State supplies no total. Never derive ballots by adding candidate votes.
 6. Validate the strict preliminary document, frozen inventory and all retained evidence
    with `uv run --offline --frozen election-guide results validate <results-file>`.
    Unsupported/missing geography, clock or choices blocks admission. A partial County-only
@@ -57,6 +58,22 @@ for observed client differences and remaining data-admission limits.
 
 ### Autonomous delivery requirement and current capability
 
+`results prepare-refresh config/results/wa-2026-general-preliminary.yaml
+--inventory-path data/normalized/wa-2026-general-inventory.json --live` validates the
+seed mapping before any request, locks the whole transaction, preflights every source hold,
+captures once per source, rebinds exact IDs/names and atomically prepares the full snapshot.
+A real failed acquisition preserves old counts and appends its actual unavailable manifest.
+Schema, identity, classification or timestamp regressions stop admission without manufacturing
+an HTTP failure. The State uses its full aggregate; County sources require inventory ancestry
+contained in King County. Lower corrected counts are not clamped.
+
+The proposed hourly workflow is disabled unless `PRELIMINARY_RESULTS_REFRESH_ENABLED` is true.
+It has only repository/Actions read permissions. It retains intent before requests, restores
+the exact previous completion state and preserves held denial manifests. Missing prior state
+stops before requests. It prepares artifacts; it cannot push branches, open PRs, approve,
+merge or deploy. Activation and the protected-publication handoff remain separate operational
+boundaries. No repository variable, workflow dispatch or schedule has been activated here.
+
 #696 requires supported autonomous acquisition, admission, scheduled refresh and normal
 protected publication. The local producer commands below are component interfaces; an
 operator-triggered daily recipe, a requested user download or an unexecuted schedule does
@@ -79,9 +96,11 @@ uv run --offline --frozen election-guide results validate data/results/wa-2026-g
 capture; every inventory race then binds its exact source contest ID/name, jurisdiction,
 whole-scope proof and every named source choice ID/name to the frozen ballot choice.
 There is no name-only discovery or partial-inventory production mode. The parser preserves
-unknown fields: the historical statewide Media Export's `createdAt` is generation time,
-not count-as-of, and that payload does not independently establish unofficial status or
-an explicit authority contest total. It cannot pass this producer without those proofs.
+unknown fields: the statewide Media Export's `createdAt` is generation time, not count-as-of.
+Its missing official-status flag stays null; SEG's output remains explicitly uncertified.
+An explicit true official-status flag blocks preliminary admission. The approved timestamp
+wording states generation and missing count time. Missing authority totals use only a tagged
+sum of the complete mapped choice rows, never an inferred ballot count or a claimed stated total.
 An existing certified file cannot be overwritten with preliminary results.
 
 The autonomous capture/admission/diff/review/publication sequence follows official announced

@@ -34,6 +34,23 @@ FEEDS: dict[str, tuple[str, str, Literal["county", "statewide"]]] = {
 }
 
 
+class PreliminaryAcquisitionError(ValueError):
+    """A real failed attempt with its normal immutable unavailable manifest."""
+
+    def __init__(self, message: str, *, manifest_path: Path) -> None:
+        super().__init__(message)
+        self.manifest_path = manifest_path
+
+
+def check_preliminary_access(source: str, *, repository_root: Path) -> None:
+    if source not in FEEDS:
+        raise ValueError("preliminary source must be county or statewide")
+    authority_id, url, _ = FEEDS[source]
+    _check_access_hold(
+        repository_root / "data/manifests/evidence", authority_id=authority_id, url=url
+    )
+
+
 def acquire_preliminary(
     source: str,
     *,
@@ -85,8 +102,9 @@ def acquire_preliminary(
             ),
             manifest_dir,
         )
-        raise ValueError(
-            f"preliminary acquisition stopped: {error}; evidence: {failure}"
+        raise PreliminaryAcquisitionError(
+            f"preliminary acquisition stopped: {error}; evidence: {failure}",
+            manifest_path=failure,
         ) from error
 
     storage_root = repository_root / "data/evidence/official"
