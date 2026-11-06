@@ -69,6 +69,11 @@
     "tests": {},
     "partition": "integration-comparisons"
   },
+  "tests/test_chrome_startup_diagnostics.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "unit"
+  },
   "tests/test_ci.py": {
     "suite": "contract",
     "tests": {},

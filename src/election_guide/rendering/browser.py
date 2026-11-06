@@ -29,6 +29,9 @@ from websocket import (  # pyright: ignore[reportUnknownVariableType]
 )
 
 from election_guide.rendering.shell import PRECINCT_LOOKUP_HREF
+from election_guide.rendering.startup_diagnostics import linux_startup_process_facts
+
+_STARTUP_PROC_ROOT = Path("/proc")
 
 
 def find_chrome() -> Path:
@@ -626,7 +629,8 @@ def _startup_diagnostics(
     return (
         f"elapsed_ms={elapsed} process={probe(process_state)} "
         f"{probe(lambda: _startup_endpoint_facts(profile / 'DevToolsActivePort'))} "
-        f"cpu_count={cpu} load={load} dbus_session={probe(dbus_shape)}"
+        f"cpu_count={cpu} load={load} dbus_session={probe(dbus_shape)} "
+        f"linux={probe(lambda: linux_startup_process_facts(process.pid, _STARTUP_PROC_ROOT))}"
     )[:950]
 
 
