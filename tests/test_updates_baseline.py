@@ -283,7 +283,7 @@ def test_old_policy_upgrade_requires_the_exact_verified_original_site(
         _page(
             f'<div class="race-results"><a href="{original}">Evidence</a> A 10 '
             '<span data-preliminary-recency="race-1">'
-            'Last checked Nov 7, 5:22:18 a.m. PST</span></div>'
+            "Last checked Nov 7, 5:22:18 a.m. PST</span></div>"
         ),
     )
     _seal(sites[0])
