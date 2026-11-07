@@ -423,3 +423,19 @@ entries:
     - results
     actions:
     - changed
+  - corrected_on: '2026-11-07'
+    headline: Preliminary results checked at 05:22:26 Pacific.
+    body: Updated the unofficial counts, source/reporting metadata or retained originals
+      for 52 contest(s), using each contest's complete jurisdiction. Publisher count
+      times remain separate from export generation and source verification times; an
+      export does not supply an absent count timestamp. No certification or outcome
+      is inferred.
+    provenance:
+    - label: General election guide
+      url: /e/wa-2026-general/
+    - label: Retained official results and refresh scope
+      url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics:
+    - results
+    actions:
+    - changed
