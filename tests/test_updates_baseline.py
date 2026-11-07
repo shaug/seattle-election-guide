@@ -15,7 +15,7 @@ from election_guide.hosting import updates_baseline
 from election_guide.hosting.production_check import Observation
 from election_guide.hosting.updates import UPDATES_SNAPSHOT, build_updates_snapshot
 from election_guide.serialization import canonical_json_bytes
-from tests.test_updates_gate import _seal  # pyright: ignore[reportPrivateUsage]
+from tests.test_updates_gate import _page, _seal, _write  # pyright: ignore[reportPrivateUsage]
 from tests.test_updates_gate import sites as sites
 
 
@@ -260,6 +260,7 @@ def test_durable_snapshot_rejects_a_different_manifest_at_the_verified_source(
         updates_baseline.resolve_production_snapshot(tmp_path / "download")
 
 
+@pytest.mark.parametrize("old_policy", ["1.0", "2.0"])
 @pytest.mark.parametrize("available, changed_source", [(False, False), (True, False), (True, True)])
 def test_old_policy_upgrade_requires_the_exact_verified_original_site(
     tmp_path: Path,
@@ -268,11 +269,26 @@ def test_old_policy_upgrade_requires_the_exact_verified_original_site(
     monkeypatch: pytest.MonkeyPatch,
     available: bool,
     changed_source: bool,
+    old_policy: str,
 ) -> None:
-    snapshot = build_updates_snapshot(sites[0]).model_dump(mode="json")
-    snapshot["schema_version"] = "1.0"
-    for election in snapshot["elections"].values():
-        election.pop("information_pages")
+    original = (
+        "https://github.com/shaug/seattle-election-guide/blob/"
+        + "a" * 40
+        + "/data/evidence/official/sha256/ff/"
+        + "f" * 64
+    )
+    _write(
+        sites[0],
+        "e/wa-2026-general/index.html",
+        _page(f'<div class="race-results"><a href="{original}">Evidence</a> A 10</div>'),
+    )
+    _seal(sites[0])
+    snapshot = build_updates_snapshot(
+        sites[0], schema_version="1.0" if old_policy == "1.0" else "2.0"
+    ).model_dump(mode="json")
+    if old_policy == "1.0":
+        for election in snapshot["elections"].values():
+            election.pop("information_pages")
     payload = canonical_json_bytes(snapshot)
     (sites[0] / UPDATES_SNAPSHOT).write_bytes(payload)
     _seal(sites[0])
@@ -300,7 +316,12 @@ def test_old_policy_upgrade_requires_the_exact_verified_original_site(
             updates_baseline.resolve_production_snapshot(tmp_path / "download")
     else:
         resolved, receipt = updates_baseline.resolve_production_snapshot(tmp_path / "download")
-        assert resolved.schema_version == "2.0"
-        assert receipt["policy_upgrade_from"] == "1.0"
+        assert resolved.schema_version == "3.0"
+        assert receipt["policy_upgrade_from"] == old_policy
         assert receipt["git_commit"] == "a" * 40
         assert resolved == build_updates_snapshot(sites[0])
+        if old_policy == "2.0":
+            assert (
+                resolved.elections["wa-2026-general"].information_pages
+                != snapshot["elections"]["wa-2026-general"]["information_pages"]
+            )

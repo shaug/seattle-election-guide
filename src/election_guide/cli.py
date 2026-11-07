@@ -1936,6 +1936,55 @@ def results_prepare_refresh(
     typer.echo(canonical_json_bytes(report).decode())
 
 
+@results_app.command("plan-publication")
+def results_plan_publication(
+    previous_results: Annotated[Path, typer.Argument(exists=True, dir_okay=False)],
+    checked_at: Annotated[str, typer.Option(help="Actual timezone-aware source check time.")],
+    repository_root: Annotated[Path, typer.Option(exists=True, file_okay=False)] = Path("."),
+) -> None:
+    """Validate prepared counts and append only a necessary information Update."""
+    from election_guide.results.publication import (
+        append_preliminary_update,
+        build_preliminary_update,
+    )
+
+    try:
+        previous = read_results(previous_results)
+        current = read_results(repository_root / "data/results/wa-2026-general.yaml")
+        inventory = read_inventory(
+            repository_root / "data/normalized/wa-2026-general-inventory.json"
+        )
+        validate_results_inventory(current, inventory)
+        validate_results_evidence(current, repository_root=repository_root)
+        original_hashes: dict[str, str] = {}
+        for race in [*previous.races, *current.races]:
+            manifest = read_capture_manifest(repository_root / race.capture_evidence)
+            if not isinstance(manifest, CapturedManifest):
+                raise ValueError("preliminary publication requires retained original bytes")
+            original_hashes[race.capture_evidence] = manifest.content_sha256
+        entry = build_preliminary_update(
+            previous,
+            current,
+            checked_at=datetime.fromisoformat(checked_at),
+            original_hashes=original_hashes,
+        )
+        appended = entry is not None and append_preliminary_update(
+            repository_root / "data/corrections/wa-2026-general.yaml", entry
+        )
+    except (OSError, ValueError) as error:
+        typer.echo(f"preliminary publication plan failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        canonical_json_bytes(
+            {
+                "status": "prepared",
+                "information_update_added": appended,
+                "publication": "normal review and release gates required",
+            }
+        ).decode()
+    )
+
+
 @results_app.command("record-refresh-failure")
 def results_record_refresh_failure(
     results_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],

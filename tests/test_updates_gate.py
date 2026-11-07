@@ -50,7 +50,7 @@ def _updates(*entries: tuple[str, str, str]) -> str:
     )
 
 
-def _seal(site: Path) -> None:
+def _seal(site: Path, *, source_commit: str = "a" * 40) -> None:
     manifest = {
         "schema_version": "2.0",
         "canonical_origin": "https://seattleelections.guide",
@@ -60,7 +60,7 @@ def _seal(site: Path) -> None:
                 "election_id": election,
                 "bundle_id": election + "-release",
                 "release_version": "test.1",
-                "git_commit": "a" * 40,
+                "git_commit": source_commit,
                 "source_panel_id": election + "-panel",
                 "source_panel_hash": "b" * 64,
                 "release_manifest_sha256": "c" * 64,
@@ -465,3 +465,45 @@ def test_removing_a_history_only_entry_is_reported_and_cannot_excuse_content_cha
     assert report["result"] == ("fail" if content_changed else "pass")
     assert report["elections"][GENERAL]["previous_entry_identities_retained"] is False
     assert report["elections"][GENERAL]["new_entries"] == []
+
+
+@pytest.mark.parametrize("route", ["index.html", "races/race-1/index.html"])
+def test_same_content_addressed_result_original_survives_a_software_commit(
+    sites: tuple[Path, Path], route: str
+) -> None:
+    baseline, candidate = sites
+    digest = "f" * 64
+    for site, revision in [(baseline, "a" * 40), (candidate, "b" * 40)]:
+        url = f"https://github.com/shaug/seattle-election-guide/blob/{revision}/data/evidence/official/sha256/ff/{digest}"
+        content = f'<div class="race-results">Unofficial A 10<a href="{url}">evidence</a></div>'
+        _write(site, f"e/{GENERAL}/{route}", _page(content))
+        _seal(site, source_commit=revision)
+    assert check_updates(baseline, candidate)["result"] == "pass"
+
+
+@pytest.mark.parametrize(
+    "change", ["hash", "wrong-pin", "wrong-prefix", "other-repository", "outside-result", "count"]
+)
+def test_result_original_identity_rule_does_not_hide_changed_evidence_or_facts(
+    sites: tuple[Path, Path], change: str
+) -> None:
+    baseline, candidate = sites
+    for site, revision in [(baseline, "a" * 40), (candidate, "b" * 40)]:
+        digest = "e" * 64 if site == candidate and change == "hash" else "f" * 64
+        prefix = "00" if site == candidate and change == "wrong-prefix" else digest[:2]
+        pin = "c" * 40 if site == candidate and change == "wrong-pin" else revision
+        repository = (
+            "someone/else"
+            if site == candidate and change == "other-repository"
+            else "shaug/seattle-election-guide"
+        )
+        value = "11" if site == candidate and change == "count" else "10"
+        url = f"https://github.com/{repository}/blob/{pin}/data/evidence/official/sha256/{prefix}/{digest}"
+        classes = "source-evidence" if change == "outside-result" else "race-results"
+        _write(
+            site,
+            f"e/{GENERAL}/index.html",
+            _page(f'<div class="{classes}">Unofficial A {value}<a href="{url}">evidence</a></div>'),
+        )
+        _seal(site, source_commit=revision)
+    assert check_updates(baseline, candidate)["result"] == "fail"

@@ -85,13 +85,13 @@ class ElectionUpdatesSnapshot(HostingModel):
 
 
 class UpdatesSnapshot(HostingModel):
-    schema_version: Literal["1.0", "2.0"] = "2.0"
+    schema_version: Literal["1.0", "2.0", "3.0"] = "3.0"
     canonical_origin: str
     elections: dict[str, ElectionUpdatesSnapshot]
 
     @model_validator(mode="after")
     def validate_information_policy(self) -> "UpdatesSnapshot":
-        if self.schema_version == "2.0" and any(
+        if self.schema_version != "1.0" and any(
             election.information_pages is None
             or election.information_pages.keys() != election.pages.keys()
             for election in self.elections.values()
@@ -283,8 +283,9 @@ class _InformationContent(_PageContent):
     marker can exempt a historical baseline. Complete assets are still verified.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, evidence_source_commit: str | None = None) -> None:
         super().__init__()
+        self.evidence_source_commit = evidence_source_commit
         self.payload: list[str] | None = None
 
     def _information(self) -> bool:
@@ -341,6 +342,20 @@ class _InformationContent(_PageContent):
             }
             or key.startswith("data-election-")
         }
+        href = facts.get("href")
+        if (
+            href is not None
+            and self.evidence_source_commit is not None
+            and self._inside("race-results")
+        ):
+            original = re.fullmatch(
+                r"https://github\.com/shaug/seattle-election-guide/blob/"
+                + re.escape(self.evidence_source_commit)
+                + r"/data/evidence/official/sha256/([0-9a-f]{2})/([0-9a-f]{64})",
+                href,
+            )
+            if original is not None and original[1] == original[2][:2]:
+                facts["href"] = "sha256-official-original:" + original[2]
         if facts:
             self.tokens.append(("facts", facts))
 
@@ -367,8 +382,10 @@ class _InformationContent(_PageContent):
             )
 
 
-def _information_content(site: Path, name: str) -> bytes:
-    parser = _InformationContent()
+def _information_content(
+    site: Path, name: str, *, evidence_source_commit: str | None = None
+) -> bytes:
+    parser = _InformationContent(evidence_source_commit)
     parser.feed((site / name).read_text(encoding="utf-8"))
     parser.close()
     return canonical_json_bytes(_without_layout_whitespace(parser.tokens))
@@ -433,10 +450,13 @@ def _pages(manifest: DeploymentManifest, election: str) -> set[str]:
     }
 
 
-def build_updates_snapshot(site: Path) -> UpdatesSnapshot:
+def build_updates_snapshot(
+    site: Path, *, schema_version: Literal["1.0", "2.0", "3.0"] = "3.0"
+) -> UpdatesSnapshot:
     """Derive a durable content baseline from the verified pages that actually ship."""
     manifest = read_verified_deployment(site)
     return UpdatesSnapshot(
+        schema_version=schema_version,
         canonical_origin=manifest.canonical_origin,
         elections={
             election.election_id: ElectionUpdatesSnapshot(
@@ -445,10 +465,22 @@ def build_updates_snapshot(site: Path) -> UpdatesSnapshot:
                     for name in sorted(_pages(manifest, election.election_id))
                 },
                 entries=sorted(_entries(site, manifest, election.election_id)),
-                information_pages={
-                    name: hashlib.sha256(_information_content(site, name)).hexdigest()
-                    for name in sorted(_pages(manifest, election.election_id))
-                },
+                information_pages=(
+                    None
+                    if schema_version == "1.0"
+                    else {
+                        name: hashlib.sha256(
+                            _information_content(
+                                site,
+                                name,
+                                evidence_source_commit=election.git_commit
+                                if schema_version == "3.0"
+                                else None,
+                            )
+                        ).hexdigest()
+                        for name in sorted(_pages(manifest, election.election_id))
+                    }
+                ),
             )
             for election in manifest.elections
         },
@@ -458,11 +490,7 @@ def build_updates_snapshot(site: Path) -> UpdatesSnapshot:
 def verify_updates_snapshot(site: Path) -> None:
     """A hash-valid stale snapshot is still invalid evidence about the staged pages."""
     stored = UpdatesSnapshot.model_validate(read_json(site / UPDATES_SNAPSHOT))
-    rebuilt = build_updates_snapshot(site)
-    if stored.schema_version == "1.0":
-        rebuilt.schema_version = "1.0"
-        for election in rebuilt.elections.values():
-            election.information_pages = None
+    rebuilt = build_updates_snapshot(site, schema_version=stored.schema_version)
     if stored != rebuilt:
         raise ValueError("Updates snapshot differs from staged election pages")
 
@@ -471,7 +499,7 @@ def compare_updates_snapshots(
     published: UpdatesSnapshot, proposed: UpdatesSnapshot
 ) -> dict[str, Any]:
     """Require a fresh served entry for each election whose page fingerprints changed."""
-    if published.schema_version != "2.0" or proposed.schema_version != "2.0":
+    if published.schema_version != "3.0" or proposed.schema_version != "3.0":
         raise ValueError(
             "Updates snapshot policy differs; verify original baseline pages before upgrading"
         )

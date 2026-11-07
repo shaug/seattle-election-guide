@@ -26,8 +26,8 @@ multi-county total. This runbook does not reopen #535 or perform future #692/#69
 6. Validate the strict preliminary document, frozen inventory and all retained evidence
    with `uv run --offline --frozen election-guide results validate <results-file>`.
    Unsupported/missing geography, clock or choices blocks admission. A partial County-only
-   candidate cannot be marked complete. Current data files remain absent until these proofs
-   exist; historical schema fixtures are not production data or current-data approval.
+   candidate cannot be marked complete. A production data file requires these proofs; historical schema fixtures are not
+   production data or current-data approval.
 
 ## Refresh and failures
 
@@ -67,12 +67,42 @@ Schema, identity, classification or timestamp regressions stop admission without
 an HTTP failure. The State uses its full aggregate; County sources require inventory ancestry
 contained in King County. Lower corrected counts are not clamped.
 
-The proposed hourly workflow is disabled unless `PRELIMINARY_RESULTS_REFRESH_ENABLED` is true.
-It has only repository/Actions read permissions. It retains intent before requests, restores
-the exact previous completion state and preserves held denial manifests. Missing prior state
-stops before requests. It prepares artifacts; it cannot push branches, open PRs, approve,
-merge or deploy. Activation and the protected-publication handoff remain separate operational
-boundaries. No repository variable, workflow dispatch or schedule has been activated here.
+The hourly workflow remains opt-in: `PRELIMINARY_RESULTS_REFRESH_ENABLED` must equal `true`.
+It runs only from protected main and only on a first run attempt. The job token has repository
+and Actions read access. The existing archive GitHub App token requests only contents and
+pull-request write; it requests no workflow-write permission. Activation follows normal review
+and deployment of this implementation, not a local script or an unreviewed branch.
+
+Each eligible tick checks the fixed `codex/preliminary-results-refresh` branch and its PR first. After an ordinary upstream merge,
+a completed squash candidate whose entire tree equals current main starts a fresh
+refresh. The merge retains branch ancestry for the next normal fast-forward push;
+a real unmerged difference remains recovery work with no new source acquisition.
+An open PR suppresses new source requests until its review/delivery is complete. A pushed
+candidate missing its PR is recovered without reacquiring sources. Normal merge conflicts stop
+for reconciliation; there is no force push, client fallback, self-approval or self-merge.
+
+Before source work the job retains intent, restores the exact previous completion state and
+preserves held denial manifests. Missing/uncertain prior state stops before requests. A known
+blocked admission also stops later ticks; certification, schema and mapping errors are not fake
+HTTP failures. Successful unchanged checks preserve count clocks and need no election-information
+Update. Changed counts/source reporting metadata or genuine unavailable observations receive a
+truthful append-only results Update, preserving all earlier text. The historical migration
+contract retains every complete pinned entry while allowing later substantive results
+updates. Before staging, the publisher requires the entire previous Updates file to
+remain an exact byte prefix, including any earlier automatic entries.
+
+The job prepares the normal release request and runs the complete `make check`, then stages
+only the General results, its Updates, the normal hosting proposal and new immutable official
+bytes/manifests. Code, Primary changes, replaced captures, missing/symlinked files and files over
+GitHub's 100 MiB limit stop before push. One ordinary branch push and draft PR hand off the
+candidate; the exact source/CI/review/admission and normal production gates still apply. A
+pending PR or a configured cron is not evidence of a completed production refresh. Preserve
+actual run, candidate and deployment evidence before declaring the autonomous requirement met.
+
+The scheduled acquisition is hourly at minute17 UTC. It is not browser polling. The fixed
+source deadlines/byte budgets and no-retry rules remain unchanged. The last verified production
+snapshot remains available while review, source access or admission is blocked. Automatic
+publication cannot certify results or substitute County-only counts for complete jurisdictions.
 
 #696 requires supported autonomous acquisition, admission, scheduled refresh and normal
 protected publication. The local producer commands below are component interfaces; an

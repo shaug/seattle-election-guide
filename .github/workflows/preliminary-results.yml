@@ -1,4 +1,4 @@
-name: Prepare preliminary election results
+name: Refresh preliminary election results
 
 on:
   schedule:
@@ -13,20 +13,74 @@ concurrency:
   group: preliminary-results-refresh
   cancel-in-progress: false
 
+env:
+  PRELIMINARY_RESULTS_BRANCH: codex/preliminary-results-refresh
+
 jobs:
   prepare:
-    if: vars.PRELIMINARY_RESULTS_REFRESH_ENABLED == 'true'
+    if: github.ref == 'refs/heads/main' && github.run_attempt == 1 && vars.PRELIMINARY_RESULTS_REFRESH_ENABLED == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
+      - name: Mint the scoped existing archive App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.ANALYTICS_ARCHIVE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ANALYTICS_ARCHIVE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
       - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+      - name: Retain a pending candidate or recover its pushed branch
+        id: candidate
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          pr="$(gh pr list --repo "$GITHUB_REPOSITORY" --base main --head "$PRELIMINARY_RESULTS_BRANCH" --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$pr" ]; then
+            echo "pending=true" >> "$GITHUB_OUTPUT"
+            echo "PR #$pr is awaiting its normal review and delivery gates; no source request."
+            exit 0
+          fi
+          echo "pending=false" >> "$GITHUB_OUTPUT"
+          remote="$(git ls-remote --heads origin "refs/heads/$PRELIMINARY_RESULTS_BRANCH")"
+          if [ -n "$remote" ]; then
+            git fetch origin "$PRELIMINARY_RESULTS_BRANCH"
+            if ! git merge-base --is-ancestor FETCH_HEAD origin/main; then
+              git checkout -B "$PRELIMINARY_RESULTS_BRANCH" FETCH_HEAD
+              git merge --no-edit origin/main
+              if git diff --quiet HEAD origin/main; then
+                echo "recover=false" >> "$GITHUB_OUTPUT"
+              else
+                echo "recover=true" >> "$GITHUB_OUTPUT"
+              fi
+              exit 0
+            fi
+          fi
+          git checkout -B "$PRELIMINARY_RESULTS_BRANCH" origin/main
+          echo "recover=false" >> "$GITHUB_OUTPUT"
       - uses: astral-sh/setup-uv@v6
-      - run: uv sync --frozen
+        if: steps.candidate.outputs.pending != 'true'
+      - uses: actions/setup-node@v4
+        if: steps.candidate.outputs.pending != 'true'
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked runtime
+        if: steps.candidate.outputs.pending != 'true'
+        run: make sync
       - name: Find the prior attempted preparation
         id: prior
+        if: steps.candidate.outputs.pending != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          mkdir -p output
           gh api --paginate "repos/$GITHUB_REPOSITORY/actions/artifacts?name=preliminary-intent&per_page=100" \
             --jq '.artifacts[].workflow_run.id' > "$RUNNER_TEMP/prior-intents.txt"
           python - <<'PY'
@@ -39,15 +93,17 @@ jobs:
           PY
       - name: Restore the exact prior completion state
         id: state
-        if: steps.prior.outputs.run != ''
+        if: steps.candidate.outputs.pending != 'true' && steps.prior.outputs.run != ''
         uses: actions/cache/restore@v4
         with:
           path: output/preliminary-state
           key: preliminary-complete-${{ steps.prior.outputs.run }}
       - name: Validate state before any publisher request
+        if: steps.candidate.outputs.pending != 'true'
         env:
           PRIOR_RUN: ${{ steps.prior.outputs.run }}
           CACHE_HIT: ${{ steps.state.outputs.cache-hit }}
+          RECOVER_CANDIDATE: ${{ steps.candidate.outputs.recover }}
         run: |
           uv run --offline --frozen python - <<'PY'
           import json, os
@@ -56,11 +112,14 @@ jobs:
           from election_guide.evidence.storage import write_manifest
           from election_guide.results.acquisition import FEEDS
           path = Path('output/preliminary-state/state.json')
-          if os.environ['PRIOR_RUN'] and os.environ['CACHE_HIT'] != 'true':
+          recovering = os.environ.get('RECOVER_CANDIDATE') == 'true'
+          if not recovering and os.environ['PRIOR_RUN'] and os.environ['CACHE_HIT'] != 'true':
               raise SystemExit('Prior outcome/state unavailable; recover that run before another publisher request.')
           state = json.loads(path.read_text()) if path.exists() else {'phase': 'complete', 'holds': []}
-          if state['phase'] != 'complete':
-              raise SystemExit('Prior source operation is uncertain; recover its artifacts first.')
+          if not recovering and state['phase'] != 'complete':
+              raise SystemExit('Prior source/publication operation is uncertain; recover its artifacts first.')
+          if not recovering and state.get('blocked_reason'):
+              raise SystemExit('Prior preparation is held: ' + state['blocked_reason'])
           for raw in state['holds']:
               manifest = UnavailableManifest.model_validate(raw)
               if not any(manifest.source_id == source and manifest.requested_url == url for source, url, _ in FEEDS.values()):
@@ -71,13 +130,18 @@ jobs:
           PY
       - name: Persist source intent before acquisition
         id: intent
+        if: steps.candidate.outputs.pending != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: preliminary-intent
           path: output/preliminary-state/state.json
           if-no-files-found: error
+      - name: Preserve the admitted baseline
+        if: steps.candidate.outputs.pending != 'true' && steps.candidate.outputs.recover != 'true'
+        run: cp data/results/wa-2026-general.yaml output/preliminary-before.yaml
       - name: Prepare one full reviewed-source snapshot
         id: refresh
+        if: steps.candidate.outputs.pending != 'true' && steps.candidate.outputs.recover != 'true'
         continue-on-error: true
         run: |
           uv run --offline --frozen election-guide results prepare-refresh \
@@ -87,14 +151,19 @@ jobs:
       - name: Record only a known source outcome
         id: completion
         if: always() && steps.intent.outcome == 'success'
+        env:
+          RECOVER_CANDIDATE: ${{ steps.candidate.outputs.recover }}
         run: |
           uv run --offline --frozen python - <<'PY'
-          import json, os
+          import json, os, subprocess
           from pathlib import Path
           from election_guide.evidence.models import UnavailableManifest
           from election_guide.evidence.storage import read_capture_manifest
           from election_guide.results.acquisition import FEEDS
-          report = json.loads(Path('output/preliminary-refresh-report.json').read_text())
+          report_path = Path('output/preliminary-refresh-report.json')
+          if os.environ['RECOVER_CANDIDATE'] == 'true':
+              report_path.write_text(json.dumps({'status': 'prepared', 'recovered_existing_candidate': True}) + '\n')
+          report = json.loads(report_path.read_text())
           if report['status'] not in {'prepared', 'blocked'}:
               raise SystemExit('Unknown outcome; preserve the in-progress intent.')
           holds = []
@@ -103,7 +172,16 @@ jobs:
               if isinstance(item, UnavailableManifest) and item.http_status is not None and (item.http_status in {401, 403} or 300 <= item.http_status < 400):
                   if any(item.source_id == source and item.requested_url == url for source, url, _ in FEEDS.values()):
                       holds.append(item.model_dump(mode='json'))
-          Path('output/preliminary-state/state.json').write_text(json.dumps({'phase': 'complete', 'run_id': os.environ['GITHUB_RUN_ID'], 'holds': holds}, indent=2) + '\n')
+          changed = subprocess.run(['git', 'diff', '--quiet', '--', 'data/results/wa-2026-general.yaml']).returncode
+          if changed not in {0, 1}:
+              raise SystemExit('Cannot establish prepared-results change.')
+          publish = report['status'] == 'prepared' or changed == 1
+          state = {'phase': 'prepared', 'run_id': os.environ['GITHUB_RUN_ID'], 'holds': holds}
+          if report['status'] == 'blocked':
+              state['blocked_reason'] = report['reason']
+          Path('output/preliminary-state/state.json').write_text(json.dumps(state, indent=2) + '\n')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('publish=' + str(publish).lower() + '\n')
           PY
       - name: Retain the candidate and exact original evidence
         id: artifact
@@ -118,7 +196,59 @@ jobs:
             data/manifests/evidence
             data/results
           if-no-files-found: error
-      - name: Preserve denial holds for the next tick
+      - name: Plan only substantive result Updates
+        if: steps.completion.outputs.publish == 'true' && steps.candidate.outputs.recover != 'true'
+        run: |
+          uv run --offline --frozen election-guide results plan-publication output/preliminary-before.yaml \
+            --checked-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > output/preliminary-publication-plan.json
+      - name: Prepare the normal current release request
+        if: steps.completion.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: uv run --offline --frozen election-guide release automation prepare --issue 696
+      - name: Validate the whole publication candidate
+        if: steps.completion.outputs.publish == 'true'
+        run: make check
+      - name: Commit scoped evidence and open or recover its draft PR
+        id: publish
+        if: steps.completion.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          uv run --offline --frozen python - <<'PY'
+          from pathlib import Path
+          from election_guide.results.publication import stage_preliminary_publication
+          stage_preliminary_publication(Path('.'))
+          PY
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore(results): prepare verified preliminary results refresh'
+          fi
+          head="$(git rev-parse HEAD)"
+          remote="$(git ls-remote --heads origin "refs/heads/$PRELIMINARY_RESULTS_BRANCH" | cut -f1)"
+          if [ "$remote" != "$head" ]; then
+            git push origin "HEAD:refs/heads/$PRELIMINARY_RESULTS_BRANCH"
+          fi
+          pr="$(gh pr list --repo "$GITHUB_REPOSITORY" --base main --head "$PRELIMINARY_RESULTS_BRANCH" --state open --json number --jq '.[0].number // empty')"
+          if [ -z "$pr" ]; then
+            gh pr create --repo "$GITHUB_REPOSITORY" --head "$PRELIMINARY_RESULTS_BRANCH" --base main \
+              --draft --title 'chore(results): refresh unofficial election-wide counts' \
+              --body-file .github/preliminary-results-pr.md
+          fi
+      - name: Record the durable candidate handoff
+        if: always() && steps.artifact.outcome == 'success'
+        env:
+          PUBLISH_OUTCOME: ${{ steps.publish.outcome }}
+        run: |
+          uv run --offline --frozen python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path('output/preliminary-state/state.json')
+          state = json.loads(path.read_text())
+          if os.environ['PUBLISH_OUTCOME'] == 'success' or state.get('blocked_reason'):
+              state['phase'] = 'complete'
+          path.write_text(json.dumps(state, indent=2) + '\n')
+          PY
+      - name: Preserve exact completion state and held failures
         if: always() && steps.artifact.outcome == 'success'
         uses: actions/cache/save@v4
         with:
