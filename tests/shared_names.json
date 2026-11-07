@@ -1153,6 +1153,18 @@
       "python",
       "test"
     ],
+    "race-results-provenance": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "race-results-status": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
     "screen-guide": [
       "template",
       "stylesheet",

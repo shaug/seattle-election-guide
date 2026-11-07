@@ -27,8 +27,10 @@ a County-only rollout does not complete #696.
 
 The timezone-aware publisher count timestamp stays separate from capture/export clocks.
 When the State export supplies only `createdAt`, admission retains a null count timestamp
-and uses the approved **Unofficial · Export generated [time]** label plus **Count timestamp
-not provided**. It never substitutes generation or retrieval time for count-as-of.
+and shows **Export generated [time]** on the second provenance line. An available count time
+uses **Count updated [time]** there; show both when both are supplied, alongside the separate
+**Last checked [time]**. The amber badge says only **Unofficial**, and absent-clock notices
+are omitted. Generation or retrieval time never substitutes for count-as-of.
 Missing publisher certification flags remain null in provenance. `preliminary` describes
 SEG's uncertified reproduction; it is not an assertion that the State supplied a false flag.
 An explicit true official-status flag stops preliminary ingestion for the separate certified path.
@@ -43,7 +45,8 @@ A contradictory generic Write-in flag requires an exact ID/name/flag override an
 reason in the reviewed map. The original source flag and bytes remain unchanged.
 
 Guide/race pages reuse the existing slim navy tally block, equal candidate emphasis,
-amber **Unofficial · [actual count time]**, and compact count/authority/evidence provenance.
+amber **Unofficial** badge, and compact count/authority/evidence provenance with available
+timestamps on its second line.
 No outcome chips appear for preliminary data. The centered banner says **Unofficial results
 · counts may change**; each contest retains its own clock. The comparison column remains
 explicitly **Certified result**, unavailable for preliminary data.
@@ -455,8 +458,8 @@ questions" previously tracked as the ballot-measures mockup pass (now removed fr
 below), without exercising the "if thresholds are to be rendered" branch of #289's own scope note
 — there is no threshold field to source, so no #283 schema follow-up is needed.
 
-Same provenance line (count · authority · evidence link) and same "Certified ·
-`<date>`" badge as candidate cards — nothing measure-specific there either. This applies
+Same provenance line (count · authority · evidence link), second line **Certified on [date]**,
+and status-only **Certified** badge as candidate cards — nothing measure-specific there either. This applies
 identically wherever the certified results data renders: the race card and the race-detail
 page render it through the shared tally-row component exactly as above ("Race cards", #286;
 "The race-detail page", #287); the comparison column renders the same underlying data through
@@ -483,9 +486,10 @@ no point publishing results at all if the winner might be missing from them.
 
 **The design.** The certified strip grows into the complete result, in the slot it already held:
 under the race header, above the lens bar, above every candidate. It is the race card's own RESULT
-block (`.race-results`, "Race cards" above) — eyebrow, "Certified · `<date>`" badge, one tally
+block (`.race-results`, "Race cards" above) — eyebrow, status-only **Certified** badge, one tally
 row per outcome in finish order with chip, share, and bar on one shared full-width scale, then the
-provenance line (count, authority, evidence link). The per-candidate vote-share row is
+provenance line (count, authority, evidence link), with **Certified on [date]** on its second
+line. The per-candidate vote-share row is
 removed; each candidate section keeps its chip. The block is left-adjusted on the race name's own
 edge and capped so a bar stays readable on a wide page.
 
