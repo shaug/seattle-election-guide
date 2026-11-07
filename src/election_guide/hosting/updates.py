@@ -76,6 +76,11 @@ _BLOCK = frozenset(
     ]
 )
 UPDATES_SNAPSHOT = "updates-snapshot.json"
+_VERIFICATION_CLOCK = re.compile(
+    r"([Ll]ast checked )(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+    r" (?:[1-9]|[12][0-9]|3[01]), (?:[1-9]|1[0-2]):[0-5][0-9]:[0-5][0-9]"
+    r" [ap]\.m\. P[SD]T\b"
+)
 
 
 class ElectionUpdatesSnapshot(HostingModel):
@@ -85,7 +90,7 @@ class ElectionUpdatesSnapshot(HostingModel):
 
 
 class UpdatesSnapshot(HostingModel):
-    schema_version: Literal["1.0", "2.0", "3.0"] = "3.0"
+    schema_version: Literal["1.0", "2.0", "3.0", "4.0"] = "4.0"
     canonical_origin: str
     elections: dict[str, ElectionUpdatesSnapshot]
 
@@ -283,9 +288,12 @@ class _InformationContent(_PageContent):
     marker can exempt a historical baseline. Complete assets are still verified.
     """
 
-    def __init__(self, evidence_source_commit: str | None = None) -> None:
+    def __init__(
+        self, evidence_source_commit: str | None = None, *, verification_clocks: bool = True
+    ) -> None:
         super().__init__()
         self.evidence_source_commit = evidence_source_commit
+        self.verification_clocks = verification_clocks
         self.payload: list[str] | None = None
 
     def _information(self) -> bool:
@@ -374,18 +382,31 @@ class _InformationContent(_PageContent):
         if self.payload is not None:
             self.payload.append(data)
         elif self._information():
+            literal = any(tag in {"pre", "textarea"} for tag, _ in self.stack)
+            if (
+                not self.verification_clocks
+                and not literal
+                and self._inside("race-results")
+                and any(
+                    tag == "span" and attrs.get("data-preliminary-recency")
+                    for tag, attrs in self.stack
+                )
+            ):
+                data = _VERIFICATION_CLOCK.sub(r"\1VERIFICATION_TIME", data)
             self._append_text(
-                "literal-text"
-                if any(tag in {"pre", "textarea"} for tag, _ in self.stack)
-                else "text",
+                "literal-text" if literal else "text",
                 data,
             )
 
 
 def _information_content(
-    site: Path, name: str, *, evidence_source_commit: str | None = None
+    site: Path,
+    name: str,
+    *,
+    evidence_source_commit: str | None = None,
+    verification_clocks: bool = True,
 ) -> bytes:
-    parser = _InformationContent(evidence_source_commit)
+    parser = _InformationContent(evidence_source_commit, verification_clocks=verification_clocks)
     parser.feed((site / name).read_text(encoding="utf-8"))
     parser.close()
     return canonical_json_bytes(_without_layout_whitespace(parser.tokens))
@@ -451,7 +472,7 @@ def _pages(manifest: DeploymentManifest, election: str) -> set[str]:
 
 
 def build_updates_snapshot(
-    site: Path, *, schema_version: Literal["1.0", "2.0", "3.0"] = "3.0"
+    site: Path, *, schema_version: Literal["1.0", "2.0", "3.0", "4.0"] = "4.0"
 ) -> UpdatesSnapshot:
     """Derive a durable content baseline from the verified pages that actually ship."""
     manifest = read_verified_deployment(site)
@@ -474,8 +495,9 @@ def build_updates_snapshot(
                                 site,
                                 name,
                                 evidence_source_commit=election.git_commit
-                                if schema_version == "3.0"
+                                if schema_version in {"3.0", "4.0"}
                                 else None,
+                                verification_clocks=schema_version != "4.0",
                             )
                         ).hexdigest()
                         for name in sorted(_pages(manifest, election.election_id))
@@ -499,7 +521,7 @@ def compare_updates_snapshots(
     published: UpdatesSnapshot, proposed: UpdatesSnapshot
 ) -> dict[str, Any]:
     """Require a fresh served entry for each election whose page fingerprints changed."""
-    if published.schema_version != "3.0" or proposed.schema_version != "3.0":
+    if published.schema_version != "4.0" or proposed.schema_version != "4.0":
         raise ValueError(
             "Updates snapshot policy differs; verify original baseline pages before upgrading"
         )

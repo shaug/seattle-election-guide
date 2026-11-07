@@ -260,7 +260,7 @@ def test_durable_snapshot_rejects_a_different_manifest_at_the_verified_source(
         updates_baseline.resolve_production_snapshot(tmp_path / "download")
 
 
-@pytest.mark.parametrize("old_policy", ["1.0", "2.0"])
+@pytest.mark.parametrize("old_policy", ["1.0", "2.0", "3.0"])
 @pytest.mark.parametrize("available, changed_source", [(False, False), (True, False), (True, True)])
 def test_old_policy_upgrade_requires_the_exact_verified_original_site(
     tmp_path: Path,
@@ -280,11 +280,16 @@ def test_old_policy_upgrade_requires_the_exact_verified_original_site(
     _write(
         sites[0],
         "e/wa-2026-general/index.html",
-        _page(f'<div class="race-results"><a href="{original}">Evidence</a> A 10</div>'),
+        _page(
+            f'<div class="race-results"><a href="{original}">Evidence</a> A 10 '
+            '<span data-preliminary-recency="race-1">'
+            'Last checked Nov 7, 5:22:18 a.m. PST</span></div>'
+        ),
     )
     _seal(sites[0])
     snapshot = build_updates_snapshot(
-        sites[0], schema_version="1.0" if old_policy == "1.0" else "2.0"
+        sites[0],
+        schema_version="1.0" if old_policy == "1.0" else "2.0" if old_policy == "2.0" else "3.0",
     ).model_dump(mode="json")
     if old_policy == "1.0":
         for election in snapshot["elections"].values():
@@ -316,11 +321,11 @@ def test_old_policy_upgrade_requires_the_exact_verified_original_site(
             updates_baseline.resolve_production_snapshot(tmp_path / "download")
     else:
         resolved, receipt = updates_baseline.resolve_production_snapshot(tmp_path / "download")
-        assert resolved.schema_version == "3.0"
+        assert resolved.schema_version == "4.0"
         assert receipt["policy_upgrade_from"] == old_policy
         assert receipt["git_commit"] == "a" * 40
         assert resolved == build_updates_snapshot(sites[0])
-        if old_policy == "2.0":
+        if old_policy in {"2.0", "3.0"}:
             assert (
                 resolved.elections["wa-2026-general"].information_pages
                 != snapshot["elections"]["wa-2026-general"]["information_pages"]
