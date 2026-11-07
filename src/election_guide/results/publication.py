@@ -30,7 +30,11 @@ PUBLICATION_FILES = frozenset(
 
 
 def build_preliminary_update(
-    previous: ResultsDocument, current: ResultsDocument, *, checked_at: datetime
+    previous: ResultsDocument,
+    current: ResultsDocument,
+    *,
+    checked_at: datetime,
+    original_hashes: dict[str, str] | None = None,
 ) -> CorrectionEntry | None:
     """Distinguish new election information from an unchanged source recheck."""
     if not isinstance(previous, PreliminaryElectionResults) or not isinstance(
@@ -49,6 +53,17 @@ def build_preliminary_update(
         for key in old
         if old[key].model_dump(exclude=excluded) != new[key].model_dump(exclude=excluded)
     ]
+    for key in old:
+        before, after = old[key].capture_evidence, new[key].capture_evidence
+        if before != after:
+            if (
+                original_hashes is None
+                or before not in original_hashes
+                or after not in original_hashes
+            ):
+                raise ValueError("new preliminary references require verified original hashes")
+            if original_hashes[before] != original_hashes[after] and key not in changed:
+                changed.append(key)
     failures = [f for f in current.failed_refreshes if f not in previous.failed_refreshes]
     if not changed and not failures:
         return None
@@ -56,7 +71,7 @@ def build_preliminary_update(
     details: list[str] = []
     if changed:
         details.append(
-            f"Updated the unofficial count-so-far, source clocks or reporting metadata "
+            f"Updated the unofficial counts, source/reporting metadata or retained originals "
             f"for {len(changed)} contest(s), using each contest's complete jurisdiction."
         )
         details.append(

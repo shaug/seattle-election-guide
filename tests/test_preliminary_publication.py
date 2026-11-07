@@ -141,3 +141,28 @@ def test_append_update_retains_whole_previous_text_and_is_idempotent(tmp_path: P
     assert appended.startswith(original)
     assert publisher().append_preliminary_update(p, entry) is False
     assert p.read_bytes() == appended
+
+
+@pytest.mark.parametrize("changed", [False, True])
+def test_verification_uses_original_byte_identity_not_new_capture_ids(changed: bool) -> None:
+    import inspect
+
+    previous = snapshot()
+    current = previous.model_copy(deep=True)
+    old_reference = current.races[0].capture_evidence
+    new_reference = "data/manifests/evidence/new-capture.json"
+    capture = next(c for c in current.captures if c.evidence == old_reference)
+    current.captures.append(
+        capture.model_copy(update={"evidence": new_reference, "captured_at": NOW})
+    )
+    current.races[0].capture_evidence = new_reference
+    current.races[0].coverage_evidence = new_reference
+    hashes = {r.capture_evidence: "0" * 64 for r in previous.races}
+    hashes[new_reference] = ("1" if changed else "0") * 64
+    assert (
+        "original_hashes" in inspect.signature(publisher().build_preliminary_update).parameters
+    ), "original evidence identity is missing from publication planning"
+    entry = publisher().build_preliminary_update(
+        previous, current, checked_at=NOW, original_hashes=hashes
+    )
+    assert (entry is not None) == changed

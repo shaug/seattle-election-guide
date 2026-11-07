@@ -1956,8 +1956,17 @@ def results_plan_publication(
         )
         validate_results_inventory(current, inventory)
         validate_results_evidence(current, repository_root=repository_root)
+        original_hashes: dict[str, str] = {}
+        for race in [*previous.races, *current.races]:
+            manifest = read_capture_manifest(repository_root / race.capture_evidence)
+            if not isinstance(manifest, CapturedManifest):
+                raise ValueError("preliminary publication requires retained original bytes")
+            original_hashes[race.capture_evidence] = manifest.content_sha256
         entry = build_preliminary_update(
-            previous, current, checked_at=datetime.fromisoformat(checked_at)
+            previous,
+            current,
+            checked_at=datetime.fromisoformat(checked_at),
+            original_hashes=original_hashes,
         )
         appended = entry is not None and append_preliminary_update(
             repository_root / "data/corrections/wa-2026-general.yaml", entry

@@ -44,12 +44,20 @@ not materially misrepresent election information. When it does, the editorial co
 applies even if identical static facts remain embedded in the page. Never invent a filler entry,
 skip a failed check or weaken another rendering/validation contract.
 
-Version `1.0` snapshots cannot be compared to new information fingerprints. The first upgrade
+Snapshot schema `3.0` additionally compares content-addressed original-result receipts by
+SHA-256 identity when their GitHub URL uses this repository, the page's exact declared source
+commit, the official `sha256/<prefix>/<hash>` path, and the results block. A software-only
+source revision cannot turn the same immutable bytes into new election information. Wrong
+commit pins, malformed paths, other repositories, other citation regions, changed original
+hashes, counts, clocks and substantive result text remain compared. Release admission still
+validates the captured original bytes and complete source tree; this is not a link exemption.
+
+Older `1.0` and `2.0` snapshots cannot be compared directly to the new fingerprints. The upgrade
 must obtain the exact successful production artifact, verify it against the still-served manifest
-and verified upload receipt, validate its original snapshot against its actual pages, then derive
-version `2.0` from those bytes. An unavailable/expired original artifact blocks this transition.
-After version `2.0` ships, its authenticated durable snapshot again avoids artifact-expiry dependence.
-Existing immutable release and deployment identities are unchanged.
+and verified upload receipt, validate its original snapshot under its own policy against actual
+pages, then derive `3.0` from those bytes. Missing/expired artifacts or source/asset mismatches
+block this transition. After `3.0` ships, its authenticated durable snapshot again avoids
+artifact-expiry dependence. Existing immutable release and deployment identities are unchanged.
 
 The primary declaration explicitly opts into `updates_from_current_source`. Only its current
 `/updates/` route uses the migrated authored schema1.1 log from this source. The immutable
