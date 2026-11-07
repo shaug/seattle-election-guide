@@ -323,6 +323,16 @@
     "tests": {},
     "partition": "unit"
   },
+  "tests/test_preliminary_publication.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "unit"
+  },
+  "tests/test_preliminary_publication_git.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
   "tests/test_preliminary_refresh.py": {
     "suite": "unit",
     "tests": {},

@@ -1,0 +1,149 @@
+"""Narrow, offline preparation for normal reviewed preliminary-result PRs."""
+
+from __future__ import annotations
+
+import subprocess
+from collections.abc import Sequence
+from datetime import datetime
+from pathlib import Path, PurePosixPath
+from textwrap import indent
+from zoneinfo import ZoneInfo
+
+import yaml
+
+from election_guide.corrections.models import (
+    CorrectionEntry,
+    CorrectionProvenanceLink,
+    ElectionCorrections,
+)
+from election_guide.results.models import PreliminaryElectionResults, ResultsDocument
+from election_guide.serialization import read_yaml, write_generated_bytes
+
+EVIDENCE_PREFIXES = ("data/evidence/official/", "data/manifests/evidence/")
+PUBLICATION_FILES = frozenset(
+    {
+        "data/results/wa-2026-general.yaml",
+        "data/corrections/wa-2026-general.yaml",
+        "config/hosting/site.yaml",
+    }
+)
+
+
+def build_preliminary_update(
+    previous: ResultsDocument, current: ResultsDocument, *, checked_at: datetime
+) -> CorrectionEntry | None:
+    """Distinguish new election information from an unchanged source recheck."""
+    if not isinstance(previous, PreliminaryElectionResults) or not isinstance(
+        current, PreliminaryElectionResults
+    ):
+        raise ValueError("the hourly publisher accepts preliminary results only")
+    if checked_at.tzinfo is None or checked_at.utcoffset() is None:
+        raise ValueError("publication check time requires a timezone")
+    old = {r.race_id: r for r in previous.races}
+    new = {r.race_id: r for r in current.races}
+    if previous.election_id != current.election_id or old.keys() != new.keys():
+        raise ValueError("preliminary publication inventory membership changed")
+    excluded = {"capture_evidence", "coverage_evidence"}
+    changed = [
+        key
+        for key in old
+        if old[key].model_dump(exclude=excluded) != new[key].model_dump(exclude=excluded)
+    ]
+    failures = [f for f in current.failed_refreshes if f not in previous.failed_refreshes]
+    if not changed and not failures:
+        return None
+    local = checked_at.astimezone(ZoneInfo("America/Los_Angeles"))
+    details: list[str] = []
+    if changed:
+        details.append(
+            f"Updated the unofficial count-so-far, source clocks or reporting metadata "
+            f"for {len(changed)} contest(s), using each contest's complete jurisdiction."
+        )
+        details.append(
+            "Publisher count times remain separate from export generation and source verification "
+            "times; an export does not supply an absent count timestamp. "
+            "No certification or outcome is inferred."
+        )
+    if failures:
+        details.append(
+            "Refresh unavailable for one or more official sources. Previously verified counts "
+            "and their publisher clocks are preserved; the retained failure observations "
+            "identify the affected authorities."
+        )
+    return CorrectionEntry(
+        corrected_on=local.date(),
+        headline=f"Preliminary results checked at {local.strftime('%H:%M:%S')} Pacific.",
+        body=" ".join(details),
+        topics=["results"],
+        actions=["changed"],
+        provenance=[
+            CorrectionProvenanceLink(label="General election guide", url="/e/wa-2026-general/"),
+            CorrectionProvenanceLink(
+                label="Retained official results and refresh scope",
+                url="https://github.com/shaug/seattle-election-guide/issues/696",
+            ),
+        ],
+    )
+
+
+def append_preliminary_update(path: Path, entry: CorrectionEntry) -> bool:
+    """Preserve the entire authored prefix and make same-entry recovery harmless."""
+    original = path.read_bytes()
+    updates = ElectionCorrections.model_validate(read_yaml(path))
+    if entry in updates.entries:
+        return False
+    ElectionCorrections.model_validate(
+        {**updates.model_dump(), "entries": [*updates.entries, entry]}
+    )
+    if not original.endswith(b"\n"):
+        raise ValueError("existing Updates text must end with a newline")
+    addition = indent(
+        yaml.safe_dump([entry.model_dump(mode="json")], sort_keys=False), "  "
+    ).encode()
+    write_generated_bytes(path, original + addition)
+    return True
+
+
+def validate_preliminary_publication_paths(root: Path, paths: Sequence[str]) -> tuple[str, ...]:
+    """Reject unrelated files and known GitHub file-size failures before staging."""
+    for name in paths:
+        relative = PurePosixPath(name)
+        if (
+            relative.is_absolute()
+            or ".." in relative.parts
+            or not (name in PUBLICATION_FILES or name.startswith(EVIDENCE_PREFIXES))
+        ):
+            raise ValueError(f"outside preliminary publication scope: {name}")
+        p = root / name
+        if p.is_symlink():
+            raise ValueError(f"publication evidence cannot be a symlink: {name}")
+        if not p.is_file():
+            raise ValueError(f"publication file missing or deleted: {name}")
+        if p.stat().st_size > 100 * 1024 * 1024:
+            raise ValueError(f"publication file exceeds GitHub's 100 MiB limit: {name}")
+    return tuple(paths)
+
+
+def stage_preliminary_publication(root: Path) -> tuple[str, ...]:
+    """Stage only validated results and append-only original evidence."""
+
+    def git(*args: str) -> bytes:
+        return subprocess.check_output(["git", *args], cwd=root)
+
+    tracked = [v.decode() for v in git("diff", "HEAD", "--name-only", "-z").split(b"\0") if v]
+    untracked = [
+        v.decode()
+        for v in git("ls-files", "--others", "--exclude-standard", "-z").split(b"\0")
+        if v
+    ]
+    paths = validate_preliminary_publication_paths(root, sorted(set(tracked + untracked)))
+    for name in paths:
+        if (
+            name.startswith(EVIDENCE_PREFIXES)
+            and git("ls-tree", "--name-only", "HEAD", "--", name).strip()
+            and name in tracked
+        ):
+            raise ValueError(f"retained evidence is immutable: {name}")
+    if paths:
+        git("add", "--", *paths)
+    return paths
