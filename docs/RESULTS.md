@@ -9,15 +9,56 @@ Ingestion mechanics — the adapter that turns an official results publication i
 `data/results/` — are deliberately not designed here. That is the next design step, and the data
 model below is its contract. That step landed with #284 (below).
 
-## Posture: close the record
+## Preliminary extension (#696)
+
+#696 prospectively extends the original certified-only policy with explicitly unofficial
+preliminary results. The original design below remains the certified/amended baseline,
+not a prohibition on this separately validated path. #535 capture and #692/#693 future
+certification duties retain their original scopes.
+
+Schema 1.1 `status: preliminary` is distinct from legacy certified schema 1.0. Legacy
+`status: counting` files remain rejected. Admission accounts for every frozen inventory
+race, its jurisdiction and all named choices, with official contest ID, authority, explicit
+whole-jurisdiction coverage evidence and retained count capture. Whole jurisdiction means
+the authoritative election-wide count-so-far, **not** finished counting, 100% reporting or
+certification. Outstanding ballots/reporting units are normal. An empty cross-county list
+or matching name does not prove coverage. The approved four County examples are an excerpt;
+a County-only rollout does not complete #696.
+
+The timezone-aware publisher count timestamp stays separate from capture/export clocks.
+When the State export supplies only `createdAt`, admission retains a null count timestamp
+and uses the approved **Unofficial · Export generated [time]** label plus **Count timestamp
+not provided**. It never substitutes generation or retrieval time for count-as-of.
+Missing publisher certification flags remain null in provenance. `preliminary` describes
+SEG's uncertified reproduction; it is not an assertion that the State supplied a false flag.
+An explicit true official-status flag stops preliminary ingestion for the separate certified path.
+Historical captures never become current without fresh official verification. Named-choice
+percentages exclude write-ins; zero named votes have no percentage, not a fabricated 100%.
+Contest-ballots, total votes including write-ins and the named denominator remain distinct:
+candidate votes never become a ballot count. Preliminary tallies have no advanced/winner flag.
+When a State export omits its own total, the producer may sum its complete, exactly mapped
+choice rows as **votes**, including write-ins, with `vote_total_basis: complete_choice_sum`.
+This calculated sum is distinct from a publisher-stated total and never becomes ballots.
+A contradictory generic Write-in flag requires an exact ID/name/flag override and retained
+reason in the reviewed map. The original source flag and bytes remain unchanged.
+
+Guide/race pages reuse the existing slim navy tally block, equal candidate emphasis,
+amber **Unofficial · [actual count time]**, and compact count/authority/evidence provenance.
+No outcome chips appear for preliminary data. The centered banner says **Unofficial results
+· counts may change**; each contest retains its own clock. The comparison column remains
+explicitly **Certified result**, unavailable for preliminary data.
+
+Verify update schedules and certification status/timing per authority. A County calendar
+date is not a statewide promise and a date never certifies data. Preliminary files cannot
+satisfy certified-ingestion tracking. See [the refresh runbook](runbooks/results-preliminary-refresh.md).
+
+## Certified baseline: close the record
 
 The site's purpose is in the name: it helps voters vote. Results are a secondary feature, and
-"secondary" was sized deliberately. The site ingests **certified results only**, once per
-election, and each archived race then states how it completed. While ballots are being counted,
-the site links out to the counting authority and ingests nothing. The site never becomes a
-results tracker: King County's own site is always fresher, tracking demands deploys exactly when
-attention is scarcest, and Washington's late ballot drops make early numbers most misleading
-precisely when traffic is highest.
+"secondary" was sized deliberately. The original #208 policy admitted certified results once
+per election and linked out during counting. #696 supersedes that no-ingestion boundary only
+through the strict preliminary extension above. Certified records state completed outcomes;
+preliminary counts never predict or claim completion.
 
 Two framing constraints bind everything this design renders:
 
@@ -37,11 +78,12 @@ Two framing constraints bind everything this design renders:
 ## The results lifecycle
 
 Washington votes by mail with postmark-day validity, so the count is a process. The model needs
-three states after election day, and only one of them publishes numbers:
+the following states after election day:
 
 | State       | Window                        | What the site does                                    |
 | ----------- | ----------------------------- | ----------------------------------------------------- |
 | `counting`  | election night → certification | Links out to the counting authority; ingests nothing |
+| `preliminary` | reviewed official count-so-far | Explicit unofficial numbers, schema 1.1; no outcomes |
 | `certified` | county canvass onward          | The one ingest, review, and deploy                   |
 | `amended`   | recount or amended canvass     | A superseding re-ingest, logged as a correction      |
 
@@ -114,17 +156,17 @@ corroborate; they do not seed.
 ## Rendering
 
 One principle governs every surface: results render as a **state, not an option**. There is no
-toggle and no new filter control. When a results file with `status: certified` (or `amended`)
-exists for the election, the surfaces below render it; before that, they don't. One new rendering
-state to test, not a combinatorial option.
+toggle and no new filter control. A validated preliminary, certified or amended file renders
+its corresponding state. Final-outcome rules below apply to certified/amended data only;
+preliminary differences are specified above.
 
-**The election-day banner's counting state is the one exception, and it is deliberate, not a
-gap.** The counting window ingests nothing (Posture: close the record), so no counting-status file
+**The date-only banner remains the fallback without admitted results.** No legacy counting-status file
 ever exists to gate on — a rendering rule keyed on file existence alone would leave that window
 with nothing to render. The banner's counting state instead derives from dates the page already
 carries: election day has passed (the shipped #192 past-rewrite condition) and the calendar's
 certification date has not yet been reached. Every other surface, and the banner's own certified
-state, still gate on the results file exactly as above (#285, "The election-day banner").
+state, still gate on their admitted file. The preliminary banner is server-rendered and is
+not overwritten by this legacy client date branch.
 
 Vote share and endorsement share never share a component. The endorsement meter keeps its
 meaning everywhere; vote share is always a slim navy-on-track tally bar, and every bar in a view

@@ -1,5 +1,13 @@
 # Launch Decisions
 
+## Preliminary official results (#696)
+
+The certified-only ingestion boundary is prospectively extended for explicit unofficial
+whole-contest-jurisdiction counts-so-far. No predictions, winner calls, County subsets
+represented as statewide totals, or endorsement scoring changes. Actual authority count
+timestamps and retained evidence are required; retrieval is not count time. Certification
+remains an evidence-based transition, never a calendar inference.
+
 These decisions define the first publishable release. Changes require a documented pull
 request before viewing consensus results, so methodology cannot be tuned to an outcome.
 

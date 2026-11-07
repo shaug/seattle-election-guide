@@ -17,6 +17,7 @@ from urllib.parse import urlencode, urljoin, urlsplit, urlunsplit
 from election_guide.validation import validated_http_url, validated_media_type
 
 MAX_DOWNLOAD_BYTES = 25 * 1024 * 1024
+RESULTS_MAX_DOWNLOAD_BYTES = 128 * 1024 * 1024
 MAX_REDIRECTS = 10
 READ_CHUNK_SIZE = 64 * 1024
 REDIRECT_STATUSES = {301, 302, 303, 307, 308}
@@ -67,6 +68,39 @@ def fetch_http(
     url: str, *, timeout_seconds: float = 30, form: dict[str, str] | None = None
 ) -> HttpArtifact:
     """Fetch one public artifact within a total deadline and strict size cap."""
+    return _fetch_http(
+        url,
+        timeout_seconds=timeout_seconds,
+        form=form,
+        max_download_bytes=MAX_DOWNLOAD_BYTES,
+        allow_redirects=True,
+    )
+
+
+def fetch_results_http(url: str, *, timeout_seconds: float = 60) -> HttpArtifact:
+    """Fetch a large official export once, refusing redirects and client rotation.
+
+    The reviewed results caller owns the exact feed URL. Public DNS/peer/TLS,
+    total deadline and response-integrity checks are shared with collection;
+    its ordinary 25 MiB budget remains unchanged.
+    """
+    return _fetch_http(
+        url,
+        timeout_seconds=timeout_seconds,
+        form=None,
+        max_download_bytes=RESULTS_MAX_DOWNLOAD_BYTES,
+        allow_redirects=False,
+    )
+
+
+def _fetch_http(
+    url: str,
+    *,
+    timeout_seconds: float,
+    form: dict[str, str] | None,
+    max_download_bytes: int,
+    allow_redirects: bool,
+) -> HttpArtifact:
     if timeout_seconds <= 0:
         raise ValueError("live collection timeout must be positive")
     requested_url = validated_http_url(url)
@@ -135,6 +169,9 @@ def fetch_http(
                 response = connection.getresponse()
                 response_status = response.status
                 if response.status in REDIRECT_STATUSES:
+                    if not allow_redirects:
+                        redirect_class = "REFUSED"
+                        raise ValueError("official results refuses an unreviewed redirect")
                     if form is not None:
                         redirect_class = "REFUSED"
                         raise ValueError("live collection refuses a POST redirect")
@@ -155,7 +192,9 @@ def fetch_http(
                     continue
                 if not 200 <= response.status < 300:
                     raise ValueError(f"{HTTP_STATUS_PREFIX}{response.status}")
-                content = _read_response(response, peer, deadline)
+                content = _read_response(
+                    response, peer, deadline, max_download_bytes=max_download_bytes
+                )
                 media_type = validated_media_type(
                     response.getheader("Content-Type", "application/octet-stream")
                 )
@@ -185,7 +224,14 @@ def fetch_http(
         ) from error
 
 
-def _read_response(response: HTTPResponse, peer: socket.socket, deadline: float) -> bytes:
+def _read_response(
+    response: HTTPResponse,
+    peer: socket.socket,
+    deadline: float,
+    *,
+    max_download_bytes: int,
+) -> bytes:
+    limit_message = f"live artifact exceeds the {max_download_bytes // (1024 * 1024)} MiB limit"
     declared_length = response.getheader("Content-Length")
     expected_length: int | None = None
     if declared_length is not None:
@@ -193,20 +239,20 @@ def _read_response(response: HTTPResponse, peer: socket.socket, deadline: float)
             expected_length = int(declared_length)
         except ValueError as error:
             raise ValueError("live artifact has an invalid Content-Length") from error
-        if expected_length < 0 or expected_length > MAX_DOWNLOAD_BYTES:
-            raise ValueError("live artifact exceeds the 25 MiB limit")
+        if expected_length < 0 or expected_length > max_download_bytes:
+            raise ValueError(limit_message)
     content = bytearray()
     while True:
         remaining = _remaining_seconds(deadline)
         if response.isclosed():
             break
         peer.settimeout(remaining)
-        chunk = response.read1(min(READ_CHUNK_SIZE, MAX_DOWNLOAD_BYTES + 1 - len(content)))
+        chunk = response.read1(min(READ_CHUNK_SIZE, max_download_bytes + 1 - len(content)))
         if not chunk:
             break
         content.extend(chunk)
-        if len(content) > MAX_DOWNLOAD_BYTES:
-            raise ValueError("live artifact exceeds the 25 MiB limit")
+        if len(content) > max_download_bytes:
+            raise ValueError(limit_message)
     if not content:
         raise ValueError("live artifact is empty")
     if expected_length is not None and len(content) != expected_length:

@@ -583,6 +583,7 @@ def test_capture_models_reject_duplicate_case_insensitive_media_type_parameters(
     [
         ("pdf", "application/pdf", "static.html"),
         ("image", "image/png", "static.html"),
+        ("json", "application/json", "static.html"),
         ("manual_upload", "application/pdf", "endorsement-card.svg"),
         ("manual_upload", "image/png", "static.html"),
     ],

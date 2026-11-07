@@ -340,3 +340,42 @@ def _install_public_socket(
     monkeypatch.setattr(collection_http.socket, "getaddrinfo", resolve)
     monkeypatch.setattr(collection_http.ssl, "create_default_context", _OfflineTLSContext)
     return peer
+
+
+def test_results_download_profile_reads_large_official_exports_without_raising_source_cap(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    body = b"x" * (26 * 1024 * 1024)
+    response = b"HTTP/1.1 200 OK\r\nContent-Length: " + str(len(body)).encode() + b"\r\n\r\n" + body
+    _install_public_socket(monkeypatch, response)
+    fetch = collection_http.fetch_results_http
+    assert fetch("https://example.com/results.json").content == body
+    _install_public_socket(monkeypatch, response)
+    with pytest.raises(ValueError, match="25 MiB"):
+        collection_http.fetch_http("https://example.com/endorsements")
+
+
+@pytest.mark.parametrize(
+    ("response", "reason"),
+    [
+        (b"HTTP/1.1 200 OK\r\nContent-Length: 134217729\r\n\r\n", "128 MiB"),
+        (b"HTTP/1.1 302 Found\r\nLocation: https://example.com/other\r\n\r\n", "redirect"),
+        (b"HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\n\r\n", "HTTP 403"),
+    ],
+)
+def test_results_profile_stops_at_its_cap_redirect_or_access_failure(
+    monkeypatch: pytest.MonkeyPatch, response: bytes, reason: str
+) -> None:
+    peer = _install_public_socket(monkeypatch, response)
+    fetch = collection_http.fetch_results_http
+    with pytest.raises(ValueError, match=reason):
+        fetch("https://example.com/results.json")
+    assert bytes(peer.sent).count(b"GET ") == 1
+
+
+def test_results_profile_keeps_public_network_and_deadline_guards() -> None:
+    fetch = collection_http.fetch_results_http
+    with pytest.raises(ValueError, match="non-public"):
+        fetch("https://127.0.0.1/results.json")
+    with pytest.raises(ValueError, match="positive"):
+        fetch("https://example.com/results.json", timeout_seconds=0)

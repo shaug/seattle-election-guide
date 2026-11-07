@@ -74,7 +74,7 @@ from election_guide.publication.personalization import (
     PersonalizationSource,
 )
 from election_guide.publication.precinct_ballot import build_precinct_ballot
-from election_guide.results.models import ElectionResults
+from election_guide.results.models import ResultsDocument
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import Source
@@ -122,7 +122,7 @@ def build_publication_bundle(
     git_commit: str,
     snapshot_root: Path,
     data_as_of: datetime | None = None,
-    results: ElectionResults | None = None,
+    results: ResultsDocument | None = None,
     certification_date: str | None = None,
     results_capture_urls: dict[str, str] | None = None,
     corrections: ElectionCorrections | None = None,
@@ -130,8 +130,8 @@ def build_publication_bundle(
     """Compute every issue-7 artifact from canonical data and one consensus report.
 
     `results` is the rendering pipeline's one hook onto post-election results
-    (issue #283): a caller that has already loaded and validated a certified
-    or amended results file (`election_guide.results.load_rendering_results`)
+    (issues #283/#696): a caller that has already loaded and validated a
+    preliminary, certified or amended file (`election_guide.results.load_rendering_results`)
     passes it through here so it reaches the published view model. Omitted or
     `None`, the bundle is unchanged from before this hook existed.
 
@@ -141,8 +141,9 @@ def build_publication_bundle(
     the post-election banner is unchanged from before this parameter existed.
 
     `results_capture_urls` (docs/RESULTS.md, Rendering § Race cards; #286),
-    keyed by race id, is each race's own certified-or-amended capture
-    resolved to its manifest's `canonical_url` -- a caller that has already
+    keyed by race id, resolves each race's own evidence. Preliminary receipts
+    link immutable repository original bytes; legacy certified/amended receipts
+    retain their manifest's `canonical_url`. A caller that has already
     read the evidence manifests
     (`election_guide.evidence.storage.read_capture_manifest`) passes it
     through here so every candidate race's results strip can link its own
@@ -319,7 +320,7 @@ def _build_view_model(
     unresolved: list[ReviewItem],
     git_commit: str,
     data_as_of: datetime,
-    results: ElectionResults | None,
+    results: ResultsDocument | None,
     certification_date: str | None = None,
     results_capture_urls: dict[str, str] | None = None,
     corrections: ElectionCorrections | None = None,

@@ -1,7 +1,7 @@
 // One race page's client entry (docs/FRONTEND.md § Modules). esbuild bundles
 // this import graph and race.html.j2 inlines the result.
 import { requireClientPayload } from './client-payload.mjs';
-import { wireElectionDay } from './election-day.mjs';
+import { wireElectionDay, wirePreliminaryRecency } from './election-day.mjs';
 import { wireMeterTooltips } from './meter-tooltip.mjs';
 import { wireRacePage } from './race-client.mjs';
 import { wireShellShare } from './share-link.mjs';
@@ -22,5 +22,7 @@ export function boot() {
   wireShellShare();
   wireElectionDay();
   wireMeterTooltips();
-  wireRacePage(/** @type {RacePayload} */ (requireClientPayload(document)));
+  const payload = /** @type {RacePayload} */ (requireClientPayload(document));
+  wirePreliminaryRecency(payload.preliminary_recency ?? []);
+  wireRacePage(payload);
 }

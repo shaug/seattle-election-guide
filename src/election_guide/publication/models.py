@@ -12,7 +12,7 @@ from election_guide.corrections.models import ElectionCorrections
 from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.personalization import PersonalizationContract
 from election_guide.publication.precinct_ballot import PrecinctBallotContract
-from election_guide.results.models import ElectionResults
+from election_guide.results.models import ResultsDocument
 from election_guide.scoring.models import ComparisonStatus, Grade
 
 HASH_PATTERN = r"^[0-9a-f]{64}$"
@@ -586,7 +586,7 @@ class PublicationViewModel(PublicationModel):
     personalization: PersonalizationContract
     comparisons: ComparisonsContract
     precinct_ballot: PrecinctBallotContract | None = None
-    results: ElectionResults | None = None
+    results: ResultsDocument | None = None
     """Certified or amended post-election results for this election, or `None`
     while none is committed (docs/RESULTS.md, Rendering: "results render as a
     state, not an option"). `#285`-`#288` read this instead of each loading

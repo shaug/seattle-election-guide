@@ -25,9 +25,10 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, RootModel
+from pydantic import BaseModel, ConfigDict, Field, RootModel
 from pydantic.json_schema import GenerateJsonSchema
 
 from election_guide.corrections.models import ElectionCorrections, UpdateTopic
@@ -286,9 +287,20 @@ class LensPayload(ClientPayloadModel):
     sources: list[LensSource]
 
 
+class PreliminaryRecency(ClientPayloadModel):
+    """Reader-clock inputs for one result target, from the admitted page contract."""
+
+    race_id: str
+    checked_at: datetime
+    checked_at_label: str = Field(min_length=1)
+    refresh_unavailable: bool
+    stale_after_seconds: int = Field(gt=0)
+
+
 class GuidePayload(LensPayload):
     """The endorsements guide's payload."""
 
+    preliminary_recency: list[PreliminaryRecency] = Field(default_factory=list[PreliminaryRecency])
     precinct_ballot: PrecinctBallotContract | None
 
     races: list[RaceDisplay]
@@ -315,6 +327,7 @@ class RacePayload(LensPayload):
     because there is one race on it and nothing to filter.
     """
 
+    preliminary_recency: list[PreliminaryRecency] = Field(default_factory=list[PreliminaryRecency])
     race: RaceDetailDisplay
     sources_page_path: str
     """Where this page's `[data-sources-link]` anchors point, carrying the live
@@ -543,6 +556,7 @@ def guide_payload(
     sources_page_path: str,
     endorsements_path: str | None = None,
     comparisons_path: str | None = None,
+    preliminary_recency: list[PreliminaryRecency] | None = None,
 ) -> GuidePayload:
     """Build the guide's payload.
 
@@ -553,6 +567,7 @@ def guide_payload(
     """
     return GuidePayload(
         **_lens_fields(view_model, contributing_only=True),
+        preliminary_recency=preliminary_recency or [],
         races=races,
         filter_scopes=filter_scopes,
         sources_page_path=sources_page_path,
@@ -570,6 +585,7 @@ def race_payload(
     *,
     race: RaceDetailDisplay,
     sources_page_path: str,
+    preliminary_recency: list[PreliminaryRecency] | None = None,
 ) -> RacePayload:
     """Build one race page's payload.
 
@@ -580,6 +596,7 @@ def race_payload(
     contract = view_model.personalization
     return RacePayload(
         **_lens_fields(view_model, contributing_only=True),
+        preliminary_recency=preliminary_recency or [],
         race=race,
         sources_page_path=sources_page_path,
         personalization=(

@@ -16,7 +16,7 @@ from urllib.parse import urlsplit
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from markupsafe import Markup
 
-from election_guide.publication.models import PublicationViewModel
+from election_guide.publication.models import PublicationRace, PublicationViewModel
 from election_guide.rendering import context
 from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
 from election_guide.rendering.models import RenderingConfiguration
@@ -45,6 +45,7 @@ from election_guide.rendering.shell import (
     site_icon_svg,
 )
 from election_guide.rendering.stylesheets import page_stylesheet
+from election_guide.results.models import PreliminaryElectionResults
 
 
 def _election_day_banner(view_model: PublicationViewModel) -> str:
@@ -55,6 +56,13 @@ def _election_day_banner(view_model: PublicationViewModel) -> str:
     require `certified_on`, so its mere presence is the "results exist"
     signal `election_day_banner_html` gates its certified state on."""
     results = view_model.results
+    if isinstance(results, PreliminaryElectionResults):
+        # No single County calendar date or count clock describes all authorities.
+        return (
+            '<p class="election-day election-day-counting">'
+            '<span class="election-day-when"><b>Unofficial results · counts may change</b>'
+            "<br>Count times and official sources are shown with each contest.</span></p>"
+        )
     certified_on = results.certified_on if results is not None else None
     return election_day_banner_html(
         view_model.metadata.election_date,
@@ -167,6 +175,21 @@ def render_html_document(
         election_id=view_model.metadata.election_id,
     )
     document_title = page_title(page="Endorsements", election=election_display_name)
+    results_by_race = {
+        race.id: context.race_results_view(
+            race,
+            results=view_model.results,
+            election_type=view_model.metadata.election_type,
+            capture_urls=view_model.metadata.results_capture_urls,
+            as_of=view_model.metadata.generated_at,
+        )
+        for section in view_model.sections
+        for race in section.races
+    }
+
+    def result_for_race(race: PublicationRace) -> context.RaceResultsView | None:
+        return results_by_race[race.id]
+
     return template.render(
         guide=view_model,
         config=configuration,
@@ -185,6 +208,11 @@ def render_html_document(
             sources_page_path=sources_page_url,
             endorsements_path=guide_path,
             comparisons_path=f"{guide_path}comparisons/",
+            preliminary_recency=[
+                result.recency
+                for result in results_by_race.values()
+                if result is not None and result.recency is not None
+            ],
         ).model_dump(mode="json"),
         # Each card links its race's own page (issue #136). Bound to this
         # election here rather than passed as a two-argument helper, so the
@@ -212,12 +240,7 @@ def render_html_document(
         # cards; #286), one function bound to this election's own results and
         # capture link so the template calls it per race exactly like
         # `meter_view` above.
-        race_results=partial(
-            context.race_results_view,
-            results=view_model.results,
-            election_type=view_model.metadata.election_type,
-            capture_urls=view_model.metadata.results_capture_urls,
-        ),
+        race_results=result_for_race,
     )
 
 
@@ -289,6 +312,7 @@ def render_race_document(
         results=view_model.results,
         election_type=view_model.metadata.election_type,
         capture_urls=view_model.metadata.results_capture_urls,
+        as_of=view_model.metadata.generated_at,
     )
     race_result_outcomes_by_candidate_id = context.race_result_outcomes_by_candidate_id(
         race_results
@@ -321,6 +345,11 @@ def render_race_document(
             view_model,
             race=race_detail,
             sources_page_path=sources_page_url,
+            preliminary_recency=(
+                [race_results.recency]
+                if race_results is not None and race_results.recency is not None
+                else []
+            ),
         ).model_dump(mode="json"),
         race_path=race_page_path(election_id, race.id),
         social_image_path=race_og_image_path(election_id, race.id),
@@ -457,7 +486,10 @@ def render_comparison_document(
     payload = comparisons_payload(
         view_model,
         default_columns=["gall", "strn", "stim"],
-        results_available=view_model.results is not None,
+        results_available=(
+            view_model.results is not None
+            and not isinstance(view_model.results, PreliminaryElectionResults)
+        ),
         race_results=context.comparison_result_outcomes(view_model),
         endorsements_path=guide_path,
         comparisons_path=f"{guide_path}comparisons/",

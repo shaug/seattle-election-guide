@@ -5,7 +5,7 @@ import { assertModuleGuard } from './support/module-guards.mjs';
 
 // The DOM first, then the module under test: see dom.mjs.
 const document = installDom();
-const { electionDayStatement, wireElectionDay } = await import(
+const { electionDayStatement, wireElectionDay, wirePreliminaryRecency } = await import(
   '../../src/election_guide/rendering/templates/election-day.mjs'
 );
 
@@ -173,4 +173,94 @@ test('wireElectionDay leaves a certified banner alone', () => {
 
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('election-day.mjs');
+});
+
+const PRELIMINARY_RECENCY = {
+  race_id: 'race-a',
+  checked_at: '2026-11-04T05:00:00Z',
+  checked_at_label: 'Nov 3, 9:00:00 p.m. PST',
+  refresh_unavailable: false,
+  stale_after_seconds: 86400,
+};
+
+function installPreliminaryTarget() {
+  installBanner(
+    '<p>Unofficial · Nov 3, 8:00 p.m. PST</p>' +
+      '<span data-preliminary-recency="race-a">Last checked Nov 3, 9:00:00 p.m. PST</span>',
+  );
+}
+
+test('a preliminary count ages by its check clock without changing its publisher timestamp', () => {
+  installPreliminaryTarget();
+  wirePreliminaryRecency([PRELIMINARY_RECENCY], new Date('2026-11-05T05:00:00Z'));
+  assert.match(document.body.textContent, /Stale · last checked Nov 3, 9:00:00 p.m. PST/);
+  assert.match(document.body.textContent, /Unofficial · Nov 3, 8:00 p.m. PST/);
+});
+
+test('a failed refresh stays unavailable instead of becoming a fresh count', () => {
+  installPreliminaryTarget();
+  wirePreliminaryRecency(
+    [{ ...PRELIMINARY_RECENCY, refresh_unavailable: true }],
+    new Date('2026-11-04T06:00:00Z'),
+  );
+  assert.match(document.body.textContent, /Refresh unavailable · last checked/);
+});
+
+test('an untrusted reader clock cannot make a future preliminary check look fresh', () => {
+  installPreliminaryTarget();
+  wirePreliminaryRecency([PRELIMINARY_RECENCY], new Date('2026-11-04T04:00:00Z'));
+  assert.match(document.body.textContent, /Check time unavailable/);
+});
+
+test('a failed-refresh flag cannot bypass invalid preliminary check metadata', () => {
+  for (const invalid of [
+    { checked_at: 'invalid' },
+    { stale_after_seconds: 0 },
+    { checked_at_label: '' },
+  ]) {
+    installPreliminaryTarget();
+    wirePreliminaryRecency(
+      [{ ...PRELIMINARY_RECENCY, refresh_unavailable: true, ...invalid }],
+      new Date('2026-11-04T06:00:00Z'),
+    );
+    const element = document.querySelector('[data-preliminary-recency]');
+    assert.ok(element);
+    assert.equal(element.textContent, 'Check time unavailable', JSON.stringify(invalid));
+  }
+});
+
+test('preliminary recency uses admitted values and only reads target identity from markup', () => {
+  installBanner(
+    '<span data-preliminary-recency="race-a" data-preliminary-check-at="2099-01-01" data-preliminary-refresh-failed="true">Audited baseline</span>',
+  );
+  wirePreliminaryRecency(
+    [
+      {
+        race_id: 'race-a',
+        checked_at: '2026-11-04T05:00:00Z',
+        checked_at_label: 'Nov 3, 9:00:00 p.m. PST',
+        refresh_unavailable: false,
+        stale_after_seconds: 86400,
+      },
+    ],
+    new Date('2026-11-04T06:00:00Z'),
+  );
+  assert.equal(document.body.textContent, 'Last checked Nov 3, 9:00:00 p.m. PST');
+});
+
+test('an unusable page payload leaves preliminary freshness on its audited baseline', async () => {
+  for (const name of ['guide-entry.mjs', 'race-entry.mjs']) {
+    installBanner(
+      '<span data-preliminary-recency="race-a" data-preliminary-check-at="2026-11-04T05:00:00Z" ' +
+        'data-preliminary-checked-label="Nov 3, 9:00:00 p.m. PST" data-preliminary-stale-after="86400">Audited baseline</span>' +
+        '<script type="application/json" data-client-payload>{"schema_version":"unsupported"}</script>',
+    );
+    const { boot } = await import(`../../src/election_guide/rendering/templates/${name}`);
+    assert.throws(() => boot(), /unusable client payload/);
+    assert.equal(
+      document.querySelector('[data-preliminary-recency]')?.textContent,
+      'Audited baseline',
+      name,
+    );
+  }
 });

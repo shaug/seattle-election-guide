@@ -143,3 +143,30 @@ export function wireElectionDay(now = new Date()) {
     banner.querySelector('.election-day-separator')?.remove();
   }
 }
+
+/** Reader-clock aging only: no requests, storage, count edits or certification.
+ * @param {PreliminaryRecency[]} recency
+ * @param {Date} [now]
+ */
+export function wirePreliminaryRecency(recency, now = new Date()) {
+  const byRace = new Map(recency.map((item) => [item.race_id, item]));
+  for (const element of document.querySelectorAll('[data-preliminary-recency]')) {
+    const item = byRace.get(element.getAttribute('data-preliminary-recency') ?? '');
+    if (!item) continue;
+    const checked = Date.parse(item.checked_at);
+    const age = now.getTime() - checked;
+    const limit = item.stale_after_seconds;
+    const label = item.checked_at_label;
+    if (!Number.isFinite(checked) || !Number.isFinite(limit) || limit <= 0 || !label) {
+      element.textContent = 'Check time unavailable';
+    } else if (item.refresh_unavailable) {
+      element.textContent = `Refresh unavailable · last checked ${label}`;
+    } else if (!Number.isFinite(age) || age < 0) {
+      element.textContent = 'Check time unavailable';
+    } else if (age >= limit * 1000) {
+      element.textContent = `Stale · last checked ${label}`;
+    } else {
+      element.textContent = `Last checked ${label}`;
+    }
+  }
+}

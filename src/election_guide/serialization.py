@@ -1,6 +1,8 @@
 """Strict serialization helpers for authoritative project records."""
 
 import json
+import os
+import tempfile
 from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
@@ -94,3 +96,20 @@ def canonical_json_bytes(value: Any) -> bytes:
     return (
         json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False, allow_nan=False) + "\n"
     ).encode()
+
+
+def write_generated_bytes(path: Path, payload: bytes) -> None:
+    """Atomically replace generated output after flushing its complete bytes."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
+            temporary_path = Path(temporary.name)
+            temporary.write(payload)
+            temporary.flush()
+            os.fsync(temporary.fileno())
+        os.replace(temporary_path, path)
+        temporary_path = None
+    finally:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)

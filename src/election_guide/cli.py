@@ -58,7 +58,12 @@ from election_guide.evidence.manual import (
     read_manual_draft,
     validate_manual_draft,
 )
-from election_guide.evidence.models import CapturedManifest, CaptureRequest, UnavailableRequest
+from election_guide.evidence.models import (
+    CapturedManifest,
+    CaptureRequest,
+    UnavailableManifest,
+    UnavailableRequest,
+)
 from election_guide.evidence.storage import (
     captured_artifact_path,
     read_capture_manifest,
@@ -143,7 +148,13 @@ from election_guide.results.loader import (
     read_results,
     reject_committed_counting_status,
 )
-from election_guide.results.models import ResultsCapture
+from election_guide.results.models import (
+    ElectionResults,
+    PreliminaryElectionResults,
+    PreliminaryRefreshFailure,
+    ResultsCapture,
+)
+from election_guide.results.preliminary import PreliminaryAdmissionPlan, build_preliminary_results
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 from election_guide.scoring import (
     ConsensusReport,
@@ -153,7 +164,8 @@ from election_guide.scoring import (
     score_dataset,
     summarize_consensus_payload,
 )
-from election_guide.serialization import canonical_json_bytes, read_json
+from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
+from election_guide.serialization import write_generated_bytes as _write_generated_bytes
 from election_guide.sources.catalog import (
     PanelSnapshotCatalog,
     appended_panel_snapshot,
@@ -1815,8 +1827,8 @@ def results_validate(
         typer.Argument(exists=True, dir_okay=False, readable=True),
     ],
     inventory_path: Annotated[
-        Path, typer.Option(exists=True, dir_okay=False, readable=True)
-    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+        Path | None, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = None,
 ) -> None:
     """Validate one committed results file: schema, inventory, and evidence.
 
@@ -1827,6 +1839,11 @@ def results_validate(
     try:
         results = read_results(results_path)
         reject_committed_counting_status(results)
+        if inventory_path is None:
+            # An election identity is never an arbitrary filesystem path.
+            if results.election_id not in {"wa-2026-primary", "wa-2026-general"}:
+                raise ValueError("provide --inventory-path for an undeclared election")
+            inventory_path = Path("data/normalized") / f"{results.election_id}-inventory.json"
         inventory = read_inventory(inventory_path)
         validate_results_inventory(results, inventory)
         validate_results_evidence(results)
@@ -1836,6 +1853,123 @@ def results_validate(
     typer.echo(
         f"results: valid ({results.election_id}, {results.status}, {len(results.races)} races)"
     )
+
+
+@results_app.command("acquire-preliminary")
+def results_acquire_preliminary(
+    source: Annotated[str, typer.Argument(help="Reviewed feed: county or statewide.")],
+    repository_root: Annotated[Path, typer.Option(exists=True, file_okay=False)] = Path("."),
+    live: Annotated[
+        bool, typer.Option(help="Explicitly enable one live official request.")
+    ] = False,
+) -> None:
+    """Capture one official export; never ingest counts or publish a release."""
+    from election_guide.results.acquisition import acquire_preliminary
+
+    if not live:
+        typer.echo("preliminary acquisition requires explicit --live", err=True)
+        raise typer.Exit(code=1)
+    try:
+        manifest = acquire_preliminary(source, repository_root=repository_root)
+    except (OSError, ValueError) as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"preliminary capture: {manifest}")
+
+
+@results_app.command("ingest-preliminary")
+def results_ingest_preliminary(
+    mapping_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    inventory_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)],
+    repository_root: Annotated[Path, typer.Option(exists=True, file_okay=False)] = Path("."),
+    output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/results"),
+) -> None:
+    """Admit a reviewed whole-jurisdiction mapping from retained official captures.
+
+    Offline only. This neither obtains official bytes nor certifies data, and
+    it never downgrades a certified file or substitutes capture time for count time.
+    """
+    try:
+        plan = PreliminaryAdmissionPlan.model_validate(read_yaml(mapping_path))
+        inventory = read_inventory(inventory_path)
+        results = build_preliminary_results(plan, inventory, repository_root=repository_root)
+        output_path = output_dir / f"{results.election_id}.yaml"
+        if output_path.exists():
+            previous = read_results(output_path)
+            if not isinstance(previous, PreliminaryElectionResults):
+                raise ValueError(
+                    "cannot overwrite a legacy/certified results file with preliminary data"
+                )
+            from election_guide.results.refresh import merge_preliminary_history
+
+            results = merge_preliminary_history(results, previous)
+            validate_results_evidence(results, repository_root=repository_root)
+        _write_generated_yaml(output_path, results.model_dump(mode="json"))
+    except (OSError, ValidationError, ValueError) as error:
+        typer.echo(f"preliminary ingest failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"preliminary results: {output_path} ({len(results.races)} whole-jurisdiction races)"
+    )
+
+
+@results_app.command("prepare-refresh")
+def results_prepare_refresh(
+    mapping_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    inventory_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)],
+    repository_root: Annotated[Path, typer.Option(exists=True, file_okay=False)] = Path("."),
+    live: Annotated[bool, typer.Option()] = False,
+) -> None:
+    """Prepare a full official snapshot once; do not publish or certify it."""
+    from election_guide.results.refresh import prepare_preliminary_refresh
+
+    if not live:
+        typer.echo("preliminary refresh requires explicit --live", err=True)
+        raise typer.Exit(code=1)
+    try:
+        report = prepare_preliminary_refresh(
+            mapping_path, inventory_path, repository_root=repository_root
+        )
+    except (OSError, ValueError) as error:
+        typer.echo(canonical_json_bytes({"status": "blocked", "reason": str(error)}).decode())
+        raise typer.Exit(code=1) from error
+    typer.echo(canonical_json_bytes(report).decode())
+
+
+@results_app.command("record-refresh-failure")
+def results_record_refresh_failure(
+    results_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    failure_capture: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    repository_root: Annotated[Path, typer.Option(exists=True, file_okay=False)] = Path("."),
+) -> None:
+    """Append an actual access observation without changing counts or their clocks."""
+    try:
+        results = read_results(results_path)
+        if not isinstance(results, PreliminaryElectionResults):
+            raise ValueError("refresh failure metadata applies only to preliminary results")
+        manifest = read_capture_manifest(failure_capture)
+        if not isinstance(manifest, UnavailableManifest):
+            raise ValueError("refresh failure requires an actual unavailable observation")
+        reference = failure_capture.resolve().relative_to(repository_root.resolve()).as_posix()
+        if any(item.evidence == reference for item in results.failed_refreshes):
+            raise ValueError("refresh failure is already recorded")
+        failure = PreliminaryRefreshFailure(
+            authority_id=manifest.source_id,
+            checked_at=manifest.retrieved_at,
+            evidence=reference,
+        )
+        updated = PreliminaryElectionResults.model_validate(
+            {
+                **results.model_dump(),
+                "failed_refreshes": [*results.failed_refreshes, failure],
+            }
+        )
+        validate_results_evidence(updated, repository_root=repository_root)
+        _write_generated_yaml(results_path, updated.model_dump(mode="json"))
+    except (OSError, ValidationError, ValueError) as error:
+        typer.echo(f"preliminary refresh record failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"preliminary refresh failure recorded: {results_path}")
 
 
 @results_app.command("ingest")
@@ -2031,6 +2165,8 @@ def results_ingest_secretary_of_state(
                 f"{output_path} does not exist; run 'results ingest' first to produce it"
             )
         existing = read_results(output_path)
+        if not isinstance(existing, ElectionResults):
+            raise ValueError("certified ingestion cannot merge into preliminary results")
         if existing.election_id != election_id:
             raise ValueError(
                 f"{output_path} belongs to {existing.election_id!r}, not {election_id!r}"
@@ -2571,24 +2707,6 @@ def _write_generated_json(path: Path, value: object) -> None:
 
 def _write_generated_yaml(path: Path, value: object) -> None:
     _write_generated_bytes(path, yaml.safe_dump(value, sort_keys=True).encode())
-
-
-def _write_generated_bytes(path: Path, payload: bytes) -> None:
-    """Write generated output atomically: stage in the destination directory,
-    fsync, then `os.replace` so a reader never observes a partial file."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
-            temporary_path = Path(temporary.name)
-            temporary.write(payload)
-            temporary.flush()
-            os.fsync(temporary.fileno())
-        os.replace(temporary_path, path)
-        temporary_path = None
-    finally:
-        if temporary_path is not None:
-            temporary_path.unlink(missing_ok=True)
 
 
 def _parse_json_value(value: str) -> Any:

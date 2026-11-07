@@ -405,6 +405,11 @@
       "template",
       "client"
     ],
+    "data-preliminary-recency": [
+      "template",
+      "client",
+      "test"
+    ],
     "data-publication-race-id": [
       "template",
       "client",
@@ -783,6 +788,7 @@
     "election-day-counting": [
       "stylesheet",
       "client",
+      "python",
       "test"
     ],
     "election-day-past": [

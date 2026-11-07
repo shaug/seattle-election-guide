@@ -22,6 +22,7 @@ import {
   compareContext,
   encodeCompareFragment,
 } from '../../src/election_guide/rendering/templates/compare-url.mjs';
+import { wirePreliminaryRecency } from '../../src/election_guide/rendering/templates/election-day.mjs';
 import {
   countingSummary,
   endorsementCountLabel,
@@ -46,6 +47,7 @@ import {
   meterLayoutBlocks,
   meterStandings,
 } from '../../src/election_guide/rendering/templates/meter-layout.mjs';
+import { installDom } from './support/dom.mjs';
 
 const FIXTURE = JSON.parse(
   readFileSync(fileURLToPath(new URL('./fixtures/mirror-parity.json', import.meta.url)), 'utf8'),
@@ -91,6 +93,25 @@ function auditedPayload(page) {
  * @type {Record<string, (input: any) => unknown>}
  */
 const RUNNERS = {
+  'preliminary-check-recency': ({ now, checkedAt, checkedLabel, staleAfter, failed }) => {
+    const document = installDom();
+    const element = document.createElement('span');
+    element.setAttribute('data-preliminary-recency', 'fixture');
+    document.body.append(element);
+    wirePreliminaryRecency(
+      [
+        {
+          race_id: 'fixture',
+          checked_at: checkedAt,
+          checked_at_label: checkedLabel,
+          stale_after_seconds: staleAfter,
+          refresh_unavailable: failed,
+        },
+      ],
+      new Date(now),
+    );
+    return element.textContent;
+  },
   'share-percentage-label': ({ share }) => percentageLabel(share),
   // The same client function, asserted for the share the server has no
   // number for. Its own mirror because the server writes that branch as a

@@ -1,5 +1,17 @@
 # Seattle Elections Guide — Front-End Code Guidelines
 
+## Preliminary results (#696)
+
+The VM carries strict preliminary schema 1.1 separately from certified schema 1.0. One
+status-aware context view feeds the shared Guide/race macro; no duplicate percentage/scoring
+implementation or live client results fetch. Preliminary presence never enables the
+explicitly Certified result comparison column. SSR contains count/status/provenance;
+publisher strings remain autoescaped and no raw-HTML exception is widened. Legacy certified
+payload values/serialization and immutable archives retain their contract.
+State export generation and missing count time use the exact approved wording from DESIGN.md;
+County count time is preserved. Nullable publisher status and tagged calculated vote totals
+stay in the typed provenance contract. The browser does not infer these facts or fetch results.
+
 How to structure the code that builds and runs the site's pages. DESIGN.md
 governs what the UI looks like and how it behaves; this document governs how
 that behavior is implemented: modules, rendering, state, contracts, and
@@ -314,6 +326,13 @@ purpose and watch the check fail.
   Dropping `live()` from the template fails it.*
 
 ## The data contract
+
+Preliminary result freshness is carried by `PreliminaryRecency` in the Guide and
+race payloads. It shares the server result view's check clock, display label,
+failed-refresh state and aging threshold. The client wires those targets only
+after page-payload admission; `data-preliminary-recency` identifies a race target
+and carries no semantic state. The server-rendered status remains the baseline
+when payload admission fails.
 
 - **The embedded JSON payload is the complete client contract.** Everything
   client code needs — identifiers, display labels, ordering, summaries — comes

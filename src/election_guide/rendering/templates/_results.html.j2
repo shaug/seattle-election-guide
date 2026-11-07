@@ -48,18 +48,18 @@
 <div class="race-results">
               <div class="race-results-head">
                 <span class="race-results-eyebrow">Result</span>
-                <span class="race-results-status">Certified · {{ view.certified_on_label }}</span>
+                <span class="race-results-status{{ ' race-results-status-preliminary' if view.preliminary else '' }}">{% if view.preliminary %}Unofficial · {% if view.reported_at_label %}{{ view.reported_at_label }}{% else %}Export generated {{ view.export_generated_at_label }}{% endif %}{% else %}Certified · {{ view.certified_on_label }}{% endif %}</span>
               </div>
               <div class="race-results-tally">
                 {% for outcome in view.outcomes %}
                 {% set linked = outcome.candidate_id in section_candidate_ids %}
-                <div class="race-results-row{{ '' if outcome.advanced else ' race-results-row-trailing' }}">
+                <div class="race-results-row{{ ' race-results-row-trailing' if not view.preliminary and not outcome.advanced else '' }}">
                   <span class="race-results-name">{% if linked %}<a href="#candidate-{{ outcome.candidate_id }}">{{ outcome.candidate_label }}</a>{% else %}{{ outcome.candidate_label }}{% endif %}{% if outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
                   <span class="race-results-share">{{ outcome.percentage_label }}</span>
-                  <span class="race-results-bar"><i style="width:{{ outcome.percentage_label }}"></i></span>
+                  <span class="race-results-bar"><i style="width:{{ outcome.percentage_label if outcome.percentage_label != '—' else '0%' }}"></i></span>
                 </div>
                 {% endfor %}
               </div>
-              <p class="race-results-provenance">{{ view.count_label }} · {{ view.authority }}{% if view.capture_url %} · <a href="{{ view.capture_url }}"{{ external_link_attributes }}>evidence</a>{% endif %}</p>
+              <p class="race-results-provenance">{{ view.count_label }} · {{ view.authority }}{% if view.capture_url %} · <a href="{{ view.capture_url }}"{{ external_link_attributes }}>evidence</a>{% endif %}{% if view.preliminary %}<br>{% if not view.reported_at_label %}Count timestamp not provided · {% endif %}<span data-preliminary-recency="{{ view.recency.race_id }}">{{ view.recency_label }}</span>{% endif %}</p>
             </div>
 {%- endmacro %}

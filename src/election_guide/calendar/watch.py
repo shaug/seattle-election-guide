@@ -34,7 +34,7 @@ from election_guide.calendar.tracking import TrackingModel, milestone_marker
 from election_guide.collection.refresh import read_refresh_event
 from election_guide.evidence.models import CapturedManifest
 from election_guide.evidence.storage import read_capture_manifest
-from election_guide.results.loader import RENDERED_STATUSES, read_results
+from election_guide.results.loader import CERTIFIED_STATUSES, read_results
 
 # Every escalation comment carries this marker so a later run recognizes its
 # own work, the same way `MARKER_PREFIX` works for the issues themselves. It is
@@ -572,7 +572,7 @@ def read_repository_artifacts(
     ingested_election_ids: set[str] = set()
     for path in _artifact_files(results_dir, "*.yaml"):
         results = read_results(path)
-        if results.election_id == path.stem and results.status in RENDERED_STATUSES:
+        if results.election_id == path.stem and results.status in CERTIFIED_STATUSES:
             ingested_election_ids.add(results.election_id)
     return RepositoryArtifacts(
         captures=tuple(captures),
