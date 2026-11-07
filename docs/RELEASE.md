@@ -96,6 +96,18 @@ uv run election-guide hosting check-updates dist/cloudflare-site \
 CI and production always resolve the baseline from production; they do not use the diagnostic
 override. `make check` remains offline and exercises the gate with fixtures.
 
+### Result-clock placement policy
+
+Snapshot schema `5.0` records exact supported count/export/certification clocks as facts
+within each existing result block, independent of their approved badge or second-provenance-line
+placement. It recognizes only the renderer's complete clock grammar in the existing status and
+provenance elements. Status, each clock value and kind, tally/provenance text, evidence, unknown
+wording and malformed clocks remain compared. Only a complete legacy export-only block with
+no count clock may omit its single redundant missing-count-clock notice; contradictory notices
+remain compared. An absent count clock stays absent in the facts. This permits the status-only badge
+presentation without a filler information entry. All older policies, including `4.0`, require
+the same exact authenticated original-site verification before migration to `5.0`.
+
 ## Audited inputs
 
 `data/releases/wa-2026-general/source-decisions.yaml` contains reviewed structured transcriptions,

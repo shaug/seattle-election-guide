@@ -7,7 +7,7 @@ import json
 import shutil
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, Literal
 
 import pytest
 
@@ -260,7 +260,7 @@ def test_durable_snapshot_rejects_a_different_manifest_at_the_verified_source(
         updates_baseline.resolve_production_snapshot(tmp_path / "download")
 
 
-@pytest.mark.parametrize("old_policy", ["1.0", "2.0", "3.0"])
+@pytest.mark.parametrize("old_policy", ["1.0", "2.0", "3.0", "4.0"])
 @pytest.mark.parametrize("available, changed_source", [(False, False), (True, False), (True, True)])
 def test_old_policy_upgrade_requires_the_exact_verified_original_site(
     tmp_path: Path,
@@ -269,7 +269,7 @@ def test_old_policy_upgrade_requires_the_exact_verified_original_site(
     monkeypatch: pytest.MonkeyPatch,
     available: bool,
     changed_source: bool,
-    old_policy: str,
+    old_policy: Literal["1.0", "2.0", "3.0", "4.0"],
 ) -> None:
     original = (
         "https://github.com/shaug/seattle-election-guide/blob/"
@@ -287,10 +287,7 @@ def test_old_policy_upgrade_requires_the_exact_verified_original_site(
         ),
     )
     _seal(sites[0])
-    snapshot = build_updates_snapshot(
-        sites[0],
-        schema_version="1.0" if old_policy == "1.0" else "2.0" if old_policy == "2.0" else "3.0",
-    ).model_dump(mode="json")
+    snapshot = build_updates_snapshot(sites[0], schema_version=old_policy).model_dump(mode="json")
     if old_policy == "1.0":
         for election in snapshot["elections"].values():
             election.pop("information_pages")
@@ -321,7 +318,7 @@ def test_old_policy_upgrade_requires_the_exact_verified_original_site(
             updates_baseline.resolve_production_snapshot(tmp_path / "download")
     else:
         resolved, receipt = updates_baseline.resolve_production_snapshot(tmp_path / "download")
-        assert resolved.schema_version == "4.0"
+        assert resolved.schema_version == "5.0"
         assert receipt["policy_upgrade_from"] == old_policy
         assert receipt["git_commit"] == "a" * 40
         assert resolved == build_updates_snapshot(sites[0])
