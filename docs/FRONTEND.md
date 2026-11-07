@@ -327,6 +327,13 @@ purpose and watch the check fail.
 
 ## The data contract
 
+Preliminary result freshness is carried by `PreliminaryRecency` in the Guide and
+race payloads. It shares the server result view's check clock, display label,
+failed-refresh state and aging threshold. The client wires those targets only
+after page-payload admission; `data-preliminary-recency` identifies a race target
+and carries no semantic state. The server-rendered status remains the baseline
+when payload admission fails.
+
 - **The embedded JSON payload is the complete client contract.** Everything
   client code needs — identifiers, display labels, ordering, summaries — comes
   from the payload. Client code never reads state out of rendered markup; the

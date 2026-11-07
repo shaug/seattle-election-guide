@@ -178,6 +178,47 @@ def test_preliminary_general_result_reuses_tally_without_calling_outcomes(
     assert "Results certify November 24" not in html
 
 
+@pytest.mark.parametrize("page", ["guide", "race"])
+def test_preliminary_recency_uses_the_typed_page_payload(
+    tmp_path: Path, general_view: PublicationViewModel, page: str
+) -> None:
+    view = general_view.model_copy(
+        update={"results": read_document(tmp_path, preliminary_document())}
+    )
+    configuration = read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    html = (
+        render_html_document(view, configuration)
+        if page == "guide"
+        else render_race_document(
+            view, "king-county-assessor", public_site_url=configuration.public_site_url
+        )
+    )
+    rows = _client_payload(html)["preliminary_recency"]
+    row = next(item for item in rows if item["race_id"] == "king-county-assessor")
+    assert row == {
+        "race_id": "king-county-assessor",
+        "checked_at": "2026-11-04T05:00:00Z",
+        "checked_at_label": "Nov 3, 9:00:00 p.m. PST",
+        "refresh_unavailable": False,
+        "stale_after_seconds": 86400,
+    }
+    expected_ids = (
+        {race.id for section in view.public_view().sections for race in section.races}
+        if page == "guide"
+        else {"king-county-assessor"}
+    )
+    assert {item["race_id"] for item in rows} == expected_ids
+    assert len(rows) == len(expected_ids)
+    assert 'data-preliminary-recency="king-county-assessor"' in html
+    for attribute in (
+        "data-preliminary-check-at",
+        "data-preliminary-checked-label",
+        "data-preliminary-refresh-failed",
+        "data-preliminary-stale-after",
+    ):
+        assert attribute not in html
+
+
 def test_failed_refresh_keeps_count_asof_and_later_success_clears_only_the_warning(
     tmp_path: Path, general_view: PublicationViewModel
 ) -> None:

@@ -102,7 +102,6 @@ export function electionDayStatement(daysUntil, { full, short }, counting = null
 
 /** @param {Date} [now] */
 export function wireElectionDay(now = new Date()) {
-  wirePreliminaryRecency(now);
   const banner = document.querySelector('[data-election-day]');
   // Absent entirely once results are certified (`shell.election_day_banner_html`
   // renders that state directly): nothing here needs to run, since a certified
@@ -146,17 +145,21 @@ export function wireElectionDay(now = new Date()) {
 }
 
 /** Reader-clock aging only: no requests, storage, count edits or certification.
- * @param {Date} now
+ * @param {PreliminaryRecency[]} recency
+ * @param {Date} [now]
  */
-function wirePreliminaryRecency(now) {
-  for (const element of document.querySelectorAll('[data-preliminary-check-at]')) {
-    const checked = Date.parse(element.getAttribute('data-preliminary-check-at') ?? '');
+export function wirePreliminaryRecency(recency, now = new Date()) {
+  const byRace = new Map(recency.map((item) => [item.race_id, item]));
+  for (const element of document.querySelectorAll('[data-preliminary-recency]')) {
+    const item = byRace.get(element.getAttribute('data-preliminary-recency') ?? '');
+    if (!item) continue;
+    const checked = Date.parse(item.checked_at);
     const age = now.getTime() - checked;
-    const limit = Number(element.getAttribute('data-preliminary-stale-after'));
-    const label = element.getAttribute('data-preliminary-checked-label');
+    const limit = item.stale_after_seconds;
+    const label = item.checked_at_label;
     if (!Number.isFinite(checked) || !Number.isFinite(limit) || limit <= 0 || !label) {
       element.textContent = 'Check time unavailable';
-    } else if (element.getAttribute('data-preliminary-refresh-failed') === 'true') {
+    } else if (item.refresh_unavailable) {
       element.textContent = `Refresh unavailable · last checked ${label}`;
     } else if (!Number.isFinite(age) || age < 0) {
       element.textContent = 'Check time unavailable';

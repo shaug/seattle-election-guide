@@ -2,7 +2,7 @@
 // bundles this import graph and guide.html.j2 inlines the result.
 import { requireClientPayload } from './client-payload.mjs';
 import { wireCompactFilters } from './compact-filters.mjs';
-import { wireElectionDay } from './election-day.mjs';
+import { wireElectionDay, wirePreliminaryRecency } from './election-day.mjs';
 import { wireGuide } from './guide-client.mjs';
 import { wireMeterTooltips } from './meter-tooltip.mjs';
 import { wireShellShare } from './share-link.mjs';
@@ -22,6 +22,8 @@ export function boot() {
   wireShellShare();
   wireElectionDay();
   wireMeterTooltips();
-  wireGuide(/** @type {GuidePayload} */ (requireClientPayload(document)));
+  const payload = /** @type {GuidePayload} */ (requireClientPayload(document));
+  wirePreliminaryRecency(payload.preliminary_recency ?? []);
+  wireGuide(payload);
   wireCompactFilters();
 }

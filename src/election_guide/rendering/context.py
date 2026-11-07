@@ -34,6 +34,7 @@ from election_guide.rendering.payload import (
     ComparisonResultOutcome,
     CoveredFilterScope,
     FilterScope,
+    PreliminaryRecency,
     RaceCandidateDisplay,
     RaceCandidateEndorsements,
     RaceDetailDisplay,
@@ -1429,11 +1430,8 @@ class RaceResultsView:
     preliminary: bool = False
     reported_at_label: str = ""
     export_generated_at_label: str = ""
-    captured_at_iso: str = ""
-    checked_at_label: str = ""
+    recency: PreliminaryRecency | None = None
     recency_label: str = ""
-    refresh_unavailable: bool = False
-    stale_after_seconds: int = PRELIMINARY_STALE_AFTER_SECONDS
 
 
 def race_results_view(
@@ -1556,10 +1554,14 @@ def _preliminary_race_view(
         export_generated_at_label=_results_clock_label(tally.export_generated_at)
         if tally.export_generated_at is not None
         else "",
-        captured_at_iso=capture.captured_at.isoformat(),
-        checked_at_label=checked_label,
+        recency=PreliminaryRecency(
+            race_id=race.id,
+            checked_at=capture.captured_at,
+            checked_at_label=checked_label,
+            refresh_unavailable=failed,
+            stale_after_seconds=PRELIMINARY_STALE_AFTER_SECONDS,
+        ),
         recency_label=recency,
-        refresh_unavailable=failed,
         outcomes=tuple(
             RaceResultOutcomeView(
                 candidate_id=outcome.choice_id,

@@ -50,6 +50,7 @@ interface GuidePayload {
   scoring: LensScoring;
   categories: LensCategory[];
   sources: LensSource[];
+  preliminary_recency?: PreliminaryRecency[];
   precinct_ballot: PrecinctBallotContract | null;
   races: RaceDisplay[];
   filter_scopes: (FilterScope | CoveredFilterScope)[];
@@ -91,6 +92,16 @@ interface LensSource {
   name: string;
   panel_role: "consensus" | "comparison";
   selectable: boolean;
+}
+/**
+ * Reader-clock inputs for one result target, from the admitted page contract.
+ */
+interface PreliminaryRecency {
+  race_id: string;
+  checked_at: string;
+  checked_at_label: string;
+  refresh_unavailable: boolean;
+  stale_after_seconds: number;
 }
 interface PrecinctBallotContract {
   schema_version?: "1.0";
@@ -300,6 +311,7 @@ interface RacePayload {
   scoring: LensScoring;
   categories: LensCategory[];
   sources: LensSource[];
+  preliminary_recency?: PreliminaryRecency[];
   race: RaceDetailDisplay;
   sources_page_path: string;
   personalization: PersonalizationContract | null;

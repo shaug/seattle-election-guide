@@ -28,7 +28,7 @@
   ],
   "mirrors": {
     "preliminary-check-recency": {
-      "client": "election-day.mjs wireElectionDay reader-clock aging",
+      "client": "election-day.mjs wirePreliminaryRecency reader-clock aging",
       "server": "rendering/context.py race_results_view preliminary check recency",
       "proof": "parity-fixture",
       "evidence": [

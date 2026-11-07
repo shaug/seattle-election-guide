@@ -22,7 +22,7 @@ import {
   compareContext,
   encodeCompareFragment,
 } from '../../src/election_guide/rendering/templates/compare-url.mjs';
-import { wireElectionDay } from '../../src/election_guide/rendering/templates/election-day.mjs';
+import { wirePreliminaryRecency } from '../../src/election_guide/rendering/templates/election-day.mjs';
 import {
   countingSummary,
   endorsementCountLabel,
@@ -96,12 +96,20 @@ const RUNNERS = {
   'preliminary-check-recency': ({ now, checkedAt, checkedLabel, staleAfter, failed }) => {
     const document = installDom();
     const element = document.createElement('span');
-    element.setAttribute('data-preliminary-check-at', checkedAt);
-    element.setAttribute('data-preliminary-checked-label', checkedLabel);
-    element.setAttribute('data-preliminary-stale-after', String(staleAfter));
-    element.setAttribute('data-preliminary-refresh-failed', String(failed));
+    element.setAttribute('data-preliminary-recency', 'fixture');
     document.body.append(element);
-    wireElectionDay(new Date(now));
+    wirePreliminaryRecency(
+      [
+        {
+          race_id: 'fixture',
+          checked_at: checkedAt,
+          checked_at_label: checkedLabel,
+          stale_after_seconds: staleAfter,
+          refresh_unavailable: failed,
+        },
+      ],
+      new Date(now),
+    );
     return element.textContent;
   },
   'share-percentage-label': ({ share }) => percentageLabel(share),

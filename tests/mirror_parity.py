@@ -1197,16 +1197,16 @@ def _preliminary_recency_cases(race: PublicationRace) -> list[dict[str, Any]]:
         view = context.race_results_view(
             race, results, election_type="general", capture_urls=None, as_of=as_of
         )
-        assert view is not None
+        assert view is not None and view.recency is not None
         cases.append(
             {
                 "mirror": "preliminary-check-recency",
                 "input": {
                     "now": as_of.isoformat(),
-                    "checkedAt": view.captured_at_iso,
-                    "checkedLabel": view.checked_at_label,
-                    "staleAfter": view.stale_after_seconds,
-                    "failed": view.refresh_unavailable,
+                    "checkedAt": view.recency.checked_at.isoformat(),
+                    "checkedLabel": view.recency.checked_at_label,
+                    "staleAfter": view.recency.stale_after_seconds,
+                    "failed": view.recency.refresh_unavailable,
                 },
                 "expected": view.recency_label,
                 "source": "context.race_results_view, synthetic retained-check clock boundary",

@@ -405,22 +405,7 @@
       "template",
       "client"
     ],
-    "data-preliminary-check-at": [
-      "template",
-      "client",
-      "test"
-    ],
-    "data-preliminary-checked-label": [
-      "template",
-      "client",
-      "test"
-    ],
-    "data-preliminary-refresh-failed": [
-      "template",
-      "client",
-      "test"
-    ],
-    "data-preliminary-stale-after": [
+    "data-preliminary-recency": [
       "template",
       "client",
       "test"

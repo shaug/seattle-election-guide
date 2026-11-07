@@ -16,7 +16,7 @@ from urllib.parse import urlsplit
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from markupsafe import Markup
 
-from election_guide.publication.models import PublicationViewModel
+from election_guide.publication.models import PublicationRace, PublicationViewModel
 from election_guide.rendering import context
 from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
 from election_guide.rendering.models import RenderingConfiguration
@@ -175,6 +175,21 @@ def render_html_document(
         election_id=view_model.metadata.election_id,
     )
     document_title = page_title(page="Endorsements", election=election_display_name)
+    results_by_race = {
+        race.id: context.race_results_view(
+            race,
+            results=view_model.results,
+            election_type=view_model.metadata.election_type,
+            capture_urls=view_model.metadata.results_capture_urls,
+            as_of=view_model.metadata.generated_at,
+        )
+        for section in view_model.sections
+        for race in section.races
+    }
+
+    def result_for_race(race: PublicationRace) -> context.RaceResultsView | None:
+        return results_by_race[race.id]
+
     return template.render(
         guide=view_model,
         config=configuration,
@@ -193,6 +208,11 @@ def render_html_document(
             sources_page_path=sources_page_url,
             endorsements_path=guide_path,
             comparisons_path=f"{guide_path}comparisons/",
+            preliminary_recency=[
+                result.recency
+                for result in results_by_race.values()
+                if result is not None and result.recency is not None
+            ],
         ).model_dump(mode="json"),
         # Each card links its race's own page (issue #136). Bound to this
         # election here rather than passed as a two-argument helper, so the
@@ -220,13 +240,7 @@ def render_html_document(
         # cards; #286), one function bound to this election's own results and
         # capture link so the template calls it per race exactly like
         # `meter_view` above.
-        race_results=partial(
-            context.race_results_view,
-            results=view_model.results,
-            election_type=view_model.metadata.election_type,
-            capture_urls=view_model.metadata.results_capture_urls,
-            as_of=view_model.metadata.generated_at,
-        ),
+        race_results=result_for_race,
     )
 
 
@@ -331,6 +345,11 @@ def render_race_document(
             view_model,
             race=race_detail,
             sources_page_path=sources_page_url,
+            preliminary_recency=(
+                [race_results.recency]
+                if race_results is not None and race_results.recency is not None
+                else []
+            ),
         ).model_dump(mode="json"),
         race_path=race_page_path(election_id, race.id),
         social_image_path=race_og_image_path(election_id, race.id),
