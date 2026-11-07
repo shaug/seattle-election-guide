@@ -4,9 +4,11 @@
 
 Reuse the existing Guide/race result block: names, one-decimal named-choice percentages,
 .45rem navy tally bars and compact contest-count/authority/evidence provenance. The adjacent
-amber status says **Unofficial** plus the actual publisher count timestamp. When only State
-export generation is supplied, use the approved **Unofficial · Export generated [time]**
-and **Count timestamp not provided**; keep the supplied County count time. All candidates
+amber badge says only **Unofficial**; certified-result badges say only **Certified**.
+The second provenance line at the bottom of the card or race result block carries available
+timestamps: **Count updated [time]**, **Export generated [time]**, and the separate
+**Last checked [time]**, or **Certified on [date]**. Omit notices about clocks the publisher
+did not supply. Export generation never substitutes for count time. All candidates
 retain equal emphasis; no winner/outcome chips or trailing treatment. Center the counting
 banner. Different authorities retain their own clocks and certification evidence; a County
 date is not an election-wide promise. Four approved County examples are a visual excerpt,

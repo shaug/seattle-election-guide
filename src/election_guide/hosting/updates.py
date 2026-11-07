@@ -90,7 +90,7 @@ class ElectionUpdatesSnapshot(HostingModel):
 
 
 class UpdatesSnapshot(HostingModel):
-    schema_version: Literal["1.0", "2.0", "3.0", "4.0"] = "4.0"
+    schema_version: Literal["1.0", "2.0", "3.0", "4.0", "5.0"] = "5.0"
     canonical_origin: str
     elections: dict[str, ElectionUpdatesSnapshot]
 
@@ -281,6 +281,15 @@ def _election_payload(payload: dict[str, Any]) -> dict[str, Any]:
     return factual({key: value for key, value in payload.items() if key in keys})
 
 
+_RESULT_MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+_RESULT_DAY = r"(?:[1-9]|[12][0-9]|3[01])"
+_RESULT_CLOCK = (
+    rf"{_RESULT_MONTH} {_RESULT_DAY}, (?:[1-9]|1[0-2]):[0-5][0-9]:[0-5][0-9] "
+    r"(?:a|p)\.m\. (?:PST|PDT)"
+)
+_RESULT_DATE = rf"{_RESULT_MONTH} {_RESULT_DAY}, [0-9]{{4}}"
+
+
 class _InformationContent(_PageContent):
     """Read actual election text/evidence and payload facts, independent of paint/code.
 
@@ -289,12 +298,88 @@ class _InformationContent(_PageContent):
     """
 
     def __init__(
-        self, evidence_source_commit: str | None = None, *, verification_clocks: bool = True
+        self,
+        evidence_source_commit: str | None = None,
+        *,
+        verification_clocks: bool = True,
+        result_clock_placement: bool = False,
     ) -> None:
         super().__init__()
         self.evidence_source_commit = evidence_source_commit
         self.verification_clocks = verification_clocks
         self.payload: list[str] | None = None
+        self.result_clock_placement = result_clock_placement
+        self.result_depth: int | None = None
+        self.result_status: str | None = None
+        self.result_clocks: list[tuple[str, str]] = []
+        self.result_legacy_export = False
+        self.result_notices: dict[int, str] = {}
+
+    def _resolve_result_notices(self) -> None:
+        if not self.result_notices:
+            return
+        omit = (
+            self.result_legacy_export
+            and self.result_status == "Unofficial"
+            and len(self.result_clocks) == 1
+            and self.result_clocks[0][0] == "export"
+            and len(self.result_notices) == 1
+        )
+        start = max(0, min(self.result_notices) - 1)
+        resolved: list[Any] = []
+        for index, token in enumerate(self.tokens[start:], start=start):
+            if index in self.result_notices:
+                if omit:
+                    continue
+                token = ("text", self.result_notices[index])
+            if resolved and token[0] == resolved[-1][0] == "text":
+                resolved[-1] = ("text", resolved[-1][1] + token[1])
+            else:
+                resolved.append(token)
+        self.tokens[start:] = resolved
+
+    def _result_clock_text(self, data: str) -> str:
+        """Keep exact clock facts independent of their approved badge/provenance position."""
+        text = data.strip()
+        if self._inside("race-results-status"):
+            old = re.fullmatch(
+                rf"(Unofficial|Certified) · (Export generated )?({_RESULT_CLOCK}|{_RESULT_DATE})",
+                text,
+            )
+            if old is not None:
+                status, export, clock = old.groups()
+                kind = "certified" if status == "Certified" else "export" if export else "count"
+                valid = _RESULT_DATE if kind == "certified" else _RESULT_CLOCK
+                if re.fullmatch(valid, clock) and not (status == "Certified" and export):
+                    self.result_status = status
+                    self.result_clocks.append((kind, clock))
+                    self.result_legacy_export = kind == "export"
+                    return status
+            elif text in {"Unofficial", "Certified"}:
+                self.result_status = text
+        elif self._inside("race-results-provenance"):
+            if self.result_status == "Certified":
+                certified = re.fullmatch(rf"Certified on ({_RESULT_DATE})", text)
+                if certified is not None:
+                    self.result_clocks.append(("certified", certified[1]))
+                    return ""
+            elif self.result_status == "Unofficial":
+                if text == "Count timestamp not provided ·":
+                    self.result_notices[len(self.tokens)] = data
+                    self.tokens.append(("result-count-notice", data))
+                    return ""
+                if text.endswith(" ·"):
+                    clocks = [
+                        re.fullmatch(rf"(Count updated|Export generated) ({_RESULT_CLOCK})", part)
+                        for part in text.removesuffix(" ·").split(" · ")
+                    ]
+                    if clocks and all(clocks):
+                        for clock in clocks:
+                            assert clock is not None
+                            kind = "count" if clock[1] == "Count updated" else "export"
+                            self.result_clocks.append((kind, clock[2]))
+                        return ""
+        return data
 
     def _information(self) -> bool:
         if any(
@@ -332,6 +417,16 @@ class _InformationContent(_PageContent):
             self.payload = []
         if not self._information():
             return
+        if (
+            self.result_clock_placement
+            and self.result_depth is None
+            and "race-results" in (attributes.get("class") or "").split()
+        ):
+            self.result_depth = len(self.stack)
+            self.result_status = None
+            self.result_clocks = []
+            self.result_legacy_export = False
+            self.result_notices = {}
         if tag in _BLOCK:
             self._append_text("text", " ")
         facts = {
@@ -373,6 +468,14 @@ class _InformationContent(_PageContent):
             self.payload = None
         if self._information() and tag in _BLOCK:
             self._append_text("text", " ")
+        if self.result_depth == len(self.stack) and self.stack[-1][0] == tag:
+            self._resolve_result_notices()
+            if self.result_clocks:
+                self.tokens.append(("result-clocks", sorted(self.result_clocks)))
+            self.result_depth = None
+            self.result_status = None
+            self.result_clocks = []
+            self.result_notices = {}
         for index in range(len(self.stack) - 1, -1, -1):
             if self.stack[index][0] == tag:
                 del self.stack[index:]
@@ -383,6 +486,8 @@ class _InformationContent(_PageContent):
             self.payload.append(data)
         elif self._information():
             literal = any(tag in {"pre", "textarea"} for tag, _ in self.stack)
+            if self.result_depth is not None and not literal:
+                data = self._result_clock_text(data)
             if (
                 not self.verification_clocks
                 and not literal
@@ -405,8 +510,13 @@ def _information_content(
     *,
     evidence_source_commit: str | None = None,
     verification_clocks: bool = True,
+    result_clock_placement: bool = False,
 ) -> bytes:
-    parser = _InformationContent(evidence_source_commit, verification_clocks=verification_clocks)
+    parser = _InformationContent(
+        evidence_source_commit,
+        verification_clocks=verification_clocks,
+        result_clock_placement=result_clock_placement,
+    )
     parser.feed((site / name).read_text(encoding="utf-8"))
     parser.close()
     return canonical_json_bytes(_without_layout_whitespace(parser.tokens))
@@ -472,7 +582,7 @@ def _pages(manifest: DeploymentManifest, election: str) -> set[str]:
 
 
 def build_updates_snapshot(
-    site: Path, *, schema_version: Literal["1.0", "2.0", "3.0", "4.0"] = "4.0"
+    site: Path, *, schema_version: Literal["1.0", "2.0", "3.0", "4.0", "5.0"] = "5.0"
 ) -> UpdatesSnapshot:
     """Derive a durable content baseline from the verified pages that actually ship."""
     manifest = read_verified_deployment(site)
@@ -495,9 +605,10 @@ def build_updates_snapshot(
                                 site,
                                 name,
                                 evidence_source_commit=election.git_commit
-                                if schema_version in {"3.0", "4.0"}
+                                if schema_version in {"3.0", "4.0", "5.0"}
                                 else None,
-                                verification_clocks=schema_version != "4.0",
+                                verification_clocks=schema_version not in {"4.0", "5.0"},
+                                result_clock_placement=schema_version == "5.0",
                             )
                         ).hexdigest()
                         for name in sorted(_pages(manifest, election.election_id))
@@ -521,7 +632,7 @@ def compare_updates_snapshots(
     published: UpdatesSnapshot, proposed: UpdatesSnapshot
 ) -> dict[str, Any]:
     """Require a fresh served entry for each election whose page fingerprints changed."""
-    if published.schema_version != "4.0" or proposed.schema_version != "4.0":
+    if published.schema_version != "5.0" or proposed.schema_version != "5.0":
         raise ValueError(
             "Updates snapshot policy differs; verify original baseline pages before upgrading"
         )

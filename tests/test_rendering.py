@@ -1000,7 +1000,8 @@ def test_certified_results_grow_a_results_strip_on_the_candidate_race_card(
 
     assert '<div class="race-results">' in card
     assert "Result" in card
-    assert "Certified · Aug 19, 2026" in card
+    assert '<span class="race-results-status">Certified</span>' in card
+    assert "<br>Certified on Aug 19, 2026</p>" in card
     # Four tally rows, leader to trailing, each on the one shared full-width
     # bar scale -- the same `width:<percentage_label>` idiom for every row,
     # never a per-candidate rescaled track.
@@ -1181,7 +1182,8 @@ def test_certified_measure_results_grow_a_results_strip_on_the_race_card(
     card = _race_card_html(html, MEASURE_RACE_ID)
 
     assert '<div class="race-results">' in card
-    assert "Certified · Aug 19, 2026" in card
+    assert '<span class="race-results-status">Certified</span>' in card
+    assert "<br>Certified on Aug 19, 2026</p>" in card
     # Two tally rows -- Yes and No -- on the shared bar scale, Yes leading
     # (60% share sorts above 40%).
     assert card.count('<div class="race-results-row') == 2
@@ -1342,7 +1344,7 @@ def test_certified_results_render_the_race_detail_pages_complete_result_block(
     assert '<span class="race-results-eyebrow">Result</span>' in body
     # The abbreviated badge grammar the block's own head carries on every
     # surface that renders it, card and page alike.
-    assert '<span class="race-results-status">Certified · Aug 19, 2026</span>' in body
+    assert '<span class="race-results-status">Certified</span>' in body
 
     # Every outcome, in finish order, each on the one shared full-width scale.
     assert body.count('<div class="race-results-row') == 4
@@ -1368,7 +1370,10 @@ def test_certified_results_render_the_race_detail_pages_complete_result_block(
 
     # The strip's own date, authority, and ballot count are the block's
     # provenance line now; nothing states them twice.
-    assert '<p class="race-results-provenance">61,234 ballots · King County Elections</p>' in body
+    assert (
+        '<p class="race-results-provenance">61,234 ballots · King County Elections'
+        "<br>Certified on Aug 19, 2026</p>" in body
+    )
     assert "Certified result" not in body
 
     # Above the lens bar and above every candidate: the block is a permanent
@@ -1670,7 +1675,10 @@ def test_certified_measure_results_render_both_choices_as_tally_rows(
     # tally row links down to it; "No" has none and stays plain text.
     assert '<a href="#candidate-' + MEASURE_RACE_ID + '--yes">Yes</a>' in body
     assert body.index('"race-results-name">No ') < body.index('race-results-name"><a href')
-    assert '<p class="race-results-provenance">50,000 ballots · King County Elections</p>' in body
+    assert (
+        '<p class="race-results-provenance">50,000 ballots · King County Elections'
+        "<br>Certified on Aug 19, 2026</p>" in body
+    )
 
 
 def test_the_result_block_does_not_change_when_personalization_is_disabled(

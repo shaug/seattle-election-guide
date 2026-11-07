@@ -166,7 +166,11 @@ def test_preliminary_general_result_reuses_tally_without_calling_outcomes(
         view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
     )
     card = _race_card_html(html, "king-county-assessor")
-    assert "Unofficial · Nov 3, 8:00:00 p.m. PST" in card
+    assert (
+        '<span class="race-results-status race-results-status-preliminary">Unofficial</span>'
+        in card
+    )
+    assert "Count updated Nov 3, 8:00:00 p.m. PST" in card
 
     assert card.count('class="race-results-row"') == 2
     assert card.count('style="width:50.0%"') == 2
@@ -250,12 +254,12 @@ def test_failed_refresh_keeps_count_asof_and_later_success_clears_only_the_warni
 
     card = rendered_card()
     assert "Refresh unavailable · last checked Nov 3, 9:00:00 p.m. PST" in card
-    assert "Unofficial · Nov 3, 8:00:00 p.m. PST" in card
+    assert "Count updated Nov 3, 8:00:00 p.m. PST" in card
     document["captures"][0]["captured_at"] = "2026-11-04T06:00:00Z"
     card = rendered_card()
     assert "Refresh unavailable" not in card
     assert "Last checked Nov 3, 10:00:00 p.m. PST" in card
-    assert "Unofficial · Nov 3, 8:00:00 p.m. PST" in card
+    assert "Count updated Nov 3, 8:00:00 p.m. PST" in card
 
 
 def test_preliminary_percentage_rounding_matches_the_existing_certified_convention(
@@ -424,10 +428,12 @@ def test_preliminary_general_result_is_readable_in_the_actual_application(
     assert observed["documentWidth"] <= observed["viewport"]
     assert observed["badgeInside"] is True
     assert observed["bannerCentered"] is True
-    assert "Unofficial" in observed["status"] and "PST" in observed["status"]
+    assert observed["status"] == "Unofficial"
+    assert "Count timestamp not provided" not in observed["provenance"]
     if clock_basis == "export":
-        assert "Export generated" in observed["status"]
-        assert "Count timestamp not provided" in observed["provenance"]
+        assert "Export generated Nov 3, 8:15:00 p.m. PST" in observed["provenance"]
+    else:
+        assert "Count updated Nov 3, 8:00:00 p.m. PST" in observed["provenance"]
     assert observed["amber"] == "rgb(138, 75, 0)"
     assert observed["outcomes"] == observed["trailing"] == 0
     assert "220 ballots" in observed["provenance"]
@@ -648,7 +654,7 @@ def test_server_preliminary_staleness_preserves_the_original_count_time(
     )
     card = _race_card_html(html, "king-county-assessor")
     assert "Stale · last checked Nov 3, 9:00:00 p.m. PST" in card
-    assert "Unofficial · Nov 3, 8:00:00 p.m. PST" in card
+    assert "Count updated Nov 3, 8:00:00 p.m. PST" in card
     assert "counting continues" not in html
 
 
@@ -734,9 +740,52 @@ def test_export_clock_keeps_missing_count_clock_and_approved_wording(
         general_view.model_copy(update={"results": results}),
         read_rendering_configuration(ROOT / "config/rendering/guide.yaml"),
     )
-    assert "Unofficial · Export generated Nov 3, 8:15:00 p.m. PST" in html
-    assert "Count timestamp not provided" in html
+    card = _race_card_html(html, "king-county-assessor")
+    assert (
+        '<span class="race-results-status race-results-status-preliminary">Unofficial</span>'
+        in card
+    )
+    assert "<br>Export generated Nov 3, 8:15:00 p.m. PST · " in card
+    assert "Count timestamp not provided" not in card
     assert "Certified ·" not in html
+
+
+@pytest.mark.parametrize("page", ["guide", "race"])
+@pytest.mark.parametrize("clocks", ["count", "export", "both"])
+def test_available_result_clocks_share_the_bottom_line_without_crowding_the_badge(
+    tmp_path: Path, general_view: PublicationViewModel, page: str, clocks: str
+) -> None:
+    document = preliminary_document()
+    row = next(r for r in document["races"] if r["race_id"] == "king-county-assessor")
+    if clocks == "export":
+        row["reported_at"] = None
+    if clocks in {"export", "both"}:
+        row["export_generated_at"] = "2026-11-04T04:15:00Z"
+    view = general_view.model_copy(
+        update={
+            "results": read_document(tmp_path, document),
+            "metadata": general_view.metadata.model_copy(
+                update={"generated_at": datetime(2026, 11, 4, 5, tzinfo=UTC)}
+            ),
+        }
+    )
+    configuration = read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    html = (
+        render_html_document(view, configuration)
+        if page == "guide"
+        else render_race_document(
+            view, "king-county-assessor", public_site_url=configuration.public_site_url
+        )
+    )
+    block = _race_card_html(html, "king-county-assessor") if page == "guide" else html
+    badge = block.split('class="race-results-status race-results-status-preliminary">', 1)[1]
+    assert badge.split("</span>", 1)[0] == "Unofficial"
+    provenance = block.split('class="race-results-provenance">', 1)[1].split("</p>", 1)[0]
+    second_line = provenance.split("<br>", 1)[1]
+    assert ("Count updated Nov 3, 8:00:00 p.m. PST" in second_line) == (clocks != "export")
+    assert ("Export generated Nov 3, 8:15:00 p.m. PST" in second_line) == (clocks != "count")
+    assert "Last checked Nov 3, 9:00:00 p.m. PST" in second_line
+    assert "timestamp not provided" not in provenance
 
 
 def test_generation_clock_cannot_follow_capture_or_replace_no_clock(tmp_path: Path) -> None:

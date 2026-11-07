@@ -6,6 +6,7 @@ import hashlib
 import json
 import shutil
 from pathlib import Path
+from typing import Literal
 
 import pytest
 from typer.testing import CliRunner
@@ -483,6 +484,112 @@ def test_same_content_addressed_result_original_survives_a_software_commit(
     assert check_updates(baseline, candidate)["result"] == "pass"
 
 
+def _result_clock_placement(kind: str, *, compact_badge: bool) -> str:
+    status = "Certified" if kind == "certified" else "Unofficial"
+    clock = "Aug 19, 2026" if kind == "certified" else "Nov 7, 4:35:00 a.m. PST"
+    previous_clock = ("Export generated " if kind == "export" else "") + clock
+    badge = status if compact_badge else f"{status} · {previous_clock}"
+    clock_line = (
+        f"Certified on {clock}"
+        if kind == "certified"
+        else f"{'Export generated' if kind == 'export' else 'Count updated'} {clock} · "
+    )
+    recency = (
+        '<span data-preliminary-recency="race-1">Last checked Nov 7, 5:22:18 a.m. PST</span>'
+        if kind != "certified"
+        else ""
+    )
+    bottom = clock_line if compact_badge else ""
+    if not compact_badge and kind == "export":
+        bottom = "Count timestamp not provided · "
+    return (
+        '<div class="race-results"><div class="race-results-head">Result '
+        f'<span class="race-results-status">{badge}</span></div>'
+        '<div class="race-results-tally">Candidate A 10 · Candidate B 5</div>'
+        '<p class="race-results-provenance">15 votes · Official authority'
+        f"<br>{bottom}{recency}</p></div>"
+    )
+
+
+@pytest.mark.parametrize("kind", ["count", "export", "certified"])
+@pytest.mark.parametrize("route", ["index.html", "races/race-1/index.html"])
+def test_result_clock_placement_is_presentation_when_all_facts_are_preserved(
+    sites: tuple[Path, Path], kind: str, route: str
+) -> None:
+    baseline, candidate = sites
+    for site, compact in [(baseline, False), (candidate, True)]:
+        _write(
+            site,
+            f"e/{GENERAL}/{route}",
+            _page(_result_clock_placement(kind, compact_badge=compact)),
+        )
+        _seal(site)
+    report = check_updates(baseline, candidate)
+    assert report["result"] == "pass"
+    assert report["elections"][GENERAL]["new_entries"] == []
+
+
+@pytest.mark.parametrize(
+    "kind,old,new",
+    [
+        ("count", "4:35:00", "4:36:00"),
+        ("export", "4:35:00", "4:36:00"),
+        ("certified", "Aug 19", "Aug 20"),
+        ("count", "Unofficial", "Certified"),
+        ("count", "Candidate A 10", "Candidate A 11"),
+        ("count", "Official authority", "Another authority"),
+        ("count", "Count updated", "Unreviewed clock"),
+        ("count", "Count updated", "Count finished"),
+        ("count", "Count updated Nov 7, 4:35:00 a.m. PST · ", ""),
+        ("export", "Export generated Nov 7, 4:35:00 a.m. PST · ", ""),
+        ("count", "4:35:00", "4:35:99"),
+        ("count", "Count updated", "Extra explanation · Count updated"),
+        ("count", "race-results-provenance", "source-provenance"),
+        ("count", "race-results-status", "source-status"),
+    ],
+)
+def test_compact_result_badges_still_compare_every_fact_and_unrecognized_text(
+    sites: tuple[Path, Path], kind: str, old: str, new: str
+) -> None:
+    baseline, candidate = sites
+    content = _result_clock_placement(kind, compact_badge=True)
+    for site, text in [(baseline, content), (candidate, content.replace(old, new))]:
+        _write(site, f"e/{GENERAL}/index.html", _page(text))
+        _seal(site)
+    assert check_updates(baseline, candidate)["result"] == "fail"
+
+
+@pytest.mark.parametrize("compact_badge", [False, True])
+def test_missing_count_notice_is_not_ignored_beside_an_available_count_clock(
+    sites: tuple[Path, Path], compact_badge: bool
+) -> None:
+    baseline, candidate = sites
+    content = _result_clock_placement("count", compact_badge=compact_badge)
+    changed = content.replace("<br>", "<br><span>Count timestamp not provided · </span>")
+    for site, text in [(baseline, content), (candidate, changed)]:
+        _write(site, f"e/{GENERAL}/index.html", _page(text))
+        _seal(site)
+    assert check_updates(baseline, candidate)["result"] == "fail"
+
+
+def test_later_count_clock_prevents_omitting_a_legacy_missing_count_notice(
+    sites: tuple[Path, Path],
+) -> None:
+    baseline, candidate = sites
+    content = _result_clock_placement("export", compact_badge=False)
+    content = content.replace(
+        "<span data-preliminary-recency=",
+        "<span>Count updated Nov 7, 4:35:00 a.m. PST · </span><span data-preliminary-recency=",
+    )
+    for site, text in [
+        (baseline, content.replace("Count timestamp not provided · ", "")),
+        (candidate, content),
+    ]:
+        _write(site, f"e/{GENERAL}/index.html", _page(text))
+        _seal(site)
+    assert check_updates(baseline, candidate)["result"] == "fail"
+
+
 @pytest.mark.parametrize(
     "change", ["hash", "wrong-pin", "wrong-prefix", "other-repository", "outside-result", "count"]
 )
@@ -598,5 +705,24 @@ def test_legacy_snapshot_verification_still_compares_its_original_check_clock(
     _write(baseline, path, _page(content.replace("5:22:18", "7:21:45")))
     _seal(baseline)
 
+    with pytest.raises(ValueError, match="snapshot differs"):
+        verify_updates_snapshot(baseline)
+
+
+@pytest.mark.parametrize("policy", ["3.0", "4.0"])
+def test_original_result_clock_is_verified_before_migrating_its_placement_policy(
+    sites: tuple[Path, Path], policy: Literal["3.0", "4.0"]
+) -> None:
+    baseline, _ = sites
+    path = f"e/{GENERAL}/index.html"
+    content = _result_clock_placement("export", compact_badge=False)
+    _write(baseline, path, _page(content))
+    _seal(baseline)
+    snapshot = build_updates_snapshot(baseline, schema_version=policy)
+    (baseline / UPDATES_SNAPSHOT).write_bytes(
+        canonical_json_bytes(snapshot.model_dump(mode="json"))
+    )
+    _write(baseline, path, _page(content.replace("4:35:00", "4:36:00")))
+    _seal(baseline)
     with pytest.raises(ValueError, match="snapshot differs"):
         verify_updates_snapshot(baseline)
