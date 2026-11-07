@@ -1,11 +1,13 @@
 """Real Git verifies that scheduled staging cannot smuggle unrelated changes."""
 
+import os
 import subprocess
 from importlib import import_module
 from importlib.util import find_spec
 from pathlib import Path
 
 import pytest
+import yaml
 
 
 def git(root: Path, *args: str) -> str:
@@ -80,3 +82,67 @@ def test_hourly_updates_append_preserves_every_previous_byte(tmp_path: Path) -> 
     assert stage(tmp_path) == ("data/corrections/wa-2026-general.yaml",)
     assert git(tmp_path, "show", "HEAD:data/corrections/wa-2026-general.yaml") == "original"
     assert git(tmp_path, "diff", "--cached", "--name-only") == str(p.relative_to(tmp_path))
+
+
+@pytest.mark.parametrize("squashed", [False, True])
+def test_candidate_recovery_distinguishes_orphan_from_already_squashed_tree(
+    tmp_path: Path, squashed: bool
+) -> None:
+    remote = tmp_path / "remote.git"
+    git(tmp_path, "init", "--bare", str(remote))
+    repo = tmp_path / "checkout"
+    repo.mkdir()
+    repository(repo)
+    git(repo, "branch", "-M", "main")
+    git(repo, "remote", "add", "origin", str(remote))
+    git(repo, "push", "origin", "main")
+    branch = "codex/preliminary-results-refresh"
+    git(repo, "checkout", "-b", branch)
+    (repo / "data/results/wa-2026-general.yaml").write_text("prepared counts")
+    git(repo, "commit", "-am", "prepared result candidate")
+    candidate_head = git(repo, "rev-parse", "HEAD")
+    git(repo, "push", "origin", branch)
+    git(repo, "checkout", "main")
+    if squashed:
+        git(repo, "merge", "--squash", branch)
+        git(repo, "commit", "-m", "accepted normal squash")
+    (repo / "later.txt").write_text("later independent main change")
+    git(repo, "add", ".")
+    git(repo, "commit", "-m", "later unrelated work")
+    git(repo, "push", "origin", "main")
+    tools = tmp_path / "tools"
+    tools.mkdir()
+    gh = tools / "gh"
+    gh.write_text("#!/bin/sh\nexit 0\n")  # External PR list has no pending PR.
+    gh.chmod(0o755)
+    output = tmp_path / "step-output.txt"
+    workflow = yaml.safe_load(
+        (Path(__file__).parents[1] / ".github/workflows/preliminary-results.yml").read_text()
+    )
+    step = next(s for s in workflow["jobs"]["prepare"]["steps"] if s.get("id") == "candidate")
+    result = subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", step["run"]],
+        cwd=repo,
+        env={
+            **os.environ,
+            "PATH": str(tools) + os.pathsep + os.environ["PATH"],
+            "GITHUB_REPOSITORY": "shaug/seattle-election-guide",
+            "PRELIMINARY_RESULTS_BRANCH": branch,
+            "GITHUB_OUTPUT": str(output),
+        },
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "pending=false" in output.read_text()
+    assert f"recover={str(not squashed).lower()}" in output.read_text()
+    assert (
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", candidate_head, "HEAD"], cwd=repo
+        ).returncode
+        == 0
+    )  # The next ordinary branch push remains a fast-forward.
+    assert (repo / "later.txt").read_text() == "later independent main change"
+    assert (repo / "data/results/wa-2026-general.yaml").read_text() == "prepared counts"
+    if squashed:
+        assert git(repo, "rev-parse", "HEAD^{tree}") == git(repo, "rev-parse", "origin/main^{tree}")

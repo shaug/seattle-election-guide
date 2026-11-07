@@ -73,7 +73,10 @@ and Actions read access. The existing archive GitHub App token requests only con
 pull-request write; it requests no workflow-write permission. Activation follows normal review
 and deployment of this implementation, not a local script or an unreviewed branch.
 
-Each eligible tick checks the fixed `codex/preliminary-results-refresh` branch and its PR first.
+Each eligible tick checks the fixed `codex/preliminary-results-refresh` branch and its PR first. After an ordinary upstream merge,
+a completed squash candidate whose entire tree equals current main starts a fresh
+refresh. The merge retains branch ancestry for the next normal fast-forward push;
+a real unmerged difference remains recovery work with no new source acquisition.
 An open PR suppresses new source requests until its review/delivery is complete. A pushed
 candidate missing its PR is recovered without reacquiring sources. Normal merge conflicts stop
 for reconciliation; there is no force push, client fallback, self-approval or self-merge.

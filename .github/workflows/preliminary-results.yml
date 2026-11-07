@@ -54,7 +54,11 @@ jobs:
             if ! git merge-base --is-ancestor FETCH_HEAD origin/main; then
               git checkout -B "$PRELIMINARY_RESULTS_BRANCH" FETCH_HEAD
               git merge --no-edit origin/main
-              echo "recover=true" >> "$GITHUB_OUTPUT"
+              if git diff --quiet HEAD origin/main; then
+                echo "recover=false" >> "$GITHUB_OUTPUT"
+              else
+                echo "recover=true" >> "$GITHUB_OUTPUT"
+              fi
               exit 0
             fi
           fi
