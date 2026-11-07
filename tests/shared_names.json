@@ -1146,6 +1146,12 @@
       "python",
       "test"
     ],
+    "race-results": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
     "screen-guide": [
       "template",
       "stylesheet",
