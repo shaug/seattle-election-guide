@@ -12,9 +12,11 @@ from typer.testing import CliRunner
 
 from election_guide.cli import app
 from election_guide.hosting.updates import (
+    UPDATES_SNAPSHOT,
     build_updates_snapshot,
     check_updates,
     compare_updates_snapshots,
+    verify_updates_snapshot,
 )
 from election_guide.serialization import canonical_json_bytes
 
@@ -507,3 +509,94 @@ def test_result_original_identity_rule_does_not_hide_changed_evidence_or_facts(
         )
         _seal(site, source_commit=revision)
     assert check_updates(baseline, candidate)["result"] == "fail"
+
+
+@pytest.mark.parametrize("route", ["index.html", "races/race-1/index.html"])
+@pytest.mark.parametrize(
+    "label", ["Last checked", "Stale · last checked", "Refresh unavailable · last checked"]
+)
+def test_unchanged_preliminary_results_can_refresh_their_verification_clock(
+    sites: tuple[Path, Path], route: str, label: str
+) -> None:
+    baseline, candidate = sites
+    for site, clock in [(baseline, "5:22:18"), (candidate, "7:21:45")]:
+        content = (
+            '<div class="race-results">Unofficial A 10 · Count as of Nov 7, 4:35 a.m. PST '
+            '<span data-preliminary-recency="race-1">'
+            f"{label} Nov 7, {clock} a.m. PST</span></div>"
+        )
+        _write(site, f"e/{GENERAL}/{route}", _page(content))
+        _seal(site)
+
+    report = check_updates(baseline, candidate)
+
+    assert report["result"] == "pass"
+    assert report["elections"][GENERAL]["changed_pages"] == []
+    assert report["elections"][GENERAL]["new_entries"] == []
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        "count",
+        "count-clock",
+        "export-clock",
+        "authority",
+        "status",
+        "extra-text",
+        "outside",
+        "unmarked",
+        "malformed",
+    ],
+)
+def test_verification_clock_rule_preserves_other_result_information(
+    sites: tuple[Path, Path], change: str
+) -> None:
+    baseline, candidate = sites
+    for site, clock in [(baseline, "5:22:18"), (candidate, "7:21:45")]:
+        changed = site == candidate
+        count = "11" if changed and change == "count" else "10"
+        count_clock = "4:36" if changed and change == "count-clock" else "4:35"
+        export_clock = "4:37" if changed and change == "export-clock" else "4:35"
+        authority = "Different authority" if changed and change == "authority" else "County"
+        label = (
+            "Refresh unavailable · last checked"
+            if changed and change == "status"
+            else "Last checked"
+        )
+        extra = " A 11" if changed and change == "extra-text" else ""
+        classes = "source-evidence" if change == "outside" else "race-results"
+        marker = "" if change == "unmarked" else ' data-preliminary-recency="race-1"'
+        stamp = f"Nov 7, {clock} a.m. PST" if change != "malformed" else f"not-a-clock-{clock}"
+        content = (
+            f'<div class="{classes}">Unofficial A {count} · {authority} '
+            f"Count as of Nov 7, {count_clock} a.m. PST · "
+            f"Export generated Nov 7, {export_clock} a.m. PST "
+            f"<span{marker}>{label} {stamp}{extra}</span></div>"
+        )
+        _write(site, f"e/{GENERAL}/index.html", _page(content))
+        _seal(site)
+
+    assert check_updates(baseline, candidate)["result"] == "fail"
+
+
+def test_legacy_snapshot_verification_still_compares_its_original_check_clock(
+    sites: tuple[Path, Path],
+) -> None:
+    baseline, _ = sites
+    path = f"e/{GENERAL}/index.html"
+    content = (
+        '<div class="race-results">Unofficial A 10 '
+        '<span data-preliminary-recency="race-1">Last checked Nov 7, 5:22:18 a.m. PST</span></div>'
+    )
+    _write(baseline, path, _page(content))
+    _seal(baseline)
+    snapshot = build_updates_snapshot(baseline, schema_version="3.0")
+    (baseline / UPDATES_SNAPSHOT).write_bytes(
+        canonical_json_bytes(snapshot.model_dump(mode="json"))
+    )
+    _write(baseline, path, _page(content.replace("5:22:18", "7:21:45")))
+    _seal(baseline)
+
+    with pytest.raises(ValueError, match="snapshot differs"):
+        verify_updates_snapshot(baseline)

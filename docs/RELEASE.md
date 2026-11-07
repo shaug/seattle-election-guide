@@ -52,11 +52,17 @@ commit pins, malformed paths, other repositories, other citation regions, change
 hashes, counts, clocks and substantive result text remain compared. Release admission still
 validates the captured original bytes and complete source tree; this is not a link exemption.
 
-Older `1.0` and `2.0` snapshots cannot be compared directly to the new fingerprints. The upgrade
+Snapshot schema `4.0` also excludes only the formatted verification clock after “Last checked”
+inside the existing result `data-preliminary-recency` span. It preserves the surrounding
+status, count and export clocks, authority, other text and evidence destinations. Unmarked,
+malformed or non-result timestamps remain compared. This implements the unchanged-verification
+rule above without adding a filler Updates entry or hiding changed election information.
+
+Older `1.0`, `2.0` and `3.0` snapshots cannot be compared directly to the new fingerprints. The upgrade
 must obtain the exact successful production artifact, verify it against the still-served manifest
 and verified upload receipt, validate its original snapshot under its own policy against actual
-pages, then derive `3.0` from those bytes. Missing/expired artifacts or source/asset mismatches
-block this transition. After `3.0` ships, its authenticated durable snapshot again avoids
+pages, then derive `4.0` from those bytes. Missing/expired artifacts or source/asset mismatches
+block this transition. After `4.0` ships, its authenticated durable snapshot again avoids
 artifact-expiry dependence. Existing immutable release and deployment identities are unchanged.
 
 The primary declaration explicitly opts into `updates_from_current_source`. Only its current
