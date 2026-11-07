@@ -83,7 +83,10 @@ preserves held denial manifests. Missing/uncertain prior state stops before requ
 blocked admission also stops later ticks; certification, schema and mapping errors are not fake
 HTTP failures. Successful unchanged checks preserve count clocks and need no election-information
 Update. Changed counts/source reporting metadata or genuine unavailable observations receive a
-truthful append-only results Update, preserving all earlier text.
+truthful append-only results Update, preserving all earlier text. The historical migration
+contract retains every complete pinned entry while allowing later substantive results
+updates. Before staging, the publisher requires the entire previous Updates file to
+remain an exact byte prefix, including any earlier automatic entries.
 
 The job prepares the normal release request and runs the complete `make check`, then stages
 only the General results, its Updates, the normal hosting proposal and new immutable official

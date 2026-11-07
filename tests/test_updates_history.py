@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import re
 from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -107,7 +108,7 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             assert serialized == row["original_entry"]
         if election == "wa-2026-general":
             added = current.entries[len(public) :]
-            assert [entry.headline for entry in added] == [
+            assert [entry.headline for entry in added[:2]] == [
                 "Added SGN's five state Supreme Court endorsements.",
                 "Added unofficial election-wide counts to the general guide.",
             ]
@@ -123,6 +124,21 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             assert added[0].corrected_on == date(2026, 11, 2)
             assert added[0].topics == ["endorsements"]
             assert added[0].actions == ["added"]
+            # The migration pins complete historical rows, not a ceiling on later
+            # substantive automatic result updates. Staging also preserves every
+            # previous raw byte, including all automatic entries already published.
+            for entry in added[2:]:
+                assert entry.corrected_on >= date(2026, 11, 6)
+                assert entry.topics == ["results"]
+                assert entry.actions == ["changed"]
+                assert re.fullmatch(
+                    r"Preliminary results checked at (?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d Pacific\.",
+                    entry.headline,
+                )
+                assert {link.url for link in entry.provenance} == {
+                    "/e/wa-2026-general/",
+                    "https://github.com/shaug/seattle-election-guide/issues/696",
+                }
             assert next(
                 e for e in current.entries if "Updated King County" in e.headline
             ).actions == ["correction"]

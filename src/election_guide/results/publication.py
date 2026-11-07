@@ -159,6 +159,11 @@ def stage_preliminary_publication(root: Path) -> tuple[str, ...]:
             and name in tracked
         ):
             raise ValueError(f"retained evidence is immutable: {name}")
+    updates_path = "data/corrections/wa-2026-general.yaml"
+    if updates_path in paths:
+        original = git("show", f"HEAD:{updates_path}")
+        if not (root / updates_path).read_bytes().startswith(original):
+            raise ValueError("existing Updates history is append-only")
     if paths:
         git("add", "--", *paths)
     return paths

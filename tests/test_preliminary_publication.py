@@ -166,3 +166,51 @@ def test_verification_uses_original_byte_identity_not_new_capture_ids(changed: b
         previous, current, checked_at=NOW, original_hashes=hashes
     )
     assert (entry is not None) == changed
+
+
+def test_automatic_update_passes_the_complete_historical_prefix_audit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from tests import test_updates_history
+
+    previous = snapshot()
+    current = previous.model_copy(deep=True)
+    current.races[0].outcomes[0].votes -= 1
+    assert current.races[0].votes_counted is not None
+    current.races[0].votes_counted -= 1
+    entry = publisher().build_preliminary_update(previous, current, checked_at=NOW)
+    assert entry is not None
+    for election in ("wa-2026-primary", "wa-2026-general"):
+        (tmp_path / f"{election}.yaml").write_bytes(
+            (ROOT / f"data/corrections/{election}.yaml").read_bytes()
+        )
+    publisher().append_preliminary_update(tmp_path / "wa-2026-general.yaml", entry)
+    monkeypatch.setattr(test_updates_history, "UPDATES_DIR", tmp_path)
+    test_updates_history.test_election_only_migration_preserves_every_complete_original()
+
+
+@pytest.mark.parametrize(
+    "topics,actions", [(["endorsements"], ["changed"]), (["results"], ["added"])]
+)
+def test_historical_prefix_audit_rejects_an_unrelated_automatic_tail(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, topics: list[str], actions: list[str]
+) -> None:
+    from tests import test_updates_history
+
+    previous = snapshot()
+    current = previous.model_copy(deep=True)
+    current.races[0].outcomes[0].votes -= 1
+    assert current.races[0].votes_counted is not None
+    current.races[0].votes_counted -= 1
+    entry = publisher().build_preliminary_update(previous, current, checked_at=NOW)
+    assert entry is not None
+    entry.topics = topics
+    entry.actions = actions
+    for election in ("wa-2026-primary", "wa-2026-general"):
+        (tmp_path / f"{election}.yaml").write_bytes(
+            (ROOT / f"data/corrections/{election}.yaml").read_bytes()
+        )
+    publisher().append_preliminary_update(tmp_path / "wa-2026-general.yaml", entry)
+    monkeypatch.setattr(test_updates_history, "UPDATES_DIR", tmp_path)
+    with pytest.raises(AssertionError):
+        test_updates_history.test_election_only_migration_preserves_every_complete_original()
