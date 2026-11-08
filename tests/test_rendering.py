@@ -1458,6 +1458,7 @@ def test_approved_meter_colors_and_tie_context_in_the_browser(
           const pill = root.querySelector('.no-majority-pill');
           const heading = root.querySelector(
             '.race-detail-candidate-tied .race-detail-candidate-heading');
+          const tiedSection = heading?.closest('section');
           const sections = [...root.querySelectorAll('.screen-meter-section')];
           return JSON.stringify({
             bars: [...results.querySelectorAll('.race-results-bar')].map(colors),
@@ -1470,6 +1471,7 @@ def test_approved_meter_colors_and_tie_context_in_the_browser(
             percentColor: meter?.querySelector('strong')
               ? getComputedStyle(meter.querySelector('strong')).color : null,
             headingBackground: heading ? getComputedStyle(heading).backgroundColor : null,
+            headingEdge: tiedSection ? getComputedStyle(tiedSection).borderLeftColor : null,
             faded: sections.some(s => {
               const block = s.querySelector('.meter-block:not(.meter-block-context)');
               return block && parseFloat(getComputedStyle(block).opacity) < 1;
@@ -1528,7 +1530,36 @@ def test_approved_meter_colors_and_tie_context_in_the_browser(
         )
     else:
         assert result["headingBackground"] == ("rgb(244, 240, 248)" if leaders > 1 else None)
+        assert result["headingEdge"] == ("rgb(101, 74, 139)" if leaders > 1 else None)
         assert result["faded"] is True
+
+
+@pytest.mark.parametrize("personalized", [False, True])
+def test_insufficient_sole_leader_keeps_amber_candidate_framing(
+    tmp_path: Path, personalized: bool
+) -> None:
+    view = _view_model(tmp_path, minimum_explicit_sources=99)
+    path = _write_race_html(tmp_path, view, RESULTS_RACE_ID)
+    code = next(s.code for s in view.personalization.sources if s.id == "the-urbanist")
+    fragment = _lens_fragment(view, mode="s", source_codes=(code,))
+    result = _evaluate_in_chrome(
+        path,
+        """(async () => {
+          await new Promise(requestAnimationFrame);
+          await new Promise(requestAnimationFrame);
+          const section = document.querySelector('.race-detail-candidate-tied');
+          const heading = section.querySelector('.race-detail-candidate-heading');
+          return JSON.stringify({background:getComputedStyle(heading).backgroundColor,
+            edge:getComputedStyle(section).borderLeftColor,
+            actualTie:section.classList.contains('race-detail-candidate-actual-tie')});
+        })()""",
+        initial_url=f"{path.resolve().as_uri()}#{fragment}" if personalized else None,
+    )
+    assert result == {
+        "background": "rgb(255, 246, 232)",
+        "edge": "rgb(217, 144, 0)",
+        "actualTie": False,
+    }
 
 
 def test_certified_results_render_the_race_detail_pages_complete_result_block(
@@ -5499,6 +5530,8 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
                   (block.getAttribute('style') ?? '').includes('var(--meter-tie)'),
                 ),
               ),
+              actualTieFrames:
+                document.querySelectorAll('.race-detail-candidate-actual-tie').length,
               anyAmberBlock: sectionMeters.some((meter) =>
                 [...meter.querySelectorAll('.meter-block')].some((block) =>
                   (block.getAttribute('style') ?? '').includes('var(--amber)'),
@@ -5528,6 +5561,7 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
         "pillHidden": False,
         "kicker": "Tied for lead",
         "anyTieBlock": True,
+        "actualTieFrames": 2,
         "anyAmberBlock": False,
         "everyCandidateHasOneMeter": True,
     }
@@ -5546,6 +5580,7 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
     assert result["majority"]["pillHidden"] is True
     assert result["majority"]["anyAmberBlock"] is False
     assert result["majority"]["anyTieBlock"] is False
+    assert result["majority"]["actualTieFrames"] == 0
     assert result["majority"]["everyCandidateHasOneMeter"] is True
     for name in result["majority"]["accessibleNames"]:
         assert re.search(r": .+ of \d+.* endorsements$", name)

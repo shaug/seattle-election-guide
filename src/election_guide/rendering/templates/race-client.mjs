@@ -199,6 +199,7 @@ export function wireRacePage(payload) {
       candidateId,
       label: candidate.label,
       isLeader,
+      actualTie: isLeader && scored.isTied,
       inHeadline: soleLeader,
       kicker: tied ? 'Tied for lead' : null,
       meter: meters.views.get(candidateId) ?? naMeterView(candidate.label, meters.totalLabel),

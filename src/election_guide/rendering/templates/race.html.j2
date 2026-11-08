@@ -98,7 +98,7 @@
        can reach that candidate's endorsements. Distinct from the
        `data-` attribute beside it, which is the client's addressing space
        and never a link target (docs/FRONTEND.md, The data contract). #}
-    <section class="race-detail-candidate{% if in_headline %} race-detail-candidate-leader race-detail-candidate-headlined{% elif tied %} race-detail-candidate-tied{% endif %}"
+    <section class="race-detail-candidate{% if in_headline %} race-detail-candidate-leader race-detail-candidate-headlined{% elif tied %} race-detail-candidate-tied{% if race.grade == 'TIED' %} race-detail-candidate-actual-tie{% endif %}{% endif %}"
       id="candidate-{{ candidate.candidate_id }}"
       data-race-detail-candidate-id="{{ candidate.candidate_id }}">
       <div class="race-detail-candidate-heading">

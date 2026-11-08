@@ -77,7 +77,7 @@
    strength, not an oversight. */
 /* Approved component palette (#711). The archived shared shell in base.css
    stays literal; only components rendering this palette inherit these tokens. */
-.screen-meter, .race-results, .no-majority-pill, .race-detail-candidate-tied {
+.screen-meter, .race-results, .no-majority-pill, .race-detail-candidate-actual-tie {
   --meter-tie: #bba6d7;
   --meter-tie-violet: #654a8b;
   --tone-tie-bg: #f4f0f8;
