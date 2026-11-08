@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -1321,6 +1322,246 @@ def _with_results(tmp_path: Path, results: ElectionResults | None = None) -> Pub
     return without_results.model_copy(update={"results": _revalidated_results(attached)})
 
 
+@pytest.mark.parametrize(
+    ("recommended", "expected"),
+    [
+        ([0], ["aligned", "different", None, None]),
+        ([0, 1], ["aligned", "aligned", None, None]),
+        ([], ["different", "different", None, None]),
+        ([2], ["different", "different", None, None]),
+    ],
+)
+def test_recorded_advancers_meter_alignment_uses_aggregate_recommendations(
+    tmp_path: Path, recommended: list[int], expected: list[str | None]
+) -> None:
+    view = _with_results(tmp_path)
+    race = next(r for s in view.sections for r in s.races if r.id == RESULTS_RACE_ID)
+    # Presentation boundary: published recommendation identities, not vote rank
+    # or a personalized source selection, decide the alignment.
+    race = race.model_copy(
+        update={
+            "recommendation_candidate_ids": [race.candidates[i].id for i in recommended],
+        }
+    )
+    result = context.race_results_view(
+        race, view.results, election_type="primary", capture_urls=None
+    )
+    assert result is not None
+    assert [getattr(row, "meter_tone", None) for row in result.outcomes] == expected
+    assert [row.chip_label for row in result.outcomes] == ["Advances", "Advances", None, None]
+
+
+@pytest.mark.parametrize("page", ["guide", "race"])
+def test_result_meter_alignment_reaches_both_shared_server_surfaces(
+    tmp_path: Path, page: str
+) -> None:
+    view = _with_results(tmp_path)
+    html = (
+        render_html_document(view, read_rendering_configuration(RENDERING_CONFIG))
+        if page == "guide"
+        else _race_html(view, RESULTS_RACE_ID)
+    )
+    block = _race_card_html(html, RESULTS_RACE_ID) if page == "guide" else html
+    assert block.count('class="race-results-bar race-results-bar-aligned"') == 1
+    assert block.count('class="race-results-bar race-results-bar-different"') == 1
+    assert block.count('class="race-results-bar"') == 2
+    assert '<i style="width:32.0%"></i>' in block
+    assert '<i style="width:29.0%"></i>' in block
+
+
+def test_actual_endorsement_ties_use_lavender_violet_and_step_without_recoloring_solo() -> None:
+    colors = context.meter_candidate_colors(
+        ["a", "b", "c", "d"], frozenset({"a", "b", "c"}), has_majority=False
+    )
+    assert colors == {
+        "a": "var(--meter-tie)",
+        "b": "var(--meter-tie-violet)",
+        "c": "color-mix(in srgb, var(--meter-tie-violet) 78%, var(--meter-track))",
+        "d": "var(--meter-trail-slate)",
+    }
+    assert context.meter_candidate_colors(["a", "b"], frozenset({"a"}), has_majority=False) == {
+        "a": "var(--amber)",
+        "b": "var(--meter-trail-slate)",
+    }
+
+
+@pytest.mark.parametrize("leaders", [1, 2, 3])
+@pytest.mark.parametrize("page", ["guide", "race"])
+@pytest.mark.parametrize("width", [390, 1280])
+def test_approved_meter_colors_and_tie_context_in_the_browser(
+    tmp_path: Path, leaders: int, page: str, width: int
+) -> None:
+    # Synthetic endorsement records go through the real scorer and publication
+    # builder: true 50/50 and three-way ties, or a sole leader at 40%.
+    candidates = _candidate_ids()
+    picks = [0, 0, 1, 2, 3] if leaders == 1 else list(range(leaders))
+    dataset = _dataset(
+        tmp_path / "dataset",
+        [
+            (source, "endorsed", [candidates[pick]])
+            for source, pick in zip(CONSENSUS_SOURCE_IDS, picks, strict=False)
+        ],
+    )
+    report = score_dataset(dataset, _configuration(), computed_at=NOW)
+    view = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="synthetic-meter-fixture",
+        snapshot_root=_snapshot_store(tmp_path, dataset),
+    ).view_model
+    results_root = tmp_path / "results"
+    results_root.mkdir()
+    view = view.model_copy(update={"results": _valid_results(results_root)})
+    path = tmp_path / f"{page}.html"
+    path.write_text(
+        render_html_document(view, read_rendering_configuration(RENDERING_CONFIG))
+        if page == "guide"
+        else _race_html(view, RESULTS_RACE_ID),
+        encoding="utf-8",
+    )
+
+    def retain(cdp: _CdpSocket, session: str) -> None:
+        directory = os.environ.get("SEG_RESULT_METER_EVIDENCE_DIR")
+        if directory:
+            target = Path(directory)
+            target.mkdir(parents=True, exist_ok=True)
+            cdp.command(
+                "Runtime.evaluate",
+                {
+                    "expression": (
+                        "document.querySelector('[data-publication-race-id=\"king-county-assessor\"]')"
+                        ".scrollIntoView({block:'center'})"
+                    )
+                },
+                session_id=session,
+            )
+            version = cdp.command("Browser.getVersion", session_id=session)
+            (target / "browser-version.json").write_text(json.dumps(version), encoding="utf-8")
+            shot = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session)
+            (target / f"{page}-{leaders}-{width}.png").write_bytes(base64.b64decode(shot["data"]))
+
+    result = _evaluate_in_chrome(
+        path,
+        """(() => {
+          const root = document.querySelector('[data-publication-race-id="king-county-assessor"]')
+            ?? document.querySelector('.race-detail');
+          const colors = e => [getComputedStyle(e).backgroundColor,
+            getComputedStyle(e.querySelector('i')).backgroundColor];
+          const rgb = element => {
+            const c = document.createElement('canvas').getContext('2d');
+            c.fillStyle = getComputedStyle(element).backgroundColor;
+            c.fillRect(0,0,1,1); return [...c.getImageData(0,0,1,1).data].slice(0,3);
+          };
+          const meter = root.querySelector('.screen-meter');
+          const results = root.querySelector('.race-results')
+            ?? document.querySelector('.race-detail-certified-result');
+          const pill = root.querySelector('.no-majority-pill');
+          const heading = root.querySelector(
+            '.race-detail-candidate-tied .race-detail-candidate-heading');
+          const tiedSection = heading?.closest('section');
+          const sections = [...root.querySelectorAll('.screen-meter-section')];
+          return JSON.stringify({
+            bars: [...results.querySelectorAll('.race-results-bar')].map(colors),
+            pill: {tied:pill.classList.contains('no-majority-pill-tied'),
+              text:pill.textContent.trim(),color:getComputedStyle(pill).color,
+              background:getComputedStyle(pill).backgroundColor},
+            swatches: [...(meter?.querySelectorAll('.meter-block-solid,.meter-half') ?? [])]
+              .map(rgb),
+            meterLabel: meter?.getAttribute('aria-label'),
+            percentColor: meter?.querySelector('strong')
+              ? getComputedStyle(meter.querySelector('strong')).color : null,
+            headingBackground: heading ? getComputedStyle(heading).backgroundColor : null,
+            headingEdge: tiedSection ? getComputedStyle(tiedSection).borderLeftColor : null,
+            faded: sections.some(s => {
+              const block = s.querySelector('.meter-block:not(.meter-block-context)');
+              return block && parseFloat(getComputedStyle(block).opacity) < 1;
+            }),
+            overflow:document.documentElement.scrollWidth > innerWidth + 1,
+            badges:[...results.querySelectorAll('.race-results-status')].map(e=>e.textContent.trim()),
+          });
+        })()""",
+        viewport=(width, 1800),
+        interact=retain,
+    )
+    if directory := os.environ.get("SEG_RESULT_METER_EVIDENCE_DIR"):
+        (Path(directory) / f"{page}-{leaders}-{width}.json").write_text(
+            json.dumps(result), encoding="utf-8"
+        )
+    assert result["bars"] == [
+        ["rgb(206, 229, 227)", "rgb(8, 127, 115)"],
+        ["rgb(206, 229, 227)", "rgb(8, 127, 115)"]
+        if leaders > 1
+        else ["rgb(240, 224, 219)", "rgb(180, 101, 76)"],
+        ["rgb(237, 242, 244)", "rgb(130, 154, 177)"],
+        ["rgb(237, 242, 244)", "rgb(130, 154, 177)"],
+    ]
+    assert result["pill"]["tied"] is (leaders > 1)
+    assert result["pill"]["text"] == "No majority"
+    assert result["pill"]["background"] == (
+        "rgb(244, 240, 248)" if leaders > 1 else "rgb(255, 246, 232)"
+    )
+
+    def contrast(foreground: str, background: str) -> float:
+        def luminance(rgb: str) -> float:
+            channels = [int(n) / 255 for n in re.findall(r"\d+", rgb)]
+            linear = [n / 12.92 if n <= 0.04045 else ((n + 0.055) / 1.055) ** 2.4 for n in channels]
+            return sum(
+                n * weight for n, weight in zip(linear, (0.2126, 0.7152, 0.0722), strict=True)
+            )
+
+        light, dark = sorted((luminance(foreground), luminance(background)), reverse=True)
+        return (light + 0.05) / (dark + 0.05)
+
+    assert contrast(result["pill"]["color"], result["pill"]["background"]) >= 4.5
+    assert result["overflow"] is False
+    assert result["badges"] == ["Certified"]
+    assert result["meterLabel"]
+    if page == "guide":
+        assert ([187, 166, 215] if leaders > 1 else [217, 144, 0]) in result["swatches"]
+        assert ([101, 74, 139] in result["swatches"]) is (leaders > 1)
+        if leaders == 3:
+            assert [131, 111, 162] in result["swatches"]
+        assert result["percentColor"] == "rgb(16, 42, 67)"
+        assert (
+            contrast(
+                result["percentColor"], "rgb(187, 166, 215)" if leaders > 1 else "rgb(217, 144, 0)"
+            )
+            >= 4.5
+        )
+    else:
+        assert result["headingBackground"] == ("rgb(244, 240, 248)" if leaders > 1 else None)
+        assert result["headingEdge"] == ("rgb(101, 74, 139)" if leaders > 1 else None)
+        assert result["faded"] is True
+
+
+@pytest.mark.parametrize("personalized", [False, True])
+def test_insufficient_sole_leader_keeps_amber_candidate_framing(
+    tmp_path: Path, personalized: bool
+) -> None:
+    view = _view_model(tmp_path, minimum_explicit_sources=99)
+    path = _write_race_html(tmp_path, view, RESULTS_RACE_ID)
+    code = next(s.code for s in view.personalization.sources if s.id == "the-urbanist")
+    fragment = _lens_fragment(view, mode="s", source_codes=(code,))
+    result = _evaluate_in_chrome(
+        path,
+        """(async () => {
+          await new Promise(requestAnimationFrame);
+          await new Promise(requestAnimationFrame);
+          const section = document.querySelector('.race-detail-candidate-tied');
+          const heading = section.querySelector('.race-detail-candidate-heading');
+          return JSON.stringify({background:getComputedStyle(heading).backgroundColor,
+            edge:getComputedStyle(section).borderLeftColor,
+            actualTie:section.classList.contains('race-detail-candidate-actual-tie')});
+        })()""",
+        initial_url=f"{path.resolve().as_uri()}#{fragment}" if personalized else None,
+    )
+    assert result == {
+        "background": "rgb(255, 246, 232)",
+        "edge": "rgb(217, 144, 0)",
+        "actualTie": False,
+    }
+
+
 def test_certified_results_render_the_race_detail_pages_complete_result_block(
     tmp_path: Path,
 ) -> None:
@@ -1353,8 +1594,8 @@ def test_certified_results_render_the_race_detail_pages_complete_result_block(
         '--dominique-m-scarimbolo">Dominique M Scarimbolo</a> '
         '<span class="race-detail-result-chip">Advances</span></span> '
         '<span class="race-results-share">32.0%</span> '
-        '<span class="race-results-bar"><i style="width:32.0%"></i></span>'
-        in _collapse_whitespace(body)
+        '<span class="race-results-bar race-results-bar-aligned">'
+        '<i style="width:32.0%"></i></span>' in _collapse_whitespace(body)
     )
     assert (
         '<a href="#candidate-king-county-assessor--christopher-roberts">'
@@ -5196,7 +5437,8 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
             const pill = card.querySelector('[data-lens-context] .no-majority-pill');
             return {{
               pillHidden: pill.hidden,
-              amberMeter: meter.classList.contains('meter-no-majority'),
+              noMajorityMeter: meter.classList.contains('meter-no-majority'),
+              tiedPill: pill.classList.contains('no-majority-pill-tied'),
               accessibleName: meter.getAttribute('aria-label'),
             }};
           }};
@@ -5214,10 +5456,11 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
     # spoken name is the full standings — every tied candidate's own exact
     # count — not a restatement of the resting percentage.
     split_accessible_name = result["split"].pop("accessibleName")
-    assert result["split"] == {"pillHidden": False, "amberMeter": True}
+    assert result["split"] == {"pillHidden": False, "noMajorityMeter": True, "tiedPill": True}
     assert re.match(r".+ ½ of 1 endorsements; .+ ½ of 1 endorsements$", split_accessible_name)
     assert result["majority"]["pillHidden"] is True
-    assert result["majority"]["amberMeter"] is False
+    assert result["majority"]["noMajorityMeter"] is False
+    assert result["majority"]["tiedPill"] is False
     assert re.search(r"of \d+.* endorsements", result["majority"]["accessibleName"])
 
 
@@ -5231,12 +5474,12 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
 
     A lens can also change which shape the page is in. A tie has no single
     leading choice, so it renders no headline and marks each tied candidate in
-    amber instead; a majority restores the headline and leaves the sections
+    purple instead; a majority restores the headline and leaves the sections
     unmarked. Both directions are exercised here, because the headline is shown
     and hidden rather than rendered and removed. The race's own headline meter
     retired with #325 (docs/METER_V2.md, Chrome geometry: "The headline
     meter's own fate"); every candidate's own section carries one instead,
-    so the amber/teal check below reads a section's own meter blocks rather
+    so the purple/teal check below reads a section's own meter blocks rather
     than a single shared one.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
@@ -5280,9 +5523,15 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
               kicker: kicker?.textContent ?? null,
               // Every standing candidate's own section meter reflects the
               // race's current majority state in its own blocks' colors
-              // (docs/METER_V2.md, Color) — amber somewhere exactly when the
-              // leader (or tied leaders) lacks a majority, never once one
-              // exists.
+              // (docs/METER_V2.md, Color) — purple for actual tied leaders,
+              // not the amber reserved for a sole sub-majority leader.
+              anyTieBlock: sectionMeters.some((meter) =>
+                [...meter.querySelectorAll('.meter-block')].some((block) =>
+                  (block.getAttribute('style') ?? '').includes('var(--meter-tie)'),
+                ),
+              ),
+              actualTieFrames:
+                document.querySelectorAll('.race-detail-candidate-actual-tie').length,
               anyAmberBlock: sectionMeters.some((meter) =>
                 [...meter.querySelectorAll('.meter-block')].some((block) =>
                   (block.getAttribute('style') ?? '').includes('var(--amber)'),
@@ -5304,14 +5553,16 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
         initial_url=f"{html_path.resolve().as_uri()}#{split_fragment}",
     )
 
-    # Tied: no headline, and each tied candidate marked amber in its own right.
+    # Tied: no headline, and each tied candidate marked purple in its own right.
     split_accessible_names = result["split"].pop("accessibleNames")
     assert result["split"] == {
         "headlineHidden": True,
         "headlineHeadsSection": False,
         "pillHidden": False,
         "kicker": "Tied for lead",
-        "anyAmberBlock": True,
+        "anyTieBlock": True,
+        "actualTieFrames": 2,
+        "anyAmberBlock": False,
         "everyCandidateHasOneMeter": True,
     }
     # docs/METER_V2.md, The discovery model's accessibility model, extended to
@@ -5328,6 +5579,8 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
     assert result["majority"]["headlineHeadsSection"] is True
     assert result["majority"]["pillHidden"] is True
     assert result["majority"]["anyAmberBlock"] is False
+    assert result["majority"]["anyTieBlock"] is False
+    assert result["majority"]["actualTieFrames"] == 0
     assert result["majority"]["everyCandidateHasOneMeter"] is True
     for name in result["majority"]["accessibleNames"]:
         assert re.search(r": .+ of \d+.* endorsements$", name)

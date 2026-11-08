@@ -173,6 +173,22 @@ test('the no-majority pill is present but hidden when there is a majority', () =
   assert.equal(host.querySelector('.support-compact').textContent, '3');
 });
 
+test('the existing no-majority pill distinguishes actual ties from a sole leader', () => {
+  for (const isTied of [true, false]) {
+    const pill = rendered(
+      raceContextTemplate({
+        isTied,
+        noMajority: true,
+        support: 'Based on 3',
+        supportCompact: '3',
+      }),
+    ).querySelector('.no-majority-pill');
+    assert.equal(pill.classList.contains('no-majority-pill-tied'), isTied);
+    assert.equal(pill.textContent, 'No majority');
+    assert.equal(pill.hidden, false);
+  }
+});
+
 test('an ordinary audited card foot renders nothing at all', () => {
   const host = rendered(raceFootTemplate({ insufficientNote: null, allSources: null }));
   assert.equal(host.querySelector('.insufficient-note'), null);

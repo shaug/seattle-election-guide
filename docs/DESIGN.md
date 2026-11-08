@@ -14,6 +14,37 @@ banner. Different authorities retain their own clocks and certification evidence
 date is not an election-wide promise. Four approved County examples are a visual excerpt,
 not a coverage limit or replacement for functional product controls.
 
+## Result alignment and actual endorsement ties (#711)
+
+Only a recorded winning/advancing result meter changes color. If the choice is in the
+published aggregate recommendation set, including an aggregate tie, use endorsement green
+`#087f73` with remainder `#cee5e3`. Otherwise use terracotta `#b4654c` with remainder
+`#f0e0db`. Evaluate multiple recorded advancers independently. A raw leader under insufficient
+coverage is not a published recommendation. Keep other result meters, backgrounds, badges,
+copy and endorsement UI unchanged. Preliminary counts do not establish an outcome: they
+retain neutral result bars, including tied or zero counts. Result alignment uses the audited
+aggregate and remains outside source-lens updates, like the result block itself.
+
+Actual endorsement ties have their own purple family: lavender `#bba6d7` first, deep violet
+`#654a8b` second, then the existing stepped colors toward the meter track. Keep the existing
+navy percentage over lavender, and the existing bold/faded candidate-section treatment.
+The existing No majority pill and Tied for lead candidate headers use purple only for a
+real tie: light ground `#f4f0f8`, ink `#59416f`, lavender border and deep-violet header edge.
+A sole leader at or below 50% remains amber; unrelated amber states do not change. Existing
+wording, ordering, accessible meter descriptions and interaction remain the other carriers
+of meaning; add no labels. This amends the earlier amber-for-ties rule below.
+
+**Alternatives considered.** Tinted result-section backgrounds impaired badge readability
+and meter-remainder appearance. Reusing tied-endorsement brown overloaded its meaning.
+Dusty rose and muted violet for result exceptions risked partisan associations. Warm
+graphite was neutral but less scannable. Terracotta stood out best among mostly green,
+while placement in the result meter distinguishes it from endorsement colors. For actual
+endorsement ties, lavender/deep violet was selected over the softer lavender/violet pair:
+it separates the two runs more clearly, with lavender first to preserve navy-text contrast.
+The approved studies are Library `result-section-tints.png` version 4 and
+`tie-purple-palette.png` (November 8, 2026). Their examples are fictional, not election facts.
+Immutable archived pages retain their pinned bytes; these rules govern newly rendered pages.
+
 How to build UI that belongs on this site. Rules here are decidable — each
 one can reject a real design. When a proposal and this document disagree,
 either follow the document or change it; never silently diverge.
@@ -70,7 +101,7 @@ When in doubt, remove ink.
 ## Color
 
 Semantics, not decoration. Values are tokens in `base.css`; page CSS never
-introduces a color literal except the three bounded #673 tokens below. The families and what they mean:
+introduces a color literal except the bounded #673 and #711 component tokens below. The families and what they mean:
 
 | Family | Tokens | Meaning |
 |---|---|---|
@@ -82,6 +113,8 @@ introduces a color literal except the three bounded #673 tokens below. The famil
 | Differ tone | `--tone-differ-*`, `--amber` | Attention and divergence: comparison signals that differ, challenger sections, no-majority states |
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
 | Meter | `--meter-*` | The segmented meter's own palette (docs/METER_V2.md § Color): track, tie depth, trailing ranks, seam ink. Its majority and no-majority fills are `--teal` and `--amber` themselves |
+| Actual tie | `--meter-tie`, `--meter-tie-violet`, `--tone-tie-*` | Tied endorsement runs and existing tie framing; never a sole sub-majority leader |
+| Result alignment | `--teal`, `--result-aligned-track`, `--result-different`, `--result-different-track` | Only recorded winning/advancing vote meters, compared with the aggregate recommendation |
 | Focus | `--focus` | Every focus ring, everywhere |
 | Compact general controls | `--compact-precinct-surface`, `--compact-expanded-surface`, `--compact-editor-shadow` | Approved C v5 precinct ground, expanded ground and editor shadow; general-only ownership |
 
@@ -97,6 +130,12 @@ already approved. Their local ownership preserves frozen primary/shared
 `base.css` bytes; it does not permit other page color literals or a new palette.
 Consumers use these tokens, and a change to their meanings or values amends this
 contract in the same PR.
+
+The approved #711 palette is scoped to the existing meter/result/tie components in
+`guide-race.css`, rather than changing the archived shared shell in `base.css`.
+Its tokens are the exact values above; no other component or shell palette changes.
+The legacy brown `--meter-tie-deep` remains in the frozen shell for archive compatibility;
+fresh tie rendering uses `--meter-tie-violet`.
 
 ## Typography
 
@@ -329,7 +368,7 @@ then any sticky strip, then content.
   "8 of 11" — which is the drift a single heading makes impossible.)*
 - **Agree tone claims a favourite, so a tie never wears it.** A tie is a
   warning that the reader has to choose, not a recommendation to accept:
-  every tied candidate takes the differ family, in its own section, marked
+  every tied candidate takes the actual-tie purple family, in its own section, marked
   with a "Tied for lead" kicker. Green would say the opposite of what a tie
   means. *(2026-08-04, issue 136 follow-up.)*
 - **Don't count a list the reader is looking at.** A heading above a list of
@@ -339,7 +378,7 @@ then any sticky strip, then content.
 - **One meter — scoped per page.** One chrome, a constant-width bar of
   equal-width blocks, one per endorsement, grouped into candidate runs in
   standings order — leader first, the site's own teal for a majority,
-  ambers for a tie or a sole leader short of one, muted slate/taupe/plum for
+  lavender/deep violet for an actual tie, amber for a sole leader short of one, muted slate/taupe/plum for
   trailing candidates — but not one *instance* everywhere: the guide and
   ballot overview render one shared meter per race, and the race-detail page
   renders one per candidate, each colorized and context-marked for that one

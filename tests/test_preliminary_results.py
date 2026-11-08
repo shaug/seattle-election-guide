@@ -176,10 +176,35 @@ def test_preliminary_general_result_reuses_tally_without_calling_outcomes(
     assert card.count('style="width:50.0%"') == 2
     assert "220 ballots" in card
     assert "race-results-row-trailing" not in card
+    assert "race-results-bar-aligned" not in card
+    assert "race-results-bar-different" not in card
     assert "race-detail-result-chip" not in card
     assert "Unofficial results · counts may change" in html
     # County's scheduled certification date is not a proved statewide promise.
     assert "Results certify November 24" not in html
+
+
+@pytest.mark.parametrize("votes", [(0, 0), (60, 40), (50, 50)])
+def test_unsettled_counts_do_not_receive_outcome_alignment(
+    tmp_path: Path, general_view: PublicationViewModel, votes: tuple[int, int]
+) -> None:
+    document = preliminary_document()
+    tally = next(r for r in document["races"] if r["race_id"] == "king-county-assessor")
+    for row, count in zip(tally["outcomes"], votes, strict=True):
+        row["votes"] = count
+    tally["write_in_votes"] = 0
+    tally["ballots_counted"] = sum(votes)
+    view = general_view.model_copy(update={"results": read_document(tmp_path, document)})
+    card = _race_card_html(
+        render_html_document(
+            view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        ),
+        "king-county-assessor",
+    )
+    assert card.count('class="race-results-bar"') == 2
+    assert "race-results-bar-aligned" not in card
+    assert "race-results-bar-different" not in card
+    assert "race-detail-result-chip" not in card
 
 
 @pytest.mark.parametrize("page", ["guide", "race"])

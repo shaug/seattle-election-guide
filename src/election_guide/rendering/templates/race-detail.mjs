@@ -78,6 +78,8 @@ import { candidateMeterTemplate } from './guide-card.mjs';
  * @property {string} candidateId
  * @property {string} label
  * @property {boolean} isLeader
+ * @property {boolean} [actualTie]
+ *   Distinct from a headlineless insufficient leader: only a scored tie gets purple.
  * @property {boolean} inHeadline
  * @property {string|null} kicker
  * @property {import('./guide-card.mjs').CandidateMeterView} meter
@@ -172,7 +174,8 @@ function candidateSectionTemplate(candidate) {
       candidate.inHeadline
         ? 'race-detail-candidate race-detail-candidate-leader race-detail-candidate-headlined'
         : candidate.isLeader
-          ? 'race-detail-candidate race-detail-candidate-tied'
+          ? 'race-detail-candidate race-detail-candidate-tied' +
+            (candidate.actualTie ? ' race-detail-candidate-actual-tie' : '')
           : 'race-detail-candidate'
     }
     id=${`candidate-${candidate.candidateId}`}

@@ -12,7 +12,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from fractions import Fraction
-from typing import Any
+from typing import Any, Literal
 from zoneinfo import ZoneInfo
 
 from election_guide.corrections.models import ElectionCorrections
@@ -1016,7 +1016,7 @@ def _meter_leader_units(
 # a literal color, so a block's paint is always a reference to a `base.css`
 # token — the document's rule that page CSS never introduces a color literal
 # applies to a block's inline style exactly as it applies to a stylesheet rule.
-_METER_TIE_COLORS: tuple[str, ...] = ("var(--amber)", "var(--meter-tie-deep)")
+_METER_TIE_COLORS: tuple[str, ...] = ("var(--meter-tie)", "var(--meter-tie-violet)")
 _METER_TRAIL_COLORS: tuple[str, ...] = (
     "var(--meter-trail-slate)",
     "var(--meter-trail-taupe)",
@@ -1394,6 +1394,9 @@ class RaceResultOutcomeView:
     a measure (docs/RESULTS.md, "The results chip"; #348), present exactly
     when `advanced` is true. `None` for a trailing outcome: the chip marks an
     outcome, not every candidate."""
+    meter_tone: Literal["aligned", "different"] | None = None
+    """Aggregate alignment for a recorded advancing outcome only (#711).
+    Preliminary counts never infer an outcome; trailing rows stay neutral."""
 
 
 @dataclass(frozen=True)
@@ -1504,6 +1507,13 @@ def race_results_view(
                 percentage_label=f"{outcome.share * 100:.1f}%",
                 advanced=outcome.advanced,
                 chip_label=chip_label if outcome.advanced else None,
+                meter_tone=(
+                    "aligned"
+                    if outcome.choice_id in race.recommendation_candidate_ids
+                    else "different"
+                )
+                if outcome.advanced
+                else None,
             )
             for outcome in sorted_outcomes
         ),
