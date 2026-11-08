@@ -316,6 +316,23 @@ Correction means the guide's prior representation was wrong. A new current offic
 endorsement does not alone prove when or whether the publisher changed its position.
 Legacy `1.0` snapshots remain readable and serialize without invented metadata.
 
+Schema `1.2` adds each admitted entry's persisted, reviewed `slug` (#677), unique within its
+election. The public identity is `/e/{election-id}/updates/{slug}/`, independent of filters,
+publication date, headline and ordering. The same slug may occur in separate elections. Only
+lowercase ASCII words/digits separated by single hyphens are accepted; `index` is reserved.
+Missing, duplicate, unsafe or URL-encoded identities fail before staging. Existing entries receive
+slugs once without changing any previous field. Automated result updates assign and retain their
+slug at creation, including harmless same-entry recovery. Legacy1.0/1.1 models retain their shape.
+
+Keep a published slug when correcting prose or a date. A necessary URL correction retains the
+old slug in that entry's `redirect_from` list as a permanent redirect; do not reuse a retired route
+for other content. Original publication dates are not editorial revision dates. Material corrections
+remain explicit notices with their evidence and related-entry links, not fabricated migration events.
+The index keeps full entries and topic filtering, with linked headlines. An individual page retains
+the same election shell, headline H1, original date/tags, full body/evidence and Back links. Only
+public election-information entries receive pages; software-only audit history stays private to its
+existing release/audit projection. Accepted archive bytes remain immutable.
+
 The index says “What changed in this election’s endorsements, sources and results.” Its topic
 buttons are exactly Endorsements, Sources and Results, selecting independent OR matches.
 No selected topic is the default and means all; clearing the final selected topic restores the

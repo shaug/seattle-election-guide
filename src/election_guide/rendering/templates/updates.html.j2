@@ -1,8 +1,8 @@
 {# Schema 1.1 election-information index. Legacy immutable records retain corrections.html.j2. #}
 {% extends 'base.html.j2' %}
 {% block head_meta %}
-  {% set canonical_url = public_site_url ~ guide_path ~ 'updates/' %}
-  {% set page_description = election_display_name ~ ' updates: endorsements, sources and results.' %}
+  {% set canonical_url = public_site_url ~ (detail_entry.href if detail_entry else guide_path ~ 'updates/') %}
+  {% set page_description = (detail_entry.body | truncate(180)) if detail_entry else election_display_name ~ ' updates: endorsements, sources and results.' %}
   {{ shell.social_meta(document_title, page_description, canonical_url) }}
   {% if updates_provenance %}
   <meta name="seg-updates-source" content="{{ updates_provenance.source_git_commit }}">
@@ -18,8 +18,10 @@
       <div class="page-band-rule"></div>
     </header>
     {{ election_day_banner | safe }}
-    {%+ call shell.page_head('Updates', eyebrow=election_display_name, mode='measured') %}What changed in this election’s endorsements, sources and results.{% endcall +%}
+    {% if detail_entry %}<nav class="update-back narrow-main" aria-label="Updates navigation"><a href="{{ corrections_href }}">Back to Updates</a></nav>{% endif %}
+    {%+ call shell.page_head(detail_entry.headline if detail_entry else 'Updates', eyebrow=election_display_name, mode='measured') %}{% if not detail_entry %}What changed in this election’s endorsements, sources and results.{% endif %}{% endcall +%}
     <main id="updates-main" class="updates-main narrow-main">
+      {% if not detail_entry %}
       <div class="topic-bar">
         <div class="topic-control" data-update-controls role="group" aria-label="Filter updates by topic">
           {% for topic in updates_payload.topics %}<button type="button" class="topic-button" disabled aria-pressed="false">{{ topic.label }}</button>{% endfor %}
@@ -28,22 +30,25 @@
       </div>
       <noscript><p class="filter-help">All updates are shown. Topic filtering needs JavaScript.</p></noscript>
       <p data-payload-notice hidden role="status" aria-live="polite"></p>
+      {% endif %}
       <div class="update-list">
-        {% for entry in corrections_entries %}
+        {% for entry in ([detail_entry] if detail_entry else corrections_entries) %}
         <article class="corrections-entry update-entry" data-update-key="{{ loop.index0 }}">
           <div class="entry-meta">
             <time class="corrections-date entry-date" datetime="{{ entry.date_iso }}">{{ entry.date_label }}</time>
             {% for action, label in entry.actions %}<span class="action-badge action-{{ action }}">{{ label }}</span>{% endfor %}
-            <span class="entry-topics">{% for topic in entry.topics %}{{ topic }}{% if not loop.last %}<span class="topic-dot" aria-hidden="true">·</span>{% endif %}{% endfor %}</span>
+            <span class="entry-topics">{% for topic in entry.topics %}{% if detail_entry %}<a href="{{ corrections_href }}?topics={{ topic | lower }}">{{ topic }}</a>{% else %}{{ topic }}{% endif %}{% if not loop.last %}<span class="topic-dot" aria-hidden="true">·</span>{% endif %}{% endfor %}</span>
           </div>
-          <h2 class="corrections-headline">{{ entry.headline }}</h2>
+          {% if not detail_entry %}<h2 class="corrections-headline">{% if entry.href %}<a href="{{ entry.href }}">{{ entry.headline }}</a>{% else %}{{ entry.headline }}{% endif %}</h2>{% endif %}
           <p class="entry-impact">{{ entry.body }}</p>
           {% if entry.provenance %}<ul class="entry-links" aria-label="Affected pages and evidence">{% for link in entry.provenance %}<li><a href="{{ link.url }}"{% if not link.url.startswith('/') %}{{ external_link_attributes }}{% endif %}>{{ link.label }}</a></li>{% endfor %}</ul>{% endif %}
         </article>
         {% endfor %}
       </div>
+      {% if detail_entry %}<p class="page-tail"><a href="{{ corrections_href }}">Back to Updates</a></p>{% else %}
       <div class="empty-state" data-update-empty hidden><h2>No updates match these topics.</h2><p>Choose another topic or clear your selections to read the complete log.</p></div>
       <p class="page-tail">This log covers election information. <a href="https://github.com/shaug/seattle-election-guide/releases"{{ external_link_attributes }}>Website release notes are on GitHub.</a></p>
+      {% endif %}
       {% if updates_provenance %}<p class="page-tail">Current Updates log: <a href="https://github.com/shaug/seattle-election-guide/blob/{{ updates_provenance.source_git_commit }}/data/corrections/{{ guide.metadata.election_id }}.yaml"{{ external_link_attributes }}>authored record</a>. <a href="https://github.com/shaug/seattle-election-guide/releases/tag/{{ updates_provenance.archive_release_version }}"{{ external_link_attributes }}>Original election archive</a>.</p>{% endif %}
     </main>
     <footer class="site-footer">

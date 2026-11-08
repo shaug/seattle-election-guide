@@ -86,6 +86,7 @@ def build_preliminary_update(
             "identify the affected authorities."
         )
     return CorrectionEntry(
+        slug=f"preliminary-results-{local.strftime('%Y-%m-%d-%H%M%S')}",
         corrected_on=local.date(),
         headline=f"Preliminary results checked at {local.strftime('%H:%M:%S')} Pacific.",
         body=" ".join(details),

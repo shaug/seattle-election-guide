@@ -530,6 +530,7 @@ class _Entries(HTMLParser):
         self.field: str | None = None
         self.date = ""
         self.headline = ""
+        self.paths: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         classes = (dict(attrs).get("class") or "").split()
@@ -541,6 +542,8 @@ class _Entries(HTMLParser):
                 self.field = "date"
             elif tag == "strong" or "corrections-headline" in classes:
                 self.field = "headline"
+            elif tag == "a" and self.field == "headline":
+                self.paths.append(dict(attrs).get("href") or "")
 
     def handle_data(self, data: str) -> None:
         if self.field == "date":
@@ -557,6 +560,23 @@ class _Entries(HTMLParser):
                 raise ValueError("published Updates contains an invalid or duplicate entry")
             self.entries.add(key)
             self.active = False
+
+
+def update_entry_paths(document: str, election: str) -> set[str]:
+    """Read actual index headline links for independent staged deep-link verification."""
+    from election_guide.corrections.models import validate_update_slug
+
+    parser = _Entries()
+    parser.feed(document)
+    parser.close()
+    prefix = f"/e/{election}/updates/"
+    for path in parser.paths:
+        if not path.startswith(prefix) or not path.endswith("/"):
+            raise ValueError("update permalink must belong to its own election")
+        validate_update_slug(path[len(prefix) : -1])
+    if parser.paths and len(set(parser.paths)) != len(parser.entries):
+        raise ValueError("update permalinks must cover every index entry exactly once")
+    return set(parser.paths)
 
 
 def _entries(site: Path, manifest: DeploymentManifest, election: str) -> set[tuple[str, str]]:

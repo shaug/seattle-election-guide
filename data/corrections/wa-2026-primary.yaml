@@ -1,7 +1,8 @@
-schema_version: "1.1"
+schema_version: "1.2"
 election_id: wa-2026-primary
 entries:
 - corrected_on: 2026-10-16
+  slug: customized-primary-sparse-leaders
   headline: Named sparse-race leaders in customized primary views.
   body: >-
     Rebuilding the archived primary guide brings its customized overview into line with the
@@ -19,6 +20,7 @@ entries:
   topics: [endorsements]
   actions: [correction]
 - corrected_on: 2026-10-11
+  slug: completed-primary-restored
   headline: Restored the completed primary guide.
   body: >-
     The archived guide again includes all 538 recorded decisions and certified results for all
@@ -39,6 +41,7 @@ entries:
   topics: [endorsements, results]
   actions: [correction]
 - corrected_on: 2026-10-03
+  slug: older-primary-snapshot-correction
   headline: An older primary snapshot replaced the completed guide.
   body: >-
     When the general guide became the site's main guide, the primary archive reverted to its August
@@ -60,6 +63,7 @@ entries:
   topics: [endorsements, results]
   actions: [correction]
 - corrected_on: 2026-09-13
+  slug: certified-results-complete
   headline: Completed certified results for all 32 races.
   body: >-
     Washington Secretary of State totals filled the eight remaining races: Congressional District
@@ -80,6 +84,7 @@ entries:
   topics: [results]
   actions: [certified]
 - corrected_on: 2026-08-19
+  slug: certified-results-and-certification-date
   headline: Published certified results for 24 races and corrected the certification date.
   body: >-
     The guide now shows King County's certified August 18 results for 24 races, including every declared
@@ -102,6 +107,7 @@ entries:
   topics: [results]
   actions: [correction, certified]
 - corrected_on: 2026-08-08
+  slug: counting-status-and-official-links
   headline: Added counting status and official results links.
   body: >-
     After election day, the guide linked readers to the official ongoing count and stated the scheduled
@@ -118,6 +124,7 @@ entries:
   topics: [results]
   actions: [added]
 - corrected_on: 2026-08-05
+  slug: previously-missed-endorsements
   headline: Added 17 previously missed endorsements after election day.
   body: >-
     Rechecks added five Transit Riders Union decisions, two Working Families Party decisions, three
@@ -139,6 +146,7 @@ entries:
   topics: [endorsements]
   actions: [added]
 - corrected_on: 2026-08-02
+  slug: comparison-rounding-and-selection-links
   headline: Corrected comparison rounding and selection-link failures.
   body: >-
     Comparison percentages stopped changing after interaction because of different rounding rules:
@@ -155,6 +163,7 @@ entries:
   topics: [endorsements]
   actions: [correction]
 - corrected_on: 2026-07-31
+  slug: races-without-majority
   headline: Marked races without a majority.
   body: >-
     A leading share at or below 50% received an amber meter and an explicit “No majority” label. The
@@ -171,6 +180,7 @@ entries:
   topics: [endorsements]
   actions: [added]
 - corrected_on: 2026-07-30
+  slug: personalized-race-details-and-shared-links
   headline: Corrected personalized race details and shared links.
   body: >-
     Race-detail counts, shares, meters, candidate order and accessible summaries were corrected to
@@ -188,6 +198,7 @@ entries:
   topics: [endorsements]
   actions: [correction]
 - corrected_on: 2026-07-29
+  slug: source-selection-and-total
   headline: Moved source selection to its own page and corrected its total.
   body: >-
     Source selection moved to a Sources page with Save, Cancel and Reset actions, and the guide carried
@@ -204,6 +215,7 @@ entries:
   topics: [sources]
   actions: [correction]
 - corrected_on: 2026-07-23
+  slug: six-organizations-and-decisions
   headline: Added six organizations and 35 recorded decisions.
   body: >-
     Seattle DSA, Tech 4 Housing, Tech 4 Taxes, Washington for Peace and Justice, WashingtonCAN, and
@@ -222,6 +234,7 @@ entries:
   topics: [endorsements, sources]
   actions: [added]
 - corrected_on: 2026-07-21
+  slug: website-launch-and-additional-decisions
   headline: Opened the website with 312 additional recorded decisions.
   body: >-
     The first live website expanded the downloadable guide's 174 decisions to 486, representing 35
@@ -243,6 +256,7 @@ entries:
   topics: [endorsements, sources]
   actions: [added, coverage]
 - corrected_on: 2026-07-21
+  slug: endorsement-agreement-and-disclosures
   headline: Simplified endorsement agreement and source disclosures.
   body: >-
     The website replaced letter grades with the leading choice’s share among explicitly endorsing
@@ -260,6 +274,7 @@ entries:
   topics: [endorsements, sources]
   actions: [coverage]
 - corrected_on: 2026-07-19
+  slug: first-primary-download
   headline: Published the first downloadable primary guide.
   body: >-
     The first release recorded 174 decisions from 17 organizations across 32 Seattle-ballot races

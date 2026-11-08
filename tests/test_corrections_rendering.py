@@ -5,10 +5,17 @@ from __future__ import annotations
 
 import base64
 import json
+import os
+import threading
+import time
+from collections.abc import Generator
+from contextlib import contextmanager
 from datetime import date
+from functools import partial
 from html import unescape
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pytest
 
@@ -79,6 +86,242 @@ def _with_corrections(view_model: PublicationViewModel) -> PublicationViewModel:
     return view_model.model_copy(
         update={"corrections": _corrections(view_model.metadata.election_id)}
     )
+
+
+def _with_permalink_updates(view_model: PublicationViewModel) -> PublicationViewModel:
+    payload = _corrections(view_model.metadata.election_id).model_dump(mode="json")
+    payload["schema_version"] = "1.2"
+    for entry, slug in zip(
+        payload["entries"], ("amended-ld32-result", "endorsement-correction"), strict=True
+    ):
+        entry.update(slug=slug, topics=["results", "endorsements"], actions=["correction"])
+    return view_model.model_copy(
+        update={"corrections": ElectionCorrections.model_validate(payload)}
+    )
+
+
+def test_permalink_index_and_detail_share_the_complete_authored_entry(tmp_path: Path) -> None:
+    view = _with_permalink_updates(_view_model(tmp_path))
+    root = f"/e/{view.metadata.election_id}/updates/"
+    index = render_corrections_document(view, public_site_url=PUBLIC_SITE_URL)
+    assert f'<a href="{root}amended-ld32-result/">Amended result,' in index
+    detail = render_corrections_document(
+        view, public_site_url=PUBLIC_SITE_URL, entry_slug="amended-ld32-result"
+    )
+    markup = detail.split("<script", 1)[0]
+    assert markup.count("<h1>") == 1
+    assert "<h1>Amended result, State Representative (LD 32, Pos. 1).</h1>" in markup
+    assert 'datetime="2026-08-27"' in markup
+    assert "county&#39;s amended canvass" in markup
+    assert 'href="https://example.org/captures/9f3c" target="_blank" rel="noopener"' in markup
+    assert f'href="{root}?topics=results"' in markup
+    assert f'href="{root}">Back to Updates</a>' in markup
+    assert f'<link rel="canonical" href="{PUBLIC_SITE_URL}{root}amended-ld32-result/">' in markup
+    assert 'property="og:url"' in markup and 'name="description"' in markup
+    assert "data-update-controls" not in markup
+    assert "Corrected an endorsement attribution." not in markup
+    assert f'href="{root}" aria-current="page">Updates</a>' in markup
+
+
+def test_permalink_detail_rejects_unknown_and_unsafe_identity(tmp_path: Path) -> None:
+    view = _with_permalink_updates(_view_model(tmp_path))
+    for slug in ("missing", "../amended-ld32-result", "%2e%2e"):
+        with pytest.raises(ValueError, match="update"):
+            render_corrections_document(view, public_site_url=PUBLIC_SITE_URL, entry_slug=slug)
+
+
+def test_permalink_renderer_keeps_identity_when_prose_dates_and_order_change(
+    tmp_path: Path,
+) -> None:
+    view = _with_permalink_updates(_view_model(tmp_path))
+    assert view.corrections is not None
+    changed = view.model_copy(deep=True)
+    assert changed.corrections is not None
+    changed.corrections.entries.reverse()
+    entry = changed.corrections.entries[1]
+    entry.headline = "Corrected headline with a different publication date."
+    entry.corrected_on = date(2026, 8, 28)
+    root = f"/e/{view.metadata.election_id}/updates/amended-ld32-result/"
+    index = render_corrections_document(changed, public_site_url=PUBLIC_SITE_URL)
+    detail = render_corrections_document(
+        changed, public_site_url=PUBLIC_SITE_URL, entry_slug="amended-ld32-result"
+    )
+    assert f'<a href="{root}">{entry.headline}</a>' in index
+    assert f'<link rel="canonical" href="{PUBLIC_SITE_URL}{root}">' in detail
+    assert f"<h1>{entry.headline}</h1>" in detail
+
+
+@contextmanager
+def _serve_updates(root: Path) -> Generator[str]:
+    server = ThreadingHTTPServer(
+        ("127.0.0.1", 0), partial(SimpleHTTPRequestHandler, directory=str(root))
+    )
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield f"http://127.0.0.1:{server.server_port}"
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join()
+
+
+def _wait_for_browser(cdp: _CdpSocket, session: str, expression: str) -> None:
+    deadline = time.monotonic() + 5
+    observed: dict[str, Any] = {}
+    while time.monotonic() < deadline:
+        observed = cdp.command(
+            "Runtime.evaluate",
+            {"expression": expression, "returnByValue": True},
+            session_id=session,
+        )
+        if observed.get("result", {}).get("value") is True:
+            return
+        time.sleep(0.025)
+    pytest.fail(f"browser never reached expected navigation state: {expression}; {observed}")
+
+
+@pytest.mark.parametrize("width", [320, 1280])
+@pytest.mark.parametrize("scripts", [True, False])
+def test_permalink_actual_detail_and_native_back_preserve_index_state(
+    tmp_path: Path,
+    general_view: PublicationViewModel,
+    width: int,
+    scripts: bool,
+) -> None:
+    view = general_view.model_copy(
+        update={
+            "corrections": load_rendering_corrections(
+                general_view.metadata.election_id, corrections_dir=PROJECT_ROOT / "data/corrections"
+            )
+        }
+    )
+    assert view.corrections is not None
+    slug = "cascade-il26-638-endorsement"
+    entry = next(entry for entry in view.corrections.entries if entry.slug == slug)
+    root = f"/e/{view.metadata.election_id}/updates/"
+    index = tmp_path / root.lstrip("/") / "index.html"
+    index.parent.mkdir(parents=True)
+    index.write_text(render_corrections_document(view, public_site_url=PUBLIC_SITE_URL))
+    detail = index.parent / slug / "index.html"
+    detail.parent.mkdir()
+    detail.write_text(
+        render_corrections_document(view, public_site_url=PUBLIC_SITE_URL, entry_slug=slug)
+    )
+    observations: dict[str, Any] = {}
+
+    def journey(cdp: _CdpSocket, session: str) -> None:
+        observations["browser"] = cdp.command("Browser.getVersion")
+        if not scripts:
+            cdp.command("Emulation.setScriptExecutionDisabled", {"value": True}, session_id=session)
+            cdp.command("Page.reload", {}, session_id=session)
+            cdp.wait_event("Page.loadEventFired", session_id=session)
+        else:
+            _wait_for_browser(
+                cdp,
+                session,
+                "document.querySelector('[data-update-topic=endorsements]')?.getAttribute('aria-pressed')==='true'",
+            )
+        _wait_for_browser(cdp, session, "document.fonts.status==='loaded'")
+        prepared = cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": f"""(()=>{{
+          const link=document.querySelector('a[href="{root}{slug}/"]');
+          link.focus();link.scrollIntoView({{block:'center'}});
+          const visible=[...document.querySelectorAll('[data-update-key]')]
+            .filter(e=>!e.hidden).map(e=>e.dataset.updateKey);
+          return {{scroll:scrollY,url:location.href,visible}};
+        }})()""",
+                "awaitPromise": True,
+                "returnByValue": True,
+            },
+            session_id=session,
+        )
+        observations["index_before"] = prepared["result"]["value"]
+        for kind in ("keyDown", "keyUp"):
+            cdp.command(
+                "Input.dispatchKeyEvent",
+                {"type": kind, "key": "Enter", "code": "Enter", "windowsVirtualKeyCode": 13},
+                session_id=session,
+            )
+        cdp.wait_event("Page.loadEventFired", session_id=session)
+        _wait_for_browser(
+            cdp, session, f"location.pathname==='{root}{slug}/' && document.readyState==='complete'"
+        )
+        _wait_for_browser(cdp, session, "document.fonts.status==='loaded'")
+        snapshot = cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": """(()=>{
+          const h=document.querySelector('h1');const box=h.getBoundingClientRect();
+          return {url:location.href,canonical:document.querySelector('link[rel=canonical]').href,
+            h1:h.textContent,h1Count:document.querySelectorAll('h1').length,
+            date:document.querySelector('time').dateTime,body:document.querySelector('.entry-impact').textContent,
+            topic:[...document.querySelectorAll('.entry-topics a')].map(a=>a.getAttribute('href')),
+            controls:!!document.querySelector('[data-update-controls]'),
+            width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
+            h1Bounds:{left:box.left,right:box.right},
+            evidence:[...document.querySelectorAll('.entry-links a')]
+              .map(a=>({href:a.getAttribute('href'),target:a.target,rel:a.rel}))};
+        })()""",
+                "awaitPromise": True,
+                "returnByValue": True,
+            },
+            session_id=session,
+        )
+        observations["detail"] = snapshot["result"]["value"]
+        if directory := os.environ.get("SEG_677_EVIDENCE_DIR"):
+            destination = Path(directory)
+            destination.mkdir(parents=True, exist_ok=True)
+            shot = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session)
+            (destination / f"detail-{width}-scripts{scripts}.png").write_bytes(
+                base64.b64decode(shot["data"])
+            )
+        cdp.command("Page.reload", {}, session_id=session)
+        cdp.wait_event("Page.loadEventFired", session_id=session)
+        _wait_for_browser(
+            cdp, session, f"location.pathname==='{root}{slug}/' && !!document.querySelector('h1')"
+        )
+        cdp.command("Runtime.evaluate", {"expression": "history.back()"}, session_id=session)
+        _wait_for_browser(
+            cdp,
+            session,
+            f"location.pathname==='{root}' && !!document.querySelector('[data-update-key]')",
+        )
+        if scripts:
+            _wait_for_browser(
+                cdp,
+                session,
+                "document.querySelector('[data-update-topic=endorsements]')?.getAttribute('aria-pressed')==='true'",
+            )
+
+    with _serve_updates(tmp_path) as origin:
+        result = _evaluate_in_chrome(
+            index,
+            """(()=>{
+          return JSON.stringify({scroll:scrollY,url:location.href,
+            visible:[...document.querySelectorAll('[data-update-key]')].filter(e=>!e.hidden).map(e=>e.dataset.updateKey)});
+        })()""",
+            viewport=(width, 900),
+            initial_url=origin + root + "?topics=endorsements",
+            interact=journey,
+        )
+    observations["index_after"] = result
+    if directory := os.environ.get("SEG_677_EVIDENCE_DIR"):
+        (Path(directory) / f"journey-{width}-scripts{scripts}.json").write_text(
+            json.dumps(observations, indent=2)
+        )
+    before = cast(dict[str, Any], observations["index_before"])
+    actual = cast(dict[str, Any], observations["detail"])
+    assert actual["h1"] == entry.headline and actual["h1Count"] == 1
+    assert actual["date"] == entry.corrected_on.isoformat() and actual["body"] == entry.body
+    assert actual["canonical"] == PUBLIC_SITE_URL + root + slug + "/"
+    assert actual["controls"] is False and actual["scrollWidth"] <= width
+    assert actual["topic"] == [root + "?topics=" + topic for topic in entry.topics]
+    assert len(actual["evidence"]) == len(entry.provenance)
+    assert result["url"] == before["url"] and result["visible"] == before["visible"]
+    assert abs(result["scroll"] - before["scroll"]) <= 2, (before, result)
 
 
 def test_current_updates_render_metadata_filters_and_a_complete_no_script_log(
