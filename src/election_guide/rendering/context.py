@@ -1395,8 +1395,8 @@ class RaceResultOutcomeView:
     when `advanced` is true. `None` for a trailing outcome: the chip marks an
     outcome, not every candidate."""
     meter_tone: Literal["aligned", "different"] | None = None
-    """Aggregate alignment for a recorded advancing outcome only (#711).
-    Preliminary counts never infer an outcome; trailing rows stay neutral."""
+    """Aggregate alignment for recorded advancers or a unique current count lead.
+    A preliminary tone never calls an outcome; its flags/chip stay unset (#715)."""
 
 
 @dataclass(frozen=True)
@@ -1532,6 +1532,14 @@ def _preliminary_race_view(
         return None
     labels = {candidate.id: candidate.label for candidate in race.candidates}
     named_total = sum(outcome.votes for outcome in tally.outcomes)
+    ordered = sorted(tally.outcomes, key=lambda item: item.votes, reverse=True)
+    current_leader_id = (
+        ordered[0].choice_id
+        if {outcome.choice_id for outcome in ordered} == set(labels)
+        and ordered[0].votes > tally.write_in_votes
+        and (len(ordered) == 1 or ordered[0].votes > ordered[1].votes)
+        else None
+    )
     capture = next(item for item in results.captures if item.evidence == tally.capture_evidence)
     checked_label = _results_clock_label(capture.captured_at)
     recency = f"Last checked {checked_label}"
@@ -1581,8 +1589,15 @@ def _preliminary_race_view(
                 else "—",
                 advanced=False,
                 chip_label=None,
+                meter_tone=(
+                    "aligned"
+                    if outcome.choice_id in race.recommendation_candidate_ids
+                    else "different"
+                )
+                if outcome.choice_id == current_leader_id
+                else None,
             )
-            for outcome in sorted(tally.outcomes, key=lambda item: item.votes, reverse=True)
+            for outcome in ordered
         ),
     )
 

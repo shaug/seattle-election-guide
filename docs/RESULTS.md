@@ -44,7 +44,7 @@ This calculated sum is distinct from a publisher-stated total and never becomes 
 A contradictory generic Write-in flag requires an exact ID/name/flag override and retained
 reason in the reviewed map. The original source flag and bytes remain unchanged.
 
-Guide/race pages reuse the existing slim navy tally block, equal candidate emphasis,
+Guide/race pages reuse the existing slim tally block, equal candidate emphasis,
 amber **Unofficial** badge, and compact count/authority/evidence provenance with available
 timestamps on its second line.
 No outcome chips appear for preliminary data. The centered banner says **Unofficial results
@@ -57,15 +57,22 @@ satisfy certified-ingestion tracking. See [the refresh runbook](runbooks/results
 
 ## Certified baseline: close the record
 
-### Approved result-meter alignment (#711)
+### Approved result-meter alignment (#711, #715)
 
-On newly rendered Guide/race pages, only recorded winning/advancing outcomes receive
-alignment paint: green `#087f73` with `#cee5e3` remainder for a published aggregate
+On newly rendered Guide/race pages, recorded winning/advancing outcomes and unique
+current unofficial vote leaders receive alignment paint: green `#087f73` with `#cee5e3`
+remainder for a published aggregate
 recommendation (including an endorsement tie), terracotta `#b4654c` with `#f0e0db`
 remainder otherwise. All recorded advancers are evaluated independently by choice ID;
 sorting, a rounded share or a vote tie never creates an outcome. Insufficient coverage
-does not manufacture an aggregate recommendation. Preliminary counts remain neutral and
-outcome-free, even when a candidate currently leads. The shared result block is still
+does not manufacture an aggregate recommendation. For preliminary data, compare actual
+integer counts and color only a unique positive named leader, with every named choice
+present and an aggregate write-in count strictly below that lead. Real top ties, zero
+counts, incomplete choices and write-in ambiguity remain neutral. Rounded display ties
+do not suppress a unique integer-count lead. All preliminary `advanced` flags stay false and chips stay
+absent. A raw Yes/No lead never asserts a passage threshold is met, and a primary lead
+never invents an advancement cutoff or number of seats. This is count-so-far alignment,
+not a completed or projected outcome. The shared result block is still
 lens-invariant; names, shares, chips, badges and provenance are unchanged. See DESIGN.md
 for the approved alternatives and actual-endorsement-tie palette. Published archive
 bundles and the copied Primary overview remain unchanged. Primary race pages are
