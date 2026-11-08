@@ -96,6 +96,70 @@ def test_correction_entry_provenance_defaults_to_empty() -> None:
     assert entry.provenance == []
 
 
+def _permalink_log() -> dict[str, object]:
+    payload = _valid_corrections().model_dump(mode="json")
+    payload["schema_version"] = "1.2"
+    for entry, slug in zip(
+        payload["entries"], ("amended-ld32-result", "endorsement-correction"), strict=True
+    ):
+        entry.update(slug=slug, topics=["results"], actions=["correction"])
+    return payload
+
+
+@pytest.mark.parametrize(
+    "slug",
+    [None, "", "Uppercase", "two--hyphens", "-start", "end-", "a/b", "..", "%2e", "é", "index"],
+)
+def test_updates_permalink_schema_rejects_missing_or_unsafe_slugs(slug: str | None) -> None:
+    payload = _permalink_log()
+    payload["entries"][0]["slug"] = slug  # type: ignore[index]
+    with pytest.raises(ValidationError, match="slug"):
+        ElectionCorrections.model_validate(payload)
+
+
+def test_updates_permalink_identity_survives_prose_date_and_order_changes() -> None:
+    original = ElectionCorrections.model_validate(_permalink_log())
+    changed = original.model_copy(deep=True)
+    changed.entries.reverse()
+    changed.entries[1].headline = "A corrected headline"
+    changed.entries[1].corrected_on = date(2026, 8, 28)
+    assert changed.entries[1].slug == "amended-ld32-result"
+    another_election = original.model_copy(update={"election_id": "wa-2026-general"})
+    assert another_election.entries[0].slug == original.entries[0].slug
+
+
+@pytest.mark.parametrize("collision", ["canonical", "alias", "self"])
+def test_updates_permalink_routes_cannot_be_reused(collision: str) -> None:
+    payload = _permalink_log()
+    entries = payload["entries"]
+    if collision == "canonical":
+        entries[1]["slug"] = entries[0]["slug"]  # type: ignore[index]
+    elif collision == "alias":
+        entries[1]["redirect_from"] = [entries[0]["slug"]]  # type: ignore[index]
+    else:
+        entries[0]["redirect_from"] = [entries[0]["slug"]]  # type: ignore[index]
+    with pytest.raises(ValidationError, match="slug"):
+        ElectionCorrections.model_validate(payload)
+
+
+def test_updates_permalink_aliases_are_explicit_and_legacy_shape_is_unchanged() -> None:
+    payload = _permalink_log()
+    payload["entries"][0]["redirect_from"] = ["former-result-notice"]  # type: ignore[index]
+    assert ElectionCorrections.model_validate(payload).entries[0].redirect_from == [
+        "former-result-notice"
+    ]
+    legacy = _valid_corrections().model_dump(mode="json")
+    assert all("slug" not in entry and "redirect_from" not in entry for entry in legacy["entries"])
+
+
+@pytest.mark.parametrize("alias", ["index", "../retired", "former%2Fnotice", "Duplicate"])
+def test_retired_permalink_aliases_follow_the_same_safe_segment_contract(alias: str) -> None:
+    payload = _permalink_log()
+    payload["entries"][0]["redirect_from"] = [alias]  # type: ignore[index]
+    with pytest.raises(ValidationError, match="slug"):
+        ElectionCorrections.model_validate(payload)
+
+
 def test_election_updates_metadata_is_required_only_for_the_new_schema() -> None:
     legacy = _valid_corrections().model_dump(mode="json")
     assert "topics" not in legacy["entries"][0]

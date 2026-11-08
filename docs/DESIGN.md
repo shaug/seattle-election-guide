@@ -728,6 +728,19 @@ archives and their existing presentation are preserved.
 
 ## Election Updates (#676)
 
+### Individual updates (#677)
+
+An index headline is a descriptive link while retaining its existing serif type, color and full
+entry beneath it. The linked page uses the same election shell and measured text column, with
+Updates current in navigation. Show Back to Updates, election identity, the existing headline as
+the single H1, original publication date, action badges and topic labels, complete body and existing
+affected-page/evidence links. Topics link to the same election's filtered index; the ordinary Back
+links return to its full log. Include a return link after the content. There is no filter toolbar,
+sidebar, comments or recommendation panel on a detail. Preserve existing colors, external-link
+safety, visible keyboard focus and readable narrow/mobile layout. Native browser Back restores
+the prior index filter and reading position. Stable election-scoped URLs and direct/no-JavaScript
+reading are part of this treatment, not a client-only modal or generated headline slug.
+
 The approved version-2 study uses the existing measured election shell and serif entry headlines.
 The tagline is “What changed in this election’s endorsements, sources and results.” Dates mean
 publication in this guide. Quiet action tags and topic labels accompany each dated chronological

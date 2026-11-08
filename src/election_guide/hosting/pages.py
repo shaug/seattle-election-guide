@@ -23,6 +23,7 @@ from election_guide.hosting.releases import materialize_released_bundle
 from election_guide.hosting.updates import (
     UPDATES_SNAPSHOT,
     build_updates_snapshot,
+    update_entry_paths,
     verify_updates_snapshot,
 )
 from election_guide.publication.calendar_feed import build_calendar_feed
@@ -45,6 +46,7 @@ from election_guide.rendering.shell import (
     page_title,
     race_og_image_path,
     race_page_path,
+    update_page_path,
 )
 from election_guide.rendering.stylesheets import page_stylesheet
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
@@ -172,7 +174,7 @@ def stage_pages_site(
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
     try:
-        public_paths, updates_projections = _stage_verified_bundles(
+        public_paths, updates_projections, update_redirects = _stage_verified_bundles(
             stage,
             verified,
             site_manifest.canonical_origin,
@@ -273,6 +275,7 @@ def stage_pages_site(
             _pages_worker(
                 site_manifest,
                 public_paths,
+                update_redirects=update_redirects,
                 data_updated_date=current_data_updated_date,
                 site_updated_date=current_site_updated_date,
                 data_version=current_data_version,
@@ -426,6 +429,19 @@ def _verify_staged_pages_site(
         corrections_asset = f"e/{declared.election_id}/updates/index.html"
         if corrections_asset in deployment.assets:
             required_assets.add(corrections_asset)
+            for path in update_entry_paths(
+                (site_dir / corrections_asset).read_text(encoding="utf-8"), declared.election_id
+            ):
+                relative = path.lstrip("/") + "index.html"
+                required_assets.add(relative)
+                detail = site_dir / relative
+                if not detail.is_file():
+                    raise ValueError(f"missing update detail: {relative}")
+                if (
+                    f'<link rel="canonical" href="{site_manifest.canonical_origin}{path}">'
+                    not in detail.read_text(encoding="utf-8")
+                ):
+                    raise ValueError(f"update detail canonical differs: {relative}")
         projection = deployed.updates_projection
         if declared.updates_from_current_source != (projection is not None):
             raise ValueError("current Updates projection differs from reviewed declaration")
@@ -625,9 +641,10 @@ def _stage_verified_bundles(
     *,
     current: _VerifiedBundle,
     updates_dir: Path,
-) -> tuple[set[str], dict[str, UpdatesProjection]]:
+) -> tuple[set[str], dict[str, UpdatesProjection], dict[str, str]]:
     public_paths: set[str] = set()
     projections: dict[str, UpdatesProjection] = {}
+    update_redirects: dict[str, str] = {}
     for bundle in bundles:
         election_root = stage / "e" / bundle.declaration.election_id
         election_root.mkdir(parents=True)
@@ -669,8 +686,10 @@ def _stage_verified_bundles(
             authored = load_rendering_corrections(
                 bundle.declaration.election_id, corrections_dir=updates_dir
             )
-            if authored is None or authored.schema_version != "1.1":
-                raise ValueError("current Updates projection requires an authored schema1.1 log")
+            if authored is None or authored.schema_version not in {"1.1", "1.2"}:
+                raise ValueError(
+                    "current Updates projection requires an authored schema1.1/1.2 log"
+                )
             provenance = UpdatesProjection(
                 source_git_commit=current.status.git_commit,
                 authored_sha256=_sha256(authored_path),
@@ -696,8 +715,28 @@ def _stage_verified_bundles(
                 encoding="utf-8",
             )
             public_paths.update({f"{root_path}updates/", f"{root_path}updates/index.html"})
+            for entry in updates_view.corrections.entries:
+                if entry.slug is None:
+                    continue  # Immutable legacy logs retain their original index-only shape.
+                path = update_page_path(bundle.declaration.election_id, entry.slug)
+                detail_dir = corrections_dir / entry.slug
+                detail_dir.mkdir()
+                (detail_dir / "index.html").write_text(
+                    render_corrections_document(
+                        updates_view,
+                        public_site_url=canonical_origin,
+                        project_url=PROJECT_URL,
+                        updates_provenance=provenance.model_dump() if provenance else None,
+                        entry_slug=entry.slug,
+                    ),
+                    encoding="utf-8",
+                )
+                public_paths.update({path, path + "index.html"})
+                for alias in entry.redirect_from:
+                    old = f"{root_path}updates/{alias}"
+                    update_redirects.update({old: path, old + "/": path, old + "/index.html": path})
         public_paths.update(f"{root_path}{name}" for name in names)
-    return public_paths, projections
+    return public_paths, projections, update_redirects
 
 
 def _stage_race_pages(
@@ -931,6 +970,7 @@ def _pages_worker(
     data_href: str,
     compare_href: str | None = None,
     corrections_href: str | None = None,
+    update_redirects: Mapping[str, str] | None = None,
 ) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
     election_roots = [f"/e/{election.election_id}/" for election in site_manifest.elections]
@@ -969,6 +1009,7 @@ def _pages_worker(
 const LEGACY_HOSTS = new Set({json.dumps(list(LEGACY_HOSTS))});
 const CURRENT_ELECTION_PATH = {json.dumps(current_path)};
 const ELECTION_ROOTS = {json.dumps(election_roots)};
+const UPDATE_REDIRECTS = {json.dumps(update_redirects or {}, sort_keys=True)};
 {comparison_root_declaration}const PUBLIC_PATHS = new Set({json.dumps(sorted(public_paths))});
 const NOT_FOUND_HTML = {json.dumps(not_found_html)};
 
@@ -1004,6 +1045,9 @@ export default {{
       url.port = "";
       return Response.redirect(url.toString(), 301);
     }}
+    if (Object.hasOwn(UPDATE_REDIRECTS, url.pathname)) {{
+      return redirectPath(url, UPDATE_REDIRECTS[url.pathname], 301);
+    }}
     if (url.pathname === "/") {{
       return redirectPath(url, CURRENT_ELECTION_PATH, 307);
     }}
@@ -1030,7 +1074,8 @@ export default {{
       // The generated PDF edition was retired (issue 193). Every PDF this
       // election ever published lived directly under its root, so anything
       // still linking one lands on the guide it was made from.
-      if (url.pathname.startsWith(root) && url.pathname.endsWith(".pdf")) {{
+      if (url.pathname.startsWith(root) && url.pathname.endsWith(".pdf") &&
+          !url.pathname.slice(root.length).includes("/")) {{
         return redirectPath(url, root, 301);
       }}
     }}

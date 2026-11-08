@@ -97,7 +97,7 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             assert row["rationale"]
         current = load_rendering_corrections(election, corrections_dir=UPDATES_DIR)
         assert current is not None
-        assert current.schema_version == "1.1"
+        assert current.schema_version == "1.2"
         public = [row for row in rows if row["disposition"] == "election_information"]
         assert len(public) == (15 if election == "wa-2026-primary" else 18)
         migrated = current.entries[: len(public)]
@@ -105,6 +105,7 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             serialized = entry.model_dump(mode="json")
             assert serialized.pop("topics") == row["topics"]
             assert serialized.pop("actions") == row["actions"]
+            assert serialized.pop("slug") == entry.slug
             assert serialized == row["original_entry"]
         if election == "wa-2026-general":
             added = current.entries[len(public) :]

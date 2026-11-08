@@ -41,7 +41,7 @@ from election_guide.rendering.payload import (
     RaceDisplay,
     RaceSourceRow,
 )
-from election_guide.rendering.shell import month_day_year
+from election_guide.rendering.shell import month_day_year, update_page_path
 from election_guide.results.models import (
     PRELIMINARY_STALE_AFTER_SECONDS,
     PreliminaryElectionResults,
@@ -1789,6 +1789,7 @@ class CorrectionEntryView:
     date_iso: str
     topics: tuple[str, ...]
     actions: tuple[tuple[str, str], ...]
+    href: str | None
 
 
 def corrections_entries_view(
@@ -1819,6 +1820,11 @@ def corrections_entries_view(
             actions=tuple(
                 (action, "Coverage" if action == "coverage" else action.title())
                 for action in entry.actions
+            ),
+            href=(
+                update_page_path(corrections.election_id, entry.slug)
+                if entry.slug is not None
+                else None
             ),
         )
         for entry in ordered

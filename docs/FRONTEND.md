@@ -1152,9 +1152,9 @@ menu acceptance or establish native Safari/physical-device observations.*
 and `updates-client.mjs`. The banner utility/calendar behavior stays unchanged; the new election
 entry preserves the major-page shell contract in RESULTS.md. A generated `UpdatesPayload`
 carries fixed topic order/labels, stable per-render entry keys/topics and all possible count labels;
-prose remains fully server-rendered. New schema1.1 records render `updates.html.j2`/`updates.css`;
-legacy1.0 records retain the original template/stylesheet and shape. No permalink identity is added
-(#677 owns that work).
+prose remains fully server-rendered. Schema1.1/1.2 records render
+`updates.html.j2`/`updates.css`; legacy1.0 records retain the original template/stylesheet and shape.
+Schema1.2 adds authored permalink identity (#677); older immutable models do not acquire invented slugs.
 
 The controls region is taken over at boot and renders exactly three keyed lit topic buttons.
 There is no All control or payload label for one. Empty selection shows the complete log;
@@ -1170,6 +1170,24 @@ order, ignores unknown tokens and canonicalizes to one query key (omitted for no
 parameters/fragments survive without being interpreted. User changes push history; boot canonicalizes
 with replace; Back/Forward restores controls and matching entries without moving focus. No storage
 or precinct/source capability is involved.
+
+The same Updates template and entry view render the index and a single entry. Index H2 headlines
+link to `/e/{election-id}/updates/{slug}/`; a detail uses its headline as the one H1, original date,
+actions, topic links, complete body and evidence, with same-election Back links. The detail has no
+topic toolbar. Its fully rendered content, relative-depth-safe links, title/description/canonical
+and social metadata work without page JavaScript. The existing Updates entry wires the shell;
+its controls projection has nothing to enhance on a detail. The native document/history navigation
+owns index→detail→Back restoration; do not add another URL reader, scroll store or client router.
+
+Persist reviewed slugs in authored schema1.2 records, never derive them in a renderer from prose,
+date or array position. A slug and any `redirect_from` aliases are safe lowercase ASCII segments,
+unique across an election's canonical and retired routes. An alias cannot be reused by another
+entry. Staging generates each admitted detail and worker 301 alias mapping; existing trailing-slash
+normalization and genuine unknown-path 404 rules apply. Independent stage verification checks the
+actual index links, detail assets and canonical addresses. Current-source Updates projection may
+add details for an archived election without rewriting its accepted archive. Updates detail pages
+remain outside the existing fact-page snapshot projection; original date/headline audit identities
+and the complete authored prose/provenance comparison remain enforced.
 
 *Check: `updates-client.test.mjs` covers all eight OR subsets, duplicates, exactly three controls, final deselection,
 empty results and persistent focus/live roots; `updates-route.test.mjs` covers admission/query

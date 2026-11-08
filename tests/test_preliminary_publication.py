@@ -47,6 +47,7 @@ def test_corrected_lower_votes_are_reported_without_clamping_or_winner_claims() 
     assert "1 contest" in entry.body and "unofficial" in entry.body.lower()
     assert "count" in entry.body.lower() and "export" in entry.body.lower()
     assert entry.corrected_on.isoformat() == "2026-11-06"
+    assert entry.slug == "preliminary-results-2026-11-06-190000"
     assert "winner" not in entry.headline.lower()
     assert current.races[0].outcomes[0].votes == previous.races[0].outcomes[0].votes - 1
 
