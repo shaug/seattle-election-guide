@@ -1074,7 +1074,8 @@
     "race-detail-candidate-tied": [
       "template",
       "stylesheet",
-      "client"
+      "client",
+      "test"
     ],
     "race-detail-candidate-title": [
       "template",
