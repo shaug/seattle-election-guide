@@ -23,7 +23,7 @@
 - Multiple certified advancers may have different alignment tones; vote ties, rounding and zero preliminary votes must not create outcomes.
 - Source-lens changes update endorsement ties and pills consistently while result alignment remains the audited aggregate.
 - Three-way palette stepping and per-candidate faded colors must remain distinguishable with readable existing text.
-- Archived primary pages retain their original bytes; tests of newly rendered certified pages do not establish a changed archived UI.
+- Published archive bundles and the copied Primary overview retain their original bytes. Primary race pages use current rendering code with verified archive data and therefore receive the approved palette; verify the actual staged projection separately from the immutable archive.
 
 ### Task 1: Shared presentation, tests and design record
 

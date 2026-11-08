@@ -67,8 +67,10 @@ sorting, a rounded share or a vote tie never creates an outcome. Insufficient co
 does not manufacture an aggregate recommendation. Preliminary counts remain neutral and
 outcome-free, even when a candidate currently leads. The shared result block is still
 lens-invariant; names, shares, chips, badges and provenance are unchanged. See DESIGN.md
-for the approved alternatives and actual-endorsement-tie palette. Immutable archived
-pages remain their original published bytes.
+for the approved alternatives and actual-endorsement-tie palette. Published archive
+bundles and the copied Primary overview remain unchanged. Primary race pages are
+rendered from the archive's verified data with current code, so those pages receive
+the approved meter treatment; see [the existing archive projection contract](PRIMARY_METER_REFRESH_2026-10-22.md).
 
 The site's purpose is in the name: it helps voters vote. Results are a secondary feature, and
 "secondary" was sized deliberately. The original #208 policy admitted certified results once
