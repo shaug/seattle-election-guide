@@ -169,7 +169,7 @@ def test_legacy_updates_reject_new_routing_metadata(schema: str, routing: str) -
         del payload["entries"][1]["slug"]  # type: ignore[index]
     elif routing == "aliases":
         payload["entries"][0]["redirect_from"] = ["retired-notice"]  # type: ignore[index]
-    with pytest.raises(ValidationError, match="schema1.2"):
+    with pytest.raises(ValidationError, match=r"schema1\.2"):
         ElectionCorrections.model_validate(payload)
 
 
