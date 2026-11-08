@@ -3,7 +3,8 @@
 ## Preliminary results (#696)
 
 Reuse the existing Guide/race result block: names, one-decimal named-choice percentages,
-.45rem navy tally bars and compact contest-count/authority/evidence provenance. The adjacent
+.45rem tally bars and compact contest-count/authority/evidence provenance. The bars remain
+neutral navy except for the approved current-leader alignment below. The adjacent
 amber badge says only **Unofficial**; certified-result badges say only **Certified**.
 The second provenance line at the bottom of the card or race result block carries available
 timestamps: **Count updated [time]**, **Export generated [time]**, and the separate
@@ -16,13 +17,18 @@ not a coverage limit or replacement for functional product controls.
 
 ## Result alignment and actual endorsement ties (#711)
 
-Only a recorded winning/advancing result meter changes color. If the choice is in the
+Recorded winning/advancing result meters and unique current unofficial vote leaders
+receive alignment color (#715 extends #711). If the choice is in the
 published aggregate recommendation set, including an aggregate tie, use endorsement green
 `#087f73` with remainder `#cee5e3`. Otherwise use terracotta `#b4654c` with remainder
 `#f0e0db`. Evaluate multiple recorded advancers independently. A raw leader under insufficient
 coverage is not a published recommendation. Keep other result meters, backgrounds, badges,
-copy and endorsement UI unchanged. Preliminary counts do not establish an outcome: they
-retain neutral result bars, including tied or zero counts. Result alignment uses the audited
+copy and endorsement UI unchanged. Preliminary color identifies only a raw count lead:
+all `advanced` flags remain false, with no outcome chips or threshold/advancement inference.
+Compare integer votes, not rounded shares. Tied/zero counts, incomplete named choices,
+or an aggregate write-in count at least as large as the top named count stay neutral.
+A measure's raw vote lead does not establish passage; a primary lead does not invent
+advancement slots. Result alignment uses the audited
 aggregate and remains outside source-lens updates, like the result block itself.
 
 Actual endorsement ties have their own purple family: lavender `#bba6d7` first, deep violet
@@ -114,7 +120,7 @@ introduces a color literal except the bounded #673 and #711 component tokens bel
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
 | Meter | `--meter-*` | The segmented meter's own palette (docs/METER_V2.md § Color): track, tie depth, trailing ranks, seam ink. Its majority and no-majority fills are `--teal` and `--amber` themselves |
 | Actual tie | `--meter-tie`, `--meter-tie-violet`, `--tone-tie-*` | Tied endorsement runs and existing tie framing; never a sole sub-majority leader |
-| Result alignment | `--teal`, `--result-aligned-track`, `--result-different`, `--result-different-track` | Only recorded winning/advancing vote meters, compared with the aggregate recommendation |
+| Result alignment | `--teal`, `--result-aligned-track`, `--result-different`, `--result-different-track` | Recorded winners/advancers or unique current unofficial vote leaders, compared with the aggregate recommendation |
 | Focus | `--focus` | Every focus ring, everywhere |
 | Compact general controls | `--compact-precinct-surface`, `--compact-expanded-surface`, `--compact-editor-shadow` | Approved C v5 precinct ground, expanded ground and editor shadow; general-only ownership |
 
