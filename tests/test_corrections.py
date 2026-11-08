@@ -160,6 +160,19 @@ def test_retired_permalink_aliases_follow_the_same_safe_segment_contract(alias: 
         ElectionCorrections.model_validate(payload)
 
 
+@pytest.mark.parametrize("schema", ["1.0", "1.1"])
+@pytest.mark.parametrize("routing", ["all", "partial", "aliases"])
+def test_legacy_updates_reject_new_routing_metadata(schema: str, routing: str) -> None:
+    payload = _permalink_log()
+    payload["schema_version"] = schema
+    if routing == "partial":
+        del payload["entries"][1]["slug"]  # type: ignore[index]
+    elif routing == "aliases":
+        payload["entries"][0]["redirect_from"] = ["retired-notice"]  # type: ignore[index]
+    with pytest.raises(ValidationError, match="schema1.2"):
+        ElectionCorrections.model_validate(payload)
+
+
 def test_election_updates_metadata_is_required_only_for_the_new_schema() -> None:
     legacy = _valid_corrections().model_dump(mode="json")
     assert "topics" not in legacy["entries"][0]

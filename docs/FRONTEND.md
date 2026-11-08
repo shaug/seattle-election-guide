@@ -1189,6 +1189,12 @@ add details for an archived election without rewriting its accepted archive. Upd
 remain outside the existing fact-page snapshot projection; original date/headline audit identities
 and the complete authored prose/provenance comparison remain enforced.
 
+The independent verifier follows links present in the index. It does not independently bind an
+authored permalink baseline or cross-check the worker's alias table; generator/integration tests
+cover current route completeness and redirects. Removing every anchor and detail together could
+therefore evade that narrower check after a self-consistent manifest rewrite. Retention of a
+previously published slug or alias additionally remains an editorial review responsibility.
+
 *Check: `updates-client.test.mjs` covers all eight OR subsets, duplicates, exactly three controls, final deselection,
 empty results and persistent focus/live roots; `updates-route.test.mjs` covers admission/query
 ownership. `test_corrections_rendering.py` checks no-script markup plus actual headless browser

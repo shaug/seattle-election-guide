@@ -126,6 +126,10 @@ class ElectionCorrections(CorrectionsModel):
 
     @model_validator(mode="after")
     def validate_election_corrections(self) -> ElectionCorrections:
+        if self.schema_version != "1.2" and any(
+            entry.slug is not None or entry.redirect_from for entry in self.entries
+        ):
+            raise ValueError("update routing metadata requires schema1.2")
         if self.schema_version in {"1.1", "1.2"} and any(
             not entry.topics or not entry.actions for entry in self.entries
         ):

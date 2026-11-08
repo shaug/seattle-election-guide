@@ -8,6 +8,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import pytest
+import yaml
 
 from election_guide.corrections.loader import load_rendering_corrections
 from election_guide.serialization import read_yaml
@@ -106,6 +107,7 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             assert serialized.pop("topics") == row["topics"]
             assert serialized.pop("actions") == row["actions"]
             assert serialized.pop("slug") == entry.slug
+            serialized.pop("redirect_from", None)
             assert serialized == row["original_entry"]
         if election == "wa-2026-general":
             added = current.entries[len(public) :]
@@ -145,6 +147,25 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             ).actions == ["correction"]
         else:
             assert current.entries == migrated
+
+
+@pytest.mark.parametrize("election", ["wa-2026-general", "wa-2026-primary"])
+def test_historical_entry_can_preserve_a_retired_route_without_changing_original_fields(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    election: str,
+) -> None:
+    for path in UPDATES_DIR.glob("*.yaml"):
+        (tmp_path / path.name).write_bytes(path.read_bytes())
+    path = tmp_path / f"{election}.yaml"
+    payload = read_yaml(path)
+    entry = payload["entries"][0]
+    old_slug = entry["slug"]
+    entry["slug"] = old_slug + "-corrected"
+    entry["redirect_from"] = [old_slug]
+    path.write_text(yaml.safe_dump(payload))
+    monkeypatch.setattr(f"{__name__}.UPDATES_DIR", tmp_path)
+    test_election_only_migration_preserves_every_complete_original()
 
 
 def test_every_audited_change_is_bound_to_an_authored_entry() -> None:
