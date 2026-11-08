@@ -1594,8 +1594,8 @@ def test_certified_results_render_the_race_detail_pages_complete_result_block(
         '--dominique-m-scarimbolo">Dominique M Scarimbolo</a> '
         '<span class="race-detail-result-chip">Advances</span></span> '
         '<span class="race-results-share">32.0%</span> '
-        '<span class="race-results-bar"><i style="width:32.0%"></i></span>'
-        in _collapse_whitespace(body)
+        '<span class="race-results-bar race-results-bar-aligned">'
+        '<i style="width:32.0%"></i></span>' in _collapse_whitespace(body)
     )
     assert (
         '<a href="#candidate-king-county-assessor--christopher-roberts">'
