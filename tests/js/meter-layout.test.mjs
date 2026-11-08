@@ -125,6 +125,18 @@ test('an unscored race lays out no blocks at all', () => {
   assert.deepEqual(meterLayoutBlocks([]), []);
 });
 
+test('actual ties use lavender/violet while a sole sub-majority leader remains amber', () => {
+  assert.deepEqual(
+    [...meterCandidateColors(['a', 'b', 'c'], new Set(['a', 'b', 'c']), false).values()],
+    [
+      'var(--meter-tie)',
+      'var(--meter-tie-violet)',
+      'color-mix(in srgb, var(--meter-tie-violet) 78%, var(--meter-track))',
+    ],
+  );
+  assert.equal(meterCandidateColors(['a', 'b'], new Set(['a']), false).get('a'), 'var(--amber)');
+});
+
 // docs/METER_V2.md, Color: a pool that runs out steps toward the track rather
 // than repeating a swatch, so two candidates in one meter never share a color.
 // `mirror-parity.test.mjs` proves the byte-identical string for every fixture

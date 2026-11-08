@@ -57,6 +57,19 @@ satisfy certified-ingestion tracking. See [the refresh runbook](runbooks/results
 
 ## Certified baseline: close the record
 
+### Approved result-meter alignment (#711)
+
+On newly rendered Guide/race pages, only recorded winning/advancing outcomes receive
+alignment paint: green `#087f73` with `#cee5e3` remainder for a published aggregate
+recommendation (including an endorsement tie), terracotta `#b4654c` with `#f0e0db`
+remainder otherwise. All recorded advancers are evaluated independently by choice ID;
+sorting, a rounded share or a vote tie never creates an outcome. Insufficient coverage
+does not manufacture an aggregate recommendation. Preliminary counts remain neutral and
+outcome-free, even when a candidate currently leads. The shared result block is still
+lens-invariant; names, shares, chips, badges and provenance are unchanged. See DESIGN.md
+for the approved alternatives and actual-endorsement-tie palette. Immutable archived
+pages remain their original published bytes.
+
 The site's purpose is in the name: it helps voters vote. Results are a secondary feature, and
 "secondary" was sized deliberately. The original #208 policy admitted certified results once
 per election and linked out during counting. #696 supersedes that no-ingestion boundary only

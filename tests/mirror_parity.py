@@ -878,7 +878,7 @@ _METER_COLOR_CASES: tuple[tuple[str, list[str], frozenset[str], bool, str], ...]
         ["a", "b", "c"],
         frozenset({"a", "b"}),
         False,
-        "Two tied leaders exactly fill the tie pool: amber, then the deep tie amber.",
+        "Two tied leaders exactly fill the tie pool: lavender, then deep violet.",
     ),
     (
         "three tied leaders",

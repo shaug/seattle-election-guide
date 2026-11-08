@@ -298,7 +298,7 @@ export function meterLayoutBlocks(endorsements) {
 // Color (docs/METER_V2.md, Color): every value below is a CSS value string,
 // not a literal color, so a block's paint is always a reference to a
 // `base.css` token.
-const METER_TIE_COLORS = ['var(--amber)', 'var(--meter-tie-deep)'];
+const METER_TIE_COLORS = ['var(--meter-tie)', 'var(--meter-tie-violet)'];
 const METER_TRAIL_COLORS = [
   'var(--meter-trail-slate)',
   'var(--meter-trail-taupe)',

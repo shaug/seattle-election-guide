@@ -69,6 +69,7 @@ const METER_DEGRADE_MAX_BLOCKS = Math.floor(120 / 3);
 /**
  * @typedef {object} RaceContextView
  * @property {boolean} noMajority
+ * @property {boolean} [isTied]
  * @property {string} support
  * @property {string} supportCompact
  */
@@ -429,7 +430,7 @@ export function candidateMeterTemplate(candidateId, meter) {
  * @param {RaceContextView} view
  */
 export function raceContextTemplate(view) {
-  return html`<p class="no-majority-pill" ?hidden=${!view.noMajority}>No majority</p><p
+  return html`<p class=${view.isTied ? 'no-majority-pill no-majority-pill-tied' : 'no-majority-pill'} ?hidden=${!view.noMajority}>No majority</p><p
     class="support-line support-full"
     data-display-role="support"
   >${view.support}</p><p

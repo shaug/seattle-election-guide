@@ -149,6 +149,7 @@ export function createGuideLens(payload) {
       },
       context: {
         noMajority: hasNoMajority(scored.winnerShare),
+        isTied: scored.isTied,
         support: supportSummary(leaderUnits, scored.explicitCount, selectedTotal),
         supportCompact: supportSummaryCompact(leaderUnits, scored.explicitCount, selectedTotal),
       },

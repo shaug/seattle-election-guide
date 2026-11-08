@@ -965,6 +965,12 @@
       "client",
       "test"
     ],
+    "no-majority-pill-tied": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "page-head": [
       "template",
       "stylesheet",

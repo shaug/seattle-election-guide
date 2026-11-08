@@ -75,6 +75,17 @@
 
    So the undo in race.css is the price of leaving both checks at full
    strength, not an oversight. */
+/* Approved component palette (#711). The archived shared shell in base.css
+   stays literal; only components rendering this palette inherit these tokens. */
+.screen-meter, .race-results, .no-majority-pill, .race-detail-candidate-tied {
+  --meter-tie: #bba6d7;
+  --meter-tie-violet: #654a8b;
+  --tone-tie-bg: #f4f0f8;
+  --tone-tie-text: #59416f;
+  --result-aligned-track: #cee5e3;
+  --result-different: #b4654c;
+  --result-different-track: #f0e0db;
+}
 .race-results { margin-top: .2rem; padding-top: .65rem; border-top: 1px solid var(--row-separator); }
 .race-results-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3rem .5rem; margin-bottom: .5rem; }
 .race-results-eyebrow { color: var(--muted); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
@@ -98,6 +109,10 @@
 .race-results-bar i { display: block; height: 100%; background: var(--navy); border-radius: .25rem; }
 .race-results-row-trailing .race-results-name, .race-results-row-trailing .race-results-share { color: var(--muted); font-weight: 500; }
 .race-results-row-trailing .race-results-bar i { background: var(--line-strong); }
+.race-results-bar-aligned { background: var(--result-aligned-track); }
+.race-results-bar-aligned i { background: var(--teal); }
+.race-results-bar-different { background: var(--result-different-track); }
+.race-results-bar-different i { background: var(--result-different); }
 .race-results-provenance { margin: .55rem 0 0; color: var(--faint); font-size: .72rem; }
 .race-results-provenance a { color: var(--blue); }
 /* Meter v2, the segmented meter (docs/METER_V2.md). Frame: 2rem tall, a
@@ -200,6 +215,7 @@
 .screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) max-content; align-items: start; min-width: 0; }
 .screen-race-context .support-line { grid-column: 2; }
 .no-majority-pill { justify-self: start; margin: 0; padding: .18rem .48rem; border: 1px solid var(--tone-differ-border); border-radius: 999px; background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .68rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
+.no-majority-pill-tied { border-color: var(--meter-tie); background: var(--tone-tie-bg); color: var(--tone-tie-text); }
 .support-line { min-width: 0; margin: .15rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.2; text-align: right; }
 /* H34: full view keeps the sentence-form caption; the guide's compact mode
    (where the caption wraps to two lines per card) shortens it. Both forms

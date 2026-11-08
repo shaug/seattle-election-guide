@@ -220,7 +220,7 @@
            listed directly below the headline, so "8 of 11 endorsing sources"
            would name the length of a list the reader is already looking at. #}
         <div class="screen-race-context" data-lens-context>
-          <p class="no-majority-pill"{% if not has_no_majority(race) %} hidden{% endif %}>No majority</p>
+          <p class="no-majority-pill{{ ' no-majority-pill-tied' if race.grade == 'TIED' else '' }}"{% if not has_no_majority(race) %} hidden{% endif %}>No majority</p>
         </div>
       </div>
 

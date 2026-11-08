@@ -277,7 +277,7 @@ export function wireRacePage(payload) {
       // directly beneath this block, so a count of them would name the length
       // of a list already on screen. The pill is what survives.
       render(
-        html`<p class="no-majority-pill" ?hidden=${!hasNoMajority(scored.winnerShare)}>No majority</p>`,
+        html`<p class=${scored.isTied ? 'no-majority-pill no-majority-pill-tied' : 'no-majority-pill'} ?hidden=${!hasNoMajority(scored.winnerShare)}>No majority</p>`,
         contextRegion,
       );
     }
