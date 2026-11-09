@@ -121,11 +121,12 @@ purpose and watch the check fail.
   groups it happens not to render — the filter bar and the election-day banner
   on the site-wide pages, the action strip on Comparisons. Splitting `base.css`
   by component is a separate decision about the shell, not this one.
-  The general-only precinct component is an explicit optional part in
-  `OPTIONAL_STYLESHEETS`, inserted before the page's final part only when the
-  admitted view model carries a precinct contract. Default page entries and
-  archived primary stylesheet bytes remain unchanged. The optional part has the
-  same file-coverage and authored-byte checks as ordinary parts.
+  Shared compact controls are ordinary Guide/Comparisons stylesheet parts.
+  The precinct editor remains an explicit optional part in `OPTIONAL_STYLESHEETS`,
+  inserted before the page's final part only when the admitted view model carries
+  an election-specific precinct contract. Original archive stylesheet bytes remain
+  unchanged. The optional part has the same file-coverage and authored-byte checks
+  as ordinary parts.
 
   *Check: exists — `tests/test_page_stylesheets.py` holds every page to its
   declared parts, holds every stylesheet on disk to a page that reads it,
@@ -432,40 +433,39 @@ when payload admission fails.
 
 ## State and URLs
 
-- **Source choices persist only in URL fragments.** The approved #608 general-election
+- **Source choices persist only in URL fragments.** An admitted election's
   precinct choice also persists in one device-memory record, owned exclusively by
   `precinct-selection-store.mjs`. That capability stores only the election-specific
-  precinct code, never source choices, addresses, or other voter information. The
+  allowlisted precinct identifier, never source choices, addresses, or other voter information. The
   explicit precinct query (including `precinct=all`) outranks remembered state;
   unavailable memory leaves URL selection usable. No session storage or cookies.
   *Check: exists — the shared module guard forbids storage in pure/wiring modules,
   and its capability-owner test requires exactly one precinct-memory owner.
   `precinct-selection-store.test.mjs` tests isolation, clearing and blocked storage;
   page/control tests cover query precedence and source-independent membership.*
-- **General race mode shares ballot query context.** `races=all` explicitly overrides
-  the general Contested default. Both modes obey precinct membership and preserve
-  measures. Only the owned `precinct` and `races` query keys travel through renderer-owned
-  Endorsements, Comparisons and Sources paths. General comparison fragments retain
-  column/section/differences state without a second race-mode copy; primary retains
-  its existing fragment codec and All default.
-  Sources keeps its legacy payload unchanged. Only the general typed variant
-  carries the required true race-query capability, selected by the renderer's
-  reviewed precinct contract. The client explicitly handles that variant and
-  the legacy contract; it infers neither election nor capability from paths,
-  panel-name patterns, markup, or browser defaults. Shared compiled Sources
-  HTML may change while the primary payload and behavior remain unchanged.
-  *Check: exists — `precinct-ballot.test.mjs` checks query defaults and ownership;
-  `compare-url.test.mjs` checks fragment separation; `test_precinct_navigation.py`
-  exercises both modes through real navigation, reload and history.*
-- **Precinct query history is general-only.** Only a supported November2026
-  general precinct contract enables the new query-history subscription/control.
-  Legacy and current primary payloads register no precinct-history listener and
-  retain their ordinary behavior. Existing routers remain the sole address owners;
-  navigation destinations come from renderer-owned complete paths in the payload.
-  *Check: exists — `test_html_uses_one_view_model_for_screen_print_filters_and_evidence`
-  observes zero primary subscriptions and no injected popstate reaction in real
-  Chromium; the actual primary9 client fixture tests the legacy case, and
-  `test_precinct_rendering.py` exercises general query Back/Forward in Chromium.*
+- **Current race mode shares ballot query context.** `races=all` explicitly overrides
+  the current Contested default. Both modes obey admitted precinct membership and
+  preserve measures, including when no geographic catalog exists. Only the owned
+  `precinct` and `races` query keys travel through renderer-owned Endorsements,
+  Comparisons and Sources paths. Current comparison fragments retain columns,
+  section and differences without a second race-mode copy. Explicit query takes
+  precedence over valid legacy comparison state; an unqualified old All default
+  now follows the current Contested default (#723).
+  Current payloads explicitly declare the race-query capability independently of
+  geography. Legacy payloads remain readable under their original contract. Clients
+  infer neither election nor capability from paths, panel names, markup or browser
+  defaults. Sources Save/Cancel/Reset and ordinary Back/Forward preserve the owned
+  race/source state and return target.
+  *Check: exists — query/router, primary current/legacy fixture and navigation
+  suites exercise defaults, fragment separation, actual navigation and history.*
+- **Query-history enhancement follows declared capabilities.** A precinct control
+  requires an admitted catalog for the same election. Current race-query handling
+  does not require geography; legacy payloads without the capability retain their
+  ordinary behavior. Existing routers remain the sole address owners, and complete
+  navigation destinations come from renderer-owned payload paths. The primary
+  direct-only contract does not activate General address requests.
+  *Check: exists — primary current/legacy fixtures, precinct-selection-store tests and
+  navigation/browser suites exercise subscription, isolation and history behavior.*
 - **Each page's codec module is the sole reader and writer of `location`.**
   One owner per fragment. No second script parses the hash by hand, and no
   handler edits `location` around the codec. A page whose codec is pure pairs
@@ -956,11 +956,12 @@ and `precinct-address-control.test.mjs` exercise admission, privacy and cancella
 browser navigation tests preserve actual general/primary behavior. This adds no
 storage exception or ratchet ceiling.
 
-## Compact general controls (#673)
+## Shared compact list controls (#673, #723)
 
-The precinct-enabled branch of `_filter_controls.html.j2` owns the 46px ordered
-bar and three real HTML selects for View, Races and Ballot. Legacy primary
-markup remains in its original branch. Each full-target select owns native
+`_filter_controls.html.j2` owns the 46px ordered bar and three real HTML selects
+for View, Races and Ballot on every current-rendered election. The optional
+Precinct slot depends on an admitted election-specific catalog. Original archive
+markup remains unchanged inside published bundles. Each full-target select owns native
 pointer/keyboard input and accessibility; an aria-hidden sibling face carries
 the approved icons and compact text. Native option commits apply immediately
 through existing controller change listeners, preserving the select node and focus.
@@ -970,12 +971,14 @@ pass resolved scope/View/Races values to `projectCompactFilters`; those controll
 still own native input intent, URL encoding, scope availability and race updates.
 The compact component has no storage, provider, scoring or ballot-matching role.
 Comparison's admitted section tokens are displayed as title-cased words; their
-six current labels match the server's section vocabulary. Precinct abbreviation
+six current General labels match that election's section vocabulary. Each election
+retains its own evidenced scope/section vocabulary and order. Precinct abbreviation
 is catalog-specific and collision-checked by `compactPrecinctName`.
 
-The optional general-only `precinct.css` owns this presentation and preserves the
+Shared `compact-filters.css` owns the compact controls and joined Sources layout.
+Optional `precinct.css` owns the precinct editor and preserves the
 Safari `label:has(> input:checked)` selected-state rule for supported legacy radios. `base.css`
-and archived primary parts stay unchanged. Font readiness, a ResizeObserver on
+and original archive bytes stay unchanged. Font readiness, a ResizeObserver on
 the actual bar and state projection re-evaluate unshrunk complete-family trigger reservations,
 including every approved closed Ballot summary. A hidden multiline probe in the actual
 trigger styles measures the widest complete family value, including all catalog
@@ -986,17 +989,18 @@ aria-hidden face and its complete measured family. Only the 13 approved district
 choices shorten; the other 11 remain unchanged. The mapping requires the exact
 known value and original full label; unknown values or renamed labels retain the
 complete supplied wording. Native options, selected values, accessible names and
-titles always retain the original full identity. Guide keeps its 24 choices;
-Comparisons keeps its own 7 section choices. No schema, controller intent or URL
+titles always retain the original full identity. The General Guide has 24 choices;
+its Comparisons has 7 section choices. Those are General examples; other elections
+retain their own evidenced scope/section vocabulary and order. No schema, controller intent or URL
 token changes are implied.
 Within a fitting mode these per-role widths stay stable across selections;
 container/font changes re-admit the fitting mode. Reservations retain the browser's
 fractional layout precision rather than accumulating an upward rounding loss for
 every role. The wide trigger shows the approved closed summary
-without a prefixed Ballot; its all-scope display and general native option use
-“All ballot races”. The rendering context owns that general-only all-scope copy
-for both the Guide payload/select and the Comparisons select, keeping legacy
-primary copy unchanged. Only when the wide content does not fit, show generic Ballot
+without a prefixed Ballot; its all-scope display and current native option use
+“All ballot races”. The rendering context owns that shared copy for both the
+Guide payload/select and Comparisons select, independently of a geographic catalog.
+Literal archived HTML retains its original wording. Only when the wide content does not fit, show generic Ballot
 and its own-scope active dot instead, before the existing safe precinct/code
 and menu-cue fallbacks; no viewport-only threshold or truncation substitutes for fit. Recheck the underline
 layout with the resolved font and reclaim inline trigger padding only when its
@@ -1010,8 +1014,8 @@ gap and 2px inline inset to separate adjacent labels; font size, complete labels
 icons and target minima remain unchanged. Reset
 all spacing states before every fit so wider containers recover their inline
 presentation. Screenshot audits
-require exactly three underlying native selects on admitted general pages and
-the original five inputs on legacy/primary pages. They exercise the actual
+require exactly three underlying native selects on current-rendered list pages;
+original legacy HTML fixtures retain their original inputs. They exercise the actual
 selected values, membership, URL and reset behavior in each composition and
 validate the visible Ballot face. No input-count ceiling or exemption grows.
 
@@ -1096,7 +1100,7 @@ while interactive acceptance is incomplete.
 
 ### Shared selection styling (#672)
 
-General-only `precinct.css` shares the approved paper/navy/border/type treatment,
+Shared `compact-filters.css` and optional `precinct.css` share the approved paper/navy/border/type treatment,
 white active/hover surface with navy outline, and amber keyboard focus between
 the custom Precinct suggestions and finite select pickers. The capability
 gate requires both `appearance: base-select` and `selector(::picker(select))`;
@@ -1134,19 +1138,22 @@ remain pending while unaffected local checks continue.
 
 ## Guide joined Sources group (#679)
 
-The shared control macro accepts an optional source count/destination only from
-the admitted general Guide. Its source link and two existing announcing roots
-stay server-owned; `projectCompactSources` takes over only the summary span once
+The shared control macro accepts an optional source count/destination from any
+current admitted Guide, independently of precinct capability. Its source link
+and two existing announcing roots stay server-owned; `projectCompactSources`
+takes over only the summary span once
 and projects the existing controller's tallying selection and complete accessible
-sentence. It creates no new source/filter state, URL owner or dialog. Legacy
-Guide markup and the Comparisons composition retain their original branches.
+sentence. It creates no new source/filter state, URL owner or dialog. Comparisons
+has no Sources slot. Literal archived HTML and older client-payload fallbacks
+retain their original contracts.
 
 `wireCompactFilters` remains the fit owner. The Guide-only source slot reserves
 “All total” and “total of total” in the actual link styles, alongside the existing
 complete control families. The complete centered controls-plus-Sources group and
 twice the current count's side reservation must fit before admitting one row.
-Otherwise CSS grid puts Sources and the nowrap count on row two, with the four
-controls centered above. That second row must also fit its actual container.
+Otherwise CSS grid puts Sources and the nowrap count on row two, with the three
+shared controls and optional admitted Precinct centered above. That second row
+must also fit its actual container.
 Reclaim only the needed part of its 12px gap first; if the complete inline
 Sources face and count still exceed the row, stack the unchanged Sources prefix
 and value inside the same 44px target and remeasure its complete family. Icons,
@@ -1157,9 +1164,8 @@ Reflow changes grid placement without moving or replacing
 focused controls, link or live status roots. The existing ResizeObserver observes
 the Guide sticky group as well as the bar; font readiness/loading completion and
 resolved source/filter projection remeasure it. Its actual height, including
-notices, supplies Guide anchor clearance. Optional `precinct.css` owns these
-Guide-only selectors; shared `base.css`, archived primary and Comparisons layout
-rules stay unchanged. No viewport constant substitutes for actual fit.
+notices, supplies Guide anchor clearance. Shared `compact-filters.css` owns these
+Guide-only selectors; shared `base.css` and original archive bytes stay unchanged. No viewport constant substitutes for actual fit.
 
 *Check: exists — `guide-client.test.mjs` verifies independent source tally,
 focused-link identity and Ballot scope; `test_precinct_rendering.py` exercises
@@ -1223,3 +1229,30 @@ empty results and persistent focus/live roots; `updates-route.test.mjs` covers a
 ownership. `test_corrections_rendering.py` checks no-script markup plus actual headless browser
 44px geometry, centered checkless labels, no reserved row gap, native Tab/Space/Enter order, focus and history at
 320/360/390/1280px. Actual screen-reader announcements are not claimed from DOM semantics alone.*
+
+
+## Historical capability and shared state (#723)
+
+Current Guide/Comparisons payloads explicitly publish `race_mode_query_enabled`
+and complete renderer-owned `list_navigation` paths, independent of precinct
+capability. Sources publishes the same query capability and complete return paths.
+Old payloads without this capability keep their existing fallback. The existing
+routers remain sole URL/history owners; clients never reconstruct election routes
+from a URL, source panel or DOM. Current primary uses Contested by default (26),
+All restores 32; SSR retains 32. Valid explicit old comparison state is admitted,
+query race mode takes precedence, and the old unqualified All default now follows
+the current default. Source selection, race return fragments, query invalid/duplicate
+values and ordinary Back/Forward retain their existing owners.
+
+A Primary precinct contract requires a matching reviewed `supplement` identity,
+map hash and current source binding and has null `address_lookup`. Literal full
+official precinct names are allowlisted application IDs, with no numeric official
+code claim or geographic decoding. Direct-only UI says “Search precincts” and
+“Matching precincts”; no map link, address privacy claim or address requests occur.
+General retains its address context. Only `precinct-selection-store.mjs` owns
+precinct memory, under separate election keys. Primary save/load requires the
+controller's admitted literal-ID allowlist; free text, addresses, unknown and
+cross-election IDs cannot be saved as Primary selections. No address data is persisted.
+The shared controls, joined Sources and measure-in-Contested predicate operate
+without any catalog. Original archive VM metadata, results and all other facts
+remain unchanged; presentation and capability bindings are separate.

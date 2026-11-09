@@ -1,0 +1,8 @@
+{
+  "release": "2026-primary.11",
+  "archive_source_sha": "ccce7f3f0285e39bb541d7e2984e36b8e92e1595",
+  "original_zip_sha256": "d684a16ac1212fa65433a27a8547f208ac76fad2c97e1863287d71f215a24877",
+  "original_bundle_sha256": "e61152cad9f195a68c420cf98c35f55d7479c4fd15ba3aee4ac48da7d775c81a",
+  "original_view_model_sha256": "78b7afc76c77ebe58d9f5195a9ee26fbeceefd7a46538953664e9760d3f9fa22",
+  "origin": "Exact original authenticated Primary11 VM; compression only, no field changes."
+}

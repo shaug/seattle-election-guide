@@ -9,12 +9,12 @@
   <a class="skip-link" href="#comparison-main">Skip to content</a>
   <div class="page" data-comparison-page data-election-id="{{ guide.metadata.election_id }}">
     <header>
-      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=guide_path ~ 'comparisons/', corrections_href=corrections_href, current='comparisons', precinct_links=guide.precinct_ballot is not none) }}
+      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=guide_path ~ 'comparisons/', corrections_href=corrections_href, current='comparisons', precinct_links=true) }}
       <div class="page-band-rule"></div>
     </header>
     {{ election_day_banner | safe }}
     <main id="comparison-main" class="comparison-main">
-      {%+ call shell.page_head('Comparisons', eyebrow=election_display_name) %}{% if guide.metadata.election_id == 'wa-2026-general' %}The endorsements you choose, juxtaposed.{% else %}Endorsements side by side, surfacing tension.{% endif %}{% endcall +%}
+      {%+ call shell.page_head('Comparisons', eyebrow=election_display_name) %}The endorsements you choose, juxtaposed.{% endcall +%}
       <div class="comparison-intro-wrap">
         <div class="comparison-intro">
           <div class="comparison-presets" role="group" aria-label="Suggested comparisons">
@@ -38,7 +38,8 @@
         ],
         '', 'aria-atomic="true" data-comparison-status', 'comparison-control-status',
         comparison_race_count ~ ' of ' ~ comparison_race_count ~ ' races shown · ' ~ comparison_differ_count ~ ' differ',
-        precinct_enabled=guide.precinct_ballot is not none
+        precinct_enabled=guide.precinct_ballot is not none,
+        precinct_address_enabled=guide.precinct_ballot is not none and guide.precinct_ballot.address_lookup is not none
       ) %}
         <option value="all">{{ all_ballot_scope_label }}</option>
         {% for section_id, section_label in comparison_filter_sections %}<option value="{{ section_id }}">{{ section_label }}</option>{% endfor %}

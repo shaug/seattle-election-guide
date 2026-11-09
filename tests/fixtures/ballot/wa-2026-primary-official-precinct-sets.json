@@ -1,0 +1,1115 @@
+{
+  "derivation": "Independent direct official Race occurrences over each literal primary PrecinctName, before source/scoring filters; no November input.",
+  "groups": [
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-32-state-representative-1",
+        "ld-32-state-representative-2",
+        "ld-32-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-32-state-representative-1",
+        "ld-32-state-representative-2",
+        "ld-32-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "1",
+        "legislative": "32",
+        "seattle_council": "5"
+      },
+      "example_precinct": "SEA 32-2153"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-32-state-representative-1",
+        "ld-32-state-representative-2",
+        "ld-32-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-32-state-representative-1",
+        "ld-32-state-representative-2",
+        "ld-32-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "32",
+        "seattle_council": "5"
+      },
+      "example_precinct": "SEA 32-2200"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-34-state-representative-1",
+        "ld-34-state-representative-2",
+        "ld-34-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-34-state-representative-2",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "8",
+        "legislative": "34",
+        "seattle_council": "1"
+      },
+      "example_precinct": "SEA 34-1245"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-34-state-representative-1",
+        "ld-34-state-representative-2",
+        "ld-34-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-34-state-representative-2",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "districts": {
+        "congressional": "9",
+        "county_council": "8",
+        "legislative": "34",
+        "seattle_council": "7"
+      },
+      "example_precinct": "SEA 34-1823"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-34-state-representative-1",
+        "ld-34-state-representative-2",
+        "ld-34-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-34-state-representative-2",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "8",
+        "legislative": "34",
+        "seattle_council": "7"
+      },
+      "example_precinct": "SEA 34-3230"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-34-state-representative-1",
+        "ld-34-state-representative-2",
+        "ld-34-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-34-state-representative-2",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "districts": {
+        "congressional": "9",
+        "county_council": "8",
+        "legislative": "34",
+        "seattle_council": "1"
+      },
+      "example_precinct": "SEA 34-3693"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-36-state-representative-1",
+        "ld-36-state-representative-2",
+        "ld-36-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-36-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "36",
+        "seattle_council": "6"
+      },
+      "example_precinct": "SEA 36-1273"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-36-state-representative-1",
+        "ld-36-state-representative-2",
+        "ld-36-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-36-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "36",
+        "seattle_council": "7"
+      },
+      "example_precinct": "SEA 36-1666"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-36-state-representative-1",
+        "ld-36-state-representative-2",
+        "ld-36-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-36-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "36",
+        "seattle_council": "5"
+      },
+      "example_precinct": "SEA 36-2125"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "districts": {
+        "congressional": "9",
+        "county_council": "2",
+        "legislative": "37",
+        "seattle_council": "2"
+      },
+      "example_precinct": "SEA 37-1553"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "districts": {
+        "congressional": "9",
+        "county_council": "8",
+        "legislative": "37",
+        "seattle_council": "2"
+      },
+      "example_precinct": "SEA 37-1825"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "districts": {
+        "congressional": "9",
+        "county_council": "2",
+        "legislative": "37",
+        "seattle_council": "3"
+      },
+      "example_precinct": "SEA 37-1827"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "districts": {
+        "congressional": "9",
+        "county_council": "8",
+        "legislative": "37",
+        "seattle_council": "3"
+      },
+      "example_precinct": "SEA 37-1862"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "2",
+        "legislative": "37",
+        "seattle_council": "3"
+      },
+      "example_precinct": "SEA 37-1863"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "8",
+        "legislative": "37",
+        "seattle_council": "3"
+      },
+      "example_precinct": "SEA 37-1875"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "8",
+        "legislative": "37",
+        "seattle_council": "1"
+      },
+      "example_precinct": "SEA 37-3969"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-43-state-representative-1",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-43-state-representative-1",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "43",
+        "seattle_council": "6"
+      },
+      "example_precinct": "SEA 43-1335"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-43-state-representative-1",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-43-state-representative-1",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "43",
+        "seattle_council": "4"
+      },
+      "example_precinct": "SEA 43-1359"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-43-state-representative-1",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-43-state-representative-1",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "43",
+        "seattle_council": "7"
+      },
+      "example_precinct": "SEA 43-1772"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-43-state-representative-1",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-43-state-representative-1",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "8",
+        "legislative": "43",
+        "seattle_council": "7"
+      },
+      "example_precinct": "SEA 43-1774"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-43-state-representative-1",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-43-state-representative-1",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "8",
+        "legislative": "43",
+        "seattle_council": "3"
+      },
+      "example_precinct": "SEA 43-1781"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-43-state-representative-1",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-43-state-representative-1",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "2",
+        "legislative": "43",
+        "seattle_council": "3"
+      },
+      "example_precinct": "SEA 43-1817"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-43-state-representative-1",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-43-state-representative-1",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "2",
+        "legislative": "43",
+        "seattle_council": "4"
+      },
+      "example_precinct": "SEA 43-1962"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-43-state-representative-1",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-8",
+        "ld-43-state-representative-1",
+        "ld-43-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-9"
+      ],
+      "districts": {
+        "congressional": "9",
+        "county_council": "8",
+        "legislative": "43",
+        "seattle_council": "3"
+      },
+      "example_precinct": "SEA 43-3974"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "2",
+        "legislative": "46",
+        "seattle_council": "6"
+      },
+      "example_precinct": "SEA 46-1262"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "46",
+        "seattle_council": "6"
+      },
+      "example_precinct": "SEA 46-1263"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "king-county-council-2",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "2",
+        "legislative": "46",
+        "seattle_council": "4"
+      },
+      "example_precinct": "SEA 46-1271"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "1",
+        "legislative": "46",
+        "seattle_council": "4"
+      },
+      "example_precinct": "SEA 46-1279"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "46",
+        "seattle_council": "5"
+      },
+      "example_precinct": "SEA 46-1311"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "4",
+        "legislative": "46",
+        "seattle_council": "4"
+      },
+      "example_precinct": "SEA 46-1357"
+    },
+    {
+      "contest_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "contested_ids": [
+        "king-county-assessor",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-5",
+        "seattle-proposition-1-library-levy",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7"
+      ],
+      "districts": {
+        "congressional": "7",
+        "county_council": "1",
+        "legislative": "46",
+        "seattle_council": "5"
+      },
+      "example_precinct": "SEA 46-2142"
+    }
+  ],
+  "source_sha256": "7e531ffe93caac8968988dcfc093ce89522ad8b384344b715d260849341b0d73"
+}

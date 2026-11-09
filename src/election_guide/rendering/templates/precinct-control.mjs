@@ -6,6 +6,7 @@ import {
   ballotQuery,
   readPrecinctSelection,
   resolvePrecinct,
+  supportedPrecinctContract,
   withPrecinct,
 } from './precinct-ballot.mjs';
 import { clearPrecinct, loadPrecinct, savePrecinct } from './precinct-selection-store.mjs';
@@ -46,8 +47,9 @@ export function compactPrecinctName(area, precincts) {
  * @param {ReturnType<typeof createVotingAddressLookup>} [providedLookup] */
 export function wirePrecinctControl(contract, router, onSelection, providedLookup) {
   const root = document.querySelector('[data-precinct-control]');
-  if (contract?.election_id !== 'wa-2026-general' || !root) return;
+  if (!contract || !supportedPrecinctContract(contract) || !root) return;
   if (!contract.endorsements_path || !contract.comparisons_path) return;
+  const allowedCodes = new Set(contract.precincts.map((precinct) => precinct.code));
   const dialog = root.querySelector('dialog');
   const form = root.querySelector('form');
   const fields = /** @type {HTMLElement|null} */ (root.querySelector('[data-precinct-fields]'));
@@ -324,7 +326,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     const remembered =
       next === null
         ? clearPrecinct(contract.election_id)
-        : savePrecinct(contract.election_id, next);
+        : savePrecinct(contract.election_id, next, allowedCodes);
     storageWarning = remembered
       ? ''
       : 'This device could not remember the choice; the link still works.';
@@ -334,13 +336,13 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     restoreFocus();
   };
   render(
-    html`<div class="filter-select-control"><label class="filter-control-label" for="voting-precinct">${lookup ? 'Address or precinct' : 'Precinct'}</label><input class="filter-select" id="voting-precinct" data-ballot-search role="combobox" aria-autocomplete="list" aria-controls="ballot-options" aria-expanded="false" autocomplete="off" maxlength="300" @input=${edit} @keydown=${key} @compositionstart=${() => {
+    html`<div class="filter-select-control"><label class="filter-control-label" for="voting-precinct">${lookup ? 'Address or precinct' : 'Search precincts'}</label><input class="filter-select" id="voting-precinct" data-ballot-search role="combobox" aria-autocomplete="list" aria-controls="ballot-options" aria-expanded="false" autocomplete="off" maxlength="300" @input=${edit} @keydown=${key} @compositionstart=${() => {
       composing = true;
       edit();
     }} @compositionend=${() => {
       composing = false;
       edit();
-    }}><ul id="ballot-options" class="ballot-options" data-ballot-options role="listbox" aria-label="Matching addresses and precincts" hidden></ul></div>${lookup ? html`<p class="address-privacy">Typed text goes to King County GIS; selected address and coordinates go to county-maintained Esri services. Providers may retain requests. SEG remembers only your precinct.</p>` : nothing}`,
+    }}><ul id="ballot-options" class="ballot-options" data-ballot-options role="listbox" aria-label=${lookup ? 'Matching addresses and precincts' : 'Matching precincts'} hidden></ul></div>${lookup ? html`<p class="address-privacy">Typed text goes to King County GIS; selected address and coordinates go to county-maintained Esri services. Providers may retain requests. SEG remembers only your precinct.</p>` : nothing}`,
     fields,
   );
   submit.textContent = SELECT_LABEL;
@@ -388,7 +390,7 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
     router.replaceControlSearch(
       withPrecinct(
         router.controlSearch(),
-        resolvePrecinct(contract, loadPrecinct(contract.election_id)).code,
+        resolvePrecinct(contract, loadPrecinct(contract.election_id, allowedCodes)).code,
       ),
     );
   update();
@@ -402,21 +404,38 @@ export function wirePrecinctControl(contract, router, onSelection, providedLooku
 /** Project complete renderer-owned routes with the current ballot context.
  * @param {PrecinctBallotContract|null|undefined} contract @param {string} search */
 export function refreshPrecinctLinks(contract, search) {
-  if (contract?.election_id !== 'wa-2026-general') return;
-  const destinations = {
-    endorsements: contract.endorsements_path,
-    comparisons: contract.comparisons_path,
-    sources: contract.sources_path,
-  };
-  const selection = readPrecinctSelection(search, contract);
+  if (!contract || !supportedPrecinctContract(contract)) return;
+  refreshListLinks(
+    {
+      endorsements: contract.endorsements_path,
+      comparisons: contract.comparisons_path,
+      sources: contract.sources_path,
+    },
+    search,
+    contract,
+  );
+}
+
+/** @param {ListNavigation|null|undefined} destinations @param {string} search
+ * @param {PrecinctBallotContract|null|undefined} [contract] */
+export function refreshListLinks(destinations, search, contract) {
+  if (!destinations) return;
+  const supported = contract && supportedPrecinctContract(contract) ? contract : null;
+  const selection = supported ? readPrecinctSelection(search, supported) : null;
   for (const link of /** @type {NodeListOf<HTMLAnchorElement>} */ (
     document.querySelectorAll('[data-precinct-link]')
   )) {
+    // The Guide lens owns its Sources fragment and refreshes it with its query.
+    if (link.hasAttribute('data-sources-link')) continue;
     const key = /** @type {keyof typeof destinations} */ (link.dataset.precinctLink);
     const target = destinations[key];
     if (!target) continue;
     const query =
-      key === 'sources' ? ballotQuery(search) : withPrecinct(ballotQuery(search), selection.code);
+      supported && selection
+        ? key === 'sources'
+          ? ballotQuery(search)
+          : withPrecinct(ballotQuery(search), selection.code)
+        : ballotQuery(search, true, false);
     link.href = `${target}${query}`;
   }
 }

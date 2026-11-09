@@ -236,7 +236,10 @@ def validate_rendered_guide(
         # The band's nav grows an Updates link under the same "state, not
         # option" gate `documents.py`'s `_corrections_href` follows (#290).
         expected_html_links.add(f"/e/{view_model.metadata.election_id}/updates/")
-    if view_model.precinct_ballot is not None:
+    if (
+        view_model.precinct_ballot is not None
+        and view_model.precinct_ballot.address_lookup is not None
+    ):
         expected_html_links.add(PRECINCT_LOOKUP_HREF)
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     required_site_metadata = {

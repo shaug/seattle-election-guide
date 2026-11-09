@@ -496,3 +496,17 @@ The canonical JSON report exits with status 1 and records `result: fail` for inv
 ancestry, bundle integrity, or content drift. Preserve it for #450 and the #440 closeout evidence.
 This command verifies the general release bundle only; complete two-election route and deployment-
 manifest composition remains the separate `hosting verify` gate.
+
+
+## Historical capability admission (#723)
+
+A reviewed historical geographic supplement is a separate election-specific input,
+not a replacement immutable election release or result correction. Source1.2
+requires full offline evidence/custody/membership admission and deployment3.1
+provenance in addition to the existing authenticated archive/current-presentation
+checks. Primary11 retains its original ZIP, VM, inventory, results and pins.
+Current controls/defaults and the direct-only August capability require the normal
+current-head gate, reproducibility, staged/strict verification, authenticated
+Updates comparison and native selection acceptance. Supplement retrieval or dataset
+publication dates never become election/count/check clocks. The original historical
+archive remains independently readable and verifiable under its original schema.

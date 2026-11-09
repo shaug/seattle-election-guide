@@ -40,8 +40,8 @@
 
 {# One election-control composition shared by every election view. Pages may
    supply their ballot options and binary View values, but not rearrange or
-   replace its slots. Admitted general precinct views use the approved compact
-   Precinct / View / Races / Ballot composition; other views keep the legacy row. #}
+   replace its slots. Current list views use the approved compact composition. The optional
+   Precinct slot requires an independently admitted election capability. #}
 {% macro election_controls(
   aria_label,
   extra_class,
@@ -57,14 +57,14 @@
   status_extra_class='',
   status_text='',
   precinct_enabled=false,
+  precinct_address_enabled=false,
   sources_count=none,
   sources_href=''
 ) -%}
 {% set ballot_options = caller() %}
-{% call control_bar(aria_label, extra_class, precinct_enabled, sources_count is not none) %}
-  {% if precinct_enabled %}
+{% call control_bar(aria_label, extra_class, true, sources_count is not none) %}
   <div class="compact-filter-controls">
-  {% include '_precinct_control.html.j2' %}
+  {% if precinct_enabled %}{% include '_precinct_control.html.j2' %}{% endif %}
   {% call compact_select('view', 'View', 'compact-view-select', name=view_name) %}
     {% for option in view_options %}<option value="{{ option.value }}"{% if option.id %} id="{{ option.id }}"{% endif %}{% if option.attributes %} {{ option.attributes | safe }}{% endif %}{% if option.checked %} selected{% endif %}>{{ option.label }}</option>{% endfor %}
   {% endcall %}
@@ -73,11 +73,6 @@
   {% endcall %}
   {% call compact_select('ballot', 'Ballot', ballot_id, ballot_attributes) %}{{ ballot_options | safe }}{% endcall %}
   </div>
-  {% else %}
-  {% call labeled_select('Ballot', ballot_id, ballot_attributes, ballot_extra_class) %}{{ ballot_options | safe }}{% endcall %}
-  {{ segmented_radio('View', view_name, view_options, 'view-setting', precinct_enabled) }}
-  {{ segmented_radio('Races', race_name, race_options, 'view-setting', precinct_enabled) }}
-  {% endif %}
   {% if sources_count is not none %}
   <div class="compact-source-row">
   <div class="compact-source-slot" data-lens-banner>

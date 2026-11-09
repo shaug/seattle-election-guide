@@ -52,6 +52,8 @@ interface GuidePayload {
   sources: LensSource[];
   preliminary_recency?: PreliminaryRecency[];
   precinct_ballot: PrecinctBallotContract | null;
+  race_mode_query_enabled?: boolean;
+  list_navigation?: ListNavigation | null;
   races: RaceDisplay[];
   filter_scopes: (FilterScope | CoveredFilterScope)[];
   sources_page_path: string;
@@ -112,6 +114,7 @@ interface PrecinctBallotContract {
   sources_path: string | null;
   precincts: PrecinctContests[];
   address_lookup?: AddressLookupContext | null;
+  supplement?: HistoricalPrecinctProvenance | null;
 }
 interface PrecinctContests {
   code: string;
@@ -130,6 +133,27 @@ interface AddressSourceIdentity {
   item: string;
   data: number;
   schema_edit: number;
+}
+/**
+ * Current supplement authority; never an archive result or capture clock.
+ */
+interface HistoricalPrecinctProvenance {
+  schema_version?: "1.0";
+  election_id: "wa-2026-primary";
+  source_git_commit: string;
+  artifact_path: string;
+  artifact_sha256: string;
+  archive_view_model_sha256: string;
+  archive_inventory_sha256: string;
+  mapping_hash: string;
+}
+/**
+ * Complete renderer-owned list routes, independent of geographic capability.
+ */
+interface ListNavigation {
+  endorsements: string | null;
+  comparisons: string | null;
+  sources: string | null;
 }
 /**
  * One race as the guide's own card renders it.
@@ -402,7 +426,7 @@ interface SourcesTreeSource {
   also_in: string[];
 }
 /**
- * General-only query capability; the legacy Sources contract stays unchanged.
+ * Current query capability; the historical type name remains readable.
  */
 interface GeneralSourcesPayload {
   schema_version: "1.0";
@@ -423,6 +447,8 @@ interface GeneralSourcesPayload {
  */
 interface ComparisonsPayload {
   precinct_ballot: PrecinctBallotContract | null;
+  race_mode_query_enabled?: boolean;
+  list_navigation?: ListNavigation | null;
   schema_version: "1.0";
   data_version: string;
   default_columns: string[];

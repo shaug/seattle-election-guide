@@ -317,6 +317,10 @@ def test_candidate_build_uses_resolved_inputs_and_one_commit_timestamp(
     path = root / "config/hosting/site.yaml"
     payload = yaml.safe_load(path.read_text())
     payload["elections"] = payload["elections"][:1]
+    # This fixture deliberately retains only the current election. Historical
+    # capabilities must never outlive their historical election declaration.
+    payload["schema_version"] = "1.1"  # Current presentation, no historical supplement.
+    payload.pop("historical_capabilities")
     payload["elections"][0].pop("publication_request", None)
     path.write_text(yaml.safe_dump(payload))
     _git(root, "init", "-q")

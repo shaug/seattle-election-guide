@@ -223,3 +223,28 @@ test('an eligible only-uncontested scope stays offered in Contested mode', async
   assert.equal(document.getElementById('race-ld').hidden, true);
   assert.match(document.querySelector('#filter-status').textContent, /0 contested races shown/);
 });
+
+test('current primary defaults to Contested without geography while legacy payload stays All', async () => {
+  const document = installDom(GUIDE_URL);
+  document.body.innerHTML = guideMarkup();
+  const { wireGuideFilters } = await import(
+    '../../src/election_guide/rendering/templates/guide-filters.mjs'
+  );
+  const { createLensRouter } = await import(
+    '../../src/election_guide/rendering/templates/lens-route.mjs'
+  );
+  const filters = wireGuideFilters(
+    {
+      filter_scopes: FILTER_SCOPES,
+      precinct_ballot: null,
+      race_mode_query_enabled: true,
+    },
+    createLensRouter(),
+  );
+  assert.equal(document.getElementById('race-mayor').hidden, false);
+  assert.equal(document.getElementById('race-ld').hidden, true);
+  window.history.replaceState(null, '', `${GUIDE_URL}?races=all`);
+  filters.syncFromUrl();
+  filters.apply({ syncUrl: false });
+  assert.equal(document.getElementById('race-ld').hidden, false);
+});

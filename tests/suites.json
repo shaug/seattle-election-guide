@@ -214,6 +214,11 @@
     "tests": {},
     "partition": "integration-artifacts"
   },
+  "tests/test_historical_precinct_supplement.py": {
+    "suite": "contract",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
   "tests/test_historical_presentation.py": {
     "suite": "integration",
     "tests": {},
@@ -359,6 +364,11 @@
     "suite": "integration",
     "tests": {},
     "partition": "integration-artifacts"
+  },
+  "tests/test_primary_ui_parity.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-rendering"
   },
   "tests/test_production_check.py": {
     "suite": "unit",

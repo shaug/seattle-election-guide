@@ -1,4 +1,4 @@
-"""General-only covered contest sets; no scoring, section or ordering policy."""
+"""Election-specific covered contest sets; no scoring, section or ordering policy."""
 
 import hashlib
 from pathlib import Path
@@ -31,6 +31,19 @@ class PrecinctContests(InventoryModel):
     jurisdiction_ids: list[str] = Field(default_factory=list)
 
 
+class HistoricalPrecinctProvenance(InventoryModel):
+    """Current supplement authority; never an archive result or capture clock."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    election_id: Literal["wa-2026-primary"]
+    source_git_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    artifact_path: str = Field(pattern=r"^e/wa-2026-primary/precinct-supplement\.json$")
+    artifact_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    archive_view_model_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    archive_inventory_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    mapping_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
 class PrecinctBallotContract(InventoryModel):
     schema_version: Literal["1.0"] = "1.0"
     election_id: str
@@ -40,6 +53,9 @@ class PrecinctBallotContract(InventoryModel):
     sources_path: str | None
     precincts: list[PrecinctContests]
     address_lookup: AddressLookupContext | None = None
+    supplement: HistoricalPrecinctProvenance | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
 
 def build_precinct_ballot(

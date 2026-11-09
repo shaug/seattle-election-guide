@@ -277,7 +277,7 @@ def complete_strict_report(
     expected_routes = plan_publication_route_checks(
         site, representative_race_path=contract.representative_race_path
     )
-    if site.schema_version == "1.1":
+    if site.current_presentation:
         try:
             planned = plan_presentation_assets(contract.observed)
         except ValueError:

@@ -336,3 +336,20 @@ test('general header navigation uses complete published paths and leaves legacy 
     assert.equal(links[1].getAttribute('href'), `${comparisonsPath}${query}`);
   }
 });
+
+test('current primary Sources preserves full literal precinct and race mode with the incoming race target', async () => {
+  const document = await wire(
+    `${SOURCES_URL}?precinct=SEA+46-1279&races=all&discard=1#race-mayor`,
+    payload({ race_mode_query_enabled: true, comparisons_path: '/e/wa-2026-primary/comparisons/' }),
+  );
+  for (const action of ['save', 'cancel', 'page-reset']) {
+    const href = new URL(
+      document.querySelector(`[data-sources-${action}]`).getAttribute('href'),
+      SOURCES_URL,
+    );
+    assert.equal(href.searchParams.get('precinct'), 'SEA 46-1279');
+    assert.equal(href.searchParams.get('races'), 'all');
+    assert.equal(href.searchParams.has('discard'), false);
+    if (action !== 'page-reset') assert.equal(href.hash, '#race-mayor');
+  }
+});

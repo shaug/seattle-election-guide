@@ -1,0 +1,689 @@
+{
+  "id" : "2ydw-3iau",
+  "name" : "August 2026 Primary Election - Final Precinct Results",
+  "assetType" : "dataset",
+  "attribution" : "King County Elections",
+  "attributionLink" : "https://kingcounty.gov/elections",
+  "averageRating" : 0,
+  "category" : "Voting & Elections",
+  "createdAt" : 1787104259,
+  "description" : "Final precinct level results for the August 4, 2026 Primary Election in King County, WA.",
+  "diciBackend" : false,
+  "displayType" : "table",
+  "downloadCount" : 143,
+  "hideFromCatalog" : false,
+  "hideFromDataJson" : false,
+  "licenseId" : "PUBLIC_DOMAIN",
+  "locked" : false,
+  "newBackend" : true,
+  "numberOfComments" : 0,
+  "oid" : 42416163,
+  "provenance" : "official",
+  "publicationAppendEnabled" : false,
+  "publicationDate" : 1787155885,
+  "publicationGroup" : 20527465,
+  "publicationStage" : "published",
+  "rowsUpdatedAt" : 1787155874,
+  "rowsUpdatedBy" : "5qns-jc5x",
+  "tableId" : 20527465,
+  "totalTimesRated" : 0,
+  "viewCount" : 779,
+  "viewLastModified" : 1787155885,
+  "viewType" : "tabular",
+  "approvals" : [ {
+    "reviewedAt" : 1787155885,
+    "reviewedAutomatically" : true,
+    "state" : "approved",
+    "submissionId" : 7628504,
+    "submissionObject" : "public_audience_request",
+    "submissionOutcome" : "change_audience",
+    "submittedAt" : 1787155885,
+    "targetAudience" : "public",
+    "workflowId" : 1496,
+    "submissionDetails" : {
+      "permissionType" : "READ"
+    },
+    "submissionOutcomeApplication" : {
+      "endedAt" : 1787155885,
+      "failureCount" : 0,
+      "startedAt" : 1787155885,
+      "status" : "success"
+    },
+    "submitter" : {
+      "id" : "5qns-jc5x",
+      "displayName" : "Chelseyann"
+    }
+  } ],
+  "clientContext" : {
+    "clientContextVariables" : [ ],
+    "inheritedVariables" : { }
+  },
+  "columns" : [ {
+    "id" : 641895153,
+    "name" : "Precinct",
+    "dataTypeName" : "text",
+    "description" : "",
+    "fieldName" : "precinct",
+    "position" : 1,
+    "renderTypeName" : "text",
+    "tableColumnId" : 170706444,
+    "cachedContents" : {
+      "non_null" : "228796",
+      "largest" : "YPT 48-1234",
+      "null" : "0",
+      "top" : [ {
+        "item" : "SEA 37-1608",
+        "count" : "103"
+      }, {
+        "item" : "SEA 46-1403",
+        "count" : "103"
+      }, {
+        "item" : "SEA 46-2295",
+        "count" : "103"
+      }, {
+        "item" : "SEA 46-2323",
+        "count" : "103"
+      }, {
+        "item" : "SEA 37-3729",
+        "count" : "103"
+      }, {
+        "item" : "SEA 46-2314",
+        "count" : "103"
+      }, {
+        "item" : "SEA 46-2361",
+        "count" : "103"
+      }, {
+        "item" : "SEA 37-1882",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-1555",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-1871",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-1838",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-1900",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-1898",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-1938",
+        "count" : "102"
+      }, {
+        "item" : "SEA 43-1859",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-3802",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-1617",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-1636",
+        "count" : "102"
+      }, {
+        "item" : "SEA 46-1271",
+        "count" : "102"
+      }, {
+        "item" : "SEA 37-1919",
+        "count" : "102"
+      } ],
+      "smallest" : "ADAIR",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : { }
+  }, {
+    "id" : 641895162,
+    "name" : "Race",
+    "dataTypeName" : "text",
+    "description" : "\t Measure or candidate race on the ballot.",
+    "fieldName" : "race",
+    "position" : 2,
+    "renderTypeName" : "text",
+    "tableColumnId" : 170706453,
+    "cachedContents" : {
+      "non_null" : "228796",
+      "largest" : "WOD 01-3193 Precinct Committee Officer - Democratic",
+      "null" : "0",
+      "top" : [ {
+        "item" : "Supreme Court Justice Position No. 7",
+        "count" : "24930"
+      }, {
+        "item" : "King County Assessor",
+        "count" : "24930"
+      }, {
+        "item" : "Supreme Court Justice Position No. 5",
+        "count" : "24930"
+      }, {
+        "item" : "Supreme Court Justice Position No. 3",
+        "count" : "22160"
+      }, {
+        "item" : "Supreme Court Justice Position No. 1",
+        "count" : "22160"
+      }, {
+        "item" : "Congressional District No. 7 United States Representative",
+        "count" : "9648"
+      }, {
+        "item" : "Congressional District No. 9 United States Representative",
+        "count" : "8550"
+      }, {
+        "item" : "City of Seattle Municipal Court Judge Position No. 5",
+        "count" : "8160"
+      }, {
+        "item" : "City of Seattle Proposition No. 1",
+        "count" : "6120"
+      }, {
+        "item" : "Northeast Electoral District Judge Position No. 1",
+        "count" : "5880"
+      }, {
+        "item" : "Congressional District No. 8 United States Representative",
+        "count" : "5599"
+      }, {
+        "item" : "Congressional District No. 1 United States Representative",
+        "count" : "4008"
+      }, {
+        "item" : "Metropolitan King County Council District No. 8",
+        "count" : "2640"
+      }, {
+        "item" : "Metropolitan King County Council District No. 2",
+        "count" : "2568"
+      }, {
+        "item" : "Legislative District No. 5 Representative Position No. 1",
+        "count" : "1764"
+      }, {
+        "item" : "Legislative District No. 46 Representative Position No. 1",
+        "count" : "1744"
+      }, {
+        "item" : "Legislative District No. 36 State Senator",
+        "count" : "1701"
+      }, {
+        "item" : "Legislative District No. 41 Representative Position No. 1",
+        "count" : "1656"
+      }, {
+        "item" : "Legislative District No. 34 Representative Position No. 2",
+        "count" : "1568"
+      }, {
+        "item" : "Legislative District No. 43 State Senator",
+        "count" : "1544"
+      } ],
+      "smallest" : "AUB 47-2700 Precinct Committee Officer - Democratic",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : { }
+  }, {
+    "id" : 641895154,
+    "name" : "LegislativeDistrict",
+    "dataTypeName" : "number",
+    "description" : "",
+    "fieldName" : "legislativedistrict",
+    "position" : 3,
+    "renderTypeName" : "number",
+    "tableColumnId" : 170706445,
+    "cachedContents" : {
+      "non_null" : "228743",
+      "largest" : "48",
+      "null" : "53",
+      "top" : [ {
+        "item" : "36",
+        "count" : "20868"
+      }, {
+        "item" : "46",
+        "count" : "20439"
+      }, {
+        "item" : "34",
+        "count" : "20075"
+      }, {
+        "item" : "37",
+        "count" : "18421"
+      }, {
+        "item" : "43",
+        "count" : "17974"
+      }, {
+        "item" : "41",
+        "count" : "15792"
+      }, {
+        "item" : "45",
+        "count" : "15049"
+      }, {
+        "item" : "5",
+        "count" : "14773"
+      }, {
+        "item" : "48",
+        "count" : "13873"
+      }, {
+        "item" : "47",
+        "count" : "12629"
+      }, {
+        "item" : "33",
+        "count" : "12580"
+      }, {
+        "item" : "30",
+        "count" : "12218"
+      }, {
+        "item" : "11",
+        "count" : "10979"
+      }, {
+        "item" : "32",
+        "count" : "9152"
+      }, {
+        "item" : "1",
+        "count" : "8176"
+      }, {
+        "item" : "12",
+        "count" : "3791"
+      }, {
+        "item" : "31",
+        "count" : "1954"
+      } ],
+      "smallest" : "1",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 641895155,
+    "name" : "CountyCouncil",
+    "dataTypeName" : "number",
+    "description" : "",
+    "fieldName" : "countycouncil",
+    "position" : 4,
+    "renderTypeName" : "number",
+    "tableColumnId" : 170706446,
+    "cachedContents" : {
+      "non_null" : "228743",
+      "largest" : "9",
+      "null" : "53",
+      "top" : [ {
+        "item" : "4",
+        "count" : "31895"
+      }, {
+        "item" : "2",
+        "count" : "30514"
+      }, {
+        "item" : "8",
+        "count" : "29517"
+      }, {
+        "item" : "1",
+        "count" : "28166"
+      }, {
+        "item" : "6",
+        "count" : "23807"
+      }, {
+        "item" : "9",
+        "count" : "23709"
+      }, {
+        "item" : "3",
+        "count" : "23665"
+      }, {
+        "item" : "7",
+        "count" : "19016"
+      }, {
+        "item" : "5",
+        "count" : "18454"
+      } ],
+      "smallest" : "1",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 641895156,
+    "name" : "CongressionalDistrict",
+    "dataTypeName" : "number",
+    "description" : "",
+    "fieldName" : "congressionaldistrict",
+    "position" : 5,
+    "renderTypeName" : "number",
+    "tableColumnId" : 170706447,
+    "cachedContents" : {
+      "non_null" : "228796",
+      "largest" : "9",
+      "null" : "0",
+      "top" : [ {
+        "item" : "7",
+        "count" : "95189"
+      }, {
+        "item" : "9",
+        "count" : "66791"
+      }, {
+        "item" : "8",
+        "count" : "39537"
+      }, {
+        "item" : "1",
+        "count" : "27279"
+      } ],
+      "smallest" : "1",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 641895157,
+    "name" : "SeattleCouncilDistrict",
+    "dataTypeName" : "number",
+    "description" : "",
+    "fieldName" : "seattlecouncildistrict",
+    "position" : 6,
+    "renderTypeName" : "number",
+    "tableColumnId" : 170706448,
+    "cachedContents" : {
+      "non_null" : "94111",
+      "largest" : "7",
+      "null" : "134685",
+      "top" : [ {
+        "item" : "1",
+        "count" : "15552"
+      }, {
+        "item" : "6",
+        "count" : "14935"
+      }, {
+        "item" : "3",
+        "count" : "14553"
+      }, {
+        "item" : "5",
+        "count" : "13542"
+      }, {
+        "item" : "4",
+        "count" : "12270"
+      }, {
+        "item" : "2",
+        "count" : "12235"
+      }, {
+        "item" : "7",
+        "count" : "11024"
+      } ],
+      "smallest" : "1",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 641895158,
+    "name" : "CounterGroup",
+    "dataTypeName" : "text",
+    "description" : "",
+    "fieldName" : "countergroup",
+    "position" : 7,
+    "renderTypeName" : "text",
+    "tableColumnId" : 170706449,
+    "cachedContents" : {
+      "non_null" : "228796",
+      "largest" : "Total",
+      "null" : "0",
+      "top" : [ {
+        "item" : "Total",
+        "count" : "228796"
+      } ],
+      "smallest" : "Total",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : { }
+  }, {
+    "id" : 641895161,
+    "name" : "CounterType",
+    "dataTypeName" : "text",
+    "description" : "\t Measure response, candidate, registered voters, overvotes, undervotes, total ballots counted",
+    "fieldName" : "countertype",
+    "position" : 8,
+    "renderTypeName" : "text",
+    "tableColumnId" : 170706452,
+    "cachedContents" : {
+      "non_null" : "228796",
+      "largest" : "Zhulan Li",
+      "null" : "0",
+      "top" : [ {
+        "item" : "Times Over Voted",
+        "count" : "27960"
+      }, {
+        "item" : "Times Under Voted",
+        "count" : "27960"
+      }, {
+        "item" : "Times Counted",
+        "count" : "27960"
+      }, {
+        "item" : "Registered Voters",
+        "count" : "27960"
+      }, {
+        "item" : "Write-in",
+        "count" : "26749"
+      }, {
+        "item" : "Scott Edwards",
+        "count" : "2770"
+      }, {
+        "item" : "Sharonda Amamilo",
+        "count" : "2770"
+      }, {
+        "item" : "Theo Angelis",
+        "count" : "2770"
+      }, {
+        "item" : "Jaime Michelle Hawk",
+        "count" : "2770"
+      }, {
+        "item" : "Dominique M Scarimbolo",
+        "count" : "2770"
+      }, {
+        "item" : "Colleen Melody",
+        "count" : "2770"
+      }, {
+        "item" : "Mike Diaz",
+        "count" : "2770"
+      }, {
+        "item" : "Debra L. Stephens",
+        "count" : "2770"
+      }, {
+        "item" : "Karim A. Merchant",
+        "count" : "2770"
+      }, {
+        "item" : "David Stevens",
+        "count" : "2770"
+      }, {
+        "item" : "Laura Christensen Colberg",
+        "count" : "2770"
+      }, {
+        "item" : "Christopher Roberts",
+        "count" : "2770"
+      }, {
+        "item" : "Dave Larson",
+        "count" : "2770"
+      }, {
+        "item" : "Al Dams",
+        "count" : "2770"
+      }, {
+        "item" : "David R Shelvey",
+        "count" : "2770"
+      } ],
+      "smallest" : "Aaron McCloud",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : { }
+  }, {
+    "id" : 641895160,
+    "name" : "Party Preference",
+    "dataTypeName" : "text",
+    "description" : "",
+    "fieldName" : "party",
+    "position" : 9,
+    "renderTypeName" : "text",
+    "tableColumnId" : 170706451,
+    "cachedContents" : {
+      "non_null" : "142159",
+      "largest" : "(States No Party Preference)",
+      "null" : "86637",
+      "top" : [ {
+        "item" : "NP",
+        "count" : "111840"
+      }, {
+        "item" : "(Prefers Democratic Party)",
+        "count" : "17334"
+      }, {
+        "item" : "(Prefers Republican Party)",
+        "count" : "7855"
+      }, {
+        "item" : "(Prefers Independent Party)",
+        "count" : "1973"
+      }, {
+        "item" : "(Prefers Fifth Republic Party)",
+        "count" : "1072"
+      }, {
+        "item" : "(Prefers Socialist Workers Party)",
+        "count" : "855"
+      }, {
+        "item" : "(States No Party Preference)",
+        "count" : "389"
+      }, {
+        "item" : "(Prefers Libertarian Party)",
+        "count" : "271"
+      }, {
+        "item" : "(Prefers Standup-America Party)",
+        "count" : "207"
+      }, {
+        "item" : "(Prefers Cascade Democrat Party)",
+        "count" : "162"
+      }, {
+        "item" : "I affirm I am a Democrat.",
+        "count" : "147"
+      }, {
+        "item" : "I affirm I am a Republican.",
+        "count" : "28"
+      }, {
+        "item" : "(Prefers Democrat Party)",
+        "count" : "26"
+      } ],
+      "smallest" : "I affirm I am a Democrat.",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : { }
+  }, {
+    "id" : 641895159,
+    "name" : "SumOfCount",
+    "dataTypeName" : "number",
+    "description" : "",
+    "fieldName" : "sumofcount",
+    "position" : 10,
+    "renderTypeName" : "number",
+    "tableColumnId" : 170706450,
+    "cachedContents" : {
+      "non_null" : "228796",
+      "largest" : "981",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "47131"
+      }, {
+        "item" : "1",
+        "count" : "8005"
+      }, {
+        "item" : "2",
+        "count" : "4597"
+      }, {
+        "item" : "3",
+        "count" : "3556"
+      }, {
+        "item" : "4",
+        "count" : "3210"
+      }, {
+        "item" : "5",
+        "count" : "2974"
+      }, {
+        "item" : "7",
+        "count" : "2816"
+      }, {
+        "item" : "6",
+        "count" : "2773"
+      }, {
+        "item" : "8",
+        "count" : "2760"
+      }, {
+        "item" : "9",
+        "count" : "2692"
+      }, {
+        "item" : "10",
+        "count" : "2607"
+      }, {
+        "item" : "11",
+        "count" : "2589"
+      }, {
+        "item" : "12",
+        "count" : "2551"
+      }, {
+        "item" : "13",
+        "count" : "2377"
+      }, {
+        "item" : "14",
+        "count" : "2353"
+      }, {
+        "item" : "15",
+        "count" : "2308"
+      }, {
+        "item" : "16",
+        "count" : "2141"
+      }, {
+        "item" : "17",
+        "count" : "2030"
+      }, {
+        "item" : "18",
+        "count" : "1881"
+      }, {
+        "item" : "19",
+        "count" : "1774"
+      } ],
+      "smallest" : "0",
+      "count" : "228796",
+      "cardinality" : "228796"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  } ],
+  "grants" : [ {
+    "inherited" : false,
+    "type" : "viewer",
+    "flags" : [ "public" ]
+  } ],
+  "license" : {
+    "name" : "Public Domain"
+  },
+  "metadata" : {
+    "availableDisplayTypes" : [ "table", "fatrow", "page" ]
+  },
+  "owner" : {
+    "id" : "5qns-jc5x",
+    "displayName" : "Chelseyann",
+    "screenName" : "Chelseyann",
+    "type" : "interactive",
+    "flags" : [ "acceptedEula", "mayBeStoriesCoOwner" ]
+  },
+  "query" : { },
+  "rights" : [ "read" ],
+  "tableAuthor" : {
+    "id" : "5qns-jc5x",
+    "displayName" : "Chelseyann",
+    "screenName" : "Chelseyann",
+    "type" : "interactive",
+    "flags" : [ "acceptedEula", "mayBeStoriesCoOwner" ]
+  },
+  "tags" : [ "elections", "primary election", "precinct", "voting", "results", "election results" ],
+  "flags" : [ "default", "ownerMayBeContacted", "restorable", "restorePossibleForType" ]
+}

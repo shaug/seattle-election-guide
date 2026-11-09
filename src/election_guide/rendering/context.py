@@ -596,10 +596,8 @@ def _filter_options(view_model: PublicationViewModel) -> list[str]:
 
 
 def all_ballot_scope_label(view_model: PublicationViewModel) -> str:
-    """The all-scope copy shared by general selects and their published options."""
-    return (
-        "All ballot races" if view_model.precinct_ballot is not None else "All Seattle ballot races"
-    )
+    """Current list copy is independent of geographic capability."""
+    return "All ballot races"
 
 
 def filter_scope_groups(view_model: PublicationViewModel) -> list[FilterScopeGroupView]:

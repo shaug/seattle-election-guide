@@ -28,11 +28,15 @@ export function withPrecinct(search, code) {
  * Invalid/duplicate values stay explicit, so device memory cannot override them.
  * @param {string} search
  * @param {boolean} [includeRaceMode]
+ * @param {boolean} [includePrecinct]
  */
-export function ballotQuery(search, includeRaceMode = true) {
+export function ballotQuery(search, includeRaceMode = true, includePrecinct = true) {
   const query = new URLSearchParams();
   const incoming = new URLSearchParams(search);
-  for (const key of includeRaceMode ? ['precinct', 'races'] : ['precinct']) {
+  for (const key of [
+    ...(includePrecinct ? ['precinct'] : []),
+    ...(includeRaceMode ? ['races'] : []),
+  ]) {
     for (const value of incoming.getAll(key)) query.append(key, value);
   }
   return query.size ? `?${query}` : '';
@@ -52,4 +56,23 @@ export function withContestedOnly(search, contested, defaultContested = false) {
   if (contested === defaultContested) query.delete('races');
   else query.set('races', contested ? 'contested' : 'all');
   return query.size ? `?${query}` : '';
+}
+
+/** Historical selection requires its explicit reviewed supplement; no address context is inherited.
+ * @param {PrecinctBallotContract|null|undefined} contract
+ */
+export function supportedPrecinctContract(contract) {
+  if (contract?.election_id === 'wa-2026-general') return true;
+  const supplement = contract?.supplement;
+  return (
+    contract?.election_id === 'wa-2026-primary' &&
+    contract.schema_version === '1.0' &&
+    supplement?.schema_version === '1.0' &&
+    supplement?.election_id === contract.election_id &&
+    supplement.mapping_hash === contract.mapping_hash &&
+    /^[a-f0-9]{64}$/.test(contract.mapping_hash) &&
+    /^[a-f0-9]{40}$/.test(supplement.source_git_commit) &&
+    /^[a-f0-9]{64}$/.test(supplement.artifact_sha256) &&
+    contract.address_lookup === null
+  );
 }

@@ -113,7 +113,9 @@ export function wireGuideFilters(payload, router, onApply = () => {}) {
     ...document.querySelectorAll('[data-filter-section]'),
   ]);
 
-  const defaultContested = payload.precinct_ballot?.election_id === 'wa-2026-general';
+  const defaultContested =
+    payload.race_mode_query_enabled === true ||
+    payload.precinct_ballot?.election_id === 'wa-2026-general';
   let precinctIds = /** @type {Set<string>|null} */ (null);
   const scopeLabels = new Map(payload.filter_scopes.map((scope) => [scope.value, scope.label]));
   let knownScopes = new Set(scopeLabels.keys());

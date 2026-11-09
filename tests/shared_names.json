@@ -816,8 +816,7 @@
     "filter-control-label": [
       "template",
       "stylesheet",
-      "client",
-      "test"
+      "client"
     ],
     "filter-control-status": [
       "template",

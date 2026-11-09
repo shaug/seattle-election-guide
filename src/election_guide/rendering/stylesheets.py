@@ -38,10 +38,10 @@ from election_guide.rendering.bundler import TEMPLATE_DIR
 # every page stylesheet to exactly one page, and holds the pages named here to
 # the templates that exist.
 PAGE_STYLESHEETS: dict[str, tuple[str, ...]] = {
-    "guide": ("base.css", "lens-pages.css", "guide-race.css", "guide.css"),
+    "guide": ("base.css", "lens-pages.css", "guide-race.css", "compact-filters.css", "guide.css"),
     "race": ("base.css", "lens-pages.css", "guide-race.css", "race.css"),
     "sources": ("base.css", "lens-pages.css", "sources.css"),
-    "compare": ("base.css", "compare.css"),
+    "compare": ("base.css", "compact-filters.css", "compare.css"),
     "corrections": ("base.css", "corrections.css"),
     "updates": ("base.css", "updates.css"),
     "about": ("base.css", "about.css"),

@@ -55,17 +55,31 @@ def find_chrome() -> Path:
     raise ValueError("Chrome or Chromium is required; set CHROME_PATH to its executable")
 
 
-# Legacy screen controls are one select and four radios. Admitted general pages
-# instead use three native selects (#673). Precinct is a separately tested dialog;
-# neither presentation includes the page-anchored source controls.
+# Legacy inputs remain readable; current list presentation has three native selects.
+# Precinct and source navigation are separate capabilities, excluded from this count.
 EXPECTED_SCREEN_CONTROL_COUNT = 5
 
-# Reset has one exact query representation per admitted page capability. General
-# precinct pages bind ordinary browsing explicitly; primary/legacy pages stay bare.
+# Independent audit admission mirrors the typed direct-only historical boundary.
+# It does not infer capability from a path, name convention or DOM control.
+_SUPPORTED_PRECINCT_EXPRESSION = (
+    "(contract=>contract?.election_id==='wa-2026-general'||Boolean("
+    "contract?.election_id==='wa-2026-primary'&&contract.schema_version==='1.0'&&"
+    "contract.supplement?.schema_version==='1.0'&&"
+    "contract.supplement?.election_id===contract.election_id&&"
+    "contract.supplement.mapping_hash===contract.mapping_hash&&"
+    "/^[a-f0-9]{64}$/.test(contract.mapping_hash)&&"
+    "/^[a-f0-9]{40}$/.test(contract.supplement.source_git_commit)&&"
+    "/^[a-f0-9]{64}$/.test(contract.supplement.artifact_sha256)&&"
+    "contract.address_lookup===null))"
+)
+
+# Reset has one exact query per admitted geographic capability. A current list
+# without geography and an unchanged legacy payload both reset to the bare query.
 _RESET_QUERY_EXPRESSION = (
-    "(window.location.search===(JSON.parse(document.querySelector("
-    "'[data-client-payload]')?.textContent??'{}').precinct_ballot?.election_id==="
-    "'wa-2026-general'?'?precinct=all':''))"
+    "(()=>{const contract=JSON.parse(document.querySelector("
+    "'[data-client-payload]')?.textContent??'{}').precinct_ballot;"
+    f"return window.location.search===({_SUPPORTED_PRECINCT_EXPRESSION}(contract)"
+    "?'?precinct=all':'');})()"
 )
 
 # How long a settle may wait for the page's own work to finish. Every animation
@@ -259,8 +273,10 @@ def _capture_emulated_viewport(
                     ".filter(control=>!control.closest('[data-precinct-control]')&&"
                     "!control.matches('button[data-filter-open],[data-filter-cancel]')).length;"
                     "const precinct=document.querySelector('[data-precinct-control]');"
-                    "const precinctExpected=bindings.precinct_ballot?.election_id==="
-                    "'wa-2026-general';"
+                    f"const precinctExpected={_SUPPORTED_PRECINCT_EXPRESSION}"
+                    "(bindings.precinct_ballot);"
+                    "const currentControls=bindings.race_mode_query_enabled===true||"
+                    "precinctExpected;"
                     "const addressExpected=precinctExpected&&Boolean("
                     "bindings.precinct_ballot.address_lookup?.election_id==="
                     "bindings.precinct_ballot.election_id&&"
@@ -269,6 +285,12 @@ def _capture_emulated_viewport(
                     "const addressControlValid=addressExpected?Boolean("
                     "precinct?.querySelector('.address-privacy')):"
                     "!precinct?.querySelector('.address-privacy');"
+                    "const info=precinct?.querySelector('a.precinct-info');"
+                    "const infoValid=addressExpected?Boolean("
+                    "precinct?.querySelectorAll('a').length===1&&"
+                    f"info?.href==={json.dumps(PRECINCT_LOOKUP_HREF)}&&"
+                    "info?.target==='_blank'&&info?.getAttribute('rel')==='noopener noreferrer'&&"
+                    "info?.getAttribute('aria-label')?.trim()):precinct?.querySelectorAll('a').length===0;"
                     "const precinctControlValid=precinctExpected?Boolean("
                     "precinct?.closest('.screen-controls')&&"
                     "precinct.querySelectorAll('dialog').length===1&&"
@@ -276,12 +298,7 @@ def _capture_emulated_viewport(
                     "precinct.querySelector('label[for=voting-precinct]')&&"
                     "precinct.querySelector('[data-ballot-options][role=listbox]')&&"
                     "!precinct.querySelector('datalist')&&"
-                    "precinct.querySelectorAll('a').length===1&&"
-                    f"precinct.querySelector('a.precinct-info')?.href==={json.dumps(PRECINCT_LOOKUP_HREF)}&&"
-                    "precinct.querySelector('a.precinct-info')?.target==='_blank'&&"
-                    "precinct.querySelector('a.precinct-info')?.getAttribute('rel')==="
-                    "'noopener noreferrer'&&"
-                    "Boolean(precinct.querySelector('a.precinct-info')?.getAttribute('aria-label')?.trim())&&"
+                    "infoValid&&"
                     "precinct.querySelector('[data-precinct-submit][type=submit]')&&"
                     "precinct.querySelector('[data-precinct-cancel][type=button]')&&"
                     "precinct.querySelectorAll('input').length===1&&"
@@ -301,11 +318,12 @@ def _capture_emulated_viewport(
                     "noTimesText:!document.querySelector('.screen-guide')"
                     ".innerHTML.includes('Times comparison'),"
                     "supportAligned:supportAligned(),"
-                    "controlCountValid:controlCount===(precinctExpected?3:"
-                    f"{EXPECTED_SCREEN_CONTROL_COUNT})&&(!precinctExpected||"
+                    "controlCountValid:controlCount===(currentControls?3:"
+                    f"{EXPECTED_SCREEN_CONTROL_COUNT})&&(!currentControls||"
                     "['view','races','ballot'].every(role=>{"
                     "const select=document.querySelector('select[data-filter-native='+role+']');"
-                    "return Boolean(select&&select.options.length>=2&&select.labels.length&&"
+                    "return Boolean(select&&select.options.length===(role==='ballot'?"
+                    "bindings.filter_scopes.length:2)&&select.labels.length&&"
                     "select.getAttribute('aria-label'));}))});"
                     "})()"
                 ),
@@ -342,9 +360,10 @@ def _capture_emulated_viewport(
                     "'[data-filter-trigger=ballot] .compact-filter-trigger')??filter;"
                     "const status=document.querySelector('#filter-status');"
                     "const completeFilter=document.querySelector('#complete-filter');"
-                    "const defaultContested=JSON.parse(document.querySelector("
-                    "'[data-client-payload]').textContent).precinct_ballot?.election_id==="
-                    "'wa-2026-general';"
+                    "const filterBindings=JSON.parse(document.querySelector("
+                    "'[data-client-payload]').textContent);"
+                    "const defaultContested=filterBindings.race_mode_query_enabled===true||"
+                    "filterBindings.precinct_ballot?.election_id==='wa-2026-general';"
                     "const contestedFilter=document.querySelector('#contested-filter');"
                     "const nativeView=document.querySelector('[data-filter-native=view]');"
                     "const nativeRaces=document.querySelector('[data-filter-native=races]');"

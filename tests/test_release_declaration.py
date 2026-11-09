@@ -334,14 +334,18 @@ def test_prepare_refreshes_derived_registry_identity(repository: Path) -> None:
     assert resolve_release(SITE, repository=repository).current == refreshed.current
 
 
-def test_primary_resolves_legacy_input_locations(tmp_path: Path) -> None:
+@pytest.mark.parametrize("schema", ["1.0", "1.1"])
+def test_primary_resolves_legacy_input_locations(tmp_path: Path, schema: str) -> None:
     site = read_site_manifest(ROOT / SITE)
     primary = site.elections[1]
-    historical = site.model_copy(
-        update={"current_election_id": primary.election_id, "elections": [primary]}
+    historical = site.model_dump(mode="json", exclude={"historical_capabilities"})
+    historical.update(
+        schema_version=schema,
+        current_election_id=primary.election_id,
+        elections=[primary.model_dump(mode="json")],
     )
     manifest = tmp_path / "primary.yaml"
-    manifest.write_text(historical.model_dump_json())
+    manifest.write_text(json.dumps(historical))
     resolved = resolve_release(manifest, repository=ROOT)
     assert resolved.inputs.registry == ROOT / "config/sources/default.yaml"
     assert resolved.inputs.dataset == ROOT / "data/normalized/canonical-dataset.json"

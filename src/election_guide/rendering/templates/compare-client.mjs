@@ -28,7 +28,7 @@ import { projectCompactFilters } from './compact-filters.mjs';
 
 import { render } from 'lit-html';
 import { availableBallotScopes, makeBallotScopeProjector } from './ballot-scopes.mjs';
-import { readClientPayload } from './client-payload.mjs';
+import { PAYLOAD_NOTICE, PAYLOAD_NOTICE_SELECTOR, readClientPayload } from './client-payload.mjs';
 import { migrateCompareState } from './compare-migrate.mjs';
 import { createCompareRouter } from './compare-route.mjs';
 import { cellAgreement, createColumnSignalEngine, rowDiffers } from './compare-signals.mjs';
@@ -49,9 +49,14 @@ import {
   readContestedOnly,
   readPrecinctSelection,
   resolvePrecinct,
+  supportedPrecinctContract,
   withContestedOnly,
 } from './precinct-ballot.mjs';
-import { refreshPrecinctLinks, wirePrecinctControl } from './precinct-control.mjs';
+import {
+  refreshListLinks,
+  refreshPrecinctLinks,
+  wirePrecinctControl,
+} from './precinct-control.mjs';
 
 /**
  * What a reader is told when the link they arrived on says nothing this page
@@ -100,15 +105,25 @@ export function wireComparisons() {
   const payload = /** @type {ComparisonsPayload} */ (admitted);
   const personalization = payload.personalization;
   const comparisons = payload.comparisons;
-  const generalRaceMode = payload.precinct_ballot?.election_id === 'wa-2026-general';
+  const queryRaceMode =
+    payload.race_mode_query_enabled === true ||
+    payload.precinct_ballot?.election_id === 'wa-2026-general';
   const context = compareContext(
     personalization,
     payload.data_version,
     comparisons,
     payload.default_columns,
     payload.results_available,
-    generalRaceMode,
+    queryRaceMode,
   );
+  if (encodeCompareFragment({ columns: payload.default_columns }, context).status !== 'ok') {
+    const invalid = document.querySelector(PAYLOAD_NOTICE_SELECTOR);
+    if (invalid instanceof HTMLElement) {
+      invalid.hidden = false;
+      invalid.textContent = PAYLOAD_NOTICE;
+    }
+    return;
+  }
   const raceResults = new Map(Object.entries(payload.race_results));
   const engine = createColumnSignalEngine(personalization, comparisons, raceResults);
   /** @type {HTMLTableElement} */
@@ -222,7 +237,7 @@ export function wireComparisons() {
   const auditedDefault = () => ({
     columns: [...payload.default_columns],
     differencesOnly: false,
-    contestedOnly: generalRaceMode ? readContestedOnly(router.controlSearch(), true) : false,
+    contestedOnly: queryRaceMode ? readContestedOnly(router.controlSearch(), true) : false,
     section: 'all',
   });
 
@@ -346,7 +361,7 @@ export function wireComparisons() {
   function writeFragment(mode) {
     const encoded = encodeCompareFragment(state, context);
     if (encoded.status !== 'ok') return false;
-    const search = generalRaceMode
+    const search = queryRaceMode
       ? withContestedOnly(router.controlSearch(), state.contestedOnly, true)
       : router.controlSearch();
     router.write(encoded.fragment, mode, search);
@@ -366,7 +381,7 @@ export function wireComparisons() {
   function readAddress() {
     // Membership and fragment policy must describe the same incoming entry.
     const contract = payload.precinct_ballot;
-    if (contract?.election_id === 'wa-2026-general') {
+    if (contract && supportedPrecinctContract(contract)) {
       precinctIds = resolvePrecinct(
         contract,
         readPrecinctSelection(router.controlSearch(), contract).code,
@@ -374,8 +389,8 @@ export function wireComparisons() {
     }
     const outcome = resolve(decodeCompareFragment(router.fragment(), context));
     if (outcome.state === null) {
-      // An anchor keeps the columns, while the query still owns general race mode.
-      if (generalRaceMode) {
+      // An anchor keeps the columns, while the query still owns list race mode.
+      if (queryRaceMode) {
         state.contestedOnly = readContestedOnly(router.controlSearch(), true);
         committed = snapshot(state);
       }
@@ -384,7 +399,7 @@ export function wireComparisons() {
       return;
     }
     state = snapshot(outcome.state);
-    if (generalRaceMode) state.contestedOnly = readContestedOnly(router.controlSearch(), true);
+    if (queryRaceMode) state.contestedOnly = readContestedOnly(router.controlSearch(), true);
     normalizeScope();
     linkNotice = outcome.notice;
     changeNotice = '';
@@ -395,7 +410,7 @@ export function wireComparisons() {
     // A migrated state replaces the stale link it was resolved from. If the
     // codec will not write it, nothing can carry it: the page falls back to the
     // audited default, clears the link, and says which of the two happened.
-    if ((outcome.address === 'rewrite' || generalRaceMode) && !writeFragment('replace')) {
+    if ((outcome.address === 'rewrite' || queryRaceMode) && !writeFragment('replace')) {
       state = auditedDefault();
       linkNotice =
         outcome.address === 'rewrite' ? UNMIGRATABLE_LINK_NOTICE : UNSHAREABLE_VIEW_NOTICE;
@@ -685,7 +700,7 @@ export function wireComparisons() {
       if (
         state.contestedOnly &&
         !contestedIds.has(display.race_id) &&
-        !(generalRaceMode && display.race_type === 'measure')
+        display.race_type !== 'measure'
       )
         continue;
       total += 1;
@@ -805,7 +820,9 @@ export function wireComparisons() {
   // checkbox the reader clicked reports the state that survived, not the one
   // they asked for.
   function renderPage() {
-    refreshPrecinctLinks(payload.precinct_ballot, router.controlSearch());
+    if (payload.list_navigation)
+      refreshListLinks(payload.list_navigation, router.controlSearch(), payload.precinct_ballot);
+    else refreshPrecinctLinks(payload.precinct_ballot, router.controlSearch());
     const text = disclosure();
     notice.hidden = text === '';
     notice.textContent = text;
@@ -860,7 +877,7 @@ export function wireComparisons() {
       event.preventDefault();
       const currentRaceMode = state.contestedOnly;
       state = snapshot(decoded.state);
-      if (generalRaceMode) state.contestedOnly = currentRaceMode;
+      if (queryRaceMode) state.contestedOnly = currentRaceMode;
       commit();
     });
   });
