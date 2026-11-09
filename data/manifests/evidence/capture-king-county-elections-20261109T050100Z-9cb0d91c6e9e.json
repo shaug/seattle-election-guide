@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 17246,
+  "canonical_url": "https://data.kingcounty.gov/api/views/2ydw-3iau",
+  "capture_method": "manual_upload",
+  "content_sha256": "f03a165787c646fc0cf927068b3d7ad08fcd5873e4ebc5effa4545d4ed4faf92",
+  "http_status": 200,
+  "id": "capture-king-county-elections-20261109T050100Z-9cb0d91c6e9e",
+  "media_type": "application/json; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Official public dataset metadata. Offline custody import of the original Root GET; actual HTTP metadata is retained in the acquisition receipt. No fetch by this command.",
+  "requested_url": "https://data.kingcounty.gov/api/views/2ydw-3iau",
+  "retrieved_at": "2026-11-09T05:01:00.205303Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-elections",
+  "storage_reference": "sha256/f0/f03a165787c646fc0cf927068b3d7ad08fcd5873e4ebc5effa4545d4ed4faf92",
+  "storage_scope": "repository",
+  "title": "Official King County dataset 2ydw-3iau metadata for the August 4, 2026 primary",
+  "updated_at": null
+}

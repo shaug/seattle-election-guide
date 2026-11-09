@@ -185,3 +185,77 @@ All existing source, eligibility, scoring and Races controls remain in force.
 Other elections retain their existing section/sequence behavior until they have
 an explicitly registered, reviewed election-specific map. The composite's other
 county contests do not expand SEG's publication inventory or certify its coverage.
+
+## Reviewed August historical precinct supplement (#723)
+
+`config/elections/wa-2026-primary-precinct-supplement.json` is a separately reviewed
+capability over unchanged Primary11, whose original VM has no precinct contract.
+It binds original archive source `ccce7f3f0285e39bb541d7e2984e36b8e92e1595`, VM
+`78b7afc76c77ebe58d9f5195a9ee26fbeceefd7a46538953664e9760d3f9fa22` and original
+inventory `b1d11782df4a0cc7c8b2c60024d97d73951298685cd08de4071465b8a5137088`.
+No source choice, certified outcome, vote counter, result/evidence clock or archive
+byte is replaced. The mapping hash is
+`f702f4f8b01833d5ca81285d908a4fe70ebe1cf3d7f6bbab47cd7750a9a31082`.
+
+The official King County dataset is `2ydw-3iau`, “August 2026 Primary Election -
+Final Precinct Results,” independently identified by its official metadata and
+[the federal catalog](https://catalog.data.gov/dataset/august-2026-primary-election-final-precinct-results).
+Its literal CSV supplies Precinct, Race, LegislativeDistrict, CountyCouncil,
+CongressionalDistrict and SeattleCouncilDistrict, plus counter fields. Admission
+uses literal districts and Race occurrences for geography; counters establish
+complete unique source rows and never overwrite archived tallies. Neither a
+precinct name convention nor November GIS supplies historical geography.
+
+The complete228796-row corpus has2770 distinct precinct names. The1020 names with
+Seattle council districts1–7 exactly match the July official Seattle crosswalk and
+its council assignments, with no missing/extra/conflicting district tuples. Each
+precinct/race pair has one Registered Voters and Times Counted record. Across31
+district tuples,666 precincts cover12 public contests and354 cover11, totaling11886
+precinct/public-contest memberships. Direct official Race membership and original
+inventory jurisdiction intersection must agree for every precinct. The applicable
+union contains30 of the32 public archive contests. Both Legislative District11
+records remain intact in All32 but match no reviewed Seattle precinct; their
+County source occurrences exist outside that Seattle electorate. PCO occurrences
+are verified separately and do not enter the public major-contest filter.
+
+The source has no separate numeric precinct code. The exact full official name is
+an allowlisted **application ID** (for example `SEA 46-1279`), preserved as a distinct
+string in the URL and election-specific memory. No official numeric-code claim or
+geographic fact is decoded from it. Unsupported/ambiguous IDs fail safely. Primary
+supports direct selection only; its null address context cannot enable November
+address suggestions/resolution or the current County address-map promise.
+
+### Source custody and clocks
+
+Original response bytes are retained without conversion in the normal official
+content-addressed evidence store:
+
+- CSV: `data/evidence/official/sha256/7e/7e531ffe93caac8968988dcfc093ce89522ad8b384344b715d260849341b0d73`,
+ 25284356 bytes, SHA-256 `7e531ffe93caac8968988dcfc093ce89522ad8b384344b715d260849341b0d73`.
+ Capture `data/manifests/evidence/capture-king-county-elections-20261109T045956Z-2f9084b84a30.json`.
+- Metadata: `data/evidence/official/sha256/f0/f03a165787c646fc0cf927068b3d7ad08fcd5873e4ebc5effa4545d4ed4faf92`,
+ 17246 bytes, SHA-256 `f03a165787c646fc0cf927068b3d7ad08fcd5873e4ebc5effa4545d4ed4faf92`.
+ Capture `data/manifests/evidence/capture-king-county-elections-20261109T050100Z-9cb0d91c6e9e.json`.
+
+These are offline imports of actual200 responses, not new fetches by evidence
+capture. CSV retrieval ended November9,2026 at04:59:56.231660Z; metadata retrieval
+ended05:01:00.205303Z. The sanitized acquisition receipt retains original URLs,
+start/end clocks, status, size and hashes; full response headers and anonymous
+cookies remain private acquisition evidence. Review is explicitly separate.
+The source metadata records dataset creation epoch1787104259 (August19 01:50:59Z),
+row-update epoch1787155874 (August19 16:11:14Z), and publicationDate/viewLastModified
+1787155885 (August19 16:11:25Z). Those identify dataset events. Publication/update
+times for the exact later exported CSV and metadata response serializations are
+unknown, so their capture `published_at`/`updated_at` remain null. None of these
+dataset, retrieval or review clocks is a publisher count/export/check clock.
+
+A retained August19 official CSV also contains the district fields. Its original capture is
+`data/manifests/evidence/capture-king-county-elections-20260819T231339Z-bef1eb29cc7a.json`,
+raw `data/evidence/official/sha256/4b/4b497f6433b7dd59e3f4d97b45865e6726efc5ddda8f01a9d435088aca865ba7`,
+21379416 bytes, SHA-256 `4b497f6433b7dd59e3f4d97b45865e6726efc5ddda8f01a9d435088aca865ba7`.
+Bounded offline corroboration compared only verified ASCII Precinct/Race/district
+columns using a byte-preserving single-byte parse (the old body is not UTF-8).
+All1020 Seattle names, district tuples and11924 Seattle precinct/race memberships
+including PCOs exactly agree with the new corpus. No unrelated counter-name
+decoding or raw conversion is claimed. The complete new export remains the chosen
+admitted input; the older evidence remains unchanged.

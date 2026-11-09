@@ -33,7 +33,8 @@ const AUDITED_PAGE = readFileSync(
 );
 
 // The DOM first, then lit-html and anything that reaches it: see dom.mjs.
-const document = installDom(PAGE_URL);
+// The SSR baseline contains every race; explicit All requests that same state.
+const document = installDom(`${PAGE_URL}?races=all`);
 const { wireComparisons } = await import(
   '../../src/election_guide/rendering/templates/compare-client.mjs'
 );
@@ -67,7 +68,7 @@ assert.ok(firstAuditedBody, 'the audited fixture rendered no row groups');
 
 wireComparisons();
 
-test('booting at the audited default leaves the row groups exactly as rendered', () => {
+test('booting at explicit All leaves the row groups exactly as rendered', () => {
   assert.ok(
     rowGroups(table)[0] === firstAuditedBody,
     'the client rebuilt the row groups at the audited default. The server renders the ' +
@@ -88,10 +89,11 @@ test('the head is taken over at boot, because its controls cannot be audited mar
 
 /** @param {string} selector */
 function toggle(selector) {
-  const input = /** @type {HTMLInputElement} */ (document.querySelector(selector));
+  const input = /** @type {HTMLOptionElement} */ (document.querySelector(selector));
   assert.ok(input, `the audited fixture has no ${selector}`);
-  input.checked = true;
-  input.dispatchEvent(new Event('change', { bubbles: true }));
+  const select = input.closest('select');
+  select.value = input.value;
+  select.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 test('the audited restore is a render, and it reproduces the audited markup', () => {

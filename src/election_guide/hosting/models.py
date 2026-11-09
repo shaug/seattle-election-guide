@@ -9,6 +9,7 @@ from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from election_guide.publication.precinct_ballot import HistoricalPrecinctProvenance
 from election_guide.rendering.models import PagePresentation
 from election_guide.validation import validated_http_url
 
@@ -64,13 +65,46 @@ class PublishedElection(HostingModel):
     bundle_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
 
 
+class HistoricalCapabilityRef(HostingModel):
+    """Reviewed current capability input, separate from an immutable release."""
+
+    path: str
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @field_validator("path")
+    @classmethod
+    def validate_path(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if (
+            path.is_absolute()
+            or ".." in path.parts
+            or "\\" in value
+            or path.as_posix() != value
+            or not value.startswith("config/elections/")
+            or not value.endswith(".json")
+        ):
+            raise ValueError("historical capability path must be a safe election configuration")
+        return value
+
+
 class SiteManifest(HostingModel):
     """Versioned source of truth for one complete Pages deployment."""
 
-    schema_version: Literal["1.0", "1.1"] = "1.0"
+    schema_version: Literal["1.0", "1.1", "1.2"] = "1.0"
     canonical_origin: str
     current_election_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     elections: list[PublishedElection] = Field(min_length=1)
+    historical_capabilities: dict[str, HistoricalCapabilityRef] = Field(
+        default_factory=dict, exclude_if=lambda value: not value
+    )
+
+    @property
+    def current_presentation(self) -> bool:
+        return self.schema_version != "1.0"
+
+    @property
+    def deployment_schema(self) -> str:
+        return {"1.0": "2.0", "1.1": "3.0", "1.2": "3.1"}[self.schema_version]
 
     @field_validator("canonical_origin")
     @classmethod
@@ -89,6 +123,12 @@ class SiteManifest(HostingModel):
             raise ValueError("site manifest current election is not published")
         if election_ids[0] != self.current_election_id:
             raise ValueError("site manifest must list the current election first")
+        if self.schema_version != "1.2" and "historical_capabilities" in self.model_fields_set:
+            raise ValueError("historical capabilities require source schema1.2")
+        if self.schema_version == "1.2" and not self.historical_capabilities:
+            raise ValueError("source schema1.2 requires a reviewed historical capability")
+        if set(self.historical_capabilities) - (set(election_ids) - {self.current_election_id}):
+            raise ValueError("historical capabilities must name declared historical elections")
         if any(
             election.publication_request is not None
             and election.election_id != self.current_election_id
@@ -129,12 +169,15 @@ class DeployedElection(HostingModel):
     updates_projection: UpdatesProjection | None = Field(
         default=None, exclude_if=lambda value: value is None
     )
+    precinct_supplement: HistoricalPrecinctProvenance | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
 
 class DeploymentManifest(HostingModel):
     """Integrity contract for one completed Pages artifact."""
 
-    schema_version: Literal["2.0", "3.0"] = "2.0"
+    schema_version: Literal["2.0", "3.0", "3.1"] = "2.0"
     canonical_origin: str
     current_election_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     elections: list[DeployedElection] = Field(min_length=1)
@@ -167,10 +210,21 @@ class DeploymentManifest(HostingModel):
     @model_validator(mode="after")
     def validate_elections(self) -> DeploymentManifest:
         for election in self.elections:
-            if self.schema_version == "3.0" and election.presentation is None:
-                raise ValueError("deployment schema3.0 requires election presentation provenance")
+            if self.schema_version in {"3.0", "3.1"} and election.presentation is None:
+                raise ValueError("deployment schema3 requires election presentation provenance")
             if self.schema_version == "2.0" and "presentation" in election.model_fields_set:
                 raise ValueError("deployment schema2.0 cannot declare presentation provenance")
+            if self.schema_version != "3.1" and "precinct_supplement" in election.model_fields_set:
+                raise ValueError("historical precinct supplements require deployment schema3.1")
+            if election.precinct_supplement is not None and (
+                election.precinct_supplement.election_id != election.election_id
+                or election.election_id == self.current_election_id
+            ):
+                raise ValueError("precinct supplement must belong to its historical election")
+        if self.schema_version == "3.1" and not any(
+            e.precinct_supplement is not None for e in self.elections
+        ):
+            raise ValueError("deployment schema3.1 requires a historical precinct supplement")
         election_ids = [election.election_id for election in self.elections]
         if len(election_ids) != len(set(election_ids)):
             raise ValueError("deployment manifest repeats an election ID")

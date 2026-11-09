@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 25284356,
+  "canonical_url": "https://data.kingcounty.gov/api/v3/views/2ydw-3iau/export.csv?accessType=DOWNLOAD",
+  "capture_method": "manual_upload",
+  "content_sha256": "7e531ffe93caac8968988dcfc093ce89522ad8b384344b715d260849341b0d73",
+  "http_status": 200,
+  "id": "capture-king-county-elections-20261109T045956Z-2f9084b84a30",
+  "media_type": "text/csv; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Official public record. Offline custody import of the original Root GET; actual HTTP metadata is retained in the acquisition receipt. No fetch by this command.",
+  "requested_url": "https://data.kingcounty.gov/api/v3/views/2ydw-3iau/export.csv?accessType=DOWNLOAD",
+  "retrieved_at": "2026-11-09T04:59:56.231660Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-elections",
+  "storage_reference": "sha256/7e/7e531ffe93caac8968988dcfc093ce89522ad8b384344b715d260849341b0d73",
+  "storage_scope": "repository",
+  "title": "August 2026 Primary Election - Final Precinct Results (official County open data export)",
+  "updated_at": null
+}

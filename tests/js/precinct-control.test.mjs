@@ -158,3 +158,86 @@ test('compact precinct identity abbreviates only unique reviewed Seattle names',
   assert.equal(opener.getAttribute('aria-expanded'), 'false');
   assert.equal(b.document.activeElement, opener);
 });
+
+test('admitted primary uses literal names and never invokes address lookup for typed text', async () => {
+  const document = installDom('https://seattleelections.guide/e/wa-2026-primary/');
+  document.body.innerHTML = PRECINCT_MARKUP;
+  ownedDialogs.add(document.querySelector('dialog'));
+  const primary = {
+    ...contract,
+    election_id: 'wa-2026-primary',
+    mapping_hash: 'b'.repeat(64),
+    precincts: [
+      { code: 'SEA 46-1279', name: 'SEA 46-1279', contest_ids: ['measure', 'candidate'] },
+    ],
+    address_lookup: null,
+    supplement: {
+      schema_version: '1.0',
+      election_id: 'wa-2026-primary',
+      mapping_hash: 'b'.repeat(64),
+      source_git_commit: 'a'.repeat(40),
+      artifact_sha256: 'c'.repeat(64),
+    },
+  };
+  let search = '';
+  let suggests = 0;
+  let resolves = 0;
+  let network = 0;
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => {
+    network += 1;
+    throw new Error('unexpected network');
+  };
+  try {
+    wirePrecinctControl(
+      primary,
+      {
+        controlSearch: () => search,
+        replaceControlSearch: (value) => {
+          search = value;
+        },
+        onHistoryChange: () => {},
+      },
+      () => {},
+      {
+        suggest: async () => {
+          suggests += 1;
+          return [];
+        },
+        resolve: async () => {
+          resolves += 1;
+          return { status: 'unavailable' };
+        },
+      },
+    );
+    assert.equal(document.querySelector('[data-precinct-control]').hidden, false);
+    assert.equal(
+      document.querySelector('label[for="voting-precinct"]').textContent,
+      'Search precincts',
+    );
+    assert.equal(
+      document.querySelector('[data-ballot-options]').getAttribute('aria-label'),
+      'Matching precincts',
+    );
+    assert.equal(document.querySelector('.address-privacy'), null);
+    document.querySelector('[data-precinct-open]').click();
+    const input = document.querySelector('#voting-precinct');
+    input.value = '123 Example Street';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 320));
+    assert.equal(suggests, 0);
+    assert.equal(resolves, 0);
+    assert.equal(network, 0);
+    input.value = 'SEA 46-1279';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    document.querySelector('[data-kind="precinct"]').click();
+    document
+      .querySelector('form')
+      .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    assert.equal(new URLSearchParams(search).get('precinct'), 'SEA 46-1279');
+    assert.equal(window.localStorage.getItem('seg-precinct-v1:wa-2026-general'), null);
+    assert.equal(window.localStorage.getItem('seg-precinct-v1:wa-2026-primary'), 'SEA 46-1279');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

@@ -297,11 +297,21 @@ class PreliminaryRecency(ClientPayloadModel):
     stale_after_seconds: int = Field(gt=0)
 
 
+class ListNavigation(ClientPayloadModel):
+    """Complete renderer-owned list routes, independent of geographic capability."""
+
+    endorsements: str | None
+    comparisons: str | None
+    sources: str | None
+
+
 class GuidePayload(LensPayload):
     """The endorsements guide's payload."""
 
     preliminary_recency: list[PreliminaryRecency] = Field(default_factory=list[PreliminaryRecency])
     precinct_ballot: PrecinctBallotContract | None
+    race_mode_query_enabled: bool = False
+    list_navigation: ListNavigation | None = None
 
     races: list[RaceDisplay]
     filter_scopes: list[FilterScope | CoveredFilterScope]
@@ -364,7 +374,7 @@ class SourcesPayload(LensPayload):
 
 
 class GeneralSourcesPayload(SourcesPayload):
-    """General-only query capability; the legacy Sources contract stays unchanged."""
+    """Current query capability; the historical type name remains readable."""
 
     race_mode_query_enabled: Literal[True]
     comparisons_path: str | None
@@ -374,6 +384,8 @@ class ComparisonsPayload(ClientPayloadModel):
     """The Comparisons page's payload."""
 
     precinct_ballot: PrecinctBallotContract | None
+    race_mode_query_enabled: bool = False
+    list_navigation: ListNavigation | None = None
 
     schema_version: Literal["1.0"]
     data_version: str
@@ -574,6 +586,10 @@ def guide_payload(
         precinct_ballot=_precinct_payload(
             view_model, endorsements_path, comparisons_path, sources_page_path
         ),
+        race_mode_query_enabled=True,
+        list_navigation=ListNavigation(
+            endorsements=endorsements_path, comparisons=comparisons_path, sources=sources_page_path
+        ),
         personalization=(
             view_model.personalization if view_model.personalization.policy.enabled else None
         ),
@@ -686,14 +702,9 @@ def sources_payload(
         "guide_path": guide_path,
         "tree": _sources_tree(view_model),
     }
-    if (
-        view_model.precinct_ballot is not None
-        and view_model.precinct_ballot.election_id == "wa-2026-general"
-    ):
-        return GeneralSourcesPayload.model_validate(
-            {**fields, "race_mode_query_enabled": True, "comparisons_path": comparisons_path}
-        )
-    return SourcesPayload.model_validate(fields)
+    return GeneralSourcesPayload.model_validate(
+        {**fields, "race_mode_query_enabled": True, "comparisons_path": comparisons_path}
+    )
 
 
 def comparisons_payload(
@@ -727,6 +738,10 @@ def comparisons_payload(
         precinct_ballot=_precinct_payload(
             view_model, endorsements_path, comparisons_path, sources_path
         ),
+        race_mode_query_enabled=True,
+        list_navigation=ListNavigation(
+            endorsements=endorsements_path, comparisons=comparisons_path, sources=sources_path
+        ),
         source_labels={
             source.code: name_by_id[source.id] for source in view_model.personalization.sources
         },
@@ -734,6 +749,7 @@ def comparisons_payload(
             display.race_id
             for display in view_model.comparisons.display_index
             if race_by_id[display.race_id].is_contested
+            or race_by_id[display.race_id].race_type == "measure"
         ],
         results_available=results_available,
         race_results=race_results,

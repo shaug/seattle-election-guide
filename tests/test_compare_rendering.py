@@ -122,7 +122,9 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
         project_url="https://github.com/shaug/seattle-election-guide",
     )
 
-    assert 'href="/e/wa-2026-primary/comparisons/" aria-current="page">Comparisons</a>' in rendered
+    assert re.search(
+        r'href="/e/wa-2026-primary/comparisons/"[^>]*aria-current="page">Comparisons</a>', rendered
+    )
     assert "<title>Comparisons — August 2026 Primary — Seattle Elections Guide</title>" in rendered
     assert '<header class="page-head">' in rendered
     assert '<p class="page-eyebrow">August 2026 Primary</p>' in rendered
@@ -140,11 +142,15 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert table.count('data-column-signal="gall"') == len(view_model.comparisons.display_index) + 1
     assert table.count('data-column-signal="strn"') == len(view_model.comparisons.display_index) + 1
     assert table.count('data-column-signal="stim"') == len(view_model.comparisons.display_index) + 1
-    assert "Endorsements side by side, surfacing tension." in rendered
+    assert "The endorsements you choose, juxtaposed." in rendered
     assert "You're starting with all sources" not in rendered
     assert 'name="description" content="Endorsements side by side, surfacing tension."' in rendered
     assert "audited all-sources" not in rendered
-    assert '<div class="segmented-control">' in rendered
+    assert re.findall(r'data-filter-native="([^"]+)"', rendered.split("<script", 1)[0]) == [
+        "view",
+        "races",
+        "ballot",
+    ]
     assert "Audited baseline" not in rendered
     assert 'class="comparison-only-badge"' not in rendered
     assert "Each organization has equal weight" not in rendered
@@ -251,7 +257,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
         public_site_url="https://seattleelections.guide",
     )
     for page in (guide, sources_page):
-        assert 'href="/e/wa-2026-primary/comparisons/">Comparisons</a>' in page
+        assert re.search(r'href="/e/wa-2026-primary/comparisons/"[^>]*>Comparisons</a>', page)
 
 
 def test_compare_document_refuses_disabled_policy() -> None:
@@ -440,17 +446,18 @@ def test_guide_and_compare_render_the_shared_election_controls_composite() -> No
     for rendered in (guide, compare):
         assert '<div class="sticky-header"' in rendered
         bar = re.search(
-            r'<section class="[^"]*filter-control-bar[^"]*".*?</section>', rendered, re.S
+            r'<section\b[^>]*class="[^"]*filter-control-bar[^"]*".*?</section>', rendered, re.S
         )
         assert bar is not None
-        assert 'class="filter-select-control' in bar.group(0)
-        assert 'class="filter-control-label"' in bar.group(0)
-        assert 'class="filter-select"' in bar.group(0)
-        assert 'class="filter-segmented-control' in bar.group(0)
-        assert 'class="segmented-control"' in bar.group(0)
+        assert re.findall(r'data-filter-native="([^"]+)"', bar.group(0)) == [
+            "view",
+            "races",
+            "ballot",
+        ]
         assert 'class="filter-control-status' in bar.group(0)
-        labels = re.findall(r'class="filter-control-label"[^>]*>([^<]+)', bar.group(0))
-        assert labels == ["Ballot", "View", "Races"]
+        labels = re.findall(r'<label class="visually-hidden"[^>]*>([^<]+)', bar.group(0))
+        assert labels == ["View", "Races", "Ballot"]
+        assert 'input type="radio"' not in bar.group(0)
 
     macro_source = (
         PROJECT_ROOT / "src/election_guide/rendering/templates/_filter_controls.html.j2"
@@ -503,56 +510,35 @@ def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometr
 ) -> None:
     script = """
     (() => {
-      const bar = document.querySelector('.filter-control-bar');
-      const select = bar.querySelector('.filter-select');
-      const label = bar.querySelector('.filter-control-label');
-      const segmented = [...bar.querySelectorAll('.segmented-control')];
-      const selected = segmented[0].querySelector('input:checked + span');
+      const bar = document.querySelector('[data-compact-filters]');
+      const controls = bar.querySelector('.compact-filter-controls');
+      const slots = [...controls.querySelectorAll('[data-filter-trigger]')];
+      const selects = slots.map(slot => slot.querySelector('select'));
       const status = bar.querySelector('.filter-control-status');
-      const styles = (element) => getComputedStyle(element);
-      const barRect = bar.getBoundingClientRect();
-      const selectRect = select.getBoundingClientRect();
-      const statusRect = status.getBoundingClientRect();
+      const rect = element => {const r=element.getBoundingClientRect();
+        return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,
+          width:r.width,height:r.height};};
+      const overlap=(a,b)=>Math.min(a.right,b.right)-Math.max(a.left,b.left)>1 &&
+        Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>1;
+      const box=rect(bar), controlBox=rect(controls), statusBox=rect(status);
       return JSON.stringify({
-        roles: [...bar.children].map((child) => [...child.classList]
-          .find((name) => name.startsWith('filter-'))),
-        slotLabels: [...bar.querySelectorAll('.filter-control-label')]
-          .map((item) => item.textContent.trim()),
-        slotOptions: segmented.map((control) => [...control.querySelectorAll('span')]
-          .map((item) => item.textContent.trim())),
-        slotRects: [...bar.children].map((child) => {
-          const rect = child.getBoundingClientRect();
-          return [rect.left - barRect.left, rect.top - barRect.top, rect.width, rect.height];
-        }),
-        selectLabel: document.querySelector(`label[for="${select.id}"]`)?.textContent,
-        statusInside: status?.parentElement === bar,
-        barDisplay: styles(bar).display,
-        barBackground: styles(bar).backgroundColor,
-        barPaddingTop: styles(bar).paddingTop,
-        barBorderBottom: styles(bar).borderBottomWidth,
-        selectHeight: styles(select).height,
-        selectPadding: styles(select).padding,
-        selectRadius: styles(select).borderRadius,
-        labelColor: styles(label).color,
-        labelSize: styles(label).fontSize,
-        labelWeight: styles(label).fontWeight,
-        selectedBackground: styles(selected).backgroundColor,
-        selectedColor: styles(selected).color,
-        barLeft: barRect.left,
-        barWidth: barRect.width,
-        barHeight: barRect.height,
-        selectTop: selectRect.top,
-        selectBottom: selectRect.bottom,
-        statusTop: statusRect.top,
-        statusBottom: statusRect.bottom,
-        statusHeight: statusRect.height,
-        statusLineHeight: styles(status).lineHeight,
-        statusWhiteSpace: styles(status).whiteSpace,
-        statusFits: status.scrollWidth <= status.clientWidth + 1,
-        allOptionsFit: segmented.flatMap((control) => [...control.querySelectorAll('span')])
-          .every((item) => item.scrollWidth <= item.clientWidth + 1),
-        outerWidth: document.documentElement.scrollWidth,
-        viewportWidth: document.documentElement.clientWidth,
+        roles:selects.map(select=>select.dataset.filterNative),
+        labels:selects.map(select=>document.querySelector(`label[for="${select.id}"]`).textContent),
+        options:selects.slice(0,2).map(select=>[...select.options].map(option=>option.textContent)),
+        heights:selects.map(select=>rect(select).height),
+        targets:slots.every(slot=>rect(slot).width>=44 && rect(slot).height>=44),
+        slotsFit:slots.every(slot=>rect(slot).left>=box.left-1 && rect(slot).right<=box.right+1),
+        ordered:slots.every((slot,index)=>index===0 ||
+          rect(slot).left>=rect(slots[index-1]).right-1),
+        statusInside:status.closest('[data-compact-filters]')===bar,
+        overlap:overlap(controlBox,statusBox),
+        statusFits:status.scrollWidth<=status.clientWidth+1,
+        statusWhiteSpace:getComputedStyle(status).whiteSpace,
+        face:slots.map(slot=>{
+          const style=getComputedStyle(slot.querySelector('.compact-filter-trigger'));
+          return [style.fontSize,style.fontWeight,style.color,style.height,style.padding];}),
+        outerWidth:document.documentElement.scrollWidth,
+        viewportWidth:document.documentElement.clientWidth,
       });
     })()
     """
@@ -560,63 +546,24 @@ def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometr
     compare = _evaluate_in_chrome(
         _comparison_html_path(tmp_path), script, mobile_width=viewport_width
     )
-    assert guide["roles"] == [
-        "filter-select-control",
-        "filter-segmented-control",
-        "filter-segmented-control",
-        "filter-control-status",
-    ]
-    assert compare["roles"] == guide["roles"]
-    assert guide["slotLabels"] == compare["slotLabels"] == ["Ballot", "View", "Races"]
-    assert guide["slotOptions"] == [["Full", "Compact"], ["All", "Contested"]]
-    assert compare["slotOptions"] == [["Full", "Differing"], ["All", "Contested"]]
-    assert guide["selectLabel"] == compare["selectLabel"] == "Ballot"
-    assert guide["statusInside"] is compare["statusInside"] is True
-    for key in (
-        "barDisplay",
-        "barBackground",
-        "barPaddingTop",
-        "barBorderBottom",
-        "selectHeight",
-        "selectPadding",
-        "selectRadius",
-        "labelColor",
-        "labelSize",
-        "labelWeight",
-        "selectedBackground",
-        "selectedColor",
-    ):
-        assert guide[key] == compare[key]
-    assert guide["outerWidth"] == guide["viewportWidth"]
-    assert compare["outerWidth"] == compare["viewportWidth"]
-    assert abs(guide["barLeft"] - compare["barLeft"]) < 1
-    assert abs(guide["barWidth"] - compare["barWidth"]) < 1
-    # The status slot carries intentionally different live copy on each page, so
-    # its text metrics may differ across browser/font environments. Compare the
-    # three shared controls here; the status has its own placement constraints
-    # below.
-    for guide_rect, compare_rect in zip(
-        guide["slotRects"][:3], compare["slotRects"][:3], strict=True
-    ):
-        for guide_value, compare_value in zip(guide_rect, compare_rect, strict=True):
-            assert abs(guide_value - compare_value) < 1
-    assert guide["allOptionsFit"] is True
-    assert compare["allOptionsFit"] is True
-    assert guide["statusWhiteSpace"] == compare["statusWhiteSpace"] == "nowrap"
-    assert guide["statusFits"] is compare["statusFits"] is True
-    if viewport_width > 720:
-        assert abs(guide["barHeight"] - compare["barHeight"]) < 1
-        for rendered in (guide, compare):
-            assert rendered["statusTop"] < rendered["selectBottom"]
-            assert rendered["statusBottom"] > rendered["selectTop"]
-            assert (
-                rendered["statusHeight"]
-                <= float(rendered["statusLineHeight"].removesuffix("px")) * 1.5
-            )
+    assert guide["roles"] == compare["roles"] == ["view", "races", "ballot"]
+    assert guide["labels"] == compare["labels"] == ["View", "Races", "Ballot"]
+    assert guide["options"] == [["Full", "Compact"], ["All", "Contested"]]
+    assert compare["options"] == [["Full", "Differing"], ["All", "Contested"]]
+    # Intrinsic family widths and the Guide's joined Sources/count composition
+    # may differ. The same native targets, styles and fit rules apply to both.
+    for rendered in (guide, compare):
+        assert rendered["heights"] == [46, 46, 46]
+        assert rendered["targets"] and rendered["slotsFit"] and rendered["ordered"]
+        assert rendered["statusInside"] and rendered["statusFits"]
+        assert not rendered["overlap"]
+        assert rendered["statusWhiteSpace"] == "nowrap"
+        assert rendered["outerWidth"] == rendered["viewportWidth"]
+    assert guide["face"] == compare["face"]
 
 
 @pytest.mark.parametrize("viewport_width", [1440, 390])
-def test_guide_and_compare_controls_share_the_scroll_placement_contract(
+def test_current_controls_retain_page_owned_scroll_placement(
     tmp_path: Path, viewport_width: int
 ) -> None:
     script = """
@@ -642,21 +589,22 @@ def test_guide_and_compare_controls_share_the_scroll_placement_contract(
     compare = _evaluate_in_chrome(
         _comparison_html_path(tmp_path), script, mobile_width=viewport_width
     )
-    assert guide["position"] == compare["position"]
     assert guide["outerWidth"] == guide["viewportWidth"]
     assert compare["outerWidth"] == compare["viewportWidth"]
     if viewport_width > 720:
-        assert guide["position"] == "sticky"
+        assert guide["position"] == compare["position"] == "sticky"
         assert abs(guide["wrapperTop"]) < 1
         assert abs(compare["wrapperTop"]) < 1
         assert abs(guide["barTop"] - compare["barTop"]) < 1
         assert guide["visible"] is compare["visible"] is True
     else:
-        assert guide["position"] == "static"
-        assert abs(guide["wrapperTop"] + 100) < 1
+        # The joined Guide group stays sticky at narrow widths; Comparisons
+        # retains its existing mobile document-flow placement.
+        assert guide["position"] == "sticky"
+        assert compare["position"] == "static"
+        assert abs(guide["wrapperTop"]) < 1
         assert abs(compare["wrapperTop"] + 100) < 1
-        assert abs(guide["barTop"] - compare["barTop"]) < 1
-        assert guide["visible"] is compare["visible"]
+        assert guide["visible"] is True
 
 
 @pytest.mark.parametrize("viewport_width", [1440, 838, 390])
@@ -1470,11 +1418,15 @@ def test_compare_client_presets_filters_and_url_round_trip(tmp_path: Path) -> No
             '[data-comparison-head] [data-column-signal]',
           )].map((heading) => heading.dataset.columnSignal);
           const historyBeforeFilters = history.length;
-          document.querySelector('[data-comparison-contested]').click();
+          {const option=document.querySelector('[data-comparison-contested]');
+            const select=option.closest('select');select.value=option.value;
+            select.dispatchEvent(new Event('change',{bubbles:true}));}
           await wait();
           const rowsBeforeDifferences = document
             .querySelectorAll('[data-comparison-race]').length;
-          document.querySelector('[data-comparison-differences]').click();
+          {const option=document.querySelector('[data-comparison-differences]');
+            const select=option.closest('select');select.value=option.value;
+            select.dispatchEvent(new Event('change',{bubbles:true}));}
           await wait();
           const historyAfterFilters = history.length;
           const rowCount = document.querySelectorAll('[data-comparison-race]').length;
@@ -1483,15 +1435,15 @@ def test_compare_client_presets_filters_and_url_round_trip(tmp_path: Path) -> No
               presetHref, presetColumns, hash: location.hash, rowCount, configuredUrl,
               rowsBeforeDifferences, historyBeforeFilters, historyAfterFilters,
               status: document.querySelector('[data-comparison-status]').textContent,
-              differencesChecked: document.querySelector('[data-comparison-differences]').checked,
-              contestedChecked: document.querySelector('[data-comparison-contested]').checked,
+              differencesChecked: document.querySelector('[data-comparison-differences]').selected,
+              contestedChecked: document.querySelector('[data-comparison-contested]').selected,
             });
         })()
         """,
     )
     assert result["presetHref"].startswith("#cmp=1&cols=strnstim&")
     assert result["presetColumns"] == ["strn", "stim"]
-    assert "races=contested" in result["hash"]
+    assert "races=" not in result["hash"]
     assert "diff=1" in result["hash"]
     assert result["rowCount"] > 0
     assert result["rowCount"] < result["rowsBeforeDifferences"]
@@ -1506,8 +1458,8 @@ def test_compare_client_presets_filters_and_url_round_trip(tmp_path: Path) -> No
           columns: [...document.querySelectorAll(
             '[data-comparison-head] [data-column-signal]',
           )].map((heading) => heading.dataset.columnSignal),
-          contested: document.querySelector('[data-comparison-contested]').checked,
-          differing: document.querySelector('[data-comparison-differences]').checked,
+          contested: document.querySelector('[data-comparison-contested]').selected,
+          differing: document.querySelector('[data-comparison-differences]').selected,
           restoredHash: location.hash,
         }))()
         """,
@@ -1536,17 +1488,17 @@ def test_legacy_differing_and_contested_differences_fragments_restore_independen
     preset = f"#{urlencode(parameters, doseq=True)}"
     expression = """
     (() => JSON.stringify({
-      differing: document.querySelector('[data-comparison-differences]').checked,
-      full: document.querySelector('[data-comparison-full]').checked,
-      contested: document.querySelector('[data-comparison-contested]').checked,
-      allRaces: document.querySelector('[data-comparison-all-races]').checked,
+      differing: document.querySelector('[data-comparison-differences]').selected,
+      full: document.querySelector('[data-comparison-full]').selected,
+      contested: document.querySelector('[data-comparison-contested]').selected,
+      allRaces: document.querySelector('[data-comparison-all-races]').selected,
       rowCount: document.querySelectorAll('[data-comparison-race]').length,
     }))()
     """
     differing = _evaluate_in_chrome(
         html_path,
         expression,
-        initial_url=f"{html_path.resolve().as_uri()}{preset}&diff=1",
+        initial_url=f"{html_path.resolve().as_uri()}?races=all{preset}&diff=1",
     )
     combined = _evaluate_in_chrome(
         html_path,
@@ -1905,7 +1857,7 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
               return value;
             })(),
             raceControlDisplay: getComputedStyle(
-              document.querySelector('[name="comparison-races"]').closest('.segmented-control'),
+              document.querySelector('[name="comparison-races"]').closest('.compact-filter-controls'),
             ).display,
           });
         })()
@@ -2459,7 +2411,9 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
           await wait();
           const chipIds = [...document.querySelectorAll('[data-row-differs="true"]')]
             .map((row) => row.dataset.comparisonRace);
-          document.querySelector('[data-comparison-differences]').click();
+          {const option=document.querySelector('[data-comparison-differences]');
+            const select=option.closest('select');select.value=option.value;
+            select.dispatchEvent(new Event('change',{bubbles:true}));}
           await wait();
           return JSON.stringify({
             filteredIds: [...document.querySelectorAll('[data-comparison-race]')]
@@ -2485,7 +2439,7 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
     )
     assert result["filteredIds"] == expected_ids
     assert result["chipIds"] == expected_ids
-    assert result["status"] == f"{len(expected_ids)} of 32 races shown · {len(expected_ids)} differ"
+    assert result["status"] == f"{len(expected_ids)} of 26 races shown · {len(expected_ids)} differ"
     assert result["statusLive"] == "polite"
     assert result["agree"] == {
         "state": "agree",
@@ -2684,7 +2638,9 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
           picker.value = 's775';
           picker.dispatchEvent(new Event('change', { bubbles: true }));
           await wait();
-          document.querySelector('[data-comparison-differences]').click();
+          {const option=document.querySelector('[data-comparison-differences]');
+            const select=option.closest('select');select.value=option.value;
+            select.dispatchEvent(new Event('change',{bubbles:true}));}
           await wait();
           const message = document.querySelector('.comparison-empty p').textContent;
           const resetLabel = document.querySelector('.comparison-reset').textContent;
@@ -2693,14 +2649,14 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
           return JSON.stringify({
             message, resetLabel,
             rowsAfterReset: document.querySelectorAll('[data-comparison-race]').length,
-            differencesChecked: document.querySelector('[data-comparison-differences]').checked,
+            differencesChecked: document.querySelector('[data-comparison-differences]').selected,
           });
         })()
         """,
     )
     assert all_agree["message"].startswith("These signals agree in every race they share")
     assert all_agree["resetLabel"] == "Show all rows"
-    assert all_agree["rowsAfterReset"] == 32
+    assert all_agree["rowsAfterReset"] == 26
     assert all_agree["differencesChecked"] is False
 
     no_match_path = _comparison_html_path(tmp_path)
@@ -2714,7 +2670,11 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
         """
         (async () => {
           const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
-          document.querySelector('[data-comparison-contested]').click();
+          const scope = document.querySelector('[data-comparison-section-filter]');
+          scope.value = 'federal';scope.dispatchEvent(new Event('change',{bubbles:true}));
+          {const option=document.querySelector('[data-comparison-contested]');
+            const select=option.closest('select');select.value=option.value;
+            select.dispatchEvent(new Event('change',{bubbles:true}));}
           await wait();
           const message = document.querySelector('.comparison-empty p').textContent;
           const resetLabel = document.querySelector('.comparison-reset').textContent;
@@ -2723,7 +2683,7 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
           return JSON.stringify({
             message, resetLabel,
             rowsAfterReset: document.querySelectorAll('[data-comparison-race]').length,
-            contestedChecked: document.querySelector('[data-comparison-contested]').checked,
+            contestedChecked: document.querySelector('[data-comparison-contested]').selected,
           });
         })()
         """,

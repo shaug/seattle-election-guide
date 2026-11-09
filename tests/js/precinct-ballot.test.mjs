@@ -5,6 +5,7 @@ import {
   readContestedOnly,
   readPrecinctSelection,
   resolvePrecinct,
+  supportedPrecinctContract,
   withContestedOnly,
   withPrecinct,
 } from '../../src/election_guide/rendering/templates/precinct-ballot.mjs';
@@ -53,4 +54,31 @@ test('ballot navigation carries only its owned keys and retains explicit invalid
     '?precinct=2502&precinct=all&races=all&races=contested',
   );
   assert.equal(ballotQuery('?view=compact'), '');
+});
+
+const primary = {
+  schema_version: '1.0',
+  election_id: 'wa-2026-primary',
+  mapping_hash: 'b'.repeat(64),
+  address_lookup: null,
+  supplement: {
+    schema_version: '1.0',
+    election_id: 'wa-2026-primary',
+    mapping_hash: 'b'.repeat(64),
+    source_git_commit: 'a'.repeat(40),
+    artifact_sha256: 'c'.repeat(64),
+  },
+};
+test('Primary capability refuses future or incomplete identity without enabling General address context', () => {
+  assert.equal(supportedPrecinctContract(primary), true);
+  const cases = [
+    { ...primary, schema_version: '2.0' },
+    { ...primary, supplement: { ...primary.supplement, schema_version: '2.0' } },
+    { ...primary, supplement: null },
+    { ...primary, supplement: { ...primary.supplement, election_id: 'wa-2026-general' } },
+    { ...primary, supplement: { ...primary.supplement, mapping_hash: 'd'.repeat(64) } },
+    { ...primary, supplement: { ...primary.supplement, source_git_commit: 'bad' } },
+    { ...primary, address_lookup: { election_id: 'wa-2026-general' } },
+  ];
+  for (const value of cases) assert.equal(supportedPrecinctContract(value), false);
 });

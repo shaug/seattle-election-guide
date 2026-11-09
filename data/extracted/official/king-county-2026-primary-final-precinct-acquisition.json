@@ -1,0 +1,28 @@
+{
+  "authority": "King County Elections",
+  "catalog_url": "https://catalog.data.gov/dataset/august-2026-primary-election-final-precinct-results",
+  "dataset_id": "2ydw-3iau",
+  "schema_version": "1.0",
+  "sources": [
+    {
+      "bytes": 25284356,
+      "completed_at": "2026-11-09T04:59:56.231660+00:00",
+      "final_url": "https://data.kingcounty.gov/api/v3/views/2ydw-3iau/export.csv?accessType=DOWNLOAD",
+      "requested_url": "https://data.kingcounty.gov/api/v3/views/2ydw-3iau/export.csv?accessType=DOWNLOAD",
+      "sha256": "7e531ffe93caac8968988dcfc093ce89522ad8b384344b715d260849341b0d73",
+      "started_at": "2026-11-09T04:59:47.897491+00:00",
+      "status": 200,
+      "storage_reference": "data/evidence/official/sha256/7e/7e531ffe93caac8968988dcfc093ce89522ad8b384344b715d260849341b0d73"
+    },
+    {
+      "bytes": 17246,
+      "completed_at": "2026-11-09T05:01:00.205303+00:00",
+      "final_url": "https://data.kingcounty.gov/api/views/2ydw-3iau",
+      "requested_url": "https://data.kingcounty.gov/api/views/2ydw-3iau",
+      "sha256": "f03a165787c646fc0cf927068b3d7ad08fcd5873e4ebc5effa4545d4ed4faf92",
+      "started_at": "2026-11-09T05:00:59.717014+00:00",
+      "status": 200,
+      "storage_reference": "data/evidence/official/sha256/f0/f03a165787c646fc0cf927068b3d7ad08fcd5873e4ebc5effa4545d4ed4faf92"
+    }
+  ]
+}

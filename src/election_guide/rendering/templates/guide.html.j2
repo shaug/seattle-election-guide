@@ -13,12 +13,12 @@
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
 
   <main class="page screen-guide">
-    {{ shell.band(guide_href=guide_path, sources_href=sources_page_url, compare_href=compare_href, corrections_href=corrections_href, current='endorsements', sources_link_data_attribute=true, precinct_links=guide.precinct_ballot is not none) }}
+    {{ shell.band(guide_href=guide_path, sources_href=sources_page_url, compare_href=compare_href, corrections_href=corrections_href, current='endorsements', sources_link_data_attribute=true, precinct_links=true) }}
     {%+ call shell.page_head('Endorsements', eyebrow=election_display_name, mode='extended') %}Seattle&rsquo;s progressive voices, distilled.{% endcall +%}
     <div class="page-band-rule"></div>
     {{ election_day_banner | safe }}
 
-    {% set joined_sources = guide.precinct_ballot is not none and guide.personalization.policy.enabled %}
+    {% set joined_sources = guide.personalization.policy.enabled %}
     <div class="sticky-header">
       {% call election_controls(
         'Guide view and race filters', 'screen-controls',
@@ -32,6 +32,7 @@
           {'value': 'contested', 'label': 'Contested', 'id': 'contested-filter', 'attributes': '', 'checked': false}
         ],
         'filter-status', precinct_enabled=guide.precinct_ballot is not none,
+        precinct_address_enabled=guide.precinct_ballot is not none and guide.precinct_ballot.address_lookup is not none,
         sources_count=consensus_source_count if joined_sources else none,
         sources_href=sources_page_url
       ) %}
@@ -80,7 +81,7 @@
           {% for race in section.races %}
           <article class="race-card" id="race-{{ race.id }}"
             data-publication-race-id="{{ race.id }}"
-            data-contested="{{ 'true' if race.is_contested or (guide.precinct_ballot is not none and race.race_type == 'measure') else 'false' }}"
+            data-contested="{{ 'true' if race.is_contested or race.race_type == 'measure' else 'false' }}"
             aria-labelledby="race-label-{{ race.id }}"
             data-filter-tokens='{{ race.filter_tokens | tojson }}'>
             {# The card's core recommendation area is an ordinary link to the

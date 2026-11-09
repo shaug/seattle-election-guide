@@ -43,6 +43,11 @@ from election_guide.hosting.production_check import (
     presentation_request_path,
     release_manifest_check,
 )
+from election_guide.hosting.supplement_pages import verify_page_supplement
+from election_guide.hosting.supplements import (
+    HistoricalPrecinctSupplement,
+    verify_served_precinct_supplement,
+)
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 
 USER_AGENT = (
@@ -229,10 +234,45 @@ def _check_presentation_assets(
                 )
             except ValueError as error:
                 add_error(f"e/{election.election_id}/release-manifest.json", error)
+    supplements: dict[str, HistoricalPrecinctSupplement] = {}
+    if manifest.current_election_id in authenticated:
+        source_git_commit = authenticated[manifest.current_election_id][0].git_commit
+        for election in manifest.elections:
+            provenance = election.precinct_supplement
+            if provenance is None or election.election_id not in authenticated:
+                continue
+            path = provenance.artifact_path
+            if path not in bodies:
+                continue
+            try:
+                supplements[election.election_id] = verify_served_precinct_supplement(
+                    bodies[path],
+                    expected_sha256=provenance.artifact_sha256,
+                    provenance=provenance,
+                    archive_manifest=authenticated[election.election_id][1],
+                    archive_git_commit=election.git_commit,
+                    source_git_commit=source_git_commit,
+                )
+            except ValueError as error:
+                add_error(path, error)
     for path, presentation in planned.items():
         if presentation is not None and path in bodies:
             try:
-                verify_page_presentation(bodies[path].decode("utf-8"), presentation)
+                document = bodies[path].decode("utf-8")
+                verify_page_presentation(document, presentation)
+                election = next(
+                    e for e in manifest.elections if path.startswith(f"e/{e.election_id}/")
+                )
+                root = f"e/{election.election_id}/"
+                verify_page_supplement(
+                    document,
+                    election.precinct_supplement,
+                    supplements.get(election.election_id),
+                    require_contract=(
+                        election.precinct_supplement is not None
+                        and path in {root + "index.html", root + "comparisons/index.html"}
+                    ),
+                )
             except ValueError as error:
                 add_error(path, error)
     return tuple(checks.values())
@@ -357,7 +397,7 @@ def run_production_check(
         presentation_assets=(
             _check_presentation_assets(base_url, manifest, timeout=timeout, deadline=deadline)
             if site_manifest is not None
-            and site_manifest.schema_version == "1.1"
+            and site_manifest.current_presentation
             and deployment_contract is not None
             and deployment_contract.ok
             else ()

@@ -139,10 +139,10 @@ No address, coordinate, suggestion identifier or provider response is persisted 
 SEG. Provider logging/retention is undocumented; client no-store is not a claim of
 zero provider retention. See docs/ADDRESS_LOOKUP.md. Voter selection changes displayed membership
 only, preserving canonical inventory, scoring inputs, source eligibility and existing
-section order. The general-only catalog is shared by both list views; primary
-archives and legacy payloads remain readable without the optional contract.
+section order. Each admitted election catalog is shared by both list views.
+Primary archives and legacy payloads remain readable without the optional contract.
 The contract contains all geographically applicable public contest IDs, independent
-of the general view's race mode. Contested is the general default; an explicit All
+of the current list race mode. Contested is the current-rendered default; an explicit All
 override includes eligible uncontested races. Both modes preserve applicable measures.
 The browser applies race mode after geography without changing section order.
 
@@ -154,5 +154,28 @@ inventory before selecting visible contests and derives the existing shared
 section/race view-model order. This presentation input is separate from canonical
 inventory/choice order and scoring inputs; no source retrieval occurs in builds.
 The map is election-scoped package data, with supplied-PDF provenance and visual
-locators. Other elections preserve their legacy presentation. #608 owns voter
-membership independently; filtering preserves the supplied relative order.
+locators. Other elections retain their own evidenced ballot order while receiving
+current shared UI/UX. They do not import the November sequence. #608 and reviewed
+election-specific supplements own voter membership independently; filtering preserves
+the supplied relative order.
+
+
+## Reviewed historical capability supplements (#723)
+
+SourceSite1.2/Deployment3.1 extend the current-presentation contract with a separate
+hash-bound historical capability. Admission first authenticates the unchanged
+archive and its original inventory/VM, then validates the supplement's election,
+source identity, exact official evidence custody and bytes, complete electorate,
+consistent literal district fields and direct official contest membership. It
+compares every normalized precinct record before projection. Unknown schemas,
+missing/cross-election/hash/coverage inputs fail before output replacement.
+Source1.0/Deployment2.0 and Source1.1/Deployment3.0 retain their original semantics.
+
+The August supplement supports direct precinct selection, with literal official
+full names as application IDs. It imports no November GIS/address context and
+uses no vote counters to overwrite certified archive results. Its provenance
+separately binds original data hashes, reviewed capability artifact and current
+presentation source. The VM and published ZIP remain literal; staging overlays
+only the in-memory presentation copy and serves a separately hashed audit asset.
+Shared list filters/navigation are current presentation and do not require a
+geographic catalog. See docs/BALLOT_INVENTORY.md for the exact admitted corpus.

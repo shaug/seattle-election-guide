@@ -575,3 +575,35 @@ test('joined Sources projects its own tally and preserves link focus and indepen
   assert.equal(link.textContent.trim(), 'Sources: All 3');
   assert.equal(ballot.hasAttribute('data-active'), true);
 });
+
+test('current primary query and source selection survive Sources navigation without a catalog', async () => {
+  const document = await wire(
+    `${GUIDE_URL}?races=all&unrelated=1#${lensFragment(['strn'])}`,
+    payload({
+      precinct_ballot: null,
+      race_mode_query_enabled: true,
+      list_navigation: {
+        endorsements: '/edition/guide/',
+        comparisons: '/edition/compare/',
+        sources: SOURCES_PATH,
+      },
+    }),
+    () => {
+      window.document.body.insertAdjacentHTML(
+        'afterbegin',
+        '<a data-precinct-link="comparisons" href="/old/">Compare</a>',
+      );
+    },
+  );
+  assert.equal(new URL(sourcesHref(document), GUIDE_URL).search, '?races=all');
+  assert.match(sourcesHref(document), /sel=strn/);
+  assert.equal(bandSourcesHref(document), sourcesHref(document));
+  assert.equal(
+    document.querySelector('[data-precinct-link="comparisons"]').getAttribute('href'),
+    '/edition/compare/?races=all',
+  );
+  window.history.replaceState(null, '', `${GUIDE_URL}?races=contested`);
+  window.dispatchEvent(new window.PopStateEvent('popstate'));
+  assert.equal(new URLSearchParams(window.location.search).get('races'), 'contested');
+  assert.equal(new URL(sourcesHref(document), GUIDE_URL).search, '?races=contested');
+});

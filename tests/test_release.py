@@ -19,6 +19,8 @@ import election_guide.release.builder as release_builder
 from election_guide.cli import app
 from election_guide.evidence.models import CapturedManifest
 from election_guide.hosting import bundle_hash, stage_pages_site, verify_staged_pages_site
+from election_guide.hosting.models import PublishedElection
+from election_guide.hosting.releases import extract_release_bundle
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import PublicationViewModel
 from election_guide.release import (
@@ -834,15 +836,18 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
 ) -> None:
     declared = yaml.safe_load((PROJECT_ROOT / "config/hosting/site.yaml").read_text())
     current = declared["elections"][0]
-    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
     _stub_release_render(monkeypatch)
-    primary_release = _build_release(
-        ledger,
-        dataset_path,
-        snapshots,
-        tmp_path,
-        tmp_path / "primary-release",
-        release_version=declared["elections"][1]["release_version"],
+    # The checked-in supplement is bound to literal Primary11. A synthetic
+    # replacement release cannot truthfully satisfy that archive identity.
+    primary_archive = PROJECT_ROOT / "tests/fixtures/ballot/primary11.original.zip"
+    assert hashlib.sha256(primary_archive.read_bytes()).hexdigest() == (
+        "d684a16ac1212fa65433a27a8547f208ac76fad2c97e1863287d71f215a24877"
+    )
+    primary_bundle = tmp_path / "primary-release"
+    extract_release_bundle(
+        primary_archive,
+        primary_bundle,
+        PublishedElection.model_validate(declared["elections"][1]),
     )
     general_release = build_release(
         ledger_path=PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml",
@@ -870,19 +875,20 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         (PROJECT_ROOT / "config/hosting/site.yaml").read_text(encoding="utf-8")
     )
     historical = site_manifest["elections"][1]
-    historical["source_registry_hash"] = primary_release.status.source_registry_hash
-    historical["git_commit"] = primary_release.status.git_commit
-    historical["release_manifest_sha256"] = hashlib.sha256(
-        (primary_release.bundle_dir / "release-manifest.json").read_bytes()
-    ).hexdigest()
-    historical["bundle_sha256"] = bundle_hash(primary_release.bundle_dir)
-    site_manifest_path = tmp_path / "site.yaml"
+    assert bundle_hash(primary_bundle) == historical["bundle_sha256"]
+    # Keep normal repository-relative supplement/evidence custody resolution.
+    site_manifest_path = tmp_path / "config/hosting/site.yaml"
+    site_manifest_path.parent.mkdir(parents=True)
+    (tmp_path / "config/elections").symlink_to(
+        PROJECT_ROOT / "config/elections", target_is_directory=True
+    )
+    (tmp_path / "data").symlink_to(PROJECT_ROOT / "data", target_is_directory=True)
     site_manifest_path.write_text(yaml.safe_dump(site_manifest), encoding="utf-8")
     stage_pages_site(
         site_manifest_path,
         {
             current["bundle_id"]: general_release.bundle_dir,
-            historical["bundle_id"]: primary_release.bundle_dir,
+            historical["bundle_id"]: primary_bundle,
         },
         output,
         expected_current_git_commit="a" * 40,
@@ -894,7 +900,17 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         expected_current_git_commit="a" * 40,
     )
 
-    # The current proposal and newly pinned primary retain the incoming Updates backfill.
+    assert deployment.schema_version == "3.1"
+    assert historical == declared["elections"][1]
+    assert bundle_hash(primary_bundle) == historical["bundle_sha256"]
+    supplement = deployment.elections[1].precinct_supplement
+    assert supplement is not None
+    assert (
+        supplement.artifact_sha256
+        == declared["historical_capabilities"]["wa-2026-primary"]["sha256"]
+    )
+
+    # The current proposal and unchanged primary retain the incoming Updates backfill.
     for election_id, headline in (
         ("wa-2026-general", "Changed how sparse and unopposed races appear."),
         ("wa-2026-primary", "Restored the completed primary guide."),
