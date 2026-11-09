@@ -214,6 +214,11 @@
     "tests": {},
     "partition": "integration-artifacts"
   },
+  "tests/test_historical_presentation.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
   "tests/test_hosting.py": {
     "suite": "integration",
     "tests": {},

@@ -213,10 +213,10 @@
 {%- endmacro %}
 
 
-{% macro election_footer_band(project_url, metadata, guide_path, data_updated_date, site_updated_date) -%}
+{% macro election_footer_band(project_url, metadata, guide_path, data_updated_date, site_updated_date, site_git_commit=none) -%}
 {# Election-page provenance, composed once for the guide, Sources, and
    Comparisons. The site-wide pages (About, the archive) have no election
    metadata and no source panel, so they call `footer_band` with their own
    `footer_audit` directly. #}
-{{- footer_band(project_url, footer_audit(data_updated_date, site_updated_date, metadata.data_version, metadata.git_commit, project_url, guide_path ~ 'release-manifest.json', metadata.source_panel_id, metadata.source_panel_hash)) -}}
+{{- footer_band(project_url, footer_audit(data_updated_date, site_updated_date, metadata.data_version, site_git_commit if site_git_commit is not none else metadata.git_commit, project_url, guide_path ~ 'release-manifest.json', metadata.source_panel_id, metadata.source_panel_hash)) -}}
 {%- endmacro %}

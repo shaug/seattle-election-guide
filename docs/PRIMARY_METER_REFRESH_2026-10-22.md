@@ -1,5 +1,14 @@
 # Primary meter refresh publication sequence
 
+## Supersession notice — November 9, 2026 (#721)
+
+The sequence below records the earlier overview-copying architecture. Source declaration1.1
+now renders public historical HTML with current accepted presentation over the verified pinned
+archive model. Presentation-only corrections no longer require a replacement historical ZIP.
+Archive data corrections still require a new reviewed immutable release. Original archive bytes,
+release identities, pins and the historical evidence below remain unchanged.
+
+
 Scope: [#600](https://github.com/shaug/seattle-election-guide/issues/600) prepared the
 immutable archives required by [#598](https://github.com/shaug/seattle-election-guide/issues/598).
 This record tracks completed publication and the remaining production acceptance.

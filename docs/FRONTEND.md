@@ -19,6 +19,29 @@ dependencies. Rules here are decidable — each one can reject a real diff. When
 a proposal and this document disagree, either follow the document or change it
 in the same pull request; never silently diverge.
 
+## Historical HTML projection (#721)
+
+Source schema1.1 renders the overview, race, Sources, enabled Comparisons and Updates pages
+through the existing document APIs over the verified archive model. `PagePresentation` is a
+separate server-side context, never a client capability or a replacement for election metadata.
+The shared head publishes original data source/release/manifest/model identities and current
+presentation source/time; the existing footer uses the latter only for Site updated. Results,
+source membership, scoring, evidence and their original clocks remain archive-owned. Derived
+preliminary recency uses the explicit presentation time, so an old check remains visibly old.
+No URL reader, interaction owner, source fetch or publication-data rebuild is added.
+
+The new deployment3.0 contract requires presentation provenance for every election. Original
+source1.0/deployment2.0 artifacts retain their earlier verification/recovery contract. Strict
+historical admission supports publication1.9/1.13/1.14 explicitly; missing/unknown versions or
+result-bearing records without unambiguous archived race/choice/election types fail closed.
+Legacy no-results models keep their absent fields. Current-source Updates preserves its separate
+authored-log provenance, stable permalinks, topic query and browser history behavior.
+
+*Check: `test_historical_presentation.py` covers data immutability, legacy admission, all election
+page kinds and independently rehashed false provenance; `test_preliminary_results.py` covers
+separate recency/count/export/check clocks; production-check tests cover source and served-body
+identity. Existing client parity, types, URL and rendering gates remain required.*
+
 Every rule names what holds it. A rule ends either with **Check:** naming the
 automated check that enforces it — `exists` when the check covers the rule,
 `partial` when it covers part and says which part — or with

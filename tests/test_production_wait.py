@@ -27,6 +27,8 @@ from tests.test_hosting_check_production_cli import (
 from tests.test_production_check import (
     COMMIT,
     _site_manifest,  # pyright: ignore[reportPrivateUsage]
+    damage_presentation_evidence,
+    with_presentation_evidence,
 )
 from tests.test_production_probe import blocked_body_server as blocked_body_server
 from tests.test_production_probe import publication_server as publication_server
@@ -46,6 +48,21 @@ class Clock:
 
 def _report() -> ProductionCheckReport:
     return _attachment_report().model_copy(update={"base_url": ORIGIN})
+
+
+@pytest.mark.parametrize(
+    "fault", ["omitted", "empty", "partial", "duplicate", "unexpected", "hash"]
+)
+def test_strict_current_presentation_requires_the_exact_bound_evidence_inventory(
+    fault: str,
+) -> None:
+    complete = with_presentation_evidence(_report())
+    contract = complete.deployment_contract
+    assert contract is not None
+    assert wait.complete_strict_report(complete, contract.expected_site, COMMIT, False)
+    damaged = damage_presentation_evidence(complete, fault)
+    assert damaged.ok  # Each retained check alone still appears successful.
+    assert not wait.complete_strict_report(damaged, contract.expected_site, COMMIT, False)
 
 
 def _run(

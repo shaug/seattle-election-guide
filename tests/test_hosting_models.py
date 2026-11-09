@@ -94,6 +94,25 @@ def test_legacy_hosting_election_models_remain_readable_without_registry_hash() 
     assert deployment.elections[0].source_registry_hash is None
 
 
+@pytest.mark.parametrize("schema,explicit_null", [("3.0", False), ("2.0", True)])
+def test_deployment_schema_does_not_invent_or_borrow_presentation_provenance(
+    schema: str, explicit_null: bool
+) -> None:
+    election: dict[str, object] = dict(_deployed_election())
+    if explicit_null:
+        election["presentation"] = None
+    with pytest.raises(ValueError, match="presentation"):
+        DeploymentManifest.model_validate(
+            {
+                "schema_version": schema,
+                "canonical_origin": "https://seattleelections.guide",
+                "current_election_id": CURRENT_ID,
+                "elections": [election],
+                "assets": {"e/index.html": "e" * 64},
+            }
+        )
+
+
 @pytest.mark.parametrize(
     "invalid_origin",
     [

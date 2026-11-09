@@ -27,6 +27,7 @@ from election_guide.rendering.documents import (
     render_html_document,
     render_race_document,
 )
+from election_guide.rendering.models import PagePresentation
 from election_guide.results.loader import read_results, reject_committed_counting_status
 from election_guide.results.models import PreliminaryElectionResults
 from election_guide.results.validation import validate_results_inventory
@@ -981,6 +982,56 @@ def test_server_preliminary_staleness_preserves_the_original_count_time(
     assert "Stale · last checked Nov 3, 9:00:00 p.m. PST" in card
     assert "Count updated Nov 3, 8:00:00 p.m. PST" in card
     assert "counting continues" not in html
+
+
+@pytest.mark.parametrize("page", ["guide", "race"])
+def test_historical_preliminary_presentation_ages_recency_without_changing_original_clocks(
+    tmp_path: Path, general_view: PublicationViewModel, page: str
+) -> None:
+    document = preliminary_document()
+    for tally in document["races"]:
+        tally["export_generated_at"] = "2026-11-04T04:30:00Z"
+    view = general_view.model_copy(
+        update={
+            "results": read_document(tmp_path, document),
+            "metadata": general_view.metadata.model_copy(
+                update={
+                    "git_commit": "c" * 40,
+                    "generated_at": datetime(2026, 11, 4, 5, tzinfo=UTC),
+                    "results_capture_urls": {
+                        "king-county-assessor": "https://example.test/original-count"
+                    },
+                }
+            ),
+        }
+    )
+    original = view.model_dump_json()
+    presentation = PagePresentation(
+        source_git_commit="a" * 40,
+        generated_at=datetime(2026, 11, 6, 5, tzinfo=UTC),
+        archive_git_commit="c" * 40,
+        archive_release_version="test.1",
+        release_manifest_sha256="d" * 64,
+        publication_view_model_sha256=hashlib.sha256(original.encode()).hexdigest(),
+    )
+    configuration = read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    html = (
+        render_html_document(view, configuration, presentation=presentation)
+        if page == "guide"
+        else render_race_document(
+            view,
+            "king-county-assessor",
+            public_site_url=configuration.public_site_url,
+            presentation=presentation,
+        )
+    )
+    assert "Stale · last checked Nov 3, 9:00:00 p.m. PST" in html
+    assert "Count updated Nov 3, 8:00:00 p.m. PST" in html
+    assert "Export generated Nov 3, 8:30:00 p.m. PST" in html
+    assert 'href="https://example.test/original-count"' in html
+    assert "Nov 5, 9:00:00 p.m. PST" not in html
+    assert "Advances" not in html and "Elected" not in html
+    assert view.model_dump_json() == original
 
 
 def test_preliminary_admission_requires_original_bytes_and_registered_authority(

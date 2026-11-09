@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 
 import pytest
@@ -12,6 +13,7 @@ from election_guide.hosting.production_check import (
     MANIFEST_CHECK,
     CommitCheck,
     Observation,
+    PresentationAssetCheck,
     ProductionCheckReport,
     RouteCheck,
     RouteCheckResult,
@@ -22,6 +24,81 @@ from election_guide.hosting.production_check import (
 
 CURRENT_ID = "wa-2026-primary"
 COMMIT = "a" * 40
+
+
+def with_presentation_evidence(report: ProductionCheckReport) -> ProductionCheckReport:
+    """A complete independent schema3 fixture, shared with retained-evidence tests."""
+    contract = report.deployment_contract
+    assert contract is not None
+    raw = contract.observed.model_dump(mode="json")
+    raw["schema_version"] = "3.0"
+    paths = ["about/index.html"]
+    for election in raw["elections"]:
+        root = f"e/{election['election_id']}/"
+        election["presentation"] = {
+            "source_git_commit": contract.expected_git_commit,
+            "generated_at": "2026-10-15T00:00:00Z",
+            "archive_git_commit": election["git_commit"],
+            "archive_release_version": election["release_version"],
+            "release_manifest_sha256": election["release_manifest_sha256"],
+            "publication_view_model_sha256": "a" * 64,
+        }
+        paths.extend(
+            root + suffix
+            for suffix in (
+                "release-status.json",
+                "release-manifest.json",
+                "index.html",
+                "sources/index.html",
+                "comparisons/index.html",
+                "updates/index.html",
+                "races/alpha/index.html",
+                "updates/recorded-update/index.html",
+            )
+        )
+    for path in paths:
+        raw["assets"][path] = hashlib.sha256(path.encode()).hexdigest()
+    deployment = DeploymentManifest.model_validate(raw)
+    site = contract.expected_site.model_copy(update={"schema_version": "1.1"})
+    current_contract = contract.model_copy(update={"observed": deployment, "expected_site": site})
+    checks = tuple(
+        PresentationAssetCheck(
+            path=path,
+            request_path="/" + path.removesuffix("index.html")
+            if path.endswith("/index.html")
+            else "/" + path,
+            expected_sha256=deployment.assets[path],
+            observed_sha256=deployment.assets[path],
+            observation=Observation(status=200),
+        )
+        for path in paths
+    )
+    return report.model_copy(
+        update={"deployment_contract": current_contract, "presentation_assets": checks}
+    )
+
+
+def damage_presentation_evidence(
+    report: ProductionCheckReport, fault: str
+) -> ProductionCheckReport:
+    if fault == "omitted":
+        raw = report.model_dump(mode="json")
+        raw.pop("presentation_assets")
+        return ProductionCheckReport.model_validate(raw)
+    checks = list(report.presentation_assets)
+    if fault == "empty":
+        checks = []
+    elif fault == "partial":
+        checks.pop()
+    elif fault == "duplicate":
+        checks[-1] = checks[0]
+    elif fault == "unexpected":
+        checks[-1] = checks[-1].model_copy(update={"path": "unexpected/index.html"})
+    else:
+        checks[-1] = checks[-1].model_copy(
+            update={"expected_sha256": "f" * 64, "observed_sha256": "f" * 64}
+        )
+    return report.model_copy(update={"presentation_assets": tuple(checks)})
 
 
 def _site_manifest() -> SiteManifest:
@@ -101,6 +178,75 @@ def test_deployment_contract_uses_the_site_manifest_and_selects_the_first_race()
     assert check.ok
     assert check.errors == ()
     assert check.representative_race_path == "/e/wa-2026-general/races/alpha/"
+
+
+def test_current_presentation_contract_cannot_accept_an_old_deployment_at_the_same_commit() -> None:
+    expected = _site_manifest().model_copy(update={"schema_version": "1.1"})
+    check = production_check.evaluate_deployment_contract(
+        expected, _deployment_manifest(), expected_git_commit=COMMIT
+    )
+    assert not check.ok
+    assert any("presentation" in error for error in check.errors)
+
+
+def test_current_presentation_requires_a_race_for_every_historical_election() -> None:
+    from tests.test_production_wait import _report  # pyright: ignore[reportPrivateUsage]
+
+    report = with_presentation_evidence(_report())
+    contract = report.deployment_contract
+    assert contract is not None
+    observed = contract.observed
+    raw = observed.model_dump(mode="json")
+    raw["assets"] = {
+        path: digest
+        for path, digest in raw["assets"].items()
+        if not path.startswith("e/wa-2026-primary/races/")
+    }
+    failed = production_check.evaluate_deployment_contract(
+        contract.expected_site,
+        DeploymentManifest.model_validate(raw),
+        expected_git_commit=contract.expected_git_commit,
+    )
+    assert not failed.ok
+    assert any("race" in error and "wa-2026-primary" in error for error in failed.errors)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("source_git_commit", "b" * 40),
+        ("archive_git_commit", "b" * 40),
+        ("archive_release_version", "other.1"),
+        ("release_manifest_sha256", "b" * 64),
+        ("generated_at", "2026-11-08T12:00:00Z"),
+    ],
+)
+def test_production_contract_binds_presentation_separately_from_historical_data(
+    field: str, value: str
+) -> None:
+    raw = _deployment_manifest().model_dump(mode="json")
+    raw["schema_version"] = "3.0"
+    raw["assets"]["e/wa-2026-primary/races/alpha/index.html"] = "f" * 64
+    for election in raw["elections"]:
+        election["presentation"] = {
+            "source_git_commit": COMMIT,
+            "generated_at": "2026-11-09T12:00:00Z",
+            "archive_git_commit": election["git_commit"],
+            "archive_release_version": election["release_version"],
+            "release_manifest_sha256": election["release_manifest_sha256"],
+            "publication_view_model_sha256": "a" * 64,
+        }
+    expected = _site_manifest().model_copy(update={"schema_version": "1.1"})
+    healthy = production_check.evaluate_deployment_contract(
+        expected, DeploymentManifest.model_validate(raw), expected_git_commit=COMMIT
+    )
+    assert healthy.ok
+    raw["elections"][1]["presentation"][field] = value
+    failed = production_check.evaluate_deployment_contract(
+        expected, DeploymentManifest.model_validate(raw), expected_git_commit=COMMIT
+    )
+    assert not failed.ok
+    assert any("presentation" in error for error in failed.errors)
 
 
 @pytest.mark.parametrize(
