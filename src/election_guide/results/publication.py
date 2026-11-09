@@ -72,16 +72,19 @@ def build_preliminary_update(
         return None
     local = checked_at.astimezone(ZoneInfo("America/Los_Angeles"))
     contests = f"{len(changed)} contest" + ("s" if len(changed) != 1 else "")
+    checked = (
+        f"{local:%B} {local.day}, {local.year} at "
+        f"{local.hour % 12 or 12}:{local:%M} {'a.m.' if local.hour < 12 else 'p.m.'} Pacific"
+    )
     return CorrectionEntry(
         slug=f"preliminary-results-{local.strftime('%Y-%m-%d-%H%M%S')}",
         corrected_on=local.date(),
-        headline=(
-            f"Updated preliminary counts for {contests} at {local.strftime('%H:%M:%S')} Pacific."
-        ),
+        headline=f"Updated preliminary counts for {contests}.",
         body=(
             f"Updated the unofficial counts for {contests}, using each contest's complete "
             "jurisdiction. Publisher count and export times remain separate from source "
-            "verification times. No certification or outcome is inferred."
+            "verification times. No certification or outcome is inferred. "
+            f"Results checked {checked}."
         ),
         topics=["results"],
         actions=["changed"],

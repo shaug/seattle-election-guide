@@ -52,6 +52,42 @@ def test_corrected_lower_votes_are_reported_without_clamping_or_winner_claims() 
     assert current.races[0].outcomes[0].votes == previous.races[0].outcomes[0].votes - 1
 
 
+@pytest.mark.parametrize(
+    "checked_at,want",
+    [
+        ("2026-11-08T00:43:49+00:00", "November 7, 2026 at 4:43 p.m."),
+        ("2026-11-07T07:21:55+00:00", "November 6, 2026 at 11:21 p.m."),
+        ("2026-07-05T07:00:59+00:00", "July 5, 2026 at 12:00 a.m."),
+        ("2026-07-05T19:00:59+00:00", "July 5, 2026 at 12:00 p.m."),
+        ("2026-11-08T20:09:59+00:00", "November 8, 2026 at 12:09 p.m."),
+        ("2026-11-08T09:43:49+09:00", "November 7, 2026 at 4:43 p.m."),
+    ],
+)
+def test_update_body_uses_source_check_time_in_pacific_minutes(checked_at: str, want: str) -> None:
+    previous = snapshot()
+    current = previous.model_copy(deep=True)
+    current.races[0].outcomes[0].votes -= 1
+    assert current.races[0].votes_counted is not None
+    current.races[0].votes_counted -= 1
+    original = current.model_dump(mode="json")
+    check_time = datetime.fromisoformat(checked_at)
+    assert all(c.captured_at != check_time for c in current.captures)
+    assert current.races[0].export_generated_at != check_time
+    assert current.races[0].reported_at != check_time
+
+    entry = publisher().build_preliminary_update(previous, current, checked_at=check_time)
+
+    assert entry is not None
+    assert entry.headline == "Updated preliminary counts for 1 contest."
+    assert entry.body == (
+        "Updated the unofficial counts for 1 contest, using each contest's complete "
+        "jurisdiction. Publisher count and export times remain separate from source "
+        "verification times. No certification or outcome is inferred. "
+        f"Results checked {want} Pacific."
+    )
+    assert current.model_dump(mode="json") == original
+
+
 def test_changed_publisher_clock_without_tally_change_does_not_create_update() -> None:
     previous = snapshot()
     current = previous.model_copy(deep=True)
@@ -261,7 +297,7 @@ def test_actual_tally_changes_create_update_even_without_new_leader(change: str)
     current = PreliminaryElectionResults.model_validate(current.model_dump())
     entry = publisher().build_preliminary_update(previous, current, checked_at=NOW)
     assert entry is not None
-    assert entry.headline == "Updated preliminary counts for 1 contest at 19:00:00 Pacific."
+    assert entry.headline == "Updated preliminary counts for 1 contest."
     assert "source/reporting metadata or retained originals" not in entry.body
 
 
@@ -273,7 +309,9 @@ def test_metadata_only_new_capture_still_requires_verified_originals() -> None:
         publisher().build_preliminary_update(previous, current, checked_at=NOW)
 
 
-def test_two_genuine_same_day_updates_keep_distinct_publication_identities(tmp_path: Path) -> None:
+def test_two_genuine_same_minute_updates_keep_distinct_publication_identities(
+    tmp_path: Path,
+) -> None:
     previous = snapshot()
     current = previous.model_copy(deep=True)
     current.races[0].outcomes[0].votes -= 1
@@ -281,11 +319,13 @@ def test_two_genuine_same_day_updates_keep_distinct_publication_identities(tmp_p
     current.races[0].votes_counted -= 1
     first = publisher().build_preliminary_update(previous, current, checked_at=NOW)
     second = publisher().build_preliminary_update(
-        previous, current, checked_at=NOW + timedelta(hours=1)
+        previous, current, checked_at=NOW + timedelta(seconds=1)
     )
     assert first is not None and second is not None
     path = tmp_path / "updates.yaml"
     path.write_bytes((ROOT / "data/corrections/wa-2026-general.yaml").read_bytes())
     assert publisher().append_preliminary_update(path, first)
     assert publisher().append_preliminary_update(path, second)
-    assert first.headline != second.headline and first.slug != second.slug
+    assert first.headline == second.headline and first.body == second.body
+    assert first.slug == "preliminary-results-2026-11-06-190000"
+    assert second.slug == "preliminary-results-2026-11-06-190001"
