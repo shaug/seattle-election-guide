@@ -95,6 +95,10 @@ record inventory, bound to deployment asset hashes and canonical public request 
 subset cannot qualify as a complete strict pass. Copied status bytes and generation must match their
 original release manifest before supplying presentation time; historical statuses keep the same
 byte binding. Original source1.0 confirmation semantics remain unchanged.
+New Source1.1 static and worker responses include `Cache-Control: no-transform` so hosting email
+obfuscation cannot rewrite the bytes checked by strict verification. Existing cache/security
+headers, statuses and bodies are preserved; exact hashes remain required. See the
+[hosting response contract](HOSTING.md#local-staging-and-preview) for Cloudflare's documented behavior.
 
 This presentation change retains Updates snapshot policy6.0. Head/footer provenance, markup and
 paint do not become election information. Original deployment2.0 baselines remain verified under

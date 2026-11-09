@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 from contextlib import contextmanager, suppress
 from http.server import BaseHTTPRequestHandler
 from pathlib import Path
@@ -286,6 +287,108 @@ def test_current_presentation_renders_all_historical_html_without_replacing_the_
         for p in bundle.rglob("*")
         if p.is_file()
     }
+
+
+@pytest.mark.parametrize("schema", ["1.0", "1.1"])
+def test_hosting_static_headers_preserve_cache_policy_and_prohibit_transformations(
+    tmp_path: Path, schema: str
+) -> None:
+    manifest, bundles, _ = _current_site(tmp_path)
+    raw = json.loads(manifest.read_bytes())
+    raw["schema_version"] = schema
+    manifest.write_bytes(canonical_json_bytes(raw))
+    output = tmp_path / "site"
+    stage_pages_site(manifest, bundles, output)
+
+    headers = (output / "_headers").read_text()
+    cache = "  Cache-Control: public, max-age=0, must-revalidate"
+    if schema == "1.1":
+        cache += ", no-transform"
+    assert headers.splitlines()[1] == cache
+    assert headers.count("Cache-Control:") == 1
+    assert "  X-Frame-Options: DENY" in headers
+    assert "  X-Content-Type-Options: nosniff" in headers
+    assert "  Content-Type: text/calendar; charset=utf-8" in headers
+
+
+@pytest.mark.parametrize("schema", ["1.0", "1.1"])
+@pytest.mark.parametrize(
+    "cache", [None, "public, max-age=0, must-revalidate", "private, NO-TRANSFORM"]
+)
+def test_hosting_worker_preserves_response_bytes_and_headers_with_no_transform(
+    tmp_path: Path, schema: str, cache: str | None
+) -> None:
+    manifest, bundles, _ = _current_site(tmp_path)
+    raw = json.loads(manifest.read_bytes())
+    raw["schema_version"] = schema
+    manifest.write_bytes(canonical_json_bytes(raw))
+    output = tmp_path / "site"
+    stage_pages_site(manifest, bundles, output)
+    script = r"""
+const fs = require("node:fs");
+(async () => {
+  const source = fs.readFileSync(process.argv[1], "utf8");
+  const moduleUrl = `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`;
+  const worker = (await import(moduleUrl)).default;
+  const cache = JSON.parse(process.argv[2]);
+  const headers = {"Content-Type": "text/html", "X-Frame-Options": "DENY", "ETag": '"original"'};
+  if (cache !== null) headers["Cache-Control"] = cache;
+  const env = {ASSETS: {fetch: () => new Response("literal contact@example.org bytes", {
+    status: 203, statusText: "Original status", headers,
+  })}};
+  const results = [];
+  for (const url of JSON.parse(process.argv[3])) {
+    const response = await worker.fetch(new Request(url), env);
+    results.push({status: response.status, statusText: response.statusText,
+      headers: Object.fromEntries(response.headers), body: await response.text()});
+  }
+  process.stdout.write(JSON.stringify(results));
+})();
+"""
+    urls = [
+        "https://seattleelections.guide/about/",
+        "https://preview.pages.dev/about/",
+        "https://seattleelections.guide/missing/",
+        "https://seattleelections.guide/?query=preserved",
+    ]
+    completed = subprocess.run(
+        ["node", "-e", script, str(output / "_worker.js"), json.dumps(cache), json.dumps(urls)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    canonical, preview, missing, redirect = json.loads(completed.stdout)
+    for asset in (canonical, preview):
+        assert asset["status"] == 203
+        assert asset["statusText"] == "Original status"
+        assert asset["body"] == "literal contact@example.org bytes"
+        assert asset["headers"]["x-frame-options"] == "DENY"
+        assert asset["headers"]["etag"] == '"original"'
+        assert asset["headers"]["content-type"] == "text/html"
+    assert "x-robots-tag" not in canonical["headers"]
+    assert preview["headers"]["x-robots-tag"] == "noindex"
+    assert missing["status"] == 404
+    assert missing["headers"]["x-robots-tag"] == "noindex"
+    assert "Page not found" in missing["body"]
+    assert redirect["status"] == 307
+    assert redirect["headers"]["location"] == (
+        f"https://seattleelections.guide/e/{CURRENT_ID}/?query=preserved"
+    )
+    for response in (canonical, preview, missing, redirect):
+        original = cache if response in (canonical, preview) else None
+        actual = response["headers"].get("cache-control")
+        if schema == "1.0":
+            assert actual == original
+        else:
+            expected = (
+                original
+                if original and "no-transform" in original.lower()
+                else f"{original}, no-transform"
+                if original
+                else "no-transform"
+            )
+            assert actual == expected
+            assert actual.lower().count("no-transform") == 1
 
 
 def _reseal_site(site: Path) -> None:

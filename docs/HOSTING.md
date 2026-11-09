@@ -295,6 +295,16 @@ atomically replaces `dist/cloudflare-site/` with:
 - `_headers` with browser-security and revalidation policy. Indexability is not set here: it
   depends on the request's hostname, which `_headers` cannot see, so the worker applies it.
 
+Source1.1 adds `Cache-Control: no-transform` to the existing static revalidation directive and
+to every worker response, preserving its cache directives, body, status and other headers.
+Actual General95 HTML was changed by Cloudflare email obfuscation after upload; new presentation
+verification requires the exact declared bytes, so the response contract must prohibit that
+transformation. [Cloudflare documents that email obfuscation excludes `no-transform` responses](https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/).
+The worker sets it explicitly because [Pages `_headers` rules do not apply to Function responses](https://developers.cloudflare.com/pages/configuration/headers/),
+including advanced-mode `_worker.js`. No global Cloudflare setting changes or response-body
+normalization are part of this contract. Source1.0 retains its original headers and worker behavior
+for authenticated historical verification and recovery.
+
 `hosting stage` verifies the completed tree before the atomic swap. The same integrity gate can be
 run independently, and CI runs it once before artifact upload and again after the deploy job
 downloads the artifact:

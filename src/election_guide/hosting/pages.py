@@ -285,7 +285,10 @@ def stage_pages_site(
         )
         public_paths.add(f"/{CALENDAR_FEED_NAME}")
 
-        (stage / "_headers").write_text(PAGES_HEADERS, encoding="utf-8")
+        headers = PAGES_HEADERS
+        if site_manifest.schema_version == "1.1":
+            headers = headers.replace("must-revalidate", "must-revalidate, no-transform", 1)
+        (stage / "_headers").write_text(headers, encoding="utf-8")
         public_paths.update({"/deployment-manifest.json", f"/{UPDATES_SNAPSHOT}"})
         (stage / "_worker.js").write_text(
             _pages_worker(
@@ -1129,6 +1132,25 @@ def _pages_worker(
         compare_href=compare_href,
         corrections_href=corrections_href,
     )
+    # _headers does not apply to Pages Function responses. The new contract
+    # prohibits edge transformations on every worker return as well as assets.
+    worker_declaration = "export default"
+    response_contract = ""
+    if site_manifest.schema_version == "1.1":
+        worker_declaration = "const router ="
+        response_contract = """
+export default {
+  async fetch(request, env) {
+    const original = await router.fetch(request, env);
+    const response = new Response(original.body, original);
+    const cache = response.headers.get("Cache-Control");
+    if (!cache?.split(",").some(value => value.trim().toLowerCase() === "no-transform")) {
+      response.headers.set("Cache-Control", cache ? `${cache}, no-transform` : "no-transform");
+    }
+    return response;
+  },
+};
+"""
     return f"""const CANONICAL_HOST = {json.dumps(site_manifest.canonical_origin.removeprefix("https://"))};
 const LEGACY_HOSTS = new Set({json.dumps(list(LEGACY_HOSTS))});
 const CURRENT_ELECTION_PATH = {json.dumps(current_path)};
@@ -1159,7 +1181,7 @@ function noindex(response) {{
   return marked;
 }}
 
-export default {{
+{worker_declaration} {{
   async fetch(request, env) {{
     const url = new URL(request.url);
 
@@ -1226,7 +1248,7 @@ export default {{
     return url.hostname === CANONICAL_HOST ? asset : noindex(asset);
   }},
 }};
-"""
+{response_contract}"""
 
 
 def _sha256(path: Path) -> str:
