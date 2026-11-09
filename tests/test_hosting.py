@@ -743,13 +743,20 @@ def test_enabled_comparisons_stage_verify_and_route_exact_asset(tmp_path: Path) 
 
     compare_html = compare_path.read_text(encoding="utf-8")
     assert 'data-default-columns="gall,strn,stim"' in compare_html
-    assert (
-        'href="/e/wa-2026-primary/comparisons/" aria-current="page">Comparisons</a>' in compare_html
+    comparison_href = f'href="/e/{CURRENT_ID}/comparisons/"'
+    comparison_link = next(
+        link
+        for link in re.findall(r"<a\b[^>]*>Comparisons</a>", compare_html)
+        if comparison_href in link
     )
+    assert 'aria-current="page"' in comparison_link
+    assert 'data-precinct-link="comparisons"' in comparison_link
     sources_html = (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
         encoding="utf-8"
     )
-    assert f'href="/e/{CURRENT_ID}/comparisons/">Comparisons</a>' in sources_html
+    assert any(
+        comparison_href in link for link in re.findall(r"<a\b[^>]*>Comparisons</a>", sources_html)
+    )
     assert f'href="/e/{CURRENT_ID}/comparisons/">Comparisons</a>' in (
         output / "about" / "index.html"
     ).read_text(encoding="utf-8")
@@ -1591,7 +1598,7 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
         '<meta name="twitter:description" content="Choose which sources count '
         f'toward your personalized {election_name} results.">' in html
     )
-    assert "Choose which sources count &mdash; the guide recalculates from your selection." in html
+    assert "The endorsements you trust, aggregated." in html
     coverage_model = view_model.model_copy(deep=True)
     coverage_source = coverage_model.sources[0]
     coverage_source.contribution_status = "coverage_gap"

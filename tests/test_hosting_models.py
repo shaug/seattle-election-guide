@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 from election_guide.hosting.models import (
@@ -273,14 +275,14 @@ def test_active_updates_projection_serializes_its_explicit_provenance() -> None:
     assert deployed.model_dump(mode="json")["updates_projection"] == projection
 
 
-def test_source12_declares_historical_capability_outside_archive_identity() -> None:
+def _source12_manifest() -> dict[str, Any]:
     historical = {**_published_election(), "election_id": "wa-2026-primary"}
     current = {
         **_published_election(),
         "election_id": "wa-2026-general",
         "bundle_id": "current-general",
     }
-    raw = {
+    return {
         "schema_version": "1.2",
         "canonical_origin": "https://seattleelections.guide",
         "current_election_id": "wa-2026-general",
@@ -292,9 +294,38 @@ def test_source12_declares_historical_capability_outside_archive_identity() -> N
             }
         },
     }
+
+
+def test_source12_declares_historical_capability_outside_archive_identity() -> None:
+    raw = _source12_manifest()
+    historical = raw["elections"][1]
     site = SiteManifest.model_validate(raw)
     serialized = site.model_dump(mode="json")
     assert serialized["historical_capabilities"] == raw["historical_capabilities"]
     assert serialized["elections"][1] == PublishedElection.model_validate(historical).model_dump(
         mode="json"
     )
+
+
+@pytest.mark.parametrize("fault", ["missing", "empty", "current", "undeclared", "legacy", "future"])
+def test_historical_capability_schema_and_election_boundaries_remain_strict(fault: str) -> None:
+    raw = _source12_manifest()
+    match = "historical capabilities must name declared historical elections"
+    if fault == "missing":
+        raw.pop("historical_capabilities")
+        match = "requires a reviewed historical capability"
+    elif fault == "empty":
+        raw["historical_capabilities"] = {}
+        match = "requires a reviewed historical capability"
+    elif fault in {"current", "undeclared"}:
+        ref = raw["historical_capabilities"].pop("wa-2026-primary")
+        election_id = "wa-2026-general" if fault == "current" else "wa-unknown-election"
+        raw["historical_capabilities"][election_id] = ref
+    elif fault == "legacy":
+        raw["schema_version"] = "1.1"
+        match = "historical capabilities require source schema1.2"
+    else:
+        raw["schema_version"] = "1.3"
+        match = "Input should be"
+    with pytest.raises(ValueError, match=match):
+        SiteManifest.model_validate(raw)

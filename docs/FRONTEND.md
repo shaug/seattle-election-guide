@@ -456,7 +456,7 @@ when payload admission fails.
   infer neither election nor capability from paths, panel names, markup or browser
   defaults. Sources Save/Cancel/Reset and ordinary Back/Forward preserve the owned
   race/source state and return target.
-  *Check: existing query/router, primary current/legacy fixture and navigation
+  *Check: exists — query/router, primary current/legacy fixture and navigation
   suites exercise defaults, fragment separation, actual navigation and history.*
 - **Query-history enhancement follows declared capabilities.** A precinct control
   requires an admitted catalog for the same election. Current race-query handling
@@ -464,7 +464,7 @@ when payload admission fails.
   ordinary behavior. Existing routers remain the sole address owners, and complete
   navigation destinations come from renderer-owned payload paths. The primary
   direct-only contract does not activate General address requests.
-  *Check: the primary current/legacy fixtures, precinct-selection-store tests and
+  *Check: exists — primary current/legacy fixtures, precinct-selection-store tests and
   navigation/browser suites exercise subscription, isolation and history behavior.*
 - **Each page's codec module is the sole reader and writer of `location`.**
   One owner per fragment. No second script parses the hash by hand, and no

@@ -51,7 +51,7 @@ def test_primary_uses_current_native_controls_without_inventing_precincts(
     ]
     assert "All ballot races" in html.split("<script", 1)[0]
     assert "<section data-compact-filters" in html
-    assert '<button class="precinct-open' not in html.split("<script", 1)[0]
+    assert not re.search(r"<[^>]+\sdata-precinct-open(?:\s|=|>)", html.split("<script", 1)[0])
     if page == "guide":
         assert "data-compact-sources" in html.split("<script", 1)[0]
         assert "Sources: <span data-sources-summary>All 40</span>" in html
