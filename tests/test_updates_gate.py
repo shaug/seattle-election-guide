@@ -770,3 +770,25 @@ def test_metadata_change_cannot_hide_simultaneous_preliminary_vote_change(
         _write(site, f"e/{GENERAL}/index.html", _page(text))
         _seal(site)
     assert check_updates(baseline, candidate)["result"] == "fail"
+
+
+@pytest.mark.parametrize(
+    "replacement",
+    [
+        "Candidate A 11",
+        "Last checked Nov 7, 5:22:99 a.m. PST",
+        "Extra election information · Last checked Nov 7, 5:22:18 a.m. PST",
+    ],
+)
+def test_recency_normalization_keeps_unrecognized_text_in_real_unofficial_results(
+    sites: tuple[Path, Path], replacement: str
+) -> None:
+    baseline, candidate = sites
+    content = _result_clock_placement("export", compact_badge=True)
+    for site, text in [
+        (baseline, content),
+        (candidate, content.replace("Last checked Nov 7, 5:22:18 a.m. PST", replacement)),
+    ]:
+        _write(site, f"e/{GENERAL}/index.html", _page(text))
+        _seal(site)
+    assert check_updates(baseline, candidate)["result"] == "fail"

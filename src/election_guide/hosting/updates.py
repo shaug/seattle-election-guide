@@ -502,6 +502,11 @@ class _InformationContent(_PageContent):
                     tag == "span" and attrs.get("data-preliminary-recency")
                     for tag, attrs in self.stack
                 )
+                and re.fullmatch(
+                    rf"(?:Last checked|Stale · last checked|Refresh unavailable · last checked) "
+                    rf"{_RESULT_CLOCK}",
+                    data.strip(),
+                )
             ):
                 return
             if self.result_depth is not None and not literal:
