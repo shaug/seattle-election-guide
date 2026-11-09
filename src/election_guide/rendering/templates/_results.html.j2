@@ -56,7 +56,7 @@
                 <div class="race-results-row{{ ' race-results-row-trailing' if not view.preliminary and not outcome.advanced else '' }}">
                   <span class="race-results-name">{% if linked %}<a href="#candidate-{{ outcome.candidate_id }}">{{ outcome.candidate_label }}</a>{% else %}{{ outcome.candidate_label }}{% endif %}{% if outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
                   <span class="race-results-share">{{ outcome.percentage_label }}</span>
-                  <span class="race-results-bar"><i style="width:{{ outcome.percentage_label if outcome.percentage_label != '—' else '0%' }}"></i></span>
+                  <span class="race-results-bar{% if outcome.meter_tone %} race-results-bar-{{ outcome.meter_tone }}{% endif %}"><i style="width:{{ outcome.percentage_label if outcome.percentage_label != '—' else '0%' }}"></i></span>
                 </div>
                 {% endfor %}
               </div>

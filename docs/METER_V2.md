@@ -42,8 +42,8 @@ tooltips. Two visual strengths remain essential:
 - **Constant width.** Within any column of cards every meter is the same size (each chrome —
   card, compact ballot, print, race page — has its own fixed footprint), so a column can be
   swept in one eye movement and compared by fill alone.
-- **Color and fill-length carry strength.** Teal past half means a majority; amber means no
-  majority; longer means stronger.
+- **Color and fill-length carry strength.** Teal past half means a majority; amber means a
+  sole leader without a majority; lavender/violet means an actual tie. Longer means stronger.
 
 The block model solves five requirements a percentage-only display cannot:
 
@@ -77,7 +77,7 @@ reveals the same detail; sliding across the meter updates the tooltip, and relea
 | Split block | one block, halved horizontally: higher-ranked candidate on top |
 | Seam | 1px between blocks; 1px between split halves |
 | Tongue tip radius | `.25rem`, interior corner only (see below) |
-| Percentage layer | left-aligned over the leader's blocks, bold tabular numerals; white on teal, navy on amber |
+| Percentage layer | left-aligned over the leader's blocks, bold tabular numerals; white on teal, navy on amber or first-run lavender |
 
 ## The discovery model
 
@@ -124,15 +124,16 @@ Exactly three color commitments carry meaning; no other hue does:
 | Meaning | Color |
 | --- | --- |
 | Majority leader | The site's own teal `#087f73` (`base.css --teal`) |
-| Tied leaders | Variations of amber: `#d99000` (`base.css --amber`) and `#8a5d12` (`--meter-tie-deep`) |
+| Tied leaders | Lavender `#bba6d7` (`guide-race.css --meter-tie`) then deep violet `#654a8b` (`--meter-tie-violet`), approved in #711; sole leaders without a majority remain amber |
 | Sole leader without a majority | Amber `#d99000` |
 | Selected candidate (race-page context) | The candidate's color, bold — `saturate(1.5) brightness(.9)` in the mockup; other blocks recede to 30% opacity. Static per #325: every candidate's own section applies this to that one candidate always, not a hover- or click-driven engaged state on a shared bar (entry 27) |
 | Trailing candidates | The muted set, by rank: slate `#7d95ad` (`--meter-trail-slate`), taupe `#a99e8a` (`--meter-trail-taupe`), plum `#a08296` (`--meter-trail-plum`) |
 
 When a pool runs out — a fourth trailing candidate, a third tied leader — subsequent candidates
 continue the last hue stepped progressively toward the track color, so two candidates in one
-meter never share a swatch. Every color above enters `base.css` as a named token at
-implementation time; `docs/DESIGN.md`'s rule that page CSS never introduces a color literal
+meter never share a swatch. The approved #711 tie tokens live with the shared meter
+component in `guide-race.css`, preserving the frozen `base.css` shell; other tokens stay
+in `base.css`. Every color enters as a named token at implementation time; `docs/DESIGN.md`'s rule that page CSS never introduces a color literal
 applies to the meter like everything else. The tokens landed in #312 under the `--meter-`
 family the track already began (`--meter-track`), spelled above and in § Seams: hue names for
 the trailing set because the doc, not the stylesheet, owns the rank order. The majority and
@@ -368,7 +369,7 @@ Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during
 | 7 | Block shape | Identical rectangles; no rounded block ends |
 | 8 | Frame | `.4rem` corner radius — a nod to the pill, nothing more |
 | 9 | Majority color | The site's own teal `#087f73` |
-| 10 | Tie / no-majority | Amber variations / amber |
+| 10 | Tie / no-majority | Lavender/deep violet for an actual tie / amber for a sole sub-majority leader (#711 supersedes the original amber tie palette) |
 | 11 | Trailing colors | Muted slate/taupe/plum; recessive by intent |
 | 12 | Selected candidate | Bold; everything else recedes |
 | 13 | Seams | 1px hairline, darker than fill, minimal contrast; invisible at rest on pointer and touch devices |

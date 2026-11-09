@@ -108,11 +108,8 @@
 .race-detail-outcomes { display: grid; gap: .65rem; }
 .race-detail-candidate, .race-detail-outcome { overflow: hidden; border: 1px solid var(--line-soft); border-left: .3rem solid var(--line-strong); background: var(--white); }
 .race-detail-candidate { border-color: #e8c58e; border-left-color: var(--amber); }
-/* Teal belongs to the one clear favourite, whose heading is the headline above.
-   A tied leader keeps the amber every other candidate wears: the green would
-   read as "this is the answer", and the reason a tie is worth marking is that
-   it is not (docs/DESIGN.md, Data display — default styling never overstates
-   confidence). What marks it instead is its "Tied for lead" eyebrow. */
+/* Teal belongs to the clear favourite; purple marks an actual tied leader
+   without making a sole sub-majority leader or an ordinary alternative purple. */
 .race-detail-candidate-leader { border-color: #9fcfc5; border-left-color: var(--teal); }
 .race-detail-candidate-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
 /* The headlined candidate's own heading carries no name (the headline above
@@ -125,8 +122,12 @@
    header's color straight through to the meter instead. */
 .race-detail-candidate-headlined .race-detail-candidate-heading { background: var(--tone-agree-bg); }
 .race-detail-candidate-title { min-width: 0; }
-/* Only a tied leader has this eyebrow, and it takes the amber its box wears. */
+/* The legacy tied class also occurs for an insufficient sole leader with no
+   headline. Keep its existing amber framing; only actual-tie gets purple. */
 .race-detail-candidate-tied .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-differ-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.race-detail-candidate-actual-tie { border-color: var(--meter-tie); border-left-color: var(--meter-tie-violet); }
+.race-detail-candidate-actual-tie .race-detail-candidate-heading { background: var(--tone-tie-bg); }
+.race-detail-candidate-actual-tie .race-detail-candidate-title p { color: var(--tone-tie-text); }
 .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
 /* The results chip itself is a guide+race shared rule (guide-race.css,
    `.race-detail-result-chip`) — this heading is one more place it renders,

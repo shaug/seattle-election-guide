@@ -1,9 +1,22 @@
 # Seattle Elections Guide — UI/UX Guidelines
 
+## Historical presentation (#721, November 9, 2026)
+
+Public historical pages use the current accepted presentation over their original verified
+election data. Published archive ZIPs retain their pinned bytes. An approved color or shared
+presentation correction therefore reaches the historical overview and its race pages together;
+it does not require a replacement election archive. Changes to historical election facts still
+require a new reviewed immutable release. Election-specific capabilities remain those supplied
+by the archive: a primary does not acquire general-only precinct controls or ballot ordering.
+The existing Data updated footer describes the original data; Site updated describes the current
+presentation source and build. Count, export, check and certification dates retain their own
+meanings. This supersedes the byte-copy/replacement-archive presentation rule below.
+
 ## Preliminary results (#696)
 
 Reuse the existing Guide/race result block: names, one-decimal named-choice percentages,
-.45rem navy tally bars and compact contest-count/authority/evidence provenance. The adjacent
+.45rem tally bars and compact contest-count/authority/evidence provenance. The bars remain
+neutral navy except for the approved current-leader alignment below. The adjacent
 amber badge says only **Unofficial**; certified-result badges say only **Certified**.
 The second provenance line at the bottom of the card or race result block carries available
 timestamps: **Count updated [time]**, **Export generated [time]**, and the separate
@@ -13,6 +26,42 @@ retain equal emphasis; no winner/outcome chips or trailing treatment. Center the
 banner. Different authorities retain their own clocks and certification evidence; a County
 date is not an election-wide promise. Four approved County examples are a visual excerpt,
 not a coverage limit or replacement for functional product controls.
+
+## Result alignment and actual endorsement ties (#711)
+
+Recorded winning/advancing result meters and unique current unofficial vote leaders
+receive alignment color (#715 extends #711). If the choice is in the
+published aggregate recommendation set, including an aggregate tie, use endorsement green
+`#087f73` with remainder `#cee5e3`. Otherwise use terracotta `#b4654c` with remainder
+`#f0e0db`. Evaluate multiple recorded advancers independently. A raw leader under insufficient
+coverage is not a published recommendation. Keep other result meters, backgrounds, badges,
+copy and endorsement UI unchanged. Preliminary color identifies only a raw count lead:
+all `advanced` flags remain false, with no outcome chips or threshold/advancement inference.
+Compare integer votes, not rounded shares. Tied/zero counts, incomplete named choices,
+or an aggregate write-in count at least as large as the top named count stay neutral.
+A measure's raw vote lead does not establish passage; a primary lead does not invent
+advancement slots. Result alignment uses the audited
+aggregate and remains outside source-lens updates, like the result block itself.
+
+Actual endorsement ties have their own purple family: lavender `#bba6d7` first, deep violet
+`#654a8b` second, then the existing stepped colors toward the meter track. Keep the existing
+navy percentage over lavender, and the existing bold/faded candidate-section treatment.
+The existing No majority pill and Tied for lead candidate headers use purple only for a
+real tie: light ground `#f4f0f8`, ink `#59416f`, lavender border and deep-violet header edge.
+A sole leader at or below 50% remains amber; unrelated amber states do not change. Existing
+wording, ordering, accessible meter descriptions and interaction remain the other carriers
+of meaning; add no labels. This amends the earlier amber-for-ties rule below.
+
+**Alternatives considered.** Tinted result-section backgrounds impaired badge readability
+and meter-remainder appearance. Reusing tied-endorsement brown overloaded its meaning.
+Dusty rose and muted violet for result exceptions risked partisan associations. Warm
+graphite was neutral but less scannable. Terracotta stood out best among mostly green,
+while placement in the result meter distinguishes it from endorsement colors. For actual
+endorsement ties, lavender/deep violet was selected over the softer lavender/violet pair:
+it separates the two runs more clearly, with lavender first to preserve navy-text contrast.
+The approved studies are Library `result-section-tints.png` version 4 and
+`tie-purple-palette.png` (November 8, 2026). Their examples are fictional, not election facts.
+Pages inside immutable archive ZIPs retain their pinned bytes; these rules govern public rendered pages.
 
 How to build UI that belongs on this site. Rules here are decidable — each
 one can reject a real design. When a proposal and this document disagree,
@@ -70,7 +119,7 @@ When in doubt, remove ink.
 ## Color
 
 Semantics, not decoration. Values are tokens in `base.css`; page CSS never
-introduces a color literal except the three bounded #673 tokens below. The families and what they mean:
+introduces a color literal except the bounded #673 and #711 component tokens below. The families and what they mean:
 
 | Family | Tokens | Meaning |
 |---|---|---|
@@ -82,6 +131,8 @@ introduces a color literal except the three bounded #673 tokens below. The famil
 | Differ tone | `--tone-differ-*`, `--amber` | Attention and divergence: comparison signals that differ, challenger sections, no-majority states |
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
 | Meter | `--meter-*` | The segmented meter's own palette (docs/METER_V2.md § Color): track, tie depth, trailing ranks, seam ink. Its majority and no-majority fills are `--teal` and `--amber` themselves |
+| Actual tie | `--meter-tie`, `--meter-tie-violet`, `--tone-tie-*` | Tied endorsement runs and existing tie framing; never a sole sub-majority leader |
+| Result alignment | `--teal`, `--result-aligned-track`, `--result-different`, `--result-different-track` | Recorded winners/advancers or unique current unofficial vote leaders, compared with the aggregate recommendation |
 | Focus | `--focus` | Every focus ring, everywhere |
 | Compact general controls | `--compact-precinct-surface`, `--compact-expanded-surface`, `--compact-editor-shadow` | Approved C v5 precinct ground, expanded ground and editor shadow; general-only ownership |
 
@@ -97,6 +148,12 @@ already approved. Their local ownership preserves frozen primary/shared
 `base.css` bytes; it does not permit other page color literals or a new palette.
 Consumers use these tokens, and a change to their meanings or values amends this
 contract in the same PR.
+
+The approved #711 palette is scoped to the existing meter/result/tie components in
+`guide-race.css`, rather than changing the archived shared shell in `base.css`.
+Its tokens are the exact values above; no other component or shell palette changes.
+The legacy brown `--meter-tie-deep` remains in the frozen shell for archive compatibility;
+fresh tie rendering uses `--meter-tie-violet`.
 
 ## Typography
 
@@ -329,7 +386,7 @@ then any sticky strip, then content.
   "8 of 11" — which is the drift a single heading makes impossible.)*
 - **Agree tone claims a favourite, so a tie never wears it.** A tie is a
   warning that the reader has to choose, not a recommendation to accept:
-  every tied candidate takes the differ family, in its own section, marked
+  every tied candidate takes the actual-tie purple family, in its own section, marked
   with a "Tied for lead" kicker. Green would say the opposite of what a tie
   means. *(2026-08-04, issue 136 follow-up.)*
 - **Don't count a list the reader is looking at.** A heading above a list of
@@ -339,7 +396,7 @@ then any sticky strip, then content.
 - **One meter — scoped per page.** One chrome, a constant-width bar of
   equal-width blocks, one per endorsement, grouped into candidate runs in
   standings order — leader first, the site's own teal for a majority,
-  ambers for a tie or a sole leader short of one, muted slate/taupe/plum for
+  lavender/deep violet for an actual tie, amber for a sole leader short of one, muted slate/taupe/plum for
   trailing candidates — but not one *instance* everywhere: the guide and
   ballot overview render one shared meter per race, and the race-detail page
   renders one per candidate, each colorized and context-marked for that one
@@ -374,8 +431,9 @@ then any sticky strip, then content.
   pointer-device state permanently rather than the print row's static-both
   one (docs/METER_V2.md, Decision log #23).
   Archived guides follow the same rule. Hosting rejects the retired `--meter-fill`
-  chrome in every served HTML page; correcting an archive means publishing a new
-  immutable release, never restoring retired UI because an old bundle's hashes agree.
+  chrome in every served HTML page. Current presentation uses verified archived data without
+  serving its old chrome; original ZIP bytes remain available for audit. Original source1.0
+  staging still applies its retired-input rule because it serves copied overview bytes.
 - **The meter's own caption states a count, not a percentage — and never the
   recommended choice's own name.** "21½ of 23 endorsements," using the same
   formatter the meter's split blocks make honest: a co-endorsement's half is
@@ -682,6 +740,19 @@ screen-reader, IME or unavailable interactive-session results. Immutable primary
 archives and their existing presentation are preserved.
 
 ## Election Updates (#676)
+
+### Individual updates (#677)
+
+An index headline is a descriptive link while retaining its existing serif type, color and full
+entry beneath it. The linked page uses the same election shell and measured text column, with
+Updates current in navigation. Show Back to Updates, election identity, the existing headline as
+the single H1, original publication date, action badges and topic labels, complete body and existing
+affected-page/evidence links. Topics link to the same election's filtered index; the ordinary Back
+links return to its full log. Include a return link after the content. There is no filter toolbar,
+sidebar, comments or recommendation panel on a detail. Preserve existing colors, external-link
+safety, visible keyboard focus and readable narrow/mobile layout. Native browser Back restores
+the prior index filter and reading position. Stable election-scoped URLs and direct/no-JavaScript
+reading are part of this treatment, not a client-only modal or generated headline slug.
 
 The approved version-2 study uses the existing measured election shell and serif entry headlines.
 The tagline is “What changed in this election’s endorsements, sources and results.” Dates mean

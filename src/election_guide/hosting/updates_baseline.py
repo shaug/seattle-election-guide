@@ -151,7 +151,7 @@ def resolve_production_snapshot(destination: Path) -> tuple[UpdatesSnapshot, dic
         raise ValueError("published Updates snapshot election contract differs from manifest")
     if _served_manifest()[0] != served:
         raise ValueError("production manifest changed while resolving baseline; run the gate again")
-    if snapshot.schema_version != "5.0":
+    if snapshot.schema_version != "6.0":
         # Older fingerprints do not contain this policy. Never
         # compare them to the new policy or infer a baseline from candidate/main.
         receipt = resolve_production_baseline(destination)

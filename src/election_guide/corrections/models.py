@@ -17,6 +17,8 @@ layout, preparation and unchanged verification history belongs with GitHub relea
 (#676). Schema1.1 adds explicit topics/actions; legacy1.0 remains readable without
 invented metadata. Existing storage and `(corrected_on, headline)` identity remain
 compatible with immutable view models; `corrected_on` is guide-publication date.
+Schema1.2 persists reviewed slugs and retired-route aliases without changing that
+audit identity or inventing routing metadata in older immutable snapshots (#677).
 
 Entries here are hand-authored (an editor writes a headline and body prose
 directly), which is why nothing here cross-validates against the ballot
@@ -31,6 +33,7 @@ capture links without this schema changing shape underneath it.
 
 from __future__ import annotations
 
+import re
 from datetime import date
 from typing import Any, Literal
 
@@ -45,6 +48,13 @@ from pydantic import (
 
 UpdateTopic = Literal["endorsements", "sources", "results"]
 UpdateAction = Literal["added", "changed", "correction", "withdrawn", "certified", "coverage"]
+
+
+def validate_update_slug(value: str) -> str:
+    """One durable URL segment; reject encoding and path ambiguity rather than quoting it."""
+    if value == "index" or re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", value) is None:
+        raise ValueError("update slug must be a nonreserved lowercase ASCII hyphenated segment")
+    return value
 
 
 class CorrectionsModel(BaseModel):
@@ -82,18 +92,26 @@ class CorrectionEntry(CorrectionsModel):
     )
     topics: list[UpdateTopic] = Field(default_factory=list[UpdateTopic])
     actions: list[UpdateAction] = Field(default_factory=list[UpdateAction])
+    slug: str | None = None
+    redirect_from: list[str] = Field(default_factory=list[str])
 
     @model_validator(mode="after")
     def validate_metadata(self) -> CorrectionEntry:
         if len(set(self.topics)) != len(self.topics) or len(set(self.actions)) != len(self.actions):
             raise ValueError("update topics and actions cannot repeat")
+        if self.slug is not None:
+            validate_update_slug(self.slug)
+        for alias in self.redirect_from:
+            validate_update_slug(alias)
+        if self.redirect_from and self.slug is None:
+            raise ValueError("update slug redirects require a canonical slug")
         return self
 
     @model_serializer(mode="wrap")
     def serialize_metadata(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
         """Legacy snapshots keep their original shape; absent metadata is not invented."""
         result = handler(self)
-        for field in ("topics", "actions"):
+        for field in ("topics", "actions", "slug", "redirect_from"):
             if field in result and not result[field]:
                 del result[field]
         return result
@@ -102,16 +120,31 @@ class CorrectionEntry(CorrectionsModel):
 class ElectionCorrections(CorrectionsModel):
     """`data/corrections/<election-id>.yaml`'s validated contract."""
 
-    schema_version: Literal["1.0", "1.1"] = "1.0"
+    schema_version: Literal["1.0", "1.1", "1.2"] = "1.0"
     election_id: str = Field(min_length=1)
     entries: list[CorrectionEntry] = Field(min_length=1)
 
     @model_validator(mode="after")
     def validate_election_corrections(self) -> ElectionCorrections:
-        if self.schema_version == "1.1" and any(
+        if self.schema_version != "1.2" and any(
+            entry.slug is not None or entry.redirect_from for entry in self.entries
+        ):
+            raise ValueError("update routing metadata requires schema1.2")
+        if self.schema_version in {"1.1", "1.2"} and any(
             not entry.topics or not entry.actions for entry in self.entries
         ):
             raise ValueError("election-information updates require topics and actions")
+        if self.schema_version == "1.2" and any(entry.slug is None for entry in self.entries):
+            raise ValueError("permalink Updates require an authored slug for every entry")
+        slugs = [
+            slug
+            for entry in self.entries
+            for slug in ([entry.slug] if entry.slug is not None else []) + entry.redirect_from
+        ]
+        if len(set(slugs)) != len(slugs):
+            raise ValueError(
+                "update slugs and retired slug aliases cannot repeat within an election"
+            )
         if len(self.entries) != len(
             {(entry.corrected_on, entry.headline) for entry in self.entries}
         ):

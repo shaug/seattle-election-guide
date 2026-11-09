@@ -1,0 +1,514 @@
+schema_version: "1.2"
+election_id: wa-2026-general
+entries:
+  - corrected_on: 2026-10-24
+    slug: uncontested-race-coverage
+    headline: "Uncontested races need enough verified endorsements to appear."
+    body: >-
+      Uncontested races appear in Endorsements, Comparisons, and individual
+      race pages only when at least two eligible progressive organizations
+      have verified endorsements. This uses the full set of verified sources;
+      choosing fewer sources changes the displayed scores, not race visibility.
+      Contested races remain available even without endorsements. The complete
+      audit records and published primary archive are preserved.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Race visibility policy and implementation"
+        url: https://github.com/shaug/seattle-election-guide/issues/607
+    topics: [endorsements, sources]
+    actions: [coverage]
+  - corrected_on: 2026-10-25
+    slug: cascade-il26-638-endorsement
+    headline: "Added Cascade Bicycle Club’s No on IL26-638 in the Washington Bikes slot."
+    body: >-
+      Cascade Bicycle Club explicitly recommends No on the state K-12 athletics
+      initiative IL26-638. Under the approved source-counting policy, this adds
+      one Washington Bikes decision and one point for No, bringing the general
+      guide to 930 decisions across the same 46 publishers. The evidence link
+      identifies Cascade as the publisher. All 929 prior decisions remain,
+      including Washington Bikes’ existing No on IL26-001; no second Cascade
+      point is counted. This targeted review does not recheck the rest of the
+      Washington Bikes slate. The endorsement’s first appearance date is unknown.
+    provenance:
+      - label: "Initiative IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Cascade Bicycle Club’s official recommendation"
+        url: https://cascade.org/news/2026/10/cascade-urges-voters-reject-harmful-ballot-initiatives-001-and-638
+      - label: "Reviewed addition and counting policy"
+        url: https://github.com/shaug/seattle-election-guide/issues/624
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-10-24
+    slug: ufcw-congress-and-ld48-endorsements
+    headline: "Added UFCW’s Jayapal, Smith, Birk and Angelis endorsements."
+    body: >-
+      UFCW 3000’s current official list endorses Pramila Jayapal for U.S.
+      House District 7, Adam Smith for District 9, Ian Birk for Supreme Court
+      Position 4 and Theo Angelis for Position 5. These four decisions bring
+      the guide to 929 decisions across the same 46 publishers. All 925 prior
+      decisions remain, including both UFCW dual endorsements and the held
+      David Hackney decision. The four endorsements’ first appearance dates
+      are unknown. The linked factual review distinguishes current source
+      coverage from the separate automatic verification work.
+    provenance:
+      - label: "U.S. House District 7"
+        url: /e/wa-2026-general/races/us-house-7/
+      - label: "U.S. House District 9"
+        url: /e/wa-2026-general/races/us-house-9/
+      - label: "Supreme Court Position 4"
+        url: /e/wa-2026-general/races/supreme-court-justice-4/
+      - label: "Supreme Court Position 5"
+        url: /e/wa-2026-general/races/supreme-court-justice-5/
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "UFCW 3000’s official endorsements"
+        url: https://ufcw3000.org/endorsements
+      - label: "October 24 factual review and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_UFCW_FACTS_2026-10-24.md
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-10-23
+    slug: sgn-smith-and-ufcw-ld37
+    headline: "Added SGN’s Adam Smith endorsement and UFCW’s LD37 dual."
+    body: >-
+      Seattle Gay News’s October 22 editorial endorses Adam Smith for U.S.
+      House District 9. UFCW 3000’s current list explicitly gives a dual
+      endorsement to Kelabe Tewolde and Sharon Tomiko Santos for LD37 House
+      Position 1, with one half point each. Both decisions are now included,
+      bringing the guide to 925 decisions across the same 46 publishers.
+      All 923 prior decisions remain. The dated checkpoint records 42 complete
+      source reviews and four access-limited publishers.
+    provenance:
+      - label: "U.S. House District 9"
+        url: /e/wa-2026-general/races/us-house-9/
+      - label: "LD37 House Position 1"
+        url: /e/wa-2026-general/races/ld-37-state-representative-1/
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "SGN’s official Adam Smith editorial"
+        url: https://www.sgn.org/story/171425/
+      - label: "UFCW 3000’s official endorsements"
+        url: https://ufcw3000.org/endorsements
+      - label: "October 23 checkpoint and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_VERIFICATION_2026-10-23.md
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-10-22
+    slug: washingtoncan-ld37-senate
+    headline: "Added WashingtonCAN’s LD37 Senate endorsement."
+    body: >-
+      WashingtonCAN’s current 2026 endorsement gallery explicitly endorses
+      Chipalo Street for LD37 Senate. That recommendation is now included,
+      bringing the guide to 923 decisions across the same 46 publishers.
+      All 922 previous decisions remain. The linked review records the
+      original graphic, current source checks and remaining access limits.
+    provenance:
+      - label: "LD37 Senate"
+        url: /e/wa-2026-general/races/ld-37-state-senator/
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "WashingtonCAN’s official endorsements"
+        url: https://www.washingtoncan.org/endorsements
+      - label: "October 22 review and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.27/docs/GENERAL_VERIFICATION_2026-10-22.md
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-10-21
+    slug: transit-riders-union-measures
+    headline: "Added Transit Riders Union’s four formal measure endorsements."
+    body: >-
+      Transit Riders Union’s October general-election article endorses Yes on
+      Seattle’s transit Proposition 1 and No on initiatives 26-645, 26-001 and
+      26-638. Those four decisions are now included, bringing the guide to 922
+      decisions across the same 46 publishers. All 918 prior decisions remain.
+      The linked review records the original article and graphic, literal source
+      labels, and candidate recommendations still held for review.
+    provenance:
+      - label: "Seattle Transit Proposition 1"
+        url: /e/wa-2026-general/races/seattle-proposition-1-transit/
+      - label: "IP26-645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "IL26-001"
+        url: /e/wa-2026-general/races/initiative-26-001/
+      - label: "IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "TRU’s October general-election endorsements"
+        url: https://transitriders.org/2026-general-election-endorsements/
+      - label: "Complete October 21 TRU review and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.25/docs/GENERAL_RECHECK_2026-10-21_TRU.md
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-10-21
+    slug: washington-bus-initiatives
+    headline: "Added Washington Bus’s three No initiative recommendations."
+    body: >-
+      Washington Bus’s current general-election gallery explicitly asks voters
+      to vote No on I-001, I-638 and I-645. Those three recommendations are now
+      included, bringing the guide to 918 decisions across the same 46 publishers.
+      All 915 previously recorded decisions are retained. The linked review
+      identifies the original image and the October 21 checks and access limits.
+    provenance:
+      - label: "IL26-001"
+        url: /e/wa-2026-general/races/initiative-26-001/
+      - label: "IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "IP26-645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "Washington Bus’s official general-election endorsements"
+        url: https://www.washingtonbus.org/endorsements
+      - label: "October 21 review and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.24/docs/GENERAL_VERIFICATION_2026-10-21.md
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-10-19
+    slug: 46th-democrats-seattle-transit
+    headline: "Added the 46th District Democrats’ Seattle transit endorsement."
+    body: >-
+      The 46th District Democrats’ current official publication endorses Yes on
+      Seattle Proposition 1, the Seattle Transit Measure. That decision is now
+      included, bringing the guide to 915 decisions across the same 46 publishers.
+      The organization’s evidence links now open its current candidates and
+      positions page; all 914 previously recorded decisions are retained. The
+      linked review describes the October 19 checks and remaining access gaps.
+    provenance:
+      - label: "Seattle Transit Proposition 1"
+        url: /e/wa-2026-general/races/seattle-proposition-1-transit/
+      - label: "46th District Democrats’ official endorsements"
+        url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_positions
+      - label: "October 19 review and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.19/docs/GENERAL_VERIFICATION_2026-10-19.md
+    topics: [endorsements, sources]
+    actions: [added]
+  - corrected_on: 2026-10-19
+    slug: four-publisher-decisions
+    headline: "Added 34 source decisions from four publishers."
+    body: >-
+      Stonewall Democrats’ general-election guide adds 29 decisions, including
+      three No initiative recommendations and an equal split between Hannah
+      Sabio-Howell and Jamie Pedersen for LD43 Senate. The 11th District Democrats’
+      Julie Wise endorsement and Seattle DSA’s No on IP26-645 are also included.
+      The Seattle Times explicitly withheld endorsements in the LD36, LD37 and
+      LD46 Senate races; it remains a comparison source. All 880 previously
+      recorded decisions are retained. LD11 House Position 1 now has a tie between
+      David Hackney and Ashley Fedan. The linked review lists every addition
+      and its evidence.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "LD43 Senate"
+        url: /e/wa-2026-general/races/ld-43-state-senator/
+      - label: "LD11 House Position 1"
+        url: /e/wa-2026-general/races/ld-11-state-representative-1/
+      - label: "King County Director of Elections"
+        url: /e/wa-2026-general/races/king-county-director-of-elections/
+      - label: "IP26-645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "Complete approved decisions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.16/docs/GENERAL_VERIFICATION_APPLICATION_2026-10-18.md
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-10-16
+    slug: two-previously-unrecorded-endorsements
+    headline: "Added two previously unrecorded endorsements."
+    body: >-
+      Washington Conservation Action’s No on IL26-638 and the Washington Education
+      Association’s endorsement of Ashley Fedan for LD11 House Position 1 are now
+      included. Both additions were published in the October 16 release after the
+      official evidence was verified.
+    provenance:
+      - label: "IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "LD11 House Position 1"
+        url: /e/wa-2026-general/races/ld-11-state-representative-1/
+      - label: "Reviewed additions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.8/docs/GENERAL_VERIFICATION_REMAINING_2026-10-16.md
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-10-16
+    slug: source-decisions-and-revisions
+    headline: "Added 175 source decisions and revised two endorsements."
+    body: >-
+      The October 16 verification added previously unrecorded decisions from 15
+      organizations, including six whose general-election endorsements were newly
+      represented. AFT Washington’s LD32 Senate choice changed from Jesse Salomon
+      to Cindy Ryu. The Environment and Climate Caucus’s LD43 Senate choice changed
+      from Jamie Pedersen alone to an equal split with Hannah Sabio-Howell.
+      The linked review accounts for every addition and replacement.
+    provenance:
+      - label: "LD32 Senate"
+        url: /e/wa-2026-general/races/ld-32-state-senator/
+      - label: "LD43 Senate"
+        url: /e/wa-2026-general/races/ld-43-state-senator/
+      - label: "Complete reviewed changes and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.7/docs/GENERAL_VERIFICATION_APPLICATION_2026-10-16.md
+    topics: [endorsements, sources]
+    actions: [added, correction]
+  - corrected_on: 2026-10-12
+    slug: sparse-and-unopposed-races
+    headline: "Changed how sparse and unopposed races appear."
+    body: >-
+      Races with too few endorsements now name the measured leading choice while
+      retaining the warning that there is too little evidence to measure agreement.
+      Unopposed races without verified endorsements are omitted from the Endorsements
+      overview. Their individual pages and comparison rows remain available.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Sparse-endorsement display change"
+        url: https://github.com/shaug/seattle-election-guide/pull/533
+      - label: "Unopposed-race display change"
+        url: https://github.com/shaug/seattle-election-guide/pull/529
+      - label: "First published October 12"
+        url: https://github.com/shaug/seattle-election-guide/actions/runs/38299893950
+    topics: [endorsements]
+    actions: [coverage]
+  - corrected_on: 2026-10-12
+    slug: three-sources-and-decisions
+    headline: "Added three sources and 22 decisions."
+    body: >-
+      Young Democrats of Washington, Nondriver Action, and Citizens Against AIPAC
+      Corruption joined the source list with 21 reviewed decisions. Tech 4 Taxes’
+      support for the income tax was also recorded as No on Initiative 645 through
+      an explicit, reviewed ballot mapping. Previously recorded decisions were retained.
+      The active source list grew from 43 to 46 organizations, changing coverage
+      counts across all 52 races. The added endorsements also produced a tie in
+      LD32 House Position 2.
+    provenance:
+      - label: "Sources"
+        url: /e/wa-2026-general/sources/
+      - label: "Initiative 645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "Complete reviewed additions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.6/docs/GENERAL_ADDITIONS_2026-10-12.md
+    topics: [endorsements, sources]
+    actions: [added]
+  - corrected_on: 2026-10-11
+    slug: eight-organization-endorsements
+    headline: "Added 64 endorsements from eight organizations."
+    body: >-
+      The general-election lists from The Stranger and Washington Bus are now
+      represented, alongside additions from Tech 4 Housing, Tech 4 Taxes, King County
+      Democrats, Working Families Party, OneAmerica Votes, and WashingtonCAN.
+      The same publication included the King County Democrats co-endorsement update
+      recorded below. The linked review lists every added decision and its evidence.
+      Tech 4 Housing and Working Families Party evidence links were also updated
+      to their current official endorsement lists.
+    provenance:
+      - label: "Endorsements"
+        url: /e/wa-2026-general/
+      - label: "Complete reviewed additions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.5/docs/GENERAL_RECONCILIATION_2026-10-10.md
+    topics: [endorsements, sources]
+    actions: [added]
+  - corrected_on: 2026-10-11
+    slug: king-county-democrats-ld32-position2
+    headline: "Updated King County Democrats’ LD32 Position 2 endorsement."
+    body: >-
+      The guide previously recorded King County Democrats endorsing Lauren Davis alone.
+      Their current official list endorses both Lauren Davis and Imraan Siddiqi.
+      Both choices are now recorded, with the organization’s one point split equally.
+    provenance:
+      - label: "King County Democrats’ official 2026 endorsements"
+        url: https://www.kcdems.org/our-party/e/2026-endorsements/
+      - label: "October 10 endorsement reconciliation"
+        url: https://github.com/shaug/seattle-election-guide/issues/508
+      - label: "LD32 House Position 2"
+        url: /e/wa-2026-general/races/ld-32-state-representative-2/
+      - label: "First published October 11; reviewed October 10"
+        url: https://github.com/shaug/seattle-election-guide/actions/runs/38190528105
+    topics: [endorsements]
+    actions: [correction]
+  - corrected_on: 2026-10-04
+    slug: washingtoncan-initiatives
+    headline: "Added WashingtonCAN’s three initiative endorsements."
+    body: >-
+      WashingtonCAN’s No recommendations on IL26-001, IL26-638, and IP26-645 were
+      added after review of its official graphics. Its previously recorded candidate
+      endorsements were retained. The dates those graphics were first published
+      were not established; October 4 is the guide’s release date.
+      The same refresh rechecked the other sources and updated evidence links
+      and availability notes without changing their recorded endorsements.
+    provenance:
+      - label: "IL26-001"
+        url: /e/wa-2026-general/races/initiative-26-001/
+      - label: "IL26-638"
+        url: /e/wa-2026-general/races/initiative-26-638/
+      - label: "IP26-645"
+        url: /e/wa-2026-general/races/initiative-26-645/
+      - label: "Reviewed additions and evidence"
+        url: https://github.com/shaug/seattle-election-guide/blob/2026-general.4/docs/GENERAL_REFRESH_2026-10-03.md
+    topics: [endorsements, sources]
+    actions: [added]
+  - corrected_on: 2026-10-03
+    slug: first-general-guide
+    headline: "Published the first general-election guide."
+    body: >-
+      The November guide opened with 614 recorded decisions from 34 organizations
+      across 52 races and measures. This is the starting point for the changes
+      recorded above. Earlier preparation of the November data had not yet
+      replaced the published primary guide.
+    provenance:
+      - label: "First general-election release"
+        url: https://github.com/shaug/seattle-election-guide/releases/tag/2026-general.1
+      - label: "First website publication"
+        url: https://github.com/shaug/seattle-election-guide/actions/runs/37111424774
+    topics: [endorsements, sources]
+    actions: [added]
+  - corrected_on: '2026-10-27'
+    slug: sgn-statewide-initiatives
+    headline: Added SGN’s No endorsements on all three statewide initiatives.
+    body: SGN explicitly recommends No on IL26-001 (parental rights in public schools), IL26-638 (K–12 school
+      athletics), and IP26-645 (state and local taxes). These three verified positions are now included,
+      bringing the guide to 933 decisions across the same 46 publishers while retaining every previous decision.
+      The editorial is dated October 26; the endorsements’ first appearance is unknown.
+    provenance:
+    - label: SGN initiative editorial
+      url: https://www.sgn.org/story/171504/
+    - label: Complete review of the three additions
+      url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_SGN_INITIATIVES_2026-10-27.md
+    - label: Initiative IL26-001
+      url: /e/wa-2026-general/races/initiative-26-001/
+    - label: Initiative IL26-638
+      url: /e/wa-2026-general/races/initiative-26-638/
+    - label: Initiative IP26-645
+      url: /e/wa-2026-general/races/initiative-26-645/
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-11-02
+    slug: sgn-supreme-court
+    headline: "Added SGN's five state Supreme Court endorsements."
+    body: >-
+      Added SGN's endorsements of Colleen Melody, Jaime Michelle Hawk, Ian Birk,
+      Theo Angelis and Debra L. Stephens for Supreme Court Positions 1, 3, 4, 5
+      and 7. These five newly included decisions bring SGN's coverage to 16
+      decisions. The complete editorial was independently checked against each
+      position and candidate; the date of first publication remains unknown.
+      All previous decisions and source qualifications are preserved.
+    provenance:
+      - label: "SGN's Supreme Court editorial"
+        url: https://www.sgn.org/story/171606/
+      - label: "Complete factual refresh and limitations"
+        url: https://github.com/shaug/seattle-election-guide/blob/main/docs/GENERAL_REFRESH_2026-10-30.md
+      - label: "Supreme Court Position 1"
+        url: /e/wa-2026-general/races/supreme-court-justice-1/
+      - label: "Supreme Court Position 3"
+        url: /e/wa-2026-general/races/supreme-court-justice-3/
+      - label: "Supreme Court Position 4"
+        url: /e/wa-2026-general/races/supreme-court-justice-4/
+      - label: "Supreme Court Position 5"
+        url: /e/wa-2026-general/races/supreme-court-justice-5/
+      - label: "Supreme Court Position 7"
+        url: /e/wa-2026-general/races/supreme-court-justice-7/
+    topics: [endorsements]
+    actions: [added]
+  - corrected_on: 2026-11-06
+    slug: unofficial-election-wide-counts
+    headline: "Added unofficial election-wide counts to the general guide."
+    body: >-
+      Preliminary results now show the official count-so-far for each contest's
+      complete jurisdiction. Statewide and multi-county contests use Washington's
+      aggregate results; contests wholly within King County use its official
+      count. The results remain unofficial, with equal emphasis for all choices
+      and no winner calls. King County supplies a count timestamp. Washington's
+      export supplies a generation timestamp instead, which is labeled separately
+      with a notice that its count timestamp is not provided. Percentages exclude
+      write-ins, and the retained evidence preserves the original source counts.
+    provenance:
+      - label: "General election guide"
+        url: /e/wa-2026-general/
+      - label: "Washington Secretary of State official aggregate"
+        url: https://results.votewa.gov/cdn/results/washington/export-20261103.json
+      - label: "King County official results"
+        url: https://results.votewa.gov/results/public/api/elections/king-county-wa/20261103/data
+      - label: "Coverage, source mapping and preliminary-results policy"
+        url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics: [results]
+    actions: [added]
+  - corrected_on: '2026-11-06'
+    slug: preliminary-results-2026-11-06-232155
+    headline: Preliminary results checked at 23:21:55 Pacific.
+    body: Updated the unofficial counts, source/reporting metadata or retained originals
+      for 52 contest(s), using each contest's complete jurisdiction. Publisher count
+      times remain separate from export generation and source verification times; an
+      export does not supply an absent count timestamp. No certification or outcome
+      is inferred.
+    provenance:
+    - label: General election guide
+      url: /e/wa-2026-general/
+    - label: Retained official results and refresh scope
+      url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics:
+    - results
+    actions:
+    - changed
+  - corrected_on: '2026-11-07'
+    slug: preliminary-results-2026-11-07-052226
+    headline: Preliminary results checked at 05:22:26 Pacific.
+    body: Updated the unofficial counts, source/reporting metadata or retained originals
+      for 52 contest(s), using each contest's complete jurisdiction. Publisher count
+      times remain separate from export generation and source verification times; an
+      export does not supply an absent count timestamp. No certification or outcome
+      is inferred.
+    provenance:
+    - label: General election guide
+      url: /e/wa-2026-general/
+    - label: Retained official results and refresh scope
+      url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics:
+    - results
+    actions:
+    - changed
+  - corrected_on: '2026-11-07'
+    slug: preliminary-results-2026-11-07-164349
+    headline: Preliminary results checked at 16:43:49 Pacific.
+    body: Updated the unofficial counts, source/reporting metadata or retained originals
+      for 52 contest(s), using each contest's complete jurisdiction. Publisher count
+      times remain separate from export generation and source verification times; an
+      export does not supply an absent count timestamp. No certification or outcome
+      is inferred.
+    provenance:
+    - label: General election guide
+      url: /e/wa-2026-general/
+    - label: Retained official results and refresh scope
+      url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics:
+    - results
+    actions:
+    - changed
+  - corrected_on: '2026-11-07'
+    slug: preliminary-results-2026-11-07-182532
+    headline: Preliminary results checked at 18:25:32 Pacific.
+    body: Updated the unofficial counts, source/reporting metadata or retained originals
+      for 52 contest(s), using each contest's complete jurisdiction. Publisher count
+      times remain separate from export generation and source verification times; an
+      export does not supply an absent count timestamp. No certification or outcome
+      is inferred.
+    provenance:
+    - label: General election guide
+      url: /e/wa-2026-general/
+    - label: Retained official results and refresh scope
+      url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics:
+    - results
+    actions:
+    - changed
+  - corrected_on: '2026-11-07'
+    slug: preliminary-results-2026-11-07-202313
+    headline: Preliminary results checked at 20:23:13 Pacific.
+    body: Updated the unofficial counts, source/reporting metadata or retained originals
+      for 20 contest(s), using each contest's complete jurisdiction. Publisher count
+      times remain separate from export generation and source verification times; an
+      export does not supply an absent count timestamp. No certification or outcome
+      is inferred.
+    provenance:
+    - label: General election guide
+      url: /e/wa-2026-general/
+    - label: Retained official results and refresh scope
+      url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics:
+    - results
+    actions:
+    - changed

@@ -19,6 +19,7 @@ from election_guide.evidence.models import CaptureRequest, UnavailableRequest
 from election_guide.evidence.storage import record_capture, record_unavailable
 from election_guide.inventory.importer import read_inventory
 from election_guide.publication.models import PublicationViewModel
+from election_guide.rendering import context
 from election_guide.rendering.browser import _CdpSocket  # pyright: ignore[reportPrivateUsage]
 from election_guide.rendering.config import read_rendering_configuration
 from election_guide.rendering.documents import (
@@ -26,6 +27,7 @@ from election_guide.rendering.documents import (
     render_html_document,
     render_race_document,
 )
+from election_guide.rendering.models import PagePresentation
 from election_guide.results.loader import read_results, reject_committed_counting_status
 from election_guide.results.models import PreliminaryElectionResults
 from election_guide.results.validation import validate_results_inventory
@@ -176,10 +178,334 @@ def test_preliminary_general_result_reuses_tally_without_calling_outcomes(
     assert card.count('style="width:50.0%"') == 2
     assert "220 ballots" in card
     assert "race-results-row-trailing" not in card
+    assert "race-results-bar-aligned" not in card
+    assert "race-results-bar-different" not in card
     assert "race-detail-result-chip" not in card
     assert "Unofficial results · counts may change" in html
     # County's scheduled certification date is not a proved statewide promise.
     assert "Results certify November 24" not in html
+
+
+@pytest.mark.parametrize("votes", [(0, 0), (50, 50)])
+def test_ambiguous_preliminary_counts_keep_neutral_meters(
+    tmp_path: Path, general_view: PublicationViewModel, votes: tuple[int, int]
+) -> None:
+    document = preliminary_document()
+    tally = next(r for r in document["races"] if r["race_id"] == "king-county-assessor")
+    for row, count in zip(tally["outcomes"], votes, strict=True):
+        row["votes"] = count
+    tally["write_in_votes"] = 0
+    tally["ballots_counted"] = sum(votes)
+    view = general_view.model_copy(update={"results": read_document(tmp_path, document)})
+    card = _race_card_html(
+        render_html_document(
+            view, read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+        ),
+        "king-county-assessor",
+    )
+    assert card.count('class="race-results-bar"') == 2
+    assert "race-results-bar-aligned" not in card
+    assert "race-results-bar-different" not in card
+    assert "race-detail-result-chip" not in card
+
+
+def _view_with_count_leader(
+    tmp_path: Path,
+    view: PublicationViewModel,
+    votes: tuple[int, ...],
+    recommended: tuple[int, ...] | None,
+    *,
+    write_ins: int = 0,
+    race_id: str = "king-county-assessor",
+) -> PublicationViewModel:
+    race = next(r for section in view.sections for r in section.races if r.id == race_id)
+    document = preliminary_document()
+    tally = next(r for r in document["races"] if r["race_id"] == race_id)
+    tally["outcomes"] = [
+        {"choice_id": candidate.id, "votes": count}
+        for candidate, count in zip(race.candidates, votes, strict=True)
+    ]
+    tally["write_in_votes"] = write_ins
+    tally["ballots_counted"] = sum(votes) + write_ins
+    updated = (
+        race.model_copy(
+            update={"recommendation_candidate_ids": [race.candidates[i].id for i in recommended]}
+        )
+        if recommended is not None
+        else race
+    )
+    return view.model_copy(
+        update={
+            "results": read_document(tmp_path, document),
+            "sections": [
+                section.model_copy(
+                    update={"races": [updated if r.id == race_id else r for r in section.races]}
+                )
+                for section in view.sections
+            ],
+        }
+    )
+
+
+@pytest.mark.parametrize(
+    "votes,recommended,write_ins,expected",
+    [
+        ((60, 40), (0,), 0, ("aligned", None)),
+        ((40, 60), (0,), 0, (None, "different")),
+        ((40, 60), (0, 1), 0, (None, "aligned")),
+        ((60, 40), (), 0, ("different", None)),
+        ((60, 40), (1,), 0, ("different", None)),
+        ((50, 50), (0, 1), 0, (None, None)),
+        ((0, 0), (0,), 0, (None, None)),
+        ((50001, 50000), (0,), 0, ("aligned", None)),
+        ((60, 40), (0,), 59, ("aligned", None)),
+        ((60, 40), (0,), 60, (None, None)),
+        ((60, 40), (0,), 61, (None, None)),
+    ],
+)
+def test_current_unofficial_leader_color_never_calls_an_outcome(
+    tmp_path: Path,
+    general_view: PublicationViewModel,
+    votes: tuple[int, int],
+    recommended: tuple[int, ...],
+    write_ins: int,
+    expected: tuple[str | None, str | None],
+) -> None:
+    view = _view_with_count_leader(tmp_path, general_view, votes, recommended, write_ins=write_ins)
+    race = next(r for s in view.sections for r in s.races if r.id == "king-county-assessor")
+    result = context.race_results_view(
+        race, view.results, election_type="general", capture_urls=None
+    )
+    assert result is not None and result.preliminary
+    rows = {row.candidate_id: row for row in result.outcomes}
+    assert tuple(rows[c.id].meter_tone for c in race.candidates) == expected
+    assert not any(row.advanced or row.chip_label for row in result.outcomes)
+    if votes == (50001, 50000):
+        assert [row.percentage_label for row in result.outcomes] == ["50.0%", "50.0%"]
+
+
+@pytest.mark.parametrize(
+    "race_id,election_type",
+    [("king-county-assessor", "primary"), ("initiative-26-645", "general")],
+)
+def test_count_lead_does_not_invent_advancement_slots_or_measure_thresholds(
+    tmp_path: Path, general_view: PublicationViewModel, race_id: str, election_type: str
+) -> None:
+    view = _view_with_count_leader(tmp_path, general_view, (60, 40), (0,), race_id=race_id)
+    race = next(r for s in view.sections for r in s.races if r.id == race_id)
+    result = context.race_results_view(
+        race, view.results, election_type=election_type, capture_urls=None
+    )
+    assert result is not None
+    assert [row.meter_tone for row in result.outcomes] == ["aligned", None]
+    assert not any(row.advanced or row.chip_label for row in result.outcomes)
+
+
+def test_submajority_current_leader_has_alignment_without_a_majority_claim(
+    tmp_path: Path, general_view: PublicationViewModel
+) -> None:
+    view = _view_with_count_leader(tmp_path, general_view, (40, 35), (0,))
+    race = next(r for s in view.sections for r in s.races if r.id == "king-county-assessor")
+    third = race.candidates[0].model_copy(
+        update={"id": "synthetic-third-choice", "label": "Synthetic third choice"}
+    )
+    race = race.model_copy(update={"candidates": [*race.candidates, third]})
+    assert isinstance(view.results, PreliminaryElectionResults)
+    document = view.results.model_dump(mode="json")
+    tally = next(r for r in document["races"] if r["race_id"] == race.id)
+    tally["outcomes"].append({"choice_id": third.id, "votes": 25})
+    tally["ballots_counted"] = 100
+    result = context.race_results_view(
+        race, read_document(tmp_path, document), election_type="general", capture_urls=None
+    )
+    assert result is not None
+    assert [row.percentage_label for row in result.outcomes] == ["40.0%", "35.0%", "25.0%"]
+    assert [row.meter_tone for row in result.outcomes] == ["aligned", None, None]
+    assert not any(row.advanced or row.chip_label for row in result.outcomes)
+
+
+@pytest.mark.parametrize(
+    "votes,write_ins,expected",
+    [(20, 0, "aligned"), (20, 19, "aligned"), (20, 20, None), (0, 0, None)],
+)
+def test_unopposed_preliminary_count_does_not_become_a_called_outcome(
+    tmp_path: Path,
+    general_view: PublicationViewModel,
+    votes: int,
+    write_ins: int,
+    expected: str | None,
+) -> None:
+    original = next(r for s in general_view.sections for r in s.races if len(r.candidates) == 1)
+    view = _view_with_count_leader(
+        tmp_path, general_view, (votes,), (0,), race_id=original.id, write_ins=write_ins
+    )
+    race = next(r for s in view.sections for r in s.races if r.id == original.id)
+    result = context.race_results_view(
+        race, view.results, election_type="general", capture_urls=None
+    )
+    assert result is not None and len(result.outcomes) == 1
+    assert result.outcomes[0].meter_tone == expected
+    assert not result.outcomes[0].advanced and result.outcomes[0].chip_label is None
+
+
+@pytest.mark.parametrize("missing", ["race", "choice"])
+def test_missing_preliminary_data_cannot_manufacture_a_colored_leader(
+    tmp_path: Path, general_view: PublicationViewModel, missing: str
+) -> None:
+    view = _view_with_count_leader(tmp_path, general_view, (60, 40), (0,))
+    race = next(r for s in view.sections for r in s.races if r.id == "king-county-assessor")
+    assert isinstance(view.results, PreliminaryElectionResults)
+    document = view.results.model_dump(mode="json")
+    if missing == "race":
+        document["races"] = [r for r in document["races"] if r["race_id"] != race.id]
+    else:
+        next(r for r in document["races"] if r["race_id"] == race.id)["outcomes"].pop()
+    results = read_document(tmp_path, document)
+    with pytest.raises(ValueError, match=r"every inventory race|every named ballot choice"):
+        validate_results_inventory(results, read_inventory(INVENTORY))
+    result = context.race_results_view(race, results, election_type="general", capture_urls=None)
+    if missing == "race":
+        assert result is None
+    else:
+        assert result is not None
+        assert all(row.meter_tone is None for row in result.outcomes)
+
+
+def _view_with_alignment(
+    tmp_path: Path, view: PublicationViewModel, tone: str
+) -> PublicationViewModel:
+    race = next(r for s in view.sections for r in s.races if r.id == "king-county-assessor")
+    leading_index = next(
+        i
+        for i, candidate in enumerate(race.candidates)
+        if (candidate.id in race.recommendation_candidate_ids) == (tone == "aligned")
+    )
+    votes = (60, 40) if leading_index == 0 else (40, 60)
+    return _view_with_count_leader(tmp_path, view, votes, None)
+
+
+@pytest.mark.parametrize("page", ["guide", "race"])
+@pytest.mark.parametrize("tone", ["aligned", "different"])
+def test_unofficial_leader_color_reaches_shared_pages_without_outcome_chrome(
+    tmp_path: Path,
+    general_view: PublicationViewModel,
+    page: str,
+    tone: str,
+) -> None:
+    view = _view_with_alignment(tmp_path, general_view, tone)
+    config = read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    html = (
+        render_html_document(view, config)
+        if page == "guide"
+        else render_race_document(
+            view, "king-county-assessor", public_site_url=config.public_site_url
+        )
+    )
+    markup = _race_card_html(html, "king-county-assessor") if page == "guide" else html
+    tally, provenance = markup.split('<div class="race-results">', 1)[1].split(
+        '<p class="race-results-provenance">', 1
+    )
+    block = tally + provenance.split("</p>", 1)[0]
+    assert block.count(f'class="race-results-bar race-results-bar-{tone}"') == 1
+    assert block.count('class="race-results-bar"') == 1
+    assert 'style="width:60.0%"' in block and 'style="width:40.0%"' in block
+    assert "Unofficial</span>" in block
+    assert 'class="race-detail-result-chip"' not in block
+    assert 'class="race-results-row race-results-row-trailing"' not in block
+    assert "Count updated Nov 3, 8:00:00 p.m. PST" in block
+
+
+@pytest.mark.parametrize("page", ["guide", "race"])
+@pytest.mark.parametrize("width", [390, 1280])
+@pytest.mark.parametrize(
+    "tone,fill,remainder",
+    [
+        ("aligned", "rgb(8, 127, 115)", "rgb(206, 229, 227)"),
+        ("different", "rgb(180, 101, 76)", "rgb(240, 224, 219)"),
+    ],
+)
+def test_unofficial_leader_colors_in_the_browser(
+    tmp_path: Path,
+    general_view: PublicationViewModel,
+    page: str,
+    width: int,
+    tone: str,
+    fill: str,
+    remainder: str,
+) -> None:
+    view = _view_with_alignment(tmp_path, general_view, tone)
+    config = read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    html = (
+        render_html_document(view, config)
+        if page == "guide"
+        else render_race_document(
+            view, "king-county-assessor", public_site_url=config.public_site_url
+        )
+    )
+    path = tmp_path / "unofficial-leader.html"
+    path.write_text(without_live_address_requests(html))
+    host = (
+        "document.querySelector('[data-publication-race-id=\"king-county-assessor\"]')"
+        if page == "guide"
+        else "document"
+    )
+
+    def retain(cdp: _CdpSocket, session: str) -> None:
+        if directory := os.environ.get("SEG_PRELIMINARY_METER_EVIDENCE_DIR"):
+            target = Path(directory)
+            target.mkdir(parents=True, exist_ok=True)
+            prefix = f"{page}-{tone}-{width}"
+            geometry = cdp.command(
+                "Runtime.evaluate",
+                {
+                    "expression": """(async () => {
+                      await document.fonts.ready;
+                      const block = HOST.querySelector('.race-results');
+                      block.scrollIntoView({block:'center'});
+                      await new Promise(requestAnimationFrame);
+                      await new Promise(requestAnimationFrame);
+                      const rect = block.getBoundingClientRect();
+                      return {top:rect.top,bottom:rect.bottom,height:innerHeight};
+                    })()""".replace("HOST", host),
+                    "awaitPromise": True,
+                    "returnByValue": True,
+                },
+                session_id=session,
+            )
+            (target / f"{prefix}-geometry.json").write_text(json.dumps(geometry))
+            version = cdp.command("Browser.getVersion", session_id=session)
+            (target / f"{prefix}-version.json").write_text(json.dumps(version))
+            shot = cdp.command("Page.captureScreenshot", {"format": "png"}, session_id=session)
+            (target / f"{prefix}.png").write_bytes(base64.b64decode(shot["data"]))
+
+    result = _evaluate_in_chrome(
+        path,
+        """(() => {
+          const block = HOST.querySelector('.race-results');
+          return JSON.stringify({
+            status: block.querySelector('.race-results-status').textContent.trim(),
+            rows: [...block.querySelectorAll('.race-results-row')].map(row => {
+              const bar = row.querySelector('.race-results-bar');
+              return { fill: getComputedStyle(bar.firstElementChild).backgroundColor,
+                remainder: getComputedStyle(bar).backgroundColor,
+                chip: !!row.querySelector('.race-detail-result-chip'),
+                trailing: row.classList.contains('race-results-row-trailing') };
+            }), overflow: document.documentElement.scrollWidth > innerWidth
+          });
+        })()""".replace("HOST", host),
+        viewport=(width, 900),
+        interact=retain,
+    )
+    if directory := os.environ.get("SEG_PRELIMINARY_METER_EVIDENCE_DIR"):
+        (Path(directory) / f"{page}-{tone}-{width}-result.json").write_text(json.dumps(result))
+    assert result["status"] == "Unofficial"
+    assert result["rows"][0]["fill"] == fill
+    assert result["rows"][0]["remainder"] == remainder
+    assert len(result["rows"]) == 2
+    assert result["rows"][1]["fill"] == "rgb(16, 42, 67)"
+    assert result["rows"][1]["remainder"] == "rgb(237, 242, 244)"
+    assert not any(row["chip"] or row["trailing"] for row in result["rows"])
+    assert not result["overflow"]
 
 
 @pytest.mark.parametrize("page", ["guide", "race"])
@@ -656,6 +982,56 @@ def test_server_preliminary_staleness_preserves_the_original_count_time(
     assert "Stale · last checked Nov 3, 9:00:00 p.m. PST" in card
     assert "Count updated Nov 3, 8:00:00 p.m. PST" in card
     assert "counting continues" not in html
+
+
+@pytest.mark.parametrize("page", ["guide", "race"])
+def test_historical_preliminary_presentation_ages_recency_without_changing_original_clocks(
+    tmp_path: Path, general_view: PublicationViewModel, page: str
+) -> None:
+    document = preliminary_document()
+    for tally in document["races"]:
+        tally["export_generated_at"] = "2026-11-04T04:30:00Z"
+    view = general_view.model_copy(
+        update={
+            "results": read_document(tmp_path, document),
+            "metadata": general_view.metadata.model_copy(
+                update={
+                    "git_commit": "c" * 40,
+                    "generated_at": datetime(2026, 11, 4, 5, tzinfo=UTC),
+                    "results_capture_urls": {
+                        "king-county-assessor": "https://example.test/original-count"
+                    },
+                }
+            ),
+        }
+    )
+    original = view.model_dump_json()
+    presentation = PagePresentation(
+        source_git_commit="a" * 40,
+        generated_at=datetime(2026, 11, 6, 5, tzinfo=UTC),
+        archive_git_commit="c" * 40,
+        archive_release_version="test.1",
+        release_manifest_sha256="d" * 64,
+        publication_view_model_sha256=hashlib.sha256(original.encode()).hexdigest(),
+    )
+    configuration = read_rendering_configuration(ROOT / "config/rendering/guide.yaml")
+    html = (
+        render_html_document(view, configuration, presentation=presentation)
+        if page == "guide"
+        else render_race_document(
+            view,
+            "king-county-assessor",
+            public_site_url=configuration.public_site_url,
+            presentation=presentation,
+        )
+    )
+    assert "Stale · last checked Nov 3, 9:00:00 p.m. PST" in html
+    assert "Count updated Nov 3, 8:00:00 p.m. PST" in html
+    assert "Export generated Nov 3, 8:30:00 p.m. PST" in html
+    assert 'href="https://example.test/original-count"' in html
+    assert "Nov 5, 9:00:00 p.m. PST" not in html
+    assert "Advances" not in html and "Elected" not in html
+    assert view.model_dump_json() == original
 
 
 def test_preliminary_admission_requires_original_bytes_and_registered_authority(

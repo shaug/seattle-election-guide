@@ -90,7 +90,7 @@ class ElectionUpdatesSnapshot(HostingModel):
 
 
 class UpdatesSnapshot(HostingModel):
-    schema_version: Literal["1.0", "2.0", "3.0", "4.0", "5.0"] = "5.0"
+    schema_version: Literal["1.0", "2.0", "3.0", "4.0", "5.0", "6.0"] = "6.0"
     canonical_origin: str
     elections: dict[str, ElectionUpdatesSnapshot]
 
@@ -303,12 +303,14 @@ class _InformationContent(_PageContent):
         *,
         verification_clocks: bool = True,
         result_clock_placement: bool = False,
+        preliminary_metadata: bool = True,
     ) -> None:
         super().__init__()
         self.evidence_source_commit = evidence_source_commit
         self.verification_clocks = verification_clocks
         self.payload: list[str] | None = None
         self.result_clock_placement = result_clock_placement
+        self.preliminary_metadata = preliminary_metadata
         self.result_depth: int | None = None
         self.result_status: str | None = None
         self.result_clocks: list[tuple[str, str]] = []
@@ -458,7 +460,11 @@ class _InformationContent(_PageContent):
                 href,
             )
             if original is not None and original[1] == original[2][:2]:
-                facts["href"] = "sha256-official-original:" + original[2]
+                facts["href"] = (
+                    "verified-preliminary-original"
+                    if not self.preliminary_metadata and self.result_status == "Unofficial"
+                    else "sha256-official-original:" + original[2]
+                )
         if facts:
             self.tokens.append(("facts", facts))
 
@@ -470,7 +476,9 @@ class _InformationContent(_PageContent):
             self._append_text("text", " ")
         if self.result_depth == len(self.stack) and self.stack[-1][0] == tag:
             self._resolve_result_notices()
-            if self.result_clocks:
+            if self.result_clocks and (
+                self.preliminary_metadata or self.result_status != "Unofficial"
+            ):
                 self.tokens.append(("result-clocks", sorted(self.result_clocks)))
             self.result_depth = None
             self.result_status = None
@@ -486,6 +494,21 @@ class _InformationContent(_PageContent):
             self.payload.append(data)
         elif self._information():
             literal = any(tag in {"pre", "textarea"} for tag, _ in self.stack)
+            if (
+                not self.preliminary_metadata
+                and self.result_status == "Unofficial"
+                and not literal
+                and any(
+                    tag == "span" and attrs.get("data-preliminary-recency")
+                    for tag, attrs in self.stack
+                )
+                and re.fullmatch(
+                    rf"(?:Last checked|Stale · last checked|Refresh unavailable · last checked) "
+                    rf"{_RESULT_CLOCK}",
+                    data.strip(),
+                )
+            ):
+                return
             if self.result_depth is not None and not literal:
                 data = self._result_clock_text(data)
             if (
@@ -511,11 +534,13 @@ def _information_content(
     evidence_source_commit: str | None = None,
     verification_clocks: bool = True,
     result_clock_placement: bool = False,
+    preliminary_metadata: bool = True,
 ) -> bytes:
     parser = _InformationContent(
         evidence_source_commit,
         verification_clocks=verification_clocks,
         result_clock_placement=result_clock_placement,
+        preliminary_metadata=preliminary_metadata,
     )
     parser.feed((site / name).read_text(encoding="utf-8"))
     parser.close()
@@ -530,6 +555,7 @@ class _Entries(HTMLParser):
         self.field: str | None = None
         self.date = ""
         self.headline = ""
+        self.paths: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         classes = (dict(attrs).get("class") or "").split()
@@ -541,6 +567,8 @@ class _Entries(HTMLParser):
                 self.field = "date"
             elif tag == "strong" or "corrections-headline" in classes:
                 self.field = "headline"
+            elif tag == "a" and self.field == "headline":
+                self.paths.append(dict(attrs).get("href") or "")
 
     def handle_data(self, data: str) -> None:
         if self.field == "date":
@@ -557,6 +585,23 @@ class _Entries(HTMLParser):
                 raise ValueError("published Updates contains an invalid or duplicate entry")
             self.entries.add(key)
             self.active = False
+
+
+def update_entry_paths(document: str, election: str) -> set[str]:
+    """Read actual index headline links for independent staged deep-link verification."""
+    from election_guide.corrections.models import validate_update_slug
+
+    parser = _Entries()
+    parser.feed(document)
+    parser.close()
+    prefix = f"/e/{election}/updates/"
+    for path in parser.paths:
+        if not path.startswith(prefix) or not path.endswith("/"):
+            raise ValueError("update permalink must belong to its own election")
+        validate_update_slug(path[len(prefix) : -1])
+    if parser.paths and len(set(parser.paths)) != len(parser.entries):
+        raise ValueError("update permalinks must cover every index entry exactly once")
+    return set(parser.paths)
 
 
 def _entries(site: Path, manifest: DeploymentManifest, election: str) -> set[tuple[str, str]]:
@@ -582,7 +627,7 @@ def _pages(manifest: DeploymentManifest, election: str) -> set[str]:
 
 
 def build_updates_snapshot(
-    site: Path, *, schema_version: Literal["1.0", "2.0", "3.0", "4.0", "5.0"] = "5.0"
+    site: Path, *, schema_version: Literal["1.0", "2.0", "3.0", "4.0", "5.0", "6.0"] = "6.0"
 ) -> UpdatesSnapshot:
     """Derive a durable content baseline from the verified pages that actually ship."""
     manifest = read_verified_deployment(site)
@@ -605,10 +650,11 @@ def build_updates_snapshot(
                                 site,
                                 name,
                                 evidence_source_commit=election.git_commit
-                                if schema_version in {"3.0", "4.0", "5.0"}
+                                if schema_version in {"3.0", "4.0", "5.0", "6.0"}
                                 else None,
-                                verification_clocks=schema_version not in {"4.0", "5.0"},
-                                result_clock_placement=schema_version == "5.0",
+                                verification_clocks=schema_version not in {"4.0", "5.0", "6.0"},
+                                result_clock_placement=schema_version in {"5.0", "6.0"},
+                                preliminary_metadata=schema_version != "6.0",
                             )
                         ).hexdigest()
                         for name in sorted(_pages(manifest, election.election_id))
@@ -632,7 +678,7 @@ def compare_updates_snapshots(
     published: UpdatesSnapshot, proposed: UpdatesSnapshot
 ) -> dict[str, Any]:
     """Require a fresh served entry for each election whose page fingerprints changed."""
-    if published.schema_version != "5.0" or proposed.schema_version != "5.0":
+    if published.schema_version != "6.0" or proposed.schema_version != "6.0":
         raise ValueError(
             "Updates snapshot policy differs; verify original baseline pages before upgrading"
         )

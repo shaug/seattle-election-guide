@@ -58,6 +58,15 @@ status, count and export clocks, authority, other text and evidence destinations
 malformed or non-result timestamps remain compared. This implements the unchanged-verification
 rule above without adding a filler Updates entry or hiding changed election information.
 
+Snapshot schema `6.0` implements #718's results-only automatic announcement rule. Recognized
+Unofficial result count/export clocks, marked recency/status and correctly pinned content-addressed
+original-result destinations are source metadata, not evidence that tallies changed. They remain
+in the verified page bytes and retained result history but do not independently require an
+Updates card. Counts/shares, certification, authority, unrecognized text, malformed/wrong-source
+evidence URLs and facts outside that result region remain compared. Old policies, including5.0,
+are verified under their original rules before deriving6.0 from the exact successful deployed
+artifact; a candidate or current main cannot supply the missing baseline.
+
 Older `1.0`, `2.0` and `3.0` snapshots cannot be compared directly to the new fingerprints. The upgrade
 must obtain the exact successful production artifact, verify it against the still-served manifest
 and verified upload receipt, validate its original snapshot under its own policy against actual
@@ -66,16 +75,37 @@ block this transition. After `4.0` ships, its authenticated durable snapshot aga
 artifact-expiry dependence. Existing immutable release and deployment identities are unchanged.
 
 The primary declaration explicitly opts into `updates_from_current_source`. Only its current
-`/updates/` route uses the migrated authored schema1.1 log from this source. The immutable
-primary9 ZIP, selected release/pins, original overview and race pages remain unchanged. The
+`/updates/` route uses the migrated authored schema1.1/1.2 log from this source. The immutable
+primary ZIP, selected release/pins, original stored overview and election data remain unchanged. The
 separate deployment `updates_projection` records the current source commit, authored-YAML hash
 and original archive version; matching HTML meta records and an authored-record/archive link
 make the distinction explicit. The deployment asset hash protects this new HTML. The original
 primary release-manifest hash covers its original archive, never this new current-log projection.
 Missing, mismatched or legacy authored overlay data fails closed; it cannot activate a historical
 release or silently fall back to the embedded software feed. General Updates is authored in the
-new current release normally. Staging tests compare every other election asset and original bundle
-byte before/after an overlay and independently check projection provenance.
+new current release normally. Source1.1 additionally renders every public historical HTML page
+with current presentation over that same original election data. Its separate deployment3.0
+`presentation` provenance and shared page meta bind the current renderer source/time to the original
+archive source/version/manifest/model hashes. The Data updated footer and publisher clocks retain
+their original meanings; Site updated describes current presentation. Staging tests compare input
+bundle bytes and election facts and independently check both projection contracts.
+
+Source1.1 confirmation and retained release evidence require the complete deterministic presentation
+record inventory, bound to deployment asset hashes and canonical public request URLs. A successful
+subset cannot qualify as a complete strict pass. Copied status bytes and generation must match their
+original release manifest before supplying presentation time; historical statuses keep the same
+byte binding. Original source1.0 confirmation semantics remain unchanged.
+New Source1.1 static and worker responses include `Cache-Control: no-transform` so hosting email
+obfuscation cannot rewrite the bytes checked by strict verification. Existing cache/security
+headers, statuses and bodies are preserved; exact hashes remain required. See the
+[hosting response contract](HOSTING.md#local-staging-and-preview) for Cloudflare's documented behavior.
+
+This presentation change retains Updates snapshot policy6.0. Head/footer provenance, markup and
+paint do not become election information. Original deployment2.0 baselines remain verified under
+their own schema; older snapshot policies still require the exact authenticated deployed artifact
+and original-policy verification before migration. The candidate, latest main or a re-rendered
+historical model cannot replace missing original baseline evidence. Changed election facts still
+require a fresh served same-election entry.
 
 Updates itself is excluded from recursive information comparison. A reviewed history-only
 migration may remove software announcements while retaining their complete original text, date,
@@ -314,16 +344,18 @@ The retained manual history ends at `2026-general.10`, published from
 `466efd641d2f190f5030e6d7e8b29d58bd4dff0d96e521af51dd0c3b950b161e`.
 Its reviewed input hashes and Updates backfill evidence remain in
 [the backfill publication record](UPDATES_BACKFILL_RELEASE_2026-10-16.md).
-The archived primary uses the canonical `2026-primary.4` source, manifest, and whole-bundle
+At that boundary the primary used the canonical `2026-primary.4` source, manifest, and whole-bundle
 pins from that publication. Preserve these archives and all earlier manual releases unchanged;
 preparation chooses the next unused general version from current remote metadata.
 
-An archived-election refresh needs a new immutable archive built from a clean merged
+An archived-election data correction needs a new immutable archive built from a clean merged
 source, followed by a protected PR recording pins from its downloaded published asset.
 The [primary meter refresh sequence](PRIMARY_METER_REFRESH_2026-10-22.md) records the
 staged Updates preparation and activation required when current code renders an
-archive's race pages while its overview and Updates remain frozen in that archive.
-It does not change the automatic current-general publication path.
+archive's race pages while its overview and Updates remained frozen in that archive.
+Under #721, presentation-only corrections instead use source1.1/deployment3.0 over the same verified
+archive. Original source1.0/deployment2.0 reading and exact-source verification-only recovery remain
+available. Neither path changes the automatic current-general publication boundary.
 
 ## Automatic delivery and evidence
 

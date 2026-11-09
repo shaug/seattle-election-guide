@@ -12,7 +12,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from fractions import Fraction
-from typing import Any
+from typing import Any, Literal
 from zoneinfo import ZoneInfo
 
 from election_guide.corrections.models import ElectionCorrections
@@ -30,6 +30,7 @@ from election_guide.publication.personalization import (
     PersonalizationRace,
     PersonalizationSource,
 )
+from election_guide.rendering.models import PagePresentation
 from election_guide.rendering.payload import (
     ComparisonResultOutcome,
     CoveredFilterScope,
@@ -41,7 +42,7 @@ from election_guide.rendering.payload import (
     RaceDisplay,
     RaceSourceRow,
 )
-from election_guide.rendering.shell import month_day_year
+from election_guide.rendering.shell import month_day_year, update_page_path
 from election_guide.results.models import (
     PRELIMINARY_STALE_AFTER_SECONDS,
     PreliminaryElectionResults,
@@ -651,7 +652,9 @@ def _footer_update_dates(view_model: PublicationViewModel) -> tuple[str, str]:
     )
 
 
-def footer_update_context(view_model: PublicationViewModel) -> dict[str, str]:
+def footer_update_context(
+    view_model: PublicationViewModel, *, presentation: PagePresentation | None = None
+) -> dict[str, str]:
     """The two provenance dates the shared election footer renders.
 
     Everything else its audit line needs is already on `guide.metadata`, which
@@ -662,7 +665,12 @@ def footer_update_context(view_model: PublicationViewModel) -> dict[str, str]:
     data_updated_date, site_updated_date = _footer_update_dates(view_model)
     return {
         "footer_data_updated_date": data_updated_date,
-        "footer_site_updated_date": site_updated_date,
+        "footer_site_updated_date": presentation.generated_at.date().isoformat()
+        if presentation is not None
+        else site_updated_date,
+        "footer_site_git_commit": presentation.source_git_commit
+        if presentation is not None
+        else view_model.metadata.git_commit,
     }
 
 
@@ -1016,7 +1024,7 @@ def _meter_leader_units(
 # a literal color, so a block's paint is always a reference to a `base.css`
 # token — the document's rule that page CSS never introduces a color literal
 # applies to a block's inline style exactly as it applies to a stylesheet rule.
-_METER_TIE_COLORS: tuple[str, ...] = ("var(--amber)", "var(--meter-tie-deep)")
+_METER_TIE_COLORS: tuple[str, ...] = ("var(--meter-tie)", "var(--meter-tie-violet)")
 _METER_TRAIL_COLORS: tuple[str, ...] = (
     "var(--meter-trail-slate)",
     "var(--meter-trail-taupe)",
@@ -1394,6 +1402,9 @@ class RaceResultOutcomeView:
     a measure (docs/RESULTS.md, "The results chip"; #348), present exactly
     when `advanced` is true. `None` for a trailing outcome: the chip marks an
     outcome, not every candidate."""
+    meter_tone: Literal["aligned", "different"] | None = None
+    """Aggregate alignment for recorded advancers or a unique current count lead.
+    A preliminary tone never calls an outcome; its flags/chip stay unset (#715)."""
 
 
 @dataclass(frozen=True)
@@ -1504,6 +1515,13 @@ def race_results_view(
                 percentage_label=f"{outcome.share * 100:.1f}%",
                 advanced=outcome.advanced,
                 chip_label=chip_label if outcome.advanced else None,
+                meter_tone=(
+                    "aligned"
+                    if outcome.choice_id in race.recommendation_candidate_ids
+                    else "different"
+                )
+                if outcome.advanced
+                else None,
             )
             for outcome in sorted_outcomes
         ),
@@ -1522,6 +1540,14 @@ def _preliminary_race_view(
         return None
     labels = {candidate.id: candidate.label for candidate in race.candidates}
     named_total = sum(outcome.votes for outcome in tally.outcomes)
+    ordered = sorted(tally.outcomes, key=lambda item: item.votes, reverse=True)
+    current_leader_id = (
+        ordered[0].choice_id
+        if {outcome.choice_id for outcome in ordered} == set(labels)
+        and ordered[0].votes > tally.write_in_votes
+        and (len(ordered) == 1 or ordered[0].votes > ordered[1].votes)
+        else None
+    )
     capture = next(item for item in results.captures if item.evidence == tally.capture_evidence)
     checked_label = _results_clock_label(capture.captured_at)
     recency = f"Last checked {checked_label}"
@@ -1571,8 +1597,15 @@ def _preliminary_race_view(
                 else "—",
                 advanced=False,
                 chip_label=None,
+                meter_tone=(
+                    "aligned"
+                    if outcome.choice_id in race.recommendation_candidate_ids
+                    else "different"
+                )
+                if outcome.choice_id == current_leader_id
+                else None,
             )
-            for outcome in sorted(tally.outcomes, key=lambda item: item.votes, reverse=True)
+            for outcome in ordered
         ),
     )
 
@@ -1764,6 +1797,7 @@ class CorrectionEntryView:
     date_iso: str
     topics: tuple[str, ...]
     actions: tuple[tuple[str, str], ...]
+    href: str | None
 
 
 def corrections_entries_view(
@@ -1794,6 +1828,11 @@ def corrections_entries_view(
             actions=tuple(
                 (action, "Coverage" if action == "coverage" else action.title())
                 for action in entry.actions
+            ),
+            href=(
+                update_page_path(corrections.election_id, entry.slug)
+                if entry.slug is not None
+                else None
             ),
         )
         for entry in ordered

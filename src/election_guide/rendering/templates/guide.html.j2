@@ -112,7 +112,7 @@
                  renders at the card foot below, after the insufficiency
                  warning, never interleaved with this caption. #}
               <div class="screen-race-context" data-lens-context>
-                <p class="no-majority-pill"{% if not has_no_majority(race) %} hidden{% endif %}>No majority</p>
+                <p class="no-majority-pill{{ ' no-majority-pill-tied' if race.grade == 'TIED' else '' }}"{% if not has_no_majority(race) %} hidden{% endif %}>No majority</p>
                 <p class="support-line support-full" data-display-role="support">{{ screen_support_summary(race) }}</p>
                 <p class="support-line support-compact" data-display-role="support">{{ screen_support_summary_compact(race) }}</p>
               </div>
@@ -154,7 +154,7 @@
     </div>
 
     <footer class="site-footer">
-      {{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}
+      {{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date, site_git_commit=footer_site_git_commit) }}
     </footer>
   </main>
 {% endblock %}

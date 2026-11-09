@@ -16,7 +16,11 @@ from election_guide.corrections.models import (
     CorrectionProvenanceLink,
     ElectionCorrections,
 )
-from election_guide.results.models import PreliminaryElectionResults, ResultsDocument
+from election_guide.results.models import (
+    PreliminaryElectionResults,
+    PreliminaryRaceResults,
+    ResultsDocument,
+)
 from election_guide.serialization import read_yaml, write_generated_bytes
 
 EVIDENCE_PREFIXES = ("data/evidence/official/", "data/manifests/evidence/")
@@ -29,6 +33,16 @@ PUBLICATION_FILES = frozenset(
 )
 
 
+def _tally(race: PreliminaryRaceResults) -> tuple[object, ...]:
+    """Actual contest totals and named votes; source clocks/order are not results."""
+    return (
+        race.ballots_counted,
+        race.votes_counted,
+        race.write_in_votes,
+        {outcome.choice_id: outcome.votes for outcome in race.outcomes},
+    )
+
+
 def build_preliminary_update(
     previous: ResultsDocument,
     current: ResultsDocument,
@@ -36,7 +50,7 @@ def build_preliminary_update(
     checked_at: datetime,
     original_hashes: dict[str, str] | None = None,
 ) -> CorrectionEntry | None:
-    """Distinguish new election information from an unchanged source recheck."""
+    """Announce actual tally changes, never metadata-only source refreshes (#718)."""
     if not isinstance(previous, PreliminaryElectionResults) or not isinstance(
         current, PreliminaryElectionResults
     ):
@@ -47,48 +61,28 @@ def build_preliminary_update(
     new = {r.race_id: r for r in current.races}
     if previous.election_id != current.election_id or old.keys() != new.keys():
         raise ValueError("preliminary publication inventory membership changed")
-    excluded = {"capture_evidence", "coverage_evidence"}
-    changed = [
-        key
-        for key in old
-        if old[key].model_dump(exclude=excluded) != new[key].model_dump(exclude=excluded)
-    ]
+    changed = [key for key in old if _tally(old[key]) != _tally(new[key])]
     for key in old:
         before, after = old[key].capture_evidence, new[key].capture_evidence
-        if before != after:
-            if (
-                original_hashes is None
-                or before not in original_hashes
-                or after not in original_hashes
-            ):
-                raise ValueError("new preliminary references require verified original hashes")
-            if original_hashes[before] != original_hashes[after] and key not in changed:
-                changed.append(key)
-    failures = [f for f in current.failed_refreshes if f not in previous.failed_refreshes]
-    if not changed and not failures:
+        if before != after and (
+            original_hashes is None or before not in original_hashes or after not in original_hashes
+        ):
+            raise ValueError("new preliminary references require verified original hashes")
+    if not changed:
         return None
     local = checked_at.astimezone(ZoneInfo("America/Los_Angeles"))
-    details: list[str] = []
-    if changed:
-        details.append(
-            f"Updated the unofficial counts, source/reporting metadata or retained originals "
-            f"for {len(changed)} contest(s), using each contest's complete jurisdiction."
-        )
-        details.append(
-            "Publisher count times remain separate from export generation and source verification "
-            "times; an export does not supply an absent count timestamp. "
-            "No certification or outcome is inferred."
-        )
-    if failures:
-        details.append(
-            "Refresh unavailable for one or more official sources. Previously verified counts "
-            "and their publisher clocks are preserved; the retained failure observations "
-            "identify the affected authorities."
-        )
+    contests = f"{len(changed)} contest" + ("s" if len(changed) != 1 else "")
     return CorrectionEntry(
+        slug=f"preliminary-results-{local.strftime('%Y-%m-%d-%H%M%S')}",
         corrected_on=local.date(),
-        headline=f"Preliminary results checked at {local.strftime('%H:%M:%S')} Pacific.",
-        body=" ".join(details),
+        headline=(
+            f"Updated preliminary counts for {contests} at {local.strftime('%H:%M:%S')} Pacific."
+        ),
+        body=(
+            f"Updated the unofficial counts for {contests}, using each contest's complete "
+            "jurisdiction. Publisher count and export times remain separate from source "
+            "verification times. No certification or outcome is inferred."
+        ),
         topics=["results"],
         actions=["changed"],
         provenance=[

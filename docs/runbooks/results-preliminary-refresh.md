@@ -148,6 +148,15 @@ check. A successful unchanged official recheck can update verification time sepa
 cannot advance count-as-of. All changed count/share information passes normal exact-head
 checks, substantive Election Updates, independent review and protected release gates.
 
+The automatic Election Updates decision compares contest tallies only (#718): named-choice
+votes by ID, write-ins and the distinct ballots/votes totals. A changed publisher clock,
+reporting field, original-byte hash, verification time or refresh failure without changed
+results does not append a card. Those observations still pass admission, retain their evidence
+and update the existing provenance/status. Do not manufacture a filler entry to satisfy an
+obsolete gate; snapshot6.0 verifies this distinction against authenticated production.
+The prior five automatic records and two retired-route redirects are accounted for in
+`docs/audits/updates-718/`.
+
 Record a genuine failed retrieval with the normal evidence-unavailable writer, then attach
 that retained unavailable manifest with:
 

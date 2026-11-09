@@ -774,6 +774,11 @@
       "python",
       "test"
     ],
+    "corrections-headline": [
+      "template",
+      "stylesheet",
+      "python"
+    ],
     "corrections-entry": [
       "template",
       "stylesheet",
@@ -965,6 +970,12 @@
       "client",
       "test"
     ],
+    "no-majority-pill-tied": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "page-head": [
       "template",
       "stylesheet",
@@ -1068,7 +1079,14 @@
     "race-detail-candidate-tied": [
       "template",
       "stylesheet",
-      "client"
+      "client",
+      "test"
+    ],
+    "race-detail-candidate-actual-tie": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
     ],
     "race-detail-candidate-title": [
       "template",

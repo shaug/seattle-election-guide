@@ -9,6 +9,7 @@ from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from election_guide.rendering.models import PagePresentation
 from election_guide.validation import validated_http_url
 
 
@@ -66,7 +67,7 @@ class PublishedElection(HostingModel):
 class SiteManifest(HostingModel):
     """Versioned source of truth for one complete Pages deployment."""
 
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.0", "1.1"] = "1.0"
     canonical_origin: str
     current_election_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     elections: list[PublishedElection] = Field(min_length=1)
@@ -122,6 +123,9 @@ class DeployedElection(HostingModel):
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     release_manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    presentation: PagePresentation | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
     updates_projection: UpdatesProjection | None = Field(
         default=None, exclude_if=lambda value: value is None
     )
@@ -130,7 +134,7 @@ class DeployedElection(HostingModel):
 class DeploymentManifest(HostingModel):
     """Integrity contract for one completed Pages artifact."""
 
-    schema_version: Literal["2.0"] = "2.0"
+    schema_version: Literal["2.0", "3.0"] = "2.0"
     canonical_origin: str
     current_election_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     elections: list[DeployedElection] = Field(min_length=1)
@@ -162,6 +166,11 @@ class DeploymentManifest(HostingModel):
 
     @model_validator(mode="after")
     def validate_elections(self) -> DeploymentManifest:
+        for election in self.elections:
+            if self.schema_version == "3.0" and election.presentation is None:
+                raise ValueError("deployment schema3.0 requires election presentation provenance")
+            if self.schema_version == "2.0" and "presentation" in election.model_fields_set:
+                raise ValueError("deployment schema2.0 cannot declare presentation provenance")
         election_ids = [election.election_id for election in self.elections]
         if len(election_ids) != len(set(election_ids)):
             raise ValueError("deployment manifest repeats an election ID")

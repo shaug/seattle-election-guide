@@ -1501,8 +1501,8 @@
           }
         ],
         "colors": {
-          "king-county-assessor--christopher-roberts": "var(--amber)",
-          "king-county-assessor--rob-foxcurran": "var(--meter-tie-deep)"
+          "king-county-assessor--christopher-roberts": "var(--meter-tie)",
+          "king-county-assessor--rob-foxcurran": "var(--meter-tie-violet)"
         },
         "labels": {
           "king-county-assessor--rob-foxcurran": "Rob Foxcurran",
@@ -1513,7 +1513,7 @@
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--amber)",
+          "style": "--meter-w:1; --meter-c:var(--meter-tie)",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
@@ -1524,7 +1524,7 @@
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-tie-deep); --meter-seam-hover-color:color-mix(in srgb, color-mix(in srgb, var(--amber) 50%, var(--meter-tie-deep) 50%) 86%, var(--meter-seam-pole))",
+          "style": "--meter-w:1; --meter-c:var(--meter-tie-violet); --meter-seam-hover-color:color-mix(in srgb, color-mix(in srgb, var(--meter-tie) 50%, var(--meter-tie-violet) 50%) 86%, var(--meter-seam-pole))",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
@@ -1968,8 +1968,8 @@
           }
         ],
         "colors": {
-          "ld-32-state-representative-1--danica-noble": "var(--amber)",
-          "ld-32-state-representative-1--keith-scully": "var(--meter-tie-deep)"
+          "ld-32-state-representative-1--danica-noble": "var(--meter-tie)",
+          "ld-32-state-representative-1--keith-scully": "var(--meter-tie-violet)"
         },
         "labels": {
           "ld-32-state-representative-1--keith-scully": "Keith Scully",
@@ -1980,7 +1980,7 @@
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--amber)",
+          "style": "--meter-w:1; --meter-c:var(--meter-tie)",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
@@ -1991,7 +1991,7 @@
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-tie-deep); --meter-seam-hover-color:color-mix(in srgb, color-mix(in srgb, var(--amber) 50%, var(--meter-tie-deep) 50%) 86%, var(--meter-seam-pole))",
+          "style": "--meter-w:1; --meter-c:var(--meter-tie-violet); --meter-seam-hover-color:color-mix(in srgb, color-mix(in srgb, var(--meter-tie) 50%, var(--meter-tie-violet) 50%) 86%, var(--meter-seam-pole))",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
@@ -3759,8 +3759,8 @@
           }
         ],
         "colors": {
-          "tie--second": "var(--amber)",
-          "tie--first": "var(--meter-tie-deep)"
+          "tie--second": "var(--meter-tie)",
+          "tie--first": "var(--meter-tie-violet)"
         },
         "labels": {
           "tie--first": "Zeta Zhang",
@@ -3771,7 +3771,7 @@
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--amber)",
+          "style": "--meter-w:1; --meter-c:var(--meter-tie)",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
@@ -3782,7 +3782,7 @@
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-tie-deep); --meter-seam-hover-color:color-mix(in srgb, color-mix(in srgb, var(--amber) 50%, var(--meter-tie-deep) 50%) 86%, var(--meter-seam-pole))",
+          "style": "--meter-w:1; --meter-c:var(--meter-tie-violet); --meter-seam-hover-color:color-mix(in srgb, color-mix(in srgb, var(--meter-tie) 50%, var(--meter-tie-violet) 50%) 86%, var(--meter-seam-pole))",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
@@ -4645,8 +4645,8 @@
           }
         ],
         "colors": {
-          "ld-11-state-representative-1--ashley-fedan": "var(--amber)",
-          "ld-11-state-representative-1--david-hackney": "var(--meter-tie-deep)"
+          "ld-11-state-representative-1--ashley-fedan": "var(--meter-tie)",
+          "ld-11-state-representative-1--david-hackney": "var(--meter-tie-violet)"
         },
         "labels": {
           "ld-11-state-representative-1--david-hackney": "David Hackney",
@@ -4657,7 +4657,7 @@
         {
           "type": "split",
           "width": 1,
-          "style": "--meter-w:1; --meter-ca:var(--amber); --meter-cb:var(--meter-tie-deep); --meter-splitline-rest:var(--meter-tie-deep); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--amber) 50%, var(--meter-tie-deep) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-color:var(--amber)",
+          "style": "--meter-w:1; --meter-ca:var(--meter-tie); --meter-cb:var(--meter-tie-violet); --meter-splitline-rest:var(--meter-tie-violet); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--meter-tie) 50%, var(--meter-tie-violet) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-color:var(--meter-tie)",
           "band_start": true,
           "band_end": true,
           "tongue_corner_start": false,
@@ -7107,9 +7107,9 @@
         "hasMajority": false
       },
       "expected": {
-        "a": "var(--amber)",
-        "b": "var(--meter-tie-deep)",
-        "c": "color-mix(in srgb, var(--meter-tie-deep) 78%, var(--meter-track))"
+        "a": "var(--meter-tie)",
+        "b": "var(--meter-tie-violet)",
+        "c": "color-mix(in srgb, var(--meter-tie-violet) 78%, var(--meter-track))"
       },
       "note": "A third tied leader exhausts the tie pool and steps toward the track, exactly as a fourth trailing candidate does.",
       "source": "meter_candidate_colors on the three tied leaders shape"
@@ -7129,11 +7129,11 @@
         "hasMajority": false
       },
       "expected": {
-        "a": "var(--amber)",
-        "b": "var(--meter-tie-deep)",
+        "a": "var(--meter-tie)",
+        "b": "var(--meter-tie-violet)",
         "c": "var(--meter-trail-slate)"
       },
-      "note": "Two tied leaders exactly fill the tie pool: amber, then the deep tie amber.",
+      "note": "Two tied leaders exactly fill the tie pool: lavender, then deep violet.",
       "source": "meter_candidate_colors on the two tied leaders shape"
     },
     {
@@ -7169,8 +7169,8 @@
         "hasMajority": false
       },
       "expected": {
-        "king-county-assessor--christopher-roberts": "var(--amber)",
-        "king-county-assessor--rob-foxcurran": "var(--meter-tie-deep)"
+        "king-county-assessor--christopher-roberts": "var(--meter-tie)",
+        "king-county-assessor--rob-foxcurran": "var(--meter-tie-violet)"
       },
       "source": "published race king-county-assessor on the district-sources panel",
       "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
@@ -7189,8 +7189,8 @@
         "hasMajority": false
       },
       "expected": {
-        "ld-11-state-representative-1--ashley-fedan": "var(--amber)",
-        "ld-11-state-representative-1--david-hackney": "var(--meter-tie-deep)"
+        "ld-11-state-representative-1--ashley-fedan": "var(--meter-tie)",
+        "ld-11-state-representative-1--david-hackney": "var(--meter-tie-violet)"
       },
       "source": "published race ld-11-state-representative-1 on the district-sources panel",
       "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
@@ -7209,8 +7209,8 @@
         "hasMajority": false
       },
       "expected": {
-        "ld-32-state-representative-1--danica-noble": "var(--amber)",
-        "ld-32-state-representative-1--keith-scully": "var(--meter-tie-deep)"
+        "ld-32-state-representative-1--danica-noble": "var(--meter-tie)",
+        "ld-32-state-representative-1--keith-scully": "var(--meter-tie-violet)"
       },
       "source": "published race ld-32-state-representative-1 on the two-sources panel",
       "note": "Two sources split some races, which is where a half share and a tie both become reachable."
@@ -7229,8 +7229,8 @@
         "hasMajority": false
       },
       "expected": {
-        "tie--second": "var(--amber)",
-        "tie--first": "var(--meter-tie-deep)"
+        "tie--second": "var(--meter-tie)",
+        "tie--first": "var(--meter-tie-violet)"
       },
       "note": "Equal units, so the display label breaks the tie and Ada Ames leads. Both the ids and the source labels run the other way, so neither can be what produced this order.",
       "source": "meter_layout_blocks on the label tie-break shape"

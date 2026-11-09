@@ -1022,6 +1022,84 @@ def test_explicit_current_updates_projection_preserves_immutable_election_assets
         verify_staged_pages_site(after, manifest)
 
 
+def test_permalink_updates_stage_current_and_archived_elections_with_real_routes(
+    tmp_path: Path,
+) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    declaration = yaml.safe_load(manifest.read_text())
+    authored = tmp_path / "authored"
+    authored.mkdir()
+    for election in declaration["elections"]:
+        election["updates_from_current_source"] = True
+        (authored / f"{election['election_id']}.yaml").write_text(
+            yaml.safe_dump(
+                {
+                    "schema_version": "1.2",
+                    "election_id": election["election_id"],
+                    "entries": [
+                        {
+                            "corrected_on": "2026-10-11",
+                            "slug": "restored-records",
+                            "redirect_from": ["former-record-notice"],
+                            "headline": "Restored election records.",
+                            "body": "The historical record is preserved.",
+                            "topics": ["endorsements"],
+                            "actions": ["correction"],
+                        }
+                    ],
+                }
+            )
+        )
+    manifest.write_text(yaml.safe_dump(declaration))
+    original_bundles = [_tree_bytes(bundle) for bundle in (current, older)]
+    output = tmp_path / "site"
+    stage_pages_site(
+        manifest, {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older}, output, updates_dir=authored
+    )
+    verified = verify_staged_pages_site(output, manifest)
+    for election in (CURRENT_ID, OLDER_ID):
+        relative = f"e/{election}/updates/restored-records/index.html"
+        page = output / relative
+        assert verified.assets[relative] == hashlib.sha256(page.read_bytes()).hexdigest()
+        assert (
+            f'href="https://seattleelections.guide/e/{election}/updates/restored-records/"'
+            in page.read_text()
+        )
+    assert original_bundles == [_tree_bytes(bundle) for bundle in (current, older)]
+    root = f"https://seattleelections.guide/e/{CURRENT_ID}/updates/"
+    results = _run_worker(
+        output / "_worker.js",
+        [
+            root + "restored-records/",
+            root + "restored-records",
+            root + "former-record-notice/?ref=old",
+            root + "former-record-notice/index.html",
+            root + "unknown/",
+            root + "bad%2Fsegment/",
+            root + "unknown.pdf",
+            "https://seattleelections.guide/e/unknown/updates/restored-records/",
+            "https://seattleelections.guide/updates/restored-records/",
+        ],
+    )
+    assert results[0]["body"] == f"asset:/e/{CURRENT_ID}/updates/restored-records/"
+    assert results[1]["status"] == 308 and results[1]["location"] == root + "restored-records/"
+    assert (
+        results[2]["status"] == 301 and results[2]["location"] == root + "restored-records/?ref=old"
+    )
+    assert results[3]["status"] == 301 and results[3]["location"] == root + "restored-records/"
+    assert all(row["status"] == 404 for row in results[4:])
+    # Removing a detail and its declared hash cannot make a broken index link valid.
+    relative = f"e/{CURRENT_ID}/updates/restored-records/index.html"
+    (output / relative).unlink()
+    deployment_path = output / "deployment-manifest.json"
+    raw = json.loads(deployment_path.read_text())
+    del raw["assets"][relative]
+    deployment_path.write_bytes(canonical_json_bytes(raw))
+    with pytest.raises(ValueError, match=r"missing|required|update"):
+        verify_staged_pages_site(output, manifest)
+
+
 def test_disabled_corrections_stage_no_page_or_nav_exposure(tmp_path: Path) -> None:
     """Issue #290, acceptance criterion 1: an election with no corrections
     file renders no page and no nav link -- the default fixture bundle

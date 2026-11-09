@@ -74,12 +74,13 @@ WHITE = (255, 255, 255)
 AMBER = (217, 144, 0)
 SKY = (155, 184, 209)
 
-# Meter v2's own palette (docs/METER_V2.md, Color), duplicated from base.css
+# Meter v2's palette (docs/METER_V2.md, Color), from base.css and the approved
+# component-scoped tie tokens in guide-race.css,
 # for the same reason as the brand palette above: this module draws pixels,
 # not stylesheet rules, so it cannot read a custom property. Duplication is
 # the whole exposure, and one drift test closes it --
 # `test_og_image.py::test_the_meter_palette_mirrors_base_css` parses
-# `base.css`'s own hex values and holds every constant below to them in both
+# the owning CSS hex values and holds every constant below to them in both
 # directions, so a token that moves on either side fails `make check` rather
 # than a reader's eye. (Before this ticket, `AMBER` above and the retired `TRACK`
 # it replaces were never held to base.css at all -- AMBER's literal RGB above
@@ -88,7 +89,9 @@ SKY = (155, 184, 209)
 METER_TRACK = (237, 242, 244)  # --meter-track
 LINE_STRONG = (130, 154, 177)  # --line-strong, the frame's own border
 MUTED = (82, 96, 109)  # --muted, the N/A label and the low-fill guard's ink
-METER_TIE_DEEP = (138, 93, 18)  # --meter-tie-deep
+METER_TIE = (187, 166, 215)  # --meter-tie
+METER_TIE_DEEP = (138, 93, 18)  # legacy base.css --meter-tie-deep
+METER_TIE_VIOLET = (101, 74, 139)  # guide-race.css --meter-tie-violet
 METER_TRAIL_SLATE = (125, 149, 173)  # --meter-trail-slate
 METER_TRAIL_TAUPE = (169, 158, 138)  # --meter-trail-taupe
 METER_TRAIL_PLUM = (160, 130, 150)  # --meter-trail-plum
@@ -104,7 +107,9 @@ METER_TRAIL_PLUM = (160, 130, 150)  # --meter-trail-plum
 _METER_TOKEN_RGB: dict[str, tuple[int, int, int]] = {
     "var(--teal)": TEAL,
     "var(--amber)": AMBER,
+    "var(--meter-tie)": METER_TIE,
     "var(--meter-tie-deep)": METER_TIE_DEEP,
+    "var(--meter-tie-violet)": METER_TIE_VIOLET,
     "var(--meter-trail-slate)": METER_TRAIL_SLATE,
     "var(--meter-trail-taupe)": METER_TRAIL_TAUPE,
     "var(--meter-trail-plum)": METER_TRAIL_PLUM,

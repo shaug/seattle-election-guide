@@ -8,6 +8,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import pytest
+import yaml
 
 from election_guide.corrections.loader import load_rendering_corrections
 from election_guide.serialization import read_yaml
@@ -97,7 +98,7 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             assert row["rationale"]
         current = load_rendering_corrections(election, corrections_dir=UPDATES_DIR)
         assert current is not None
-        assert current.schema_version == "1.1"
+        assert current.schema_version == "1.2"
         public = [row for row in rows if row["disposition"] == "election_information"]
         assert len(public) == (15 if election == "wa-2026-primary" else 18)
         migrated = current.entries[: len(public)]
@@ -105,6 +106,8 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             serialized = entry.model_dump(mode="json")
             assert serialized.pop("topics") == row["topics"]
             assert serialized.pop("actions") == row["actions"]
+            assert serialized.pop("slug") == entry.slug
+            serialized.pop("redirect_from", None)
             assert serialized == row["original_entry"]
         if election == "wa-2026-general":
             added = current.entries[len(public) :]
@@ -124,15 +127,16 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             assert added[0].corrected_on == date(2026, 11, 2)
             assert added[0].topics == ["endorsements"]
             assert added[0].actions == ["added"]
-            # The migration pins complete historical rows, not a ceiling on later
-            # substantive automatic result updates. Staging also preserves every
-            # previous raw byte, including all automatic entries already published.
+            # #718 audits the original automatic tail, removes metadata-only
+            # records and retains every published route through existing aliases.
+            # Later genuine tally changes retain distinct publication identities.
             for entry in added[2:]:
                 assert entry.corrected_on >= date(2026, 11, 6)
                 assert entry.topics == ["results"]
                 assert entry.actions == ["changed"]
                 assert re.fullmatch(
-                    r"Preliminary results checked at (?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d Pacific\.",
+                    r"Updated preliminary counts for [1-9]\d* contests? at "
+                    r"(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d Pacific\.",
                     entry.headline,
                 )
                 assert {link.url for link in entry.provenance} == {
@@ -144,6 +148,25 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             ).actions == ["correction"]
         else:
             assert current.entries == migrated
+
+
+@pytest.mark.parametrize("election", ["wa-2026-general", "wa-2026-primary"])
+def test_historical_entry_can_preserve_a_retired_route_without_changing_original_fields(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    election: str,
+) -> None:
+    for path in UPDATES_DIR.glob("*.yaml"):
+        (tmp_path / path.name).write_bytes(path.read_bytes())
+    path = tmp_path / f"{election}.yaml"
+    payload = read_yaml(path)
+    entry = payload["entries"][0]
+    old_slug = entry["slug"]
+    entry["slug"] = old_slug + "-corrected"
+    entry["redirect_from"] = [old_slug]
+    path.write_text(yaml.safe_dump(payload))
+    monkeypatch.setattr(f"{__name__}.UPDATES_DIR", tmp_path)
+    test_election_only_migration_preserves_every_complete_original()
 
 
 def test_every_audited_change_is_bound_to_an_authored_entry() -> None:
@@ -209,3 +232,30 @@ def test_minor_copy_announcement_is_audited_instead_of_publicly_announced() -> N
     prefix = json.loads(json.dumps(original["entries"][:26], default=str))
     encoded = json.dumps(prefix, sort_keys=True, separators=(",", ":")).encode()
     assert hashlib.sha256(encoded).hexdigest() == audit["preserved_public_prefix_sha256"]
+
+
+def test_results_check_audit_preserves_real_counts_and_all_published_routes() -> None:
+    audit_dir = PROJECT_ROOT / "docs/audits/updates-718"
+    audit = json.loads((audit_dir / "classification.json").read_text())
+    original = (audit_dir / "original-wa-2026-general.yaml").read_bytes()
+    assert hashlib.sha256(original).hexdigest() == audit["original_file_sha256"]
+    frozen = json.loads(json.dumps(yaml.safe_load(original), default=str))
+    assert [row["original_entry"] for row in audit["records"]] == frozen["entries"][20:]
+    current = load_rendering_corrections("wa-2026-general", corrections_dir=UPDATES_DIR)
+    assert current is not None
+    by_slug = {e.slug: e.model_dump(mode="json") for e in current.entries}
+    assert [len(r["changed_contest_ids"]) for r in audit["records"]] == [52, 0, 52, 8, 0]
+    for row in audit["records"]:
+        before, after = row["before_tallies"], row["after_tallies"]
+        assert before.keys() == after.keys() and len(before) == 52
+        assert [key for key in before if before[key] != after[key]] == row["changed_contest_ids"]
+        slug = row["original_entry"]["slug"]
+        if row["changed_contest_ids"]:
+            assert row["disposition"] == "retain_actual_results_change"
+            assert by_slug[slug] == row["corrected_entry"]
+        else:
+            assert row["disposition"] == "metadata_only_removed_from_index"
+            assert slug not in by_slug
+            assert slug in by_slug[row["redirect_to"]]["redirect_from"]
+    assert len(current.entries) >= 23
+    assert [e.model_dump(mode="json") for e in current.entries[:20]] == frozen["entries"][:20]

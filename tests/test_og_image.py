@@ -22,7 +22,9 @@ from election_guide.rendering.og_image import (
     LINE_STRONG,
     MARGIN,
     METER_HEIGHT,
+    METER_TIE,
     METER_TIE_DEEP,
+    METER_TIE_VIOLET,
     METER_TOP,
     METER_TRACK,
     METER_TRAIL_PLUM,
@@ -259,19 +261,22 @@ def test_a_leader_short_of_a_majority_takes_the_differ_family() -> None:
     assert AMBER not in _colours(majority)
 
 
-def test_a_tied_field_takes_the_tie_amber_family() -> None:
+def test_a_tied_field_takes_the_lavender_violet_family() -> None:
     """Two leaders neither of whom has a majority (docs/METER_V2.md, Color):
-    the deeper of the two tie ambers, never a hue a solo leader would draw."""
+    both tie colors, never the amber a solo leader below 50% draws."""
     tied = render_race_card(
         _card(
             no_majority=True,
             fill_percent=50,
             percentage_label="50%",
-            blocks=(_solid(AMBER),) * 10 + (_solid(METER_TIE_DEEP),) * 10,
+            blocks=(_solid(METER_TIE),) * 10 + (_solid(METER_TIE_VIOLET),) * 10,
         )
     )
 
-    assert METER_TIE_DEEP in _colours(tied)
+    assert METER_TIE_VIOLET in _colours(tied)
+    assert (187, 166, 215) in _colours(tied)
+    assert (101, 74, 139) in _colours(tied)
+    assert AMBER not in _colours(tied)
 
 
 def test_a_trailing_field_draws_every_muted_hue_it_names() -> None:
@@ -370,7 +375,7 @@ def test_blend_is_the_color_mix_percentage_split() -> None:
     assert _blend((0, 100, 0), (100, 0, 100), 50) == (50, 50, 50)
 
 
-# Every meter v2 token this module draws with, held to `base.css`'s own hex
+# Every meter v2 token this module draws with, held to the owning CSS hex
 # values in both directions -- the "one source of truth" this ticket's own
 # color decision requires (docs/METER_V2.md, Color; #312's tokens). A mirrors
 # module was not the right shape for a CSS custom property (`tests/mirrors.json`
@@ -382,7 +387,9 @@ _TOKEN_RE = re.compile(r"--([\w-]+):\s*#([0-9a-fA-F]{6});")
 
 
 def _base_css_tokens() -> dict[str, tuple[int, int, int]]:
-    source = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
+    source = "\n".join(
+        (TEMPLATE_DIR / name).read_text(encoding="utf-8") for name in ("base.css", "guide-race.css")
+    )
     return {
         name: (int(hexcode[0:2], 16), int(hexcode[2:4], 16), int(hexcode[4:6], 16))
         for name, hexcode in _TOKEN_RE.findall(source)
@@ -399,7 +406,9 @@ def _base_css_tokens() -> dict[str, tuple[int, int, int]]:
         ("muted", MUTED),
         ("line-strong", LINE_STRONG),
         ("meter-track", METER_TRACK),
+        ("meter-tie", METER_TIE),
         ("meter-tie-deep", METER_TIE_DEEP),
+        ("meter-tie-violet", METER_TIE_VIOLET),
         ("meter-trail-slate", METER_TRAIL_SLATE),
         ("meter-trail-taupe", METER_TRAIL_TAUPE),
         ("meter-trail-plum", METER_TRAIL_PLUM),
@@ -407,7 +416,7 @@ def _base_css_tokens() -> dict[str, tuple[int, int, int]]:
 )
 def test_the_meter_palette_mirrors_base_css(token: str, constant: tuple[int, int, int]) -> None:
     assert _base_css_tokens()[token] == constant, (
-        f"og_image.py's own copy of --{token} has drifted from base.css; a Python image "
+        f"og_image.py's own copy of --{token} has drifted from its owning CSS; a Python image "
         "renderer has no CSS engine to read the token from directly, so this hand-kept "
         "mirror is the one source of truth docs/METER_V2.md's Color section requires -- "
         "update the constant in rendering/og_image.py to match."

@@ -19,7 +19,7 @@ from markupsafe import Markup
 from election_guide.publication.models import PublicationRace, PublicationViewModel
 from election_guide.rendering import context
 from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
-from election_guide.rendering.models import RenderingConfiguration
+from election_guide.rendering.models import PagePresentation, RenderingConfiguration
 from election_guide.rendering.payload import (
     comparisons_payload,
     guide_payload,
@@ -139,6 +139,8 @@ def _template_environment(directory: Path, _sources: tuple[tuple[str, bytes], ..
 def render_html_document(
     view_model: PublicationViewModel,
     configuration: RenderingConfiguration,
+    *,
+    presentation: PagePresentation | None = None,
 ) -> str:
     """Render the guide's one HTML document, which also carries its print rules."""
     view_model = view_model.public_view()
@@ -181,7 +183,7 @@ def render_html_document(
             results=view_model.results,
             election_type=view_model.metadata.election_type,
             capture_urls=view_model.metadata.results_capture_urls,
-            as_of=view_model.metadata.generated_at,
+            as_of=presentation.generated_at if presentation else view_model.metadata.generated_at,
         )
         for section in view_model.sections
         for race in section.races
@@ -227,7 +229,8 @@ def render_html_document(
         election_day_banner=_election_day_banner(view_model),
         canonical_origin=configuration.public_site_url,
         project_url=configuration.project_url,
-        **context.footer_update_context(view_model),
+        page_presentation=presentation,
+        **context.footer_update_context(view_model, presentation=presentation),
         filter_scope_groups=filter_scope_groups,
         has_no_majority=context.has_no_majority,
         guide_card_label=context.guide_card_label,
@@ -250,6 +253,7 @@ def render_race_document(
     *,
     public_site_url: str,
     project_url: str | None = None,
+    presentation: PagePresentation | None = None,
 ) -> str:
     """Render one race's own page (issue #136).
 
@@ -312,7 +316,7 @@ def render_race_document(
         results=view_model.results,
         election_type=view_model.metadata.election_type,
         capture_urls=view_model.metadata.results_capture_urls,
-        as_of=view_model.metadata.generated_at,
+        as_of=presentation.generated_at if presentation else view_model.metadata.generated_at,
     )
     race_result_outcomes_by_candidate_id = context.race_result_outcomes_by_candidate_id(
         race_results
@@ -365,7 +369,8 @@ def render_race_document(
         election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
         project_url=project_url,
-        **context.footer_update_context(view_model),
+        page_presentation=presentation,
+        **context.footer_update_context(view_model, presentation=presentation),
         group_rows=context.race_source_group_rows(
             race,
             source_by_id,
@@ -393,6 +398,7 @@ def render_sources_document(
     *,
     public_site_url: str,
     project_url: str | None = None,
+    presentation: PagePresentation | None = None,
 ) -> str:
     """Render the standalone per-election sources/customization page (issue 107).
 
@@ -455,7 +461,8 @@ def render_sources_document(
         election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
         project_url=project_url,
-        **context.footer_update_context(view_model),
+        page_presentation=presentation,
+        **context.footer_update_context(view_model, presentation=presentation),
     )
 
 
@@ -464,6 +471,7 @@ def render_comparison_document(
     *,
     public_site_url: str,
     project_url: str | None = None,
+    presentation: PagePresentation | None = None,
 ) -> str:
     """Render the policy-gated, no-JavaScript comparison baseline."""
     if not view_model.comparisons.policy.enabled:
@@ -522,7 +530,8 @@ def render_comparison_document(
         election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
         project_url=project_url,
-        **context.footer_update_context(view_model),
+        page_presentation=presentation,
+        **context.footer_update_context(view_model, presentation=presentation),
         comparison_sections=comparison_sections,
         comparison_filter_sections=context.ballot_filter_sections(view_model),
         all_ballot_scope_label=context.all_ballot_scope_label(view_model),
@@ -542,7 +551,9 @@ def render_corrections_document(
     *,
     public_site_url: str,
     project_url: str | None = None,
+    presentation: PagePresentation | None = None,
     updates_provenance: dict[str, str] | None = None,
+    entry_slug: str | None = None,
 ) -> str:
     """Render the per-election Updates page from the legacy corrections field
     (docs/RESULTS.md, "The updates page"; issues #290 and #551).
@@ -559,6 +570,14 @@ def render_corrections_document(
         raise ValueError("corrections page cannot render while the election has no corrections")
 
     entries = context.corrections_entries_view(view_model.corrections)
+    detail_entry = None
+    if entry_slug is not None:
+        from election_guide.rendering.shell import update_page_path
+
+        wanted = update_page_path(view_model.metadata.election_id, entry_slug)
+        detail_entry = next((entry for entry in entries if entry.href == wanted), None)
+        if detail_entry is None:
+            raise ValueError(f"unknown update slug: {entry_slug!r}")
     for entry in entries:
         for link in entry.provenance:
             _require_web_url(link.url, allow_root_relative=True)
@@ -566,7 +585,8 @@ def render_corrections_document(
     view_model = view_model.public_view()
     environment = template_environment()
     current_updates = (
-        view_model.corrections is not None and view_model.corrections.schema_version == "1.1"
+        view_model.corrections is not None
+        and view_model.corrections.schema_version in {"1.1", "1.2"}
     )
     template = environment.get_template(
         "updates.html.j2" if current_updates else "corrections.html.j2"
@@ -587,7 +607,9 @@ def render_corrections_document(
         legacy_name=view_model.metadata.election_name,
         election_id=view_model.metadata.election_id,
     )
-    document_title = page_title(page="Updates", election=election_display_name)
+    document_title = page_title(
+        page=detail_entry.headline if detail_entry else "Updates", election=election_display_name
+    )
     compare_href = f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
     return template.render(
         guide=view_model,
@@ -602,13 +624,15 @@ def render_corrections_document(
         updates_payload=filter_payload.model_dump(mode="json") if filter_payload else None,
         updates_provenance=updates_provenance,
         corrections_entries=entries,
+        detail_entry=detail_entry,
         compare_href=compare_href,
         corrections_href=f"{guide_path}updates/",
         guide_path=guide_path,
         election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
         project_url=project_url,
-        **context.footer_update_context(view_model),
+        page_presentation=presentation,
+        **context.footer_update_context(view_model, presentation=presentation),
     )
 
 

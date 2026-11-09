@@ -1,7 +1,8 @@
-schema_version: "1.1"
+schema_version: "1.2"
 election_id: wa-2026-general
 entries:
   - corrected_on: 2026-10-24
+    slug: uncontested-race-coverage
     headline: "Uncontested races need enough verified endorsements to appear."
     body: >-
       Uncontested races appear in Endorsements, Comparisons, and individual
@@ -18,6 +19,7 @@ entries:
     topics: [endorsements, sources]
     actions: [coverage]
   - corrected_on: 2026-10-25
+    slug: cascade-il26-638-endorsement
     headline: "Added Cascade Bicycle Club’s No on IL26-638 in the Washington Bikes slot."
     body: >-
       Cascade Bicycle Club explicitly recommends No on the state K-12 athletics
@@ -40,6 +42,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-10-24
+    slug: ufcw-congress-and-ld48-endorsements
     headline: "Added UFCW’s Jayapal, Smith, Birk and Angelis endorsements."
     body: >-
       UFCW 3000’s current official list endorses Pramila Jayapal for U.S.
@@ -68,6 +71,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-10-23
+    slug: sgn-smith-and-ufcw-ld37
     headline: "Added SGN’s Adam Smith endorsement and UFCW’s LD37 dual."
     body: >-
       Seattle Gay News’s October 22 editorial endorses Adam Smith for U.S.
@@ -93,6 +97,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-10-22
+    slug: washingtoncan-ld37-senate
     headline: "Added WashingtonCAN’s LD37 Senate endorsement."
     body: >-
       WashingtonCAN’s current 2026 endorsement gallery explicitly endorses
@@ -112,6 +117,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-10-21
+    slug: transit-riders-union-measures
     headline: "Added Transit Riders Union’s four formal measure endorsements."
     body: >-
       Transit Riders Union’s October general-election article endorses Yes on
@@ -136,6 +142,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-10-21
+    slug: washington-bus-initiatives
     headline: "Added Washington Bus’s three No initiative recommendations."
     body: >-
       Washington Bus’s current general-election gallery explicitly asks voters
@@ -157,6 +164,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-10-19
+    slug: 46th-democrats-seattle-transit
     headline: "Added the 46th District Democrats’ Seattle transit endorsement."
     body: >-
       The 46th District Democrats’ current official publication endorses Yes on
@@ -175,6 +183,7 @@ entries:
     topics: [endorsements, sources]
     actions: [added]
   - corrected_on: 2026-10-19
+    slug: four-publisher-decisions
     headline: "Added 34 source decisions from four publishers."
     body: >-
       Stonewall Democrats’ general-election guide adds 29 decisions, including
@@ -202,6 +211,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-10-16
+    slug: two-previously-unrecorded-endorsements
     headline: "Added two previously unrecorded endorsements."
     body: >-
       Washington Conservation Action’s No on IL26-638 and the Washington Education
@@ -218,6 +228,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-10-16
+    slug: source-decisions-and-revisions
     headline: "Added 175 source decisions and revised two endorsements."
     body: >-
       The October 16 verification added previously unrecorded decisions from 15
@@ -236,6 +247,7 @@ entries:
     topics: [endorsements, sources]
     actions: [added, correction]
   - corrected_on: 2026-10-12
+    slug: sparse-and-unopposed-races
     headline: "Changed how sparse and unopposed races appear."
     body: >-
       Races with too few endorsements now name the measured leading choice while
@@ -254,6 +266,7 @@ entries:
     topics: [endorsements]
     actions: [coverage]
   - corrected_on: 2026-10-12
+    slug: three-sources-and-decisions
     headline: "Added three sources and 22 decisions."
     body: >-
       Young Democrats of Washington, Nondriver Action, and Citizens Against AIPAC
@@ -273,6 +286,7 @@ entries:
     topics: [endorsements, sources]
     actions: [added]
   - corrected_on: 2026-10-11
+    slug: eight-organization-endorsements
     headline: "Added 64 endorsements from eight organizations."
     body: >-
       The general-election lists from The Stranger and Washington Bus are now
@@ -290,6 +304,7 @@ entries:
     topics: [endorsements, sources]
     actions: [added]
   - corrected_on: 2026-10-11
+    slug: king-county-democrats-ld32-position2
     headline: "Updated King County Democrats’ LD32 Position 2 endorsement."
     body: >-
       The guide previously recorded King County Democrats endorsing Lauren Davis alone.
@@ -307,6 +322,7 @@ entries:
     topics: [endorsements]
     actions: [correction]
   - corrected_on: 2026-10-04
+    slug: washingtoncan-initiatives
     headline: "Added WashingtonCAN’s three initiative endorsements."
     body: >-
       WashingtonCAN’s No recommendations on IL26-001, IL26-638, and IP26-645 were
@@ -327,6 +343,7 @@ entries:
     topics: [endorsements, sources]
     actions: [added]
   - corrected_on: 2026-10-03
+    slug: first-general-guide
     headline: "Published the first general-election guide."
     body: >-
       The November guide opened with 614 recorded decisions from 34 organizations
@@ -341,6 +358,7 @@ entries:
     topics: [endorsements, sources]
     actions: [added]
   - corrected_on: '2026-10-27'
+    slug: sgn-statewide-initiatives
     headline: Added SGN’s No endorsements on all three statewide initiatives.
     body: SGN explicitly recommends No on IL26-001 (parental rights in public schools), IL26-638 (K–12 school
       athletics), and IP26-645 (state and local taxes). These three verified positions are now included,
@@ -360,6 +378,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-11-02
+    slug: sgn-supreme-court
     headline: "Added SGN's five state Supreme Court endorsements."
     body: >-
       Added SGN's endorsements of Colleen Melody, Jaime Michelle Hawk, Ian Birk,
@@ -386,6 +405,7 @@ entries:
     topics: [endorsements]
     actions: [added]
   - corrected_on: 2026-11-06
+    slug: unofficial-election-wide-counts
     headline: "Added unofficial election-wide counts to the general guide."
     body: >-
       Preliminary results now show the official count-so-far for each contest's
@@ -408,12 +428,28 @@ entries:
     topics: [results]
     actions: [added]
   - corrected_on: '2026-11-06'
-    headline: Preliminary results checked at 23:21:55 Pacific.
-    body: Updated the unofficial counts, source/reporting metadata or retained originals
-      for 52 contest(s), using each contest's complete jurisdiction. Publisher count
-      times remain separate from export generation and source verification times; an
-      export does not supply an absent count timestamp. No certification or outcome
-      is inferred.
+    slug: preliminary-results-2026-11-06-232155
+    headline: Updated preliminary counts for 52 contests at 23:21:55 Pacific.
+    body: Updated the unofficial counts for 52 contests, using each contest's complete jurisdiction.
+      Publisher count and export times remain separate from source verification times. No certification
+      or outcome is inferred.
+    provenance:
+    - label: General election guide
+      url: /e/wa-2026-general/
+    - label: Retained official results and refresh scope
+      url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics:
+    - results
+    actions:
+    - changed
+    redirect_from:
+    - preliminary-results-2026-11-07-052226
+  - corrected_on: '2026-11-07'
+    slug: preliminary-results-2026-11-07-164349
+    headline: Updated preliminary counts for 52 contests at 16:43:49 Pacific.
+    body: Updated the unofficial counts for 52 contests, using each contest's complete jurisdiction.
+      Publisher count and export times remain separate from source verification times. No certification
+      or outcome is inferred.
     provenance:
     - label: General election guide
       url: /e/wa-2026-general/
@@ -424,12 +460,11 @@ entries:
     actions:
     - changed
   - corrected_on: '2026-11-07'
-    headline: Preliminary results checked at 05:22:26 Pacific.
-    body: Updated the unofficial counts, source/reporting metadata or retained originals
-      for 52 contest(s), using each contest's complete jurisdiction. Publisher count
-      times remain separate from export generation and source verification times; an
-      export does not supply an absent count timestamp. No certification or outcome
-      is inferred.
+    slug: preliminary-results-2026-11-07-182532
+    headline: Updated preliminary counts for 8 contests at 18:25:32 Pacific.
+    body: Updated the unofficial counts for 8 contests, using each contest's complete jurisdiction.
+      Publisher count and export times remain separate from source verification times. No certification
+      or outcome is inferred.
     provenance:
     - label: General election guide
       url: /e/wa-2026-general/
@@ -439,67 +474,5 @@ entries:
     - results
     actions:
     - changed
-  - corrected_on: '2026-11-07'
-    headline: Preliminary results checked at 16:43:49 Pacific.
-    body: Updated the unofficial counts, source/reporting metadata or retained originals
-      for 52 contest(s), using each contest's complete jurisdiction. Publisher count
-      times remain separate from export generation and source verification times; an
-      export does not supply an absent count timestamp. No certification or outcome
-      is inferred.
-    provenance:
-    - label: General election guide
-      url: /e/wa-2026-general/
-    - label: Retained official results and refresh scope
-      url: https://github.com/shaug/seattle-election-guide/issues/696
-    topics:
-    - results
-    actions:
-    - changed
-  - corrected_on: '2026-11-07'
-    headline: Preliminary results checked at 18:25:32 Pacific.
-    body: Updated the unofficial counts, source/reporting metadata or retained originals
-      for 52 contest(s), using each contest's complete jurisdiction. Publisher count
-      times remain separate from export generation and source verification times; an
-      export does not supply an absent count timestamp. No certification or outcome
-      is inferred.
-    provenance:
-    - label: General election guide
-      url: /e/wa-2026-general/
-    - label: Retained official results and refresh scope
-      url: https://github.com/shaug/seattle-election-guide/issues/696
-    topics:
-    - results
-    actions:
-    - changed
-  - corrected_on: '2026-11-07'
-    headline: Preliminary results checked at 20:23:13 Pacific.
-    body: Updated the unofficial counts, source/reporting metadata or retained originals
-      for 20 contest(s), using each contest's complete jurisdiction. Publisher count
-      times remain separate from export generation and source verification times; an
-      export does not supply an absent count timestamp. No certification or outcome
-      is inferred.
-    provenance:
-    - label: General election guide
-      url: /e/wa-2026-general/
-    - label: Retained official results and refresh scope
-      url: https://github.com/shaug/seattle-election-guide/issues/696
-    topics:
-    - results
-    actions:
-    - changed
-  - corrected_on: '2026-11-08'
-    headline: Preliminary results checked at 10:21:55 Pacific.
-    body: Updated the unofficial counts, source/reporting metadata or retained originals
-      for 20 contest(s), using each contest's complete jurisdiction. Publisher count
-      times remain separate from export generation and source verification times; an
-      export does not supply an absent count timestamp. No certification or outcome
-      is inferred.
-    provenance:
-    - label: General election guide
-      url: /e/wa-2026-general/
-    - label: Retained official results and refresh scope
-      url: https://github.com/shaug/seattle-election-guide/issues/696
-    topics:
-    - results
-    actions:
-    - changed
+    redirect_from:
+    - preliminary-results-2026-11-07-202313

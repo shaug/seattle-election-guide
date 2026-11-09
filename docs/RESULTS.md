@@ -36,6 +36,15 @@ SEG's uncertified reproduction; it is not an assertion that the State supplied a
 An explicit true official-status flag stops preliminary ingestion for the separate certified path.
 Historical captures never become current without fresh official verification. Named-choice
 percentages exclude write-ins; zero named votes have no percentage, not a fabricated 100%.
+
+Automatic preliminary Updates announce actual tally changes only (#718): named-choice votes
+by choice ID, write-ins, and the distinct contest ballots or total-votes fields. Reordered
+choices, publisher count/export/check clocks, source-byte changes, reporting metadata and
+refresh failures without a tally change do not create an entry. Retain and validate those
+observations in result/evidence history and the existing provenance display. They never
+become a new count. Meaningful tally corrections, including decreases without a leader
+change, still receive an Update. The [five-record audit](audits/updates-718/README.md)
+preserves the original text and published links while correcting the erroneous public log.
 Contest-ballots, total votes including write-ins and the named denominator remain distinct:
 candidate votes never become a ballot count. Preliminary tallies have no advanced/winner flag.
 When a State export omits its own total, the producer may sum its complete, exactly mapped
@@ -44,7 +53,7 @@ This calculated sum is distinct from a publisher-stated total and never becomes 
 A contradictory generic Write-in flag requires an exact ID/name/flag override and retained
 reason in the reviewed map. The original source flag and bytes remain unchanged.
 
-Guide/race pages reuse the existing slim navy tally block, equal candidate emphasis,
+Guide/race pages reuse the existing slim tally block, equal candidate emphasis,
 amber **Unofficial** badge, and compact count/authority/evidence provenance with available
 timestamps on its second line.
 No outcome chips appear for preliminary data. The centered banner says **Unofficial results
@@ -56,6 +65,32 @@ date is not a statewide promise and a date never certifies data. Preliminary fil
 satisfy certified-ingestion tracking. See [the refresh runbook](runbooks/results-preliminary-refresh.md).
 
 ## Certified baseline: close the record
+
+### Approved result-meter alignment (#711, #715)
+
+On newly rendered Guide/race pages, recorded winning/advancing outcomes and unique
+current unofficial vote leaders receive alignment paint: green `#087f73` with `#cee5e3`
+remainder for a published aggregate
+recommendation (including an endorsement tie), terracotta `#b4654c` with `#f0e0db`
+remainder otherwise. All recorded advancers are evaluated independently by choice ID;
+sorting, a rounded share or a vote tie never creates an outcome. Insufficient coverage
+does not manufacture an aggregate recommendation. For preliminary data, compare actual
+integer counts and color only a unique positive named leader, with every named choice
+present and an aggregate write-in count strictly below that lead. Real top ties, zero
+counts, incomplete choices and write-in ambiguity remain neutral. Rounded display ties
+do not suppress a unique integer-count lead. All preliminary `advanced` flags stay false and chips stay
+absent. A raw Yes/No lead never asserts a passage threshold is met, and a primary lead
+never invents an advancement cutoff or number of seats. This is count-so-far alignment,
+not a completed or projected outcome. The shared result block is still
+lens-invariant; names, shares, chips, badges and provenance are unchanged. See DESIGN.md
+for the approved alternatives and actual-endorsement-tie palette. Published archive bundles
+remain unchanged. Under #721, the public Primary overview and race pages both render the
+archive's verified data with current code and receive the same approved meter treatment.
+Deployment/page metadata distinguish original data from presentation source/time; count,
+export, check and certification clocks retain their original values. Derived preliminary
+recency uses current presentation time without substituting it for a publisher or check clock.
+The earlier [replacement-archive sequence](PRIMARY_METER_REFRESH_2026-10-22.md) remains an audit
+record; presentation-only corrections no longer require that sequence.
 
 The site's purpose is in the name: it helps voters vote. Results are a secondary feature, and
 "secondary" was sized deliberately. The original #208 policy admitted certified results once
@@ -293,6 +328,23 @@ Use the smallest accurate set. Changed requires evidence of a publisher changing
 Correction means the guide's prior representation was wrong. A new current official dual
 endorsement does not alone prove when or whether the publisher changed its position.
 Legacy `1.0` snapshots remain readable and serialize without invented metadata.
+
+Schema `1.2` adds each admitted entry's persisted, reviewed `slug` (#677), unique within its
+election. The public identity is `/e/{election-id}/updates/{slug}/`, independent of filters,
+publication date, headline and ordering. The same slug may occur in separate elections. Only
+lowercase ASCII words/digits separated by single hyphens are accepted; `index` is reserved.
+Missing, duplicate, unsafe or URL-encoded identities fail before staging. Existing entries receive
+slugs once without changing any previous field. Automated result updates assign and retain their
+slug at creation, including harmless same-entry recovery. Legacy1.0/1.1 models retain their shape.
+
+Keep a published slug when correcting prose or a date. A necessary URL correction retains the
+old slug in that entry's `redirect_from` list as a permanent redirect; do not reuse a retired route
+for other content. Original publication dates are not editorial revision dates. Material corrections
+remain explicit notices with their evidence and related-entry links, not fabricated migration events.
+The index keeps full entries and topic filtering, with linked headlines. An individual page retains
+the same election shell, headline H1, original date/tags, full body/evidence and Back links. Only
+public election-information entries receive pages; software-only audit history stays private to its
+existing release/audit projection. Accepted archive bytes remain immutable.
 
 The index says “What changed in this election’s endorsements, sources and results.” Its topic
 buttons are exactly Endorsements, Sources and Results, selecting independent OR matches.

@@ -109,6 +109,13 @@ test('a candidate who is not leading renders no kicker', () => {
   );
 });
 
+test('only an actual tied leader gets the purple framing modifier', () => {
+  for (const actualTie of [true, false]) {
+    const section = draw([candidate({ actualTie })]).querySelector('section');
+    assert.equal(section.classList.contains('race-detail-candidate-actual-tie'), actualTie);
+  }
+});
+
 // The certified heading chip (docs/RESULTS.md, Rendering § The race-detail
 // page; #287) — not reachable via the committed race-markup-parity fixture,
 // since no results file is committed yet (#284's own scope), so this module's

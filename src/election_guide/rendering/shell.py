@@ -105,6 +105,13 @@ def race_page_path(election_id: str, race_id: str) -> str:
     return f"/e/{election_id}/races/{race_id}/"
 
 
+def update_page_path(election_id: str, slug: str) -> str:
+    """Address an already-authored identity; never derive it from prose or position."""
+    from election_guide.corrections.models import validate_update_slug
+
+    return f"/e/{election_id}/updates/{validate_update_slug(slug)}/"
+
+
 def race_og_image_path(election_id: str, race_id: str) -> str:
     """The per-race social card, published beside the page it belongs to."""
 

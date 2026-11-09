@@ -336,8 +336,8 @@ class PublicationRace(PublicationModel):
     election's frozen `publication_view_model.json` -- including one
     published before this field existed -- against the *current*
     `PublicationViewModel`, so a required field here would break loading a
-    historical bundle it never applies to (that surface byte-copies the
-    guide page rather than re-rendering it)."""
+    legacy no-results model. Current-presentation hosting separately requires
+    the stored race type and complete roster when archived results need them."""
     is_contested: bool
     filter_tokens: list[str]
     support_leader_candidate_ids: list[str]
@@ -626,8 +626,8 @@ class PublicationViewModel(PublicationModel):
     def public_view(self) -> PublicationViewModel:
         """Project every public surface while retaining the complete audit model.
 
-        Both elections use the same selector (issue #607); serving a revised
-        primary overview requires a replacement immutable primary archive.
+        Both elections use the same selector (issue #607); current-presentation
+        hosting renders the primary overview without replacing its pinned archive.
         Filter the client contracts too, so links and personalized comparisons
         cannot reintroduce a race omitted from the server-rendered pages.
         """

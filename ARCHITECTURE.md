@@ -83,6 +83,13 @@ Raw captures are addressed by content hash and governed by `SOURCE_POLICY.md`.
   makes that same page legible from the browser's own print output, so no second rendering of the
   guide exists. Chromium produces the responsive screenshots the validation report references.
   Renderers do not independently calculate scoring or display semantics.
+- **Historical presentation (#721):** source declaration schema1.1 composes every public election
+  HTML page with current accepted rendering code over the pinned archive's verified publication
+  model. It never rebuilds or overwrites that archive, its exports, evidence or election facts.
+  Deployment schema3.0 and page metadata distinguish original data/release identity from the
+  current presentation source and deterministic build time. Data and publisher clocks stay original;
+  preliminary recency ages against the explicit presentation time. Original source1.0/deployment2.0
+  contracts remain readable and verifiable for authenticated baselines and exact-source recovery.
 - **Validation:** structural, provenance, scoring, semantic-render, and visual checks block
   publication on serious errors.
 
