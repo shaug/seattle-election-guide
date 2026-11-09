@@ -39,8 +39,12 @@ import {
   LEGACY_RACE_PREFIX,
   lensContext,
 } from './lens-url.mjs';
-import { ballotQuery } from './precinct-ballot.mjs';
-import { refreshPrecinctLinks, wirePrecinctControl } from './precinct-control.mjs';
+import { ballotQuery, supportedPrecinctContract } from './precinct-ballot.mjs';
+import {
+  refreshListLinks,
+  refreshPrecinctLinks,
+  wirePrecinctControl,
+} from './precinct-control.mjs';
 
 /**
  * Forward a fragment that names a race to that race's own page (issue #136).
@@ -151,8 +155,12 @@ export function wireGuide(payload) {
     });
     if (result.status === 'rejected') notice = SELECTION_LINK_FAILURE_NOTICE;
     const query =
-      payload.precinct_ballot?.election_id === 'wa-2026-general'
-        ? ballotQuery(router.controlSearch())
+      payload.race_mode_query_enabled || supportedPrecinctContract(payload.precinct_ballot)
+        ? ballotQuery(
+            router.controlSearch(),
+            true,
+            supportedPrecinctContract(payload.precinct_ballot),
+          )
         : '';
     return `${payload.sources_page_path}${query}${result.status === 'ok' ? result.fragment : ''}`;
   };
@@ -167,6 +175,9 @@ export function wireGuide(payload) {
    * than caching, so a link the page gains later is not missed.
    */
   const renderChrome = () => {
+    if (payload.list_navigation)
+      refreshListLinks(payload.list_navigation, router.controlSearch(), payload.precinct_ballot);
+    else refreshPrecinctLinks(payload.precinct_ballot, router.controlSearch());
     const href = sourcesHref();
     const summary = lensCountingSummary(payload, selectedCodes);
     if (bannerStatus) render(html`${summary}`, bannerStatus);
@@ -186,11 +197,8 @@ export function wireGuide(payload) {
     }
   };
 
-  if (payload.precinct_ballot?.election_id === 'wa-2026-general') {
-    onFiltersApplied = () => {
-      renderChrome();
-      refreshPrecinctLinks(payload.precinct_ballot, router.controlSearch());
-    };
+  if (payload.race_mode_query_enabled || supportedPrecinctContract(payload.precinct_ballot)) {
+    onFiltersApplied = renderChrome;
     onLensHistoryChange(() => {
       filters.syncFromUrl();
       filters.apply({ syncUrl: false });

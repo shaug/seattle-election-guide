@@ -33,6 +33,10 @@ const PRECINCT_MARKUP = readFileSync(
 );
 const PAGE = 'https://seattleelections.guide/e/wa-2026-primary/comparisons/';
 
+const LEGACY_PAGE = readFileSync(
+  new URL('./fixtures/compare-legacy-page.html', import.meta.url),
+  'utf8',
+);
 const AUDITED_PAGE = readFileSync(
   fileURLToPath(new URL('./fixtures/compare-audited-page.html', import.meta.url)),
   'utf8',
@@ -76,9 +80,9 @@ const { compareContext, decodeCompareFragment, encodeCompareFragment } = await i
  * @param {(payload: any) => void} [options.editPayload]
  * @returns {Document}
  */
-function boot({ fragment = '', editPayload, search = '' } = {}) {
+function boot({ fragment = '', editPayload, search = '', page = AUDITED_PAGE } = {}) {
   const document = installDom(`${PAGE}${search}${fragment}`);
-  document.write(AUDITED_PAGE);
+  document.write(page);
   if (editPayload !== undefined) {
     const element = /** @type {Element} */ (document.querySelector('[data-client-payload]'));
     const payload = JSON.parse(/** @type {string} */ (element.textContent));
@@ -153,6 +157,8 @@ const unresolvableStaleFragment = (payload) =>
 
 /** A panel that has stopped offering the source the Add control reaches for. */
 function withdrawStranger(payload) {
+  // Keep a valid two-column published default; Add alone reaches withdrawn Times.
+  payload.default_columns = ['gall', 'strn'];
   for (const source of payload.personalization.sources) {
     if (source.code === 'stim') source.selectable = false;
   }
@@ -217,23 +223,46 @@ test('a stale link that only partly survives says which part did not', () => {
   assert.deepEqual(columns(document), ['gall', 'strn', 'stim']);
 });
 
-test('a stale link that cannot be migrated at all is named, not swallowed', () => {
-  // The configured defaults are the fallback every unrestorable link resolves
-  // to, so a publication whose own defaults no longer resolve is what makes the
-  // migration reject outright rather than fall back.
+test('unusable configured defaults fail closed before results, state or subscriptions are taken over', () => {
+  const fragment = unresolvableStaleFragment(auditedPayload());
+  let originalRows;
+  let originalMarkup;
+  let subscriptions = 0;
+  let writes = 0;
   const document = boot({
-    fragment: unresolvableStaleFragment(auditedPayload()),
+    fragment,
     editPayload(payload) {
       payload.default_columns = ['gall', 'zzzz'];
+      const table = globalThis.document.querySelector('[data-comparison-table]');
+      originalRows = [...table.querySelectorAll('tbody')];
+      originalMarkup = table.innerHTML;
+      const add = window.addEventListener.bind(window);
+      window.addEventListener = (type, ...args) => {
+        if (['hashchange', 'popstate'].includes(type)) subscriptions++;
+        add(type, ...args);
+      };
+      const replace = history.replaceState.bind(history);
+      const push = history.pushState.bind(history);
+      history.replaceState = (...args) => {
+        writes++;
+        replace(...args);
+      };
+      history.pushState = (...args) => {
+        writes++;
+        push(...args);
+      };
     },
   });
-  assert.deepEqual(notice(document), {
-    text:
-      'This comparison link could not be updated for the current source list, so the ' +
-      'default comparison is shown.',
-    hidden: false,
-  });
-  assert.equal(window.location.hash, '');
+  const payloadNotice = document.querySelector('[data-payload-notice]');
+  assert.equal(payloadNotice.hidden, false);
+  assert.match(payloadNotice.textContent, /could not read its published data/);
+  assert.equal(window.location.hash, fragment);
+  assert.equal(subscriptions, 0);
+  assert.equal(writes, 0);
+  const table = document.querySelector('[data-comparison-table]');
+  assert.equal(table.innerHTML, originalMarkup);
+  assert.deepEqual([...table.querySelectorAll('tbody')], originalRows);
+  assert.equal(document.querySelector('[data-comparison-title]'), null);
 });
 
 test('a change the codec refuses is not applied, and the reader is told why', () => {
@@ -275,11 +304,9 @@ test('the next change that does take clears the explanation of the one that did 
   /** @type {HTMLElement} */ (document.querySelector('.comparison-column-add')).click();
   assert.equal(notice(document).hidden, false);
 
-  const differences = /** @type {HTMLInputElement} */ (
-    document.querySelector('[data-comparison-differences]')
-  );
-  differences.checked = true;
-  differences.dispatchEvent(new Event('change'));
+  const view = document.querySelector('[data-filter-native=view]');
+  view.value = 'differing';
+  view.dispatchEvent(new Event('change'));
 
   assert.deepEqual(notice(document), { text: '', hidden: true });
   assert.ok(window.location.hash.includes('diff=1'));
@@ -333,7 +360,7 @@ test('precinct comparison preserves explicit All through presets and Clear', () 
   window.dispatchEvent(new Event('hashchange'));
   assert.deepEqual(visible(), ids);
   assert.equal(document.querySelector('[data-comparison-section-filter]').value, 'all');
-  assert.equal(document.querySelector('[data-comparison-differences]').checked, false);
+  assert.equal(document.querySelector('[data-comparison-differences]').selected, false);
   const selected = columns(document);
   document.querySelector('[data-precinct-clear]').click();
   assert.deepEqual(
@@ -356,7 +383,7 @@ test('precinct comparison preserves explicit All through presets and Clear', () 
     visible(),
     payload.comparisons.display_index.map((d) => d.race_id),
   );
-  const replay = boot({ search: '?precinct=all', fragment: cleared });
+  const replay = boot({ search: '?precinct=all&races=all', fragment: cleared });
   assert.deepEqual(
     [...replay.querySelectorAll('[data-comparison-race]')].map((r) => r.dataset.comparisonRace),
     payload.comparisons.display_index.map((d) => d.race_id),
@@ -491,11 +518,14 @@ for (const code of ['1273', '1279']) {
       [...doc.querySelectorAll('[data-comparison-race]')].map((e) => e.dataset.comparisonRace);
     const differing = doc.querySelector('[data-comparison-differences]');
     assert.equal(differing.disabled, false);
-    assert.equal(differing.checked, true);
+    assert.equal(differing.selected, true);
     assert.deepEqual(ids(), ['us-house-9', 'ld-11-state-representative-1']);
-    doc.querySelector('[data-comparison-full]').click();
+    const view = doc.querySelector('[data-filter-native=view]');
+    view.value = 'full';
+    view.dispatchEvent(new Event('change'));
     assert.deepEqual(ids(), ['us-house-7', 'us-house-9', 'ld-11-state-representative-1']);
-    differing.click();
+    view.value = 'differing';
+    view.dispatchEvent(new Event('change'));
     const scope = doc.querySelector('[data-comparison-section-filter]');
     scope.value = 'federal';
     scope.dispatchEvent(new Event('change'));
@@ -507,7 +537,7 @@ for (const code of ['1273', '1279']) {
     assert.equal(window.location.hash, fragment);
     assert.deepEqual(ids(), ['us-house-9']);
     doc.querySelector('[data-precinct-clear]').click();
-    assert.equal(differing.checked, true);
+    assert.equal(differing.selected, true);
     assert.equal(scope.value, 'federal');
     assert.deepEqual(ids(), ['us-house-9']);
     assert.deepEqual(columns(doc), ['gall', 'strn']);
@@ -518,3 +548,41 @@ for (const code of ['1273', '1279']) {
     );
   });
 }
+
+test('current primary without geography admits legacy explicit comparison state and query precedence', () => {
+  const original = auditedPayload();
+  const legacy = `${currentFragment(original, ['gall', 'strn'])}&races=contested&diff=1&show=federal`;
+  const editPayload = (payload) => {
+    payload.race_mode_query_enabled = true;
+    payload.precinct_ballot = null;
+  };
+  let document = boot({ fragment: legacy, editPayload });
+  assert.deepEqual(columns(document), ['gall', 'strn']);
+  assert.equal(document.querySelector('[data-comparison-contested]').selected, true);
+  assert.equal(document.querySelector('[data-comparison-differences]').selected, true);
+  assert.equal(document.querySelector('[data-comparison-section-filter]').value, 'federal');
+  document = boot({ fragment: legacy, search: '?races=all', editPayload });
+  assert.equal(document.querySelector('[data-comparison-all-races]').selected, true);
+  assert.equal(new URLSearchParams(window.location.search).get('races'), 'all');
+  assert.deepEqual(columns(document), ['gall', 'strn']);
+  assert.equal(document.querySelector('[data-comparison-differences]').selected, true);
+  document = boot({ editPayload });
+  assert.equal(document.querySelector('[data-comparison-contested]').selected, true);
+});
+
+test('literal M74 legacy primary comparison HTML and payload keep the old All default and fragment controls', () => {
+  const document = boot({ page: LEGACY_PAGE });
+  const raw = JSON.parse(document.querySelector('[data-client-payload]').textContent);
+  assert.equal(Object.hasOwn(raw, 'race_mode_query_enabled'), false);
+  assert.equal(document.querySelector('[data-comparison-all-races]').checked, true);
+  assert.equal(document.querySelector('[data-comparison-race]').closest('tbody').isConnected, true);
+  assert.equal(
+    document.querySelectorAll('[data-comparison-race]').length,
+    raw.comparisons.display_index.length,
+  );
+  const option = document.querySelector('[data-comparison-contested]');
+  option.checked = true;
+  option.dispatchEvent(new Event('change'));
+  assert.match(window.location.hash, /races=contested/);
+  assert.equal(window.location.search, '');
+});

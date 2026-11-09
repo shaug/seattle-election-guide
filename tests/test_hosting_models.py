@@ -271,3 +271,30 @@ def test_active_updates_projection_serializes_its_explicit_provenance() -> None:
 
     assert published.model_dump(mode="json")["updates_from_current_source"] is True
     assert deployed.model_dump(mode="json")["updates_projection"] == projection
+
+
+def test_source12_declares_historical_capability_outside_archive_identity() -> None:
+    historical = {**_published_election(), "election_id": "wa-2026-primary"}
+    current = {
+        **_published_election(),
+        "election_id": "wa-2026-general",
+        "bundle_id": "current-general",
+    }
+    raw = {
+        "schema_version": "1.2",
+        "canonical_origin": "https://seattleelections.guide",
+        "current_election_id": "wa-2026-general",
+        "elections": [current, historical],
+        "historical_capabilities": {
+            "wa-2026-primary": {
+                "path": "config/elections/wa-2026-primary-precinct-supplement.json",
+                "sha256": "e" * 64,
+            }
+        },
+    }
+    site = SiteManifest.model_validate(raw)
+    serialized = site.model_dump(mode="json")
+    assert serialized["historical_capabilities"] == raw["historical_capabilities"]
+    assert serialized["elections"][1] == PublishedElection.model_validate(historical).model_dump(
+        mode="json"
+    )

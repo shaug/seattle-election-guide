@@ -134,87 +134,86 @@ RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/guide.yaml"
 # contract). The whole opening tag, so the selector inside the inlined bundle
 # is not mistaken for a second element.
 PAYLOAD_ELEMENT = '<script type="application/json" data-client-payload>'
+# Issue723: actual inspected Darwin captures with shared compact controls, joined
+# Sources and the current Contested default. Tolerances below are unchanged.
 DARWIN_VISUAL_BASELINES = {
     "desktop": [
-        0.382,
-        0.593,
-        0.613,
+        0.379,
+        0.575,
+        0.599,
         0.422,
-        0.149,
-        0.190,
-        0.184,
-        0.129,
-        0.071,
-        0.065,
-        0.068,
         0.069,
-        0.078,
-        0.106,
-        0.097,
-        0.089,
-    ],
-    # UI polish round 5.1 (issue 177): the hero deck is gone and the source
-    # strip is always present, shifting the narrow layout while preserving its
-    # overall visual density.
-    "mobile": [
-        0.503,
-        0.495,
-        0.507,
-        0.537,
-        0.346,
-        0.356,
-        0.133,
-        0.135,
-        0.128,
-        0.170,
-        0.118,
-        0.067,
-        0.098,
-        0.115,
+        0.069,
+        0.056,
+        0.064,
         0.084,
-        0.039,
+        0.116,
+        0.089,
+        0.097,
+        0.073,
+        0.115,
+        0.088,
+        0.098,
+    ],
+    "mobile": [
+        0.438,
+        0.437,
+        0.465,
+        0.486,
+        0.115,
+        0.144,
+        0.125,
+        0.082,
+        0.112,
+        0.135,
+        0.125,
+        0.08,
+        0.144,
+        0.222,
+        0.197,
+        0.128,
     ],
 }
+# Issue723 estimated Linux references retain the existing platform-delta method:
+# old Linux + (new measured Darwin - old Darwin), per cell, rounded to3 decimals.
+# These are expectations, not Linux measurements; normal Linux CI remains required.
+# No clamping, mean/max tolerance or semantic/blank/geometry check changes.
 LINUX_VISUAL_BASELINES = {
     "desktop": [
-        0.390,
-        0.603,
-        0.613,
+        0.387,
+        0.585,
+        0.599,
         0.422,
-        0.152,
-        0.178,
-        0.180,
-        0.129,
-        0.071,
-        0.059,
-        0.058,
-        0.071,
-        0.068,
-        0.067,
-        0.069,
-        0.071,
-    ],
-    # UI polish round 5.1 (issue 177): values carry the same per-index delta
-    # measured on a real macOS run of this fixture (there is no equivalent
-    # real Linux measurement available in this environment); if CI reports
-    # different exact values, replace these with its own.
-    "mobile": [
-        0.515,
-        0.512,
-        0.525,
-        0.540,
-        0.340,
-        0.339,
-        0.132,
-        0.141,
-        0.106,
-        0.128,
-        0.116,
-        0.077,
-        0.076,
-        0.056,
-        0.067,
+        0.072,
+        0.057,
         0.052,
+        0.064,
+        0.084,
+        0.11,
+        0.079,
+        0.099,
+        0.063,
+        0.076,
+        0.06,
+        0.08,
+    ],
+    "mobile": [
+        0.45,
+        0.454,
+        0.483,
+        0.489,
+        0.109,
+        0.127,
+        0.124,
+        0.088,
+        0.09,
+        0.093,
+        0.123,
+        0.09,
+        0.122,
+        0.163,
+        0.18,
+        0.141,
     ],
 }
 APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
@@ -515,16 +514,15 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "@media print" in html
     assert "@media (max-width: 720px)" in html
     assert 'id="race-filter"' in html
-    assert 'input type="radio" name="ballot-view" value="full" checked><span>Full</span>' in html
-    assert 'input type="radio" name="ballot-view" value="compact"><span>Compact</span>' in html
-    assert (
-        'input type="radio" name="race-set" value="complete" id="complete-filter" checked'
-        "><span>All</span>" in html
-    )
-    assert (
-        'input type="radio" name="race-set" value="contested" id="contested-filter"'
-        "><span>Contested</span>" in html
-    )
+    assert re.findall(r'<select[^>]+data-filter-native="([^"]+)"', html) == [
+        "view",
+        "races",
+        "ballot",
+    ]
+    assert '<option value="full" selected>Full</option>' in html
+    assert '<option value="compact">Compact</option>' in html
+    assert '<option value="contested" id="contested-filter">Contested</option>' in html
+    assert 'input type="radio"' not in body
     assert "contested-control" not in html
     assert html.count('data-contested="') == len(races)
     assert "Full race detail" not in html
@@ -537,7 +535,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "card.dataset.filterTokens" in html
     assert 'card.dataset.contested === "true"' in html
     assert 'query.set("view", "compact")' in html
-    assert '<label class="filter-control-label" for="race-filter">Ballot</label>' in html
+    assert '<label class="visually-hidden" for="race-filter">Ballot</label>' in html
     assert "Show races" not in html
     assert 'query.set("filter", state.scope)' in html
     assert "syncFromUrl();" in html
@@ -567,7 +565,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         trigger_end = html.index("</a>", trigger_start)
         trigger_html = html[trigger_start:trigger_end]
         assert f'id="race-label-{race.id}"' in trigger_html
-        contested_value = "true" if race.is_contested else "false"
+        contested_value = "true" if race.is_contested or race.race_type == "measure" else "false"
         assert f'data-contested="{contested_value}"' in html[trigger_start - 400 : trigger_start]
         assert 'data-display-role="recommendation"' in trigger_html
         assert 'data-display-role="share"' in trigger_html
@@ -613,8 +611,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "target.showModal()" not in html
     assert "history.pushState" not in html
     assert "history.back()" not in html
-    # Precinct history is general-only. Verify actual primary behavior rather than
-    # banning a listener method that the shared router may legitimately export.
+    # Current race-query history is shared without requiring a precinct catalog.
+    # The original Primary9 HTML/payload remains separately covered as legacy.
     observer = """<script>
       window.primaryHistorySubscriptions = 0;
       const originalAdd = window.addEventListener.bind(window);
@@ -629,7 +627,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     expected_scoped_ids = {
         "all": sorted(race.id for race in races if scope in race.filter_tokens),
         "contested": sorted(
-            race.id for race in races if scope in race.filter_tokens and race.is_contested
+            race.id
+            for race in races
+            if scope in race.filter_tokens and (race.is_contested or race.race_type == "measure")
         ),
     }
     primary_history = _evaluate_in_chrome(
@@ -644,20 +644,21 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
       const compact = document.documentElement.classList.contains('compact-ballot-mode');
       const filter = document.querySelector('#race-filter');
       filter.value = EXPECTED_SCOPE;filter.dispatchEvent(new Event('change',{bubbles:true}));
-      document.querySelector('#contested-filter').click();
+      const raceMode = document.querySelector('[data-filter-native=races]');
+      raceMode.value = 'contested';raceMode.dispatchEvent(new Event('change',{bubbles:true}));
       const contestedIds = ids();
       const contestedQuery = new URLSearchParams(location.search);
       const queryMatches = contestedQuery.get('filter') === EXPECTED_SCOPE &&
-        contestedQuery.get('races') === 'contested';
-      document.querySelector('#complete-filter').click();
+        !contestedQuery.has('races');
+      raceMode.value = 'complete';raceMode.dispatchEvent(new Event('change',{bubbles:true}));
       return {subscriptions:window.primaryHistorySubscriptions,before,after,compact,
         contestedIds,allIds:ids(),queryMatches,
-        allQueryMatches:!new URLSearchParams(location.search).has('races')};
+        allQueryMatches:new URLSearchParams(location.search).get('races') === 'all'};
     })())""".replace("EXPECTED_SCOPE", json.dumps(scope)),
     )
-    assert primary_history["subscriptions"] == 0
+    assert primary_history["subscriptions"] == 1
     assert primary_history["after"] == primary_history["before"]
-    assert primary_history["compact"] is False
+    assert primary_history["compact"] is True
     assert primary_history["contestedIds"] == expected_scoped_ids["contested"]
     assert primary_history["allIds"] == expected_scoped_ids["all"]
     assert primary_history["queryMatches"] is True
@@ -3274,6 +3275,9 @@ def test_the_persistent_action_strip_renders_at_a_whole_pixel_height(tmp_path: P
     bytes as deterministic artifacts, but the whole-pixel geometry remains a
     stable, machine-checkable rendering QA property.
 
+    The Guide now uses the shared joined Sources group (#723); this stable
+    action-strip contract remains on race pages.
+
     Root cause, isolated by diffing the two screenshots' actual pixels: before
     this fix, `.state-action-strip` (the navy "Counting all N sources" band
     `guide.html.j2`'s `.lens-banner` renders when personalization is enabled --
@@ -3299,7 +3303,7 @@ def test_the_persistent_action_strip_renders_at_a_whole_pixel_height(tmp_path: P
     view_model = _lens_enabled(_view_model(tmp_path / "fixture"))
     html_path = tmp_path / "guide.html"
     html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        _race_html(view_model, RACE_ID),
         encoding="utf-8",
     )
 
@@ -3644,7 +3648,7 @@ def test_public_views_require_full_panel_confidence_for_uncontested_races(
     assert ('<option value="county">' in html) is visible
     assert ('<option value="Countywide">' in html) is visible
     if not visible:
-        assert payload["filter_scopes"] == [{"value": "all", "label": "All Seattle ballot races"}]
+        assert payload["filter_scopes"] == [{"value": "all", "label": "All ballot races"}]
 
     # Public views omit the race while canonical audit exports retain it.
     exported = json.loads(bundle.artifacts["publication_view_model.json"])
@@ -3710,7 +3714,7 @@ def test_public_views_require_full_panel_confidence_for_uncontested_races(
               });
             })()
             """,
-            initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+            initial_url=f"{html_path.resolve().as_uri()}?races=all#{fragment}",
         )
         assert result["visible"] is True
         assert "Too few endorsements" in result["insufficient"]
@@ -3872,9 +3876,13 @@ def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_s
     keeps only a compact, non-interactive summary and a link to the
     dedicated sources page."""
     html = _sources_tree_html(tmp_path)
-    controls = html.split('<section class="screen-controls filter-control-bar"')[1].split(
-        "</section>"
-    )[0]
+    controls_match = re.search(
+        r'<section\b[^>]*class="screen-controls filter-control-bar"[^>]*>(.*?)</section>',
+        html,
+        re.S,
+    )
+    assert controls_match is not None
+    controls = controls_match[1]
 
     assert controls.count("<button") == 0
     assert "data-customize-open" not in html
@@ -4021,7 +4029,9 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
 
     # One generator for the Ballot filter: the payload publishes exactly the
     # options the select renders, in the same order.
-    select = html.split('<select class="filter-select" id="race-filter"')[1].split("</select>")[0]
+    select_match = re.search(r'<select\b[^>]*id="race-filter"[^>]*>(.*?)</select>', html, re.S)
+    assert select_match is not None
+    select = select_match[1]
     rendered = [
         (value, unescape(label))
         for value, label in re.findall(r'<option value="([^"]*)">([^<]*)</option>', select)
@@ -4033,7 +4043,7 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
     # link, and the same path the rendered anchors carry.
     assert payload.sources_page_path.startswith("/e/")
     assert payload.sources_page_path.endswith("/sources/")
-    assert f'href="{payload.sources_page_path}" data-sources-link' in html
+    assert re.search(rf'data-sources-link[^>]*href="{re.escape(payload.sources_page_path)}"', html)
 
 
 def test_the_guide_publishes_exactly_one_payload_element(tmp_path: Path) -> None:
@@ -5978,14 +5988,11 @@ def test_sources_strip_keeps_the_same_geometry_between_default_and_lens_states(
     assert personalized["stickyHeight"] == pytest.approx(default["stickyHeight"], abs=0.5)
 
 
-def test_personalization_reactive_banner_appends_below_the_controls_not_over_them(
+def test_personalization_sources_join_current_controls_without_overlap(
     tmp_path: Path,
 ) -> None:
-    """Issue 103 acceptance criterion: with a non-default selection active,
-    the reactive banner must stack below the sticky filter controls rather
-    than covering them. Both were independently `position: sticky; top: 0`,
-    which made them compete for the same stuck position; they must now share
-    one sticky ancestor so normal document flow keeps them stacked.
+    """The approved shared Sources group retains its sticky ancestor and
+    complete live link/status without covering the native controls (#723).
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     tallying_codes = sorted(
@@ -6005,11 +6012,15 @@ def test_personalization_reactive_banner_appends_below_the_controls_not_over_the
           await new Promise((resolve) => setTimeout(resolve, 60));
           const controls = document.querySelector('.screen-controls');
           const banner = document.querySelector('[data-lens-banner]');
-          const controlsRect = controls.getBoundingClientRect();
+          const controlGroup = controls.querySelector('.compact-filter-controls');
+          const controlsRect = controlGroup.getBoundingClientRect();
           const bannerRect = banner.getBoundingClientRect();
           return JSON.stringify({
             bannerHidden: banner.hidden,
-            bannerBelowControls: bannerRect.top >= controlsRect.bottom - 1,
+            sharedGroup: banner.closest('[data-compact-sources]') === controls,
+            overlap: Math.min(bannerRect.right,controlsRect.right)-
+              Math.max(bannerRect.left,controlsRect.left)>1 &&
+              Math.min(bannerRect.bottom,controlsRect.bottom)-Math.max(bannerRect.top,controlsRect.top)>1,
             bannerText: banner.querySelector('[data-lens-banner-status]').textContent,
             editSourcesHref: banner.querySelector('[data-sources-link]').href,
             background: getComputedStyle(banner).backgroundColor,
@@ -6019,10 +6030,11 @@ def test_personalization_reactive_banner_appends_below_the_controls_not_over_the
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
     assert result["bannerHidden"] is False
-    assert result["bannerBelowControls"] is True
+    assert result["sharedGroup"] is True
+    assert result["overlap"] is False
     assert result["bannerText"].startswith("Counting ")
     assert result["editSourcesHref"].endswith(f"/sources/#{fragment}")
-    assert result["background"] == "rgb(16, 42, 67)"
+    assert result["background"] == "rgba(0, 0, 0, 0)"
 
 
 def test_race_page_restores_an_active_lens_from_its_own_link(tmp_path: Path) -> None:
@@ -7071,7 +7083,18 @@ def test_reset_query_audit_requires_exact_query_for_admitted_page_capability(
     html.write_text('<script type="application/json" data-client-payload>{}</script>')
     expression = """(()=>{
       const check=()=>CHECK;
+      const primary={schema_version:'1.0',election_id:'wa-2026-primary',
+        mapping_hash:'b'.repeat(64),address_lookup:null,supplement:{schema_version:'1.0',
+        election_id:'wa-2026-primary',mapping_hash:'b'.repeat(64),
+        source_git_commit:'a'.repeat(40),artifact_sha256:'c'.repeat(64)}};
       const cases=[
+        {label:'admitted-primary',payload:{precinct_ballot:primary},expected:'?precinct=all'},
+        {label:'future-primary',payload:{precinct_ballot:{...primary,schema_version:'2.0'}},expected:''},
+        {label:'future-supplement',payload:{precinct_ballot:{...primary,
+          supplement:{...primary.supplement,schema_version:'2.0'}}},expected:''},
+        {label:'wrong-primary-map',payload:{precinct_ballot:{...primary,mapping_hash:'c'.repeat(64)}},expected:''},
+        {label:'incomplete-primary',payload:{precinct_ballot:{...primary,supplement:{}}},expected:''},
+        {label:'current-without-geography',payload:{race_mode_query_enabled:true,precinct_ballot:null},expected:''},
         {label:'general',payload:{precinct_ballot:{election_id:'wa-2026-general'}},
           expected:'?precinct=all'},
         {label:'primary',payload:{precinct_ballot:{election_id:'wa-2026-primary'}},expected:''},
@@ -7079,7 +7102,8 @@ def test_reset_query_audit_requires_exact_query_for_admitted_page_capability(
         {label:'non-precinct',payload:{precinct_ballot:null},expected:''},
       ];
       const queries=['','?precinct=all','?precinct=1279','?precinct=unknown',
-        '?precinct=all&precinct=all','?precinct=all&other=1','?other=1','?precinct='];
+        '?precinct=all&precinct=all','?precinct=all&other=1','?other=1','?precinct=',
+        '?races=all','?precinct=all&races=all'];
       const failures=[];
       for(const c of cases){
         document.querySelector('[data-client-payload]').textContent=JSON.stringify(c.payload);

@@ -180,7 +180,8 @@ The generation fails unless:
 - every race page declares its own title, description, canonical URL, and social card, so a shared
   race unfurls as that race rather than as the site (issue 136);
 - desktop and mobile browser checks exercise the card's link to its race page, the filter and view
-  controls, and viewport containment; an empty overview requires only the all-races scope and no
+  controls, and viewport containment; current three-select presentation follows an explicit payload
+  capability independently of geography, while readable legacy payloads retain their earlier controls; an empty overview requires only the all-races scope and no
   visible grid, while a filter with no matching races also requires no visible grid;
 - the configured desktop and mobile captures use their exact CSS viewport dimensions without
   horizontal overflow, expose every overview race and the filter controls, and contain visible pixels; and
@@ -196,3 +197,17 @@ Browser and font rasterization can vary across operating-system and Chrome versi
 values are deterministic inputs; macOS and Linux therefore have separately approved coarse visual
 signatures under the same tight tolerance. Independent blank-image, dimension, and overflow checks
 remain strict. Human review remains required for every meaningful design change.
+
+
+Current-rendered completed elections follow the shared controls/defaults (#723).
+The audit selects All to check every public overview record, then restores the
+presentation-declared default for capture. It requires exact reset queries, not
+ignored residue; supported Primary supplements bind ordinary browsing with
+`precinct=all`, while a page without geography resets to a bare query. Unknown,
+future, incomplete or mismatched Primary capability claims remain unsupported.
+The direct-only Primary contract requires no address privacy text or County map
+promise; the existing General address capability retains its exact destination
+and security/accessible-link assertions. Native counts, payload-owned Ballot
+option cardinality, one selected value, meter/count/overflow checks and all
+time/budget limits stay strict. Shared approved UI updates may replace a layout
+reference with recorded evidence; the coarse mean/per-cell tolerances do not grow.

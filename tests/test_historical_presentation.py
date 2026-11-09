@@ -712,3 +712,25 @@ def test_production_rejects_http_200_historical_html_with_wrong_bytes_or_provena
         assert "presentation" in " ".join(
             error for check in report.presentation_assets for error in check.errors
         )
+
+
+@pytest.mark.parametrize("fault", ["missing", "wrong-hash"])
+def test_historical_capability_cannot_be_silently_ignored_by_staging(
+    tmp_path: Path, fault: str
+) -> None:
+    manifest, bundles, _ = _current_site(tmp_path)
+    raw = json.loads(manifest.read_bytes())
+    raw["schema_version"] = "1.2"
+    raw["historical_capabilities"] = {
+        OLDER_ID: {
+            "path": "config/elections/reviewed-historical-supplement.json",
+            "sha256": "e" * 64,
+        }
+    }
+    manifest.write_bytes(canonical_json_bytes(raw))
+    if fault == "wrong-hash":
+        path = tmp_path / "config/elections/reviewed-historical-supplement.json"
+        path.parent.mkdir(parents=True)
+        path.write_text("{}\n")
+    with pytest.raises((OSError, ValueError)):
+        stage_pages_site(manifest, bundles, tmp_path / "site")

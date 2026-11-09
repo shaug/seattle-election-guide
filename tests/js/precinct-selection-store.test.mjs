@@ -30,3 +30,19 @@ test('blocked memory never prevents URL-only use', () => {
 });
 test('memory owner obeys its narrow capability guard', () =>
   assertModuleGuard('precinct-selection-store.mjs'));
+
+test('Primary memory requires an admitted literal-ID allowlist and rejects address/free/unknown/cross-election text', () => {
+  installDom();
+  const names = new Set(['SEA 46-1279', 'SEA 36-1273']);
+  for (const invalid of ['600 4th Ave', 'free text', 'SEA 99-9999', '1279']) {
+    assert.equal(savePrecinct('wa-2026-primary', invalid, names), false);
+  }
+  assert.equal(savePrecinct('wa-2026-primary', 'SEA 46-1279'), false);
+  assert.equal(savePrecinct('wa-2026-primary', 'SEA 46-1279', names), true);
+  assert.equal(loadPrecinct('wa-2026-primary', names), 'SEA 46-1279');
+  assert.equal(loadPrecinct('wa-2026-primary'), null);
+  assert.equal(loadPrecinct('wa-2026-general'), null);
+  window.localStorage.setItem('seg-precinct-v1:wa-2026-primary', '600 4th Ave');
+  assert.equal(loadPrecinct('wa-2026-primary', names), null);
+  assert.equal(clearPrecinct('wa-2026-primary'), true);
+});

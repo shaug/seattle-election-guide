@@ -41,6 +41,10 @@
   <meta name="{{ name }}" content="{{ value }}">
 {% endfor %}
 {% endif %}
+{% if guide is defined and guide.precinct_ballot and guide.precinct_ballot.supplement %}
+  <meta name="seg-precinct-supplement" content="{{ guide.precinct_ballot.supplement.artifact_sha256 }}">
+  <meta name="seg-precinct-source" content="{{ guide.precinct_ballot.supplement.source_git_commit }}">
+{% endif %}
 {% block head_meta %}{% endblock %}
   {{ shell.head_links(canonical_origin, shareable=shareable | default(true), image_path=social_image_path | default('/og-image.png')) }}
   <title>{{ document_title }}</title>

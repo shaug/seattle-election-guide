@@ -84,7 +84,8 @@ verified release bundle, supplied locally or downloaded from the release that pu
 infers the current election from dates, filenames, directory order, or an earlier deployment.
 
 Source schema `1.1` selects current presentation over immutable election data (#721), producing
-deployment schema `3.0`. Original source `1.0` and deployment `2.0` remain readable and verifiable
+deployment schema `3.0`. Source `1.2` retains those semantics and declares reviewed
+historical capability supplements, producing deployment `3.1` (#723). Original source `1.0` and deployment `2.0` remain readable and verifiable
 under their original contracts for authenticated baseline and exact-source recovery. The schemas
 must match: a new presentation declaration cannot accept an old copied deployment at the same SHA.
 
@@ -191,7 +192,7 @@ unpublished candidate can never cross the production boundary.
 
 Only the current election's release bundle is built from source. An older election is downloaded
 from its declared Release and verified against every original artifact hash and reviewed pin.
-Source schema1.1 then renders its public overview, race, Sources, enabled Comparisons and Updates
+Source schemas1.1/1.2 then render its public overview, race, Sources, enabled Comparisons and Updates
 pages with the current accepted renderer over that verified publication model. It does not rebuild,
 overwrite or relabel the archive. Its CSV/JSON exports, original HTML, evidence, scoring, source
 membership and outcomes remain inside the unchanged archive with their original identities.
@@ -201,7 +202,7 @@ approved presentation-only corrections require no replacement historical release
 Every served HTML page must exclude the retired percentage-only meter's `--meter-fill` chrome.
 Generated public HTML and independent staged-site verification reject it even when all recorded
 hashes agree. Source1.0 retains its original retired-input rejection because it copies the overview;
-source1.1 may read authentic old HTML as an audit artifact but never serves those bytes.
+source1.1/1.2 may read authentic old HTML as an audit artifact but never serves those bytes.
 
 Current presentation explicitly supports publication schemas1.9/1.13/1.14. Older1.9/1.13 keep
 their absent registry hash;1.14 requires it. Missing/unknown schema versions and corrupt inputs
@@ -219,7 +220,7 @@ projection to current release status and the pinned original release manifest an
 election HTML head. These provenance checks accompany VM-to-render invariance tests and review;
 a metadata claim alone does not prove arbitrary visible election facts correct.
 
-Before current status can supply presentation time, source1.1 independently verifies every copied
+Before current status can supply presentation time, source1.1/1.2 independently verifies every copied
 status's exact bytes against its original release-manifest artifact hash and binds generation,
 release and panel identities to that manifest. Resealing deployment assets or HTML cannot change
 that original clock authority.
@@ -295,7 +296,7 @@ atomically replaces `dist/cloudflare-site/` with:
 - `_headers` with browser-security and revalidation policy. Indexability is not set here: it
   depends on the request's hostname, which `_headers` cannot see, so the worker applies it.
 
-Source1.1 adds `Cache-Control: no-transform` to the existing static revalidation directive and
+Source1.1/1.2 add `Cache-Control: no-transform` to the existing static revalidation directive and
 to every worker response, preserving its cache directives, body, status and other headers.
 Actual General95 HTML was changed by Cloudflare email obfuscation after upload; new presentation
 verification requires the exact declared bytes, so the response contract must prohibit that
@@ -469,7 +470,7 @@ in the fetched schema-valid deployment manifest's asset inventory. The checker a
 - a genuine `404` from a deterministic unknown-election path; and
 - the declared release version and the exact `source_sha` in the public manifest.
 
-For source1.1, strict checking additionally requires deployment3.0 and binds its presentation
+For source1.1/1.2, strict checking additionally requires deployment3.0/3.1 respectively and binds its presentation
 source to the exact expected SHA independently of historical data-source pins. It fetches and
 authenticates every copied status against its original release manifest, and deterministic overview, Sources,
 race, available Comparisons, Updates index/detail and How this works page bodies. Shared head
@@ -652,3 +653,31 @@ Staged verification rejects missing/extra projection provenance, a different cur
 identity, and HTML that lacks its declared provenance. An opted-in missing/legacy log fails closed.
 This creates no historical release activation. Schema1.2 retains the already supported authored
 detail slugs and permanent aliases; legacy logs never acquire invented permalink identities.
+
+
+## Historical precinct supplement contract (#723)
+
+Source1.2 requires a nonempty `historical_capabilities` map, keyed only by a
+declared historical election. Each value is a safe `config/elections/*.json` path
+and reviewed SHA-256. Source1.0/1.1 reject that field; deployment2.0/3.0 reject
+supplement provenance. Unknown future versions fail closed.
+
+For Primary11 the declaration binds its original VM/inventory/release/source,
+exact official raw CSV and supporting metadata, normal official capture manifests,
+sanitized acquisition receipt and July city-membership crosswalk. Full offline
+admission verifies all hashes/custody and all1020 Seattle precincts against literal
+August district fields and official Race occurrences. The original VM's null
+precinct capability, results and all archive pins stay unchanged. The overlay
+exists only on the rendering copy, with no address context.
+
+Deployment3.1 records `precinct_supplement` separately from data and presentation:
+current source, artifact path/hash, original VM/inventory hashes and map hash.
+The literal reviewed JSON is copied to the election's `precinct-supplement.json`
+audit asset. Page-head supplement/source meta records and Guide/Comparisons payload
+membership must agree with it. Staged verification and strict production checks
+reject missing/extra/cross-election/provenance/body mismatches, including rehashed
+HTML that changes precinct membership. The strict inventory includes the audit
+asset and all current-presentation pages; exact canonical-body hashes, race floors,
+retained receipt completeness, no-transform/static-worker handling,120s deadline
+and4MiB report budget are unchanged. Data updated/result clocks retain original
+archive identities; capability retrieval/review clocks are separate audit facts.

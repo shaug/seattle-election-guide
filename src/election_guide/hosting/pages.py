@@ -8,8 +8,9 @@ import os
 import shutil
 import tempfile
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
+from typing import Any, cast
 
 from election_guide.calendar import read_election_calendar
 from election_guide.corrections.loader import load_rendering_corrections
@@ -26,6 +27,12 @@ from election_guide.hosting.presentation import (
     verify_presentation_identity,
 )
 from election_guide.hosting.releases import materialize_released_bundle
+from election_guide.hosting.supplement_pages import verify_page_supplement
+from election_guide.hosting.supplements import (
+    AdmittedPrecinctSupplement,
+    read_historical_precinct_supplement,
+    verify_served_precinct_supplement,
+)
 from election_guide.hosting.updates import (
     UPDATES_SNAPSHOT,
     build_updates_snapshot,
@@ -168,7 +175,7 @@ def stage_pages_site(
             _verify_bundle(
                 declaration,
                 bundle_dir,
-                current_presentation=site_manifest.schema_version == "1.1",
+                current_presentation=site_manifest.current_presentation,
             )
         )
 
@@ -186,6 +193,29 @@ def stage_pages_site(
             f"expected {expected_current_git_commit}, found {current.status.git_commit}"
         )
 
+    supplements: dict[str, AdmittedPrecinctSupplement] = {}
+    repository = (
+        site_manifest_path.parents[2]
+        if site_manifest_path.parent.parts[-2:] == ("config", "hosting")
+        else site_manifest_path.parent
+    )
+    by_id = {b.declaration.election_id: b for b in verified}
+    for election_id, ref in site_manifest.historical_capabilities.items():
+        bundle = by_id[election_id]
+        raw_dataset = read_json(bundle.directory / "data/canonical-dataset.json")
+        if not isinstance(raw_dataset, dict):
+            raise ValueError("historical precinct supplement requires its original inventory")
+        dataset = cast(dict[str, Any], raw_dataset)
+        if not isinstance(dataset.get("inventory"), dict):
+            raise ValueError("historical precinct supplement requires its original inventory")
+        supplements[election_id] = read_historical_precinct_supplement(
+            ref,
+            repository=repository,
+            archive_view_model=bundle.view_model,
+            archive_manifest=bundle.manifest,
+            archive_inventory=dataset["inventory"],
+        )
+
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
     try:
@@ -195,7 +225,8 @@ def stage_pages_site(
             site_manifest.canonical_origin,
             current=current,
             updates_dir=updates_dir,
-            current_presentation=site_manifest.schema_version == "1.1",
+            current_presentation=site_manifest.current_presentation,
+            supplements=supplements,
         )
         # Site-wide pages use the current release's data cutoff and deployed
         # revision timestamp, matching the election-scoped footer.
@@ -286,7 +317,7 @@ def stage_pages_site(
         public_paths.add(f"/{CALENDAR_FEED_NAME}")
 
         headers = PAGES_HEADERS
-        if site_manifest.schema_version == "1.1":
+        if site_manifest.current_presentation:
             headers = headers.replace("must-revalidate", "must-revalidate, no-transform", 1)
         (stage / "_headers").write_text(headers, encoding="utf-8")
         public_paths.update({"/deployment-manifest.json", f"/{UPDATES_SNAPSHOT}"})
@@ -307,7 +338,7 @@ def stage_pages_site(
         )
         deployment_assets = _artifact_hashes(stage)
         deployment_manifest = {
-            "schema_version": "3.0" if site_manifest.schema_version == "1.1" else "2.0",
+            "schema_version": site_manifest.deployment_schema,
             "canonical_origin": site_manifest.canonical_origin,
             "current_election_id": site_manifest.current_election_id,
             "elections": [
@@ -330,7 +361,16 @@ def stage_pages_site(
                                 mode="json"
                             )
                         }
-                        if site_manifest.schema_version == "1.1"
+                        if site_manifest.current_presentation
+                        else {}
+                    ),
+                    **(
+                        {
+                            "precinct_supplement": supplements[bundle.declaration.election_id]
+                            .provenance(current.status.git_commit)
+                            .model_dump(mode="json")
+                        }
+                        if bundle.declaration.election_id in supplements
                         else {}
                     ),
                     **(
@@ -387,7 +427,7 @@ def _verify_staged_pages_site(
     expected_current_git_commit: str | None,
 ) -> DeploymentManifest:
     deployment = DeploymentManifest.model_validate(read_json(site_dir / "deployment-manifest.json"))
-    expected_schema = "3.0" if site_manifest.schema_version == "1.1" else "2.0"
+    expected_schema = site_manifest.deployment_schema
     if deployment.schema_version != expected_schema:
         raise ValueError("deployment presentation schema differs from site manifest")
     if deployment.canonical_origin != site_manifest.canonical_origin:
@@ -398,7 +438,7 @@ def _verify_staged_pages_site(
         raise ValueError("deployment manifest election count differs from site manifest")
 
     authenticated: dict[str, tuple[ReleaseStatus, ReleaseManifest]] = {}
-    if deployment.schema_version == "3.0":
+    if deployment.schema_version in {"3.0", "3.1"}:
         for election in deployment.elections:
             root = site_dir / "e" / election.election_id
             manifest_path = root / "release-manifest.json"
@@ -468,11 +508,36 @@ def _verify_staged_pages_site(
             assert current_status is not None
             release_manifest = authenticated[declared.election_id][1]
             verify_presentation_identity(deployed, release_manifest, current_status)
+            supplement_ref = site_manifest.historical_capabilities.get(declared.election_id)
+            supplement_provenance = deployed.precinct_supplement
+            supplement_declaration = None
+            if (supplement_ref is None) != (supplement_provenance is None):
+                raise ValueError("historical precinct supplement declaration differs")
+            if supplement_ref is not None and supplement_provenance is not None:
+                required_assets.add(supplement_provenance.artifact_path)
+                supplement_declaration = verify_served_precinct_supplement(
+                    (site_dir / supplement_provenance.artifact_path).read_bytes(),
+                    expected_sha256=supplement_ref.sha256,
+                    provenance=supplement_provenance,
+                    archive_manifest=release_manifest,
+                    archive_git_commit=deployed.git_commit,
+                    source_git_commit=current_status.git_commit,
+                )
             prefix = f"e/{declared.election_id}/"
             for relative in deployment.assets:
                 if relative.startswith(prefix) and relative.endswith(".html"):
                     verify_page_presentation(
                         (site_dir / relative).read_text(encoding="utf-8"), deployed.presentation
+                    )
+                    verify_page_supplement(
+                        (site_dir / relative).read_text(encoding="utf-8"),
+                        supplement_provenance,
+                        supplement_declaration,
+                        require_contract=(
+                            supplement_provenance is not None
+                            and relative
+                            in {prefix + "index.html", prefix + "comparisons/index.html"}
+                        ),
                     )
         required_assets.update(
             {
@@ -707,6 +772,7 @@ def _stage_verified_bundles(
     current: _VerifiedBundle,
     updates_dir: Path,
     current_presentation: bool,
+    supplements: Mapping[str, AdmittedPrecinctSupplement],
 ) -> tuple[set[str], dict[str, UpdatesProjection], dict[str, str]]:
     public_paths: set[str] = set()
     projections: dict[str, UpdatesProjection] = {}
@@ -714,6 +780,16 @@ def _stage_verified_bundles(
     for bundle in bundles:
         election_root = stage / "e" / bundle.declaration.election_id
         election_root.mkdir(parents=True)
+        supplement = supplements.get(bundle.declaration.election_id)
+        if supplement is not None:
+            bundle = replace(
+                bundle,
+                view_model=bundle.view_model.model_copy(
+                    update={"precinct_ballot": supplement.contract(current.status.git_commit)}
+                ),
+            )
+            (election_root / "precinct-supplement.json").write_bytes(supplement.raw)
+            public_paths.add(f"/e/{bundle.declaration.election_id}/precinct-supplement.json")
         html_source = bundle.directory / bundle.status.guide_html_artifact
         presentation = _page_presentation(bundle, current) if current_presentation else None
         if presentation is None:
@@ -1136,7 +1212,7 @@ def _pages_worker(
     # prohibits edge transformations on every worker return as well as assets.
     worker_declaration = "export default"
     response_contract = ""
-    if site_manifest.schema_version == "1.1":
+    if site_manifest.current_presentation:
         worker_declaration = "const router ="
         response_contract = """
 export default {

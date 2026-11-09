@@ -343,7 +343,7 @@ def evaluate_deployment_contract(
 ) -> DeploymentContractCheck:
     """Compare production with the checked-in site declaration and selected commit."""
     errors: list[str] = []
-    expected_schema = "3.0" if expected.schema_version == "1.1" else "2.0"
+    expected_schema = expected.deployment_schema
     if observed.schema_version != expected_schema:
         errors.append("deployment presentation schema differs from the source declaration")
     if observed.canonical_origin != expected.canonical_origin:
@@ -372,7 +372,7 @@ def evaluate_deployment_contract(
         deployed = observed_by_id.get(declared.election_id)
         if deployed is None:
             continue
-        if expected.schema_version == "1.1":
+        if expected.current_presentation:
             presentation = deployed.presentation
             if presentation is None or current_presentation is None:
                 errors.append(f"missing current presentation provenance: {declared.election_id}")
@@ -386,6 +386,26 @@ def evaluate_deployment_contract(
                 errors.append(f"presentation identity differs: {declared.election_id}")
             if not _presentation_race_assets(observed, declared.election_id):
                 errors.append(f"presentation has no race page for election {declared.election_id}")
+        supplement_ref = expected.historical_capabilities.get(declared.election_id)
+        supplement = deployed.precinct_supplement
+        if (supplement_ref is None) != (supplement is None):
+            errors.append(f"historical precinct supplement differs: {declared.election_id}")
+        if (
+            supplement_ref is not None
+            and supplement is not None
+            and (
+                supplement.artifact_sha256 != supplement_ref.sha256
+                or supplement.source_git_commit != expected_git_commit
+                or supplement.artifact_path != f"e/{declared.election_id}/precinct-supplement.json"
+                or observed.assets.get(supplement.artifact_path) != supplement_ref.sha256
+                or deployed.presentation is None
+                or supplement.archive_view_model_sha256
+                != deployed.presentation.publication_view_model_sha256
+            )
+        ):
+            errors.append(
+                f"historical precinct supplement identity differs: {declared.election_id}"
+            )
         values = (
             ("bundle ID", declared.bundle_id, deployed.bundle_id),
             ("release version", declared.release_version, deployed.release_version),
@@ -460,13 +480,15 @@ def plan_presentation_assets(
     manifest: DeploymentManifest,
 ) -> dict[str, PagePresentation | None]:
     """Probe every page kind deterministically, without returning full HTML evidence."""
-    if manifest.schema_version != "3.0":
-        raise ValueError("presentation asset planning requires deployment schema3.0")
+    if manifest.schema_version not in {"3.0", "3.1"}:
+        raise ValueError("presentation asset planning requires deployment schema3.0 or3.1")
     paths: dict[str, PagePresentation | None] = {"about/index.html": None}
     for election in manifest.elections:
         root = f"e/{election.election_id}/"
         paths[root + "release-status.json"] = None
         paths[root + "release-manifest.json"] = None
+        if election.precinct_supplement is not None:
+            paths[election.precinct_supplement.artifact_path] = None
         paths[root + "index.html"] = election.presentation
         paths[root + "sources/index.html"] = election.presentation
         for suffix in ("comparisons/index.html", "updates/index.html"):

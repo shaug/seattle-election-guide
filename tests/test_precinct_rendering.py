@@ -366,17 +366,22 @@ def test_general_race_modes_pass_the_release_screenshot_audit(
     )
 
 
-def test_general_sources_capability_does_not_extend_the_legacy_payload(
+def test_current_sources_query_capability_is_independent_of_precinct_catalog(
     general_view: PublicationViewModel,
 ) -> None:
     payload = sources_payload(general_view, guide_path="/e/wa-2026-general/")
     assert isinstance(payload, GeneralSourcesPayload)
     assert payload.race_mode_query_enabled is True
-    legacy = sources_payload(
+    without_geography = sources_payload(
         general_view.model_copy(update={"precinct_ballot": None}),
         guide_path="/e/wa-2026-general/",
     )
-    assert type(legacy) is SourcesPayload
+    assert isinstance(without_geography, GeneralSourcesPayload)
+    assert without_geography.race_mode_query_enabled is True
+    legacy_fields = without_geography.model_dump(
+        exclude={"race_mode_query_enabled", "comparisons_path"}
+    )
+    legacy = SourcesPayload.model_validate(legacy_fields)
     assert "race_mode_query_enabled" not in legacy.model_dump(mode="json")
 
 

@@ -6,8 +6,10 @@ Public historical pages use the current accepted presentation over their origina
 election data. Published archive ZIPs retain their pinned bytes. An approved color or shared
 presentation correction therefore reaches the historical overview and its race pages together;
 it does not require a replacement election archive. Changes to historical election facts still
-require a new reviewed immutable release. Election-specific capabilities remain those supplied
-by the archive: a primary does not acquire general-only precinct controls or ballot ordering.
+require a new reviewed immutable release. Every completed election receives current shared
+UI/UX. Election-specific capabilities come from its verified archive or a separately reviewed,
+hash-bound supplement for that election; November geography or ballot ordering never stands
+in for August evidence.
 The existing Data updated footer describes the original data; Site updated describes the current
 presentation source and build. Count, export, check and certification dates retain their own
 meanings. This supersedes the byte-copy/replacement-archive presentation rule below.
@@ -134,7 +136,7 @@ introduces a color literal except the bounded #673 and #711 component tokens bel
 | Actual tie | `--meter-tie`, `--meter-tie-violet`, `--tone-tie-*` | Tied endorsement runs and existing tie framing; never a sole sub-majority leader |
 | Result alignment | `--teal`, `--result-aligned-track`, `--result-different`, `--result-different-track` | Recorded winners/advancers or unique current unofficial vote leaders, compared with the aggregate recommendation |
 | Focus | `--focus` | Every focus ring, everywhere |
-| Compact general controls | `--compact-precinct-surface`, `--compact-expanded-surface`, `--compact-editor-shadow` | Approved C v5 precinct ground, expanded ground and editor shadow; general-only ownership |
+| Compact election controls | `--compact-precinct-surface`, `--compact-expanded-surface`, `--compact-editor-shadow` | Approved C v5 precinct ground, expanded ground and editor shadow; shared current list controls |
 
 **Rule:** a new UI state must first try to inherit an existing family *by
 meaning*. Introducing a new hue amends this table and is a design
@@ -142,10 +144,10 @@ decision, never just a CSS edit. Example: the "No majority" state joined
 the differ/amber family rather than adding a yellow.
 
 The three compact-control tokens are defined only on `[data-compact-filters]` in
-optional `precinct.css`: `#edf4ef` for the precinct ground, `#e7f2ef` for expanded
+shared `compact-filters.css`: `#edf4ef` for the precinct ground, `#e7f2ef` for expanded
 controls, and `#102a4326` for the editor shadow. These exact C v5 values were
-already approved. Their local ownership preserves frozen primary/shared
-`base.css` bytes; it does not permit other page color literals or a new palette.
+already approved. Their local ownership preserves shared `base.css` and original
+archive bytes; it does not permit other page color literals or a new palette.
 Consumers use these tokens, and a change to their meanings or values amends this
 contract in the same PR.
 
@@ -526,7 +528,7 @@ context. The compact bar adapts within narrow containers. There is no separate s
 or explanatory line above it. (Scott's explicit preview revision, October 25, 2026.)
 There is no setup section, district questionnaire or embedded map. The first-version
 no-address restriction is superseded by the optional #657 voting-address path below.
-Both general list views default to Contested, visibly selected; All remains enabled
+Both current list views default to Contested, visibly selected; All remains enabled
 and adds applicable uncontested races within existing public eligibility. Selecting
 a precinct constrains both modes to applicable covered races and measures. Ballot remains enabled and intersects its original scope with precinct membership.
 Offer only scopes with at least one applicable covered contest, including measures,
@@ -539,8 +541,9 @@ not change geographic membership, source eligibility or scoring. Changing or
 clearing precinct preserves View as well as Races.
 Source choices and comparison columns remain independent. Clear removes geography
 while preserving race mode. Selected precinct text uses stronger weight; control
-bodies align vertically in the compact bar. Unsupported choices never claim an exact ballot. Primary has no
-precinct control.
+bodies align vertically in the compact bar. Unsupported choices never claim an exact ballot.
+The reviewed August supplement enables direct primary precinct selection (#723).
+Without an admitted catalog, the shared View/Races/Ballot controls remain available.
 
 ## Optional voting-address path (#657, October28,2026)
 
@@ -597,11 +600,11 @@ See BALLOT_INVENTORY.md for the source, literal-versus-SEG heading distinctions,
 and the explicit November-only boundary. Historical primary publications do not
 inherit this mapping.
 
-## Adaptive compact general filter bar (#673)
+## Adaptive compact election filter bar (#673, #723)
 
-On precinct-enabled general Endorsements and Comparisons, the earlier wrapping
-header row is replaced by one centered 46px control row:
-**Precinct → View → Races → Ballot**. Keep the existing reactive race-count
+Current Endorsements and Comparisons use one centered 46px control row:
+**View → Races → Ballot**, preceded by **Precinct** when an election-specific
+catalog is admitted. Keep the existing reactive race-count
 phrase visible and intact. It sits beside the centered group when its whole
 phrase fits in the remaining side space; otherwise it occupies its own centered
 line below. The control row remains 46px, while the bar grows for that count line.
@@ -677,17 +680,17 @@ The normal suggestion overlay keeps at least 8px before the first action,
 including Clear. A complete-option fallback for a zoomed viewport uses editor
 scrolling while preserving that action boundary.
 The compact surface changes no availability, fallback, race visibility, measures,
-source/scoring, URL/history or precinct-only persistence rule. Primary keeps its
-legacy controls and archive styles.
+source/scoring, URL/history or precinct-only persistence rule. Current-rendered completed elections use the same controls and styling; original
+archive HTML remains immutable. Geographic controls require election-specific evidence (#723).
 
 
 ## Guide Sources and filters group (#679, November 1, 2026)
 
 Scott approved the existing Sources-group study and its mobile space tradeoff.
-On the precinct-enabled general Endorsements guide, Precinct, View, Races and
-Ballot retain their ordered row. Sources joins that centered group when the
+On every current-rendered Endorsements guide, View, Races and Ballot retain their
+ordered row, preceded by Precinct when that election has an admitted catalog. Sources joins that centered group when the
 complete controls, source summary and intact live race-count phrase fit the
-actual container in the resolved font. Otherwise the four controls stay on row
+actual container in the resolved font. Otherwise the filter controls stay on row
 one and Sources shares row two with the count. Both rows remain sticky at every
 supported width; there is no third count row or auto-hide. This supersedes the
 Guide's separate navy source strip and its previous separate count line, while
@@ -714,8 +717,8 @@ viewport does not grant a minimum size to a constrained Guide container.
 
 ## Shared selection styling (#672)
 
-The current general Guide and Comparisons keep the one-field custom Precinct
-search and their real finite HTML selects. There is no second Results control,
+Current-rendered Guide and Comparisons pages share the real finite HTML selects.
+An election with an admitted precinct catalog also has the one-field custom Precinct search. There is no second Results control,
 datalist, new provider behavior or additional selection state. Shared selection
 surfaces use paper ground, navy text, the screen-sans family at 14px and existing
 borders. Hover/active options use a white surface and navy outline, without a navy
@@ -736,8 +739,30 @@ demo offset or clipped option labels.
 Actual candidate-bound interaction and visual acceptance remain required under
 FRONTEND's native-select verification. Headless geometry/pixels can establish the
 enhanced app surface they actually measure, not physical-device, spoken
-screen-reader, IME or unavailable interactive-session results. Immutable primary
-archives and their existing presentation are preserved.
+screen-reader, IME or unavailable interactive-session results. Immutable primary archives, including their original presentation, are preserved
+inside their published bundles. Current-rendered primary pages follow this shared treatment.
+
+## Completed-election parity (#723)
+
+Current-rendered completed elections use the current Guide, Sources and Comparisons
+composition, copy, compact View/Races/Ballot controls and joined Guide Sources group.
+This is independent of geographic capability. Current-rendered primary starts with
+Contested: its 25 contested candidate races and measure remain visible (26); All
+restores all 32 records, including six uncontested races. All 32 remain available
+in server-rendered/no-JavaScript content. No result, source choice or scoring changes.
+The current query owns race mode; explicit query overrides legacy comparison state.
+Valid old comparison columns, section, differences and explicit contested tokens
+remain readable. An old unqualified All default carries no token and now follows
+the current Contested default.
+
+The reviewed August catalog supports direct precinct selection only. Its editor
+says “Search precincts”, offers matching precincts, and carries no County address-map
+link or address/privacy promise. It never invokes November address lookup. General
+retains its reviewed address behavior. Precinct identity, draft/Select/Cancel/Clear,
+keyboard and focus handling, URL precedence and election-specific memory follow
+the existing component. Future completed-election geography requires its own
+complete, verified election-specific evidence; current-election mappings cannot
+stand in for it.
 
 ## Election Updates (#676)
 
