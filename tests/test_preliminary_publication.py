@@ -52,19 +52,19 @@ def test_corrected_lower_votes_are_reported_without_clamping_or_winner_claims() 
     assert current.races[0].outcomes[0].votes == previous.races[0].outcomes[0].votes - 1
 
 
-def test_changed_publisher_clock_is_information_but_retrieval_is_not_count_time() -> None:
+def test_changed_publisher_clock_without_tally_change_does_not_create_update() -> None:
     previous = snapshot()
     current = previous.model_copy(deep=True)
     assert current.races[0].export_generated_at is not None
     current.races[0].export_generated_at += timedelta(seconds=1)
     current = PreliminaryElectionResults.model_validate(current.model_dump())
     entry = publisher().build_preliminary_update(previous, current, checked_at=NOW)
-    assert entry is not None
+    assert entry is None
     assert current.races[0].reported_at is None
     assert current.races[0].export_generated_at != NOW
 
 
-def test_failed_refresh_announces_unavailability_while_preserving_all_counts() -> None:
+def test_failed_refresh_without_tally_change_does_not_create_update() -> None:
     previous = snapshot()
     current = previous.model_copy(deep=True)
     current.failed_refreshes.append(
@@ -75,9 +75,8 @@ def test_failed_refresh_announces_unavailability_while_preserving_all_counts() -
         )
     )
     entry = publisher().build_preliminary_update(previous, current, checked_at=NOW)
-    assert entry is not None and "unavailable" in entry.body.lower()
+    assert entry is None
     assert current.races == previous.races
-    assert "preserv" in entry.body.lower()
 
 
 def test_certified_inputs_cannot_enter_the_preliminary_publisher() -> None:
@@ -166,7 +165,7 @@ def test_verification_uses_original_byte_identity_not_new_capture_ids(changed: b
     entry = publisher().build_preliminary_update(
         previous, current, checked_at=NOW, original_hashes=hashes
     )
-    assert (entry is not None) == changed
+    assert entry is None
 
 
 def test_automatic_update_passes_the_complete_historical_prefix_audit(
@@ -215,3 +214,78 @@ def test_historical_prefix_audit_rejects_an_unrelated_automatic_tail(
     monkeypatch.setattr(test_updates_history, "UPDATES_DIR", tmp_path)
     with pytest.raises(AssertionError):
         test_updates_history.test_election_only_migration_preserves_every_complete_original()
+
+
+@pytest.mark.parametrize("field", ["reported_at", "reporting_complete"])
+def test_source_metadata_alone_never_generates_result_update(field: str) -> None:
+    previous = snapshot()
+    current = previous.model_copy(deep=True)
+    race = current.races[0]
+    if field == "reported_at":
+        race.reported_at = race.export_generated_at
+    elif field == "reporting_complete":
+        race.reporting_complete = not race.reporting_complete
+    assert publisher().build_preliminary_update(previous, current, checked_at=NOW) is None
+
+
+def test_reordering_identical_choice_counts_does_not_create_update() -> None:
+    previous = snapshot()
+    current = previous.model_copy(deep=True)
+    next(r for r in current.races if len(r.outcomes) > 1).outcomes.reverse()
+    assert publisher().build_preliminary_update(previous, current, checked_at=NOW) is None
+
+
+@pytest.mark.parametrize("change", ["increase", "redistribute", "write-in", "ballots"])
+def test_actual_tally_changes_create_update_even_without_new_leader(change: str) -> None:
+    previous = snapshot()
+    if change == "ballots":
+        previous.races[0].vote_total_basis = "authority_stated"
+        previous.races[0].ballots_counted = previous.races[0].votes_counted
+        previous.races[0].votes_counted = None
+    current = previous.model_copy(deep=True)
+    race = current.races[0]
+    if change == "ballots":
+        assert race.ballots_counted is not None
+        race.ballots_counted += 1
+    elif change == "redistribute":
+        race = next(r for r in current.races if len(r.outcomes) > 1)
+        race.outcomes[0].votes -= 1
+        race.outcomes[1].votes += 1
+    else:
+        if change == "write-in":
+            race.write_in_votes += 1
+        else:
+            race.outcomes[0].votes += 1
+        assert race.votes_counted is not None
+        race.votes_counted += 1
+    current = PreliminaryElectionResults.model_validate(current.model_dump())
+    entry = publisher().build_preliminary_update(previous, current, checked_at=NOW)
+    assert entry is not None
+    assert entry.headline == "Updated preliminary counts for 1 contest at 19:00:00 Pacific."
+    assert "source/reporting metadata or retained originals" not in entry.body
+
+
+def test_metadata_only_new_capture_still_requires_verified_originals() -> None:
+    previous = snapshot()
+    current = previous.model_copy(deep=True)
+    current.races[0].capture_evidence = "data/manifests/evidence/unverified.json"
+    with pytest.raises(ValueError, match="verified original hashes"):
+        publisher().build_preliminary_update(previous, current, checked_at=NOW)
+
+
+def test_two_genuine_same_day_updates_keep_distinct_publication_identities(tmp_path: Path) -> None:
+    previous = snapshot()
+    current = previous.model_copy(deep=True)
+    current.races[0].outcomes[0].votes -= 1
+    assert current.races[0].votes_counted is not None
+    current.races[0].votes_counted -= 1
+    first = publisher().build_preliminary_update(previous, current, checked_at=NOW)
+    second = publisher().build_preliminary_update(
+        previous, current, checked_at=NOW + timedelta(hours=1)
+    )
+    assert first is not None and second is not None
+    path = tmp_path / "updates.yaml"
+    path.write_bytes((ROOT / "data/corrections/wa-2026-general.yaml").read_bytes())
+    assert publisher().append_preliminary_update(path, first)
+    assert publisher().append_preliminary_update(path, second)
+    assert first.headline != second.headline and first.slug != second.slug

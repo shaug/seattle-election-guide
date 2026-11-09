@@ -532,16 +532,12 @@ def test_result_clock_placement_is_presentation_when_all_facts_are_preserved(
 @pytest.mark.parametrize(
     "kind,old,new",
     [
-        ("count", "4:35:00", "4:36:00"),
-        ("export", "4:35:00", "4:36:00"),
         ("certified", "Aug 19", "Aug 20"),
         ("count", "Unofficial", "Certified"),
         ("count", "Candidate A 10", "Candidate A 11"),
         ("count", "Official authority", "Another authority"),
         ("count", "Count updated", "Unreviewed clock"),
         ("count", "Count updated", "Count finished"),
-        ("count", "Count updated Nov 7, 4:35:00 a.m. PST · ", ""),
-        ("export", "Export generated Nov 7, 4:35:00 a.m. PST · ", ""),
         ("count", "4:35:00", "4:35:99"),
         ("count", "Count updated", "Extra explanation · Count updated"),
         ("count", "race-results-provenance", "source-provenance"),
@@ -726,3 +722,51 @@ def test_original_result_clock_is_verified_before_migrating_its_placement_policy
     _seal(baseline)
     with pytest.raises(ValueError, match="snapshot differs"):
         verify_updates_snapshot(baseline)
+
+
+@pytest.mark.parametrize("kind", ["count", "export"])
+@pytest.mark.parametrize("change", ["clock", "original", "failed-refresh", "clock-absent"])
+def test_metadata_only_preliminary_changes_do_not_force_filler_updates(
+    sites: tuple[Path, Path], kind: str, change: str
+) -> None:
+    baseline, candidate = sites
+    original = "https://github.com/shaug/seattle-election-guide/blob/" + "a" * 40
+    original += "/data/evidence/official/sha256/ff/" + "f" * 64
+    before = _result_clock_placement(kind, compact_badge=True).replace(
+        "Official authority", f'Official authority <a href="{original}">evidence</a>'
+    )
+    after = before
+    if change == "clock":
+        after = after.replace("4:35:00", "4:36:00")
+    elif change == "original":
+        after = after.replace("/ff/" + "f" * 64, "/ee/" + "e" * 64)
+    elif change == "failed-refresh":
+        after = after.replace("Last checked", "Refresh unavailable · last checked")
+    else:
+        label = "Count updated" if kind == "count" else "Export generated"
+        after = after.replace(label + " Nov 7, 4:35:00 a.m. PST · ", "")
+    for site, content in [(baseline, before), (candidate, after)]:
+        _write(site, f"e/{GENERAL}/index.html", _page(content))
+        _seal(site)
+    assert check_updates(baseline, candidate)["result"] == "pass"
+    # Historical snapshots keep the policy under which they were accepted.
+    old = build_updates_snapshot(baseline, schema_version="5.0")
+    new = build_updates_snapshot(candidate, schema_version="5.0")
+    assert old.elections[GENERAL].information_pages != new.elections[GENERAL].information_pages
+
+
+def test_metadata_change_cannot_hide_simultaneous_preliminary_vote_change(
+    sites: tuple[Path, Path],
+) -> None:
+    baseline, candidate = sites
+    content = _result_clock_placement("export", compact_badge=True)
+    for site, text in [
+        (baseline, content),
+        (
+            candidate,
+            content.replace("4:35:00", "4:36:00").replace("Candidate A 10", "Candidate A 11"),
+        ),
+    ]:
+        _write(site, f"e/{GENERAL}/index.html", _page(text))
+        _seal(site)
+    assert check_updates(baseline, candidate)["result"] == "fail"

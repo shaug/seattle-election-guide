@@ -36,6 +36,15 @@ SEG's uncertified reproduction; it is not an assertion that the State supplied a
 An explicit true official-status flag stops preliminary ingestion for the separate certified path.
 Historical captures never become current without fresh official verification. Named-choice
 percentages exclude write-ins; zero named votes have no percentage, not a fabricated 100%.
+
+Automatic preliminary Updates announce actual tally changes only (#718): named-choice votes
+by choice ID, write-ins, and the distinct contest ballots or total-votes fields. Reordered
+choices, publisher count/export/check clocks, source-byte changes, reporting metadata and
+refresh failures without a tally change do not create an entry. Retain and validate those
+observations in result/evidence history and the existing provenance display. They never
+become a new count. Meaningful tally corrections, including decreases without a leader
+change, still receive an Update. The [five-record audit](audits/updates-718/README.md)
+preserves the original text and published links while correcting the erroneous public log.
 Contest-ballots, total votes including write-ins and the named denominator remain distinct:
 candidate votes never become a ballot count. Preliminary tallies have no advanced/winner flag.
 When a State export omits its own total, the producer may sum its complete, exactly mapped
