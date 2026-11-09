@@ -219,6 +219,11 @@ projection to current release status and the pinned original release manifest an
 election HTML head. These provenance checks accompany VM-to-render invariance tests and review;
 a metadata claim alone does not prove arbitrary visible election facts correct.
 
+Before current status can supply presentation time, source1.1 independently verifies every copied
+status's exact bytes against its original release-manifest artifact hash and binds generation,
+release and panel identities to that manifest. Resealing deployment assets or HTML cannot change
+that original clock authority.
+
 The existing Data updated footer retains archive data/version/panel provenance. Site updated uses
 the current presentation source/time. Publisher count/export, capture/check and certification clocks
 remain literal. Derived preliminary recency uses the explicit presentation time so old checks age.
@@ -456,10 +461,14 @@ in the fetched schema-valid deployment manifest's asset inventory. The checker a
 
 For source1.1, strict checking additionally requires deployment3.0 and binds its presentation
 source to the exact expected SHA independently of historical data-source pins. It fetches and
-hash-checks current release status and every release manifest, and deterministic overview, Sources,
+authenticates every copied status against its original release manifest, and deterministic overview, Sources,
 race, available Comparisons, Updates index/detail and How this works page bodies. Shared head
 provenance must agree with the current source and original archive. HTTP200 with a stale or false
-body fails. The report retains paths, observed/expected hashes, statuses and errors, never full HTML;
+body fails. HTML requests use canonical slash addresses and compare with the corresponding
+`index.html` asset identity; a correct index alias cannot excuse a stale canonical response.
+Every election must retain a race representative. Both strict confirmation and retained receipts
+require the exact planned body-evidence inventory with matching asset hashes and request addresses;
+omitted, duplicate or unexpected records fail. The report retains paths, observed/expected hashes, statuses and errors, never full HTML;
 the existing deadline and4MiB worker-result budget are unchanged. Original source1.0 strict and
 availability checks retain their earlier contracts.
 

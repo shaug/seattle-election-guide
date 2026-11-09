@@ -18,6 +18,7 @@ from election_guide.release.automation_models import (
     UploadReceipt,
 )
 from election_guide.serialization import canonical_json_bytes
+from tests.test_production_check import damage_presentation_evidence, with_presentation_evidence
 from tests.test_release_promotion import (
     promotion_setup,  # noqa: F401 # pyright: ignore[reportUnusedImport]
 )
@@ -637,6 +638,32 @@ def test_verified_evidence_rejects_incomplete_strict_probes(
         evidence.retain_evidence(
             receipt, issue_number=550, reports={"production-wait.json": report}
         )
+    assert not api.posted
+
+
+@pytest.mark.parametrize(
+    "fault", ["omitted", "empty", "partial", "duplicate", "unexpected", "hash"]
+)
+def test_retained_current_presentation_evidence_rejects_incomplete_or_false_inventory(
+    evidence_setup: tuple[Any, ...], fault: str
+) -> None:
+    from election_guide.hosting.production_wait import ProductionWaitReport
+
+    evidence, api, _, publication, upload, _ = evidence_setup
+    complete = with_presentation_evidence(successful_report(evidence_setup).attempts[0])
+    damaged = damage_presentation_evidence(complete, fault)
+    body = canonical_json_bytes(
+        ProductionWaitReport((damaged, damaged), (0, 1), False).model_dump()
+    )
+    receipt = operation(
+        publication,
+        phase="deployment",
+        state="verified",
+        upload=upload,
+        verification_sha256=hashlib.sha256(body).hexdigest(),
+    )
+    with pytest.raises(ValueError, match="complete strict"):
+        evidence.retain_evidence(receipt, issue_number=550, reports={"production-wait.json": body})
     assert not api.posted
 
 

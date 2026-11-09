@@ -21,6 +21,7 @@ from election_guide.hosting.models import (
 )
 from election_guide.hosting.presentation import (
     validate_presentation_input,
+    verify_copied_release_status,
     verify_page_presentation,
     verify_presentation_identity,
 )
@@ -386,19 +387,26 @@ def _verify_staged_pages_site(
     expected_schema = "3.0" if site_manifest.schema_version == "1.1" else "2.0"
     if deployment.schema_version != expected_schema:
         raise ValueError("deployment presentation schema differs from site manifest")
-    current_status = (
-        ReleaseStatus.model_validate(
-            read_json(site_dir / "e" / deployment.current_election_id / "release-status.json")
-        )
-        if deployment.schema_version == "3.0"
-        else None
-    )
     if deployment.canonical_origin != site_manifest.canonical_origin:
         raise ValueError("deployment manifest canonical origin differs from site manifest")
     if deployment.current_election_id != site_manifest.current_election_id:
         raise ValueError("deployment manifest current election differs from site manifest")
     if len(deployment.elections) != len(site_manifest.elections):
         raise ValueError("deployment manifest election count differs from site manifest")
+
+    authenticated: dict[str, tuple[ReleaseStatus, ReleaseManifest]] = {}
+    if deployment.schema_version == "3.0":
+        for election in deployment.elections:
+            root = site_dir / "e" / election.election_id
+            manifest_path = root / "release-manifest.json"
+            if _sha256(manifest_path) != election.release_manifest_sha256:
+                raise ValueError("presentation release manifest differs from archive identity")
+            original = ReleaseManifest.model_validate(read_json(manifest_path))
+            authenticated[election.election_id] = (
+                verify_copied_release_status((root / "release-status.json").read_bytes(), original),
+                original,
+            )
+    current_status = authenticated[deployment.current_election_id][0] if authenticated else None
 
     required_assets = {
         "_headers",
@@ -435,7 +443,11 @@ def _verify_staged_pages_site(
             raise ValueError("deployment manifest release-manifest hash differs from site manifest")
 
         election_root = site_dir / "e" / declared.election_id
-        status = ReleaseStatus.model_validate(read_json(election_root / "release-status.json"))
+        status = (
+            authenticated[declared.election_id][0]
+            if authenticated
+            else ReleaseStatus.model_validate(read_json(election_root / "release-status.json"))
+        )
         if (
             status.election_id != deployed.election_id
             or status.release_version != deployed.release_version
@@ -451,9 +463,7 @@ def _verify_staged_pages_site(
             )
         if deployed.presentation is not None:
             assert current_status is not None
-            release_manifest = ReleaseManifest.model_validate(
-                read_json(election_root / "release-manifest.json")
-            )
+            release_manifest = authenticated[declared.election_id][1]
             verify_presentation_identity(deployed, release_manifest, current_status)
             prefix = f"e/{declared.election_id}/"
             for relative in deployment.assets:

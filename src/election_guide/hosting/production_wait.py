@@ -23,7 +23,9 @@ from election_guide.hosting.production_check import (
     Observation,
     ProductionCheckReport,
     RouteCheckResult,
+    plan_presentation_assets,
     plan_publication_route_checks,
+    presentation_request_path,
 )
 from election_guide.hosting.production_probe import run_production_check
 
@@ -275,6 +277,21 @@ def complete_strict_report(
     expected_routes = plan_publication_route_checks(
         site, representative_race_path=contract.representative_race_path
     )
+    if site.schema_version == "1.1":
+        try:
+            planned = plan_presentation_assets(contract.observed)
+        except ValueError:
+            return False
+        checks = {check.path: check for check in report.presentation_assets}
+        if len(checks) != len(report.presentation_assets) or checks.keys() != planned.keys():
+            return False
+        if any(
+            check.request_path != presentation_request_path(path)
+            or check.expected_sha256 is None
+            or check.expected_sha256 != contract.observed.assets.get(path)
+            for path, check in checks.items()
+        ):
+            return False
     return [result.check for result in report.route_results] == expected_routes and (
         not active_window
         or (report.release_manifest is not None and report.data_freshness is not None)

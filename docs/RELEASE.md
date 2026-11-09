@@ -90,6 +90,12 @@ archive source/version/manifest/model hashes. The Data updated footer and publis
 their original meanings; Site updated describes current presentation. Staging tests compare input
 bundle bytes and election facts and independently check both projection contracts.
 
+Source1.1 confirmation and retained release evidence require the complete deterministic presentation
+record inventory, bound to deployment asset hashes and canonical public request URLs. A successful
+subset cannot qualify as a complete strict pass. Copied status bytes and generation must match their
+original release manifest before supplying presentation time; historical statuses keep the same
+byte binding. Original source1.0 confirmation semantics remain unchanged.
+
 This presentation change retains Updates snapshot policy6.0. Head/footer provenance, markup and
 paint do not become election information. Original deployment2.0 baselines remain verified under
 their own schema; older snapshot policies still require the exact authenticated deployed artifact

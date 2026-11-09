@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from html.parser import HTMLParser
 from typing import cast
 
@@ -10,6 +11,23 @@ from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.models import PagePresentation
 from election_guide.results.models import ElectionResults, RaceResults
+
+
+def verify_copied_release_status(raw: bytes, manifest: ReleaseManifest) -> ReleaseStatus:
+    """Authenticate copied status bytes before they can supply presentation time."""
+    if hashlib.sha256(raw).hexdigest() != manifest.artifact_hashes.get("release-status.json"):
+        raise ValueError("presentation copied status bytes differ from original release manifest")
+    status = ReleaseStatus.model_validate_json(raw)
+    if status.generated_at != manifest.generated_at:
+        raise ValueError("presentation status generation differs from original release manifest")
+    if (
+        status.release_version != manifest.release_version
+        or status.source_panel_id != manifest.source_panel_id
+        or status.source_panel_hash != manifest.source_panel_hash
+        or status.source_registry_hash != manifest.source_registry_hash
+    ):
+        raise ValueError("presentation status identity differs from original release manifest")
+    return status
 
 
 def validate_presentation_input(raw: object, status: ReleaseStatus) -> PublicationViewModel:

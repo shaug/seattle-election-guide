@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from http.server import BaseHTTPRequestHandler
 from pathlib import Path
 from typing import Any
@@ -307,6 +307,68 @@ def _reseal_site(site: Path) -> None:
     write_hashes()
 
 
+def _joint_false_presentation_time(site: Path, *, rehash_status: bool) -> None:
+    deployment_path = site / "deployment-manifest.json"
+    deployment = json.loads(deployment_path.read_bytes())
+    current = deployment["elections"][0]
+    root = site / "e" / deployment["current_election_id"]
+    status_path = root / "release-status.json"
+    status = json.loads(status_path.read_bytes())
+    status["generated_at"] = "2026-07-22T12:00:00Z"
+    status_path.write_bytes(canonical_json_bytes(status))
+    old_manifest_hash = current["release_manifest_sha256"]
+    if rehash_status:
+        manifest_path = root / "release-manifest.json"
+        manifest = json.loads(manifest_path.read_bytes())
+        manifest["artifact_hashes"]["release-status.json"] = hashlib.sha256(
+            status_path.read_bytes()
+        ).hexdigest()
+        manifest_path.write_bytes(canonical_json_bytes(manifest))
+        current["release_manifest_sha256"] = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+        current["presentation"]["release_manifest_sha256"] = current["release_manifest_sha256"]
+    for election in deployment["elections"]:
+        election["presentation"]["generated_at"] = "2026-07-22T12:00:00Z"
+    deployment_path.write_bytes(canonical_json_bytes(deployment))
+    for page in (site / "e").rglob("*.html"):
+        html = (
+            page.read_text()
+            .replace(
+                'name="seg-presentation-generated-at" content="2026-07-21T12:00:00+00:00"',
+                'name="seg-presentation-generated-at" content="2026-07-22T12:00:00+00:00"',
+            )
+            .replace("Site updated 2026-07-21", "Site updated 2026-07-22")
+        )
+        if rehash_status and page.is_relative_to(root):
+            html = html.replace(old_manifest_hash, current["release_manifest_sha256"])
+        page.write_text(html)
+    _reseal_site(site)
+
+
+@pytest.mark.parametrize("rehash_status", [False, True])
+def test_joint_status_and_presentation_time_reseal_cannot_change_original_build_time(
+    tmp_path: Path, rehash_status: bool
+) -> None:
+    manifest, bundles, _ = _current_site(tmp_path)
+    site = tmp_path / "site"
+    stage_pages_site(manifest, bundles, site)
+    _joint_false_presentation_time(site, rehash_status=rehash_status)
+    with pytest.raises(ValueError, match=r"presentation.*status|presentation.*generation"):
+        verify_staged_pages_site(site, manifest)
+
+
+def test_copied_historical_status_bytes_stay_bound_to_the_original_manifest(tmp_path: Path) -> None:
+    manifest, bundles, _ = _current_site(tmp_path)
+    site = tmp_path / "site"
+    stage_pages_site(manifest, bundles, site)
+    path = site / "e" / OLDER_ID / "release-status.json"
+    status = json.loads(path.read_bytes())
+    status["generated_at"] = "2026-07-22T12:00:00Z"
+    path.write_bytes(canonical_json_bytes(status))
+    _reseal_site(site)
+    with pytest.raises(ValueError, match=r"presentation.*status"):
+        verify_staged_pages_site(site, manifest)
+
+
 def _replace_archive_overview(bundle: Path, html: bytes) -> None:
     status = json.loads((bundle / "release-status.json").read_bytes())
     path = bundle / status["guide_html_artifact"]
@@ -439,7 +501,19 @@ def test_projection_provenance_is_bound_to_both_source_and_archive(
 
 
 @pytest.mark.parametrize(
-    "fault", [None, "bytes", "metadata", "status-election", "archive-manifest"]
+    "fault",
+    [
+        None,
+        "bytes",
+        "metadata",
+        "status-election",
+        "archive-manifest",
+        "canonical-stale",
+        "canonical-race-404",
+        "status-time-joint",
+        "status-time-rehashed",
+        "historical-status",
+    ],
 )
 def test_production_rejects_http_200_historical_html_with_wrong_bytes_or_provenance(
     tmp_path: Path, fault: str | None
@@ -470,15 +544,42 @@ def test_production_rejects_http_200_historical_html_with_wrong_bytes_or_provena
         release["release_version"] = "other.1"
         release_path.write_bytes(canonical_json_bytes(release))
         _reseal_site(site)
+    elif fault in {"status-time-joint", "status-time-rehashed"}:
+        _joint_false_presentation_time(site, rehash_status=fault == "status-time-rehashed")
+    elif fault == "historical-status":
+        path = site / "e" / OLDER_ID / "release-status.json"
+        status = json.loads(path.read_bytes())
+        status["generated_at"] = "2026-07-22T12:00:00Z"
+        path.write_bytes(canonical_json_bytes(status))
+        _reseal_site(site)
+
+    deployment = json.loads((site / "deployment-manifest.json").read_bytes())
+    race_asset = sorted(
+        path
+        for path in deployment["assets"]
+        if path.startswith(f"e/{OLDER_ID}/races/") and path.endswith("/index.html")
+    )[0]
+    canonical_race = "/" + race_asset.removesuffix("index.html")
+    requests: list[str] = []
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, format: str, *args: object) -> None:
             pass
 
         def do_GET(self) -> None:
+            requests.append(self.path)
             if self.path == "/" or self.path.endswith("/voter-guide.pdf"):
                 self.send_response(307 if self.path == "/" else 301)
                 self.send_header("Location", f"https://seattleelections.guide/e/{CURRENT_ID}/")
+                self.end_headers()
+                return
+            if fault == "canonical-stale" and self.path == f"/e/{OLDER_ID}/":
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(b"<main>Frozen overview with stale election information</main>")
+                return
+            if fault == "canonical-race-404" and self.path == canonical_race:
+                self.send_response(404)
                 self.end_headers()
                 return
             path = site / self.path.lstrip("/")
@@ -487,7 +588,8 @@ def test_production_rejects_http_200_historical_html_with_wrong_bytes_or_provena
             self.send_response(200 if path.is_file() else 404)
             self.end_headers()
             if path.is_file():
-                self.wfile.write(path.read_bytes())
+                with suppress(BrokenPipeError, ConnectionResetError):
+                    self.wfile.write(path.read_bytes())
 
     with contextmanager(_start)(Handler) as origin:
         report = run_production_check(
@@ -500,6 +602,8 @@ def test_production_rejects_http_200_historical_html_with_wrong_bytes_or_provena
     if fault is None:
         assert report.ok
         assert len(report.presentation_assets) >= 14
+        assert canonical_race in requests
+        assert f"/e/{OLDER_ID}/index.html" not in requests
     else:
         assert not report.ok
         assert "presentation" in " ".join(

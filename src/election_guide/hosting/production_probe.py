@@ -20,6 +20,7 @@ from urllib.parse import urljoin, urlsplit
 
 from election_guide.hosting.models import DeploymentManifest, SiteManifest
 from election_guide.hosting.presentation import (
+    verify_copied_release_status,
     verify_page_presentation,
     verify_presentation_identity,
 )
@@ -39,6 +40,7 @@ from election_guide.hosting.production_check import (
     plan_presentation_assets,
     plan_publication_route_checks,
     plan_route_checks,
+    presentation_request_path,
     release_manifest_check,
 )
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
@@ -164,7 +166,8 @@ def _check_presentation_assets(
     bodies: dict[str, bytes] = {}
     checks: dict[str, PresentationAssetCheck] = {}
     for path in planned:
-        observation, body = _fetch_body(base_url, "/" + path, timeout=timeout, deadline=deadline)
+        request_path = presentation_request_path(path)
+        observation, body = _fetch_body(base_url, request_path, timeout=timeout, deadline=deadline)
         digest = hashlib.sha256(body).hexdigest() if body is not None else None
         expected = manifest.assets.get(path)
         errors: list[str] = []
@@ -176,6 +179,7 @@ def _check_presentation_assets(
             bodies[path] = body
         checks[path] = PresentationAssetCheck(
             path=path,
+            request_path=request_path,
             expected_sha256=expected,
             observed_sha256=digest,
             observation=observation,
@@ -187,37 +191,44 @@ def _check_presentation_assets(
             update={"errors": (*checks[path].errors, str(error))}
         )
 
-    status_path = f"e/{manifest.current_election_id}/release-status.json"
-    current_status = None
-    if status_path in bodies:
-        try:
-            current_status = ReleaseStatus.model_validate_json(bodies[status_path])
-            current = next(
-                election
-                for election in manifest.elections
-                if election.election_id == manifest.current_election_id
-            )
-            if (
-                current_status.election_id != current.election_id
-                or current_status.git_commit != current.git_commit
-                or current_status.release_version != current.release_version
-                or current_status.source_panel_id != current.source_panel_id
-                or current_status.source_panel_hash != current.source_panel_hash
-                or current_status.source_registry_hash != current.source_registry_hash
-            ):
-                raise ValueError("presentation current release status differs from deployment")
-        except ValueError as error:
-            add_error(status_path, error)
+    authenticated: dict[str, tuple[ReleaseStatus, ReleaseManifest]] = {}
     for election in manifest.elections:
         path = f"e/{election.election_id}/release-manifest.json"
-        if current_status is not None and path in bodies:
+        status_path = f"e/{election.election_id}/release-status.json"
+        if path not in bodies or status_path not in bodies:
+            continue
+        try:
+            if checks[path].observed_sha256 != election.release_manifest_sha256:
+                raise ValueError("presentation release manifest differs from archive identity")
+            release_manifest = ReleaseManifest.model_validate_json(bodies[path])
+        except ValueError as error:
+            add_error(path, error)
+            continue
+        try:
+            status = verify_copied_release_status(bodies[status_path], release_manifest)
+            if (
+                status.election_id != election.election_id
+                or status.git_commit != election.git_commit
+                or status.release_version != election.release_version
+                or status.source_panel_id != election.source_panel_id
+                or status.source_panel_hash != election.source_panel_hash
+                or status.source_registry_hash != election.source_registry_hash
+            ):
+                raise ValueError("presentation release status differs from deployment")
+            authenticated[election.election_id] = status, release_manifest
+        except ValueError as error:
+            add_error(status_path, error)
+    if manifest.current_election_id in authenticated:
+        current_status = authenticated[manifest.current_election_id][0]
+        for election in manifest.elections:
+            if election.election_id not in authenticated:
+                continue
             try:
-                if checks[path].observed_sha256 != election.release_manifest_sha256:
-                    raise ValueError("presentation release manifest differs from archive identity")
-                release_manifest = ReleaseManifest.model_validate_json(bodies[path])
-                verify_presentation_identity(election, release_manifest, current_status)
+                verify_presentation_identity(
+                    election, authenticated[election.election_id][1], current_status
+                )
             except ValueError as error:
-                add_error(path, error)
+                add_error(f"e/{election.election_id}/release-manifest.json", error)
     for path, presentation in planned.items():
         if presentation is not None and path in bodies:
             try:
@@ -345,7 +356,10 @@ def run_production_check(
         ),
         presentation_assets=(
             _check_presentation_assets(base_url, manifest, timeout=timeout, deadline=deadline)
-            if site_manifest is not None and site_manifest.schema_version == "1.1"
+            if site_manifest is not None
+            and site_manifest.schema_version == "1.1"
+            and deployment_contract is not None
+            and deployment_contract.ok
             else ()
         ),
     )

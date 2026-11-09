@@ -9,6 +9,7 @@ and its GitHub alert reconciliation are retired (#523).
 from __future__ import annotations
 
 import json
+import re
 from datetime import timedelta
 from html.parser import HTMLParser
 
@@ -152,6 +153,7 @@ class PresentationAssetCheck(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True)
     path: str
+    request_path: str
     expected_sha256: str | None
     observed_sha256: str | None
     observation: Observation
@@ -382,6 +384,8 @@ def evaluate_deployment_contract(
                 or presentation.generated_at != current_presentation.generated_at
             ):
                 errors.append(f"presentation identity differs: {declared.election_id}")
+            if not _presentation_race_assets(observed, declared.election_id):
+                errors.append(f"presentation has no race page for election {declared.election_id}")
         values = (
             ("bundle ID", declared.bundle_id, deployed.bundle_id),
             ("release version", declared.release_version, deployed.release_version),
@@ -456,23 +460,22 @@ def plan_presentation_assets(
     manifest: DeploymentManifest,
 ) -> dict[str, PagePresentation | None]:
     """Probe every page kind deterministically, without returning full HTML evidence."""
+    if manifest.schema_version != "3.0":
+        raise ValueError("presentation asset planning requires deployment schema3.0")
     paths: dict[str, PagePresentation | None] = {"about/index.html": None}
-    paths[f"e/{manifest.current_election_id}/release-status.json"] = None
     for election in manifest.elections:
         root = f"e/{election.election_id}/"
+        paths[root + "release-status.json"] = None
         paths[root + "release-manifest.json"] = None
         paths[root + "index.html"] = election.presentation
         paths[root + "sources/index.html"] = election.presentation
         for suffix in ("comparisons/index.html", "updates/index.html"):
             if root + suffix in manifest.assets:
                 paths[root + suffix] = election.presentation
-        races = sorted(
-            name
-            for name in manifest.assets
-            if name.startswith(root + "races/") and name.endswith("/index.html")
-        )
-        if races:
-            paths[races[0]] = election.presentation
+        races = _presentation_race_assets(manifest, election.election_id)
+        if not races:
+            raise ValueError(f"presentation has no race page for election {election.election_id}")
+        paths[races[0]] = election.presentation
         details = sorted(
             name
             for name in manifest.assets
@@ -483,6 +486,18 @@ def plan_presentation_assets(
         if details:
             paths[details[0]] = election.presentation
     return paths
+
+
+def _presentation_race_assets(manifest: DeploymentManifest, election_id: str) -> list[str]:
+    pattern = re.escape(f"e/{election_id}/races/") + r"[^/]+/index\.html"
+    return sorted(path for path in manifest.assets if re.fullmatch(pattern, path))
+
+
+def presentation_request_path(asset_path: str) -> str:
+    """Canonical public address, independent of the index-file asset identity."""
+    return "/" + (
+        asset_path.removesuffix("index.html") if asset_path.endswith("/index.html") else asset_path
+    )
 
 
 class _ArchiveIndexParser(HTMLParser):
@@ -613,7 +628,7 @@ def render_summary_lines(report: ProductionCheckReport) -> list[str]:
     lines.extend(_check_line(result) for result in report.route_results)
     for asset in report.presentation_assets:
         status = "PASS" if asset.ok else "FAIL"
-        lines.append(f"{status} presentation asset (/{asset.path})")
+        lines.append(f"{status} presentation asset ({asset.request_path})")
         lines.extend(f"FAIL presentation asset: {error}" for error in asset.errors)
     if report.commit is not None:
         status = "PASS" if report.commit.ok else "FAIL"
