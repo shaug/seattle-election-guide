@@ -14,9 +14,11 @@ from typer.testing import CliRunner
 from election_guide.cli import app
 from election_guide.hosting.updates import (
     UPDATES_SNAPSHOT,
+    UpdatesSnapshot,
     build_updates_snapshot,
     check_updates,
     compare_updates_snapshots,
+    update_entry_paths,
     verify_updates_snapshot,
 )
 from election_guide.serialization import canonical_json_bytes
@@ -51,6 +53,155 @@ def _updates(*entries: tuple[str, str, str]) -> str:
         )
         + "</main>"
     )
+
+
+def _permalink_updates(*slugs: str) -> str:
+    return (
+        '<meta name="seg-updates-schema" content="1.2"><main id="corrections-main">'
+        + "".join(
+            '<article class="corrections-entry">'
+            f'<time class="corrections-date">{OLD_ENTRY[0]}</time>'
+            '<h2 class="corrections-headline">'
+            f'<a href="/e/{GENERAL}/updates/{slug}/">{OLD_ENTRY[1]}</a></h2>'
+            f'<p class="corrections-body">{OLD_ENTRY[2]}</p></article>'
+            for slug in slugs
+        )
+        + "</main>"
+    )
+
+
+def test_permalink_schema_cannot_fall_back_when_its_only_link_is_missing() -> None:
+    document = (
+        _permalink_updates("first-count")
+        .replace(f'<a href="/e/{GENERAL}/updates/first-count/">', "")
+        .replace("</a>", "")
+    )
+    with pytest.raises(ValueError, match="permalink"):
+        update_entry_paths(document, GENERAL)
+
+
+def test_legacy_information_log_keeps_its_unlinked_headlines() -> None:
+    document = _permalink_updates("first-count").replace('content="1.2"', 'content="1.1"')
+    document = document.replace(f'<a href="/e/{GENERAL}/updates/first-count/">', "").replace(
+        "</a>", ""
+    )
+    assert update_entry_paths(document, GENERAL) == set()
+
+
+def test_permalink_policy_preserves_all_schema_six_election_fingerprints(
+    sites: tuple[Path, Path],
+) -> None:
+    _write(sites[0], f"e/{GENERAL}/updates/index.html", _permalink_updates("first-count"))
+    _seal(sites[0])
+    old = build_updates_snapshot(sites[0], schema_version="6.0")
+    new = build_updates_snapshot(sites[0])
+    assert new.schema_version == "7.0"
+    assert new.canonical_origin == old.canonical_origin
+    for election, previous in old.elections.items():
+        assert new.elections[election].pages == previous.pages
+        assert new.elections[election].information_pages == previous.information_pages
+
+
+def test_same_date_and_headline_updates_use_distinct_permalink_identity(
+    sites: tuple[Path, Path],
+) -> None:
+    baseline, candidate = sites
+    _write(baseline, f"e/{GENERAL}/updates/index.html", _permalink_updates("first-count"))
+    _write(candidate, f"e/{GENERAL}/index.html", _page("A: 3 endorsements"))
+    _write(
+        candidate,
+        f"e/{GENERAL}/updates/index.html",
+        _permalink_updates("first-count", "second-count"),
+    )
+    for site in sites:
+        _seal(site)
+    report = check_updates(baseline, candidate)
+    assert report["result"] == "pass"
+    assert report["elections"][GENERAL]["previous_entry_identities_retained"]
+    assert report["elections"][GENERAL]["new_entries"] == [
+        {
+            "path": f"/e/{GENERAL}/updates/second-count/",
+            "date": OLD_ENTRY[0],
+            "headline": OLD_ENTRY[1],
+        }
+    ]
+    assert update_entry_paths(_permalink_updates("first-count", "second-count"), GENERAL) == {
+        f"/e/{GENERAL}/updates/first-count/",
+        f"/e/{GENERAL}/updates/second-count/",
+    }
+
+
+@pytest.mark.parametrize("change", ["unchanged", "prose-date", "replace"])
+def test_modern_information_changes_still_require_fresh_and_retained_permalinks(
+    sites: tuple[Path, Path], change: str
+) -> None:
+    baseline, candidate = sites
+    old = _permalink_updates("first-count")
+    new = old
+    if change == "prose-date":
+        new = old.replace(OLD_ENTRY[0], NEW_ENTRY[0]).replace(OLD_ENTRY[1], NEW_ENTRY[1])
+    elif change == "replace":
+        new = _permalink_updates("second-count")
+    _write(baseline, f"e/{GENERAL}/updates/index.html", old)
+    _write(candidate, f"e/{GENERAL}/index.html", _page("A: 3 endorsements"))
+    _write(candidate, f"e/{GENERAL}/updates/index.html", new)
+    for site in sites:
+        _seal(site)
+    assert check_updates(baseline, candidate)["result"] == "fail"
+
+
+@pytest.mark.parametrize(
+    "route",
+    ["", "../unsafe", "encoded%2Froute", "Uppercase", "index", "a/b"],
+)
+def test_modern_update_identity_rejects_unsafe_permalink_routes(route: str) -> None:
+    with pytest.raises(ValueError):
+        update_entry_paths(_permalink_updates(route), GENERAL)
+
+
+@pytest.mark.parametrize("mutation", ["missing", "duplicate", "multiple", "cross-election"])
+def test_modern_update_identity_requires_one_unique_same_election_headline_route(
+    mutation: str,
+) -> None:
+    document = _permalink_updates("first-count", "second-count")
+    if mutation == "missing":
+        document = document.replace(
+            '<a href="/e/' + GENERAL + '/updates/first-count/">', ""
+        ).replace("</a>", "", 1)
+    elif mutation == "duplicate":
+        document = document.replace("second-count", "first-count")
+    elif mutation == "multiple":
+        document = document.replace("</a>", '</a><a href="/extra/">Extra</a>', 1)
+    else:
+        document = document.replace(f"/e/{GENERAL}/", f"/e/{PRIMARY}/", 1)
+    with pytest.raises(ValueError):
+        update_entry_paths(document, GENERAL)
+
+
+@pytest.mark.parametrize("policy", ["1.0", "2.0", "3.0", "4.0", "5.0", "6.0"])
+def test_old_snapshot_policies_keep_their_strict_date_headline_identity(
+    sites: tuple[Path, Path],
+    policy: Literal["1.0", "2.0", "3.0", "4.0", "5.0", "6.0"],
+) -> None:
+    _write(
+        sites[0],
+        f"e/{GENERAL}/updates/index.html",
+        _permalink_updates("first-count", "second-count"),
+    )
+    _seal(sites[0])
+    with pytest.raises(ValueError, match="duplicate"):
+        build_updates_snapshot(sites[0], schema_version=policy)
+
+
+@pytest.mark.parametrize("policy", ["1.0", "2.0", "3.0", "4.0", "5.0", "6.0"])
+def test_old_snapshot_payloads_cannot_claim_permalink_identity(
+    sites: tuple[Path, Path],
+    policy: Literal["1.0", "2.0", "3.0", "4.0", "5.0", "6.0"],
+) -> None:
+    payload = build_updates_snapshot(sites[0], schema_version=policy).model_dump(mode="json")
+    payload["elections"][GENERAL]["entries"][0].insert(0, f"/e/{GENERAL}/updates/first-count/")
+    with pytest.raises(ValueError, match="permalink"):
+        UpdatesSnapshot.model_validate(payload)
 
 
 def _seal(site: Path, *, source_commit: str = "a" * 40) -> None:

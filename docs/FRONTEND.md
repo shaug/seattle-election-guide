@@ -1184,6 +1184,8 @@ carries fixed topic order/labels, stable per-render entry keys/topics and all po
 prose remains fully server-rendered. Schema1.1/1.2 records render
 `updates.html.j2`/`updates.css`; legacy1.0 records retain the original template/stylesheet and shape.
 Schema1.2 adds authored permalink identity (#677); older immutable models do not acquire invented slugs.
+The nonvisual `seg-updates-schema` meta record identifies the authored schema for strict
+permalink admission (#728); it supplies no client state and changes no visible page treatment.
 
 The controls region is taken over at boot and renders exactly three keyed lit topic buttons.
 There is no All control or payload label for one. Empty selection shows the complete log;
@@ -1215,8 +1217,11 @@ entry. Staging generates each admitted detail and worker 301 alias mapping; exis
 normalization and genuine unknown-path 404 rules apply. Independent stage verification checks the
 actual index links, detail assets and canonical addresses. Current-source Updates projection may
 add details for an archived election without rewriting its accepted archive. Updates detail pages
-remain outside the existing fact-page snapshot projection; original date/headline audit identities
-and the complete authored prose/provenance comparison remain enforced.
+remain outside the existing fact-page snapshot projection; original date/headline audit bindings
+and the complete authored prose/provenance comparison remain enforced. Updates snapshot7.0 uses
+the actual permalink as modern entry identity, preserving distinct same-day matching headlines.
+Its information fingerprints remain policy6.0; all earlier snapshot policies keep their parser
+and require authenticated original-site verification before upgrade.
 
 The independent verifier follows links present in the index. It does not independently bind an
 authored permalink baseline or cross-check the worker's alias table; generator/integration tests

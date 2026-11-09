@@ -17,8 +17,9 @@ layout, preparation and unchanged verification history belongs with GitHub relea
 (#676). Schema1.1 adds explicit topics/actions; legacy1.0 remains readable without
 invented metadata. Existing storage and `(corrected_on, headline)` identity remain
 compatible with immutable view models; `corrected_on` is guide-publication date.
-Schema1.2 persists reviewed slugs and retired-route aliases without changing that
-audit identity or inventing routing metadata in older immutable snapshots (#677).
+Schema1.2 persists reviewed slugs and retired-route aliases as entry identity (#677,
+#728). Original date/headline audit bindings remain enforced separately, and older
+immutable snapshots acquire no routing metadata.
 
 Entries here are hand-authored (an editor writes a headline and body prose
 directly), which is why nothing here cross-validates against the ballot
@@ -145,7 +146,7 @@ class ElectionCorrections(CorrectionsModel):
             raise ValueError(
                 "update slugs and retired slug aliases cannot repeat within an election"
             )
-        if len(self.entries) != len(
+        if self.schema_version != "1.2" and len(self.entries) != len(
             {(entry.corrected_on, entry.headline) for entry in self.entries}
         ):
             raise ValueError(
