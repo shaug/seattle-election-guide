@@ -52,7 +52,7 @@
       {% if updates_provenance %}<p class="page-tail">Current Updates log: <a href="https://github.com/shaug/seattle-election-guide/blob/{{ updates_provenance.source_git_commit }}/data/corrections/{{ guide.metadata.election_id }}.yaml"{{ external_link_attributes }}>authored record</a>. <a href="https://github.com/shaug/seattle-election-guide/releases/tag/{{ updates_provenance.archive_release_version }}"{{ external_link_attributes }}>Original election archive</a>.</p>{% endif %}
     </main>
     <footer class="site-footer">
-      {% if project_url is not none %}{{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}{% endif %}
+      {% if project_url is not none %}{{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date, site_git_commit=footer_site_git_commit) }}{% endif %}
     </footer>
   </div>
 {% endblock %}

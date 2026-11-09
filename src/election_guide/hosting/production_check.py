@@ -16,6 +16,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
 from election_guide.hosting.models import DeploymentManifest, SiteManifest
 from election_guide.release.models import ReleaseManifest
+from election_guide.rendering.models import PagePresentation
 
 MANIFEST_PATH = "/deployment-manifest.json"
 STALE_DATA_THRESHOLD_DAYS = 7
@@ -146,6 +147,26 @@ class DataFreshnessCheck(BaseModel):
         return self.age <= timedelta(days=self.threshold_days)
 
 
+class PresentationAssetCheck(BaseModel):
+    """Bounded evidence about a fetched page or its source-data provenance."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    path: str
+    expected_sha256: str | None
+    observed_sha256: str | None
+    observation: Observation
+    errors: tuple[str, ...] = ()
+
+    @property
+    def ok(self) -> bool:
+        return (
+            self.observation.status == 200
+            and self.expected_sha256 is not None
+            and self.observed_sha256 == self.expected_sha256
+            and not self.errors
+        )
+
+
 class ProductionCheckReport(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -161,6 +182,7 @@ class ProductionCheckReport(BaseModel):
     route_results: tuple[RouteCheckResult, ...] = ()
     commit: CommitCheck | None = None
     data_freshness: DataFreshnessCheck | None = None
+    presentation_assets: tuple[PresentationAssetCheck, ...] = ()
 
     @property
     def ok(self) -> bool:
@@ -175,6 +197,8 @@ class ProductionCheckReport(BaseModel):
         if self.release_manifest_parse_error is not None:
             return False
         if any(not result.ok for result in self.route_results):
+            return False
+        if any(not asset.ok for asset in self.presentation_assets):
             return False
         if self.commit is not None and not self.commit.ok:
             return False
@@ -317,6 +341,9 @@ def evaluate_deployment_contract(
 ) -> DeploymentContractCheck:
     """Compare production with the checked-in site declaration and selected commit."""
     errors: list[str] = []
+    expected_schema = "3.0" if expected.schema_version == "1.1" else "2.0"
+    if observed.schema_version != expected_schema:
+        errors.append("deployment presentation schema differs from the source declaration")
     if observed.canonical_origin != expected.canonical_origin:
         errors.append(
             "deployment manifest canonical origin differs from site manifest: "
@@ -337,10 +364,24 @@ def evaluate_deployment_contract(
         )
 
     observed_by_id = {election.election_id: election for election in observed.elections}
+    current = observed_by_id.get(expected.current_election_id)
+    current_presentation = current.presentation if current is not None else None
     for declared in expected.elections:
         deployed = observed_by_id.get(declared.election_id)
         if deployed is None:
             continue
+        if expected.schema_version == "1.1":
+            presentation = deployed.presentation
+            if presentation is None or current_presentation is None:
+                errors.append(f"missing current presentation provenance: {declared.election_id}")
+            elif (
+                presentation.source_git_commit != expected_git_commit
+                or presentation.archive_git_commit != deployed.git_commit
+                or presentation.archive_release_version != deployed.release_version
+                or presentation.release_manifest_sha256 != deployed.release_manifest_sha256
+                or presentation.generated_at != current_presentation.generated_at
+            ):
+                errors.append(f"presentation identity differs: {declared.election_id}")
         values = (
             ("bundle ID", declared.bundle_id, deployed.bundle_id),
             ("release version", declared.release_version, deployed.release_version),
@@ -409,6 +450,39 @@ def evaluate_deployment_contract(
         representative_race_path=representative_race_path,
         errors=tuple(errors),
     )
+
+
+def plan_presentation_assets(
+    manifest: DeploymentManifest,
+) -> dict[str, PagePresentation | None]:
+    """Probe every page kind deterministically, without returning full HTML evidence."""
+    paths: dict[str, PagePresentation | None] = {"about/index.html": None}
+    paths[f"e/{manifest.current_election_id}/release-status.json"] = None
+    for election in manifest.elections:
+        root = f"e/{election.election_id}/"
+        paths[root + "release-manifest.json"] = None
+        paths[root + "index.html"] = election.presentation
+        paths[root + "sources/index.html"] = election.presentation
+        for suffix in ("comparisons/index.html", "updates/index.html"):
+            if root + suffix in manifest.assets:
+                paths[root + suffix] = election.presentation
+        races = sorted(
+            name
+            for name in manifest.assets
+            if name.startswith(root + "races/") and name.endswith("/index.html")
+        )
+        if races:
+            paths[races[0]] = election.presentation
+        details = sorted(
+            name
+            for name in manifest.assets
+            if name.startswith(root + "updates/")
+            and name.endswith("/index.html")
+            and name != root + "updates/index.html"
+        )
+        if details:
+            paths[details[0]] = election.presentation
+    return paths
 
 
 class _ArchiveIndexParser(HTMLParser):
@@ -537,6 +611,10 @@ def render_summary_lines(report: ProductionCheckReport) -> list[str]:
             f"FAIL current release manifest ({path}): {report.release_manifest_parse_error}"
         )
     lines.extend(_check_line(result) for result in report.route_results)
+    for asset in report.presentation_assets:
+        status = "PASS" if asset.ok else "FAIL"
+        lines.append(f"{status} presentation asset (/{asset.path})")
+        lines.extend(f"FAIL presentation asset: {error}" for error in asset.errors)
     if report.commit is not None:
         status = "PASS" if report.commit.ok else "FAIL"
         lines.append(

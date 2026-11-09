@@ -36,6 +36,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+{% if page_presentation is defined and page_presentation %}
+{% for name, value in page_presentation.html_metadata.items() %}
+  <meta name="{{ name }}" content="{{ value }}">
+{% endfor %}
+{% endif %}
 {% block head_meta %}{% endblock %}
   {{ shell.head_links(canonical_origin, shareable=shareable | default(true), image_path=social_image_path | default('/og-image.png')) }}
   <title>{{ document_title }}</title>

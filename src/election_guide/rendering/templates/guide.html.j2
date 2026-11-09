@@ -154,7 +154,7 @@
     </div>
 
     <footer class="site-footer">
-      {{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}
+      {{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date, site_git_commit=footer_site_git_commit) }}
     </footer>
   </main>
 {% endblock %}

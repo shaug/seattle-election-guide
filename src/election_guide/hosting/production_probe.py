@@ -10,6 +10,7 @@ here for the same reason.
 
 from __future__ import annotations
 
+import hashlib
 import http.client
 import urllib.error
 import urllib.request
@@ -17,12 +18,17 @@ from datetime import UTC, datetime
 from time import monotonic
 from urllib.parse import urljoin, urlsplit
 
-from election_guide.hosting.models import SiteManifest
+from election_guide.hosting.models import DeploymentManifest, SiteManifest
+from election_guide.hosting.presentation import (
+    verify_page_presentation,
+    verify_presentation_identity,
+)
 from election_guide.hosting.production_check import (
     MANIFEST_PATH,
     CommitCheck,
     DataFreshnessCheck,
     Observation,
+    PresentationAssetCheck,
     ProductionCheckReport,
     RouteCheck,
     RouteCheckResult,
@@ -30,10 +36,12 @@ from election_guide.hosting.production_check import (
     evaluate_deployment_contract,
     evaluate_manifest,
     evaluate_release_manifest,
+    plan_presentation_assets,
     plan_publication_route_checks,
     plan_route_checks,
     release_manifest_check,
 )
+from election_guide.release.models import ReleaseManifest, ReleaseStatus
 
 USER_AGENT = (
     "SeattleElectionGuide-ProductionCheck/1 (+https://github.com/shaug/seattle-election-guide)"
@@ -147,6 +155,76 @@ def fetch_asset_body(
 ) -> tuple[Observation, bytes | None]:
     """Read a first-party asset using the same unfollowed production probe transport."""
     return _fetch_body(base_url, path, timeout=timeout)
+
+
+def _check_presentation_assets(
+    base_url: str, manifest: DeploymentManifest, *, timeout: float, deadline: float | None
+) -> tuple[PresentationAssetCheck, ...]:
+    planned = plan_presentation_assets(manifest)
+    bodies: dict[str, bytes] = {}
+    checks: dict[str, PresentationAssetCheck] = {}
+    for path in planned:
+        observation, body = _fetch_body(base_url, "/" + path, timeout=timeout, deadline=deadline)
+        digest = hashlib.sha256(body).hexdigest() if body is not None else None
+        expected = manifest.assets.get(path)
+        errors: list[str] = []
+        if observation.status != 200 or body is None:
+            errors.append(f"presentation asset is unavailable: {path}")
+        elif expected is None or digest != expected:
+            errors.append(f"presentation asset hash differs: {path}")
+        else:
+            bodies[path] = body
+        checks[path] = PresentationAssetCheck(
+            path=path,
+            expected_sha256=expected,
+            observed_sha256=digest,
+            observation=observation,
+            errors=tuple(errors),
+        )
+
+    def add_error(path: str, error: ValueError) -> None:
+        checks[path] = checks[path].model_copy(
+            update={"errors": (*checks[path].errors, str(error))}
+        )
+
+    status_path = f"e/{manifest.current_election_id}/release-status.json"
+    current_status = None
+    if status_path in bodies:
+        try:
+            current_status = ReleaseStatus.model_validate_json(bodies[status_path])
+            current = next(
+                election
+                for election in manifest.elections
+                if election.election_id == manifest.current_election_id
+            )
+            if (
+                current_status.election_id != current.election_id
+                or current_status.git_commit != current.git_commit
+                or current_status.release_version != current.release_version
+                or current_status.source_panel_id != current.source_panel_id
+                or current_status.source_panel_hash != current.source_panel_hash
+                or current_status.source_registry_hash != current.source_registry_hash
+            ):
+                raise ValueError("presentation current release status differs from deployment")
+        except ValueError as error:
+            add_error(status_path, error)
+    for election in manifest.elections:
+        path = f"e/{election.election_id}/release-manifest.json"
+        if current_status is not None and path in bodies:
+            try:
+                if checks[path].observed_sha256 != election.release_manifest_sha256:
+                    raise ValueError("presentation release manifest differs from archive identity")
+                release_manifest = ReleaseManifest.model_validate_json(bodies[path])
+                verify_presentation_identity(election, release_manifest, current_status)
+            except ValueError as error:
+                add_error(path, error)
+    for path, presentation in planned.items():
+        if presentation is not None and path in bodies:
+            try:
+                verify_page_presentation(bodies[path].decode("utf-8"), presentation)
+            except ValueError as error:
+                add_error(path, error)
+    return tuple(checks.values())
 
 
 def run_production_check(
@@ -264,5 +342,10 @@ def run_production_check(
                 published_at=release_manifest.generated_at,
                 checked_at=observed_at,
             )
+        ),
+        presentation_assets=(
+            _check_presentation_assets(base_url, manifest, timeout=timeout, deadline=deadline)
+            if site_manifest is not None and site_manifest.schema_version == "1.1"
+            else ()
         ),
     )

@@ -103,6 +103,53 @@ def test_deployment_contract_uses_the_site_manifest_and_selects_the_first_race()
     assert check.representative_race_path == "/e/wa-2026-general/races/alpha/"
 
 
+def test_current_presentation_contract_cannot_accept_an_old_deployment_at_the_same_commit() -> None:
+    expected = _site_manifest().model_copy(update={"schema_version": "1.1"})
+    check = production_check.evaluate_deployment_contract(
+        expected, _deployment_manifest(), expected_git_commit=COMMIT
+    )
+    assert not check.ok
+    assert any("presentation" in error for error in check.errors)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("source_git_commit", "b" * 40),
+        ("archive_git_commit", "b" * 40),
+        ("archive_release_version", "other.1"),
+        ("release_manifest_sha256", "b" * 64),
+        ("generated_at", "2026-11-08T12:00:00Z"),
+    ],
+)
+def test_production_contract_binds_presentation_separately_from_historical_data(
+    field: str, value: str
+) -> None:
+    raw = _deployment_manifest().model_dump(mode="json")
+    raw["schema_version"] = "3.0"
+    raw["assets"]["e/wa-2026-primary/races/alpha/index.html"] = "f" * 64
+    for election in raw["elections"]:
+        election["presentation"] = {
+            "source_git_commit": COMMIT,
+            "generated_at": "2026-11-09T12:00:00Z",
+            "archive_git_commit": election["git_commit"],
+            "archive_release_version": election["release_version"],
+            "release_manifest_sha256": election["release_manifest_sha256"],
+            "publication_view_model_sha256": "a" * 64,
+        }
+    expected = _site_manifest().model_copy(update={"schema_version": "1.1"})
+    healthy = production_check.evaluate_deployment_contract(
+        expected, DeploymentManifest.model_validate(raw), expected_git_commit=COMMIT
+    )
+    assert healthy.ok
+    raw["elections"][1]["presentation"][field] = value
+    failed = production_check.evaluate_deployment_contract(
+        expected, DeploymentManifest.model_validate(raw), expected_git_commit=COMMIT
+    )
+    assert not failed.ok
+    assert any("presentation" in error for error in failed.errors)
+
+
 @pytest.mark.parametrize(
     ("mutation", "expected_error"),
     [

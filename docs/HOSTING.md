@@ -83,6 +83,11 @@ release, and staging refuses to resolve it without one — see
 verified release bundle, supplied locally or downloaded from the release that published it; it never
 infers the current election from dates, filenames, directory order, or an earlier deployment.
 
+Source schema `1.1` selects current presentation over immutable election data (#721), producing
+deployment schema `3.0`. Original source `1.0` and deployment `2.0` remain readable and verifiable
+under their original contracts for authenticated baseline and exact-source recovery. The schemas
+must match: a new presentation declaration cannot accept an old copied deployment at the same SHA.
+
 The public route contract is:
 
 - `/` returns a temporary `307` redirect to the manifest-declared current election;
@@ -184,15 +189,40 @@ unpublished candidate can never cross the production boundary.
 
 ## Historical bundles
 
-Only the current election is built during staging. An older election is downloaded from its
-declared Release, because rebuilding an existing release identity with newer rendering code
-would violate its artifact hashes. To correct an archived guide, build and publish a new immutable
-release from merged mainline code and the completed election inputs, then update its version and
-reviewed pins. Existing release artifacts remain unchanged and available for audit.
+Only the current election's release bundle is built from source. An older election is downloaded
+from its declared Release and verified against every original artifact hash and reviewed pin.
+Source schema1.1 then renders its public overview, race, Sources, enabled Comparisons and Updates
+pages with the current accepted renderer over that verified publication model. It does not rebuild,
+overwrite or relabel the archive. Its CSV/JSON exports, original HTML, evidence, scoring, source
+membership and outcomes remain inside the unchanged archive with their original identities.
+Historical election-data corrections still require a new reviewed immutable release and pins;
+approved presentation-only corrections require no replacement historical release.
 
 Every served HTML page must exclude the retired percentage-only meter's `--meter-fill` chrome.
-Both bundle staging and independent staged-site verification reject it, even when all recorded
-hashes agree. An authentic older release is an audit record, not permission to restore retired UI.
+Generated public HTML and independent staged-site verification reject it even when all recorded
+hashes agree. Source1.0 retains its original retired-input rejection because it copies the overview;
+source1.1 may read authentic old HTML as an audit artifact but never serves those bytes.
+
+Current presentation explicitly supports publication schemas1.9/1.13/1.14. Older1.9/1.13 keep
+their absent registry hash;1.14 requires it. Missing/unknown schema versions and corrupt inputs
+fail before output replacement. No-results legacy models may omit structured election naming,
+race type and choice roster. Result-bearing models must carry their own matching election,
+known races, complete choice rosters and race types, candidate-election type for outcome labels,
+and admissible own capture references. Ambiguous types/choices and legacy `counting` fail closed;
+the renderer never borrows today's inventory or infers outcomes from names or IDs.
+
+Every new deployed election has `presentation`: current source commit/build time, original archive
+source/version, release-manifest hash and original publication-model hash. Shared page meta records
+declare the same identities. The original release manifest still covers its original archive HTML;
+the deployment asset hash covers the newly rendered page. Independent verification binds the
+projection to current release status and the pinned original release manifest and checks every
+election HTML head. These provenance checks accompany VM-to-render invariance tests and review;
+a metadata claim alone does not prove arbitrary visible election facts correct.
+
+The existing Data updated footer retains archive data/version/panel provenance. Site updated uses
+the current presentation source/time. Publisher count/export, capture/check and certification clocks
+remain literal. Derived preliminary recency uses the explicit presentation time so old checks age.
+No projection request fetches a result, endorsement or provider at build/runtime.
 
 Pass `--released-bundle-dir` to resolve every declared bundle that was not supplied with
 `--bundle`:
@@ -245,7 +275,7 @@ make hosting-stage
 
 The Make target resolves the current bundle from `config/hosting/site.yaml` and supplies
 `dist/reproducibility-a/bundle`; the shared staging implementation resolves all other declared
-bundles from their hash-pinned published archives. The archived primary uses the canonical `2026-primary.4` pins from main, containing the
+bundles from their hash-pinned published archives. The archived primary uses the canonical `2026-primary.11` pins from main, containing the
 completed primary’s certified results, Meter v2, and backfilled Updates history.
 Historical downloads require authenticated read-only GitHub access.
 Staging verifies all declared identities, each release status, every release-manifest artifact hash,
@@ -253,7 +283,7 @@ and the current bundle's exact Git revision before it changes the existing outpu
 atomically replaces `dist/cloudflare-site/` with:
 
 - `e/index.html`, generated from the manifest;
-- each guide at `e/<election-id>/index.html`, copied byte-for-byte from its validated release;
+- each guide at `e/<election-id>/index.html`, rendered from its validated release model;
 - each election's `release-status.json` and `release-manifest.json`;
 - `about/index.html`, the site-wide About/FAQ page, generated from the manifest;
 - a site-wide deployment manifest recording every verified release and staged asset hash; and
@@ -424,6 +454,15 @@ in the fetched schema-valid deployment manifest's asset inventory. The checker a
 - a genuine `404` from a deterministic unknown-election path; and
 - the declared release version and the exact `source_sha` in the public manifest.
 
+For source1.1, strict checking additionally requires deployment3.0 and binds its presentation
+source to the exact expected SHA independently of historical data-source pins. It fetches and
+hash-checks current release status and every release manifest, and deterministic overview, Sources,
+race, available Comparisons, Updates index/detail and How this works page bodies. Shared head
+provenance must agree with the current source and original archive. HTTP200 with a stale or false
+body fails. The report retains paths, observed/expected hashes, statuses and errors, never full HTML;
+the existing deadline and4MiB worker-result budget are unchanged. Original source1.0 strict and
+availability checks retain their earlier contracts.
+
 The automatic finalizer retains both complete passes and all failed observations on the owning
 release issue. A failure leaves finalization incomplete. Use `verify-release.yml` with the original
 source/run/attempt to retry evidence without another upload; see [RELEASE.md](RELEASE.md).
@@ -580,10 +619,11 @@ the milestone forward one year is part of completing the rotation.
 ## Current election-information Updates projection (#676)
 
 An explicit election declaration `updates_from_current_source: true` opts only that election's
-current `/updates/` route into the current source's authored schema1.1 election-information log.
-The primary9 declaration uses this route-only migration; archive bytes, release pins, overview
-and race pages retain their immutable identities. The old archive's embedded corrections remain
-available inside that archive. Staging never writes to a verified input bundle.
+current `/updates/` route into the current source's authored schema1.1/1.2 election-information log.
+The current primary declaration uses this authored-log projection; archive bytes and release pins
+retain their immutable identities. The old archive's embedded corrections remain available inside
+that archive. Source1.1 also renders the other public HTML with current presentation over original
+data. Staging never writes to a verified input bundle.
 
 `DeployedElection.updates_projection` is separate provenance for this new HTML: current source
 commit, authored-YAML SHA-256 and original archive release. The same values appear in HTML meta
@@ -591,4 +631,5 @@ records and an authored-record/original-archive link. The current deployment's a
 the projected route. An old election release-manifest hash does not attest its newly authored log.
 Staged verification rejects missing/extra projection provenance, a different current source/archive
 identity, and HTML that lacks its declared provenance. An opted-in missing/legacy log fails closed.
-This creates no historical release activation and no Updates detail pages.
+This creates no historical release activation. Schema1.2 retains the already supported authored
+detail slugs and permanent aliases; legacy logs never acquire invented permalink identities.

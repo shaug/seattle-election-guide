@@ -83,10 +83,14 @@ absent. A raw Yes/No lead never asserts a passage threshold is met, and a primar
 never invents an advancement cutoff or number of seats. This is count-so-far alignment,
 not a completed or projected outcome. The shared result block is still
 lens-invariant; names, shares, chips, badges and provenance are unchanged. See DESIGN.md
-for the approved alternatives and actual-endorsement-tie palette. Published archive
-bundles and the copied Primary overview remain unchanged. Primary race pages are
-rendered from the archive's verified data with current code, so those pages receive
-the approved meter treatment; see [the existing archive projection contract](PRIMARY_METER_REFRESH_2026-10-22.md).
+for the approved alternatives and actual-endorsement-tie palette. Published archive bundles
+remain unchanged. Under #721, the public Primary overview and race pages both render the
+archive's verified data with current code and receive the same approved meter treatment.
+Deployment/page metadata distinguish original data from presentation source/time; count,
+export, check and certification clocks retain their original values. Derived preliminary
+recency uses current presentation time without substituting it for a publisher or check clock.
+The earlier [replacement-archive sequence](PRIMARY_METER_REFRESH_2026-10-22.md) remains an audit
+record; presentation-only corrections no longer require that sequence.
 
 The site's purpose is in the name: it helps voters vote. Results are a secondary feature, and
 "secondary" was sized deliberately. The original #208 policy admitted certified results once

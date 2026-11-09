@@ -19,6 +19,11 @@ from election_guide.hosting.models import (
     SiteManifest,
     UpdatesProjection,
 )
+from election_guide.hosting.presentation import (
+    validate_presentation_input,
+    verify_page_presentation,
+    verify_presentation_identity,
+)
 from election_guide.hosting.releases import materialize_released_bundle
 from election_guide.hosting.updates import (
     UPDATES_SNAPSHOT,
@@ -32,13 +37,16 @@ from election_guide.publication.models import PublicationViewModel
 from election_guide.release.comparison import verify_release_bundle_artifacts
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.bundler import bundle_entry
+from election_guide.rendering.config import read_rendering_configuration
 from election_guide.rendering.documents import (
     render_comparison_document,
     render_corrections_document,
+    render_html_document,
     render_race_document,
     render_sources_document,
     template_environment,
 )
+from election_guide.rendering.models import PagePresentation
 from election_guide.rendering.og_image import race_card, render_race_card
 from election_guide.rendering.shell import (
     election_names,
@@ -155,7 +163,13 @@ def stage_pages_site(
     for declaration in site_manifest.elections:
         bundle_dir = bundle_dirs[declaration.bundle_id].resolve()
         _validate_distinct_paths(bundle_dir, output_dir)
-        verified.append(_verify_bundle(declaration, bundle_dir))
+        verified.append(
+            _verify_bundle(
+                declaration,
+                bundle_dir,
+                current_presentation=site_manifest.schema_version == "1.1",
+            )
+        )
 
     current = next(
         bundle
@@ -180,6 +194,7 @@ def stage_pages_site(
             site_manifest.canonical_origin,
             current=current,
             updates_dir=updates_dir,
+            current_presentation=site_manifest.schema_version == "1.1",
         )
         # Site-wide pages use the current release's data cutoff and deployed
         # revision timestamp, matching the election-scoped footer.
@@ -288,7 +303,7 @@ def stage_pages_site(
         )
         deployment_assets = _artifact_hashes(stage)
         deployment_manifest = {
-            "schema_version": "2.0",
+            "schema_version": "3.0" if site_manifest.schema_version == "1.1" else "2.0",
             "canonical_origin": site_manifest.canonical_origin,
             "current_election_id": site_manifest.current_election_id,
             "elections": [
@@ -305,6 +320,15 @@ def stage_pages_site(
                         else {}
                     ),
                     "release_manifest_sha256": _sha256(bundle.directory / "release-manifest.json"),
+                    **(
+                        {
+                            "presentation": _page_presentation(bundle, current).model_dump(
+                                mode="json"
+                            )
+                        }
+                        if site_manifest.schema_version == "1.1"
+                        else {}
+                    ),
                     **(
                         {
                             "updates_projection": updates_projections[
@@ -359,6 +383,16 @@ def _verify_staged_pages_site(
     expected_current_git_commit: str | None,
 ) -> DeploymentManifest:
     deployment = DeploymentManifest.model_validate(read_json(site_dir / "deployment-manifest.json"))
+    expected_schema = "3.0" if site_manifest.schema_version == "1.1" else "2.0"
+    if deployment.schema_version != expected_schema:
+        raise ValueError("deployment presentation schema differs from site manifest")
+    current_status = (
+        ReleaseStatus.model_validate(
+            read_json(site_dir / "e" / deployment.current_election_id / "release-status.json")
+        )
+        if deployment.schema_version == "3.0"
+        else None
+    )
     if deployment.canonical_origin != site_manifest.canonical_origin:
         raise ValueError("deployment manifest canonical origin differs from site manifest")
     if deployment.current_election_id != site_manifest.current_election_id:
@@ -415,6 +449,18 @@ def _verify_staged_pages_site(
             raise ValueError(
                 f"staged release manifest differs for election {declared.election_id!r}"
             )
+        if deployed.presentation is not None:
+            assert current_status is not None
+            release_manifest = ReleaseManifest.model_validate(
+                read_json(election_root / "release-manifest.json")
+            )
+            verify_presentation_identity(deployed, release_manifest, current_status)
+            prefix = f"e/{declared.election_id}/"
+            for relative in deployment.assets:
+                if relative.startswith(prefix) and relative.endswith(".html"):
+                    verify_page_presentation(
+                        (site_dir / relative).read_text(encoding="utf-8"), deployed.presentation
+                    )
         required_assets.update(
             {
                 f"e/{declared.election_id}/index.html",
@@ -539,7 +585,7 @@ def _resolve_released_bundles(
     """Fill in every declared bundle not supplied locally from its published release.
 
     Only the current election is built during staging. Historical bundles are
-    downloaded from their declared releases; a correction requires publishing a
+    downloaded from their declared releases; a data correction requires publishing a
     new release and updating the pins, never rebuilding an existing identity.
     """
     resolved = dict(bundle_dirs)
@@ -567,12 +613,17 @@ def _validate_bundle_assignments(
         )
 
 
-def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _VerifiedBundle:
+def _verify_bundle(
+    declaration: PublishedElection, bundle_dir: Path, *, current_presentation: bool = False
+) -> _VerifiedBundle:
     status = ReleaseStatus.model_validate(read_json(bundle_dir / "release-status.json"))
     manifest_path = bundle_dir / "release-manifest.json"
     manifest = ReleaseManifest.model_validate(read_json(manifest_path))
-    view_model = PublicationViewModel.model_validate(
-        read_json(bundle_dir / "data/publication_view_model.json")
+    raw_view = read_json(bundle_dir / "data/publication_view_model.json")
+    view_model = (
+        validate_presentation_input(raw_view, status)
+        if current_presentation
+        else PublicationViewModel.model_validate(raw_view)
     )
     if view_model.metadata.election_id != declaration.election_id:
         raise ValueError(f"bundle {declaration.bundle_id!r} publication election differs")
@@ -609,7 +660,8 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
         raise ValueError(f"bundle {declaration.bundle_id!r} release manifest hash differs")
 
     verify_release_bundle_artifacts(bundle_dir, status=status, manifest=manifest)
-    _verify_meter_markup(bundle_dir / status.guide_html_artifact)
+    if not current_presentation:
+        _verify_meter_markup(bundle_dir / status.guide_html_artifact)
     if declaration.bundle_sha256 is not None:
         # Naming both digests is what makes a drifted pin actionable: the fix is
         # to recompute it with `hosting bundle-hash` and review the difference,
@@ -630,7 +682,7 @@ def _verify_meter_markup(html_path: Path) -> None:
     if b"--meter-fill" in html_path.read_bytes():
         raise ValueError(
             f"{html_path} contains the retired endorsement meter; "
-            "publish a replacement release before staging"
+            "served HTML must use the current endorsement meter"
         )
 
 
@@ -641,6 +693,7 @@ def _stage_verified_bundles(
     *,
     current: _VerifiedBundle,
     updates_dir: Path,
+    current_presentation: bool,
 ) -> tuple[set[str], dict[str, UpdatesProjection], dict[str, str]]:
     public_paths: set[str] = set()
     projections: dict[str, UpdatesProjection] = {}
@@ -649,7 +702,14 @@ def _stage_verified_bundles(
         election_root = stage / "e" / bundle.declaration.election_id
         election_root.mkdir(parents=True)
         html_source = bundle.directory / bundle.status.guide_html_artifact
-        shutil.copy2(html_source, election_root / "index.html")
+        presentation = _page_presentation(bundle, current) if current_presentation else None
+        if presentation is None:
+            shutil.copy2(html_source, election_root / "index.html")
+        else:
+            (election_root / "index.html").write_text(
+                _guide_html(bundle.view_model, canonical_origin, presentation=presentation),
+                encoding="utf-8",
+            )
 
         # One list, so what is copied and what the worker will route are the
         # same set by construction.
@@ -660,14 +720,16 @@ def _stage_verified_bundles(
         sources_dir = election_root / "sources"
         sources_dir.mkdir()
         (sources_dir / "index.html").write_text(
-            _sources_html(bundle.view_model, canonical_origin),
+            _sources_html(bundle.view_model, canonical_origin, presentation=presentation),
             encoding="utf-8",
         )
 
         root_path = f"/e/{bundle.declaration.election_id}/"
         public_paths.update({root_path, f"{root_path}index.html"})
         public_paths.update({f"{root_path}sources/", f"{root_path}sources/index.html"})
-        public_paths.update(_stage_race_pages(bundle, election_root, canonical_origin))
+        public_paths.update(
+            _stage_race_pages(bundle, election_root, canonical_origin, presentation=presentation)
+        )
         if (
             bundle.view_model.comparisons.policy.enabled
             or bundle.declaration.comparison_route_preview
@@ -675,7 +737,11 @@ def _stage_verified_bundles(
             compare_dir = election_root / "comparisons"
             compare_dir.mkdir()
             (compare_dir / "index.html").write_text(
-                _comparison_html(_comparison_route_view_model(bundle), canonical_origin),
+                _comparison_html(
+                    _comparison_route_view_model(bundle),
+                    canonical_origin,
+                    presentation=presentation,
+                ),
                 encoding="utf-8",
             )
             public_paths.update({f"{root_path}comparisons/", f"{root_path}comparisons/index.html"})
@@ -696,22 +762,26 @@ def _stage_verified_bundles(
                 archive_release_version=bundle.status.release_version,
             )
             projections[bundle.declaration.election_id] = provenance
-            updates_view = bundle.view_model.model_copy(
-                update={
-                    "corrections": authored,
-                    "metadata": bundle.view_model.metadata.model_copy(
-                        update={
-                            "git_commit": current.status.git_commit,
-                            "generated_at": current.status.generated_at,
-                        }
-                    ),
-                }
-            )
+            update: dict[str, object] = {"corrections": authored}
+            if not current_presentation:
+                # Preserve the original schema1.0 route-only projection contract.
+                update["metadata"] = bundle.view_model.metadata.model_copy(
+                    update={
+                        "git_commit": current.status.git_commit,
+                        "generated_at": current.status.generated_at,
+                    }
+                )
+            updates_view = bundle.view_model.model_copy(update=update)
         if updates_view.corrections is not None and updates_view.corrections.entries:
             corrections_dir = election_root / "updates"
             corrections_dir.mkdir()
             (corrections_dir / "index.html").write_text(
-                _corrections_html(updates_view, canonical_origin, provenance=provenance),
+                _corrections_html(
+                    updates_view,
+                    canonical_origin,
+                    provenance=provenance,
+                    presentation=presentation,
+                ),
                 encoding="utf-8",
             )
             public_paths.update({f"{root_path}updates/", f"{root_path}updates/index.html"})
@@ -726,6 +796,7 @@ def _stage_verified_bundles(
                         updates_view,
                         public_site_url=canonical_origin,
                         project_url=PROJECT_URL,
+                        presentation=presentation,
                         updates_provenance=provenance.model_dump() if provenance else None,
                         entry_slug=entry.slug,
                     ),
@@ -743,12 +814,14 @@ def _stage_race_pages(
     bundle: _VerifiedBundle,
     election_root: Path,
     canonical_origin: str,
+    *,
+    presentation: PagePresentation | None = None,
 ) -> set[str]:
     """Stage pages, social cards, and routes only for publicly visible races.
 
     General and primary race pages use the shared full-panel visibility selector,
-    including qualifying uncontested races (issue #607). The copied primary
-    overview requires a replacement immutable archive to adopt that policy.
+    including qualifying uncontested races (issue #607). Source1.1 renders the
+    primary overview through this same public view; original ZIP bytes stay fixed.
     """
     view_model = bundle.view_model
     election_id = bundle.declaration.election_id
@@ -776,6 +849,7 @@ def _stage_race_pages(
                     race.id,
                     public_site_url=canonical_origin,
                     project_url=PROJECT_URL,
+                    presentation=presentation,
                 ),
                 encoding="utf-8",
             )
@@ -802,21 +876,59 @@ def _comparison_route_view_model(bundle: _VerifiedBundle) -> PublicationViewMode
     )
 
 
-def _sources_html(view_model: PublicationViewModel, canonical_origin: str) -> str:
+def _page_presentation(bundle: _VerifiedBundle, current: _VerifiedBundle) -> PagePresentation:
+    return PagePresentation(
+        source_git_commit=current.status.git_commit,
+        generated_at=current.status.generated_at,
+        archive_git_commit=bundle.status.git_commit,
+        archive_release_version=bundle.status.release_version,
+        release_manifest_sha256=_sha256(bundle.directory / "release-manifest.json"),
+        publication_view_model_sha256=bundle.manifest.artifact_hashes[
+            "data/publication_view_model.json"
+        ],
+    )
+
+
+def _guide_html(
+    view_model: PublicationViewModel,
+    canonical_origin: str,
+    *,
+    presentation: PagePresentation,
+) -> str:
+    configuration = read_rendering_configuration(Path("config/rendering/guide.yaml"))
+    configuration = configuration.model_copy(
+        update={"public_site_url": canonical_origin, "project_url": PROJECT_URL}
+    )
+    return render_html_document(view_model, configuration, presentation=presentation)
+
+
+def _sources_html(
+    view_model: PublicationViewModel,
+    canonical_origin: str,
+    *,
+    presentation: PagePresentation | None = None,
+) -> str:
     """Render the per-election sources/customization page (issue 107)."""
     return render_sources_document(
         view_model,
         public_site_url=canonical_origin,
         project_url=PROJECT_URL,
+        presentation=presentation,
     )
 
 
-def _comparison_html(view_model: PublicationViewModel, canonical_origin: str) -> str:
+def _comparison_html(
+    view_model: PublicationViewModel,
+    canonical_origin: str,
+    *,
+    presentation: PagePresentation | None = None,
+) -> str:
     """Render a per-election comparison route after hosting has admitted it."""
     return render_comparison_document(
         view_model,
         public_site_url=canonical_origin,
         project_url=PROJECT_URL,
+        presentation=presentation,
     )
 
 
@@ -825,6 +937,7 @@ def _corrections_html(
     canonical_origin: str,
     *,
     provenance: UpdatesProjection | None = None,
+    presentation: PagePresentation | None = None,
 ) -> str:
     """Render the per-election corrections page (docs/RESULTS.md, "The
     corrections page"; issue #290) after `_stage_verified_bundles` has
@@ -834,6 +947,7 @@ def _corrections_html(
         view_model,
         public_site_url=canonical_origin,
         project_url=PROJECT_URL,
+        presentation=presentation,
         updates_provenance=provenance.model_dump(mode="json") if provenance is not None else None,
     )
 

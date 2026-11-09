@@ -30,6 +30,7 @@ from election_guide.publication.personalization import (
     PersonalizationRace,
     PersonalizationSource,
 )
+from election_guide.rendering.models import PagePresentation
 from election_guide.rendering.payload import (
     ComparisonResultOutcome,
     CoveredFilterScope,
@@ -651,7 +652,9 @@ def _footer_update_dates(view_model: PublicationViewModel) -> tuple[str, str]:
     )
 
 
-def footer_update_context(view_model: PublicationViewModel) -> dict[str, str]:
+def footer_update_context(
+    view_model: PublicationViewModel, *, presentation: PagePresentation | None = None
+) -> dict[str, str]:
     """The two provenance dates the shared election footer renders.
 
     Everything else its audit line needs is already on `guide.metadata`, which
@@ -662,7 +665,12 @@ def footer_update_context(view_model: PublicationViewModel) -> dict[str, str]:
     data_updated_date, site_updated_date = _footer_update_dates(view_model)
     return {
         "footer_data_updated_date": data_updated_date,
-        "footer_site_updated_date": site_updated_date,
+        "footer_site_updated_date": presentation.generated_at.date().isoformat()
+        if presentation is not None
+        else site_updated_date,
+        "footer_site_git_commit": presentation.source_git_commit
+        if presentation is not None
+        else view_model.metadata.git_commit,
     }
 
 

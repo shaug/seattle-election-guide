@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 MetadataText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 REQUIRED_RENDER_CHECK_IDS = frozenset(
@@ -21,6 +21,29 @@ REQUIRED_RENDER_CHECK_IDS = frozenset(
 
 class RenderingModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+class PagePresentation(RenderingModel):
+    """Current page build, separate from the immutable election-data release."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    source_git_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    generated_at: AwareDatetime
+    archive_git_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    archive_release_version: str = Field(min_length=1)
+    release_manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    publication_view_model_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @property
+    def html_metadata(self) -> dict[str, str]:
+        return {
+            "seg-data-source": self.archive_git_commit,
+            "seg-data-release": self.archive_release_version,
+            "seg-data-manifest-sha256": self.release_manifest_sha256,
+            "seg-data-view-model-sha256": self.publication_view_model_sha256,
+            "seg-presentation-source": self.source_git_commit,
+            "seg-presentation-generated-at": self.generated_at.isoformat(),
+        }
 
 
 class RenderingConfiguration(RenderingModel):

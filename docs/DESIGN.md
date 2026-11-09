@@ -1,5 +1,17 @@
 # Seattle Elections Guide — UI/UX Guidelines
 
+## Historical presentation (#721, November 9, 2026)
+
+Public historical pages use the current accepted presentation over their original verified
+election data. Published archive ZIPs retain their pinned bytes. An approved color or shared
+presentation correction therefore reaches the historical overview and its race pages together;
+it does not require a replacement election archive. Changes to historical election facts still
+require a new reviewed immutable release. Election-specific capabilities remain those supplied
+by the archive: a primary does not acquire general-only precinct controls or ballot ordering.
+The existing Data updated footer describes the original data; Site updated describes the current
+presentation source and build. Count, export, check and certification dates retain their own
+meanings. This supersedes the byte-copy/replacement-archive presentation rule below.
+
 ## Preliminary results (#696)
 
 Reuse the existing Guide/race result block: names, one-decimal named-choice percentages,
@@ -49,7 +61,7 @@ endorsement ties, lavender/deep violet was selected over the softer lavender/vio
 it separates the two runs more clearly, with lavender first to preserve navy-text contrast.
 The approved studies are Library `result-section-tints.png` version 4 and
 `tie-purple-palette.png` (November 8, 2026). Their examples are fictional, not election facts.
-Immutable archived pages retain their pinned bytes; these rules govern newly rendered pages.
+Pages inside immutable archive ZIPs retain their pinned bytes; these rules govern public rendered pages.
 
 How to build UI that belongs on this site. Rules here are decidable — each
 one can reject a real design. When a proposal and this document disagree,
@@ -419,8 +431,9 @@ then any sticky strip, then content.
   pointer-device state permanently rather than the print row's static-both
   one (docs/METER_V2.md, Decision log #23).
   Archived guides follow the same rule. Hosting rejects the retired `--meter-fill`
-  chrome in every served HTML page; correcting an archive means publishing a new
-  immutable release, never restoring retired UI because an old bundle's hashes agree.
+  chrome in every served HTML page. Current presentation uses verified archived data without
+  serving its old chrome; original ZIP bytes remain available for audit. Original source1.0
+  staging still applies its retired-input rule because it serves copied overview bytes.
 - **The meter's own caption states a count, not a percentage — and never the
   recommended choice's own name.** "21½ of 23 endorsements," using the same
   formatter the meter's split blocks make honest: a co-endorsement's half is
