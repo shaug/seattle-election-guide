@@ -5,6 +5,7 @@ import json
 import re
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -16,6 +17,7 @@ from election_guide.serialization import read_yaml
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 UPDATES_DIR = PROJECT_ROOT / "data/corrections"
 AUDIT_DIR = PROJECT_ROOT / "docs/audits/updates-2026-10-16"
+PRESENTATION_MIGRATION = PROJECT_ROOT / "docs/audits/updates-728/presentation.json"
 
 
 def test_primary_has_a_publication_history() -> None:
@@ -135,9 +137,13 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
                 assert entry.topics == ["results"]
                 assert entry.actions == ["changed"]
                 assert re.fullmatch(
-                    r"Updated preliminary counts for [1-9]\d* contests? at "
-                    r"(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d Pacific\.",
+                    r"Updated preliminary counts for [1-9]\d* contests?\.",
                     entry.headline,
+                )
+                assert re.search(
+                    r" Results checked [A-Z][a-z]+ [1-9]\d?, \d{4} at "
+                    r"(?:[1-9]|1[0-2]):[0-5]\d [ap]\.m\. Pacific\.$",
+                    entry.body,
                 )
                 assert {link.url for link in entry.provenance} == {
                     "/e/wa-2026-general/",
@@ -234,9 +240,51 @@ def test_minor_copy_announcement_is_audited_instead_of_publicly_announced() -> N
     assert hashlib.sha256(encoded).hexdigest() == audit["preserved_public_prefix_sha256"]
 
 
+def _results_check_presentation_entries(audit: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Only #728's exact presentation replaces #718's immutable corrected text."""
+    checked_times = {
+        "preliminary-results-2026-11-06-232155": "November 6, 2026 at 11:21 p.m.",
+        "preliminary-results-2026-11-07-164349": "November 7, 2026 at 4:43 p.m.",
+        "preliminary-results-2026-11-07-182532": "November 7, 2026 at 6:25 p.m.",
+    }
+    retained = [row["corrected_entry"] for row in audit["records"] if row["changed_contest_ids"]]
+    assert {entry["slug"] for entry in retained} == checked_times.keys()
+    rows: list[dict[str, Any]] = []
+    migrated: dict[str, dict[str, Any]] = {}
+    for original in retained:
+        slug = original["slug"]
+        encoded = json.dumps(original, sort_keys=True, separators=(",", ":")).encode()
+        headline = original["headline"].split(" at ")[0] + "."
+        body = original["body"] + f" Results checked {checked_times[slug]} Pacific."
+        rows.append(
+            {
+                "slug": slug,
+                "original_entry_sha256": hashlib.sha256(encoded).hexdigest(),
+                "headline": headline,
+                "body": body,
+            }
+        )
+        migrated[slug] = {**original, "headline": headline, "body": body}
+    migration = json.loads(PRESENTATION_MIGRATION.read_text())
+    assert migration == {
+        "schema_version": "1.0",
+        "authority": "https://github.com/shaug/seattle-election-guide/issues/728",
+        "source_revision": "5697bed34bc43e88de145e929fabf9499e6d0f63",
+        "source_audit": "docs/audits/updates-718/classification.json",
+        "source_audit_sha256": "40a8b6db2a7299e73d6ecee3afa3c920f3058202831218785910a51e27c8ca8d",
+        "entries": rows,
+    }
+    return migrated
+
+
 def test_results_check_audit_preserves_real_counts_and_all_published_routes() -> None:
     audit_dir = PROJECT_ROOT / "docs/audits/updates-718"
-    audit = json.loads((audit_dir / "classification.json").read_text())
+    audit_bytes = (audit_dir / "classification.json").read_bytes()
+    assert hashlib.sha256(audit_bytes).hexdigest() == (
+        "40a8b6db2a7299e73d6ecee3afa3c920f3058202831218785910a51e27c8ca8d"
+    )
+    audit = json.loads(audit_bytes)
+    presented = _results_check_presentation_entries(audit)
     original = (audit_dir / "original-wa-2026-general.yaml").read_bytes()
     assert hashlib.sha256(original).hexdigest() == audit["original_file_sha256"]
     frozen = json.loads(json.dumps(yaml.safe_load(original), default=str))
@@ -250,12 +298,58 @@ def test_results_check_audit_preserves_real_counts_and_all_published_routes() ->
         assert before.keys() == after.keys() and len(before) == 52
         assert [key for key in before if before[key] != after[key]] == row["changed_contest_ids"]
         slug = row["original_entry"]["slug"]
+        assert isinstance(slug, str)
         if row["changed_contest_ids"]:
             assert row["disposition"] == "retain_actual_results_change"
-            assert by_slug[slug] == row["corrected_entry"]
+            assert slug in by_slug
+            assert by_slug[slug] == presented[slug]
         else:
             assert row["disposition"] == "metadata_only_removed_from_index"
             assert slug not in by_slug
             assert slug in by_slug[row["redirect_to"]]["redirect_from"]
     assert len(current.entries) >= 23
     assert [e.model_dump(mode="json") for e in current.entries[:20]] == frozen["entries"][:20]
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("headline", "Updated preliminary counts for 53 contests."),
+        ("body", "Results checked November 6, 2026 at 11:22 p.m. Pacific."),
+        ("slug", "preliminary-results-2026-11-06-232155-changed"),
+        ("corrected_on", "2026-11-08"),
+        ("topics", ["sources"]),
+        ("actions", ["correction"]),
+        ("provenance", [{"label": "Changed evidence", "url": "/e/wa-2026-general/"}]),
+        ("redirect_from", []),
+    ],
+)
+def test_results_presentation_migration_rejects_other_authored_changes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, field: str, value: object
+) -> None:
+    raw = read_yaml(UPDATES_DIR / "wa-2026-general.yaml")
+    raw["entries"][20][field] = value
+    (tmp_path / "wa-2026-general.yaml").write_text(yaml.safe_dump(raw))
+    monkeypatch.setattr(f"{__name__}.UPDATES_DIR", tmp_path)
+    with pytest.raises(AssertionError):
+        test_results_check_audit_preserves_real_counts_and_all_published_routes()
+
+
+@pytest.mark.parametrize("mutation", ["headline", "body", "hash", "extra", "missing"])
+def test_results_presentation_migration_rejects_unapproved_binding(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mutation: str
+) -> None:
+    migration = json.loads(PRESENTATION_MIGRATION.read_text())
+    if mutation in {"headline", "body"}:
+        migration["entries"][0][mutation] += " Unapproved change."
+    elif mutation == "hash":
+        migration["entries"][0]["original_entry_sha256"] = "0" * 64
+    elif mutation == "extra":
+        migration["entries"].append(migration["entries"][0])
+    else:
+        migration["entries"].pop()
+    path = tmp_path / "presentation.json"
+    path.write_text(json.dumps(migration))
+    monkeypatch.setattr(f"{__name__}.PRESENTATION_MIGRATION", path)
+    with pytest.raises(AssertionError):
+        test_results_check_audit_preserves_real_counts_and_all_published_routes()

@@ -10,6 +10,7 @@ from urllib.parse import urljoin, urlsplit
 
 from pydantic import model_validator
 
+from election_guide.corrections.models import validate_update_slug
 from election_guide.hosting.models import DeploymentManifest, HostingModel
 from election_guide.serialization import canonical_json_bytes, read_json
 
@@ -83,14 +84,29 @@ _VERIFICATION_CLOCK = re.compile(
 )
 
 
+UpdateSnapshotPolicy = Literal["1.0", "2.0", "3.0", "4.0", "5.0", "6.0", "7.0"]
+UpdateSnapshotEntry = tuple[str, str] | tuple[str, str, str]
+
+
+def _entry_identity(entry: UpdateSnapshotEntry) -> tuple[str, ...]:
+    return ("permalink", entry[0]) if len(entry) == 3 else ("legacy", *entry)
+
+
+def _validate_entry_path(path: str, election: str) -> None:
+    prefix = f"/e/{election}/updates/"
+    if not path.startswith(prefix) or not path.endswith("/"):
+        raise ValueError("update permalink must belong to its own election")
+    validate_update_slug(path[len(prefix) : -1])
+
+
 class ElectionUpdatesSnapshot(HostingModel):
     pages: dict[str, str]
-    entries: list[tuple[str, str]]
+    entries: list[UpdateSnapshotEntry]
     information_pages: dict[str, str] | None = None
 
 
 class UpdatesSnapshot(HostingModel):
-    schema_version: Literal["1.0", "2.0", "3.0", "4.0", "5.0", "6.0"] = "6.0"
+    schema_version: UpdateSnapshotPolicy = "7.0"
     canonical_origin: str
     elections: dict[str, ElectionUpdatesSnapshot]
 
@@ -102,6 +118,19 @@ class UpdatesSnapshot(HostingModel):
             for election in self.elections.values()
         ):
             raise ValueError("Updates information policy requires every served page fingerprint")
+        for election_id, election in self.elections.items():
+            if self.schema_version != "7.0":
+                if any(len(entry) != 2 for entry in election.entries):
+                    raise ValueError("permalink Updates identity requires snapshot7.0")
+                continue
+            identities = [_entry_identity(entry) for entry in election.entries]
+            if len(set(identities)) != len(identities) or any(
+                not all(entry) for entry in election.entries
+            ):
+                raise ValueError("Updates contains invalid or duplicate entry identities")
+            for entry in election.entries:
+                if len(entry) == 3:
+                    _validate_entry_path(entry[0], election_id)
         return self
 
 
@@ -548,27 +577,45 @@ def _information_content(
 
 
 class _Entries(HTMLParser):
-    def __init__(self) -> None:
+    def __init__(self, *, permalink_identity: bool = False, election: str = "") -> None:
         super().__init__(convert_charrefs=True)
-        self.entries: set[tuple[str, str]] = set()
+        self.entries: set[UpdateSnapshotEntry] = set()
+        self.identities: set[tuple[str, ...]] = set()
+        self.permalink_identity = permalink_identity
+        self.election = election
+        self.schema: str | None = None
         self.active = False
         self.field: str | None = None
         self.date = ""
         self.headline = ""
         self.paths: list[str] = []
+        self.entry_paths: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        classes = (dict(attrs).get("class") or "").split()
+        attributes = dict(attrs)
+        classes = (attributes.get("class") or "").split()
+        if (
+            self.permalink_identity
+            and tag == "meta"
+            and attributes.get("name") == "seg-updates-schema"
+        ):
+            schema = attributes.get("content")
+            if self.schema is not None or schema not in {"1.0", "1.1", "1.2"}:
+                raise ValueError("invalid Updates authored schema marker")
+            self.schema = schema
         if tag == "article" and "corrections-entry" in classes:
             self.active = True
             self.date = self.headline = ""
+            self.entry_paths = []
         if self.active:
             if tag in {"p", "time"} and "corrections-date" in classes:
                 self.field = "date"
             elif tag == "strong" or "corrections-headline" in classes:
                 self.field = "headline"
             elif tag == "a" and self.field == "headline":
-                self.paths.append(dict(attrs).get("href") or "")
+                path = attributes.get("href") or ""
+                self.paths.append(path)
+                self.entry_paths.append(path)
 
     def handle_data(self, data: str) -> None:
         if self.field == "date":
@@ -580,39 +627,51 @@ class _Entries(HTMLParser):
         if tag in {"p", "time", "strong", "h2"}:
             self.field = None
         if tag == "article" and self.active:
-            key = (" ".join(self.date.split()), " ".join(self.headline.split()))
-            if not all(key) or key in self.entries:
+            key: UpdateSnapshotEntry = (
+                " ".join(self.date.split()),
+                " ".join(self.headline.split()),
+            )
+            if self.permalink_identity and (self.schema == "1.2" or self.entry_paths):
+                if len(self.entry_paths) != 1:
+                    raise ValueError("each permalink Updates entry needs one headline route")
+                if self.schema in {"1.0", "1.1"}:
+                    raise ValueError("legacy Updates cannot declare a permalink identity")
+                path = self.entry_paths[0]
+                _validate_entry_path(path, self.election)
+                key = (path, *key)
+            identity = _entry_identity(key)
+            if not all(key) or identity in self.identities:
                 raise ValueError("published Updates contains an invalid or duplicate entry")
             self.entries.add(key)
+            self.identities.add(identity)
             self.active = False
 
 
 def update_entry_paths(document: str, election: str) -> set[str]:
     """Read actual index headline links for independent staged deep-link verification."""
-    from election_guide.corrections.models import validate_update_slug
-
-    parser = _Entries()
+    parser = _Entries(permalink_identity=True, election=election)
     parser.feed(document)
     parser.close()
-    prefix = f"/e/{election}/updates/"
     for path in parser.paths:
-        if not path.startswith(prefix) or not path.endswith("/"):
-            raise ValueError("update permalink must belong to its own election")
-        validate_update_slug(path[len(prefix) : -1])
+        _validate_entry_path(path, election)
     if parser.paths and len(set(parser.paths)) != len(parser.entries):
         raise ValueError("update permalinks must cover every index entry exactly once")
     return set(parser.paths)
 
 
-def _entries(site: Path, manifest: DeploymentManifest, election: str) -> set[tuple[str, str]]:
+def _entries(
+    site: Path, manifest: DeploymentManifest, election: str, *, permalink_identity: bool
+) -> set[UpdateSnapshotEntry]:
     name = f"e/{election}/updates/index.html"
     if name not in manifest.assets:
         return set()
-    parser = _Entries()
+    parser = _Entries(permalink_identity=permalink_identity, election=election)
     parser.feed((site / name).read_text(encoding="utf-8"))
     parser.close()
     if parser.active or not parser.entries:
         raise ValueError(f"published Updates has no complete entries: {name}")
+    if permalink_identity and parser.paths and len(set(parser.paths)) != len(parser.entries):
+        raise ValueError("update permalinks must cover every index entry exactly once")
     return parser.entries
 
 
@@ -627,7 +686,7 @@ def _pages(manifest: DeploymentManifest, election: str) -> set[str]:
 
 
 def build_updates_snapshot(
-    site: Path, *, schema_version: Literal["1.0", "2.0", "3.0", "4.0", "5.0", "6.0"] = "6.0"
+    site: Path, *, schema_version: UpdateSnapshotPolicy = "7.0"
 ) -> UpdatesSnapshot:
     """Derive a durable content baseline from the verified pages that actually ship."""
     manifest = read_verified_deployment(site)
@@ -640,7 +699,14 @@ def build_updates_snapshot(
                     name: hashlib.sha256(_page_content(site, name, manifest)).hexdigest()
                     for name in sorted(_pages(manifest, election.election_id))
                 },
-                entries=sorted(_entries(site, manifest, election.election_id)),
+                entries=sorted(
+                    _entries(
+                        site,
+                        manifest,
+                        election.election_id,
+                        permalink_identity=schema_version == "7.0",
+                    )
+                ),
                 information_pages=(
                     None
                     if schema_version == "1.0"
@@ -650,11 +716,12 @@ def build_updates_snapshot(
                                 site,
                                 name,
                                 evidence_source_commit=election.git_commit
-                                if schema_version in {"3.0", "4.0", "5.0", "6.0"}
+                                if schema_version in {"3.0", "4.0", "5.0", "6.0", "7.0"}
                                 else None,
-                                verification_clocks=schema_version not in {"4.0", "5.0", "6.0"},
-                                result_clock_placement=schema_version in {"5.0", "6.0"},
-                                preliminary_metadata=schema_version != "6.0",
+                                verification_clocks=schema_version
+                                not in {"4.0", "5.0", "6.0", "7.0"},
+                                result_clock_placement=schema_version in {"5.0", "6.0", "7.0"},
+                                preliminary_metadata=schema_version not in {"6.0", "7.0"},
                             )
                         ).hexdigest()
                         for name in sorted(_pages(manifest, election.election_id))
@@ -678,7 +745,7 @@ def compare_updates_snapshots(
     published: UpdatesSnapshot, proposed: UpdatesSnapshot
 ) -> dict[str, Any]:
     """Require a fresh served entry for each election whose page fingerprints changed."""
-    if published.schema_version != "6.0" or proposed.schema_version != "6.0":
+    if published.schema_version != "7.0" or proposed.schema_version != "7.0":
         raise ValueError(
             "Updates snapshot policy differs; verify original baseline pages before upgrading"
         )
@@ -698,7 +765,8 @@ def compare_updates_snapshots(
             for page in old_pages.keys() & new_pages.keys()
             if old_pages[page] != new_pages[page]
         )
-        before, after = set(old.entries), set(new.entries)
+        before = {_entry_identity(entry) for entry in old.entries}
+        after = {_entry_identity(entry) for entry in new.entries}
         fresh = after - before
         # Rewriting a date/headline must not masquerade as an additional entry.
         retained = before <= after
@@ -706,7 +774,13 @@ def compare_updates_snapshots(
         elections[election] = {
             "result": "pass" if passed else "fail",
             "changed_pages": ["/" + page for page in sorted(changed)],
-            "new_entries": [{"date": day, "headline": headline} for day, headline in sorted(fresh)],
+            "new_entries": [
+                {"path": entry[0], "date": entry[1], "headline": entry[2]}
+                if len(entry) == 3
+                else {"date": entry[0], "headline": entry[1]}
+                for entry in sorted(new.entries)
+                if _entry_identity(entry) in fresh
+            ],
             "previous_entry_identities_retained": retained,
             "updates_path": f"/e/{election}/updates/",
         }

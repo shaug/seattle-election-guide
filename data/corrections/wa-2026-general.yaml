@@ -429,10 +429,10 @@ entries:
     actions: [added]
   - corrected_on: '2026-11-06'
     slug: preliminary-results-2026-11-06-232155
-    headline: Updated preliminary counts for 52 contests at 23:21:55 Pacific.
+    headline: Updated preliminary counts for 52 contests.
     body: Updated the unofficial counts for 52 contests, using each contest's complete jurisdiction.
       Publisher count and export times remain separate from source verification times. No certification
-      or outcome is inferred.
+      or outcome is inferred. Results checked November 6, 2026 at 11:21 p.m. Pacific.
     provenance:
     - label: General election guide
       url: /e/wa-2026-general/
@@ -446,10 +446,10 @@ entries:
     - preliminary-results-2026-11-07-052226
   - corrected_on: '2026-11-07'
     slug: preliminary-results-2026-11-07-164349
-    headline: Updated preliminary counts for 52 contests at 16:43:49 Pacific.
+    headline: Updated preliminary counts for 52 contests.
     body: Updated the unofficial counts for 52 contests, using each contest's complete jurisdiction.
       Publisher count and export times remain separate from source verification times. No certification
-      or outcome is inferred.
+      or outcome is inferred. Results checked November 7, 2026 at 4:43 p.m. Pacific.
     provenance:
     - label: General election guide
       url: /e/wa-2026-general/
@@ -461,10 +461,10 @@ entries:
     - changed
   - corrected_on: '2026-11-07'
     slug: preliminary-results-2026-11-07-182532
-    headline: Updated preliminary counts for 8 contests at 18:25:32 Pacific.
+    headline: Updated preliminary counts for 8 contests.
     body: Updated the unofficial counts for 8 contests, using each contest's complete jurisdiction.
       Publisher count and export times remain separate from source verification times. No certification
-      or outcome is inferred.
+      or outcome is inferred. Results checked November 7, 2026 at 6:25 p.m. Pacific.
     provenance:
     - label: General election guide
       url: /e/wa-2026-general/

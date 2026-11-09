@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from datetime import date
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 import yaml
@@ -78,8 +79,13 @@ def test_election_corrections_requires_at_least_one_entry() -> None:
         ElectionCorrections.model_validate(payload)
 
 
-def test_election_corrections_rejects_a_repeated_date_and_headline_entry() -> None:
+@pytest.mark.parametrize("schema", ["1.0", "1.1"])
+def test_legacy_corrections_reject_a_repeated_date_and_headline_entry(schema: str) -> None:
     payload = _valid_corrections().model_dump(mode="json")
+    payload["schema_version"] = schema
+    if schema == "1.1":
+        for entry in payload["entries"]:
+            entry.update(topics=["results"], actions=["changed"])
     payload["entries"].append(payload["entries"][0])
 
     with pytest.raises(ValidationError, match="repeats a"):
@@ -126,6 +132,18 @@ def test_updates_permalink_identity_survives_prose_date_and_order_changes() -> N
     assert changed.entries[1].slug == "amended-ld32-result"
     another_election = original.model_copy(update={"election_id": "wa-2026-general"})
     assert another_election.entries[0].slug == original.entries[0].slug
+
+
+def test_permalink_updates_with_matching_date_and_headline_keep_distinct_slug_identity() -> None:
+    payload = _permalink_log()
+    entries = cast(list[dict[str, Any]], payload["entries"])
+    entries[1].update(corrected_on=entries[0]["corrected_on"], headline=entries[0]["headline"])
+    log = ElectionCorrections.model_validate(payload)
+    assert [entry.slug for entry in log.entries] == [
+        "amended-ld32-result",
+        "endorsement-correction",
+    ]
+    assert log.entries[0].body != log.entries[1].body
 
 
 @pytest.mark.parametrize("collision", ["canonical", "alias", "self"])

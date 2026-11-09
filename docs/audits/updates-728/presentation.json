@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "authority": "https://github.com/shaug/seattle-election-guide/issues/728",
+  "source_revision": "5697bed34bc43e88de145e929fabf9499e6d0f63",
+  "source_audit": "docs/audits/updates-718/classification.json",
+  "source_audit_sha256": "40a8b6db2a7299e73d6ecee3afa3c920f3058202831218785910a51e27c8ca8d",
+  "entries": [
+    {
+      "slug": "preliminary-results-2026-11-06-232155",
+      "original_entry_sha256": "67ac8b0faeab170155457298323ac087bd506308f1a25d8a08790687d2338b00",
+      "headline": "Updated preliminary counts for 52 contests.",
+      "body": "Updated the unofficial counts for 52 contests, using each contest's complete jurisdiction. Publisher count and export times remain separate from source verification times. No certification or outcome is inferred. Results checked November 6, 2026 at 11:21 p.m. Pacific."
+    },
+    {
+      "slug": "preliminary-results-2026-11-07-164349",
+      "original_entry_sha256": "59b69666467f24bcfefb31c2fad190a2933fdde720d4b0ae9193a1bff8b31830",
+      "headline": "Updated preliminary counts for 52 contests.",
+      "body": "Updated the unofficial counts for 52 contests, using each contest's complete jurisdiction. Publisher count and export times remain separate from source verification times. No certification or outcome is inferred. Results checked November 7, 2026 at 4:43 p.m. Pacific."
+    },
+    {
+      "slug": "preliminary-results-2026-11-07-182532",
+      "original_entry_sha256": "047d03d4aff90585214bda5a79034d2b464a24af4e4457defcbf6d82f6616bc3",
+      "headline": "Updated preliminary counts for 8 contests.",
+      "body": "Updated the unofficial counts for 8 contests, using each contest's complete jurisdiction. Publisher count and export times remain separate from source verification times. No certification or outcome is inferred. Results checked November 7, 2026 at 6:25 p.m. Pacific."
+    }
+  ]
+}
