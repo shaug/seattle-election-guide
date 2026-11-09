@@ -519,7 +519,7 @@ def test_current_projection_can_use_old_presentation_bytes_without_serving_retir
         stage_pages_site(manifest, bundles, tmp_path / "legacy")
 
 
-def test_original_schema2_baseline_and_current_projection_share_snapshot6_facts(
+def test_original_schema2_baseline_and_current_projection_share_information_facts(
     tmp_path: Path,
 ) -> None:
     manifest, bundles, _ = _current_site(tmp_path)
@@ -540,8 +540,12 @@ def test_original_schema2_baseline_and_current_projection_share_snapshot6_facts(
     stage_pages_site(manifest, bundles, candidate)
 
     assert check_updates(baseline, candidate)["result"] == "pass"
-    assert build_updates_snapshot(baseline).schema_version == "6.0"
-    assert build_updates_snapshot(candidate).schema_version == "6.0"
+    for site in (baseline, candidate):
+        current = build_updates_snapshot(site)
+        previous = build_updates_snapshot(site, schema_version="6.0")
+        assert current.schema_version == "7.0"
+        for election_id, election in current.elections.items():
+            assert election.information_pages == previous.elections[election_id].information_pages
     page = candidate / "e" / OLDER_ID / "index.html"
     page.write_text(page.read_text().replace("10 ballots", "11 ballots"))
     _reseal_site(candidate)
