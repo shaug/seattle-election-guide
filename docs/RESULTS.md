@@ -45,6 +45,12 @@ observations in result/evidence history and the existing provenance display. The
 become a new count. Meaningful tally corrections, including decreases without a leader
 change, still receive an Update. The [five-record audit](audits/updates-718/README.md)
 preserves the original text and published links while correcting the erroneous public log.
+Preliminary-update headlines state only the changed contest count (#728). The body separately
+says “Results checked November 7, 2026 at 4:43 p.m. Pacific.” using the source check instant,
+converted to America/Los_Angeles at minute precision, without rounding. It never substitutes
+a publisher count or export clock. Slugs retain their original second precision. The narrow
+[#728 presentation migration](audits/updates-728/README.md) preserves the #718 audit, all
+published routes and every other authored field while correcting its three retained entries.
 Contest-ballots, total votes including write-ins and the named denominator remain distinct:
 candidate votes never become a ballot count. Preliminary tallies have no advanced/winner flag.
 When a State export omits its own total, the producer may sum its complete, exactly mapped
@@ -336,6 +342,9 @@ lowercase ASCII words/digits separated by single hyphens are accepted; `index` i
 Missing, duplicate, unsafe or URL-encoded identities fail before staging. Existing entries receive
 slugs once without changing any previous field. Automated result updates assign and retain their
 slug at creation, including harmless same-entry recovery. Legacy1.0/1.1 models retain their shape.
+For schema1.2, unique slugs and aliases own entry identity (#728): genuine separate tally changes
+may share a publication date and timestamp-free headline. Legacy1.0/1.1 still reject repeated
+`(corrected_on, headline)` identities. Existing original date/headline audit bindings remain strict.
 
 Keep a published slug when correcting prose or a date. A necessary URL correction retains the
 old slug in that entry's `redirect_from` list as a permanent redirect; do not reuse a retired route

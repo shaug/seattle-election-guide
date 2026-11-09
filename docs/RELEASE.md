@@ -67,6 +67,17 @@ evidence URLs and facts outside that result region remain compared. Old policies
 are verified under their original rules before deriving6.0 from the exact successful deployed
 artifact; a candidate or current main cannot supply the missing baseline.
 
+Snapshot schema `7.0` preserves every `6.0` election-information fingerprint and changes only
+Updates entry identity (#728). Linked entries record their actual same-election permalink,
+publication date and headline; comparison uses the permalink. Two genuine tally changes may
+therefore share a date and a timestamp-free headline. Editing an existing entry's prose or date
+never creates a fresh entry, and a concurrent information change still requires a fresh entry
+and retention of all earlier identities. Legacy unlinked logs keep their date/headline identity.
+The authored-schema meta record makes schema1.2's required headline links explicit; missing,
+duplicate, unsafe, cross-election or multiple headline routes fail validation. Older snapshots
+retain their original tuple shape and strict parser. Upgrading them requires the exact verified
+successful deployed artifact and original-policy snapshot verification before deriving `7.0`.
+
 Older `1.0`, `2.0` and `3.0` snapshots cannot be compared directly to the new fingerprints. The upgrade
 must obtain the exact successful production artifact, verify it against the still-served manifest
 and verified upload receipt, validate its original snapshot under its own policy against actual
@@ -100,7 +111,8 @@ obfuscation cannot rewrite the bytes checked by strict verification. Existing ca
 headers, statuses and bodies are preserved; exact hashes remain required. See the
 [hosting response contract](HOSTING.md#local-staging-and-preview) for Cloudflare's documented behavior.
 
-This presentation change retains Updates snapshot policy6.0. Head/footer provenance, markup and
+The historical-presentation change retained Updates snapshot policy6.0. The later #728 permalink
+identity policy7.0 preserves those same information fingerprints. Head/footer provenance, markup and
 paint do not become election information. Original deployment2.0 baselines remain verified under
 their own schema; older snapshot policies still require the exact authenticated deployed artifact
 and original-policy verification before migration. The candidate, latest main or a re-rendered
