@@ -1138,19 +1138,22 @@ remain pending while unaffected local checks continue.
 
 ## Guide joined Sources group (#679)
 
-The shared control macro accepts an optional source count/destination only from
-the admitted general Guide. Its source link and two existing announcing roots
-stay server-owned; `projectCompactSources` takes over only the summary span once
+The shared control macro accepts an optional source count/destination from any
+current admitted Guide, independently of precinct capability. Its source link
+and two existing announcing roots stay server-owned; `projectCompactSources`
+takes over only the summary span once
 and projects the existing controller's tallying selection and complete accessible
-sentence. It creates no new source/filter state, URL owner or dialog. Legacy
-Guide markup and the Comparisons composition retain their original branches.
+sentence. It creates no new source/filter state, URL owner or dialog. Comparisons
+has no Sources slot. Literal archived HTML and older client-payload fallbacks
+retain their original contracts.
 
 `wireCompactFilters` remains the fit owner. The Guide-only source slot reserves
 “All total” and “total of total” in the actual link styles, alongside the existing
 complete control families. The complete centered controls-plus-Sources group and
 twice the current count's side reservation must fit before admitting one row.
-Otherwise CSS grid puts Sources and the nowrap count on row two, with the four
-controls centered above. That second row must also fit its actual container.
+Otherwise CSS grid puts Sources and the nowrap count on row two, with the three
+shared controls and optional admitted Precinct centered above. That second row
+must also fit its actual container.
 Reclaim only the needed part of its 12px gap first; if the complete inline
 Sources face and count still exceed the row, stack the unchanged Sources prefix
 and value inside the same 44px target and remeasure its complete family. Icons,
