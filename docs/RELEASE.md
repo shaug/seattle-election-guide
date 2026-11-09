@@ -58,6 +58,15 @@ status, count and export clocks, authority, other text and evidence destinations
 malformed or non-result timestamps remain compared. This implements the unchanged-verification
 rule above without adding a filler Updates entry or hiding changed election information.
 
+Snapshot schema `6.0` implements #718's results-only automatic announcement rule. Recognized
+Unofficial result count/export clocks, marked recency/status and correctly pinned content-addressed
+original-result destinations are source metadata, not evidence that tallies changed. They remain
+in the verified page bytes and retained result history but do not independently require an
+Updates card. Counts/shares, certification, authority, unrecognized text, malformed/wrong-source
+evidence URLs and facts outside that result region remain compared. Old policies, including5.0,
+are verified under their original rules before deriving6.0 from the exact successful deployed
+artifact; a candidate or current main cannot supply the missing baseline.
+
 Older `1.0`, `2.0` and `3.0` snapshots cannot be compared directly to the new fingerprints. The upgrade
 must obtain the exact successful production artifact, verify it against the still-served manifest
 and verified upload receipt, validate its original snapshot under its own policy against actual

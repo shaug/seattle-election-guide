@@ -127,15 +127,16 @@ def test_election_only_migration_preserves_every_complete_original() -> None:
             assert added[0].corrected_on == date(2026, 11, 2)
             assert added[0].topics == ["endorsements"]
             assert added[0].actions == ["added"]
-            # The migration pins complete historical rows, not a ceiling on later
-            # substantive automatic result updates. Staging also preserves every
-            # previous raw byte, including all automatic entries already published.
+            # #718 audits the original automatic tail, removes metadata-only
+            # records and retains every published route through existing aliases.
+            # Later genuine tally changes retain distinct publication identities.
             for entry in added[2:]:
                 assert entry.corrected_on >= date(2026, 11, 6)
                 assert entry.topics == ["results"]
                 assert entry.actions == ["changed"]
                 assert re.fullmatch(
-                    r"Preliminary results checked at (?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d Pacific\.",
+                    r"Updated preliminary counts for [1-9]\d* contests? at "
+                    r"(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d Pacific\.",
                     entry.headline,
                 )
                 assert {link.url for link in entry.provenance} == {
@@ -231,3 +232,30 @@ def test_minor_copy_announcement_is_audited_instead_of_publicly_announced() -> N
     prefix = json.loads(json.dumps(original["entries"][:26], default=str))
     encoded = json.dumps(prefix, sort_keys=True, separators=(",", ":")).encode()
     assert hashlib.sha256(encoded).hexdigest() == audit["preserved_public_prefix_sha256"]
+
+
+def test_results_check_audit_preserves_real_counts_and_all_published_routes() -> None:
+    audit_dir = PROJECT_ROOT / "docs/audits/updates-718"
+    audit = json.loads((audit_dir / "classification.json").read_text())
+    original = (audit_dir / "original-wa-2026-general.yaml").read_bytes()
+    assert hashlib.sha256(original).hexdigest() == audit["original_file_sha256"]
+    frozen = json.loads(json.dumps(yaml.safe_load(original), default=str))
+    assert [row["original_entry"] for row in audit["records"]] == frozen["entries"][20:]
+    current = load_rendering_corrections("wa-2026-general", corrections_dir=UPDATES_DIR)
+    assert current is not None
+    by_slug = {e.slug: e.model_dump(mode="json") for e in current.entries}
+    assert [len(r["changed_contest_ids"]) for r in audit["records"]] == [52, 0, 52, 8, 0]
+    for row in audit["records"]:
+        before, after = row["before_tallies"], row["after_tallies"]
+        assert before.keys() == after.keys() and len(before) == 52
+        assert [key for key in before if before[key] != after[key]] == row["changed_contest_ids"]
+        slug = row["original_entry"]["slug"]
+        if row["changed_contest_ids"]:
+            assert row["disposition"] == "retain_actual_results_change"
+            assert by_slug[slug] == row["corrected_entry"]
+        else:
+            assert row["disposition"] == "metadata_only_removed_from_index"
+            assert slug not in by_slug
+            assert slug in by_slug[row["redirect_to"]]["redirect_from"]
+    assert len(current.entries) >= 23
+    assert [e.model_dump(mode="json") for e in current.entries[:20]] == frozen["entries"][:20]
