@@ -1,6 +1,7 @@
 {# Schema 1.1 election-information index. Legacy immutable records retain corrections.html.j2. #}
 {% extends 'base.html.j2' %}
 {% block head_meta %}
+  <meta name="seg-updates-schema" content="{{ guide.corrections.schema_version }}">
   {% set canonical_url = public_site_url ~ (detail_entry.href if detail_entry else guide_path ~ 'updates/') %}
   {% set page_description = (detail_entry.body | truncate(180)) if detail_entry else election_display_name ~ ' updates: endorsements, sources and results.' %}
   {{ shell.social_meta(document_title, page_description, canonical_url) }}

@@ -777,7 +777,8 @@
     "corrections-headline": [
       "template",
       "stylesheet",
-      "python"
+      "python",
+      "test"
     ],
     "corrections-entry": [
       "template",

@@ -18,6 +18,7 @@ import pytest
 
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
+from election_guide.rendering.browser import _settle  # pyright: ignore[reportPrivateUsage]
 from election_guide.rendering.config import read_rendering_configuration
 from election_guide.rendering.context import ComparisonCellView, comparison_row_differs
 from election_guide.rendering.documents import (
@@ -562,7 +563,7 @@ def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometr
     assert guide["face"] == compare["face"]
 
 
-@pytest.mark.parametrize("viewport_width", [1440, 390])
+@pytest.mark.parametrize("viewport_width", [1440, 1280, 390])
 def test_current_controls_retain_page_owned_scroll_placement(
     tmp_path: Path, viewport_width: int
 ) -> None:
@@ -570,7 +571,9 @@ def test_current_controls_retain_page_owned_scroll_placement(
     (async () => {
       const wrapper = document.querySelector('.sticky-header');
       const documentTop = wrapper.getBoundingClientRect().top + scrollY;
-      window.scrollTo(0, documentTop + 100);
+      const initialDocumentHeight = document.documentElement.scrollHeight;
+      const requestedScrollY = documentTop + 100;
+      window.scrollTo(0, requestedScrollY);
       await new Promise((resolve) => setTimeout(resolve, 80));
       const wrapperRect = wrapper.getBoundingClientRect();
       const barRect = wrapper.querySelector('.filter-control-bar').getBoundingClientRect();
@@ -582,13 +585,24 @@ def test_current_controls_retain_page_owned_scroll_placement(
         visible: barRect.bottom > 0 && barRect.top < innerHeight,
         outerWidth: document.documentElement.scrollWidth,
         viewportWidth: document.documentElement.clientWidth,
+        initialDocumentHeight,
+        documentHeight: document.documentElement.scrollHeight,
+        requestedScrollY,
+        actualScrollY: scrollY,
       });
     })()
     """
-    guide = _evaluate_in_chrome(_guide_html_path(tmp_path), script, mobile_width=viewport_width)
-    compare = _evaluate_in_chrome(
-        _comparison_html_path(tmp_path), script, mobile_width=viewport_width
+    # Initial frame layout can adjust scroll anchoring. Use the renderer's normal
+    # fonts/animation/two-frame handoff before measuring the requested scroll target.
+    guide = _evaluate_in_chrome(
+        _guide_html_path(tmp_path), script, mobile_width=viewport_width, interact=_settle
     )
+    compare = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path), script, mobile_width=viewport_width, interact=_settle
+    )
+    for rendered in (guide, compare):
+        assert rendered["documentHeight"] == rendered["initialDocumentHeight"]
+        assert abs(rendered["actualScrollY"] - rendered["requestedScrollY"]) < 1
     assert guide["outerWidth"] == guide["viewportWidth"]
     assert compare["outerWidth"] == compare["viewportWidth"]
     if viewport_width > 720:
