@@ -476,3 +476,19 @@ entries:
     - changed
     redirect_from:
     - preliminary-results-2026-11-07-202313
+  - corrected_on: '2026-11-09'
+    headline: Updated preliminary counts for 52 contests.
+    body: Updated the unofficial counts for 52 contests, using each contest's complete
+      jurisdiction. Publisher count and export times remain separate from source verification
+      times. No certification or outcome is inferred. Results checked November 9, 2026
+      at 8:23 p.m. Pacific.
+    provenance:
+    - label: General election guide
+      url: /e/wa-2026-general/
+    - label: Retained official results and refresh scope
+      url: https://github.com/shaug/seattle-election-guide/issues/696
+    topics:
+    - results
+    actions:
+    - changed
+    slug: preliminary-results-2026-11-09-202310
