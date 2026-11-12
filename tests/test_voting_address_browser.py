@@ -21,6 +21,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def _address_transport_mock() -> str:
     fixture = json.loads((ROOT / "tests/fixtures/address/public-civic.json").read_text())
+    fixture["metadata"] = json.loads(
+        (ROOT / "tests/fixtures/address/compatible-metadata.json").read_text()
+    )
     return (
         "const fixture="
         + json.dumps(fixture)
@@ -48,8 +51,8 @@ def _address_transport_mock() -> str:
           const key=url.includes('ADDRESS_POINT')
         ?'address':url.includes('CITY_AREA')?'city':'precinct';
           const expected=contract.address_lookup[key];
-          response={serviceItemId:expected.item
-        ,editingInfo:{dataLastEditDate:expected.data,schemaLastEditDate:expected.schema_edit}};
+          response={...structuredClone(fixture.metadata[key]),serviceItemId:expected.item,
+            editingInfo:{dataLastEditDate:expected.data,schemaLastEditDate:expected.schema_edit}};
         }
         return new Response(JSON.stringify(response));
       };

@@ -1,0 +1,245 @@
+{
+  "city": {
+    "id": 0,
+    "serviceItemId": "ab9d5cb566f4485c952ad0a278f11ef5",
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+      "wkid": 2926,
+      "latestWkid": 2926
+    },
+    "editingInfo": {
+      "lastEditDate": 1792005927397,
+      "schemaLastEditDate": 1792005925455,
+      "dataLastEditDate": 1792005925455
+    },
+    "capabilities": "Query,Extract",
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "supportedSpatialRelationships": [
+      "esriSpatialRelIntersects",
+      "esriSpatialRelContains",
+      "esriSpatialRelCrosses",
+      "esriSpatialRelEnvelopeIntersects",
+      "esriSpatialRelIndexIntersects",
+      "esriSpatialRelOverlaps",
+      "esriSpatialRelTouches",
+      "esriSpatialRelWithin",
+      "esriSpatialRelDisjoint",
+      "esriSpatialRelRelation"
+    ],
+    "maxRecordCount": 1000,
+    "useStandardizedQueries": true,
+    "fields": [
+      {
+        "name": "JURIS",
+        "type": "esriFieldTypeString",
+        "alias": "JURIS",
+        "sqlType": "sqlTypeOther",
+        "length": 2,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "CITYNAME",
+        "type": "esriFieldTypeString",
+        "alias": "CITYNAME",
+        "sqlType": "sqlTypeOther",
+        "length": 75,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      }
+    ]
+  },
+  "precinct": {
+    "id": 655,
+    "serviceItemId": "532208ddbedf4d2fa54ca7073987e83b",
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+      "wkid": 2926,
+      "latestWkid": 2926
+    },
+    "editingInfo": {
+      "lastEditDate": 1772671046142,
+      "schemaLastEditDate": 1772671046142,
+      "dataLastEditDate": 1772636566276
+    },
+    "capabilities": "Query",
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "supportedSpatialRelationships": [
+      "esriSpatialRelIntersects",
+      "esriSpatialRelContains",
+      "esriSpatialRelCrosses",
+      "esriSpatialRelEnvelopeIntersects",
+      "esriSpatialRelIndexIntersects",
+      "esriSpatialRelOverlaps",
+      "esriSpatialRelTouches",
+      "esriSpatialRelWithin",
+      "esriSpatialRelDisjoint",
+      "esriSpatialRelRelation"
+    ],
+    "maxRecordCount": 2000,
+    "useStandardizedQueries": true,
+    "fields": [
+      {
+        "name": "VOTDST",
+        "type": "esriFieldTypeString",
+        "alias": "VOTDST",
+        "sqlType": "sqlTypeOther",
+        "length": 4,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "NAME",
+        "type": "esriFieldTypeString",
+        "alias": "NAME",
+        "sqlType": "sqlTypeOther",
+        "length": 50,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "CONGDST",
+        "type": "esriFieldTypeString",
+        "alias": "CONGDST",
+        "sqlType": "sqlTypeOther",
+        "length": 4,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "KCCDST",
+        "type": "esriFieldTypeString",
+        "alias": "KCCDST",
+        "sqlType": "sqlTypeOther",
+        "length": 4,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "LEGDST",
+        "type": "esriFieldTypeString",
+        "alias": "LEGDST",
+        "sqlType": "sqlTypeOther",
+        "length": 4,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "SCC",
+        "type": "esriFieldTypeString",
+        "alias": "SCC",
+        "sqlType": "sqlTypeOther",
+        "length": 5,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      }
+    ]
+  },
+  "address": {
+    "id": 0,
+    "serviceItemId": "5aa0a3c77428491da8d73e9d069c10f6",
+    "geometryType": "esriGeometryPoint",
+    "spatialReference": {
+      "wkid": 2926,
+      "latestWkid": 2926
+    },
+    "editingInfo": {
+      "lastEditDate": 1794228994534,
+      "schemaLastEditDate": 1794228994534,
+      "dataLastEditDate": 1794228994534
+    },
+    "capabilities": "Query,Extract",
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "supportedSpatialRelationships": [
+      "esriSpatialRelIntersects",
+      "esriSpatialRelContains",
+      "esriSpatialRelCrosses",
+      "esriSpatialRelEnvelopeIntersects",
+      "esriSpatialRelIndexIntersects",
+      "esriSpatialRelOverlaps",
+      "esriSpatialRelTouches",
+      "esriSpatialRelWithin",
+      "esriSpatialRelDisjoint",
+      "esriSpatialRelRelation"
+    ],
+    "maxRecordCount": 1000,
+    "useStandardizedQueries": true,
+    "fields": [
+      {
+        "name": "SITEID",
+        "type": "esriFieldTypeGUID",
+        "alias": "ESITEID",
+        "sqlType": "sqlTypeOther",
+        "length": 38,
+        "nullable": false,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "ADDR_FULL",
+        "type": "esriFieldTypeString",
+        "alias": "FullAddr",
+        "sqlType": "sqlTypeOther",
+        "length": 120,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "ZIP5",
+        "type": "esriFieldTypeString",
+        "alias": "ZIP5",
+        "sqlType": "sqlTypeOther",
+        "length": 5,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "Building",
+        "type": "esriFieldTypeString",
+        "alias": "Building",
+        "sqlType": "sqlTypeOther",
+        "length": 75,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      },
+      {
+        "name": "Unit",
+        "type": "esriFieldTypeString",
+        "alias": "Unit",
+        "sqlType": "sqlTypeOther",
+        "length": 75,
+        "nullable": true,
+        "editable": true,
+        "domain": null,
+        "defaultValue": null
+      }
+    ]
+  },
+  "provenance": {
+    "issue": "https://github.com/shaug/seattle-election-guide/issues/746",
+    "purpose": "Projection of actual November12 metadata fields used by the adapter; unused field definitions and raw response entities are not reconstructed. Static offline fixtures, never current network evidence."
+  }
+}
