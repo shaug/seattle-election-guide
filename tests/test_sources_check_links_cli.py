@@ -234,14 +234,18 @@ def test_voting_period_requests_the_current_elections_links(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path, instant: str
 ) -> None:
     _set_check_time(monkeypatch, instant)
-    elections = []
+    elections: list[str] = []
 
     def check(registry: Any, **kwargs: Any) -> list[LinkCheckResult]:
         elections.append(registry.election_id)
         return [_result("a", "https://a.example", ok=True)]
 
     monkeypatch.setattr(cli, "run_link_check", check)
-    monkeypatch.setattr(cli, "reconcile_link_rot_alert", lambda *args, **kwargs: "healthy")
+
+    def reconcile(*args: Any, **kwargs: Any) -> str:
+        return "healthy"
+
+    monkeypatch.setattr(cli, "reconcile_link_rot_alert", reconcile)
     result = _invoke("--state-path", str(tmp_path / "state.json"))
     assert result.exit_code == 0, result.output
     assert elections == ["wa-2026-general"]
@@ -287,14 +291,18 @@ def test_default_registry_follows_a_site_current_election_change(
     site["elections"] = [e for e in site["elections"] if e["election_id"] == "wa-2026-primary"]
     site_path = tmp_path / "site.yaml"
     site_path.write_text(yaml.safe_dump(site))
-    seen = []
+    seen: list[str] = []
 
     def check(registry: Any, **kwargs: Any) -> list[LinkCheckResult]:
         seen.append(registry.election_id)
         return [_result("a", "https://a.example", ok=True)]
 
     monkeypatch.setattr(cli, "run_link_check", check)
-    monkeypatch.setattr(cli, "reconcile_link_rot_alert", lambda *args, **kwargs: "healthy")
+
+    def reconcile(*args: Any, **kwargs: Any) -> str:
+        return "healthy"
+
+    monkeypatch.setattr(cli, "reconcile_link_rot_alert", reconcile)
     result = _invoke(
         "--site-manifest", str(site_path), "--state-path", str(tmp_path / "state.json")
     )
@@ -344,14 +352,15 @@ def test_workflow_cache_receipt_requires_an_actual_state_write(
     )
     output = tmp_path / "github-output"
     output.touch()
-    monkeypatch.setattr(
-        cli,
-        "run_link_check",
-        lambda *args, **kwargs: [_result("a", "https://a.example", ok=False, error=GONE_404)],
-    )
-    monkeypatch.setattr(
-        cli, "reconcile_link_rot_alert", lambda *args, **kwargs: "confirmed failure retained"
-    )
+
+    def check(*args: Any, **kwargs: Any) -> list[LinkCheckResult]:
+        return [_result("a", "https://a.example", ok=False, error=GONE_404)]
+
+    def reconcile(*args: Any, **kwargs: Any) -> str:
+        return "confirmed failure retained"
+
+    monkeypatch.setattr(cli, "run_link_check", check)
+    monkeypatch.setattr(cli, "reconcile_link_rot_alert", reconcile)
     extra = ("--dry-run",) if dry_run else ()
     result = _invoke("--state-path", str(state), "--github-output", str(output), *extra)
     assert result.exit_code == (0 if "11-04" in instant else 1), result.output
