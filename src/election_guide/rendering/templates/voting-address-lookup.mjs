@@ -1,5 +1,5 @@
-// Optional, anonymous County/Esri lookup. No address leaves this adapter except as
-// transient suggestions; the control commits only an admitted precinct code.
+// Optional, anonymous County/Esri lookup. Address operations remain transient;
+// the control commits only an admitted precinct code.
 const LOCATOR =
   'https://gismaps.kingcounty.gov/arcgis/rest/services/Address/Address_Points_locator/GeocodeServer';
 const GIS = 'https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/';
@@ -10,6 +10,73 @@ const LIMIT = 20;
 const MAX_BYTES = 262144;
 const unresolved = () => ({ status: 'unresolved' });
 const unavailable = () => ({ status: 'unavailable' });
+const STRING = 'esriFieldTypeString';
+const LAYERS = {
+  city: {
+    id: 0,
+    geometry: 'esriGeometryPolygon',
+    fields: { CITYNAME: STRING, JURIS: STRING },
+  },
+  precinct: {
+    id: 655,
+    geometry: 'esriGeometryPolygon',
+    fields: {
+      VOTDST: STRING,
+      NAME: STRING,
+      CONGDST: STRING,
+      LEGDST: STRING,
+      KCCDST: STRING,
+      SCC: STRING,
+    },
+  },
+  address: {
+    id: 0,
+    geometry: 'esriGeometryPoint',
+    fields: {
+      SITEID: 'esriFieldTypeGUID',
+      ADDR_FULL: STRING,
+      ZIP5: STRING,
+      Building: STRING,
+      Unit: STRING,
+    },
+  },
+};
+
+/** @param {unknown} value @param {string} token */
+function supports(value, token) {
+  return (
+    typeof value === 'string' &&
+    value.split(',').some((part) => part.trim().toLowerCase() === token)
+  );
+}
+
+/** @param {any} value @param {number} wkid */
+function hasSpatialReference(value, wkid) {
+  return value?.wkid === wkid && (value.latestWkid === undefined || value.latestWkid === wkid);
+}
+
+/** @param {any} data @param {'city'|'precinct'|'address'} key */
+function compatibleMetadata(data, key) {
+  const layer = LAYERS[key];
+  return (
+    data.id === layer.id &&
+    data.geometryType === layer.geometry &&
+    hasSpatialReference(data.spatialReference, 2926) &&
+    supports(data.capabilities, 'query') &&
+    supports(data.supportedQueryFormats, 'json') &&
+    data.useStandardizedQueries === true &&
+    Number.isSafeInteger(data.maxRecordCount) &&
+    data.maxRecordCount >= LIMIT &&
+    (key === 'address' ||
+      (Array.isArray(data.supportedSpatialRelationships) &&
+        data.supportedSpatialRelationships.includes('esriSpatialRelIntersects'))) &&
+    Array.isArray(data.fields) &&
+    Object.entries(layer.fields).every(([name, type]) => {
+      const matches = data.fields.filter((/** @type {any} */ field) => field?.name === name);
+      return matches.length === 1 && matches[0].type === type;
+    })
+  );
+}
 
 /** @param {AddressLookupContext|null|undefined} binding @param {PrecinctContests[]} precincts
  * @param {{fetchImpl?: typeof fetch}} [options] */
@@ -96,13 +163,13 @@ export function createVotingAddressLookup(binding, precincts, { fetchImpl = fetc
       if (
         !expected ||
         data.serviceItemId !== expected.item ||
-        data.editingInfo?.schemaLastEditDate !== expected.schema_edit ||
+        !compatibleMetadata(data, key) ||
         (key !== 'address' && data.editingInfo?.dataLastEditDate !== expected.data)
       )
         throw new Error('unreviewed geography');
       if (
         !Number.isSafeInteger(data.editingInfo?.dataLastEditDate) ||
-        !Number.isSafeInteger(data.editingInfo?.schemaLastEditDate)
+        data.editingInfo.dataLastEditDate < 0
       )
         throw new Error('missing source identity');
       if (key === 'address') return data.editingInfo.dataLastEditDate;
@@ -181,23 +248,28 @@ export function createVotingAddressLookup(binding, precincts, { fetchImpl = fetc
         `${ADDRESS}/query`,
         {
           where: `ADDR_FULL = '${literal}' AND ZIP5 = '${a.Postal}'${unit ? ` AND Unit = '${unit}'` : ''}`,
-          outFields: 'OBJECTID,SITEID,ADDR_FULL,CTYNAME,POSTALCTYNAME,ZIP5,Building,Unit',
+          outFields: Object.keys(LAYERS.address.fields).join(','),
           outSR: '4326',
           returnGeometry: 'true',
           resultRecordCount: String(LIMIT),
         },
         signal,
       );
-      if (current.spatialReference?.wkid !== 4326) return unresolved();
+      if (!hasSpatialReference(current.spatialReference, 4326)) return unresolved();
       let code = /** @type {string|null} */ (null);
       for (const site of features(current)) {
         const point = site.geometry;
         if (
           site.attributes?.ADDR_FULL !== a.StAddr ||
           site.attributes.ZIP5 !== a.Postal ||
-          !site.attributes.SITEID ||
+          typeof site.attributes.SITEID !== 'string' ||
+          !site.attributes.SITEID.trim() ||
+          (site.attributes.Unit !== null && typeof site.attributes.Unit !== 'string') ||
+          (site.attributes.Building !== null && typeof site.attributes.Building !== 'string') ||
           (unit ? site.attributes.Unit !== unit : Boolean(site.attributes.Unit)) ||
           site.attributes.Building ||
+          (point?.spatialReference !== undefined &&
+            !hasSpatialReference(point.spatialReference, 4326)) ||
           typeof point?.x !== 'number' ||
           typeof point.y !== 'number' ||
           !Number.isFinite(point.x) ||

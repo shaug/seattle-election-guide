@@ -12,6 +12,7 @@ import json
 import re
 from datetime import timedelta
 from html.parser import HTMLParser
+from typing import Literal
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
@@ -46,6 +47,24 @@ def release_manifest_check(current_election_id: str) -> RouteCheck:
     )
 
 
+class RequestDiagnostics(BaseModel):
+    """Bounded metadata, separate from whether a complete response was obtained."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    started_at: AwareDatetime
+    elapsed_seconds: float = Field(ge=0)
+    headers_seconds: float | None = Field(default=None, ge=0)
+    body_seconds: float | None = Field(default=None, ge=0)
+    phase: Literal["open", "body", "complete"]
+    response_status: int | None = None
+    response_headers: dict[str, str] = Field(default_factory=dict)
+    expected_bytes: int | None = None
+    received_bytes: int | None = None
+    partial_sha256: str | None = None
+    exception_types: tuple[str, ...] = ()
+
+
 class Observation(BaseModel):
     """What one live request actually returned, or why it could not be made."""
 
@@ -55,6 +74,7 @@ class Observation(BaseModel):
     location: str | None = None
     raw_location: str | None = None
     error: str | None = None
+    diagnostics: RequestDiagnostics | None = None
 
 
 class RouteCheckResult(BaseModel):

@@ -15,7 +15,9 @@ import http.client
 import urllib.error
 import urllib.request
 from datetime import UTC, datetime
+from email.message import Message
 from time import monotonic
+from typing import Literal
 from urllib.parse import urljoin, urlsplit
 
 from election_guide.hosting.models import DeploymentManifest, SiteManifest
@@ -31,6 +33,7 @@ from election_guide.hosting.production_check import (
     Observation,
     PresentationAssetCheck,
     ProductionCheckReport,
+    RequestDiagnostics,
     RouteCheck,
     RouteCheckResult,
     evaluate_archive_index,
@@ -105,24 +108,87 @@ def probe(
     base_url: str, check: RouteCheck, *, timeout: float, deadline: float | None = None
 ) -> Observation:
     """Make one unfollowed request and report exactly what came back."""
-    url = urljoin(base_url, check.path)
+    return _fetch_body(base_url, check.path, timeout=timeout, deadline=deadline, read_body=False)[0]
+
+
+def _framing_headers(headers: Message | None) -> dict[str, str]:
+    """Only normalized known framing values; no arbitrary headers or parameters."""
+    result: dict[str, str] = {}
+    for name in ("Content-Length", "Content-Type", "Content-Encoding", "Transfer-Encoding"):
+        try:
+            value = headers.get(name) if headers is not None else None
+        except Exception:
+            continue
+        if not isinstance(value, str) or len(value) > 256:
+            continue
+        value = value.strip().lower()
+        if name == "Content-Length":
+            if value.isascii() and value.isdigit() and len(value) <= 20:
+                result[name.lower()] = str(int(value))
+        elif name == "Content-Type":
+            media_type = value.split(";", 1)[0].strip()
+            if media_type in {
+                "application/json",
+                "text/html",
+                "text/plain",
+                "application/octet-stream",
+            }:
+                result[name.lower()] = media_type
+        else:
+            codings = [coding.strip() for coding in value.split(",")]
+            if codings and all(
+                c in {"identity", "gzip", "br", "deflate", "zstd", "chunked"} for c in codings
+            ):
+                result[name.lower()] = ", ".join(codings)
+    return result
+
+
+def _request_diagnostics(
+    started_at: datetime,
+    start: float,
+    phase: Literal["open", "body", "complete"],
+    response_status: int | None,
+    headers: Message | None,
+    headers_at: float | None,
+    body_start: float | None,
+    body: bytes | None = None,
+    error: BaseException | None = None,
+) -> RequestDiagnostics | None:
+    """Diagnostic failures never replace the existing transport outcome."""
     try:
-        with _OPENER.open(_request(url), timeout=_request_timeout(timeout, deadline)) as response:
-            raw_location = response.headers.get("Location")
-            return Observation(
-                status=response.status,
-                location=_location_path(raw_location),
-                raw_location=raw_location,
-            )
-    except urllib.error.HTTPError as error:
-        raw_location = error.headers.get("Location")
-        return Observation(
-            status=error.code,
-            location=_location_path(raw_location),
-            raw_location=raw_location,
+        end = monotonic()
+        safe_headers = _framing_headers(headers)
+        partial = getattr(error, "partial", None)
+        types: list[str] = []
+        seen: set[int] = set()
+        cause = error
+        while isinstance(cause, BaseException) and id(cause) not in seen and len(types) < 4:
+            seen.add(id(cause))
+            types.append(type(cause).__name__[:80])
+            cause = cause.__cause__ or cause.__context__ or getattr(cause, "reason", None)
+        return RequestDiagnostics(
+            started_at=started_at,
+            elapsed_seconds=max(0, end - start),
+            headers_seconds=None if headers_at is None else max(0, headers_at - start),
+            body_seconds=None if body_start is None else max(0, end - body_start),
+            phase=phase,
+            response_status=response_status,
+            response_headers=safe_headers,
+            expected_bytes=int(safe_headers["content-length"])
+            if "content-length" in safe_headers
+            else None,
+            received_bytes=len(body)
+            if body is not None
+            else len(partial)
+            if isinstance(partial, bytes)
+            else None,
+            partial_sha256=hashlib.sha256(partial).hexdigest()
+            if isinstance(partial, bytes)
+            else None,
+            exception_types=tuple(types),
         )
-    except _TRANSPORT_ERRORS as error:
-        return Observation(error=str(error))
+    except Exception:
+        return None
 
 
 def fetch_manifest_body(
@@ -133,17 +199,43 @@ def fetch_manifest_body(
 
 
 def _fetch_body(
-    base_url: str, path: str, *, timeout: float, deadline: float | None = None
+    base_url: str,
+    path: str,
+    *,
+    timeout: float,
+    deadline: float | None = None,
+    read_body: bool = True,
 ) -> tuple[Observation, bytes | None]:
     url = urljoin(base_url, path)
+    started_at, start = datetime.now(UTC), monotonic()
+    phase: Literal["open", "body", "complete"] = "open"
+    response_status: int | None = None
+    headers: Message | None = None
+    headers_at: float | None = None
+    body_start: float | None = None
     try:
         with _OPENER.open(_request(url), timeout=_request_timeout(timeout, deadline)) as response:
-            body = response.read()
+            headers_at = monotonic()
+            response_status, headers = response.status, response.headers
+            body = None
+            if read_body:
+                phase, body_start = "body", monotonic()
+                body = response.read()
             raw_location = response.headers.get("Location")
             observation = Observation(
                 status=response.status,
                 location=_location_path(raw_location),
                 raw_location=raw_location,
+                diagnostics=_request_diagnostics(
+                    started_at,
+                    start,
+                    "complete",
+                    response_status,
+                    headers,
+                    headers_at,
+                    body_start,
+                    body,
+                ),
             )
             return observation, body
     except urllib.error.HTTPError as error:
@@ -152,9 +244,24 @@ def _fetch_body(
             status=error.code,
             location=_location_path(raw_location),
             raw_location=raw_location,
+            diagnostics=_request_diagnostics(
+                started_at, start, "open", error.code, error.headers, monotonic(), None, error=error
+            ),
         ), None
     except _TRANSPORT_ERRORS as error:
-        return Observation(error=str(error)), None
+        return Observation(
+            error=str(error),
+            diagnostics=_request_diagnostics(
+                started_at,
+                start,
+                phase,
+                response_status,
+                headers,
+                headers_at,
+                body_start,
+                error=error,
+            ),
+        ), None
 
 
 def fetch_asset_body(

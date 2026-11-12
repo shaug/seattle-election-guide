@@ -929,8 +929,14 @@ The admitted November2026 precinct contract may carry an explicit catalog-bound
 address capability and reviewed jurisdiction/source identities. Primary, legacy,
 unsupported and mismatched capabilities issue no lookup requests. No capability is
 inferred from URL paths, panel labels or the wall clock; general artifacts may retain
-their own pinned binding. Detected source drift fails closed, without claiming an
-atomic public GIS snapshot or fetching entire polygon layers per lookup.
+their own pinned binding. Metadata admission checks the consumed field/type,
+layer/item, geometry/SR and bounded query contract before and after resolution
+(#746), rather than comparing schema-edit clocks or complete field arrays.
+Recorded schema epochs remain provenance. City/precinct DATA stays pinned to the
+reviewed election geography; ADDRESS DATA may refresh between lookups but must
+stay equal within one resolution. Compatible aliases, indexes, field order and
+unused fields do not invalidate a lookup. Incompatible drift fails closed without
+claiming an atomic public GIS snapshot or fetching whole polygon layers.
 
 `voting-address-lookup.mjs` is the narrow storage-free network adapter, using fixed
 approved endpoints and bounded anonymous requests (address-bearing form POST;

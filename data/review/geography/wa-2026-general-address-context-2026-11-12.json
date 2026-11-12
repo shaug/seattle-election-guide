@@ -1,0 +1,404 @@
+{
+  "record_version": "1.0",
+  "issue": "https://github.com/shaug/seattle-election-guide/issues/746",
+  "election_id": "wa-2026-general",
+  "recorded_by": "OpenAI Codex /root",
+  "recorded_at": "2026-11-12T05:37:18.025507+00:00",
+  "purpose": "Review one current ADDRESS context after a reproduced schema-identity rejection. No adapter/UI/provider, other layer pin, catalog or election-fact change.",
+  "previous_context": {
+    "election_id": "wa-2026-general",
+    "mapping_hash": "6320180e360a9ae2299d2e2971c3cf0e1b39e0d1e87c675b3a6fd3ee54fc82ef",
+    "city": {
+      "item": "ab9d5cb566f4485c952ad0a278f11ef5",
+      "data": 1792005925455,
+      "schema_edit": 1792005925455
+    },
+    "precinct": {
+      "item": "532208ddbedf4d2fa54ca7073987e83b",
+      "data": 1772636566276,
+      "schema_edit": 1772671046142
+    },
+    "address": {
+      "item": "5aa0a3c77428491da8d73e9d069c10f6",
+      "data": 1793624199394,
+      "schema_edit": 1793624207718
+    }
+  },
+  "reviewed_context": {
+    "address": {
+      "data": 1794228994534,
+      "item": "5aa0a3c77428491da8d73e9d069c10f6",
+      "schema_edit": 1794228994534
+    },
+    "city": {
+      "data": 1792005925455,
+      "item": "ab9d5cb566f4485c952ad0a278f11ef5",
+      "schema_edit": 1792005925455
+    },
+    "election_id": "wa-2026-general",
+    "mapping_hash": "6320180e360a9ae2299d2e2971c3cf0e1b39e0d1e87c675b3a6fd3ee54fc82ef",
+    "precinct": {
+      "data": 1772636566276,
+      "item": "532208ddbedf4d2fa54ca7073987e83b",
+      "schema_edit": 1772671046142
+    }
+  },
+  "observed_context_metadata": {
+    "city": {
+      "serviceItemId": "ab9d5cb566f4485c952ad0a278f11ef5",
+      "editingInfo": {
+        "lastEditDate": 1792005927397,
+        "schemaLastEditDate": 1792005925455,
+        "dataLastEditDate": 1792005925455
+      }
+    },
+    "precinct": {
+      "serviceItemId": "532208ddbedf4d2fa54ca7073987e83b",
+      "editingInfo": {
+        "lastEditDate": 1772671046142,
+        "schemaLastEditDate": 1772671046142,
+        "dataLastEditDate": 1772636566276
+      }
+    },
+    "address": {
+      "serviceItemId": "5aa0a3c77428491da8d73e9d069c10f6",
+      "editingInfo": {
+        "lastEditDate": 1794228994534,
+        "schemaLastEditDate": 1794228994534,
+        "dataLastEditDate": 1794228994534
+      }
+    }
+  },
+  "source_review": {
+    "reviewer": "OpenAI Codex /root",
+    "production_observed_source": "a20a3f3df92c42a95fcf5d14274b5ab29ac83955",
+    "production_observed_release": "2026-general.113",
+    "published_adapter_control": {
+      "result": {
+        "status": "unavailable"
+      },
+      "suggestions": 3,
+      "resolution_metadata_reads": 3,
+      "geocoder_or_query_calls": 0,
+      "all4_requests_HTTP200": true
+    },
+    "ADDRESS_complete_field_count": 45,
+    "ADDRESS_complete_fields_sha256": "be09c43a45451ef428610ec097156f494065cf9ed0a02db6ab87a10889814cc5",
+    "field_hash_encoding": "UTF-8 JSON complete field array; sorted keys, compact separators, original array order. Derived value, not original HTTP entity bytes.",
+    "previous_recorded_complete_fields_sha256": "c82f619da9e444b101177234c37ad149cc2f0f9448ed88fde4ff9fced3eba295",
+    "whole_previous_field_array_equality": false,
+    "historical_comparison_limit": "Current complete field-array hash differs from the November4 recorded hash. Original historical full metadata was not available in the inspected retained incident directories; no complete old/new field-array or metadata-diff equality is claimed. Compatibility is established for the reviewed current adapter contract and bounded civic path below.",
+    "reviewed_ADDRESS_contract": {
+      "serviceItemId": "5aa0a3c77428491da8d73e9d069c10f6",
+      "geometryType": "esriGeometryPoint",
+      "spatialReference": {
+        "wkid": 2926,
+        "latestWkid": 2926
+      },
+      "objectIdField": "OBJECTID",
+      "capabilities": "Query,Extract",
+      "supportedQueryFormats": "JSON, geoJSON, PBF",
+      "maxRecordCount": 1000,
+      "required_fields": [
+        {
+          "name": "OBJECTID",
+          "type": "esriFieldTypeOID",
+          "alias": "OBJECTID",
+          "sqlType": "sqlTypeOther",
+          "nullable": false,
+          "editable": false,
+          "domain": null,
+          "defaultValue": null
+        },
+        {
+          "name": "SITEID",
+          "type": "esriFieldTypeGUID",
+          "alias": "ESITEID",
+          "sqlType": "sqlTypeOther",
+          "length": 38,
+          "nullable": false,
+          "editable": true,
+          "domain": null,
+          "defaultValue": null
+        },
+        {
+          "name": "ADDR_FULL",
+          "type": "esriFieldTypeString",
+          "alias": "FullAddr",
+          "sqlType": "sqlTypeOther",
+          "length": 120,
+          "nullable": true,
+          "editable": true,
+          "domain": null,
+          "defaultValue": null
+        },
+        {
+          "name": "CTYNAME",
+          "type": "esriFieldTypeString",
+          "alias": "CTYNAME",
+          "sqlType": "sqlTypeOther",
+          "length": 28,
+          "nullable": true,
+          "editable": true,
+          "domain": null,
+          "defaultValue": null
+        },
+        {
+          "name": "POSTALCTYNAME",
+          "type": "esriFieldTypeString",
+          "alias": "POSTALCTYNAME",
+          "sqlType": "sqlTypeOther",
+          "length": 28,
+          "nullable": true,
+          "editable": true,
+          "domain": null,
+          "defaultValue": null
+        },
+        {
+          "name": "ZIP5",
+          "type": "esriFieldTypeString",
+          "alias": "ZIP5",
+          "sqlType": "sqlTypeOther",
+          "length": 5,
+          "nullable": true,
+          "editable": true,
+          "domain": null,
+          "defaultValue": null
+        },
+        {
+          "name": "Building",
+          "type": "esriFieldTypeString",
+          "alias": "Building",
+          "sqlType": "sqlTypeOther",
+          "length": 75,
+          "nullable": true,
+          "editable": true,
+          "domain": null,
+          "defaultValue": null
+        },
+        {
+          "name": "Unit",
+          "type": "esriFieldTypeString",
+          "alias": "Unit",
+          "sqlType": "sqlTypeOther",
+          "length": 75,
+          "nullable": true,
+          "editable": true,
+          "domain": null,
+          "defaultValue": null
+        }
+      ]
+    },
+    "scope": "Reviewed all45 current field definitions and the exact adapter-consumed eight fields; current point geometry,4326 query output, complete bounded exact-site results, Seattle intersection and all catalog district assignments succeeded. All fields retained in the historical civic candidate match; the fresh complete candidate additionally contains56 previously omitted provider attributes. Whole current city/precinct JSON values equal the historical fixture. Whole site JSON differs only in unused OBJECTID25342 to25347. City/precinct identities and all1020 catalog tuples remain pinned, not refreshed.",
+    "review_is_not": "Independent canonical review, voter eligibility, universal address coverage, atomic GIS snapshot, browser CORS/device acceptance or deployed repair.",
+    "candidate_comparison": {
+      "historical_fixture_was_projection": true,
+      "all_historical_fields_equal": true,
+      "current_additional_attribute_names": [
+        "AddBldg",
+        "AddNumFrom",
+        "AddNumTo",
+        "AddRange",
+        "BldgName",
+        "BldgType",
+        "Block",
+        "CntryName",
+        "Country",
+        "DisplayX",
+        "DisplayY",
+        "Distance",
+        "District",
+        "ExInfo",
+        "LangCode",
+        "LevelName",
+        "LevelType",
+        "LongLabel",
+        "MetroArea",
+        "Nbrhd",
+        "PIN",
+        "Phone",
+        "PlaceName",
+        "Place_addr",
+        "PostalExt",
+        "Rank",
+        "Region",
+        "RegionAbbr",
+        "Score",
+        "Sector",
+        "ShortLabel",
+        "Side",
+        "StDir1",
+        "StDir2",
+        "StName1",
+        "StName2",
+        "StPreDir",
+        "StPreDir1",
+        "StPreDir2",
+        "StPreType",
+        "StPreType1",
+        "StPreType2",
+        "StType1",
+        "StType2",
+        "Status",
+        "Subregion",
+        "Territory",
+        "Type",
+        "URL",
+        "X",
+        "Xmax",
+        "Xmin",
+        "Y",
+        "Ymax",
+        "Ymin",
+        "Zone"
+      ],
+      "complete_candidate_literal_equality": false
+    }
+  },
+  "observations": [
+    {
+      "index": 1,
+      "url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Address/Address_Points_locator/GeocodeServer/suggest",
+      "method": "POST",
+      "started_at": "2026-11-12T05:33:58.287Z",
+      "retrieved_at": "2026-11-12T05:33:58.415Z",
+      "status": 200,
+      "bytes": 419,
+      "sha256": "8e973e001fda4b043652146786ff2ea368711cfa9571225056c6b43047488ae8"
+    },
+    {
+      "index": 2,
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/CITY_AREA_448/FeatureServer/0?f=json",
+      "method": "GET",
+      "started_at": "2026-11-12T05:33:58.415Z",
+      "retrieved_at": "2026-11-12T05:33:58.771Z",
+      "status": 200,
+      "bytes": 36442,
+      "sha256": "6deccb6d877827e931d79d3a934d1ea1e67abc7f60c8ceba3b510009c85b7600"
+    },
+    {
+      "index": 3,
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/FindMyDistricts_March2026/FeatureServer/655?f=json",
+      "method": "GET",
+      "started_at": "2026-11-12T05:33:58.772Z",
+      "retrieved_at": "2026-11-12T05:33:58.863Z",
+      "status": 200,
+      "bytes": 9764,
+      "sha256": "dff27220ff997c9c130f7d2f44d8075aff5fbd559e92764a7e1ee6eaec311fca"
+    },
+    {
+      "index": 4,
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/ADDRESS_POINT_642/FeatureServer/0?f=json",
+      "method": "GET",
+      "started_at": "2026-11-12T05:33:58.863Z",
+      "retrieved_at": "2026-11-12T05:33:58.961Z",
+      "status": 200,
+      "bytes": 16948,
+      "sha256": "d689482b09ae1cda0adafdc3ba350b61edd84732ca2ea99c448d7d4dc85f3f55"
+    },
+    {
+      "index": 5,
+      "url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Address/Address_Points_locator/GeocodeServer/findAddressCandidates",
+      "method": "POST",
+      "started_at": "2026-11-12T05:33:58.961Z",
+      "retrieved_at": "2026-11-12T05:33:58.986Z",
+      "status": 200,
+      "bytes": 1498,
+      "sha256": "dca715ae7b58ed0a38d7abb99a885c36d1ee813211eb29de679b87d92180f9a1"
+    },
+    {
+      "index": 6,
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/ADDRESS_POINT_642/FeatureServer/0/query",
+      "method": "POST",
+      "started_at": "2026-11-12T05:33:58.987Z",
+      "retrieved_at": "2026-11-12T05:33:59.451Z",
+      "status": 200,
+      "bytes": 1567,
+      "sha256": "c8f32bd4e8313dc38872d189a8af1f7aa2e473cdda3227d9efd9d6fcdeaa4047"
+    },
+    {
+      "index": 7,
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/CITY_AREA_448/FeatureServer/0/query",
+      "method": "POST",
+      "started_at": "2026-11-12T05:33:59.452Z",
+      "retrieved_at": "2026-11-12T05:33:59.648Z",
+      "status": 200,
+      "bytes": 551,
+      "sha256": "664b0f8dac476abe523c5301459e9c01a92aea7324076984aa452cb3cec86a7c"
+    },
+    {
+      "index": 8,
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/FindMyDistricts_March2026/FeatureServer/655/query",
+      "method": "POST",
+      "started_at": "2026-11-12T05:33:59.648Z",
+      "retrieved_at": "2026-11-12T05:33:59.840Z",
+      "status": 200,
+      "bytes": 1131,
+      "sha256": "c6391e44fd07dc1379ca0dbcf349be6df41e1f7aaa6ea96f89893f7475f019bf"
+    },
+    {
+      "index": 9,
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/CITY_AREA_448/FeatureServer/0?f=json",
+      "method": "GET",
+      "started_at": "2026-11-12T05:33:59.841Z",
+      "retrieved_at": "2026-11-12T05:33:59.854Z",
+      "status": 200,
+      "bytes": 36442,
+      "sha256": "6deccb6d877827e931d79d3a934d1ea1e67abc7f60c8ceba3b510009c85b7600"
+    },
+    {
+      "index": 10,
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/FindMyDistricts_March2026/FeatureServer/655?f=json",
+      "method": "GET",
+      "started_at": "2026-11-12T05:33:59.855Z",
+      "retrieved_at": "2026-11-12T05:33:59.866Z",
+      "status": 200,
+      "bytes": 9764,
+      "sha256": "dff27220ff997c9c130f7d2f44d8075aff5fbd559e92764a7e1ee6eaec311fca"
+    },
+    {
+      "index": 11,
+      "url": "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/ADDRESS_POINT_642/FeatureServer/0?f=json",
+      "method": "GET",
+      "started_at": "2026-11-12T05:33:59.866Z",
+      "retrieved_at": "2026-11-12T05:33:59.877Z",
+      "status": 200,
+      "bytes": 16948,
+      "sha256": "d689482b09ae1cda0adafdc3ba350b61edd84732ca2ea99c448d7d4dc85f3f55"
+    }
+  ],
+  "scope_proof": {
+    "prospective_unmodified_adapter_result": {
+      "status": "resolved",
+      "code": "3230"
+    },
+    "supported_precinct_name": "SEA 34-3230",
+    "all11_requests_HTTP200": true,
+    "whole_metadata_before_after_equal": {
+      "CITY_AREA": {
+        "indices": [
+          2,
+          9
+        ],
+        "whole_literal_equal": true
+      },
+      "March2026": {
+        "indices": [
+          3,
+          10
+        ],
+        "whole_literal_equal": true
+      },
+      "ADDRESS_POINT": {
+        "indices": [
+          4,
+          11
+        ],
+        "whole_literal_equal": true
+      }
+    },
+    "preserved_checks": "Exact item/schema admission; before/after source drift; canonical PointAddress/site/unit; declared4326 finite geometry; complete bounded site/city/precinct arrays; Seattle jurisdiction; exact catalog code/name/all district tuples.",
+    "clock_limit": "These are actual retrieval/recording clocks, not new election counts or publisher/certification clocks."
+  },
+  "custody": "Full metadata response entities, provider suggestion keys and diagnostic request details remain private. This record contains clean official URLs, metadata, derived hashes and scoped observations. The separate public civic fixture is structured anonymous official response data, not a residential address."
+}
