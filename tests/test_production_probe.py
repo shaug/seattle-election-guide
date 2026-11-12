@@ -7,17 +7,23 @@ redirect response is observed at its own hop rather than silently followed.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import socketserver
 import threading
+import urllib.error
 from collections.abc import Generator, Iterator
 from contextlib import contextmanager, suppress
 from datetime import UTC, datetime
+from email.message import Message
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from itertools import pairwise
 from typing import ClassVar
+from urllib.request import Request
 
 import pytest
 
+from election_guide.hosting import production_probe
 from election_guide.hosting.production_check import RouteCheck, render_summary_lines
 from election_guide.hosting.production_probe import fetch_manifest_body, probe, run_production_check
 from tests.test_production_check import (
@@ -154,6 +160,8 @@ class _TruncatedManifestHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         self.send_response(200)
         self.send_header("Content-Length", "1000")
+        self.send_header("Content-Type", "application/json; private=header-secret")
+        self.send_header("Set-Cookie", "session=header-secret")
         self.end_headers()
         self.wfile.write(b"short")
         self.close_connection = True
@@ -339,6 +347,214 @@ def test_fetch_manifest_body_reports_a_truncated_response_instead_of_crashing(
     assert observation.status is None
     assert observation.error is not None
     assert body is None
+
+
+def test_truncated_body_retains_available_diagnostics_without_accepting_partial_bytes(
+    truncated_manifest_server: str,
+) -> None:
+    """Dropping metadata at the failed read loses the already received framing."""
+    observation, body = fetch_manifest_body(truncated_manifest_server, timeout=5)
+
+    diagnostic = getattr(observation, "diagnostics", None)
+    assert diagnostic is not None
+    assert observation.status is None and body is None
+    assert diagnostic.phase == "body"
+    assert diagnostic.response_status == 200
+    assert diagnostic.expected_bytes == 1000
+    assert diagnostic.received_bytes == 5
+    assert diagnostic.partial_sha256 == hashlib.sha256(b"short").hexdigest()
+    assert "IncompleteRead" in diagnostic.exception_types
+    assert diagnostic.response_headers == {
+        "content-length": "1000",
+        "content-type": "application/json",
+    }
+    assert "header-secret" not in observation.model_dump_json()
+    assert 0 <= diagnostic.headers_seconds <= diagnostic.elapsed_seconds
+    assert 0 <= diagnostic.body_seconds <= diagnostic.elapsed_seconds
+
+
+def test_successful_body_retains_timing_and_received_length(server: str) -> None:
+    observation, body = fetch_manifest_body(server, timeout=5)
+
+    diagnostic = getattr(observation, "diagnostics", None)
+    assert diagnostic is not None
+    assert observation.status == 200 and body == MANIFEST_BODY
+    assert diagnostic.phase == "complete"
+    assert diagnostic.received_bytes == len(MANIFEST_BODY)
+    assert diagnostic.expected_bytes is None
+    assert diagnostic.partial_sha256 is None
+    assert diagnostic.exception_types == ()
+    assert diagnostic.started_at.tzinfo is not None
+    assert 0 <= diagnostic.headers_seconds <= diagnostic.elapsed_seconds
+    assert 0 <= diagnostic.body_seconds <= diagnostic.elapsed_seconds
+
+
+def test_pre_response_failure_retains_phase_and_exception_chain() -> None:
+    observation, body = fetch_manifest_body("http://127.0.0.1:1", timeout=1)
+
+    diagnostic = getattr(observation, "diagnostics", None)
+    assert diagnostic is not None
+    assert observation.status is None and body is None
+    assert diagnostic.phase == "open"
+    assert diagnostic.response_status is None
+    assert diagnostic.headers_seconds is None and diagnostic.body_seconds is None
+    assert diagnostic.expected_bytes is None and diagnostic.received_bytes is None
+    assert "URLError" in diagnostic.exception_types
+    assert "ConnectionRefusedError" in diagnostic.exception_types
+
+
+@pytest.mark.parametrize("error_type", [ConnectionResetError, TimeoutError])
+def test_failed_body_keeps_original_error_and_does_not_invent_received_bytes(
+    monkeypatch: pytest.MonkeyPatch, error_type: type[OSError]
+) -> None:
+    calls: list[tuple[str, float]] = []
+
+    class FailedBody:
+        status = 200
+        headers = Message()
+        headers["Content-Length"] = "25"
+
+        def __enter__(self) -> FailedBody:
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            pass
+
+        def read(self) -> bytes:
+            raise error_type("body-read-original-error")
+
+    def open_response(request: Request, *, timeout: float) -> FailedBody:
+        calls.append((request.full_url, timeout))
+        return FailedBody()
+
+    monkeypatch.setattr("election_guide.hosting.production_probe._OPENER.open", open_response)
+    observation, body = fetch_manifest_body("https://example.test", timeout=5)
+
+    diagnostic = getattr(observation, "diagnostics", None)
+    assert diagnostic is not None
+    assert calls == [("https://example.test/deployment-manifest.json", 5)]
+    assert observation.status is None and body is None
+    assert observation.error == "body-read-original-error"
+    assert diagnostic.phase == "body" and diagnostic.response_status == 200
+    assert diagnostic.expected_bytes == 25 and diagnostic.received_bytes is None
+    assert diagnostic.partial_sha256 is None
+    assert diagnostic.exception_types == (error_type.__name__,)
+
+
+def test_diagnostics_round_trip_does_not_turn_incomplete_body_into_a_pass(
+    truncated_manifest_server: str,
+) -> None:
+    from election_guide.hosting.production_check import (
+        MANIFEST_CHECK,
+        ProductionCheckReport,
+        RouteCheckResult,
+    )
+
+    observation, _ = fetch_manifest_body(truncated_manifest_server, timeout=5)
+    report = ProductionCheckReport(
+        manifest=RouteCheckResult(check=MANIFEST_CHECK, observed=observation)
+    )
+    retained = ProductionCheckReport.model_validate_json(report.model_dump_json())
+
+    diagnostic = getattr(retained.manifest.observed, "diagnostics", None)
+    assert diagnostic is not None
+    assert diagnostic.response_status == 200 and diagnostic.received_bytes == 5
+    assert not retained.ok
+
+
+def test_header_only_route_diagnostics_do_not_read_the_body(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class HeaderOnly:
+        status = 200
+        headers = Message()
+        headers["Content-Length"] = "1000"
+
+        def __enter__(self) -> HeaderOnly:
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            pass
+
+        def read(self) -> bytes:
+            pytest.fail("A route status check must not acquire its body")
+
+    def open_headers(*args: object, **kwargs: object) -> HeaderOnly:
+        return HeaderOnly()
+
+    monkeypatch.setattr("election_guide.hosting.production_probe._OPENER.open", open_headers)
+    observation = probe(
+        "https://example.test", RouteCheck(name="route", path="/", expected_status=200), timeout=5
+    )
+
+    diagnostic = getattr(observation, "diagnostics", None)
+    assert diagnostic is not None
+    assert observation.status == 200
+    assert diagnostic.phase == "complete"
+    assert diagnostic.body_seconds is None and diagnostic.received_bytes is None
+
+
+def test_unavailable_header_diagnostic_does_not_mask_a_success(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class UnavailableHeader(Message):
+        def get(self, name: str, failobj: object = None) -> str | None:
+            if name.lower() == "content-length":
+                raise ValueError("private-header-error")
+            return None
+
+    class Response:
+        status = 200
+        headers = UnavailableHeader()
+
+        def __enter__(self) -> Response:
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            pass
+
+        def read(self) -> bytes:
+            return b"body"
+
+    def open_response(*args: object, **kwargs: object) -> Response:
+        return Response()
+
+    monkeypatch.setattr("election_guide.hosting.production_probe._OPENER.open", open_response)
+    observation, body = fetch_manifest_body("https://example.test", timeout=5)
+
+    diagnostic = getattr(observation, "diagnostics", None)
+    assert diagnostic is not None
+    assert observation.status == 200 and body == b"body"
+    assert diagnostic.expected_bytes is None and diagnostic.received_bytes == 4
+    assert "private-header-error" not in observation.model_dump_json()
+
+
+def test_exception_diagnostics_bound_chain_types_without_copying_messages(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    outer = urllib.error.URLError("original")
+    errors: list[BaseException] = [outer]
+    errors.extend(TimeoutError("private-exception-secret") for _ in range(6))
+    for error, cause in pairwise(errors):
+        error.__cause__ = cause
+    errors[-1].__cause__ = outer
+
+    def fail_open(*args: object, **kwargs: object) -> None:
+        raise outer
+
+    monkeypatch.setattr("election_guide.hosting.production_probe._OPENER.open", fail_open)
+    observation, body = fetch_manifest_body("https://example.test", timeout=5)
+
+    diagnostic = getattr(observation, "diagnostics", None)
+    assert diagnostic is not None
+    assert body is None and observation.error == "<urlopen error original>"
+    assert diagnostic.exception_types == (
+        "URLError",
+        "TimeoutError",
+        "TimeoutError",
+        "TimeoutError",
+    )
+    assert "private-exception-secret" not in diagnostic.model_dump_json()
 
 
 def test_run_production_check_against_a_fully_healthy_deployment_is_ok(server: str) -> None:
@@ -593,7 +809,6 @@ def blocked_body_server() -> Iterator[str]:
 
 
 def test_shared_deadline_bounds_every_http_request(monkeypatch: pytest.MonkeyPatch) -> None:
-    from election_guide.hosting import production_probe
 
     now = 0.0
     calls: list[tuple[float, float]] = []

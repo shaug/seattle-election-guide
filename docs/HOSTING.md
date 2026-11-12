@@ -455,6 +455,21 @@ even if subsequent attempts succeed. Retrying verification performs no upload. `
 requires strict release verification and cannot be combined with `--availability-only`.
 Without `--wait`, the existing single-check behavior is unchanged.
 
+Request observations may additionally carry bounded `diagnostics` (#742): UTC request start,
+elapsed/header/body timing, the operation phase, available response status, normalized framing
+headers, expected/received byte counts, a partial-body digest when the transport exposes those
+bytes, and at most four exception type names. Only known Content-Length, media type and encoding
+values are retained; arbitrary headers, parameters, cookies, exception messages, tracebacks and response
+content are not copied into this metadata. The existing original error string remains unchanged.
+Unavailable diagnostic metadata never replaces the request outcome. Legacy reports without this
+optional record remain readable.
+
+An available response status in diagnostics is distinct from a complete-body success: a truncated
+read still has null observation status/body and fails the existing hash/strict checks. Received
+length is unknown after a timeout/reset unless actual partial bytes were exposed; it is not guessed
+as zero. Header-only route requests remain header-only. These observations do not relax the
+request cap, whole deadline, retry policy or two-consecutive-complete-pass requirement.
+
 Production checking is always read-only: it never opens, updates, or closes GitHub issues and does
 not require GitHub credentials. The former `--dry-run` and `--repository` options are retired (#523).
 
