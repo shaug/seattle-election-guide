@@ -9,7 +9,6 @@ from typing import Any, cast
 import yaml
 
 from election_guide.hosting import read_site_manifest
-from election_guide.sources.registry import read_source_registry
 
 PROJECT_ROOT = Path(__file__).parents[1]
 WORKFLOW_PATH = PROJECT_ROOT / ".github" / "workflows" / "check-links.yml"
@@ -59,15 +58,24 @@ def test_the_check_step_invokes_sources_check_links_with_the_repository() -> Non
     assert check_step["env"]["GH_TOKEN"] == "${{ github.token }}"
 
 
-def test_the_workflow_checks_the_current_elections_source_registry() -> None:
+def test_the_workflow_resolves_its_registry_from_the_site_declaration() -> None:
     steps = _steps(_workflow())
     check_step = next(step for step in steps if "sources check-links" in step.get("run", ""))
     command = shlex.split(check_step["run"])
-    registry_path = PROJECT_ROOT / command[command.index("check-links") + 1]
-    registry = read_source_registry(registry_path)
-    hosting = read_site_manifest(PROJECT_ROOT / "config" / "hosting" / "site.yaml")
+    assert command[command.index("check-links") + 1] == "--site-manifest"
+    site_path = PROJECT_ROOT / command[command.index("--site-manifest") + 1]
+    assert read_site_manifest(site_path).current_election_id
 
-    assert registry.election_id == hosting.current_election_id
+
+def test_only_an_actual_state_write_is_saved_to_the_workflow_cache() -> None:
+    steps = _steps(_workflow())
+    check_step = next(step for step in steps if "sources check-links" in step.get("run", ""))
+    save_step = next(
+        step for step in steps if step.get("uses", "").startswith("actions/cache/save")
+    )
+    assert "--github-output" in check_step["run"]
+    assert '"$GITHUB_OUTPUT"' in check_step["run"]
+    assert f"steps.{check_step['id']}.outputs.state_written == 'true'" in save_step["if"]
 
 
 def test_state_is_restored_before_the_check_and_saved_after() -> None:

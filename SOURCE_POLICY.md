@@ -81,7 +81,10 @@ an observation failure, not evidence that an endorsement was deleted or changed.
 latest verified endorsement decisions and their usable evidence canonical.** Denied, timed-out,
 empty or incomplete retrieval must not silently replace those facts with an empty result.
 Record the actual failure, check time, last real success and access limitation; continue the
-normal retries and genuine failure counts/escalation. No source designation, freshness check
+normal retries and genuine failure counts/escalation while that election's verification period
+is still open. Endorsement-source polling ends after the calendar election day in Pacific time;
+counting and certification do not extend it. Retain the last failure and verified facts when
+monitoring retires, without claiming the source recovered. No source designation, freshness check
 or access-failure mode may block a release merely because a previously verified source is
 inaccessible. No exception or override is required to retain that evidence.
 
