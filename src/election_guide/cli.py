@@ -13,6 +13,7 @@ from contextlib import contextmanager
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Annotated, Any, cast
+from zoneinfo import ZoneInfo
 
 import typer
 import yaml
@@ -34,6 +35,7 @@ from election_guide.analytics import (
 )
 from election_guide.authorities.registry import read_authority_registry
 from election_guide.calendar import (
+    ELECTION_TIMEZONE,
     EVIDENCE_MANIFEST_DIR,
     REFRESH_EVENT_DIR,
     RESULTS_DIR,
@@ -1655,9 +1657,15 @@ def sources_report(
 @sources_app.command("check-links")
 def sources_check_links(
     registry_path: Annotated[
-        Path,
+        Path | None,
         typer.Argument(exists=True, dir_okay=False, readable=True),
-    ] = Path("config/sources/default.yaml"),
+    ] = None,
+    site_manifest: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)] = Path(
+        "config/hosting/site.yaml"
+    ),
+    calendar_path: Annotated[
+        Path, typer.Option("--calendar", exists=True, dir_okay=False, readable=True)
+    ] = Path("config/calendar/elections.yaml"),
     state_path: Annotated[
         Path,
         typer.Option(help="Where the previous run's failing URLs are read from and written to."),
@@ -1674,13 +1682,42 @@ def sources_check_links(
             "or saving state."
         ),
     ] = False,
+    github_output: Annotated[
+        Path | None,
+        typer.Option(
+            dir_okay=False, help="Append state_written=true only after saving check state."
+        ),
+    ] = None,
 ) -> None:
-    """Probe every cited source URL, alerting on links dead across consecutive runs (O17)."""
+    """Check current cited sources through election day; preserve history once voting closes."""
     try:
+        current_election_id = None
+        if registry_path is None:
+            current_election_id = read_site_manifest(site_manifest).current_election_id
+            # Keep the historical primary's registry name, as release inputs do.
+            registry_name = (
+                "default" if current_election_id == "wa-2026-primary" else current_election_id
+            )
+            registry_path = Path("config/sources") / f"{registry_name}.yaml"
         registry = read_source_registry(registry_path)
-    except ValueError as error:
+        if current_election_id is not None and registry.election_id != current_election_id:
+            raise ValueError("source registry election does not match the site's current election")
+        calendar = read_election_calendar(calendar_path)
+        try:
+            voting_day = calendar.election(registry.election_id).election_date
+        except KeyError as error:
+            raise ValueError(f"calendar declares no election {registry.election_id!r}") from error
+        checked_at = datetime.now(UTC)
+    except (OSError, UnicodeError, ValueError) as error:
         typer.echo(f"sources check-links failed: {error}", err=True)
         raise typer.Exit(code=1) from error
+
+    if checked_at.astimezone(ZoneInfo(ELECTION_TIMEZONE)).date() > voting_day:
+        typer.echo(
+            f"sources check-links: skipped {registry.election_id}; voting closed after "
+            f"{voting_day} ({ELECTION_TIMEZONE}); no link requests, alert or state changes"
+        )
+        return
 
     results = run_link_check(registry, timeout_seconds=timeout, delay_seconds=delay)
     previous = read_link_check_state(state_path)
@@ -1698,11 +1735,14 @@ def sources_check_links(
         typer.echo("sources check-links: dry run, no alert issue or state changes")
     else:
         write_link_check_state(state_path, next_state(results))
+        if github_output is not None:
+            with github_output.open("a", encoding="utf-8") as stream:
+                stream.write("state_written=true\n")
         try:
             outcome = reconcile_link_rot_alert(
                 LinkRotAlertTracker(repository),
                 confirmed,
-                checked_at=datetime.now(UTC).isoformat(),
+                checked_at=checked_at.isoformat(),
             )
         except ValueError as error:
             typer.echo(f"sources check-links failed: {error}", err=True)
