@@ -249,15 +249,25 @@ captures:
   evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
   kind: preliminary
   publisher_is_official_results: null
+- authority_id: king-county-elections
+  captured_at: '2026-11-11T21:23:37.675207Z'
+  evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
+  kind: preliminary
+  publisher_is_official_results: false
+- authority_id: wa-secretary-of-state
+  captured_at: '2026-11-11T21:23:43.662992Z'
+  evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
+  kind: preliminary
+  publisher_is_official_results: null
 election_id: wa-2026-general
 failed_refreshes: []
 races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: court-of-appeals-division-1-district-1
   outcomes:
@@ -274,9 +284,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: court-of-appeals-division-1-district-1
   outcomes:
@@ -293,9 +303,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: washington-state
   outcomes:
@@ -314,9 +324,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: washington-state
   outcomes:
@@ -335,9 +345,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: washington-state
   outcomes:
@@ -356,9 +366,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: king-county
   outcomes:
@@ -377,9 +387,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: county-council-district-2
   outcomes:
@@ -398,9 +408,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: county-council-district-4
   outcomes:
@@ -417,9 +427,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: county-council-district-8
   outcomes:
@@ -438,9 +448,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: king-county
   outcomes:
@@ -457,9 +467,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: king-county-district-court-west-electoral-district
   outcomes:
@@ -478,9 +488,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: king-county-district-court-west-electoral-district
   outcomes:
@@ -497,9 +507,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: king-county-district-court-west-electoral-district
   outcomes:
@@ -516,9 +526,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: king-county-district-court-west-electoral-district
   outcomes:
@@ -535,9 +545,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: king-county-district-court-west-electoral-district
   outcomes:
@@ -554,9 +564,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: king-county
   outcomes:
@@ -573,9 +583,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-11
   outcomes:
@@ -594,9 +604,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-11
   outcomes:
@@ -613,9 +623,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-32
   outcomes:
@@ -634,9 +644,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-32
   outcomes:
@@ -655,9 +665,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-32
   outcomes:
@@ -676,9 +686,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-34
   outcomes:
@@ -695,9 +705,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-34
   outcomes:
@@ -716,9 +726,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-34
   outcomes:
@@ -735,9 +745,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-36
   outcomes:
@@ -754,9 +764,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-36
   outcomes:
@@ -773,9 +783,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-36
   outcomes:
@@ -794,9 +804,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-37
   outcomes:
@@ -815,9 +825,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-37
   outcomes:
@@ -836,9 +846,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-37
   outcomes:
@@ -857,9 +867,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-43
   outcomes:
@@ -878,9 +888,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-43
   outcomes:
@@ -897,9 +907,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-43
   outcomes:
@@ -918,9 +928,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-46
   outcomes:
@@ -939,9 +949,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-46
   outcomes:
@@ -960,9 +970,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: legislative-district-46
   outcomes:
@@ -981,9 +991,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: seattle-city-council-district-5
   outcomes:
@@ -1009,9 +1019,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: city-of-seattle
   outcomes:
@@ -1028,9 +1038,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: city-of-seattle
   outcomes:
@@ -1047,9 +1057,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: city-of-seattle
   outcomes:
@@ -1066,9 +1076,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: city-of-seattle
   outcomes:
@@ -1085,9 +1095,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: city-of-seattle
   outcomes:
@@ -1106,9 +1116,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: city-of-seattle
   outcomes:
@@ -1125,9 +1135,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: city-of-seattle
   outcomes:
@@ -1144,9 +1154,9 @@ races:
 - authority: King County Elections
   authority_id: king-county-elections
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T172149Z-212b5955e52c.json
+  coverage_evidence: data/manifests/evidence/capture-king-county-elections-20261111T212337Z-c6f132d97279.json
   export_generated_at: null
   jurisdiction_id: city-of-seattle
   outcomes:
@@ -1165,9 +1175,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: washington-state
   outcomes:
@@ -1186,9 +1196,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: washington-state
   outcomes:
@@ -1207,9 +1217,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: washington-state
   outcomes:
@@ -1228,9 +1238,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: washington-state
   outcomes:
@@ -1249,9 +1259,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: washington-state
   outcomes:
@@ -1270,9 +1280,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: congressional-district-7
   outcomes:
@@ -1291,9 +1301,9 @@ races:
 - authority: Washington Secretary of State
   authority_id: wa-secretary-of-state
   ballots_counted: null
-  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   coverage: whole_jurisdiction
-  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T172150Z-0d23300358d8.json
+  coverage_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20261111T212343Z-79c31d7df0cf.json
   export_generated_at: '2026-11-11T03:02:34.706071Z'
   jurisdiction_id: congressional-district-9
   outcomes:
