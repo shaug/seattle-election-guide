@@ -36,5 +36,5 @@
 - [ ] Add the calendar guard before run_link_check and state/alert reconciliation. Add current-election registry selection and the actual-state-write output; preserve normal in-window behavior.
 - [ ] Remove the workflow's hardcoded registry and condition cache save on the command's state_written output. Keep serialized daily scheduling for future eligible elections.
 - [ ] Amend O17 and source policy to state the closed-voting boundary. Verify CI/publication/freshness/production have no access-only source dependency; change only if an actual dependency exists.
-- [ ] Run focused tests green, commit the issue-scoped candidate, then fresh normal owning preparation against the actually accepted predecessor, full make check, affected readiness and all three independent canonical lenses.
+- [ ] Run focused tests green, commit the issue-scoped candidate, then fresh normal owning preparation against the actual published predecessor, full make check, affected readiness and all three independent canonical lenses.
 - [ ] Drive the reviewed candidate through current required CI, actual candidate inspection, ordinary expected-head merge and original-main publication/protected acceptance. Close #748 truthfully as retirement, retaining its original NXDOMAIN evidence and correcting the obsolete next-poll instruction.
