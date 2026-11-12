@@ -553,8 +553,15 @@ and opening an issue listing URLs that fail across consecutive runs. Rate-limite
 Reports only; never mutates source data, never rewrites a stored URL, and never re-captures
 evidence. Consecutive-failure confirmation avoids alerting on transient errors.
 
-The scheduled check uses the source registry for `current_election_id` in
-`config/hosting/site.yaml`; update its registry argument when the site rolls to a new election.
+The scheduled check resolves the source registry for `current_election_id` in
+`config/hosting/site.yaml`, using the same registry naming as release inputs. It checks only
+through that election's calendar election day in `America/Los_Angeles`. The first Pacific day
+after election day retires endorsement-source polling, even while that election remains the
+site's current election during counting or certification (#748). No new source requests or
+alert reconciliation occur outside that period. Skipped and dry runs leave prior failure state
+untouched and do not report recovery or save a new cache observation. An existing alert is
+retired explicitly, retaining its original failure and distinguishing retirement from recovery.
+When the site rolls to a later election, its own calendar and registry govern the check.
 Historical registries retain the URLs originally captured, even when a publisher replaces a
 primary page with a general-election publication. A general-election page is evidence for that
 election, not a replacement citation for an archived primary endorsement.
