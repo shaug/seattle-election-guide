@@ -472,33 +472,38 @@ const productionPrecincts = readFixture(
   '../../config/elections/wa-2026-general-precinct-ballots.json',
 ).precincts;
 
-function reviewedCivicLookup(changeAddress = () => {}) {
+function reviewedCivicLookup(
+  changeAddress = () => {},
+  review = reviewedContext,
+  binding = review.reviewed_context,
+  fixture = civic,
+) {
   let addressReads = 0;
   const operations = [];
   const fetchImpl = async (url) => {
     operations.push(url);
     let value;
-    if (url.endsWith('/findAddressCandidates')) value = civic.candidate;
+    if (url.endsWith('/findAddressCandidates')) value = fixture.candidate;
     else if (url.endsWith('/query'))
       value = url.includes('ADDRESS_POINT')
-        ? civic.site
+        ? fixture.site
         : url.includes('CITY_AREA')
-          ? civic.city
-          : civic.precinct;
+          ? fixture.city
+          : fixture.precinct;
     else {
       const key = url.includes('ADDRESS_POINT')
         ? 'address'
         : url.includes('CITY_AREA')
           ? 'city'
           : 'precinct';
-      value = structuredClone(reviewedContext.observed_context_metadata[key]);
+      value = structuredClone(review.observed_context_metadata[key]);
       if (key === 'address') changeAddress(value, ++addressReads);
     }
     return new Response(JSON.stringify(value));
   };
   return {
     operations,
-    lookup: createVotingAddressLookup(productionContext, productionPrecincts, { fetchImpl }),
+    lookup: createVotingAddressLookup(binding, productionPrecincts, { fetchImpl }),
   };
 }
 const civicChoice = {
@@ -507,7 +512,7 @@ const civicChoice = {
   isCollection: false,
 };
 
-test('reviewed ADDRESS refresh resolves the retained civic case with the production binding', async () => {
+test('November4 ADDRESS context still resolves its retained historical civic case', async () => {
   const b = reviewedCivicLookup();
   assert.deepEqual(await b.lookup.resolve(civicChoice, new AbortController().signal), {
     status: 'resolved',
@@ -532,6 +537,65 @@ test('reviewed ADDRESS refresh still rejects address data changing during resolu
   const b = reviewedCivicLookup((value, read) => {
     if (read === 2) value.editingInfo.dataLastEditDate++;
   });
+  assert.deepEqual(await b.lookup.resolve(civicChoice, new AbortController().signal), {
+    status: 'unresolved',
+  });
+});
+
+const currentAddressReview = readFixture(
+  '../../data/review/geography/wa-2026-general-address-context-2026-11-12.json',
+);
+const currentCivic = readFixture('../fixtures/address/public-civic-2026-11-12.json');
+
+test('production binding resolves the current reviewed November12 civic responses', async () => {
+  const b = reviewedCivicLookup(undefined, currentAddressReview, productionContext, currentCivic);
+  assert.deepEqual(await b.lookup.resolve(civicChoice, new AbortController().signal), {
+    status: 'resolved',
+    code: '3230',
+  });
+});
+
+test('the previous binding rejects the current schema before geocoding', async () => {
+  const b = reviewedCivicLookup(
+    undefined,
+    currentAddressReview,
+    reviewedContext.reviewed_context,
+    currentCivic,
+  );
+  assert.deepEqual(await b.lookup.resolve(civicChoice, new AbortController().signal), {
+    status: 'unavailable',
+  });
+  assert.equal(b.operations.length, 3);
+  assert.ok(b.operations.every((url) => url.endsWith('?f=json')));
+});
+
+for (const identity of ['item', 'schema'])
+  test(`current ADDRESS context rejects an unreviewed ${identity} before geocoding`, async () => {
+    const b = reviewedCivicLookup(
+      (value) => {
+        if (identity === 'item') value.serviceItemId = 'unreviewed-item';
+        else value.editingInfo.schemaLastEditDate++;
+      },
+      currentAddressReview,
+      productionContext,
+      currentCivic,
+    );
+    assert.deepEqual(await b.lookup.resolve(civicChoice, new AbortController().signal), {
+      status: 'unavailable',
+    });
+    assert.equal(b.operations.length, 3);
+    assert.ok(b.operations.every((url) => url.endsWith('?f=json')));
+  });
+
+test('current ADDRESS context rejects data changing during resolution', async () => {
+  const b = reviewedCivicLookup(
+    (value, read) => {
+      if (read === 2) value.editingInfo.dataLastEditDate++;
+    },
+    currentAddressReview,
+    productionContext,
+    currentCivic,
+  );
   assert.deepEqual(await b.lookup.resolve(civicChoice, new AbortController().signal), {
     status: 'unresolved',
   });

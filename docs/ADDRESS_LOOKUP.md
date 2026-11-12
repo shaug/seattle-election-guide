@@ -48,6 +48,24 @@ The production-binding regression uses retained responses offline. Wrong item/sc
 identities and address data changing during resolution still reject; no drift,
 exact-site, unit, Seattle or precinct/district guard is relaxed.
 
+### Current ADDRESS context refresh (#746)
+
+On November 12 UTC (November 11 Pacific), the published November 4 ADDRESS binding
+rejected another schema change before geocoding. The same service item now reports
+data/schema identity `1794228994534`. Review of the current field/query/geometry
+contract and an unchanged-adapter City Hall resolution admitted only this ADDRESS
+context. All 11 requests succeeded, resolving `SEA 34-3230`, with whole metadata
+responses equal before and after. City/precinct identities and the catalog stay pinned.
+
+The [current review record](../data/review/geography/wa-2026-general-address-context-2026-11-12.json)
+and separate current civic fixture retain the actual observations. The complete
+current field-array hash differs from the historical record; no whole old/new field
+array equality is claimed. The current civic site differs only in an unused
+`OBJECTID`; its exact site identity, geometry and district result remain equal.
+Offline regressions exercise the production binding against these current responses,
+the previous binding's rejection, wrong item/schema identities and mid-resolution
+drift. This bounded evidence does not establish universal coverage or a deployed fix.
+
 ## Failure and privacy boundaries
 
 Explicit candidate selection, PointAddress scope, exact current site data and one
