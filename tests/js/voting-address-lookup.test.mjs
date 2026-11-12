@@ -4,6 +4,9 @@ import test from 'node:test';
 import { createVotingAddressLookup } from '../../src/election_guide/rendering/templates/voting-address-lookup.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
+const compatibleMetadata = JSON.parse(
+  readFileSync(new URL('../fixtures/address/compatible-metadata.json', import.meta.url), 'utf8'),
+);
 const context = {
   election_id: 'wa-2026-general',
   mapping_hash: 'reviewed',
@@ -39,6 +42,7 @@ const suggestion = {
   isCollection: false,
 };
 const meta = (key) => ({
+  ...structuredClone(compatibleMetadata[key]),
   serviceItemId: context[key].item,
   editingInfo: {
     dataLastEditDate: context[key].data ?? 9,
@@ -496,7 +500,10 @@ function reviewedCivicLookup(
         : url.includes('CITY_AREA')
           ? 'city'
           : 'precinct';
-      value = structuredClone(review.observed_context_metadata[key]);
+      value = {
+        ...structuredClone(compatibleMetadata[key]),
+        ...structuredClone(review.observed_context_metadata[key]),
+      };
       if (key === 'address') changeAddress(value, ++addressReads);
     }
     return new Response(JSON.stringify(value));
@@ -512,7 +519,7 @@ const civicChoice = {
   isCollection: false,
 };
 
-test('November4 ADDRESS context still resolves its retained historical civic case', async () => {
+test('November4 recorded binding resolves the retained civic case with compatible metadata', async () => {
   const b = reviewedCivicLookup();
   assert.deepEqual(await b.lookup.resolve(civicChoice, new AbortController().signal), {
     status: 'resolved',
@@ -520,11 +527,11 @@ test('November4 ADDRESS context still resolves its retained historical civic cas
   });
 });
 
-for (const identity of ['item', 'schema'])
+for (const identity of ['item', 'required-field-type'])
   test(`reviewed ADDRESS refresh still rejects an unreviewed ${identity} before geocoding`, async () => {
     const b = reviewedCivicLookup((value) => {
       if (identity === 'item') value.serviceItemId = 'unreviewed-item';
-      else value.editingInfo.schemaLastEditDate++;
+      else value.fields.find((field) => field.name === 'ADDR_FULL').type = 'esriFieldTypeInteger';
     });
     assert.deepEqual(await b.lookup.resolve(civicChoice, new AbortController().signal), {
       status: 'unavailable',
@@ -555,7 +562,7 @@ test('production binding resolves the current reviewed November12 civic response
   });
 });
 
-test('the previous binding rejects the current schema before geocoding', async () => {
+test('the previous recorded binding accepts compatible current metadata without a pin refresh', async () => {
   const b = reviewedCivicLookup(
     undefined,
     currentAddressReview,
@@ -563,18 +570,17 @@ test('the previous binding rejects the current schema before geocoding', async (
     currentCivic,
   );
   assert.deepEqual(await b.lookup.resolve(civicChoice, new AbortController().signal), {
-    status: 'unavailable',
+    status: 'resolved',
+    code: '3230',
   });
-  assert.equal(b.operations.length, 3);
-  assert.ok(b.operations.every((url) => url.endsWith('?f=json')));
 });
 
-for (const identity of ['item', 'schema'])
+for (const identity of ['item', 'required-field-type'])
   test(`current ADDRESS context rejects an unreviewed ${identity} before geocoding`, async () => {
     const b = reviewedCivicLookup(
       (value) => {
         if (identity === 'item') value.serviceItemId = 'unreviewed-item';
-        else value.editingInfo.schemaLastEditDate++;
+        else value.fields.find((field) => field.name === 'ADDR_FULL').type = 'esriFieldTypeInteger';
       },
       currentAddressReview,
       productionContext,
@@ -600,3 +606,214 @@ test('current ADDRESS context rejects data changing during resolution', async ()
     status: 'unresolved',
   });
 });
+
+for (const kind of ['clock', 'clock-absent', 'aliases', 'indexes', 'field-order', 'unused-field'])
+  test(`semantic compatibility tolerates benign ${kind} churn in all three layers`, async () => {
+    const b = boot({
+      edit(value, url) {
+        if (!url.endsWith('?f=json')) return value;
+        if (kind === 'clock-absent') delete value.editingInfo.schemaLastEditDate;
+        else value.editingInfo.schemaLastEditDate += 10;
+        if (kind === 'aliases') for (const field of value.fields) field.alias = 'Updated label';
+        if (kind === 'indexes')
+          value.indexes = [{ name: 'rotated_index', fields: value.fields[0].name }];
+        if (kind === 'field-order') value.fields.reverse();
+        if (kind === 'unused-field')
+          value.fields.push({ name: 'UNUSED_NEW_FIELD', type: 'esriFieldTypeInteger' });
+        return value;
+      },
+    });
+    assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+      status: 'resolved',
+      code: '0320',
+    });
+  });
+
+test('semantic compatibility tolerates schema-only churn between metadata observations', async () => {
+  const reads = new Map();
+  const b = boot({
+    edit(value, url) {
+      if (url.endsWith('?f=json')) {
+        reads.set(url, (reads.get(url) ?? 0) + 1);
+        if (reads.get(url) === 2) value.editingInfo.schemaLastEditDate += 10;
+      }
+      return value;
+    },
+  });
+  assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+    status: 'resolved',
+    code: '0320',
+  });
+});
+
+const layerUrl = { city: 'CITY_AREA', precinct: 'March2026', address: 'ADDRESS_POINT' };
+const incompatibleMetadata = {
+  layer(value) {
+    value.id++;
+  },
+  item(value) {
+    value.serviceItemId = 'different-service';
+  },
+  geometry(value) {
+    value.geometryType = 'esriGeometryPolyline';
+  },
+  'spatial-reference'(value) {
+    value.spatialReference = { wkid: 3857, latestWkid: 3857 };
+  },
+  query(value) {
+    value.capabilities = 'Extract';
+  },
+  json(value) {
+    value.supportedQueryFormats = 'PBF';
+  },
+  'record-limit'(value) {
+    value.maxRecordCount = 19;
+  },
+  'standardized-query'(value) {
+    value.useStandardizedQueries = false;
+  },
+  'missing-fields'(value) {
+    delete value.fields;
+  },
+  'duplicate-required-field'(value) {
+    value.fields.push(structuredClone(value.fields[0]));
+  },
+  'wrong-field-type'(value) {
+    value.fields[0].type = 'esriFieldTypeInteger';
+  },
+};
+for (const layer of Object.keys(layerUrl))
+  for (const [kind, mutate] of Object.entries(incompatibleMetadata))
+    for (const boundary of ['before', 'after'])
+      test(`semantic compatibility rejects ${layer} ${kind} at the ${boundary} boundary`, async () => {
+        let reads = 0;
+        const b = boot({
+          edit(value, url) {
+            if (url.endsWith('?f=json') && url.includes(layerUrl[layer])) {
+              reads++;
+              if (reads === (boundary === 'before' ? 1 : 2)) mutate(value);
+            }
+            return value;
+          },
+        });
+        assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+          status: 'unavailable',
+        });
+        if (boundary === 'before')
+          assert.ok(!b.calls.some((call) => call.url.endsWith('/findAddressCandidates')));
+      });
+
+for (const layer of ['city', 'precinct'])
+  test(`semantic compatibility still requires ${layer} intersection support`, async () => {
+    const b = boot({
+      edit(value, url) {
+        if (url.endsWith('?f=json') && url.includes(layerUrl[layer]))
+          value.supportedSpatialRelationships = ['esriSpatialRelContains'];
+        return value;
+      },
+    });
+    assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+      status: 'unavailable',
+    });
+  });
+
+for (const layer of ['city', 'precinct'])
+  test(`semantic compatibility rejects a malformed ${layer} relationship declaration`, async () => {
+    const b = boot({
+      edit(value, url) {
+        if (url.endsWith('?f=json') && url.includes(layerUrl[layer]))
+          value.supportedSpatialRelationships = 'esriSpatialRelIntersects';
+        return value;
+      },
+    });
+    assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+      status: 'unavailable',
+    });
+  });
+
+for (const layer of Object.keys(layerUrl))
+  test(`semantic compatibility requires every consumed ${layer} field`, async () => {
+    for (const field of compatibleMetadata[layer].fields) {
+      const b = boot({
+        edit(value, url) {
+          if (url.endsWith('?f=json') && url.includes(layerUrl[layer]))
+            value.fields = value.fields.filter((entry) => entry.name !== field.name);
+          return value;
+        },
+      });
+      assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+        status: 'unavailable',
+      });
+    }
+  });
+
+for (const field of ['SITEID', 'Building', 'Unit'])
+  test(`semantic compatibility rejects a malformed consumed site ${field}`, async () => {
+    const b = boot({
+      edit(value, url) {
+        if (url.includes('ADDRESS_POINT') && url.endsWith('/query'))
+          value.features[0].attributes[field] = field === 'SITEID' ? 1 : 0;
+        return value;
+      },
+    });
+    assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+      status: 'unresolved',
+    });
+  });
+
+test('semantic compatibility requests only consumed ADDRESS fields', async () => {
+  const b = boot();
+  assert.equal(
+    (await b.lookup.resolve(suggestion, new AbortController().signal)).status,
+    'resolved',
+  );
+  const call = b.calls.find(
+    (entry) => entry.url.includes('ADDRESS_POINT') && entry.url.endsWith('/query'),
+  );
+  assert.equal(
+    new URLSearchParams(call.options.body).get('outFields'),
+    'SITEID,ADDR_FULL,ZIP5,Building,Unit',
+  );
+});
+
+test('semantic compatibility rejects contradictory returned spatial references', async () => {
+  const b = boot({
+    edit(value, url) {
+      if (url.includes('ADDRESS_POINT') && url.endsWith('/query'))
+        value.spatialReference.latestWkid = 3857;
+      return value;
+    },
+  });
+  assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+    status: 'unresolved',
+  });
+});
+
+for (const reference of [{ wkid: 3857 }, { wkid: 4326, latestWkid: 3857 }, null])
+  test(`semantic compatibility rejects contradictory per-point SR ${JSON.stringify(reference)}`, async () => {
+    const b = boot({
+      edit(value, url) {
+        if (url.includes('ADDRESS_POINT') && url.endsWith('/query'))
+          value.features[0].geometry.spatialReference = reference;
+        return value;
+      },
+    });
+    assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+      status: 'unresolved',
+    });
+  });
+
+for (const reference of [{ wkid: 4326 }, { wkid: 4326, latestWkid: 4326 }])
+  test(`semantic compatibility accepts an explicit matching per-point SR ${JSON.stringify(reference)}`, async () => {
+    const b = boot({
+      edit(value, url) {
+        if (url.includes('ADDRESS_POINT') && url.endsWith('/query'))
+          value.features[0].geometry.spatialReference = reference;
+        return value;
+      },
+    });
+    assert.deepEqual(await b.lookup.resolve(suggestion, new AbortController().signal), {
+      status: 'resolved',
+      code: '0320',
+    });
+  });

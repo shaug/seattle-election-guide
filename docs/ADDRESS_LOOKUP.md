@@ -26,6 +26,8 @@ found all1,020 code/name/assignment tuples equal the shipped catalog. Edit times
 are not legally certified November3 effective dates or voter ballot-part guarantees.
 Current public civic fixture responses and their hashes are retained under
 `tests/fixtures/address/public-civic.json`; they are not residential voter evidence.
+Recorded schema edit epochs retain observation provenance. They are not the
+runtime compatibility test: the adapter checks the layer contract it consumes.
 
 ### Reviewed ADDRESS context refresh (#691)
 
@@ -44,17 +46,18 @@ headers, forms and provider suggestion keys remain private. The earlier October 
 evidence is preserved. This bounded civic observation is not universal address
 coverage, an atomic GIS snapshot or evidence of a deployed repair.
 
-The production-binding regression uses retained responses offline. Wrong item/schema
-identities and address data changing during resolution still reject; no drift,
-exact-site, unit, Seattle or precinct/district guard is relaxed.
+The original production-binding regression used retained responses offline and
+rejected changed schema clocks. Issue #746 supersedes that clock comparison with
+the semantic checks below. Item identity, exact-site, unit, Seattle and
+precinct/district checks remain required.
 
-### Current ADDRESS context refresh (#746)
+### Schema-clock rejection and retained prototype (#746)
 
 On November 12 UTC (November 11 Pacific), the published November 4 ADDRESS binding
 rejected another schema change before geocoding. The same service item now reports
 data/schema identity `1794228994534`. Review of the current field/query/geometry
-contract and an unchanged-adapter City Hall resolution admitted only this ADDRESS
-context. All 11 requests succeeded, resolving `SEA 34-3230`, with whole metadata
+contract and an unchanged-adapter City Hall resolution tested a prospective ADDRESS
+context refresh. All 11 requests succeeded, resolving `SEA 34-3230`, with whole metadata
 responses equal before and after. City/precinct identities and the catalog stay pinned.
 
 The [current review record](../data/review/geography/wa-2026-general-address-context-2026-11-12.json)
@@ -62,9 +65,45 @@ and separate current civic fixture retain the actual observations. The complete
 current field-array hash differs from the historical record; no whole old/new field
 array equality is claimed. The current civic site differs only in an unused
 `OBJECTID`; its exact site identity, geometry and district result remain equal.
-Offline regressions exercise the production binding against these current responses,
-the previous binding's rejection, wrong item/schema identities and mid-resolution
-drift. This bounded evidence does not establish universal coverage or a deployed fix.
+That pin-refresh prototype and its original tests remain historical evidence.
+Scott subsequently requested resilience to compatible metadata changes. The final
+implementation retains the original recorded ADDRESS epochs and checks the consumed
+contract instead. The prototype observation does not establish universal coverage
+or a deployed fix.
+
+### Semantic compatibility (#746)
+
+All three layers must retain their reviewed service-item identity, expected layer
+ID (`0`, `655`, `0`), geometry type and native spatial reference (`2926`, with any
+`latestWkid` agreeing). They must support Query, JSON, standardized queries and at
+least the requested 20 records. City and precinct metadata must declare Intersects
+in an array of supported spatial relationships.
+
+Each consumed field must occur exactly once with its expected type: city
+`CITYNAME`/`JURIS`; precinct `VOTDST`/`NAME`/`CONGDST`/`LEGDST`/`KCCDST`/`SCC`; and
+ADDRESS `SITEID` (GUID), `ADDR_FULL`, `ZIP5`, `Building` and `Unit` (strings).
+ADDRESS queries request only those five fields. Field order, aliases, indexes,
+unused fields and schema edit clocks do not determine compatibility; there is no
+whole-field-array hash pin. Missing, duplicated or mistyped required fields fail
+closed.
+
+City and precinct data epochs stay bound to the reviewed catalog. ADDRESS data
+may refresh between lookups, but every layer's data epoch must be well formed and
+remain unchanged between the observations around one resolution. The full consumed
+metadata contract is checked both times. Returned address collections and any
+per-point spatial-reference declarations must consistently identify `4326`.
+
+These checks tolerate compatible metadata churn without accepting a different
+service, coordinate meaning, boundary dataset or consumed response shape. They
+cannot establish an atomic snapshot, detect a provider misreporting unchanged data
+epochs, or certify every address. Response limits, network failures and incompatible
+contracts can still make lookup unavailable; direct precinct entry remains available.
+
+The [separate compatibility observation](../data/review/geography/wa-2026-general-address-compatibility-2026-11-12.json)
+used the changed adapter with the original published binding: all 11 anonymous
+public civic requests succeeded and resolved `SEA 34-3230`. Each layer's complete
+metadata response matched before and after. The actual executed module bytes were
+preserved; this development observation does not claim deployed browser acceptance.
 
 ## Failure and privacy boundaries
 
@@ -75,8 +114,9 @@ partial, unit-unresolved, unsupported, boundary, contradictory, malformed or
 truncated results leave direct entry available. A clearly selected canonical
 street/building address is not verification of any originally typed unit.
 
-Bounded before/after metadata checks reject detected City/precinct identity drift;
-the exact tuple is checked for each site. This is not a transactional/atomic
+Bounded before/after metadata checks reject incompatible layer contracts, changed
+service items, unreviewed City/precinct data epochs and data changing during a
+resolution; the exact tuple is checked for each site. This is not a transactional/atomic
 snapshot guarantee. No whole polygon downloads or automatic latest-year switch
 occur. New general artifacts may retain their own pinned capability; primary,
 legacy and nonmatching capabilities make no requests. Old artifacts are unchanged.
@@ -124,3 +164,16 @@ URL and opens a separate tab with `noopener noreferrer`. It has an accessible
 purpose label and visible keyboard focus; its static destination never receives
 typed text, selected-address details or SEG query state. This replaces the former
 text finder link without adding a mode or changing address transmission/admission.
+
+## Recurrence and monitoring limits (#746)
+
+Hosted production checks cover routes, assets and published static payloads; they
+do not execute a live address lookup. Browser tests use retained provider fixtures,
+and the scheduled source-link check tests registry URLs rather than this functional
+flow. Compatible-contract regressions prevent the known clock-rejection mechanism
+from returning, but those checks cannot discover every live provider change.
+
+A separate future monitoring change could exercise one public civic address with
+the actual served binding and alert on failure. It would need its own scope and
+traffic policy; it must not collect private addresses or mutate pins automatically.
+Issue #746 adds no monitor, schedule or automatic acquisition.

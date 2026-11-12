@@ -151,3 +151,21 @@ and offline. Exact current sites, incorporated Seattle and one matching reviewed
 precinct/district tuple are required; ambiguity and detected drift use direct entry.
 Known addressable-site geography is not unit/voter-registration verification or a
 complete official-ballot certification. Existing source/scoring/primary rules hold.
+
+### Compatible GIS metadata refreshes (#746, November 11, 2026)
+
+Scott requested resilience after repeated ADDRESS schema-clock invalidations.
+Schema-edit equality is replaced by validation of the adapter's consumed metadata
+contract for all three layers. Exact service/layer identity, reviewed geometry/SR,
+required field types/uniqueness and bounded query support remain required;
+compatible aliases, indexes, field order and unused fields may change. The existing
+schema epochs remain recorded provenance, not a runtime semantic-compatibility
+proxy or a whole-field-array hash pin.
+
+City/precinct DATA remains bound to reviewed election geography: one civic case
+cannot establish that a changed boundary dataset still matches the entire catalog.
+ADDRESS DATA already legitimately refreshes between lookups and must stay stable
+within a resolution. Exact current site/unit/Seattle and consistent precinct/all
+district checks, provider boundaries and privacy controls remain. Metadata alone
+cannot establish provider-data correctness or an atomic snapshot. No new monitor,
+provider, transmission, UI or historical address capability is introduced.
