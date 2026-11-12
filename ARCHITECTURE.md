@@ -133,8 +133,11 @@ Admission validates the entire reviewed electorate and every covered jurisdictio
 before building source-independent contest-ID sets. Publication performs no geography
 network requests. The optional #657 November2026 browser address path uses only the
 reviewed County GIS locator and County-maintained Esri site/city/precinct services.
-It validates current exact address-site geometry against the pinned catalog and
-source edit identities; detected drift or ambiguity leaves direct entry available.
+It validates current exact address-site geometry against the pinned catalog,
+admitted layer/item identities and consumed metadata contracts. City/precinct DATA
+identities stay election-bound; ADDRESS DATA must remain stable within a lookup.
+Compatible schema-clock, alias/index and unused-field churn is allowed (#746).
+Detected incompatible drift or ambiguity leaves direct entry available.
 No address, coordinate, suggestion identifier or provider response is persisted by
 SEG. Provider logging/retention is undocumented; client no-store is not a claim of
 zero provider retention. See docs/ADDRESS_LOOKUP.md. Voter selection changes displayed membership
