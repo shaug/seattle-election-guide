@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1457390,
+  "canonical_url": "https://results.votewa.gov/results/public/api/elections/king-county-wa/20261103/data",
+  "capture_method": "json",
+  "content_sha256": "16d17ea6e5f11452a2deb2af9b2406d1c1d3e6031b02e816f9c473139bb29577",
+  "http_status": 200,
+  "id": "capture-king-county-elections-20261113T132212Z-38bad23eecef",
+  "media_type": "application/json; charset=utf-8",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Official public election-results export; no voter records.",
+  "requested_url": "https://results.votewa.gov/results/public/api/elections/king-county-wa/20261103/data",
+  "retrieved_at": "2026-11-13T13:22:12.542793Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-elections",
+  "storage_reference": "sha256/16/16d17ea6e5f11452a2deb2af9b2406d1c1d3e6031b02e816f9c473139bb29577",
+  "storage_scope": "repository",
+  "title": "wa-2026-general preliminary results (county JSON export)",
+  "updated_at": null
+}
