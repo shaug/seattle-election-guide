@@ -10,7 +10,7 @@ elections:
   source_registry_hash: d9c0bfbad3bd963d11b24ee45d1ae3bfe8f2b16a6b489fd80e6cf463efdc1f27
   publication_request:
     issue_number: 696
-    previous_release_sha: a9b8e188ddfdc778139005774c3a0624e534a554
+    previous_release_sha: 092b4892fc134b3558d256fef300cd94bdee8b7a
     inputs:
       ledger_sha256: 494b69a261066b27955a6670b7064ae3d9197e8104f49d22b6dae48a4d8eb51c
       dataset_sha256: ae258aa3fd0492613ec962cf09b61c48d8b6975aedfa12fe854e4124462b3f92
