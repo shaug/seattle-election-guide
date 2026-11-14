@@ -639,6 +639,13 @@ jobs:
         ARTIFACT_DIGEST: ${{ needs.publish.outputs.publication_digest }}
     - name: Retain publication before deployment
       run: uv run election-guide release automation retain-publication --publication dist/publication.json
+    - name: Record proved pre-upload failure disposition
+      run: |-
+        if [ -f config/hosting/preupload-failure.json ]; then
+          uv run election-guide release automation record-preupload-disposition \
+            --request config/hosting/preupload-failure.json \
+            --output dist/preupload-disposition.json
+        fi
     - name: Preserve publication-evidence
       uses: actions/upload-artifact@v4
       with:

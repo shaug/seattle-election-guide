@@ -291,6 +291,58 @@ elif command not in ['finalize', 'deployment-status', 'retain-operation']:
         assert calls[-1] == "retain-operation"
 
 
+@pytest.mark.parametrize("scenario", ["absent", "recorded", "failed"])
+def test_preupload_proof_step_uses_existing_evidence_writer_and_fails_closed(
+    tmp_path: Path, scenario: str
+) -> None:
+    import json
+    import sys
+
+    jobs = workflow()["jobs"]
+    steps = [
+        step
+        for step in jobs["publication-evidence"]["steps"]
+        if step.get("name") == "Record proved pre-upload failure disposition"
+    ]
+    assert len(steps) == 1, "pre-upload proof must precede the deployment dependency"
+    step = steps[0]
+    binary = tmp_path / "uv"
+    binary.write_text(
+        f"#!{sys.executable}\n"
+        "import json, os, pathlib, sys\n"
+        "args=sys.argv[1:]\n"
+        "assert args[:5]==['run','election-guide','release','automation',"
+        "'record-preupload-disposition']\n"
+        "pathlib.Path('calls.json').write_text(json.dumps(args))\n"
+        "sys.exit(1 if os.environ['FAIL_PROOF']=='true' else 0)\n"
+    )
+    binary.chmod(0o755)
+    if scenario != "absent":
+        request = tmp_path / "config/hosting/preupload-failure.json"
+        request.parent.mkdir(parents=True)
+        request.write_text("{}\n")
+    env = {"PATH": f"{tmp_path}:{os.defpath}", "FAIL_PROOF": str(scenario == "failed").lower()}
+    result = subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", step["run"]],
+        cwd=tmp_path,
+        env=env,
+        check=False,
+    )
+    assert result.returncode == (1 if scenario == "failed" else 0)
+    if scenario == "absent":
+        assert not (tmp_path / "calls.json").exists()
+    else:
+        calls = json.loads((tmp_path / "calls.json").read_bytes())
+        assert calls[5:] == [
+            "--request",
+            "config/hosting/preupload-failure.json",
+            "--output",
+            "dist/preupload-disposition.json",
+        ]
+    assert "publication-evidence" in jobs["deploy"]["needs"]
+    assert "deployments" not in jobs["publication-evidence"]["permissions"]
+
+
 @pytest.mark.parametrize("name", ["ci.yml", "verify-release.yml", "deploy-pr-preview.yml"])
 def test_github_cli_steps_have_effective_authentication(name: str) -> None:
     document = workflow(name)

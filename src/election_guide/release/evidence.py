@@ -425,6 +425,89 @@ def read_evidence_reports(receipt: OperationReceipt, *, issue_number: int) -> di
     raise ValueError("complete evidence receipt is unavailable")
 
 
+def _preupload_records(
+    publication: PublicationResult,
+) -> tuple[
+    tuple[tuple[OperationReceipt, dict[str, bytes]], ...],
+    dict[int, tuple[PartMarker, bytes]],
+]:
+    issue = _validate_publication(publication)
+    candidate = publication.published.candidate
+    comments = _comments(candidate.producer.repository, issue)
+    completed = tuple(
+        (receipt, reports)
+        for receipt, reports in _completed(comments, issue)
+        if receipt.producer.source_sha == candidate.source_sha
+    )
+    complete_groups = {_sha(_bytes(receipt)) for receipt, _ in completed}
+    for receipt, _ in completed:
+        verify_canonical_publication(receipt.publication, publication.published)
+        if receipt.upload is not None or receipt.state == "verified":
+            raise ValueError("upload evidence contradicts a pre-upload disposition")
+    pending = {
+        comment_id: (marker, content)
+        for comment_id, (marker, content) in comments.items()
+        if marker.producer.source_sha == candidate.source_sha
+        and marker.group not in complete_groups
+    }
+    return completed, pending
+
+
+def read_preupload_evidence(
+    publication: PublicationResult,
+) -> tuple[tuple[OperationReceipt, dict[str, bytes]], ...]:
+    """Admission requires complete evidence with no complete or partial upload claim."""
+    completed, pending = _preupload_records(publication)
+    if pending:
+        raise ValueError("incomplete evidence prevents a pre-upload disposition")
+    return completed
+
+
+def read_pending_preupload_evidence(
+    publication: PublicationResult, *, error: str
+) -> tuple[OperationReceipt, dict[str, bytes]] | None:
+    """Recover one pending failed disposition for recording only, never admission.
+
+    Its receipt digest must exactly bind the original issuer and publication.
+    The caller authenticates the recovered proof before the resumable writer
+    checks every existing report part against the complete expected reports.
+    """
+    completed, pending = _preupload_records(publication)
+    if not pending:
+        return None
+    if len({marker.group for marker, _ in pending.values()}) != 1 or any(
+        receipt.error == error for receipt, _ in completed
+    ):
+        raise ValueError("duplicate or ambiguous pending pre-upload disposition")
+    first = next(iter(pending.values()))[0]
+    receipt = OperationReceipt(
+        phase="deployment",
+        state="failed",
+        producer=first.producer,
+        publication=publication,
+        upload=None,
+        verification_sha256=None,
+        error=error,
+    )
+    refs: dict[str, list[PartRef]] = {}
+    for comment_id, (marker, _) in pending.items():
+        if (
+            marker.group != _sha(_bytes(receipt))
+            or marker.producer != receipt.producer
+            or marker.phase != receipt.phase
+            or marker.release_version != publication.published.candidate.declaration.release_version
+        ):
+            raise ValueError("unrelated incomplete evidence prevents disposition recording")
+        if marker.kind == "report":
+            refs.setdefault(marker.report, []).append(PartRef(id=comment_id, marker=marker))
+    reports = {
+        name: _assemble(tuple(sorted(parts, key=lambda ref: ref.marker.part)), pending)
+        for name, parts in refs.items()
+        if len(parts) == parts[0].marker.count
+    }
+    return receipt, reports
+
+
 def retain_evidence(
     receipt: OperationReceipt, *, issue_number: int, reports: dict[str, bytes]
 ) -> tuple[int, ...]:
@@ -438,6 +521,20 @@ def retain_evidence(
     comments = _comments(receipt.producer.repository, issue_number)
     _completed(comments, issue_number)
     _check_canonical_receipts(comments, extra=receipt)
+    report_bytes = {**reports, "receipt.json": _bytes(receipt)}
+    expected_parts: dict[tuple[str, int], tuple[PartMarker, bytes]] = {}
+    for name, data in report_bytes.items():
+        if canonical_json_bytes(json.loads(data)) != data:
+            raise ValueError("evidence reports require canonical UTF-8 JSON")
+        for marker, chunk in _parts(receipt, name, data, "report"):
+            expected_parts[marker.report, marker.part] = marker, chunk
+    for existing, content in comments.values():
+        if (
+            existing.group == _sha(_bytes(receipt))
+            and existing.kind == "report"
+            and expected_parts.get((existing.report, existing.part)) != (existing, content)
+        ):
+            raise ValueError("conflicting existing evidence part")
     refs: list[PartRef] = []
     all_ids: list[int] = []
 
@@ -488,10 +585,7 @@ def retain_evidence(
             retained.append(PartRef(id=comment_id, marker=marker))
         return tuple(retained)
 
-    for name, data in sorted({**reports, "receipt.json": _bytes(receipt)}.items()):
-        # JSON is canonicalized by its producer; reject arbitrary/noncanonical report bytes.
-        if canonical_json_bytes(json.loads(data)) != data:
-            raise ValueError("evidence reports require canonical UTF-8 JSON")
+    for name, data in sorted(report_bytes.items()):
         refs.extend(retain(name, data, "report"))
     index_data = _bytes(EvidenceIndex(parts=tuple(refs)))
     for depth in range(10):
