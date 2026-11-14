@@ -126,6 +126,14 @@ workflow shell does not reimplement them. Verification-only recovery reads the o
 object and upload receipt, preserving provenance without rebuilding or uploading. Failed evidence
 keeps delivery incomplete and retryable. Historical two-revision lineage checks remain unchanged.
 
+A proved pre-upload failure may have a distinct typed disposition in the existing
+sealed negative-evidence protocol. Its writer authenticates retained bytes and a
+closed audited source contract without provider credentials or deployment access.
+The serialized upload consumer checks live original-intent contradictions before
+the global guard accepts that proof for a different normally admitted release.
+Original intent/failure/archive identities remain immutable; same-source upload
+guards and successful-upload verification-only recovery remain unchanged.
+
 ## Offline precinct personalization (#608)
 
 The November2026 general precinct catalog is a hash-bound publication input.

@@ -425,6 +425,37 @@ def read_evidence_reports(receipt: OperationReceipt, *, issue_number: int) -> di
     raise ValueError("complete evidence receipt is unavailable")
 
 
+def read_preupload_evidence(
+    publication: PublicationResult,
+) -> tuple[tuple[OperationReceipt, dict[str, bytes]], ...]:
+    """Read this source's complete evidence; incomplete groups or uploads fail closed.
+
+    This checks repository evidence consistency, not historical provider write absence.
+    A complete upload fragment remains a contradiction even without its final seal.
+    """
+    issue = _validate_publication(publication)
+    candidate = publication.published.candidate
+    comments = _comments(candidate.producer.repository, issue)
+    completed = tuple(
+        (receipt, reports)
+        for receipt, reports in _completed(comments, issue)
+        if receipt.producer.source_sha == candidate.source_sha
+    )
+    complete_groups = {_sha(_bytes(receipt)) for receipt, _ in completed}
+    observed_groups = {
+        marker.group
+        for marker, _ in comments.values()
+        if marker.producer.source_sha == candidate.source_sha
+    }
+    if observed_groups != complete_groups:
+        raise ValueError("incomplete evidence prevents a pre-upload disposition")
+    for receipt, _ in completed:
+        verify_canonical_publication(receipt.publication, publication.published)
+        if receipt.upload is not None or receipt.state == "verified":
+            raise ValueError("upload evidence contradicts a pre-upload disposition")
+    return completed
+
+
 def retain_evidence(
     receipt: OperationReceipt, *, issue_number: int, reports: dict[str, bytes]
 ) -> tuple[int, ...]:

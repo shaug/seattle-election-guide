@@ -456,6 +456,55 @@ present, must match the report exactly. An absent initial status can be recovere
 in-progress or success status URLs must agree with the upload. Missing, conflicting or ambiguous
 evidence fails closed.
 It never builds, republishes, uploads, or relabels the original upload producer.
+
+### Proved pre-upload failure disposition
+
+A created GitHub deployment intent is conservative evidence of a possible upload,
+even when its statuses are empty. A failed report, absent Pages URL or selected
+provider inventory alone cannot clear it. Successful or uncertain uploads still
+use the original-producing-run verification-only procedure above.
+
+The separate pre-upload disposition supports one audited normal invocation:
+Wrangler4.158.0 project-metadata GET503 under complete source tree
+`25653db793a25aaabdcc954410109775cf9cd371`. That tree binds the entrypoint,
+transitive application code, workflow recipe, npm lockfile and uploader config.
+Both possible project lookup sites in this invocation precede resource writes;
+the retained report does not identify which lookup threw. This is a qualified
+normal-path conclusion, not a captured remote stack, literal runtime bundle hash
+or universal OS/network/provider-inventory proof. Unknown code, output or upload
+outcomes fail closed.
+
+An issue-scoped correction may include a reviewed
+`config/hosting/preupload-failure.json` request containing the original typed
+artifact identity, exact intent ID and already-retained complete ZIP as base64.
+Do not request the old artifact again merely to supply these bytes. Normal main
+CI's existing publication-evidence job runs `record-preupload-disposition` only
+when that operational request exists. It authenticates the wrapper digest and
+producing-attempt metadata through Actions, validates safe unique members and the
+complete failed report, and appends a typed disposition report through the
+existing sealed evidence protocol. The carrier remains failed, with no upload or
+verification credit. Original intent, failed reports and archive identities are
+never edited or deleted. No provider credential or new GitHub permission is
+available to this evidence-recording step.
+
+The durable proof retains the complete original wrapper and metadata attestation.
+It must match the exact request committed at its original trusted-main issuer's
+workflow SHA. A later CI producer reuses that original disposition without relabeling it or
+requiring an expired temporary artifact. Missing, partial, forged, ambiguous or
+conflicting evidence is not acceptance. Recording historical source proof does
+not grant admission: the serialized deployment job independently checks the live
+owned intent, current statuses and complete/partial upload evidence before the
+global guard accepts its disposition. A later upload claim or status on that
+original intent rejects the disposition; a different normally verified release
+does not. Existing same-source admission and creation guards remain unchanged.
+
+Source/workflow corrections still require normal prepare, a fresh unreserved
+version, the published predecessor, full validation, independent review, exact
+head CI and candidate inspection. They receive no release-request exemption.
+The legitimate correction release may supersede an earlier published-but-unshipped
+archive while preserving its tag, asset and bytes; do not claim the superseded
+source was accepted production. The correction's own upload and any later
+verification-only recovery retain their normal single CI producer and intent.
 Already successful verification is idempotent and cannot reorder an older production deployment.
 `make hosting-deploy` deliberately fails with these recovery instructions.
 

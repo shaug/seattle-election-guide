@@ -887,6 +887,37 @@ def fetch_artifact_command(
         _failed(error)
 
 
+@app.command("record-preupload-disposition")
+def record_preupload_disposition_command(
+    request: Annotated[Path, typer.Option()], output: Annotated[Path, typer.Option()]
+) -> None:
+    """Retain historical source proof; upload admission still checks the live intent."""
+    import os
+
+    from election_guide.release.evidence import current_producer, record_evidence_failure
+    from election_guide.release.preupload import (
+        PreUploadRecoveryRequest,
+        resolve_preupload_failure,
+    )
+
+    try:
+        if (
+            os.environ.get("GITHUB_ACTIONS") != "true"
+            or os.environ.get("GITHUB_REF") != "refs/heads/main"
+        ):
+            raise ValueError("pre-upload disposition recording requires trusted main Actions")
+        parsed = PreUploadRecoveryRequest.model_validate_json(request.read_bytes())
+        proof = resolve_preupload_failure(
+            parsed.model_dump(mode="json"),
+            producer=current_producer(parsed.failed_artifact.producer.source_sha),
+        )
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(canonical_json_bytes(proof.model_dump(mode="json")))
+    except (OSError, ValueError) as error:
+        record_evidence_failure(output.parent / "preupload-recording-failure", error)
+        _failed(error)
+
+
 @app.command("delivery-check")
 def delivery_check_command(
     publication: Annotated[Path, typer.Option()], output_dir: Annotated[Path, typer.Option()]
