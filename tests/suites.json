@@ -360,6 +360,11 @@
     "tests": {},
     "partition": "integration-artifacts"
   },
+  "tests/test_preupload_disposition.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
   "tests/test_preview_teardown.py": {
     "suite": "integration",
     "tests": {},

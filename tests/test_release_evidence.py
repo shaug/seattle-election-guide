@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 from functools import partial
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qs, urlsplit
 
 import pytest
 from typer.testing import CliRunner
@@ -74,6 +75,9 @@ class GitHub:
         else:
             assert "/deployments" in endpoint
             rows = self.deployments
+            source = parse_qs(urlsplit(endpoint).query).get("sha")
+            if source:
+                rows = [row for row in rows if row.get("sha") == source[0]]
         # Deliberately put the relevant records on later pages.
         return json.dumps([[], rows[:1], rows[1:]])
 

@@ -195,7 +195,22 @@ def require_no_unverified_uploads(repository: str) -> None:
             and r.upload.github_deployment_id == row.get("id")
             and deployment_payload(r.publication) == identity.model_dump(mode="json")
         ]
+        from election_guide.release.preupload import DISPOSITION_ERROR
+
+        if verified and any(record.error == DISPOSITION_ERROR for record in records):
+            raise ValueError("verified original upload contradicts its pre-upload disposition")
         if not verified:
+            from election_guide.release.preupload import load_preupload_dispositions
+
+            publications = [
+                record.publication
+                for record in records
+                if record.phase == "publication"
+                and record.state == "published"
+                and deployment_payload(record.publication) == identity.model_dump(mode="json")
+            ]
+            if publications and load_preupload_dispositions(publications[0], row):
+                continue
             raise ValueError(
                 "an earlier upload is unverified; "
                 "use verification-only recovery before any new upload"
