@@ -487,6 +487,14 @@ verification credit. Original intent, failed reports and archive identities are
 never edited or deleted. No provider credential or new GitHub permission is
 available to this evidence-recording step.
 
+The authenticated metadata snapshot must fit one existing evidence part and is
+written first. If a later evidence POST fails, the trusted recorder revalidates
+that snapshot and the original issuer's request, then appends only matching
+missing parts under the original issuer. It can resume after temporary artifact
+expiry without inventing metadata or relabeling the producer. Unrelated,
+conflicting or multiple pending groups fail closed; incomplete proof never
+passes upload admission.
+
 The durable proof retains the complete original wrapper and metadata attestation.
 It must match the exact request committed at its original trusted-main issuer's
 workflow SHA. A later CI producer reuses that original disposition without relabeling it or

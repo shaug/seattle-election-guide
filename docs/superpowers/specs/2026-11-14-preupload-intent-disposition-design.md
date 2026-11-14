@@ -35,7 +35,7 @@ delivery path. It does not override platform or provider permissions.
 Add a distinct typed disposition report, carried by the existing authenticated
 negative evidence framing, separate from any successful UploadReceipt. Its
 carrier remains a failed deployment receipt targeting the original source; the
-disposition producer's workflow SHA/run identify the actual correction workflow,
+disposition producer's workflow SHA/run identify the original correcting workflow,
 not a claim that its CI lanes tested the old source. It binds the original publication, original producer and exact
 managed deployment ID, authenticated failed artifact ID/name/wrapper digest,
 whole failed-report digest, the audited uploader contract/classifier and the
@@ -47,7 +47,7 @@ them against current authenticated Actions metadata and producing-attempt
 boundaries without downloading the artifact again. Extract only safe unique
 regular members and verify the complete wrapper's hash/size/CRC. The old report
 must match the original producer/source/deployment exactly; returncode must be
-nonzero, and there must be no upload.json or Pages URL. The original intent must
+exactly1 for this normal failure, and there must be no upload.json or Pages URL. The original intent must
 still match its durable publication and have no status suggesting an upload.
 Reject any contradictory complete or partial upload evidence, duplicate matching
 intents, conflicting dispositions or a later matching successful upload.
@@ -70,6 +70,12 @@ reuse, not another artifact download. Authenticate its metadata/attempt boundary
 when recording the disposition, then retain the complete wrapper and metadata
 attestation inside the existing sealed durable evidence reports. Reads validate
 that durable proof without requiring a temporary artifact to remain available.
+The complete metadata snapshot fits one existing evidence part and sorts first.
+After an interrupted journal write, the recorder may complete only the exact
+matching pending group under its original issuer, using that retained metadata
+and the issuer's immutable reviewed request. All existing report parts must
+match before any missing part is posted. Unrelated, conflicting or multiple
+pending groups remain blocked; incomplete evidence never grants admission.
 The admission consumer independently checks current original-intent ownership,
 statuses, upload receipts and incomplete evidence groups for contradictions. A
 historical source-proof journal entry alone grants no upload admission. Its

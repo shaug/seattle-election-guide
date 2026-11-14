@@ -448,6 +448,167 @@ def recovery_request(setup: tuple[Any, ...]) -> dict[str, Any]:
     }
 
 
+@pytest.fixture
+def interrupted_recording(
+    disposed_intent: tuple[Any, ...], monkeypatch: pytest.MonkeyPatch
+) -> tuple[tuple[Any, ...], dict[str, Any]]:
+    from election_guide.hosting import promotion
+
+    workflow, _, api, _, _, _, _, _, _, metadata = disposed_intent
+    api.comments[:] = [
+        comment
+        for comment in api.comments
+        if json.loads(comment["body"].splitlines()[-1].split(" ", 2)[2][:-4])["producer"]["run_id"]
+        != 200
+    ]
+    state: dict[str, Any] = {"expired": False, "verifications": 0}
+    read_rows = workflow.read_rows
+
+    def rows(endpoint: str, field: str | None = None) -> list[dict[str, Any]]:
+        if field == "artifacts":
+            if state["expired"]:
+                raise ValueError("original artifact expired")
+            return [metadata]
+        return read_rows(endpoint, field)
+
+    def verify(reference: Any) -> None:
+        if state["expired"]:
+            raise ValueError("original artifact expired")
+        state["verifications"] += 1
+
+    monkeypatch.setattr(workflow, "read_rows", rows)
+    monkeypatch.setattr(promotion, "verify_actions_artifact", verify)
+    return disposed_intent, state
+
+
+@pytest.mark.parametrize("retained_parts", [1, 3, 5])
+@pytest.mark.parametrize("later_caller", [False, True])
+def test_partial_disposition_write_resumes_only_missing_parts_with_original_issuer(
+    interrupted_recording: tuple[tuple[Any, ...], dict[str, Any]],
+    retained_parts: int,
+    later_caller: bool,
+) -> None:
+    from election_guide.release import preupload
+
+    setup, state = interrupted_recording
+    workflow, evidence, api, _, publication, issuer, _, proof, _, _ = setup
+    start = len(api.posted)
+    api.fail_after = start + retained_parts
+    with pytest.raises(ValueError, match="unavailable"):
+        preupload.resolve_preupload_failure(recovery_request(setup), producer=issuer)
+    retained = copy.deepcopy(api.comments)
+    with pytest.raises(ValueError, match="incomplete"):
+        workflow.require_no_unverified_uploads(issuer.repository)
+
+    api.fail_after = None
+    state["expired"] = True
+    caller = (
+        issuer.model_copy(update={"workflow_sha": "c" * 40, "run_id": 300})
+        if later_caller
+        else issuer
+    )
+    result = preupload.resolve_preupload_failure(recovery_request(setup), producer=caller)
+
+    assert result.model_dump(mode="json") == proof
+    assert result.producer == issuer and state["verifications"] == 1
+    assert all(comment in api.comments for comment in retained)
+    assert all(
+        api.posted[start:].count(comment["body"]) == 1
+        for comment in api.comments[len(retained) - retained_parts :]
+    )
+    assert len(preupload.read_recorded_dispositions(publication, 50)) == 1
+    workflow.require_no_unverified_uploads(issuer.repository)
+    assert api.deployments[0]["id"] == 50 and api.statuses[50] == []
+    records = evidence.load_verified_receipts(
+        repository=issuer.repository,
+        issue_number=550,
+        release_version=publication.published.candidate.declaration.release_version,
+        source_sha=issuer.source_sha,
+    )
+    assert sum(record.error == DISPOSITION_ERROR for record in records) == 1
+
+
+def test_recorder_does_not_ignore_an_unrelated_pending_operation(
+    interrupted_recording: tuple[tuple[Any, ...], dict[str, Any]],
+    evidence_setup: tuple[Any, ...],  # noqa: F811
+) -> None:
+    from election_guide.release import preupload
+
+    setup, _ = interrupted_recording
+    _, evidence, api, _, publication, issuer, _, _, _, _ = setup
+    api.fail_after = len(api.posted) + 1
+    with pytest.raises(ValueError, match="unavailable"):
+        evidence.retain_evidence(
+            operation(
+                publication,
+                phase="deployment",
+                state="failed",
+                upload=evidence_setup[4],
+                error="uncertain upload",
+            ),
+            issue_number=550,
+            reports={},
+        )
+    api.fail_after = None
+    before = copy.deepcopy(api.comments)
+    posted = len(api.posted)
+    with pytest.raises(ValueError):
+        preupload.resolve_preupload_failure(recovery_request(setup), producer=issuer)
+    assert api.comments == before and len(api.posted) == posted
+
+
+@pytest.mark.parametrize("damage", ["conflicting-metadata", "unexpected-report", "duplicate-group"])
+def test_pending_disposition_conflicts_are_rejected_before_any_missing_part_is_posted(
+    interrupted_recording: tuple[tuple[Any, ...], dict[str, Any]], damage: str
+) -> None:
+    from election_guide.release import preupload
+    from tests.test_release_evidence import BOT
+
+    setup, _ = interrupted_recording
+    _, evidence, api, _, publication, issuer, _, _, _, metadata = setup
+    api.fail_after = len(api.posted) + 1
+    with pytest.raises(ValueError, match="unavailable"):
+        preupload.resolve_preupload_failure(recovery_request(setup), producer=issuer)
+    api.fail_after = None
+    carrier = operation(
+        publication, phase="deployment", state="failed", producer=issuer, error=DISPOSITION_ERROR
+    )
+    name = "preupload-artifact-metadata.json"
+    value = copy.deepcopy(metadata)
+    if damage == "conflicting-metadata":
+        value["id"] = 71
+    elif damage == "unexpected-report":
+        name, value = "unrelated.json", {"unexpected": True}
+    else:
+        carrier = carrier.model_copy(
+            update={"producer": issuer.model_copy(update={"workflow_sha": "c" * 40, "run_id": 300})}
+        )
+    marker, chunk = evidence._parts(carrier, name, canonical_json_bytes(value), "report")[0]
+    comment = {"id": len(api.comments) + 1, "user": BOT, "body": evidence._body(marker, chunk)}
+    if damage == "conflicting-metadata":
+        api.comments[-1]["body"] = comment["body"]
+    else:
+        api.comments.append(comment)
+    before, posted = copy.deepcopy(api.comments), len(api.posted)
+    with pytest.raises(ValueError):
+        preupload.resolve_preupload_failure(recovery_request(setup), producer=issuer)
+    assert api.comments == before and len(api.posted) == posted
+
+
+def test_metadata_snapshot_must_fit_one_existing_evidence_part_before_recording(
+    interrupted_recording: tuple[tuple[Any, ...], dict[str, Any]],
+) -> None:
+    from election_guide.release import preupload
+
+    setup, state = interrupted_recording
+    _, evidence, api, _, _, issuer, _, _, _, metadata = setup
+    metadata["unsupported_large_field"] = "x" * evidence.PART_BYTES
+    before, posted = copy.deepcopy(api.comments), len(api.posted)
+    with pytest.raises(ValueError):
+        preupload.resolve_preupload_failure(recovery_request(setup), producer=issuer)
+    assert api.comments == before and len(api.posted) == posted and state["verifications"] == 0
+
+
 def test_disposition_recording_authenticates_retained_wrapper_without_downloading(
     disposed_intent: tuple[Any, ...], monkeypatch: pytest.MonkeyPatch
 ) -> None:

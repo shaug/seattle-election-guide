@@ -129,6 +129,9 @@ keeps delivery incomplete and retryable. Historical two-revision lineage checks 
 A proved pre-upload failure may have a distinct typed disposition in the existing
 sealed negative-evidence protocol. Its writer authenticates retained bytes and a
 closed audited source contract without provider credentials or deployment access.
+Interrupted recording resumes only an exact matching original group; admission
+continues to reject incomplete evidence. The existing append-only writer checks
+all retained report parts before posting any missing part.
 The serialized upload consumer checks live original-intent contradictions before
 the global guard accepts that proof for a different normally admitted release.
 Original intent/failure/archive identities remain immutable; same-source upload

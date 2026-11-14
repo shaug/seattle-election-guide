@@ -27,7 +27,9 @@ from election_guide.release.automation_models import (
     Sha256,
 )
 from election_guide.release.evidence import (
+    PART_BYTES,
     deployment_payload,
+    read_pending_preupload_evidence,
     read_preupload_evidence,
     require_publication_evidence,
     retain_evidence,
@@ -173,6 +175,9 @@ def validate_metadata(reference: ArtifactRef, metadata: dict[str, Any]) -> None:
         or workflow_run.get("id") != reference.producer.run_id
         or workflow_run.get("head_sha") != reference.producer.workflow_sha
         or workflow_run.get("head_branch") != "main"
+        # This snapshot sorts first and must be one complete existing report
+        # part, so any later POST failure leaves enough proof to resume it.
+        or len(canonical_json_bytes(metadata)) > PART_BYTES
     ):
         raise ValueError("retained pre-upload metadata conflicts with original artifact")
 
@@ -331,7 +336,8 @@ def resolve_preupload_failure(
 
     Existing complete proof is reused with its original issuer, even by later CI
     producers and after temporary artifact expiry. No download, deployment/status
-    mutation or uploader is invoked here.
+    mutation or uploader is invoked here. An interrupted record resumes only its
+    exact original group, using the authenticated metadata part written first.
     """
     from election_guide.hosting.promotion import verify_actions_artifact
 
@@ -345,28 +351,42 @@ def resolve_preupload_failure(
     original_failure = OperationReceipt.model_validate_json(members["operation.json"])
     publication = original_failure.publication
     require_publication_evidence(publication)
-    existing = read_recorded_dispositions(publication, parsed.github_deployment_id)
-    if existing:
-        if (
-            existing[0].failed_artifact != reference
-            or existing[0].github_deployment_id != parsed.github_deployment_id
-        ):
-            raise ValueError("repeated recovery request conflicts with original disposition")
-        return existing[0]
-    artifacts = [
-        row
-        for row in workflow.read_rows(
-            f"repos/{reference.producer.repository}/actions/runs/{reference.producer.run_id}"
-            "/artifacts?per_page=100",
-            "artifacts",
-        )
-        if row.get("name") == reference.name
-    ]
-    if len(artifacts) != 1:
-        raise ValueError("original failed artifact is missing or ambiguous")
-    metadata = artifacts[0]
-    validate_metadata(reference, metadata)
-    verify_actions_artifact(reference)
+    pending = read_pending_preupload_evidence(publication, error=DISPOSITION_ERROR)
+    if pending:
+        original_carrier, reports = pending
+        producer = original_carrier.producer
+        try:
+            raw_metadata = json.loads(reports["preupload-artifact-metadata.json"])
+        except KeyError as error:
+            raise ValueError(
+                "pending disposition lacks its authenticated metadata snapshot"
+            ) from error
+        if not isinstance(raw_metadata, dict):
+            raise ValueError("invalid pending artifact metadata snapshot")
+        metadata = cast(dict[str, Any], raw_metadata)
+    else:
+        existing = read_recorded_dispositions(publication, parsed.github_deployment_id)
+        if existing:
+            if (
+                existing[0].failed_artifact != reference
+                or existing[0].github_deployment_id != parsed.github_deployment_id
+            ):
+                raise ValueError("repeated recovery request conflicts with original disposition")
+            return existing[0]
+        artifacts = [
+            row
+            for row in workflow.read_rows(
+                f"repos/{reference.producer.repository}/actions/runs/{reference.producer.run_id}"
+                "/artifacts?per_page=100",
+                "artifacts",
+            )
+            if row.get("name") == reference.name
+        ]
+        if len(artifacts) != 1:
+            raise ValueError("original failed artifact is missing or ambiguous")
+        metadata = artifacts[0]
+        validate_metadata(reference, metadata)
+        verify_actions_artifact(reference)
     proof = PreUploadDisposition(
         kind=KIND,
         producer=producer,
