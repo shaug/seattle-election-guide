@@ -457,6 +457,50 @@ in-progress or success status URLs must agree with the upload. Missing, conflict
 evidence fails closed.
 It never builds, republishes, uploads, or relabels the original upload producer.
 
+### Historical evidence compatibility
+
+Current readers accept the original v1 report/index/seal groups and bounded v2
+compressed envelopes. Writers remain v1 during the reader rollout; enabling v2
+writes requires a separate accepted rollout. Existing comments are never edited
+or deleted. Seven-day Actions artifacts do not replace durable issue evidence.
+
+Historical-source CI executes that source's reader code. Before requesting such
+a recovery after compressed evidence exists, run the supported preparation mode
+from current main and require its complete successful report:
+
+<!-- runbook-command:prepare-historical-evidence -->
+```bash
+gh workflow run verify-release.yml --ref main \
+  -f mode=prepare-historical-evidence \
+  -f issue="$issue_number" \
+  -f release_version="$release_version" \
+  -f source_sha="$source_sha" \
+  -f run_id="$run_id" \
+  -f run_attempt="$run_attempt"
+```
+
+Under the existing mainline lock, preparation discovers every owning issue in
+managed deployment payloads and validates the complete relevant custody before
+posting. It appends only missing lossless v1 representations, preserves original
+receipt/report bytes and producer identities, and reuses existing matching IDs.
+The distinct current exporter identity and actual new comment IDs are retained
+in `compatibility-report.json`. At most 256 new comments are posted per invocation.
+Incomplete, conflicting or interrupted preparation exits nonzero with retained
+failure evidence; a later explicitly requested invocation rereads and resumes.
+No upload, probe, deployment status, artifact download or existing comment change
+is part of preparation. It does not authorize a recovery that another gate denies.
+
+The same mode retains an offline integration proof using authenticated saved
+General128 operations. It executes the original source's verification-workflow
+`recover-upload` command and its latest-production/global-admission consumers
+against an explicitly labeled fixture API. All imported project files must match
+the original Git blobs. Pure v2 correctly fails for the old reader; prepared v1
+recovers exact receipts/reports without Actions artifacts. Fixture IDs are not
+native GitHub IDs, and this proof is neither historical full-CI publication nor a
+new General128 production acceptance. Native CI and deployed preparation must
+both pass this proof before v2 writer activation. Default verification-only mode
+uses current readers directly and preserves the original upload identity.
+
 ### Proved pre-upload failure disposition
 
 A created GitHub deployment intent is conservative evidence of a possible upload,

@@ -1,6 +1,6 @@
 # Compressed Release Evidence Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox syntax for tracking. Native execution was explicitly selected; no plan-ack handshake is pending.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox syntax for tracking. Execution method: native.
 
 **Goal:** Replace ordinary fifteen-comment release evidence with three durable compressed checkpoints without losing original bytes, identity or historical recovery.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** Existing Python/Pydantic, standard-library gzip/zlib/base64/hashlib/JSON, authenticated gh API and existing Actions workflows. No dependency or permission-map addition.
 
-**Spec:** docs/superpowers/specs/2026-11-15-compressed-release-evidence-design.md; approved original task retained in the same owner's issue762 task record.
+**Spec:** docs/superpowers/specs/2026-11-15-compressed-release-evidence-design.md; original task records are separate.
 
 ## Global Constraints
 
@@ -33,7 +33,7 @@
 
 - Create src/election_guide/release/evidence_v2.py: typed v2 framing, bounded compression/decoding and multipart assembly; no API or production decisions.
 - Modify src/election_guide/release/evidence.py: combine authenticated v1/v2 comments and shared validation; explicit lossless v1 retention helper; active v1 default in Stage A.
-- Create src/election_guide/release/evidence_compat.py: current-workflow compatibility preparation and historical execution proof; no upload/provider capability.
+- Create src/election_guide/release/evidence_compat.py: current-workflow compatibility preparation; no upload/provider capability. Create tests/test_release_evidence_historical.py: subprocess execution proof using unmodified historical Git objects and an offline fixture API.
 - Modify src/election_guide/release/automation_cli.py: explicit preparation/proof command and failure artifact propagation.
 - Modify .github/workflows/verify-release.yml: explicit preparation mode using existing permissions/concurrency; default verification behavior retained.
 - Modify docs/RELEASE.md and ARCHITECTURE.md: format/limits and required recovery ordering.
@@ -62,13 +62,13 @@
 
 ### Task 3: Supported historical compatibility preparation (Stage A)
 
-**Interfaces:** prepare_historical_evidence(repository: str, issue_number: int, output_dir: Path) -> compatibility report materializes only missing matching v1 records from authenticated complete v2 groups, with actual current exporter identity separate. prove_historical_reader(source_sha: str, retained_records, output_dir: Path) -> proof executes the unmodified source object's existing latest-production command in a separate process and records origins, hashes, exact bytes and exit state. CLI `release automation prepare-historical-evidence` exposes preparation/proof under trusted current-main execution only.
+**Interfaces:** prepare_historical_evidence(repository: str, issue_number: int, output_dir: Path) -> compatibility report materializes only missing matching v1 records from authenticated complete v2 groups, with actual current exporter identity separate. The mandatory historical integration test executes the original verification workflow recover-upload command and latest-production/global-admission consumers in separate processes, recording imported Git-blob identities and exact receipt/report hashes. CLI `release automation prepare-historical-evidence` exposes preparation under trusted current-main execution only; the same workflow mode runs and retains the historical proof without a second production Git orchestration API.
 
 - [ ] Add RED tests: multiple managed releases and latest selection survive preparation; partial v1 continuation; already complete v1 no POST; corrupt/incomplete v2 fails before export; conflicts fail closed; original producer/source never rewritten; no artifacts/provider/upload/deployment-status call; bounded export batches report incomplete visibly.
 - [ ] Add a subprocess integration test that executes actual original K source/workflow command against explicitly labeled retained/fixture transport; pure v2 is not silently treated as old-reader success, while lossless compatibility preparation yields exact old consumer receipts/reports. Assert imported project origins come from the original source, not the current checkout.
-- [ ] Implement the preparation command and testable historical proof using full immutable Git objects and authenticated retained General128 custody. Do not patch old code. Record current reader/exporter SHA separately from original operation.
+- [ ] Implement the preparation command and testable historical proof using full immutable Git objects and authenticated retained General128 custody. Discover all owning issues from managed deployment payloads and preflight them before any export; bound new comments per invocation to 256, with explicit nonzero partial/resumable output. Do not patch old code. Record current reader/exporter SHA separately from original operation.
 - [ ] Add explicit preparation/proof mode to verify-release.yml, preserving existing permission values, concurrency and default recovery. Invalid mode/input/retention exits nonzero with retained local report/summary; default verification remains unchanged.
-- [ ] Run `uv run --offline --frozen pytest -q tests/test_release_evidence_compat.py tests/test_release_automation_workflow.py tests/test_release_runbook.py` to GREEN; commit `feat: preserve historical readers through evidence preparation` with runbook ordering.
+- [ ] Run `uv run --offline --frozen pytest -q tests/test_release_evidence_compat.py tests/test_release_evidence_historical.py tests/test_release_automation_workflow.py tests/test_release_runbook.py` to GREEN; commit `feat: preserve historical readers through evidence preparation` with runbook ordering.
 
 ### Task 4: Deploy and prove reader rollout (Stage A gate)
 
@@ -96,7 +96,7 @@
 
 ## Plan self-review
 
-Coverage: codec/framing/limits -> Task1; original bytes/ownership/current consumer contracts -> Task2; historical source execution/order/expiry -> Task3 and deployed Task4 proof; reader-before-writer deployment -> Task4 gate; multipart/idempotency/uncertain writes/incomplete-v1/upload-before-probes/failures -> Task5; full/review/CI/candidate/ordinary shipping/preservation/resource closeout -> Tasks4-6. Every Review Focus row has an owning regression test. Interfaces use original operation identity throughout. The compatibility preparation is required recovery ordering, not a new permission or optional approval gate. Native execution and routine choices were explicitly authorized; proceed after this self-review without a plan-ack round.
+Coverage: codec/framing/limits -> Task1; original bytes/ownership/current consumer contracts -> Task2; historical source execution/order/expiry -> Task3 and deployed Task4 proof; reader-before-writer deployment -> Task4 gate; multipart/idempotency/uncertain writes/incomplete-v1/upload-before-probes/failures -> Task5; full/review/CI/candidate/ordinary shipping/preservation/resource closeout -> Tasks4-6. Every Review Focus row has an owning regression test. Interfaces use original operation identity throughout. The compatibility preparation is required recovery ordering, not a new permission or optional approval gate. Execution remains native and the staged acceptance gates remain mandatory.
 
 
 ## Named executable regressions
@@ -105,6 +105,6 @@ Task1: `test_codec_round_trips_original_unicode_bytes`; `test_deterministic_gzip
 
 Task2: `test_general128_three_v2_comments_restore_exact_original_reports`; `test_mixed_representations_deduplicate_only_identical_bytes`; `test_incomplete_v2_blocks_preupload_disposition`; `test_partial_v1_receipt_cannot_be_contradicted_by_v2_upload`; `test_v2_supports_current_admission_latest_updates_and_expired_artifact_recovery`; `test_reader_rollout_keeps_active_writer_v1`.
 
-Task3: `test_compatibility_preparation_covers_global_managed_intents`; `test_compatibility_export_resumes_original_v1_ids`; `test_compatibility_export_keeps_original_producer_and_records_exporter`; `test_unmodified_historical_source_reads_prepared_v2_operations`; `test_historical_proof_rejects_current_import_origins`; `test_prepare_mode_has_no_upload_or_provider_capability`.
+Task3: `test_compatibility_preparation_covers_global_managed_intents`; `test_compatibility_export_resumes_original_v1_ids`; `test_compatibility_export_keeps_original_producer_and_records_exporter`; `test_original_workflow_and_consumers_after_lossless_preparation`; `test_historical_proof_rejects_current_import_origins`; `test_historical_preparation_keeps_permissions_lock_and_default_recovery`; `test_preparation_cli_preserves_nonzero_and_never_runs_verification`.
 
 Task5: `test_ordinary_release_retains_exactly_three_comments`; `test_ambiguous_successful_post_is_reused_after_reread`; `test_missing_ambiguous_post_stays_nonzero`; `test_multipart_retry_posts_only_missing_records`; `test_existing_partial_v1_remains_v1_after_cutover`; `test_upload_checkpoint_is_retained_before_probes`; `test_failed_retention_is_nonzero_and_does_not_mark_deployment_success`.

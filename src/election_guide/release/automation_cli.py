@@ -1014,6 +1014,21 @@ def deployment_status_command(upload: Annotated[Path, typer.Option()]) -> None:
         _failed(error)
 
 
+@app.command("prepare-historical-evidence")
+def prepare_historical_evidence_command(
+    repository: Annotated[str, typer.Option()],
+    issue: Annotated[int, typer.Option(min=1)],
+    output_dir: Annotated[Path, typer.Option()],
+) -> None:
+    """Materialize lossless v1 evidence under the trusted current-main workflow."""
+    from election_guide.release.evidence_compat import prepare_historical_evidence
+
+    try:
+        typer.echo(json.dumps(prepare_historical_evidence(repository, issue, output_dir)))
+    except (OSError, ValueError) as error:
+        _failed(error)
+
+
 @app.command("recover-upload")
 def recover_upload_command(
     repository: Annotated[str, typer.Option()],

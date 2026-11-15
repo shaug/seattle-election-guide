@@ -14,6 +14,7 @@ import os
 import subprocess
 import tempfile
 from contextlib import suppress
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal, cast
@@ -64,6 +65,16 @@ class PartMarker(OperationalRecord):
 
 EvidenceMarker = PartMarker | evidence_v2.EnvelopeMarker
 Comments = dict[int, tuple[EvidenceMarker, bytes]]
+
+
+@dataclass(frozen=True)
+class IssueEvidence:
+    """Authenticated format state, including incomplete compressed groups."""
+
+    comments: Comments
+    completed: tuple[tuple[OperationReceipt, dict[str, bytes]], ...]
+    complete_compressed_groups: frozenset[str]
+    pending_compressed_groups: frozenset[str]
 
 
 class PartRef(OperationalRecord):
@@ -480,6 +491,21 @@ def load_verified_receipts(
     )
 
 
+def read_issue_evidence(repository: str, issue_number: int) -> IssueEvidence:
+    """Read and validate complete issue custody before compatibility writes."""
+    comments = _comments(repository, issue_number)
+    completed = tuple(_completed(comments, issue_number))
+    compressed = {
+        marker.group
+        for marker, _ in comments.values()
+        if isinstance(marker, evidence_v2.EnvelopeMarker)
+    }
+    sealed = frozenset(
+        marker.group for marker, _ in comments.values() if marker.kind in {"v2-envelope", "v2-seal"}
+    )
+    return IssueEvidence(comments, completed, sealed, frozenset(compressed - sealed))
+
+
 def read_evidence_reports(receipt: OperationReceipt, *, issue_number: int) -> dict[str, bytes]:
     for existing, reports in _completed(
         _comments(receipt.producer.repository, issue_number), issue_number
@@ -577,9 +603,15 @@ def read_pending_preupload_evidence(
 
 
 def retain_v1_evidence(
-    receipt: OperationReceipt, *, issue_number: int, reports: dict[str, bytes]
+    receipt: OperationReceipt,
+    *,
+    issue_number: int,
+    reports: dict[str, bytes],
+    max_new_comments: int | None = None,
 ) -> tuple[int, ...]:
     """Append missing parts and seal last. Never edit a comment, including human text."""
+    if max_new_comments is not None and (type(max_new_comments) is not int or max_new_comments < 0):
+        raise ValueError("invalid compatibility comment budget")
     receipt = OperationReceipt.model_validate_json(_bytes(receipt))
     if _validate_publication(receipt.publication) != issue_number:
         raise ValueError("evidence issue differs from reviewed request")
@@ -605,10 +637,12 @@ def retain_v1_evidence(
             raise ValueError("conflicting existing evidence part")
     refs: list[PartRef] = []
     all_ids: list[int] = []
+    posted = 0
 
     def retain(
         name: str, data: bytes, kind: Literal["report", "index", "seal"]
     ) -> tuple[PartRef, ...]:
+        nonlocal posted
         retained: list[PartRef] = []
         for marker, chunk in _parts(receipt, name, data, kind):
             comment_id: int | None = None
@@ -624,6 +658,11 @@ def retain_v1_evidence(
                     comment_id = existing_id
                     break
             if comment_id is None:
+                if max_new_comments is not None and posted >= max_new_comments:
+                    raise ValueError(
+                        "compatibility comment budget exhausted; preparation incomplete"
+                    )
+                posted += 1
                 with tempfile.TemporaryDirectory(prefix="release-evidence-") as temporary:
                     path = Path(temporary) / "comment.json"
                     path.write_bytes(canonical_json_bytes({"body": _body(marker, chunk)}))

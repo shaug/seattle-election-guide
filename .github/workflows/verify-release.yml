@@ -2,6 +2,14 @@ name: Verify existing release
 'on':
   workflow_dispatch:
     inputs:
+      mode:
+        description: Verify an upload, or prepare evidence for an unmodified historical reader
+        required: true
+        type: choice
+        default: verify
+        options:
+        - verify
+        - prepare-historical-evidence
       issue:
         description: Owning release issue
         required: true
@@ -39,6 +47,7 @@ jobs:
     timeout-minutes: 10
     env:
       GH_TOKEN: ${{ github.token }}
+      MODE: ${{ inputs.mode }}
       SOURCE_SHA: ${{ inputs.source_sha }}
       ISSUE: ${{ inputs.issue }}
       VERSION: ${{ inputs.release_version }}
@@ -56,11 +65,35 @@ jobs:
       run: uv python install 3.12
     - name: Install locked dependencies
       run: uv sync --frozen
+    - name: Validate recovery mode
+      run: |-
+        case "$MODE" in
+          verify|prepare-historical-evidence) ;;
+          *)
+            mkdir -p dist
+            printf '%s\n' "Unknown recovery mode: $MODE" > dist/summary.md
+            cat dist/summary.md >&2
+            cat dist/summary.md >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+            printf '%s\n' '{"state":"failed","complete":false,"error":"unknown recovery mode"}' > dist/finalization-error.json
+            exit 1
+            ;;
+        esac
+    - name: Prepare historical evidence
+      if: inputs.mode == 'prepare-historical-evidence'
+      run: uv run election-guide release automation prepare-historical-evidence --repository "$GITHUB_REPOSITORY"
+        --issue "$ISSUE" --output-dir dist/historical-evidence
+    - name: Prove unmodified historical readers
+      if: inputs.mode == 'prepare-historical-evidence'
+      env:
+        HISTORICAL_PROOF_OUTPUT: dist/historical-evidence-proof.json
+      run: uv run pytest -q tests/test_release_evidence_historical.py
     - name: Recover immutable upload evidence
+      if: inputs.mode == 'verify'
       run: uv run election-guide release automation recover-upload --repository "$GITHUB_REPOSITORY" --issue "$ISSUE"
         --release-version "$VERSION" --source-sha "$SOURCE_SHA" --run-id "$RUN_ID" --run-attempt "$RUN_ATTEMPT"
         --output dist/upload.json
     - name: Retry verification and evidence only
+      if: inputs.mode == 'verify'
       run: |-
         uv run election-guide release automation finalize --upload dist/upload.json --output-dir dist/finalization
         uv run election-guide release automation deployment-status --upload dist/upload.json
