@@ -443,6 +443,11 @@
     "tests": {},
     "partition": "integration-artifacts"
   },
+  "tests/test_release_evidence_v2.py": {
+    "suite": "integration",
+    "tests": {},
+    "partition": "integration-artifacts"
+  },
   "tests/test_release_evidence_v2_codec.py": {
     "suite": "unit",
     "tests": {}

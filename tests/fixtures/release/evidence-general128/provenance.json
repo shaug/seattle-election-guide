@@ -1,0 +1,126 @@
+{
+  "repository": "shaug/seattle-election-guide",
+  "issue": 696,
+  "source": "4f9d09ac39ba09166123500bf3107c1b665ea6dc",
+  "run_id": 43755212223,
+  "run_attempt": 1,
+  "original_comments": [
+    {
+      "id": 6900695160,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900695160",
+      "body_sha256": "25ad63ef1df4651c305e9bf7222a1e198a415a22b35c7fd57cab62b227fe6159"
+    },
+    {
+      "id": 6900695419,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900695419",
+      "body_sha256": "a4ed08407ae8d20070021964690eb311543c526b1251680e5987b421b6dda156"
+    },
+    {
+      "id": 6900695640,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900695640",
+      "body_sha256": "1ab33b1ef43cd093dce9dc62d45ee40f110fa7a86fdc3594119d83fe1c2b88d1"
+    },
+    {
+      "id": 6900845245,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900845245",
+      "body_sha256": "8e227ef57dc31e0d6eb2e2c494d7b45f8eef87cde31f62fb1ce41312fb3325f2"
+    },
+    {
+      "id": 6900845431,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900845431",
+      "body_sha256": "141af6051d2b0efc1bbc2d8b655605362cf549c8f8fdf0a7415223994bdb31f6"
+    },
+    {
+      "id": 6900845590,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900845590",
+      "body_sha256": "9d730faff477f2b50ed2c9ca99e0c543161ff24c088de997ca295e8861329086"
+    },
+    {
+      "id": 6900849833,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900849833",
+      "body_sha256": "eea3d4e521476cc8ea33733c79f9e0021479d7fdc2506bf0e1aaccfa65b86eab"
+    },
+    {
+      "id": 6900849993,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900849993",
+      "body_sha256": "abe076040892da29c0002f1015541dc0cfa8dae43cb5fd0dc09407b279ef8dd3"
+    },
+    {
+      "id": 6900850140,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900850140",
+      "body_sha256": "2989a49d2bc9ba0372de407912c9d7d0a2fa3e97858b7054a062e81ceddda04b"
+    },
+    {
+      "id": 6900850306,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900850306",
+      "body_sha256": "a0f902268194ca9ee36f3caeb5d129c7635a6b59305ef220ac17af11a06faf99"
+    },
+    {
+      "id": 6900850476,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900850476",
+      "body_sha256": "e49016e35933cb3ac9552758ae2a46b1cd62a8f2c5897f57e8537f7b8c91a44b"
+    },
+    {
+      "id": 6900850635,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900850635",
+      "body_sha256": "0904c383e80d2935d4d2d7cee0a873bf3f51db7e06bc16f8b73bb0dc070d9622"
+    },
+    {
+      "id": 6900850782,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900850782",
+      "body_sha256": "64129011b350047d1a0dd9d019bf9ca7dcb58ed747c3416e75f447bc4339da83"
+    },
+    {
+      "id": 6900850958,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900850958",
+      "body_sha256": "bcacbaa635f6f3a7a04dea954b3f2b9d0dac3d2a8b6fc8c8229ade9487513585"
+    },
+    {
+      "id": 6900851128,
+      "url": "https://github.com/shaug/seattle-election-guide/issues/696#issuecomment-6900851128",
+      "body_sha256": "4feb89346ec4c2f718ff3f32a80eecaf2983d433b8b2374e1e50ce3494c087a2"
+    }
+  ],
+  "selected_whole_comment_objects_sha256": "ea1f0234bbabadc0d0160ab4a01e4624f10c6b8a0b8624077daea8bf9699520f",
+  "checkpoints": [
+    {
+      "checkpoint": "publication",
+      "receipt_sha256": "1408fb87a2467c44b45e99d57588d0c3d69bbe098ad21f2c88127c0db28ea064",
+      "reports": {}
+    },
+    {
+      "checkpoint": "upload",
+      "receipt_sha256": "c2272c6df946d31c4bc84e5651fe81977a96b38d35ec9bb126cdcd7150a69e2c",
+      "reports": {}
+    },
+    {
+      "checkpoint": "verified",
+      "receipt_sha256": "2a453adce7598f0a87bbe8ae90c6e4db6b1cd8f37e5bea3b55c49de12c2e4682",
+      "reports": {
+        "production-wait.json": {
+          "bytes": 141815,
+          "sha256": "bb0830237f7099bbdd71c76b5affb63dabb8df250ef200040e774d9ff19b348e"
+        }
+      }
+    }
+  ],
+  "transport": "Original authenticated saved GitHub API custody selected offline; tests generate explicitly synthetic v2 comment IDs. No new API/artifact/public ZIP request or production acceptance.",
+  "additional_saved_original_bytes": {
+    "deployment-manifest.json": {
+      "bytes": 33480,
+      "sha256": "0ffcc8a1dc7d1f9ec1cb11f4aef04adabb31beef289812f62583283123d79b94"
+    },
+    "updates-snapshot.json": {
+      "bytes": 31102,
+      "sha256": "4de1fdee9a3fe832a52ab54c2433f6caa3ae480e81db7f69ef8849d1c0c70509"
+    },
+    "deployment.original.json": {
+      "bytes": 2551,
+      "sha256": "3dd4392491b3d0f932d86e90a2aac54b5a5f6b9b1c80e3963d5ef1502528be41"
+    },
+    "statuses.original.json": {
+      "bytes": 3445,
+      "sha256": "df979a0100ba06add8c241226b7540dfe65c1a6784846b87418be5cc7427afa3"
+    }
+  }
+}

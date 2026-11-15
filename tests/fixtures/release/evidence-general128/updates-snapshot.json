@@ -1,0 +1,415 @@
+{
+  "canonical_origin": "https://seattleelections.guide",
+  "elections": {
+    "wa-2026-general": {
+      "entries": [
+        [
+          "/e/wa-2026-general/updates/46th-democrats-seattle-transit/",
+          "October 19, 2026",
+          "Added the 46th District Democrats’ Seattle transit endorsement."
+        ],
+        [
+          "/e/wa-2026-general/updates/cascade-il26-638-endorsement/",
+          "October 25, 2026",
+          "Added Cascade Bicycle Club’s No on IL26-638 in the Washington Bikes slot."
+        ],
+        [
+          "/e/wa-2026-general/updates/eight-organization-endorsements/",
+          "October 11, 2026",
+          "Added 64 endorsements from eight organizations."
+        ],
+        [
+          "/e/wa-2026-general/updates/first-general-guide/",
+          "October 3, 2026",
+          "Published the first general-election guide."
+        ],
+        [
+          "/e/wa-2026-general/updates/four-publisher-decisions/",
+          "October 19, 2026",
+          "Added 34 source decisions from four publishers."
+        ],
+        [
+          "/e/wa-2026-general/updates/king-county-democrats-ld32-position2/",
+          "October 11, 2026",
+          "Updated King County Democrats’ LD32 Position 2 endorsement."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-06-232155/",
+          "November 6, 2026",
+          "Updated preliminary counts for 52 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-07-164349/",
+          "November 7, 2026",
+          "Updated preliminary counts for 52 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-07-182532/",
+          "November 7, 2026",
+          "Updated preliminary counts for 8 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-09-202310/",
+          "November 9, 2026",
+          "Updated preliminary counts for 52 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-10-142214/",
+          "November 10, 2026",
+          "Updated preliminary counts for 8 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-10-164058/",
+          "November 10, 2026",
+          "Updated preliminary counts for 52 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-10-202349/",
+          "November 10, 2026",
+          "Updated preliminary counts for 8 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-12-112206/",
+          "November 12, 2026",
+          "Updated preliminary counts for 52 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-12-152210/",
+          "November 12, 2026",
+          "Updated preliminary counts for 52 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-12-182255/",
+          "November 12, 2026",
+          "Updated preliminary counts for 11 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-14-164441/",
+          "November 14, 2026",
+          "Updated preliminary counts for 52 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/preliminary-results-2026-11-15-082206/",
+          "November 15, 2026",
+          "Updated preliminary counts for 8 contests."
+        ],
+        [
+          "/e/wa-2026-general/updates/sgn-smith-and-ufcw-ld37/",
+          "October 23, 2026",
+          "Added SGN’s Adam Smith endorsement and UFCW’s LD37 dual."
+        ],
+        [
+          "/e/wa-2026-general/updates/sgn-statewide-initiatives/",
+          "October 27, 2026",
+          "Added SGN’s No endorsements on all three statewide initiatives."
+        ],
+        [
+          "/e/wa-2026-general/updates/sgn-supreme-court/",
+          "November 2, 2026",
+          "Added SGN's five state Supreme Court endorsements."
+        ],
+        [
+          "/e/wa-2026-general/updates/source-decisions-and-revisions/",
+          "October 16, 2026",
+          "Added 175 source decisions and revised two endorsements."
+        ],
+        [
+          "/e/wa-2026-general/updates/sparse-and-unopposed-races/",
+          "October 12, 2026",
+          "Changed how sparse and unopposed races appear."
+        ],
+        [
+          "/e/wa-2026-general/updates/three-sources-and-decisions/",
+          "October 12, 2026",
+          "Added three sources and 22 decisions."
+        ],
+        [
+          "/e/wa-2026-general/updates/transit-riders-union-measures/",
+          "October 21, 2026",
+          "Added Transit Riders Union’s four formal measure endorsements."
+        ],
+        [
+          "/e/wa-2026-general/updates/two-previously-unrecorded-endorsements/",
+          "October 16, 2026",
+          "Added two previously unrecorded endorsements."
+        ],
+        [
+          "/e/wa-2026-general/updates/ufcw-congress-and-ld48-endorsements/",
+          "October 24, 2026",
+          "Added UFCW’s Jayapal, Smith, Birk and Angelis endorsements."
+        ],
+        [
+          "/e/wa-2026-general/updates/uncontested-race-coverage/",
+          "October 24, 2026",
+          "Uncontested races need enough verified endorsements to appear."
+        ],
+        [
+          "/e/wa-2026-general/updates/unofficial-election-wide-counts/",
+          "November 6, 2026",
+          "Added unofficial election-wide counts to the general guide."
+        ],
+        [
+          "/e/wa-2026-general/updates/washington-bus-initiatives/",
+          "October 21, 2026",
+          "Added Washington Bus’s three No initiative recommendations."
+        ],
+        [
+          "/e/wa-2026-general/updates/washingtoncan-initiatives/",
+          "October 4, 2026",
+          "Added WashingtonCAN’s three initiative endorsements."
+        ],
+        [
+          "/e/wa-2026-general/updates/washingtoncan-ld37-senate/",
+          "October 22, 2026",
+          "Added WashingtonCAN’s LD37 Senate endorsement."
+        ]
+      ],
+      "information_pages": {
+        "e/wa-2026-general/index.html": "41b89dea57f72df54a90eafb1ab64ddbc14e58f957d88be228206bd0aeb4c7f6",
+        "e/wa-2026-general/races/initiative-26-001/index.html": "8cc6143cde833bcd71664a5ad2ffad49569df042ea8c2a364fc333cef477ef2e",
+        "e/wa-2026-general/races/initiative-26-638/index.html": "1a67148cfcf21e62acf2adcfa936acdaf5e1d5b72116b8db6932670cb3678cea",
+        "e/wa-2026-general/races/initiative-26-645/index.html": "b7742f2bdb731b84621368236be5b07115e3c7a63ef49469a5c9da958631eab5",
+        "e/wa-2026-general/races/king-county-assessor/index.html": "e676b79f0ef3a28ba8013ba714c71af00df70faa7f21882340e63d9e3a39989f",
+        "e/wa-2026-general/races/king-county-council-2/index.html": "29f5c58f8de3109bb1c03e28f794831c320e7405db0aa3f00462492c59aba325",
+        "e/wa-2026-general/races/king-county-council-4/index.html": "69dd0167c44c8bc09c7fb13154159aa029d4530e3e8970739e41a676bd323707",
+        "e/wa-2026-general/races/king-county-council-8/index.html": "703c35c4c9301cb86ff4e74bf5dab83bbb4add27cc9838015780a431e0ab76a5",
+        "e/wa-2026-general/races/king-county-director-of-elections/index.html": "cd9cabfc46ef56af85fd1c2e0faeac40b299f9147252ceb14d3962b664fc4227",
+        "e/wa-2026-general/races/king-county-district-court-west-judge-1/index.html": "cca6e56dff65dbaf36be460ebb3ca15a00041ccf260b2c819fcd9c05d89b0ae6",
+        "e/wa-2026-general/races/king-county-prosecuting-attorney/index.html": "61878e3aac3a3980a858a4a201c85c23f498bdb29ddb417d082f054169492103",
+        "e/wa-2026-general/races/ld-11-state-representative-1/index.html": "258fde3d1336d43b6fc0ee6cd5b1630c2a0355c31c6173d123ed5f7056e1d0d8",
+        "e/wa-2026-general/races/ld-11-state-representative-2/index.html": "4a289965389caf616822121a92fe90edf7cbb639dd9af5f06169a20750d9860e",
+        "e/wa-2026-general/races/ld-32-state-representative-1/index.html": "31ffd9010edc20618e43187104129a5237edb516f986cba70417cbc515fe6d74",
+        "e/wa-2026-general/races/ld-32-state-representative-2/index.html": "3234ece856e7fa2f20b548b0cae35a87f057a3261dee8885ca30671608c01c69",
+        "e/wa-2026-general/races/ld-32-state-senator/index.html": "10607f9e25cac8a7b1632ec3d4794107b9b28e35951176456a656b9c0feceb75",
+        "e/wa-2026-general/races/ld-34-state-representative-1/index.html": "760eadc9f33c069e58e58672109445e0e55ffad9e04afff4290fd246f1f778a7",
+        "e/wa-2026-general/races/ld-34-state-representative-2/index.html": "594c4cd98bef6c24f167ed4cca75de0fd350c929b0338f71e7476168a17f4a1f",
+        "e/wa-2026-general/races/ld-34-state-senator/index.html": "4e4eb76a0fc50aae892dc94d4a9ecc683d34927d534405df2eedc3a33744e311",
+        "e/wa-2026-general/races/ld-36-state-representative-1/index.html": "d7d074e78fe73cde92b44d25e637028fcfcaa604e18e4f4ffa46f9de4f4400c7",
+        "e/wa-2026-general/races/ld-36-state-representative-2/index.html": "a09631932046ebeae78ecb9c6636fe08f180031a141fa230abb458c563ec055a",
+        "e/wa-2026-general/races/ld-36-state-senator/index.html": "26cabe9e3c454c68cdb86428850b981929274b0fe0760ceaffe047ff01f6a957",
+        "e/wa-2026-general/races/ld-37-state-representative-1/index.html": "58bf2464f9fce54812f4b526fe9cc90654b49b0370ea243cec77aa6a1045606c",
+        "e/wa-2026-general/races/ld-37-state-representative-2/index.html": "8430da76fa4234894f42d1eabbee27f5b73e6e4a409e277e317567903c3c61e9",
+        "e/wa-2026-general/races/ld-37-state-senator/index.html": "1c9f3be2c4d81fc96a367b238a4625580f72698e61323b1927be56d045a4784f",
+        "e/wa-2026-general/races/ld-43-state-representative-1/index.html": "6f2face99f597c45d84526569e3f35ef3cc36468667c857797cf7c8cb202cf18",
+        "e/wa-2026-general/races/ld-43-state-representative-2/index.html": "917e6f327c66c4c9011a92c430718220e82828b17591136d8a2d7e39895371ad",
+        "e/wa-2026-general/races/ld-43-state-senator/index.html": "443e2ba4ec758572a2a840ad21c0e639da17c97b923c7a52a420f75ea48faf04",
+        "e/wa-2026-general/races/ld-46-state-representative-1/index.html": "fd29ef07f936969c4f01c5ffd18ba62618e8f4b87370670d80efd24d142a06c7",
+        "e/wa-2026-general/races/ld-46-state-representative-2/index.html": "5b74ef0ab6c326c33945b78c874895e957a5b846c2b83822f520680a4fe10123",
+        "e/wa-2026-general/races/ld-46-state-senator/index.html": "ee8b47fca99cbf69263d6061cac2582d751fba98499059dc3c33d511f6655f82",
+        "e/wa-2026-general/races/seattle-city-council-5/index.html": "af13f5da2d4d902d5371f456370106d32f17821c2a2479501671445003834b8d",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-1/index.html": "5c4e579b3188dfd213c0b12187d2427817fecb249198f480b6a298f25dc15a5d",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-2/index.html": "bd14aefd8aed0dfc48747d72f444f3d603a6fc20ab86cd87cca4927d6a6ff9c4",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-3/index.html": "4d891325c1585d16f0a9b6045eea45801b4999fd8e9a3ab62772688f225728ad",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-4/index.html": "01e957e8e9db929de1483ac9010857369920ce48f9502cfe3f3273078045cc63",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-5/index.html": "2e62161a7a343e48634bb681188662d61299cf1bd81ff8e4f9658a2610ecd6ae",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-6/index.html": "2472eafa34f117e6c797bc5f034279d75fe077fd9816519db72bdd44cddbe579",
+        "e/wa-2026-general/races/seattle-proposition-1-transit/index.html": "58d6ed5adaec5b0a5ae7b62ee421979f32c32711fc0acb66dcd20386d89fe1ec",
+        "e/wa-2026-general/races/supreme-court-justice-1/index.html": "b790038a49556dcf0506340e85a832edb1d0308d889b1802b5834f231e5301eb",
+        "e/wa-2026-general/races/supreme-court-justice-3/index.html": "c5dc371377e6a879f2bd190e47cb40a98514a4a61f37ec8ce42b8e573be789b2",
+        "e/wa-2026-general/races/supreme-court-justice-4/index.html": "a822ceccb36f3c57677a0aa3df518f57d4659f611ea319327f2ef314dc4dbe3d",
+        "e/wa-2026-general/races/supreme-court-justice-5/index.html": "6e7400fe2d52071818fbdefbcacccaae4c28610ca089a660f075471820d359a3",
+        "e/wa-2026-general/races/supreme-court-justice-7/index.html": "1beed8d3718f6d7cf4ceea01d89feb7ed09b279d8047dc3df872948dd1202c6b",
+        "e/wa-2026-general/races/us-house-7/index.html": "6758f7792e51cbf395d173d6ec91df4c29e5e53f5111bb232627d97e0dd12f21",
+        "e/wa-2026-general/races/us-house-9/index.html": "e4e5e62d4e65ec1340ca41bc71c8da230aa9cee5a40fb5fb906416728dc1c2da"
+      },
+      "pages": {
+        "e/wa-2026-general/index.html": "8df3fb1b9d330a326442895e7c3e4da5caf688b11716d5963e578b7ffe607ea7",
+        "e/wa-2026-general/races/initiative-26-001/index.html": "e75c9753fd9a3196490a0fb48bae9a2b644aa8772c3b63c7c012db77a4679565",
+        "e/wa-2026-general/races/initiative-26-638/index.html": "d9e5865a1fe7767c4af52cf252dad0824965610e798238493e3c03ffc0bc4219",
+        "e/wa-2026-general/races/initiative-26-645/index.html": "7fd2c6aff60c76d3809dea14c73d8fcc47988ac290e8e38d97a35cbd3fb9b98e",
+        "e/wa-2026-general/races/king-county-assessor/index.html": "d231c75d914362ec45f51ce5bf83bbaeb3263e850617816ce042223b040d50de",
+        "e/wa-2026-general/races/king-county-council-2/index.html": "7d8418b759b779bad61fb5c2452657d44e0ca60336e4bf3fb3656cb5c47c96ef",
+        "e/wa-2026-general/races/king-county-council-4/index.html": "575ec68e723c7f1763e96a6e17ad153128e30e2ac9ccff0f8757e61f52e2ad66",
+        "e/wa-2026-general/races/king-county-council-8/index.html": "688975f0da0ef489cad9f92819796476dd805ca5b89dd7202cd9ea87ace215d6",
+        "e/wa-2026-general/races/king-county-director-of-elections/index.html": "f066acc30afd2aaa87680f09211583a5e4638d4151e84643e39c00fab9461edc",
+        "e/wa-2026-general/races/king-county-district-court-west-judge-1/index.html": "45dedf196474e18a650a9d19cda63bc063094434cef073b85677f98f78d967d2",
+        "e/wa-2026-general/races/king-county-prosecuting-attorney/index.html": "7b4f308446a9f9b5f2bdbf38b5a196b8b4e0d72e765f92ea20b66b333307b246",
+        "e/wa-2026-general/races/ld-11-state-representative-1/index.html": "d6eca283db33a673ae527858223a04d895b2d12462d4adb7812f15cbb5993564",
+        "e/wa-2026-general/races/ld-11-state-representative-2/index.html": "bef7b6e388773903be44735d4918d6980f5f0895baa5bb606c7f99eae83c1918",
+        "e/wa-2026-general/races/ld-32-state-representative-1/index.html": "4fd5f202568d64083486bec1ef041ab978e46b82b2deb8f98a8e318489f12fdf",
+        "e/wa-2026-general/races/ld-32-state-representative-2/index.html": "c650ac90877ba73fb6acc325063fa68c6d22dd1bae86334ce3db26ea38675bce",
+        "e/wa-2026-general/races/ld-32-state-senator/index.html": "44aec98bf45aafa040c2314b62c7093bb93699d3a19d467aedff798d0a6b94c8",
+        "e/wa-2026-general/races/ld-34-state-representative-1/index.html": "ea2af40c01f5f5cb6147c54e4b448517383be47003d21f692e48f78a90ddf0ef",
+        "e/wa-2026-general/races/ld-34-state-representative-2/index.html": "f45a205fd1b92bdfeaa6edcaebe139f2dc0d00d71bbb603e118675655b3b7972",
+        "e/wa-2026-general/races/ld-34-state-senator/index.html": "1442cbe3a5108d0cb051e25728550bded394937d04d0baf712e220fd5fec840a",
+        "e/wa-2026-general/races/ld-36-state-representative-1/index.html": "bd24cccf87562c97332459fb1ff13c0ab0aecb78d749a55ec9e3f8490045fb7e",
+        "e/wa-2026-general/races/ld-36-state-representative-2/index.html": "9a8f7eca2b9171e0c52d575da9d48c19e0d9f1b63420617aa398f1e2db9843f0",
+        "e/wa-2026-general/races/ld-36-state-senator/index.html": "03829864ffb76382844db819fcb59051a774b3954f9f60adf1040746706c9481",
+        "e/wa-2026-general/races/ld-37-state-representative-1/index.html": "2e4ab878473c389b2f8fd02c200ce0c7c687037596722e432f21dc6d4d984a77",
+        "e/wa-2026-general/races/ld-37-state-representative-2/index.html": "6ef27f974c5d8103957d3e171392b01b373fcf38f469faad1d97e508a39b38ca",
+        "e/wa-2026-general/races/ld-37-state-senator/index.html": "ac1842a01a007555875e71938df10e46447eada26c178cc501c3007dd2b47e37",
+        "e/wa-2026-general/races/ld-43-state-representative-1/index.html": "5b0b9aa1ab21589d90637e5459cfb998877ab4f4af328f5b01a0b9b9cbd96c6b",
+        "e/wa-2026-general/races/ld-43-state-representative-2/index.html": "53a73fe96a039fa3d87cb1e6016f3831320ebbc4f843aa0020259fd97fa78943",
+        "e/wa-2026-general/races/ld-43-state-senator/index.html": "47c978e93a2458ca8022aeff2d06de058a5a58fda730855b22353e2f61f18dbd",
+        "e/wa-2026-general/races/ld-46-state-representative-1/index.html": "4ea9987d9a6283d49ae4f8053615794331c8e531ec2877dd49666eb8064abb93",
+        "e/wa-2026-general/races/ld-46-state-representative-2/index.html": "77a93f13b3633274ef2bb7778d82f1db6895ae9e7a49a2508982c4c5cb843c51",
+        "e/wa-2026-general/races/ld-46-state-senator/index.html": "f24e5f0895c078eb20d94b7a4a05e75dcc6b22fc57dd4637d8267f835fe256ff",
+        "e/wa-2026-general/races/seattle-city-council-5/index.html": "178b5827e2fc3703c2f2fa71b423036300ab6cd18207bbd03f347d2deb21fea8",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-1/index.html": "a505015c126964ada4e6eb3b18909834aa10c3246273a076b62fb78a20db9d51",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-2/index.html": "4e5c6819b8cf62d11a2007830be1252975229d6374b0fb06faec8b7f4562f3e2",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-3/index.html": "bddacd4cb3f1c1bc4967637d6d99f199ac184a869dd7cad20a07a3ed6bc79ae4",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-4/index.html": "9ed57f5557adda5465cc1e960267131469d4a44ac5410f57a75d15362f4ca939",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-5/index.html": "c50450ad1fd988d07a1a64f8da89b32ac68a37cea4f12e424395a5366cb02d6b",
+        "e/wa-2026-general/races/seattle-municipal-court-judge-6/index.html": "d2dd33b753e562a8cd89804e82f5edfb39d8d9185ff1ba105a45a411105df0d0",
+        "e/wa-2026-general/races/seattle-proposition-1-transit/index.html": "8c0800e97c1537a67aa2ddb2312991d213ffaa4f5b42f74d5e53afae019c8af4",
+        "e/wa-2026-general/races/supreme-court-justice-1/index.html": "9cf4f909cf8ab782b7ec6048423f91f451f803f5931c009a13fcd24df1f809ec",
+        "e/wa-2026-general/races/supreme-court-justice-3/index.html": "0bc493228c671475c4713eb057e3365f9ea21c9d33468da1eb786984810d8f8d",
+        "e/wa-2026-general/races/supreme-court-justice-4/index.html": "3a5877085b60d7df2e78096bb80abf2b3fd8b3df5de92ac20d42cef6c0bb66c9",
+        "e/wa-2026-general/races/supreme-court-justice-5/index.html": "c78ab9c8b1f79a9c47a1004fa8e13c6841453edda3b74526620ac9504e7e5cd4",
+        "e/wa-2026-general/races/supreme-court-justice-7/index.html": "2eeeaf62ad6ce4793ae0734ec7e36240ee6195dea31b074f1fca55299d10ec6e",
+        "e/wa-2026-general/races/us-house-7/index.html": "9a20bb07b75d31d470b46608bb4952cf48f6bc348bfded941bccaaee1d6a8ff0",
+        "e/wa-2026-general/races/us-house-9/index.html": "de816e8cca831cd6865cdcd15a2a7b6e4354bd8c5639aa818f3415dd3e14f6f5"
+      }
+    },
+    "wa-2026-primary": {
+      "entries": [
+        [
+          "/e/wa-2026-primary/updates/certified-results-and-certification-date/",
+          "August 19, 2026",
+          "Published certified results for 24 races and corrected the certification date."
+        ],
+        [
+          "/e/wa-2026-primary/updates/certified-results-complete/",
+          "September 13, 2026",
+          "Completed certified results for all 32 races."
+        ],
+        [
+          "/e/wa-2026-primary/updates/comparison-rounding-and-selection-links/",
+          "August 2, 2026",
+          "Corrected comparison rounding and selection-link failures."
+        ],
+        [
+          "/e/wa-2026-primary/updates/completed-primary-restored/",
+          "October 11, 2026",
+          "Restored the completed primary guide."
+        ],
+        [
+          "/e/wa-2026-primary/updates/counting-status-and-official-links/",
+          "August 8, 2026",
+          "Added counting status and official results links."
+        ],
+        [
+          "/e/wa-2026-primary/updates/customized-primary-sparse-leaders/",
+          "October 16, 2026",
+          "Named sparse-race leaders in customized primary views."
+        ],
+        [
+          "/e/wa-2026-primary/updates/endorsement-agreement-and-disclosures/",
+          "July 21, 2026",
+          "Simplified endorsement agreement and source disclosures."
+        ],
+        [
+          "/e/wa-2026-primary/updates/first-primary-download/",
+          "July 19, 2026",
+          "Published the first downloadable primary guide."
+        ],
+        [
+          "/e/wa-2026-primary/updates/older-primary-snapshot-correction/",
+          "October 3, 2026",
+          "An older primary snapshot replaced the completed guide."
+        ],
+        [
+          "/e/wa-2026-primary/updates/personalized-race-details-and-shared-links/",
+          "July 30, 2026",
+          "Corrected personalized race details and shared links."
+        ],
+        [
+          "/e/wa-2026-primary/updates/previously-missed-endorsements/",
+          "August 5, 2026",
+          "Added 17 previously missed endorsements after election day."
+        ],
+        [
+          "/e/wa-2026-primary/updates/races-without-majority/",
+          "July 31, 2026",
+          "Marked races without a majority."
+        ],
+        [
+          "/e/wa-2026-primary/updates/six-organizations-and-decisions/",
+          "July 23, 2026",
+          "Added six organizations and 35 recorded decisions."
+        ],
+        [
+          "/e/wa-2026-primary/updates/source-selection-and-total/",
+          "July 29, 2026",
+          "Moved source selection to its own page and corrected its total."
+        ],
+        [
+          "/e/wa-2026-primary/updates/website-launch-and-additional-decisions/",
+          "July 21, 2026",
+          "Opened the website with 312 additional recorded decisions."
+        ]
+      ],
+      "information_pages": {
+        "e/wa-2026-primary/index.html": "8e0fb4741f6f1b0d397e42e283118cadd59df52befed57eaf1544286050016cb",
+        "e/wa-2026-primary/races/king-county-assessor/index.html": "35009895a518840f90ac6088d6de257be7358932c0da016e9ed7c93b2c521d23",
+        "e/wa-2026-primary/races/king-county-council-2/index.html": "94e69121577c7b370a4ad00fa4ff8552e223136dde4dcdd2413a3d5e4bdacefe",
+        "e/wa-2026-primary/races/king-county-council-8/index.html": "36af2ce103bc61440b848bd9def023bccf7a56e8dc3c46d5433eba052fca69db",
+        "e/wa-2026-primary/races/ld-11-state-representative-1/index.html": "7a6924000c940fe5ab8e8fb31c32a0e72006feb0e3044988b6ad84f8f5fe125c",
+        "e/wa-2026-primary/races/ld-11-state-representative-2/index.html": "0bf604094ffaef54521657879139cf712a89663317045ef679456c69f3ad3040",
+        "e/wa-2026-primary/races/ld-32-state-representative-1/index.html": "fc0e45f96f5ead994110851c8707eed17075161df0dd34ceb3929a51ad47585e",
+        "e/wa-2026-primary/races/ld-32-state-representative-2/index.html": "a9a3571540b385cde1e22299c898a421d40ade4923868d28bdc9cfb78ac6c260",
+        "e/wa-2026-primary/races/ld-32-state-senator/index.html": "14ed8938a9096c4e170060bfcae2cf1eee176d8acd9bebd22314520df8df665c",
+        "e/wa-2026-primary/races/ld-34-state-representative-1/index.html": "bef2eb24de424089a9d959dc57c79674e631c332a1cfc5cb4635774fe1e00879",
+        "e/wa-2026-primary/races/ld-34-state-representative-2/index.html": "65e73a4a87dd8c62c1d97e400d3aaee55b2ffe1a13870fec33ae4a3e67773f32",
+        "e/wa-2026-primary/races/ld-34-state-senator/index.html": "94850725a5fb298f788c251ffd63e113f70ded2187f28f9b8f526e779cd30e12",
+        "e/wa-2026-primary/races/ld-36-state-representative-1/index.html": "b12a26dc1bba32435260851e9bff6ab6fe5c5248ab90e063ab271b5f2578c41f",
+        "e/wa-2026-primary/races/ld-36-state-representative-2/index.html": "49cdeecccabf753b36ee52f55686ca5b2981d918d17743a0e86ecc24826f7ac1",
+        "e/wa-2026-primary/races/ld-36-state-senator/index.html": "daa817e3113ac9315d70dffef47e2d86a5cd3cc193a4a137bdd8080e95c3e4b4",
+        "e/wa-2026-primary/races/ld-37-state-representative-1/index.html": "dd41a8814c1f070e8478c7a7908c434b350bf991eb5ecc016fa59faa3ee82044",
+        "e/wa-2026-primary/races/ld-37-state-representative-2/index.html": "e384997f330bc1f9df101a08dd6d2f93f9c56573e5e5e44ce9cf1e64d54173e5",
+        "e/wa-2026-primary/races/ld-37-state-senator/index.html": "5d2b96312306477fde9b158b22037756d510a373998af809247687412b0b4130",
+        "e/wa-2026-primary/races/ld-43-state-representative-1/index.html": "7130477c7596d147ededc1e0c67e0a2da637d0c7fce445a2d2c8d74c187c2abe",
+        "e/wa-2026-primary/races/ld-43-state-representative-2/index.html": "1349f04bf8db6ff955bac28bab3160d094eccee8da5c4f2faaf8943b769802f0",
+        "e/wa-2026-primary/races/ld-43-state-senator/index.html": "0f7132a4bf5bdfaa5b3fadf9e29108ce5d48b228016d6d23d3d51baa65907815",
+        "e/wa-2026-primary/races/ld-46-state-representative-1/index.html": "7226a3c527fb725ff311e621da0bd77c54df29ed5cc81249d7ef507dcd02926e",
+        "e/wa-2026-primary/races/ld-46-state-representative-2/index.html": "d94a569a08bdc7f447b88236e059bff0c3b534b56328219b2590a7394d1d3648",
+        "e/wa-2026-primary/races/ld-46-state-senator/index.html": "1af174305834c9e685f9dd7f1845490ab89b8e7930537abd7dd2a087832489f1",
+        "e/wa-2026-primary/races/seattle-city-council-5/index.html": "2968c9fa4eb3e845c8219afa49e087c3420075712526e900c508b1a84dcdcac8",
+        "e/wa-2026-primary/races/seattle-municipal-court-judge-5/index.html": "c114d395e279036e77e5158575327d9e84b38635527632a27e284866f92cc377",
+        "e/wa-2026-primary/races/seattle-proposition-1-library-levy/index.html": "c8182eaad54e65622edd081f243fae13ffc54be27ef4b5fadcefc905c91d627d",
+        "e/wa-2026-primary/races/supreme-court-justice-1/index.html": "ff14a613886b83eef06d4ce9a3c827238f416d44a1b0d23b274184cf48eb74c5",
+        "e/wa-2026-primary/races/supreme-court-justice-3/index.html": "98376c609bd27f62d20ea8ced78721508f91b075028b3f5e702f5ebf218a7697",
+        "e/wa-2026-primary/races/supreme-court-justice-5/index.html": "b5a2506c98f72e34a6d1f01d7565debba23a99c5209d69040493c49be52604cc",
+        "e/wa-2026-primary/races/supreme-court-justice-7/index.html": "25a5672620cb2e6fa810f2ad6e308620be9b89e139e8ef381940ff1d5f312187",
+        "e/wa-2026-primary/races/us-house-7/index.html": "b25d86a57f95fe90137bea9e73a14459784c07db7c3e3767dd4a96e7727c327c",
+        "e/wa-2026-primary/races/us-house-9/index.html": "b29662fb771d8458ff5d36d350c1aa56f5ee73c2bf556cbbbd1f0d994ca6d59a"
+      },
+      "pages": {
+        "e/wa-2026-primary/index.html": "5da4f1d248e531126b109ecfc81cfe1de26f45ab60c48db1abc31a4da5543154",
+        "e/wa-2026-primary/races/king-county-assessor/index.html": "a7653ffcffe189d15bc17d3a0a3604e2a991479d1b046b895d164fccafd0820e",
+        "e/wa-2026-primary/races/king-county-council-2/index.html": "51c3d71143714ca7c6759161d744bcd244d78ca0b16419fefedc656d975b1e33",
+        "e/wa-2026-primary/races/king-county-council-8/index.html": "fd9b16ee1cb6d719b350a02cb78d9777d75a1abe323eca0e4caf955e2eb08eb0",
+        "e/wa-2026-primary/races/ld-11-state-representative-1/index.html": "ca650696c3f3cfdb8d8cc9b8f2600c3811aef6f8263d7b2e5970c7ea6380508f",
+        "e/wa-2026-primary/races/ld-11-state-representative-2/index.html": "8b27da5556003b118a8f508bf1f471e9efef93fc2d2dc6a0a140718436ed50f6",
+        "e/wa-2026-primary/races/ld-32-state-representative-1/index.html": "834220f2ec8235debe63e6fbc2f0059c47296e70e632b1b7048b750d0559b70a",
+        "e/wa-2026-primary/races/ld-32-state-representative-2/index.html": "54e980e31ba90c7a8601dbed09883c519c91daf7a0444fd7ca107f00a20d5d12",
+        "e/wa-2026-primary/races/ld-32-state-senator/index.html": "3860b6667c8c74c41cb80d8257d6b3c2f28d292bb683a66141dcde1dc81650b7",
+        "e/wa-2026-primary/races/ld-34-state-representative-1/index.html": "15f59e072a61373cec8c57faf22ac15bb180268036989fbd90f11c9821d1d603",
+        "e/wa-2026-primary/races/ld-34-state-representative-2/index.html": "bc3f9a65c79bd53197db003de77ced2adbf223916e236689bd58da4c3d7c6c57",
+        "e/wa-2026-primary/races/ld-34-state-senator/index.html": "41a77a81a3504c8ab066474423eaac00977c3f31e8f0a9427f2b154366b12270",
+        "e/wa-2026-primary/races/ld-36-state-representative-1/index.html": "90de3b6513af4e09c77def0c444880f0bf7e0260eddf4588c563ac7b2e2cd88c",
+        "e/wa-2026-primary/races/ld-36-state-representative-2/index.html": "cf06e0f58f9560069eb9ccee36f03b5785379a6f6e85d31c31f363318b49baad",
+        "e/wa-2026-primary/races/ld-36-state-senator/index.html": "324e62662b3cdd77e1f095f20e51901f1210fa93a7c3995dbf83df58c2753afb",
+        "e/wa-2026-primary/races/ld-37-state-representative-1/index.html": "4aa9951b6c16328022fb05544356caa8a883fe1cdc55073e407bdb146791b923",
+        "e/wa-2026-primary/races/ld-37-state-representative-2/index.html": "256247048ce67cb87e211633f6e7d1fdc83737f6d363945bc57008c57bb424a7",
+        "e/wa-2026-primary/races/ld-37-state-senator/index.html": "a714b8e0c9e251efb5edb350e203c2d71a4b9a6d2f7b13d565273ba09b2f7679",
+        "e/wa-2026-primary/races/ld-43-state-representative-1/index.html": "7b4e923d16ff0e6b8e597f2f38106a6af052313c8be3d9283870c15f4b66c4c0",
+        "e/wa-2026-primary/races/ld-43-state-representative-2/index.html": "9aee2e4c8d2292f0007db275099d11916f8ba1b51123e042a5e601d790537348",
+        "e/wa-2026-primary/races/ld-43-state-senator/index.html": "e77703d8c3db3fc2eb6e5e6e7a64cfcad722113adddadcb1871adf6ac0980f05",
+        "e/wa-2026-primary/races/ld-46-state-representative-1/index.html": "215ded9d58e6932b56180445ae2342d30b1982b868a9cb466d5ba73837e56fae",
+        "e/wa-2026-primary/races/ld-46-state-representative-2/index.html": "dfc36b3c09d48e07c1a66d2147614749dfac2dc5db20fad010e39c4942a8a7f1",
+        "e/wa-2026-primary/races/ld-46-state-senator/index.html": "768851ccbce11cf9f284e4fcda0626b0dacd43dd82e6f8ba51ea6dac4f2df303",
+        "e/wa-2026-primary/races/seattle-city-council-5/index.html": "acd7e856aee37c9d92bcc59f2aad0ef74eeda8f5b2c9a556071e8a049634ad57",
+        "e/wa-2026-primary/races/seattle-municipal-court-judge-5/index.html": "c802679b895b6196d9a4f07b9cbca4cf8cd08883fdffc01305cbe974fb8235d3",
+        "e/wa-2026-primary/races/seattle-proposition-1-library-levy/index.html": "9af25c52efe43dcee7e6330b491a99a7433559e2f67d3be4dbf3f3fb6e14ba41",
+        "e/wa-2026-primary/races/supreme-court-justice-1/index.html": "2d8e3769fc6f14b055f353e23ebd0d4a0421cc34973a17ab67253277c6778038",
+        "e/wa-2026-primary/races/supreme-court-justice-3/index.html": "a3926f8203ba4e08752395292ab047af42af54a8506c505d947918f071fd4560",
+        "e/wa-2026-primary/races/supreme-court-justice-5/index.html": "7d9318f03e401ed2d7734888bfa1050ae075a5f45c314dcfd187ec6ab4584e4d",
+        "e/wa-2026-primary/races/supreme-court-justice-7/index.html": "1e46e4149219f0a59b1817053f047934daad0465eb7f0a43c49318fbd76f2f8a",
+        "e/wa-2026-primary/races/us-house-7/index.html": "31575372a1510af5d7255971cc333b6bd3d6cc29688e4610e8e336dd00b8d792",
+        "e/wa-2026-primary/races/us-house-9/index.html": "9b8b511d8bf3e2fb5a517cb051c5b491f118c0892e4a48079ce2efe25b066dc0"
+      }
+    }
+  },
+  "schema_version": "7.0"
+}
