@@ -126,6 +126,16 @@ workflow shell does not reimplement them. Verification-only recovery reads the o
 object and upload receipt, preserving provenance without rebuilding or uploading. Failed evidence
 keeps delivery incomplete and retryable. Historical two-revision lineage checks remain unchanged.
 
+Durable release checkpoints use bounded deterministic gzip envelopes containing
+original canonical receipt/report bytes and hashes. Publication, upload-before-probes,
+and verified finalization remain separate operations with original producer identities.
+Ordinary operations need one immutable comment each; bounded multipart fallback seals
+actual part IDs last. Matching records are reused, incomplete legacy groups continue in
+their original format, and an uncertain POST requires a complete authenticated reread
+before any further write. Both formats share the existing validation boundary. Historical
+source recovery first requires current-main lossless v1 compatibility preparation as
+documented in `docs/RELEASE.md`; no old source or receipt is rewritten.
+
 A proved pre-upload failure may have a distinct typed disposition in the existing
 sealed negative-evidence protocol. Its writer authenticates retained bytes and a
 closed audited source contract without provider credentials or deployment access.

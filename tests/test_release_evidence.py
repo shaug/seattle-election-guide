@@ -160,13 +160,15 @@ def test_receipts_retain_all_identities_and_unicode_reports(
     receipt = operation(publication)
     report = canonical_json_bytes({"observations": "🗳日本語\n" * 20000})
     ids = evidence.retain_evidence(receipt, issue_number=550, reports={"observations.json": report})
-    assert len(ids) > 3
+    assert len(ids) == 1
     assert loaded(evidence_setup) == (receipt,)
     assert all(len(body) < 60000 for body in api.posted)
     assert evidence.read_evidence_reports(receipt, issue_number=550)["observations.json"] == report
 
 
-def test_partial_comment_retry_posts_only_missing_parts(evidence_setup: tuple[Any, ...]) -> None:
+def test_legacy_partial_comment_retry_posts_only_missing_parts(
+    evidence_setup: tuple[Any, ...],
+) -> None:
     evidence, api, _, publication, _, _ = evidence_setup
     receipt = operation(publication)
     reports = {"large.json": canonical_json_bytes({"text": "é" * 50000})}
@@ -175,22 +177,22 @@ def test_partial_comment_retry_posts_only_missing_parts(evidence_setup: tuple[An
     )
     api.fail_after = 1
     with pytest.raises(ValueError, match="unavailable"):
-        evidence.retain_evidence(receipt, issue_number=550, reports=reports)
+        evidence.retain_v1_evidence(receipt, issue_number=550, reports=reports)
     first = api.posted[0]
     assert loaded(evidence_setup) == ()
     api.fail_after = None
-    evidence.retain_evidence(receipt, issue_number=550, reports=reports)
+    evidence.retain_v1_evidence(receipt, issue_number=550, reports=reports)
     assert api.posted.count(first) == 1
     assert api.comments[0]["body"] == "keep me"
     assert loaded(evidence_setup) == (receipt,)
 
 
 @pytest.mark.parametrize("damage", ["hash", "truncate", "missing", "duplicate"])
-def test_malformed_or_conflicting_owned_parts_fail(
+def test_malformed_or_conflicting_legacy_owned_parts_fail(
     evidence_setup: tuple[Any, ...], damage: str
 ) -> None:
     evidence, api, _, publication, _, _ = evidence_setup
-    evidence.retain_evidence(operation(publication), issue_number=550, reports={})
+    evidence.retain_v1_evidence(operation(publication), issue_number=550, reports={})
     if damage == "hash":
         api.comments[0]["body"] = api.comments[0]["body"].replace("\new", "\neA", 1)
     elif damage == "truncate":
@@ -507,7 +509,7 @@ def test_same_run_partial_failed_then_verified_is_resumable(
     )
     assert result.state == "failed"
     monkeypatch.setattr(evidence, "wait_for_production", partial(provided_report, good))
-    api.fail_after = len(api.posted) + 1
+    api.fail_after = len(api.posted)
     with pytest.raises(ValueError, match="unavailable"):
         evidence.finalize_deployment(
             upload,
@@ -550,14 +552,14 @@ def test_probe_exception_retains_failed_receipt(
     )
 
 
-def test_large_report_index_remains_bounded(
+def test_legacy_large_report_index_remains_bounded(
     evidence_setup: tuple[Any, ...], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     evidence, api, _, publication, _, _ = evidence_setup
     monkeypatch.setattr(evidence, "PART_BYTES", 4000)
     report = canonical_json_bytes({"observations": "🗳" * 400000})
     receipt = operation(publication)
-    evidence.retain_evidence(receipt, issue_number=550, reports={"large.json": report})
+    evidence.retain_v1_evidence(receipt, issue_number=550, reports={"large.json": report})
     assert evidence.read_evidence_reports(receipt, issue_number=550)["large.json"] == report
     assert all(len(body) < 60000 for body in api.posted)
 
@@ -686,6 +688,75 @@ def test_finalize_cli_failure_always_writes_local_evidence(evidence_setup: tuple
     assert json.loads((output / "finalization-error.json").read_bytes())["complete"] is False
 
 
+def test_upload_checkpoint_is_retained_before_probes(
+    evidence_setup: tuple[Any, ...], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from election_guide.release.evidence_v2 import MARKER
+
+    evidence, api, resolved, publication, upload, root = evidence_setup
+    evidence.retain_evidence(operation(publication), issue_number=550, reports={})
+    report = successful_report(evidence_setup)
+    probes: list[str] = []
+
+    def probe(*args: Any, **kwargs: Any) -> Any:
+        records = loaded(evidence_setup)
+        assert len(api.posted) == 2 and all(MARKER in body for body in api.posted)
+        assert records[-1].upload == upload and records[-1].state == "published"
+        probes.append("after durable upload")
+        return report
+
+    monkeypatch.setattr(evidence, "wait_for_production", probe)
+    receipt = evidence.finalize_deployment(
+        upload, site_manifest=resolved.site, producer=upload.producer, output_dir=root / "out"
+    )
+    assert receipt.state == "verified" and probes == ["after durable upload"]
+    assert len(api.posted) == 3
+
+
+@pytest.mark.parametrize("checkpoint", ["upload", "verified"])
+def test_failed_retention_is_nonzero_and_does_not_mark_deployment_success(
+    evidence_setup: tuple[Any, ...], monkeypatch: pytest.MonkeyPatch, checkpoint: str
+) -> None:
+    from election_guide.release import workflow
+    from election_guide.release.automation_cli import app
+
+    evidence, api, resolved, publication, upload, root = evidence_setup
+    evidence.retain_evidence(operation(publication), issue_number=550, reports={})
+    if checkpoint == "verified":
+        evidence.retain_evidence(
+            operation(publication, phase="deployment", upload=upload), issue_number=550, reports={}
+        )
+    api.fail_after = len(api.posted)
+    probes: list[str] = []
+    report = successful_report(evidence_setup)
+
+    def probe(*args: Any, **kwargs: Any) -> Any:
+        probes.append("probe")
+        return report
+
+    statuses: list[Any] = []
+
+    def record_status(*args: Any, **kwargs: Any) -> None:
+        statuses.append(kwargs)
+
+    monkeypatch.setattr(evidence, "wait_for_production", probe)
+    monkeypatch.setattr(workflow, "write_deployment_status", record_status)
+    output = root / "out"
+    with pytest.raises(ValueError, match="unavailable"):
+        evidence.finalize_deployment(
+            upload, site_manifest=resolved.site, producer=upload.producer, output_dir=output
+        )
+    assert probes == ([] if checkpoint == "upload" else ["probe"])
+    assert (
+        OperationReceipt.model_validate_json((output / "operation-receipt.json").read_bytes()).state
+        == "failed"
+    )
+    assert json.loads((output / "finalization-error.json").read_bytes())["complete"] is False
+    result = CliRunner().invoke(app, ["deployment-status", "--upload", str(output / "upload.json")])
+    assert result.exit_code == 1 and "durable verified finalization" in result.output
+    assert not statuses and api.statuses[50] == []
+
+
 def test_cli_bootstrap_lookup_and_skipped_operation(evidence_setup: tuple[Any, ...]) -> None:
     _, _, _, publication, _, root = evidence_setup
     from election_guide.release.automation_cli import app
@@ -726,14 +797,14 @@ def test_cli_lookup_failure_never_writes_bootstrap_absence(evidence_setup: tuple
     assert not output.exists()
 
 
-def test_partial_upload_receipt_still_rejects_conflicting_upload(
+def test_legacy_partial_upload_receipt_still_rejects_conflicting_upload(
     evidence_setup: tuple[Any, ...],
 ) -> None:
     evidence, api, _, publication, upload, _ = evidence_setup
     original = operation(publication, phase="deployment", upload=upload)
     api.fail_after = 1
     with pytest.raises(ValueError, match="unavailable"):
-        evidence.retain_evidence(original, issue_number=550, reports={})
+        evidence.retain_v1_evidence(original, issue_number=550, reports={})
     assert loaded(evidence_setup) == ()
     api.fail_after = None
     conflicting = operation(

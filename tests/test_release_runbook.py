@@ -86,7 +86,10 @@ def test_historical_preparation_command_and_order_cannot_drift() -> None:
     )
     text = " ".join(document.read_text().split())
     for term in [
-        "Writers remain v1 during the reader rollout",
+        "The reader rollout kept writers v1",
+        "An incomplete v1 group continues as v1",
+        "rereads complete authenticated issue custody",
+        "Failed retention cannot mark deployment success",
         "before v2 writer activation",
         "original Git blobs",
         "At most 256 new comments",

@@ -32,7 +32,7 @@ from election_guide.release.evidence import (
     read_pending_preupload_evidence,
     read_preupload_evidence,
     require_publication_evidence,
-    retain_evidence,
+    retain_v1_evidence,
     validate_deployment,
 )
 from election_guide.serialization import canonical_json_bytes
@@ -409,7 +409,7 @@ def resolve_preupload_failure(
         verification_sha256=None,
         error=DISPOSITION_ERROR,
     )
-    retain_evidence(
+    retain_v1_evidence(
         carrier,
         issue_number=issue,
         reports={

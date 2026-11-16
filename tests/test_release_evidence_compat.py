@@ -245,15 +245,24 @@ def test_compatibility_comment_budget_fails_visibly_and_can_resume(
     assert store.posted[0] == first and len(store.posted) == 15
 
 
+@pytest.mark.parametrize("stored", [True, False])
 def test_compatibility_export_rereads_a_stored_post_after_lost_response(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, stored: bool
 ) -> None:
     store = IssueStore(compressed_comments())
     install(monkeypatch, store)
     lost = False
+    reread = False
 
     def ambiguous(command: list[str], failure: str) -> str:
-        nonlocal lost
+        nonlocal lost, reread
+        if lost and "--method" not in command and "/comments" in command[2]:
+            reread = True
+        if lost and "--method" in command:
+            assert reread, "an uncertain POST requires a complete reread before another write"
+        if "--method" in command and not lost and not stored:
+            lost = True
+            raise ValueError("fixture response lost without storage")
         result = store.run(command, failure)
         if "--method" in command and not lost:
             lost = True
@@ -261,16 +270,23 @@ def test_compatibility_export_rereads_a_stored_post_after_lost_response(
         return result
 
     monkeypatch.setattr(evidence, "run_gh", ambiguous)
-    with pytest.raises(ValueError, match="response lost"):
-        compat().prepare_historical_evidence(REPOSITORY, 696, tmp_path / "ambiguous")
-    assert len(store.posted) == 1
-    first = copy.deepcopy(store.posted[0])
+    if stored:
+        assert compat().prepare_historical_evidence(REPOSITORY, 696, tmp_path / "ambiguous")[
+            "complete"
+        ]
+        assert len(store.posted) == 15
+    else:
+        with pytest.raises(ValueError, match="response lost"):
+            compat().prepare_historical_evidence(REPOSITORY, 696, tmp_path / "ambiguous")
+        assert not store.posted
+    assert lost and reread
+    before = copy.deepcopy(store.posted)
     report = json.loads((tmp_path / "ambiguous/compatibility-report.json").read_bytes())
-    assert report["complete"] is False
-    assert report["observed_new_comment_ids"] == [first["id"]]
+    assert report["complete"] is stored
+    assert set(report["observed_new_comment_ids"]) == {row["id"] for row in before}
     result = compat().prepare_historical_evidence(REPOSITORY, 696, tmp_path / "resumed")
     assert result["complete"] is True
-    assert len(store.posted) == 15 and store.posted[0] == first
+    assert len(store.posted) == 15 and store.posted[: len(before)] == before
 
 
 def test_preparation_rejects_non_main_execution_before_any_api(
