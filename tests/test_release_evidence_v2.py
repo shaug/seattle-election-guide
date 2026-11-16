@@ -484,6 +484,35 @@ def test_existing_partial_v1_remains_v1_after_cutover(monkeypatch: pytest.Monkey
     assert len(api.posted) == 3
 
 
+@pytest.mark.parametrize("matching", [True, False])
+def test_completed_compressed_reports_checked_before_legacy_continuation(
+    matching: bool, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    api = GitHub()
+    operation, reports = checkpoint("publication")
+    api.comments = [
+        v2_comment(operation, reports, 1000000),
+        {**originals()[0], "id": 2000000, "fixture_transport": True},
+    ]
+    before = copy.deepcopy(api.comments)
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    if not matching:
+        with pytest.raises(ValueError, match="conflict"):
+            evidence.retain_evidence(
+                operation,
+                issue_number=696,
+                reports={"different.json": canonical_json_bytes({"x": 1})},
+            )
+        assert api.comments == before and not api.posted
+        return
+    ids = evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    assert ids[0] == 2000000 and len(ids) == 3 and len(api.posted) == 2
+    assert api.comments[:2] == before and all(evidence.MARKER in body for body in api.posted)
+    assert evidence.read_evidence_reports(operation, issue_number=696) == reports
+    assert evidence.retain_evidence(operation, issue_number=696, reports=reports) == ids
+    assert len(api.posted) == 2
+
+
 def test_explicit_v1_retention_coexists_with_compressed_operations(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

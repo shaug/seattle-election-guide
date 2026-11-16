@@ -772,13 +772,16 @@ def retain_evidence(
     _check_canonical_receipts(comments, extra=receipt)
     group = _sha(_bytes(receipt))
     existing = {key: value for key, value in comments.items() if value[0].group == group}
+    if any(
+        retained == receipt and retained_reports != reports
+        for retained, retained_reports in completed
+    ):
+        raise ValueError("conflicting existing evidence reports")
     if any(isinstance(marker, PartMarker) for marker, _ in existing.values()):
         return retain_v1_evidence(receipt, issue_number=issue_number, reports=reports)
-    for retained, retained_reports in completed:
+    for retained, _ in completed:
         if retained != receipt:
             continue
-        if retained_reports != reports:
-            raise ValueError("conflicting existing evidence reports")
         seals = [
             (key, marker, content)
             for key, (marker, content) in existing.items()
