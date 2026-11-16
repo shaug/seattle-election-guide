@@ -72,6 +72,30 @@ uv run election-guide hosting verify \\
     )
 
 
+def test_historical_preparation_command_and_order_cannot_drift() -> None:
+    document = PROJECT_ROOT / "docs/RELEASE.md"
+    assert (
+        _marked_bash(document, "prepare-historical-evidence")
+        == '''gh workflow run verify-release.yml --ref main \\
+  -f mode=prepare-historical-evidence \\
+  -f issue="$issue_number" \\
+  -f release_version="$release_version" \\
+  -f source_sha="$source_sha" \\
+  -f run_id="$run_id" \\
+  -f run_attempt="$run_attempt"'''
+    )
+    text = " ".join(document.read_text().split())
+    for term in [
+        "Writers remain v1 during the reader rollout",
+        "before v2 writer activation",
+        "original Git blobs",
+        "At most 256 new comments",
+        "exits nonzero",
+        "Fixture IDs are not native GitHub IDs",
+    ]:
+        assert term in text
+
+
 def test_read_only_production_probe_command_cannot_drift() -> None:
     assert (
         _marked_bash(PROJECT_ROOT / "docs/HOSTING.md", "production-probe")

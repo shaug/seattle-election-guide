@@ -14,6 +14,7 @@ import os
 import subprocess
 import tempfile
 from contextlib import suppress
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal, cast
@@ -30,6 +31,7 @@ from election_guide.hosting.production_wait import (
     complete_strict_report,
     wait_for_production,
 )
+from election_guide.release import evidence_v2
 from election_guide.release.automation_models import (
     OperationalRecord,
     OperationReceipt,
@@ -59,6 +61,20 @@ class PartMarker(OperationalRecord):
     count: PositiveId
     sha256: Sha256
     report_sha256: Sha256
+
+
+EvidenceMarker = PartMarker | evidence_v2.EnvelopeMarker
+Comments = dict[int, tuple[EvidenceMarker, bytes]]
+
+
+@dataclass(frozen=True)
+class IssueEvidence:
+    """Authenticated format state, including incomplete compressed groups."""
+
+    comments: Comments
+    completed: tuple[tuple[OperationReceipt, dict[str, bytes]], ...]
+    complete_compressed_groups: frozenset[str]
+    pending_compressed_groups: frozenset[str]
 
 
 class PartRef(OperationalRecord):
@@ -166,33 +182,48 @@ def _parts(
     ]
 
 
-def _comments(repository: str, issue_number: int) -> dict[int, tuple[PartMarker, bytes]]:
-    result: dict[int, tuple[PartMarker, bytes]] = {}
+def _comments(repository: str, issue_number: int) -> Comments:
+    result: Comments = {}
     keys: set[tuple[str, str, str, int]] = set()
+    compressed_groups: dict[str, bytes] = {}
     for comment in _pages(f"repos/{repository}/issues/{issue_number}/comments"):
         if not workflow_owned(comment.get("user")):
             continue
         body = comment.get("body")
-        if not isinstance(body, str) or MARKER not in body:
+        if not isinstance(body, str) or (MARKER not in body and evidence_v2.MARKER not in body):
             continue
         try:
-            lines = body.splitlines()
-            marker = PartMarker.model_validate_json(
-                lines[-1].removeprefix(MARKER).removesuffix(" -->")
-            )
-            payload = base64.b64decode(lines[1], validate=True)
-            if (
-                marker.producer.repository != repository
-                or marker.part > marker.count
-                or len(payload) > PART_BYTES
-                or _sha(payload) != marker.sha256
-                or _body(marker, payload) != body
-            ):
-                raise ValueError("conflicting evidence framing or hash")
-            payload.decode("utf-8")
+            marker: EvidenceMarker
+            if evidence_v2.MARKER in body:
+                marker, payload = evidence_v2.decode_comment(body)
+                identity = canonical_json_bytes(
+                    marker.model_dump(mode="json", exclude={"kind", "part", "part_sha256"})
+                )
+                if (
+                    marker.producer.repository != repository
+                    or compressed_groups.get(marker.group, identity) != identity
+                ):
+                    raise ValueError("conflicting compressed evidence group identity")
+                compressed_groups[marker.group] = identity
+                key = marker.group, marker.kind, "", marker.part
+            else:
+                lines = body.splitlines()
+                marker = PartMarker.model_validate_json(
+                    lines[-1].removeprefix(MARKER).removesuffix(" -->")
+                )
+                payload = base64.b64decode(lines[1], validate=True)
+                if (
+                    marker.producer.repository != repository
+                    or marker.part > marker.count
+                    or len(payload) > PART_BYTES
+                    or _sha(payload) != marker.sha256
+                    or _body(marker, payload) != body
+                ):
+                    raise ValueError("conflicting evidence framing or hash")
+                payload.decode("utf-8")
+                key = marker.group, marker.kind, marker.report, marker.part
         except (ValueError, IndexError) as error:
             raise ValueError("malformed or conflicting owned evidence part") from error
-        key = (marker.group, marker.kind, marker.report, marker.part)
         if key in keys or _id(comment) in result:
             raise ValueError("conflicting duplicate evidence parts")
         keys.add(key)
@@ -200,7 +231,7 @@ def _comments(repository: str, issue_number: int) -> dict[int, tuple[PartMarker,
     return result
 
 
-def _assemble(refs: tuple[PartRef, ...], comments: dict[int, tuple[PartMarker, bytes]]) -> bytes:
+def _assemble(refs: tuple[PartRef, ...], comments: Comments) -> bytes:
     if not refs:
         raise ValueError("incomplete evidence: missing part references")
     first = refs[0].marker
@@ -310,7 +341,7 @@ def _validate_receipt(receipt: OperationReceipt, reports: dict[str, bytes]) -> N
 
 
 def _index_parts(
-    data: bytes, marker: PartMarker, comments: dict[int, tuple[PartMarker, bytes]], depth: int = 0
+    data: bytes, marker: PartMarker, comments: Comments, depth: int = 0
 ) -> tuple[PartRef, ...]:
     if depth > 10:
         raise ValueError("evidence index nesting exceeds framing bound")
@@ -333,8 +364,39 @@ def _index_parts(
     return refs
 
 
+def _compressed_records(comments: Comments) -> list[tuple[OperationReceipt, dict[str, bytes]]]:
+    compressed = {
+        comment_id: (marker, payload)
+        for comment_id, (marker, payload) in comments.items()
+        if isinstance(marker, evidence_v2.EnvelopeMarker)
+    }
+    records: list[tuple[OperationReceipt, dict[str, bytes]]] = []
+    for marker, payload in compressed.values():
+        if marker.kind == "v2-envelope":
+            files = evidence_v2.decode_envelope(payload, marker)
+        elif marker.kind == "v2-seal":
+            files = evidence_v2.assemble_envelope(marker, payload, compressed)
+        else:
+            continue
+        receipt = OperationReceipt.model_validate_json(files.pop("receipt.json"))
+        if (
+            marker.producer != receipt.producer
+            or marker.phase != receipt.phase
+            or marker.state != receipt.state
+            or marker.release_version
+            != receipt.publication.published.candidate.declaration.release_version
+        ):
+            raise ValueError("compressed evidence marker conflicts with original receipt")
+        _validate_receipt(receipt, files)
+        records.append((receipt, files))
+    return records
+
+
 def _check_canonical_receipts(
-    comments: dict[int, tuple[PartMarker, bytes]], extra: OperationReceipt | None = None
+    comments: Comments,
+    extra: OperationReceipt | None = None,
+    *,
+    compressed: list[tuple[OperationReceipt, dict[str, bytes]]] | None = None,
 ) -> None:
     # An unsealed group cannot prove completion, but a complete receipt fragment
     # already binds its canonical upload identity and must not be contradicted.
@@ -343,6 +405,10 @@ def _check_canonical_receipts(
         if marker.kind == "report" and marker.report == "receipt.json":
             groups.setdefault(marker.group, []).append(PartRef(id=comment_id, marker=marker))
     receipts = [extra] if extra is not None else []
+    receipts.extend(
+        receipt
+        for receipt, _ in (_compressed_records(comments) if compressed is None else compressed)
+    )
     for refs in groups.values():
         ordered = tuple(sorted(refs, key=lambda ref: ref.marker.part))
         if len(ordered) != ordered[0].marker.count:
@@ -371,9 +437,10 @@ def _check_canonical_receipts(
 
 
 def _completed(
-    comments: dict[int, tuple[PartMarker, bytes]], issue_number: int
+    comments: Comments, issue_number: int
 ) -> list[tuple[OperationReceipt, dict[str, bytes]]]:
-    _check_canonical_receipts(comments)
+    compressed = _compressed_records(comments)
+    _check_canonical_receipts(comments, compressed=compressed)
     completed: list[tuple[OperationReceipt, dict[str, bytes]]] = []
     for marker, payload in comments.values():
         if marker.kind != "seal":
@@ -401,7 +468,15 @@ def _completed(
             raise ValueError("receipt marker conflicts with its reviewed request")
         _validate_receipt(receipt, reports)
         completed.append((receipt, reports))
-    return completed
+    unique: dict[str, tuple[OperationReceipt, dict[str, bytes]]] = {}
+    for receipt, reports in [*completed, *compressed]:
+        if _validate_publication(receipt.publication) != issue_number:
+            raise ValueError("evidence receipt conflicts with owning issue")
+        group = _sha(_bytes(receipt))
+        if group in unique and unique[group] != (receipt, reports):
+            raise ValueError("conflicting cross-format evidence reports")
+        unique[group] = receipt, reports
+    return list(unique.values())
 
 
 def load_verified_receipts(
@@ -414,6 +489,21 @@ def load_verified_receipts(
         if receipt.producer.source_sha == source_sha
         and receipt.publication.published.candidate.declaration.release_version == release_version
     )
+
+
+def read_issue_evidence(repository: str, issue_number: int) -> IssueEvidence:
+    """Read and validate complete issue custody before compatibility writes."""
+    comments = _comments(repository, issue_number)
+    completed = tuple(_completed(comments, issue_number))
+    compressed = {
+        marker.group
+        for marker, _ in comments.values()
+        if isinstance(marker, evidence_v2.EnvelopeMarker)
+    }
+    sealed = frozenset(
+        marker.group for marker, _ in comments.values() if marker.kind in {"v2-envelope", "v2-seal"}
+    )
+    return IssueEvidence(comments, completed, sealed, frozenset(compressed - sealed))
 
 
 def read_evidence_reports(receipt: OperationReceipt, *, issue_number: int) -> dict[str, bytes]:
@@ -429,7 +519,7 @@ def _preupload_records(
     publication: PublicationResult,
 ) -> tuple[
     tuple[tuple[OperationReceipt, dict[str, bytes]], ...],
-    dict[int, tuple[PartMarker, bytes]],
+    Comments,
 ]:
     issue = _validate_publication(publication)
     candidate = publication.published.candidate
@@ -439,7 +529,11 @@ def _preupload_records(
         for receipt, reports in _completed(comments, issue)
         if receipt.producer.source_sha == candidate.source_sha
     )
-    complete_groups = {_sha(_bytes(receipt)) for receipt, _ in completed}
+    complete_formats = {
+        (isinstance(marker, PartMarker), marker.group)
+        for marker, _ in comments.values()
+        if marker.kind in {"seal", "v2-envelope", "v2-seal"}
+    }
     for receipt, _ in completed:
         verify_canonical_publication(receipt.publication, publication.published)
         if receipt.upload is not None or receipt.state == "verified":
@@ -448,7 +542,7 @@ def _preupload_records(
         comment_id: (marker, content)
         for comment_id, (marker, content) in comments.items()
         if marker.producer.source_sha == candidate.source_sha
-        and marker.group not in complete_groups
+        and (isinstance(marker, PartMarker), marker.group) not in complete_formats
     }
     return completed, pending
 
@@ -508,10 +602,16 @@ def read_pending_preupload_evidence(
     return receipt, reports
 
 
-def retain_evidence(
-    receipt: OperationReceipt, *, issue_number: int, reports: dict[str, bytes]
+def retain_v1_evidence(
+    receipt: OperationReceipt,
+    *,
+    issue_number: int,
+    reports: dict[str, bytes],
+    max_new_comments: int | None = None,
 ) -> tuple[int, ...]:
     """Append missing parts and seal last. Never edit a comment, including human text."""
+    if max_new_comments is not None and (type(max_new_comments) is not int or max_new_comments < 0):
+        raise ValueError("invalid compatibility comment budget")
     receipt = OperationReceipt.model_validate_json(_bytes(receipt))
     if _validate_publication(receipt.publication) != issue_number:
         raise ValueError("evidence issue differs from reviewed request")
@@ -537,25 +637,32 @@ def retain_evidence(
             raise ValueError("conflicting existing evidence part")
     refs: list[PartRef] = []
     all_ids: list[int] = []
+    posted = 0
 
     def retain(
         name: str, data: bytes, kind: Literal["report", "index", "seal"]
     ) -> tuple[PartRef, ...]:
+        nonlocal posted
         retained: list[PartRef] = []
         for marker, chunk in _parts(receipt, name, data, kind):
             comment_id: int | None = None
             for existing_id, (existing, content) in comments.items():
-                if (existing.group, existing.kind, existing.report, existing.part) == (
-                    marker.group,
-                    marker.kind,
-                    marker.report,
-                    marker.part,
-                ):
+                if isinstance(existing, PartMarker) and (
+                    existing.group,
+                    existing.kind,
+                    existing.report,
+                    existing.part,
+                ) == (marker.group, marker.kind, marker.report, marker.part):
                     if existing != marker or content != chunk:
                         raise ValueError("conflicting existing evidence part")
                     comment_id = existing_id
                     break
             if comment_id is None:
+                if max_new_comments is not None and posted >= max_new_comments:
+                    raise ValueError(
+                        "compatibility comment budget exhausted; preparation incomplete"
+                    )
+                posted += 1
                 with tempfile.TemporaryDirectory(prefix="release-evidence-") as temporary:
                     path = Path(temporary) / "comment.json"
                     path.write_bytes(canonical_json_bytes({"body": _body(marker, chunk)}))
@@ -601,6 +708,13 @@ def retain_evidence(
         raise ValueError("evidence index nesting exceeds framing bound")
     _completed(comments, issue_number)
     return tuple(all_ids)
+
+
+def retain_evidence(
+    receipt: OperationReceipt, *, issue_number: int, reports: dict[str, bytes]
+) -> tuple[int, ...]:
+    """Active production writers remain v1 during the dual-reader rollout."""
+    return retain_v1_evidence(receipt, issue_number=issue_number, reports=reports)
 
 
 def require_publication_evidence(publication: PublicationResult) -> None:

@@ -144,6 +144,7 @@ def test_attempt_scoped_artifact_ids_flow_through_jobs() -> None:
 def test_verification_rerun_cannot_build_or_upload() -> None:
     document = workflow("verify-release.yml")
     assert set(document["on"]["workflow_dispatch"]["inputs"]) == {
+        "mode",
         "issue",
         "release_version",
         "source_sha",
@@ -161,6 +162,53 @@ def test_verification_rerun_cannot_build_or_upload() -> None:
         assert forbidden not in text
     assert "automation recover-upload" in text and "automation finalize" in text
     assert "github.ref == 'refs/heads/main'" in document["jobs"]["verify"]["if"]
+
+
+def test_historical_preparation_keeps_permissions_lock_and_default_recovery() -> None:
+    document = workflow("verify-release.yml")
+    assert document["permissions"] == {
+        "contents": "read",
+        "actions": "read",
+        "issues": "write",
+        "pull-requests": "write",
+        "deployments": "write",
+    }
+    assert document["concurrency"] == {
+        "group": "verified-release-mainline",
+        "queue": "max",
+        "cancel-in-progress": "false",
+    }
+    mode = document["on"]["workflow_dispatch"]["inputs"]["mode"]
+    assert mode["default"] == "verify"
+    assert mode["options"] == ["verify", "prepare-historical-evidence"]
+    steps = document["jobs"]["verify"]["steps"]
+    prepare = next(s for s in steps if s.get("name") == "Prepare historical evidence")
+    assert prepare["if"] == "inputs.mode == 'prepare-historical-evidence'"
+    assert "automation prepare-historical-evidence" in prepare["run"]
+    proof = next(s for s in steps if s.get("name") == "Prove unmodified historical readers")
+    assert proof["if"] == prepare["if"]
+    assert "tests/test_release_evidence_historical.py" in proof["run"]
+    for name in ["Recover immutable upload evidence", "Retry verification and evidence only"]:
+        assert next(s for s in steps if s.get("name") == name)["if"] == "inputs.mode == 'verify'"
+
+
+@pytest.mark.parametrize("mode", ["verify", "prepare-historical-evidence", "invalid"])
+def test_recovery_mode_fails_closed(tmp_path: Path, mode: str) -> None:
+    step = next(
+        s
+        for s in workflow("verify-release.yml")["jobs"]["verify"]["steps"]
+        if s.get("name") == "Validate recovery mode"
+    )
+    result = subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", step["run"]],
+        cwd=tmp_path,
+        env=os.environ | {"MODE": mode, "GITHUB_STEP_SUMMARY": str(tmp_path / "summary.md")},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert (result.returncode == 0) == (mode != "invalid")
+    assert (tmp_path / "dist/finalization-error.json").exists() == (mode == "invalid")
 
 
 def test_local_upload_route_is_retired() -> None:
@@ -350,7 +398,8 @@ def test_github_cli_steps_have_effective_authentication(name: str) -> None:
         r"\bgh\s|hosting verify-releases|make check-release-reproducible|"
         r"release automation (capture-source|validate-request|admit|build|stage|publish|"
         r"capture-artifact|fetch-artifact|retain-publication|delivery-check|create-deployment|"
-        r"upload|finalize|deployment-status|retain-operation|recover-upload)\b"
+        r"upload|finalize|deployment-status|retain-operation|recover-upload|"
+        r"prepare-historical-evidence)\b"
     )
     checked: list[str] = []
     missing: list[str] = []
