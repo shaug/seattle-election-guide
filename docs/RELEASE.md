@@ -460,9 +460,25 @@ It never builds, republishes, uploads, or relabels the original upload producer.
 ### Historical evidence compatibility
 
 Current readers accept the original v1 report/index/seal groups and bounded v2
-compressed envelopes. Writers remain v1 during the reader rollout; enabling v2
-writes requires a separate accepted rollout. Existing comments are never edited
-or deleted. Seven-day Actions artifacts do not replace durable issue evidence.
+compressed envelopes. The reader rollout kept writers v1 and passed deployed
+historical compatibility proof before the separate v2 writer rollout. New ordinary
+operations use one deterministic gzip/base64 envelope per checkpoint: publication,
+upload recorded before probes, and verified finalization. Each envelope retains
+the original canonical receipt/report bytes, hashes and producer identities.
+Existing comments are never edited or deleted. Seven-day Actions artifacts do not
+replace durable issue evidence.
+
+Bodies stay below 60,000 characters. The format allows at most 16 reports,
+8 MiB per report, 16 MiB decoded and 4 MiB compressed. Larger valid envelopes use
+32,768-byte parts (at most 128) followed by a seal naming their actual comment IDs
+and hashes; oversized input fails rather than being truncated. Matching completed
+records are reused without posting. An incomplete v1 group continues as v1.
+After an uncertain POST, the writer rereads complete authenticated issue custody
+before proceeding: it reuses only an exact stored record, and fails nonzero if
+storage remains missing or conflicting. Failed retention cannot mark deployment
+success. These transport changes preserve all admission and strict probe gates.
+The separate pre-upload failure disposition protocol retains its existing v1
+report/index/seal representation and interrupted-recording recovery.
 
 Historical-source CI executes that source's reader code. Before requesting such
 a recovery after compressed evidence exists, run the supported preparation mode

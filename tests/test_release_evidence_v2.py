@@ -1,4 +1,4 @@
-"""Dual readers consume original General128 bytes; active writers stay v1."""
+"""Compressed checkpoints preserve original General128 bytes and resumable writes."""
 
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ import copy
 import gzip
 import hashlib
 import json
+import random
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
@@ -40,6 +41,8 @@ def v2_comment(
     operation: OperationReceipt,
     reports: dict[str, bytes],
     comment_id: int,
+    *,
+    first_part: bool = False,
     **marker_updates: Any,
 ) -> dict[str, Any]:
     files = {**reports, "receipt.json": canonical_json_bytes(operation.model_dump(mode="json"))}
@@ -57,6 +60,8 @@ def v2_comment(
         uncompressed_sha256=hashlib.sha256(raw).hexdigest(),
         part_sha256=hashlib.sha256(payload).hexdigest(),
     ).model_copy(update=marker_updates)
+    if first_part:
+        marker, payload = evidence_v2.envelope_parts(marker, payload)[0]
     comment = copy.deepcopy(originals()[0])
     comment.update(
         id=comment_id,
@@ -280,13 +285,203 @@ def test_v2_supports_current_admission_latest_updates_and_expired_artifact_recov
     assert baseline["deployment_id"] == 7809440517 and baseline["git_commit"] == SOURCE
 
 
-def test_reader_rollout_keeps_active_writer_v1(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_explicit_legacy_writer_keeps_v1_wire_contract(monkeypatch: pytest.MonkeyPatch) -> None:
     api = GitHub()
     monkeypatch.setattr(evidence, "run_gh", api.run)
     operation, reports = checkpoint("publication")
-    evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    evidence.retain_v1_evidence(operation, issue_number=696, reports=reports)
     assert len(api.posted) == 3
     assert all(evidence.MARKER in body and evidence_v2.MARKER not in body for body in api.posted)
+
+
+def test_ordinary_release_retains_exactly_three_comments(monkeypatch: pytest.MonkeyPatch) -> None:
+    api = GitHub()
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    for name in CHECKPOINTS:
+        operation, reports = checkpoint(name)
+        ids = evidence.retain_evidence(operation, issue_number=696, reports=reports)
+        assert ids == (api.comments[-1]["id"],)
+        assert evidence.read_evidence_reports(operation, issue_number=696) == reports
+        assert evidence.retain_evidence(operation, issue_number=696, reports=reports) == ids
+    assert len(api.posted) == 3
+    assert all(evidence_v2.MARKER in body and len(body) < 60000 for body in api.posted)
+    assert loaded() == tuple(checkpoint(name)[0] for name in CHECKPOINTS)
+
+
+class UncertainGitHub(GitHub):
+    """A single normal POST may store successfully while its response is unusable."""
+
+    def __init__(self, *, reply: str, kind: str | None = None) -> None:
+        super().__init__()
+        self.reply = reply
+        self.kind = kind
+        self.armed = True
+        self.post_calls = 0
+        self.comment_reads = 0
+
+    def run(self, command: list[str], failure: str) -> str:
+        if "--method" not in command:
+            if "/comments" in command[2]:
+                self.comment_reads += 1
+            return super().run(command, failure)
+        self.post_calls += 1
+        body = json.loads(Path(command[command.index("--input") + 1]).read_bytes())["body"]
+        matches = self.kind is None or (
+            evidence_v2.MARKER in body and evidence_v2.decode_comment(body)[0].kind == self.kind
+        )
+        if not self.armed or not matches:
+            return super().run(command, failure)
+        self.armed = False
+        if self.reply == "missing":
+            raise ValueError("fixture issue write unavailable")
+        result = super().run(command, failure)
+        if self.reply == "foreign-stored":
+            self.comments[-1]["user"] = {**self.comments[-1]["user"], "id": 7}
+            raise ValueError("fixture response lost after storage")
+        if self.reply == "duplicate":
+            self.comments.append({**self.comments[-1], "id": len(self.comments) + 1})
+        if self.reply in {"lost", "duplicate"}:
+            raise ValueError("fixture response lost after storage")
+        if self.reply == "malformed":
+            return "{truncated"
+        row = json.loads(result)
+        row["user"] = {**row["user"], "id": 7}
+        return json.dumps(row)
+
+
+@pytest.mark.parametrize("reply", ["lost", "malformed", "wrong-owner-reply"])
+def test_ambiguous_successful_post_is_reused_after_reread(
+    reply: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    api = UncertainGitHub(reply=reply)
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    operation, reports = checkpoint("publication")
+    ids = evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    assert ids == (1,) and api.post_calls == 1 and api.comment_reads >= 2
+    assert evidence.read_evidence_reports(operation, issue_number=696) == reports
+    assert evidence.retain_evidence(operation, issue_number=696, reports=reports) == ids
+    assert api.post_calls == 1
+
+
+def test_missing_ambiguous_post_stays_nonzero(monkeypatch: pytest.MonkeyPatch) -> None:
+    api = UncertainGitHub(reply="missing")
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    operation, reports = checkpoint("publication")
+    with pytest.raises(ValueError, match="unavailable"):
+        evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    assert api.post_calls == 1 and api.comment_reads >= 2 and not api.comments
+
+
+def large_reports() -> dict[str, bytes]:
+    # High entropy triggers the real body/chunk bounds without changing production limits.
+    return {
+        "large.json": canonical_json_bytes(
+            {"observations": random.Random(762).randbytes(90000).hex()}
+        )
+    }
+
+
+def test_multipart_retry_posts_only_missing_records(monkeypatch: pytest.MonkeyPatch) -> None:
+    api = GitHub()
+    api.fail_after = 1
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    operation, _ = checkpoint("publication")
+    reports = large_reports()
+    with pytest.raises(ValueError, match="unavailable"):
+        evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    first = copy.deepcopy(api.comments[0])
+    assert evidence_v2.decode_comment(first["body"])[0].kind == "v2-part"
+    assert loaded() == ()
+    api.fail_after = None
+    ids = evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    assert api.comments[0] == first and api.posted.count(first["body"]) == 1
+    markers = [evidence_v2.decode_comment(row["body"])[0] for row in api.comments]
+    assert all(marker.kind == "v2-part" for marker in markers[:-1])
+    assert markers[-1].kind == "v2-seal"
+    assert ids == tuple(row["id"] for row in api.comments)
+    assert evidence.read_evidence_reports(operation, issue_number=696) == reports
+    assert evidence.retain_evidence(operation, issue_number=696, reports=reports) == ids
+    assert len(api.posted) == len(ids) and all(len(body) < 60000 for body in api.posted)
+
+
+@pytest.mark.parametrize("kind", ["v2-part", "v2-seal"])
+def test_ambiguous_multipart_post_reuses_stored_record(
+    kind: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    api = UncertainGitHub(reply="lost", kind=kind)
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    operation, _ = checkpoint("publication")
+    reports = large_reports()
+    ids = evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    assert not api.armed and api.post_calls == len(ids) and api.comment_reads >= 2
+    assert evidence.read_evidence_reports(operation, issue_number=696) == reports
+    assert len(set(api.posted)) == len(ids)
+
+
+def test_ambiguous_duplicate_post_fails_before_another_write(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    api = UncertainGitHub(reply="duplicate")
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    operation, reports = checkpoint("publication")
+    with pytest.raises(ValueError, match="duplicate"):
+        evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    assert api.post_calls == 1 and api.comment_reads >= 2
+
+
+def test_unowned_ambiguous_record_cannot_complete_a_write(monkeypatch: pytest.MonkeyPatch) -> None:
+    api = UncertainGitHub(reply="foreign-stored")
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    operation, reports = checkpoint("publication")
+    with pytest.raises(ValueError, match="lost"):
+        evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    assert api.post_calls == 1 and api.comment_reads >= 2
+    assert loaded() == ()
+
+
+def test_legacy_continuation_reconciles_an_ambiguous_post(monkeypatch: pytest.MonkeyPatch) -> None:
+    api = UncertainGitHub(reply="lost")
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    operation, reports = checkpoint("publication")
+    ids = evidence.retain_v1_evidence(operation, issue_number=696, reports=reports)
+    assert ids == (1, 2, 3) and api.post_calls == 3 and api.comment_reads >= 2
+    assert evidence.read_evidence_reports(operation, issue_number=696) == reports
+
+
+@pytest.mark.parametrize("complete", [True, False])
+def test_existing_compressed_reports_conflict_before_any_post(
+    complete: bool, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    api = GitHub()
+    operation, reports = checkpoint("publication")
+    original = v2_comment(
+        operation, reports if complete else large_reports(), 1, first_part=not complete
+    )
+    api.comments = [original]
+    before = copy.deepcopy(api.comments)
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    with pytest.raises(ValueError, match="conflict"):
+        evidence.retain_evidence(
+            operation, issue_number=696, reports={"different.json": canonical_json_bytes({"x": 1})}
+        )
+    assert api.comments == before and not api.posted
+
+
+def test_existing_partial_v1_remains_v1_after_cutover(monkeypatch: pytest.MonkeyPatch) -> None:
+    api = GitHub()
+    monkeypatch.setattr(evidence, "run_gh", api.run)
+    operation, reports = checkpoint("publication")
+    api.fail_after = 1
+    with pytest.raises(ValueError, match="unavailable"):
+        evidence.retain_v1_evidence(operation, issue_number=696, reports=reports)
+    before = copy.deepcopy(api.comments)
+    api.fail_after = None
+    ids = evidence.retain_evidence(operation, issue_number=696, reports=reports)
+    assert api.comments[:1] == before and ids[0] == before[0]["id"]
+    assert len(api.posted) == 3 and all(evidence.MARKER in body for body in api.posted)
+    assert evidence.read_evidence_reports(operation, issue_number=696) == reports
+    assert evidence.retain_evidence(operation, issue_number=696, reports=reports) == ids
+    assert len(api.posted) == 3
 
 
 def test_explicit_v1_retention_coexists_with_compressed_operations(

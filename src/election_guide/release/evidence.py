@@ -1,13 +1,14 @@
 """Immutable, resumable GitHub evidence and read-only production finalization.
 
-A group is identified by the operation's canonical JSON digest. Parts alone are
-incomplete. A seal names an index which names every required report part by ID
-and hash. Only a complete, authenticated chain yields an operation receipt.
+A group is identified by the operation's canonical JSON digest. One authenticated
+envelope, or a seal binding every immutable legacy/multipart record by ID and hash,
+yields a complete operation. Unsealed parts never prove completion.
 """
 
 from __future__ import annotations
 
 import base64
+import gzip
 import hashlib
 import json
 import os
@@ -602,6 +603,76 @@ def read_pending_preupload_evidence(
     return receipt, reports
 
 
+def _comment_key(marker: EvidenceMarker) -> tuple[str, str, str, int]:
+    return (
+        marker.group,
+        marker.kind,
+        marker.report if isinstance(marker, PartMarker) else "",
+        marker.part,
+    )
+
+
+def _post_evidence(
+    receipt: OperationReceipt,
+    issue_number: int,
+    marker: EvidenceMarker,
+    payload: bytes,
+    comments: Comments,
+) -> int:
+    """Post once; reconcile an uncertain response through the same authenticated custody."""
+    body = (
+        _body(marker, payload)
+        if isinstance(marker, PartMarker)
+        else evidence_v2.render_envelope(marker, payload)
+    )
+    try:
+        with tempfile.TemporaryDirectory(prefix="release-evidence-") as temporary:
+            path = Path(temporary) / "comment.json"
+            path.write_bytes(canonical_json_bytes({"body": body}))
+            result = _object(
+                json.loads(
+                    run_gh(
+                        [
+                            "gh",
+                            "api",
+                            f"repos/{receipt.producer.repository}/issues/{issue_number}/comments",
+                            "--method",
+                            "POST",
+                            "--input",
+                            str(path),
+                        ],
+                        "could not retain release evidence",
+                    )
+                )
+            )
+        if not workflow_owned(result.get("user")) or result.get("body") != body:
+            raise ValueError("posted evidence ownership/body differs")
+        comment_id = _id(result)
+        if comment_id in comments:
+            raise ValueError("posted evidence ID conflicts with existing custody")
+    except (OSError, ValueError):
+        recovered = _comments(receipt.producer.repository, issue_number)
+        _completed(recovered, issue_number)
+        _check_canonical_receipts(recovered, extra=receipt)
+        if any(recovered.get(key) != value for key, value in comments.items()):
+            raise ValueError("previously retained evidence disappeared or conflicts") from None
+        matches = [
+            (existing_id, existing, content)
+            for existing_id, (existing, content) in recovered.items()
+            if _comment_key(existing) == _comment_key(marker)
+        ]
+        if not matches:
+            raise
+        comment_id, existing, content = matches[0]
+        if (existing, content) != (marker, payload):
+            raise ValueError("conflicting stored evidence after uncertain POST") from None
+        comments.clear()
+        comments.update(recovered)
+        return comment_id
+    comments[comment_id] = marker, payload
+    return comment_id
+
+
 def retain_v1_evidence(
     receipt: OperationReceipt,
     *,
@@ -663,31 +734,7 @@ def retain_v1_evidence(
                         "compatibility comment budget exhausted; preparation incomplete"
                     )
                 posted += 1
-                with tempfile.TemporaryDirectory(prefix="release-evidence-") as temporary:
-                    path = Path(temporary) / "comment.json"
-                    path.write_bytes(canonical_json_bytes({"body": _body(marker, chunk)}))
-                    result = _object(
-                        json.loads(
-                            run_gh(
-                                [
-                                    "gh",
-                                    "api",
-                                    f"repos/{receipt.producer.repository}/issues/{issue_number}/comments",
-                                    "--method",
-                                    "POST",
-                                    "--input",
-                                    str(path),
-                                ],
-                                "could not retain release evidence",
-                            )
-                        )
-                    )
-                if not workflow_owned(result.get("user")) or result.get("body") != _body(
-                    marker, chunk
-                ):
-                    raise ValueError("posted evidence ownership/body differs")
-                comment_id = _id(result)
-                comments[comment_id] = marker, chunk
+                comment_id = _post_evidence(receipt, issue_number, marker, chunk, comments)
             all_ids.append(comment_id)
             retained.append(PartRef(id=comment_id, marker=marker))
         return tuple(retained)
@@ -713,8 +760,82 @@ def retain_v1_evidence(
 def retain_evidence(
     receipt: OperationReceipt, *, issue_number: int, reports: dict[str, bytes]
 ) -> tuple[int, ...]:
-    """Active production writers remain v1 during the dual-reader rollout."""
-    return retain_v1_evidence(receipt, issue_number=issue_number, reports=reports)
+    """Retain one compressed checkpoint, continuing any existing v1 representation."""
+    receipt = OperationReceipt.model_validate_json(_bytes(receipt))
+    if _validate_publication(receipt.publication) != issue_number:
+        raise ValueError("evidence issue differs from reviewed request")
+    if "receipt.json" in reports:
+        raise ValueError("receipt.json is reserved")
+    _validate_receipt(receipt, reports)
+    comments = _comments(receipt.producer.repository, issue_number)
+    completed = _completed(comments, issue_number)
+    _check_canonical_receipts(comments, extra=receipt)
+    group = _sha(_bytes(receipt))
+    existing = {key: value for key, value in comments.items() if value[0].group == group}
+    if any(isinstance(marker, PartMarker) for marker, _ in existing.values()):
+        return retain_v1_evidence(receipt, issue_number=issue_number, reports=reports)
+    for retained, retained_reports in completed:
+        if retained != receipt:
+            continue
+        if retained_reports != reports:
+            raise ValueError("conflicting existing evidence reports")
+        seals = [
+            (key, marker, content)
+            for key, (marker, content) in existing.items()
+            if marker.kind in {"v2-envelope", "v2-seal"}
+        ]
+        if len(seals) != 1:
+            raise ValueError("conflicting compressed evidence completion")
+        key, marker, content = seals[0]
+        ids = (key,)
+        if marker.kind == "v2-seal":
+            refs = evidence_v2.EnvelopeSeal.model_validate_json(content).parts
+            ids = (*(ref.id for ref in refs), key)
+        if set(ids) != set(existing):
+            raise ValueError("conflicting unreferenced compressed evidence parts")
+        return ids
+
+    payload = evidence_v2.encode_envelope({**reports, "receipt.json": _bytes(receipt)})
+    raw = gzip.decompress(payload)  # Only our own bounded encode_envelope output.
+    marker = evidence_v2.EnvelopeMarker(
+        producer=receipt.producer,
+        release_version=receipt.publication.published.candidate.declaration.release_version,
+        phase=receipt.phase,
+        state=receipt.state,
+        group=group,
+        compressed_bytes=len(payload),
+        compressed_sha256=_sha(payload),
+        uncompressed_bytes=len(raw),
+        uncompressed_sha256=_sha(raw),
+        part_sha256=_sha(payload),
+    )
+    pieces = evidence_v2.envelope_parts(marker, payload)
+    expected = {_comment_key(part): (part, chunk) for part, chunk in pieces}
+    if any(expected.get(_comment_key(part)) != (part, chunk) for part, chunk in existing.values()):
+        raise ValueError("conflicting existing compressed evidence part")
+
+    def retain(part: evidence_v2.EnvelopeMarker, chunk: bytes) -> int:
+        for key, value in comments.items():
+            if _comment_key(value[0]) == _comment_key(part):
+                if value != (part, chunk):
+                    raise ValueError("conflicting existing compressed evidence part")
+                return key
+        return _post_evidence(receipt, issue_number, part, chunk, comments)
+
+    ids = tuple(retain(part, chunk) for part, chunk in pieces)
+    if pieces[0][0].kind == "v2-part":
+        seal = canonical_json_bytes(
+            evidence_v2.EnvelopeSeal(
+                parts=tuple(
+                    evidence_v2.EnvelopeRef(id=key, part=part.part, sha256=_sha(chunk))
+                    for key, (part, chunk) in zip(ids, pieces, strict=True)
+                )
+            ).model_dump(mode="json")
+        )
+        seal_marker = pieces[0][0].model_copy(update={"kind": "v2-seal", "part_sha256": _sha(seal)})
+        ids += (retain(seal_marker, seal),)
+    _completed(comments, issue_number)
+    return ids
 
 
 def require_publication_evidence(publication: PublicationResult) -> None:

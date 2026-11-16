@@ -328,7 +328,7 @@ def test_partial_upload_receipt_blocks_even_without_a_completed_seal(
 ) -> None:
     workflow, evidence, api, _, publication, _, _, _, _, _ = disposed_intent
     upload = evidence_setup[4]
-    evidence.retain_evidence(
+    evidence.retain_v1_evidence(
         operation(
             publication,
             phase="deployment",
@@ -511,6 +511,7 @@ def test_partial_disposition_write_resumes_only_missing_parts_with_original_issu
 
     assert result.model_dump(mode="json") == proof
     assert result.producer == issuer and state["verifications"] == 1
+    assert all(evidence.MARKER in body for body in api.posted[start:])
     assert all(comment in api.comments for comment in retained)
     assert all(
         api.posted[start:].count(comment["body"]) == 1
@@ -538,7 +539,7 @@ def test_recorder_does_not_ignore_an_unrelated_pending_operation(
     _, evidence, api, _, publication, issuer, _, _, _, _ = setup
     api.fail_after = len(api.posted) + 1
     with pytest.raises(ValueError, match="unavailable"):
-        evidence.retain_evidence(
+        evidence.retain_v1_evidence(
             operation(
                 publication,
                 phase="deployment",
