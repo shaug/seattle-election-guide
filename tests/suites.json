@@ -188,6 +188,11 @@
     },
     "partition": "integration-artifacts"
   },
+  "tests/test_evidence_retention.py": {
+    "suite": "unit",
+    "tests": {},
+    "partition": "unit"
+  },
   "tests/test_frontend_bundle.py": {
     "suite": "integration",
     "tests": {},

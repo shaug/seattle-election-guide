@@ -138,3 +138,12 @@ publication and production promotion at that same merged SHA. There is no post-m
 screenshot attestation or Publish approval. Documentation/test-only changes run CI
 without publishing or deploying another release. See the executable recovery commands
 in [RELEASE.md](docs/RELEASE.md); never use a direct local production upload.
+
+## Operational evidence lifetime
+
+Implementation artifacts belong in isolated worktrees, never in the root checkout
+or custom archives under its `.git`. Follow [EVIDENCE_RETENTION.md](docs/EVIDENCE_RETENTION.md)
+for run-level and election-closeout retention. A completed review should leave a
+compact receipt rather than repeated full diffs, logs or build backups. The
+`evidence retention-plan` command provides non-destructive triage; it is not yet a
+cleanup executor and does not authorize deleting referenced source evidence.
