@@ -8,6 +8,7 @@ on:
   pull_request:
     types:
       - labeled
+      - unlabeled
       - synchronize
       - reopened
       - closed
@@ -15,7 +16,55 @@ on:
 permissions:
   contents: read
 
+# Serialize build, upload and cleanup together. Never cancel a partial upload or
+# deletion. Pending runs may replace one another, so every run reads current PR
+# state rather than assuming event order.
+concurrency:
+  group: pages-preview-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
 jobs:
+  admission:
+    name: Resolve current PR preview intent
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.CLOUDFLARE_PAGES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      deploy: ${{ steps.admit.outputs.deploy }}
+      head_sha: ${{ steps.admit.outputs.head_sha }}
+    steps:
+      - name: Read current PR preview state
+        id: admit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: &read_preview_state |
+          gh api --method GET "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > preview-state.json
+          if ! jq -e --arg repo "$GITHUB_REPOSITORY" --argjson number "$PR_NUMBER" '
+            .number == $number and (.state == "open" or .state == "closed") and
+            .head.repo.full_name == $repo and .base.repo.full_name == $repo and
+            (.head.sha | type == "string" and test("^[0-9a-f]{40}$")) and
+            (.labels | type == "array") and all(.labels[]; .name | type == "string")
+            ' preview-state.json > /dev/null; then
+            echo "::error::Current PR preview state is malformed or belongs to another PR/repository."
+            exit 1
+          fi
+          head_sha="$(jq -r '.head.sha' preview-state.json)"
+          deploy="$(jq -r '.state == "open" and any(.labels[]; .name == "deploy preview")' preview-state.json)"
+          cleanup=true
+          if [ "$deploy" = true ]; then
+            cleanup=false
+          fi
+          if [ -n "${EXPECTED_HEAD:-}" ] && [ "$head_sha" != "$EXPECTED_HEAD" ]; then
+            echo "::notice::PR head changed during the build; skip this stale upload."
+            deploy=false
+          fi
+          printf 'head_sha=%s\ndeploy=%s\ncleanup=%s\n' "$head_sha" "$deploy" "$cleanup" >> "$GITHUB_OUTPUT"
+
   deploy:
     name: Deploy PR preview
     # The head-repository guard is what keeps the Cloudflare token away from
@@ -23,23 +72,14 @@ jobs:
     # job rather than failing it. `pull_request_target` would run the fork's
     # code with the token in scope, which is why this workflow does not use it;
     # a contributor's branch is previewed by pushing it to origin instead.
-    # Gating on state rather than only on the action keeps a `labeled` event on
-    # an already-closed pull request from deploying a preview that no later
-    # close event would ever tear down.
+    # Do not enter the environment-bearing deployment job for opted-out PRs.
+    needs: admission
     if: >-
-      github.event.pull_request.state == 'open' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      contains(github.event.pull_request.labels.*.name, 'deploy preview') &&
-      vars.CLOUDFLARE_PAGES_ENABLED == 'true'
+      vars.CLOUDFLARE_PAGES_ENABLED == 'true' &&
+      needs.admission.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # Scoped to this job rather than the workflow. A workflow-level cancelling
-    # group would also cover teardown, and a superseding event arriving while a
-    # close-triggered teardown was still running would cancel it -- with no
-    # second `closed` event to retry it, the preview would survive.
-    concurrency:
-      group: pages-preview-pr-${{ github.event.pull_request.number }}
-      cancel-in-progress: true
     permissions:
       contents: read
       deployments: write
@@ -48,16 +88,13 @@ jobs:
       name: pr-${{ github.event.pull_request.number }}
       url: ${{ steps.deploy.outputs.url }}
     env:
-      # The pull_request event's own SHA is an ephemeral merge commit that
-      # exists in no branch. The audit footer has to show a commit a reader can
-      # actually look up, so every step that records one uses the head instead.
-      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      HEAD_SHA: ${{ needs.admission.outputs.head_sha }}
       # Consumed by the `pages:deploy` script, which defaults to main.
       PAGES_BRANCH: pr-${{ github.event.pull_request.number }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ needs.admission.outputs.head_sha }}
           fetch-depth: 0
       - uses: astral-sh/setup-uv@v6
         with:
@@ -114,7 +151,15 @@ jobs:
       # The alias is derived from the pull request number rather than the branch
       # name, so it is stable across pushes and immune to the mangling real
       # branch names get.
+      - name: Recheck current state immediately before upload
+        id: recheck
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          EXPECTED_HEAD: ${{ needs.admission.outputs.head_sha }}
+        run: *read_preview_state
       - name: Deploy the preview
+        if: steps.recheck.outputs.deploy == 'true'
         id: deploy
         run: |
           npm run pages:deploy -- \
@@ -129,12 +174,13 @@ jobs:
       # workflow's own previous comment, which is unambiguous because nothing
       # else comments here as the Actions bot.
       - name: Comment the preview link
+        if: steps.deploy.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PREVIEW_URL: ${{ steps.deploy.outputs.url }}
         run: |
-          printf '**Preview:** %s\n\nBuilt from `%s`. Every non-canonical host is `noindex`, so this copy cannot appear in search results. Removing the `deploy preview` label stops future deployments; closing this pull request tears this one down.\n' \
+          printf '**Preview:** %s\n\nBuilt from `%s`. Every non-canonical host is `noindex`, so this copy cannot appear in search results. Removing the `deploy preview` label or closing this pull request tears this preview down.\n' \
             "$PREVIEW_URL" "$HEAD_SHA" > comment.md
           gh pr comment "$PR_NUMBER" \
             --body-file comment.md \
@@ -143,44 +189,46 @@ jobs:
 
   teardown:
     name: Remove PR preview
-    # Deliberately not label-gated. A preview that was deployed and then had its
-    # label removed must still be cleaned up when the pull request closes, so
-    # this runs on every same-repository close and no-ops when it finds nothing.
+    # Run after any build/upload outcome. A label removed mid-upload must be
+    # reconciled before this workflow releases the PR lock. Re-added labels and
+    # reopened PRs are evaluated from the live response, not the old event.
+    needs: [admission, deploy]
     if: >-
-      github.event.action == 'closed' &&
+      always() &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       vars.CLOUDFLARE_PAGES_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Deliberately the deploy job's group, so a close landing mid-build queues
-    # behind the upload instead of racing it: teardown would otherwise delete
-    # the current deployments and let the still-running deploy publish a fresh
-    # one that no later event would ever clean up. `cancel-in-progress: false`
-    # means teardown itself cancels nothing; only a `reopened` deploy can
-    # displace a pending teardown, which is what reopening should do.
-    concurrency:
-      group: pages-preview-pr-${{ github.event.pull_request.number }}
-      cancel-in-progress: false
     permissions:
       contents: read
     env:
       PREVIEW_BRANCH: pr-${{ github.event.pull_request.number }}
     steps:
+      - name: Read current state after build or upload
+        id: current
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: *read_preview_state
       # Pinned to the base branch on purpose. A bare checkout on a
       # `pull_request` event resolves refs/pull/<number>/merge, and GitHub
       # retires that ref when the pull request closes -- which is exactly when
       # this job runs. The job reads its lockfile from a
       # ref that still exists.
       - uses: actions/checkout@v4
+        if: steps.current.outputs.cleanup == 'true'
         with:
           ref: ${{ github.event.pull_request.base.ref }}
       - uses: actions/setup-node@v4
+        if: steps.current.outputs.cleanup == 'true'
         with:
           node-version: '22'
           cache: npm
       - name: Install pinned Wrangler
+        if: steps.current.outputs.cleanup == 'true'
         run: npm ci --ignore-scripts
       - name: Delete this pull request's preview deployments
+        if: steps.current.outputs.cleanup == 'true'
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
