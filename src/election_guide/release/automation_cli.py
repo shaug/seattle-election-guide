@@ -854,7 +854,11 @@ def capture_artifact_command(
 
     try:
         reference = capture_artifact(
-            producer=current_producer(source_sha), artifact_id=artifact_id, name=name, digest=digest
+            retry_visibility=True,
+            producer=current_producer(source_sha),
+            artifact_id=artifact_id,
+            name=name,
+            digest=digest,
         )
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_bytes(canonical_json_bytes(reference.model_dump(mode="json")))

@@ -391,6 +391,17 @@ ZIP digest is distinct from the release asset digest. Wrapper downloads use uniq
 temporary storage outside the checkout and remove it on success and failure; extracted
 artifacts remain in the requested output directory.
 
+The fresh `capture-artifact` CLI entrypoint opts into an initial metadata read that
+retries only the typed `gh` exit-1 `Not Found (HTTP 404)` response, for at most
+three reads of the same exact ID
+with 5- then 10-second backoff. Retry logs identify the endpoint and failed attempt;
+other errors and exhausted reads remain nonzero. This is visibility-lag handling,
+not proof of the GitHub backend cause. Metadata parsing and all subsequent identity,
+expiry, digest, source/attempt and wrapper checks are unchanged and are not restarted.
+No upload, production-probe, credential or request-timeout policy changes. Backoff
+adds at most 15 seconds; existing request durations still apply. Core captures default
+to fail-fast, so `fetch-artifact` and retained upload-report recovery do not opt in.
+
 The publisher creates or resumes only an owned matching draft, verifies its canonical ZIP,
 then publishes it. Existing archives and their screenshot bytes remain immutable. Durable
 publication evidence on the owning issue must complete before upload. The final selection check

@@ -5,12 +5,14 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import sys
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
+from time import sleep
 from typing import Any, cast
 
-from election_guide.github_cli import parse_paginated_objects, run_gh
+from election_guide.github_cli import GitHubCliError, parse_paginated_objects, run_gh
 from election_guide.hosting.models import SiteManifest
 from election_guide.hosting.promotion import (
     download_actions_artifact,
@@ -92,10 +94,33 @@ def post_object(endpoint: str, payload: dict[str, Any]) -> dict[str, Any]:
     return cast(dict[str, Any], result)
 
 
+def _read_uploaded_artifact_metadata(endpoint: str) -> dict[str, Any]:
+    """Bound visibility lag for one just-uploaded ID; preserve every validation."""
+    for attempt, delay in enumerate((5.0, 10.0), start=1):
+        try:
+            return read_object(endpoint)
+        except GitHubCliError as error:
+            if error.returncode != 1 or error.stderr != "gh: Not Found (HTTP 404)":
+                raise
+            print(
+                f"artifact metadata read retry: {endpoint} "
+                f"attempt {attempt}/3 exit {error.returncode}: {error.stderr}",
+                file=sys.stderr,
+            )
+            sleep(delay)
+    return read_object(endpoint)
+
+
 def capture_artifact(
-    *, producer: Producer, artifact_id: int, name: str, digest: str
+    *,
+    producer: Producer,
+    artifact_id: int,
+    name: str,
+    digest: str,
+    retry_visibility: bool = False,
 ) -> ArtifactRef:
-    metadata = read_object(f"repos/{producer.repository}/actions/artifacts/{artifact_id}")
+    read_metadata = _read_uploaded_artifact_metadata if retry_visibility else read_object
+    metadata = read_metadata(f"repos/{producer.repository}/actions/artifacts/{artifact_id}")
     reference = ArtifactRef(
         id=artifact_id,
         name=name,
