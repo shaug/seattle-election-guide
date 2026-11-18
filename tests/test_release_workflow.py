@@ -606,3 +606,264 @@ def test_upload_recovery_authenticates_retained_evidence(
     else:
         with pytest.raises(ValueError):
             recover()
+
+
+@pytest.fixture
+def captured_artifact_service(monkeypatch: pytest.MonkeyPatch) -> dict[str, Any]:
+    """Replace only external gh processes; retain the real identity validators."""
+    from election_guide.hosting import promotion
+    from election_guide.release.automation_models import Producer
+    from tests.test_release_promotion import AdmissionAPI
+
+    producer = Producer(
+        repository="owner/repository",
+        source_sha="a" * 40,
+        workflow_sha="a" * 40,
+        run_id=100,
+        run_attempt=2,
+    )
+    metadata = {
+        "id": 13,
+        "name": "promotion-100-2",
+        "size_in_bytes": 19,
+        "digest": "sha256:" + "b" * 64,
+        "expired": False,
+        "created_at": "2026-10-16T12:30:00Z",
+        "workflow_run": {"id": 100, "head_sha": "a" * 40, "head_branch": "main"},
+    }
+    endpoint = "repos/owner/repository/actions/artifacts/13"
+    api = AdmissionAPI("a" * 40)
+    state: dict[str, Any] = {
+        "producer": producer,
+        "metadata": metadata,
+        "api": api,
+        "endpoint": endpoint,
+        "reads": [],
+        "failures": [],
+        "delays": [],
+        "returncode": 1,
+    }
+
+    def run(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+        assert command[:2] == ["gh", "api"] and len(command) == 3
+        if command[2] == endpoint:
+            state["reads"].append(command[2])
+            failure = state["failures"].pop(0) if state["failures"] else None
+            if failure is not None:
+                return subprocess.CompletedProcess(command, state["returncode"], "", failure)
+            payload = state.get("payload", json.dumps(metadata))
+        else:
+            payload = api(command, "fixture")
+        return subprocess.CompletedProcess(command, 0, payload, "")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    monkeypatch.setattr(adapter(), "sleep", state["delays"].append, raising=False)
+    # Both layers call the shared real run_gh; no validator is replaced.
+    assert promotion.run_gh is adapter().run_gh
+    return state
+
+
+def capture_fixture_artifact(state: dict[str, Any]) -> Any:
+    return adapter().capture_artifact(
+        retry_visibility=True,
+        producer=state["producer"],
+        artifact_id=13,
+        name="promotion-100-2",
+        digest="sha256:" + "b" * 64,
+    )
+
+
+@pytest.mark.parametrize("failures,reads,delays", [(1, 3, [5.0]), (2, 4, [5.0, 10.0])])
+def test_capture_new_artifact_recovers_visibility_404_without_changing_identity(
+    captured_artifact_service: dict[str, Any], failures: int, reads: int, delays: list[float]
+) -> None:
+    state = captured_artifact_service
+    state["failures"] = ["gh: Not Found (HTTP 404)"] * failures
+    result = capture_fixture_artifact(state)
+    assert result.id == 13 and result.name == "promotion-100-2"
+    assert result.producer.repository == "owner/repository"
+    assert result.producer.source_sha == "a" * 40
+    assert result.producer.run_id == 100 and result.producer.run_attempt == 2
+    assert result.digest.size == 19 and result.digest.sha256 == "b" * 64
+    assert state["reads"] == [state["endpoint"]] * reads
+    assert state["delays"] == delays
+
+
+def test_capture_new_artifact_exhaustion_stops_after_three_reads(
+    captured_artifact_service: dict[str, Any],
+) -> None:
+    from election_guide.github_cli import GitHubCliError
+
+    state = captured_artifact_service
+    state["failures"] = ["gh: Not Found (HTTP 404)"] * 5
+    with pytest.raises(GitHubCliError, match="Not Found") as error:
+        capture_fixture_artifact(state)
+    assert error.value.returncode == 1 and error.value.stderr == "gh: Not Found (HTTP 404)"
+    assert len(state["reads"]) == 3 and len(state["failures"]) == 2
+    assert state["delays"] == [5.0, 10.0]
+
+
+@pytest.mark.parametrize("status", [401, 403, 429, 500])
+def test_capture_new_artifact_does_not_retry_other_http_errors(
+    captured_artifact_service: dict[str, Any], status: int
+) -> None:
+    from election_guide.github_cli import GitHubCliError
+
+    state = captured_artifact_service
+    state["failures"] = [f"gh: request failed (HTTP {status})"]
+    with pytest.raises(GitHubCliError, match=str(status)):
+        capture_fixture_artifact(state)
+    assert len(state["reads"]) == 1 and state["delays"] == []
+
+
+def test_capture_new_artifact_does_not_retry_other_exit_status(
+    captured_artifact_service: dict[str, Any],
+) -> None:
+    from election_guide.github_cli import GitHubCliError
+
+    state = captured_artifact_service
+    state["returncode"] = 2
+    state["failures"] = ["gh: Not Found (HTTP 404)"]
+    with pytest.raises(GitHubCliError):
+        capture_fixture_artifact(state)
+    assert len(state["reads"]) == 1 and state["delays"] == []
+
+
+@pytest.mark.parametrize("payload", ["{", "[]"])
+def test_capture_new_artifact_does_not_retry_malformed_metadata(
+    captured_artifact_service: dict[str, Any], payload: str
+) -> None:
+    state = captured_artifact_service
+    state["payload"] = payload
+    with pytest.raises(ValueError):
+        capture_fixture_artifact(state)
+    assert len(state["reads"]) == 1 and state["delays"] == []
+
+
+def test_capture_new_artifact_does_not_retry_an_error_message_lookalike(
+    monkeypatch: pytest.MonkeyPatch, captured_artifact_service: dict[str, Any]
+) -> None:
+    seen: list[str] = []
+
+    def read(endpoint: str) -> dict[str, Any]:
+        seen.append(endpoint)
+        raise ValueError("could not read Actions delivery metadata: gh: Not Found (HTTP 404)")
+
+    monkeypatch.setattr(adapter(), "read_object", read)
+    with pytest.raises(ValueError, match="Not Found"):
+        capture_fixture_artifact(captured_artifact_service)
+    assert len(seen) == 1 and captured_artifact_service["delays"] == []
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        "id",
+        "name",
+        "digest",
+        "run",
+        "source",
+        "branch",
+        "expired",
+        "created",
+        "repository",
+        "attempt",
+    ],
+)
+def test_capture_visibility_retry_still_rejects_wrong_identity(
+    captured_artifact_service: dict[str, Any], bad: str
+) -> None:
+    state = captured_artifact_service
+    state["failures"] = ["gh: Not Found (HTTP 404)"]
+    metadata = state["metadata"]
+    if bad == "id":
+        metadata["id"] = 14
+    elif bad == "name":
+        metadata["name"] = "promotion-999-2"
+    elif bad == "digest":
+        metadata["digest"] = "sha256:" + "c" * 64
+    elif bad == "run":
+        metadata["workflow_run"]["id"] = 101
+    elif bad == "source":
+        metadata["workflow_run"]["head_sha"] = "c" * 40
+    elif bad == "branch":
+        metadata["workflow_run"]["head_branch"] = "other"
+    elif bad == "expired":
+        metadata["expired"] = True
+    elif bad == "created":
+        metadata["created_at"] = "2026-10-16T11:59:59Z"
+    elif bad == "repository":
+        state["api"].run["repository"]["full_name"] = "another/repository"
+    else:
+        state["api"].run["run_attempt"] = 3
+    with pytest.raises(ValueError, match="artifact"):
+        capture_fixture_artifact(state)
+    assert len(state["reads"]) == 3 and state["delays"] == [5.0]
+
+
+def test_capture_visibility_retry_never_restarts_strict_validation(
+    captured_artifact_service: dict[str, Any],
+) -> None:
+    state = captured_artifact_service
+    state["failures"] = ["gh: Not Found (HTTP 404)", None, "gh: Not Found (HTTP 404)"]
+    with pytest.raises(ValueError, match="missing or expired"):
+        capture_fixture_artifact(state)
+    assert len(state["reads"]) == 3 and state["delays"] == [5.0]
+
+
+def test_capture_existing_artifact_lookup_keeps_fail_fast_behavior(
+    captured_artifact_service: dict[str, Any],
+) -> None:
+    from election_guide.github_cli import GitHubCliError
+
+    state = captured_artifact_service
+    state["failures"] = ["gh: Not Found (HTTP 404)"]
+    with pytest.raises(GitHubCliError, match="Not Found"):
+        adapter().capture_artifact(
+            producer=state["producer"],
+            artifact_id=13,
+            name="promotion-100-2",
+            digest="sha256:" + "b" * 64,
+        )
+    assert len(state["reads"]) == 1 and state["delays"] == []
+
+
+def test_fresh_capture_cli_opts_into_metadata_visibility_wait(
+    captured_artifact_service: dict[str, Any], monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from typer.testing import CliRunner
+
+    from election_guide.cli import app
+
+    state = captured_artifact_service
+    state["failures"] = ["gh: Not Found (HTTP 404)"]
+    for name, value in {
+        "GITHUB_REPOSITORY": "owner/repository",
+        "GITHUB_SHA": "a" * 40,
+        "GITHUB_RUN_ID": "100",
+        "GITHUB_RUN_ATTEMPT": "2",
+    }.items():
+        monkeypatch.setenv(name, value)
+    output = tmp_path / "captured.json"
+    result = CliRunner().invoke(
+        app,
+        [
+            "release",
+            "automation",
+            "capture-artifact",
+            "--source-sha",
+            "a" * 40,
+            "--artifact-id",
+            "13",
+            "--name",
+            "promotion-100-2",
+            "--digest",
+            "sha256:" + "b" * 64,
+            "--output",
+            str(output),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    captured = json.loads(output.read_bytes())
+    assert captured["id"] == 13 and captured["producer"]["run_attempt"] == 2
+    assert len(state["reads"]) == 3 and state["delays"] == [5.0]
