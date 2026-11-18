@@ -360,7 +360,7 @@ Four rules govern when a preview exists:
 
 - **Opt in with the label.** Previews are not automatic. This build is expensive — Chromium
   rendering plus a full release build — and most pull requests here change data or prose with no
-  visual surface. Removing the label stops future deployments. If the label ever becomes friction,
+  visual surface. Removing the label tears down the PR's preview. If the label ever becomes friction,
   inverting to deploy-by-default with an opt-out label is a one-line change to the same workflow.
 - **Only branches in this repository.** The deploy job requires
   `github.event.pull_request.head.repo.full_name == github.repository`. A pull request from a fork
@@ -368,9 +368,17 @@ Four rules govern when a preview exists:
   contributor's work by pushing their branch to origin and opening a pull request from it. The
   workflow deliberately does not use `pull_request_target`, which would run a fork's code with the
   Cloudflare API token in scope.
-- **Closing tears the preview down.** Closing or merging the pull request deletes its deployments.
-  Teardown is not label-gated, so a preview whose label was removed before the pull request closed
-  is still cleaned up. It enumerates every page of the Cloudflare deployments API with
+- **Label removal and closing tear the preview down (#767).** Removing `deploy preview`, closing,
+  or merging the PR deletes its preview deployments. Re-adding the label to an open same-repository
+  PR builds its current head again. The whole workflow uses one non-cancelling PR-scoped lock;
+  build/upload and cleanup cannot overlap. Pending events may replace each other, so each run
+  reads the current PR identity, labels, state and head before entering the deployment job,
+  so opted-out PRs create no GitHub deployment environments. It rechecks the built head before upload,
+  and reconciles cleanup after even a failed/skipped build. A removed label during upload is
+  handled before releasing the lock; a re-added label protects the current preview and the
+  subsequent run rebuilds it. HTTP/malformed state reads fail visibly and authorize neither
+  upload nor deletion. Rerunning the workflow reconciles current state, not a stale event.
+  Teardown enumerates every page of the Cloudflare deployments API with
   `env=preview` and Cloudflare's default page size, continuing until an empty page as in
   [Cloudflare's SDK pagination](https://github.com/cloudflare/cloudflare-typescript/blob/main/src/core/pagination.ts).
   A short nonempty page does not end enumeration. Teardown then deletes only entries whose raw
@@ -389,7 +397,7 @@ workflow overrides it, by setting `PAGES_BRANCH`.
 
 ### Preview retention and limits (decision for #269)
 
-Keep the `pr-<number>` GitHub environment after close. It records the preview's deployment
+Keep the `pr-<number>` GitHub environment after label removal or close. It records the preview's deployment
 history; it does not host the Pages copy or keep the branch alias alive. GitHub's
 [delete-environment API](https://docs.github.com/en/rest/deployments/environments#delete-an-environment)
 requires repository **Administration: write**, which the automatic `GITHUB_TOKEN` permissions
