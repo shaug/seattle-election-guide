@@ -246,3 +246,197 @@ def test_teardown_works_when_server_rejects_a_page_size_override(tmp_path: Path)
         {"action": "list", "page": 2},
         {"action": "delete", "id": "target"},
     ]
+
+
+def _pr_state(
+    *, state: str = "open", labels: tuple[str, ...] = ("deploy preview",), sha: str = "a" * 40
+) -> dict[str, Any]:
+    return {
+        "number": 269,
+        "state": state,
+        "head": {"sha": sha, "repo": {"full_name": "shaug/seattle-election-guide"}},
+        "base": {"repo": {"full_name": "shaug/seattle-election-guide"}},
+        "labels": [{"name": label} for label in labels],
+    }
+
+
+def _read_preview_state(
+    tmp_path: Path, payload: object, *, expected_head: str = "", api_fails: bool = False
+) -> tuple[subprocess.CompletedProcess[str], dict[str, str]]:
+    workflow = yaml.load(
+        (PROJECT_ROOT / ".github/workflows/deploy-pr-preview.yml").read_text(encoding="utf-8"),
+        Loader=yaml.BaseLoader,
+    )
+    step = next(
+        (step for step in workflow["jobs"]["admission"]["steps"] if step.get("id") == "admit"),
+        None,
+    )
+    assert step is not None, "preview must read current PR state before any deployment"
+    commands = tmp_path / "state-bin"
+    commands.mkdir()
+    fixture = tmp_path / "pr.json"
+    fixture.write_text(json.dumps(payload), encoding="utf-8")
+    gh = commands / "gh"
+    gh.write_text(
+        f"#!{sys.executable}\n"
+        "import os, pathlib, sys\n"
+        'assert sys.argv[1:] == ["api", "--method", "GET", '
+        '"repos/shaug/seattle-election-guide/pulls/269"]\n'
+        'if os.environ["API_FAILS"] == "true": sys.exit(1)\n'
+        'print(pathlib.Path(os.environ["PR_FIXTURE"]).read_text())\n',
+        encoding="utf-8",
+    )
+    gh.chmod(0o755)
+    output = tmp_path / "outputs"
+    result = subprocess.run(
+        ["bash", "--noprofile", "--norc", "-e", "-o", "pipefail", "-c", step["run"]],
+        cwd=tmp_path,
+        env={
+            **os.environ,
+            "PATH": f"{commands}{os.pathsep}{os.environ['PATH']}",
+            "PR_FIXTURE": str(fixture),
+            "API_FAILS": str(api_fails).lower(),
+            "GITHUB_OUTPUT": str(output),
+            "GITHUB_REPOSITORY": "shaug/seattle-election-guide",
+            "PR_NUMBER": "269",
+            "EXPECTED_HEAD": expected_head,
+        },
+        capture_output=True,
+        text=True,
+        timeout=15,
+        check=False,
+    )
+    outputs = (
+        dict(line.split("=", 1) for line in output.read_text().splitlines())
+        if (output.exists())
+        else {}
+    )
+    return result, outputs
+
+
+@pytest.mark.parametrize(
+    "state,labels,deploy,cleanup",
+    [
+        ("open", (), "false", "true"),
+        ("open", ("unrelated",), "false", "true"),
+        ("open", ("deploy preview",), "true", "false"),
+        ("open", ("deploy preview", "unrelated"), "true", "false"),
+        ("closed", (), "false", "true"),
+        ("closed", ("deploy preview",), "false", "true"),
+    ],
+)
+def test_preview_current_state_controls_deployment_and_cleanup(
+    tmp_path: Path, state: str, labels: tuple[str, ...], deploy: str, cleanup: str
+) -> None:
+    result, outputs = _read_preview_state(tmp_path, _pr_state(state=state, labels=labels))
+    assert result.returncode == 0, result.stderr
+    assert outputs == {"head_sha": "a" * 40, "deploy": deploy, "cleanup": cleanup}
+
+
+def test_preview_label_readded_before_cleanup_keeps_the_current_preview(tmp_path: Path) -> None:
+    # A delayed unlabeled event may observe an already re-added label. The fresh
+    # policy must protect the preview, independent of that old event's contents.
+    result, outputs = _read_preview_state(tmp_path, _pr_state())
+    assert result.returncode == 0, result.stderr
+    assert outputs["cleanup"] == "false"
+
+
+def test_preview_removed_during_build_is_deleted_without_touching_production(
+    tmp_path: Path,
+) -> None:
+    state_dir = tmp_path / "state"
+    state_dir.mkdir()
+    result, outputs = _read_preview_state(state_dir, _pr_state(labels=()), expected_head="a" * 40)
+    assert result.returncode == 0, result.stderr
+    assert outputs["deploy"] == "false"
+    assert outputs["cleanup"] == "true"
+    result, calls = _run_teardown(
+        tmp_path,
+        [
+            _page(
+                [
+                    _deployment("ours", "pr-269"),
+                    _deployment("other", "pr-270"),
+                    _deployment("prod", "main", "production"),
+                ]
+            ),
+            _page([]),
+        ],
+    )
+    assert result.returncode == 0, result.stderr
+    assert [call for call in calls if call["action"] == "delete"] == [
+        {"action": "delete", "id": "ours"}
+    ]
+
+
+def test_preview_changed_head_cannot_upload_stale_build(tmp_path: Path) -> None:
+    result, outputs = _read_preview_state(tmp_path, _pr_state(sha="b" * 40), expected_head="a" * 40)
+    assert result.returncode == 0, result.stderr
+    assert outputs == {"head_sha": "b" * 40, "deploy": "false", "cleanup": "false"}
+
+
+@pytest.mark.parametrize("change", ["number", "repo", "sha", "labels", "state"])
+def test_preview_rejects_invalid_or_wrong_pr_identity(tmp_path: Path, change: str) -> None:
+    data = _pr_state()
+    if change == "number":
+        data["number"] = 270
+    elif change == "repo":
+        data["head"]["repo"]["full_name"] = "other/fork"
+    elif change == "sha":
+        data["head"]["sha"] = "not-a-sha"
+    elif change == "labels":
+        data["labels"] = None
+    else:
+        data["state"] = "unknown"
+    result, outputs = _read_preview_state(tmp_path, data)
+    assert result.returncode != 0
+    assert outputs == {}
+
+
+def test_preview_failed_read_does_not_authorize_either_mutation(tmp_path: Path) -> None:
+    result, outputs = _read_preview_state(tmp_path, _pr_state(), api_fails=True)
+    assert result.returncode != 0
+    assert outputs == {}
+
+
+def test_preview_lifecycle_serializes_reconciliation_and_rechecks_before_upload() -> None:
+    workflow = yaml.load(
+        (PROJECT_ROOT / ".github/workflows/deploy-pr-preview.yml").read_text(encoding="utf-8"),
+        Loader=yaml.BaseLoader,
+    )
+    assert "unlabeled" in workflow["on"]["pull_request"]["types"]
+    assert workflow["concurrency"] == {
+        "group": "pages-preview-pr-${{ github.event.pull_request.number }}",
+        "cancel-in-progress": "false",
+    }
+    deploy = workflow["jobs"]["deploy"]
+    teardown = workflow["jobs"]["teardown"]
+    assert "concurrency" not in deploy and "concurrency" not in teardown
+    assert teardown["needs"] == ["admission", "deploy"]
+    assert "always()" in teardown["if"]
+    assert "github.event.action == 'closed'" not in teardown["if"]
+    steps = deploy["steps"]
+    upload = next(step for step in steps if step.get("id") == "deploy")
+    recheck = next(step for step in steps if step.get("id") == "recheck")
+    admit = workflow["jobs"]["admission"]["steps"][0]
+    cleanup = next(step for step in teardown["steps"] if step.get("id") == "current")
+    assert admit["run"] == recheck["run"] == cleanup["run"]
+    assert admit["id"] == "admit"
+    assert steps.index(recheck) + 1 == steps.index(upload)
+    assert recheck["env"]["EXPECTED_HEAD"] == "${{ needs.admission.outputs.head_sha }}"
+    assert upload["if"] == "steps.recheck.outputs.deploy == 'true'"
+    for step in teardown["steps"][1:]:
+        assert step["if"] == "steps.current.outputs.cleanup == 'true'"
+
+
+def test_preview_opt_out_does_not_create_a_github_deployment_environment() -> None:
+    workflow = yaml.load(
+        (PROJECT_ROOT / ".github/workflows/deploy-pr-preview.yml").read_text(encoding="utf-8"),
+        Loader=yaml.BaseLoader,
+    )
+    admission = workflow["jobs"].get("admission")
+    assert admission is not None, "live admission must precede the environment-bearing job"
+    assert "environment" not in admission
+    assert all("uses" not in step for step in admission["steps"])
+    assert workflow["jobs"]["deploy"]["needs"] == "admission"
+    assert "needs.admission.outputs.deploy == 'true'" in workflow["jobs"]["deploy"]["if"]

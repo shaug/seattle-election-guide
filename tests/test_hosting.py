@@ -2137,38 +2137,36 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     assert set(workflow["on"]) == {"pull_request"}
     assert workflow["on"]["pull_request"]["types"] == [
         "labeled",
+        "unlabeled",
         "synchronize",
         "reopened",
         "closed",
     ]
-    # Concurrency is per job, not per workflow. A cancelling workflow-level
-    # group would also cover teardown, and a teardown cancelled mid-run leaves
-    # a live preview with no second `closed` event to retry it.
-    assert "concurrency" not in workflow
+    # Whole lifecycle serialization cannot cancel an upload/cleanup halfway.
+    assert workflow["concurrency"] == {
+        "group": "pages-preview-pr-${{ github.event.pull_request.number }}",
+        "cancel-in-progress": "false",
+    }
     deploy = workflow["jobs"]["deploy"]
     assert "CANDIDATE_BUNDLE_ID" not in workflow.get("env", {})
-    assert deploy["concurrency"]["group"].endswith("pr-${{ github.event.pull_request.number }}")
-    assert deploy["concurrency"]["cancel-in-progress"] == "true"
-    # Teardown shares the deploy job's group so a close landing mid-build queues
-    # behind the upload rather than racing it, and never cancels.
-    teardown_concurrency = workflow["jobs"]["teardown"]["concurrency"]
-    assert teardown_concurrency["group"] == deploy["concurrency"]["group"]
-    assert teardown_concurrency["cancel-in-progress"] == "false"
+    assert "concurrency" not in deploy
+    assert "concurrency" not in workflow["jobs"]["teardown"]
 
     fork_guard = "github.event.pull_request.head.repo.full_name == github.repository"
     # A fork's pull request fails this job-level condition, so the job is
     # skipped rather than failed and the token is never in scope.
     assert fork_guard in deploy["if"]
-    assert "contains(github.event.pull_request.labels.*.name, 'deploy preview')" in deploy["if"]
-    # State, not action: labeling an already-closed pull request would otherwise
-    # deploy a preview that no later close event could tear down.
-    assert "github.event.pull_request.state == 'open'" in deploy["if"]
+    # Labels, open state and current head are re-read under the lock. The event
+    # snapshot may be stale by the time the job starts.
+    admit = workflow["jobs"]["admission"]["steps"][0]
+    assert 'any(.labels[]; .name == "deploy preview")' in admit["run"]
+    assert '.state == "open"' in admit["run"]
     assert deploy["environment"]["name"] == "pr-${{ github.event.pull_request.number }}"
     assert deploy["environment"]["url"] == "${{ steps.deploy.outputs.url }}"
 
     # The audit footer must show a commit that exists in the repository, not the
     # ephemeral merge commit the pull_request event checks out by default.
-    head_sha = "${{ github.event.pull_request.head.sha }}"
+    head_sha = "${{ needs.admission.outputs.head_sha }}"
     assert deploy["env"]["HEAD_SHA"] == head_sha
     assert deploy["env"]["PAGES_BRANCH"] == "pr-${{ github.event.pull_request.number }}"
     checkout = next(
@@ -2213,10 +2211,10 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
         next(step for step in deploy["steps"] if step.get("name") == "Deploy the preview")
     )
 
-    # Teardown is deliberately not label-gated: a preview whose label was
-    # removed before the pull request closed must still be cleaned up.
+    # Cleanup reconciles live state after even failed or skipped builds.
     teardown = workflow["jobs"]["teardown"]
-    assert "github.event.action == 'closed'" in teardown["if"]
+    assert "always()" in teardown["if"]
+    assert teardown["needs"] == ["admission", "deploy"]
     assert fork_guard in teardown["if"]
     assert "labels" not in teardown["if"]
     delete_step = next(
