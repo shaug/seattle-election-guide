@@ -87,6 +87,8 @@ Allowed kinds: `operational`, `election-operational`, `source`, `published`,
 `receipt`, `checkpoint`, `unknown`. Only the first two can become candidates.
 Missing owner/completion declarations, active consumers, an explicit hold,
 unknown election references and incomplete election closeout retain the payload.
+The path's `<owner>` segment must match the declared `owner`; contradictory
+owner declarations retain the payload even when a completion receipt is supplied.
 For `election-operational`, every referenced election must declare `phase: closed`
 and the closeout receipt categories `certified-ingest`, `accepted-release`, and
 `retrospective`. Those labels are triage inputs only. The executor must verify the

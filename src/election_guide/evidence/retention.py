@@ -114,6 +114,8 @@ def retention_plan(inventory: RetentionInventory) -> RetentionPlan:
             or not item.completion_receipt.strip()
         ):
             reason = "missing owner or completion receipt, or run is not completed"
+        elif PurePosixPath(item.path).parts[1] != item.owner:
+            reason = "artifact path and declared owner disagree"
         elif item.active_consumers or item.hold is not None:
             reason = "active consumer or explicit hold"
         elif any(election not in inventory.elections for election in item.elections):

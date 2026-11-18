@@ -143,3 +143,14 @@ def test_known_active_election_holds_shared_archive(tmp_path: Path) -> None:
     result = invoke(tmp_path, data)
     assert result.exit_code == 0
     assert json.loads(result.stdout)["entries"][0]["disposition"] == "retain"
+
+
+def test_contradictory_path_owner_cannot_become_a_removal_candidate(tmp_path: Path) -> None:
+    data = inventory()
+    data["artifacts"][0]["path"] = "runs/another-owner/output.jsonl"
+    result = invoke(tmp_path, data)
+    assert result.exit_code == 0, result.stdout
+    report = json.loads(result.stdout)
+    assert report["deletion_authorized"] is False
+    assert report["candidate_bytes"] == 0
+    assert report["entries"][0]["disposition"] == "retain"
