@@ -1486,6 +1486,22 @@ def evidence_verify(
     typer.echo(f"evidence: valid ({manifest.id}, {manifest.availability})")
 
 
+@evidence_app.command("retention-plan")
+def evidence_retention_plan(
+    inventory_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+) -> None:
+    """Triage declared operational payloads; never delete or authorize deletion (#768)."""
+    from election_guide.evidence.retention import RetentionInventory, retention_plan
+
+    try:
+        inventory = RetentionInventory.model_validate_json(inventory_path.read_text())
+        plan = retention_plan(inventory)
+    except (OSError, ValueError) as error:
+        typer.echo(f"retention plan failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(plan.model_dump_json(indent=2))
+
+
 @evidence_app.command("verify-all")
 def evidence_verify_all(
     # `exists=True` matches `release verify`, the other read-only sweep: a
