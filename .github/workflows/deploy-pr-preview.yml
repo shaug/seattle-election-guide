@@ -58,6 +58,24 @@ jobs:
           cleanup=true
           if [ "$deploy" = true ]; then
             cleanup=false
+          elif [ -n "${PREVIEW_DEPLOY_RESULT:-}" ]; then
+            # A skipped upload can still have previews from earlier runs. The
+            # deployment job has used this exact environment since its introduction.
+            gh api --method GET "repos/${GITHUB_REPOSITORY}/deployments" \
+              -f "environment=pr-${PR_NUMBER}" -F per_page=1 > preview-history.json
+            if ! jq -se --arg env "pr-${PR_NUMBER}" --arg repo "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY" '
+              length == 1 and (.[0] | type == "array" and length <= 1 and
+                all(.[]; .environment == $env and .repository_url == $repo and
+                  (.id | type == "number" and . > 0 and . == floor)))
+              ' preview-history.json > /dev/null; then
+              echo "::error::Invalid deployment history for pr-${PR_NUMBER}."
+              exit 1
+            fi
+            cleanup="$(jq 'length > 0' preview-history.json)"
+            if [ "$cleanup" = false ] && [ "$PREVIEW_DEPLOY_RESULT" != skipped ]; then
+              echo "::error::Deployment job was $PREVIEW_DEPLOY_RESULT but its history is missing; retry reconciliation."
+              exit 1
+            fi
           fi
           if [ -n "${EXPECTED_HEAD:-}" ] && [ "$head_sha" != "$EXPECTED_HEAD" ]; then
             echo "::notice::PR head changed during the build; skip this stale upload."
@@ -201,12 +219,15 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
+      deployments: read
+      pull-requests: read
     env:
       PREVIEW_BRANCH: pr-${{ github.event.pull_request.number }}
     steps:
       - name: Read current state after build or upload
         id: current
         env:
+          PREVIEW_DEPLOY_RESULT: ${{ needs.deploy.result }}
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: *read_preview_state
@@ -233,46 +254,61 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
+          : "${CLOUDFLARE_ACCOUNT_ID:?Missing CLOUDFLARE_ACCOUNT_ID}" "${CLOUDFLARE_API_TOKEN:?Missing CLOUDFLARE_API_TOKEN}"
           # Wrangler lists only one page. Read the raw API through the final
           # empty page, even when earlier pages contain no matching branch.
           # Use Cloudflare's default page size rather than a custom override.
           # Finish enumeration before deleting: deletion would shift later
           # pages, and a failed listing must never look like an empty result.
-          page=1
-          : > deployment-ids.txt
-          while true; do
-            curl --fail --silent --show-error --get \
-              "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/seattle-elections/deployments" \
-              --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-              --data-urlencode "env=preview" \
-              --data-urlencode "page=$page" \
-              --output deployments.json
-            if ! jq -e '
-              .success == true and (.result | type == "array") and
-              all(.result[];
-                (.id | type == "string" and length > 0) and
-                (.environment == "preview" or .environment == "production") and
-                (.deployment_trigger.metadata.branch | type == "string"))
-              ' deployments.json > /dev/null; then
-              echo "::error::Could not enumerate preview deployments: unsuccessful or malformed Cloudflare response on page $page."
-              exit 1
-            fi
-            jq -r --arg branch "$PREVIEW_BRANCH" \
-              '.result[] | select(.environment == "preview" and .deployment_trigger.metadata.branch == $branch) | .id' \
-              deployments.json >> deployment-ids.txt
-            count="$(jq '.result | length' deployments.json)"
-            if [ "$count" -eq 0 ]; then
-              break
-            fi
-            page=$((page + 1))
-          done
+          list_preview_ids() {
+            local page=1 count
+            while true; do
+              curl --fail --silent --show-error --get \
+                "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/seattle-elections/deployments" \
+                --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+                --data-urlencode "env=preview" \
+                --data-urlencode "page=$page" \
+                --output deployments.json
+              if ! jq -se '
+                length == 1 and (.[0] | .success == true and .errors == [] and
+                (.result | type == "array") and
+                all(.result[];
+                  (.id | type == "string" and test("^[A-Za-z0-9][A-Za-z0-9_-]*\\z")) and
+                  (.environment == "preview" or .environment == "production") and
+                  (.deployment_trigger.metadata.branch | type == "string")))
+                ' deployments.json > /dev/null; then
+                echo "::error::Could not enumerate preview deployments: unsuccessful or malformed Cloudflare response on page $page." >&2
+                exit 1
+              fi
+              jq -r --arg branch "$PREVIEW_BRANCH" \
+                '.result[] | select(.environment == "preview" and .deployment_trigger.metadata.branch == $branch) | .id' \
+                deployments.json
+              count="$(jq '.result | length' deployments.json)"
+              if [ "$count" -eq 0 ]; then
+                break
+              fi
+              page=$((page + 1))
+            done
+          }
+          list_preview_ids > deployment-ids.txt
           if [ ! -s deployment-ids.txt ]; then
             echo "No preview deployments found for $PREVIEW_BRANCH."
             exit 0
           fi
+          delete_failed=false
           while IFS= read -r id; do
             echo "Deleting deployment $id"
             npx wrangler pages deployment delete "$id" \
               --project-name seattle-elections \
-              --force
+              --force || delete_failed=true
           done < deployment-ids.txt
+          if [ "$delete_failed" = true ]; then
+            # Another actor may already have removed the deployment. Only a
+            # fresh, complete inventory can establish the desired end state.
+            list_preview_ids > remaining-ids.txt
+            if [ -s remaining-ids.txt ]; then
+              echo "::error::Preview deployments remain for $PREVIEW_BRANCH after deletion failed."
+              exit 1
+            fi
+            echo "Verified no remaining preview deployments for $PREVIEW_BRANCH."
+          fi

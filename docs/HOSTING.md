@@ -378,13 +378,22 @@ Four rules govern when a preview exists:
   handled before releasing the lock; a re-added label protects the current preview and the
   subsequent run rebuilds it. HTTP/malformed state reads fail visibly and authorize neither
   upload nor deletion. Rerunning the workflow reconciles current state, not a stale event.
-  Teardown enumerates every page of the Cloudflare deployments API with
+  When the current PR state calls for cleanup, teardown first checks GitHub's
+  [deployment history](https://docs.github.com/en/rest/deployments/deployments#list-deployments)
+  for the exact repository and `pr-<number>` environment. Every preview upload since #263
+  has used that environment. One record, including an older or failed attempt, is enough
+  to check Pages. A successful empty history with a skipped deployment job skips provider
+  access. A failed or malformed history read, or missing history for a deployment job that
+  ran or was cancelled, fails reconciliation before any provider call.
+  For an attempted preview, teardown enumerates every page of the Cloudflare deployments API with
   `env=preview` and Cloudflare's default page size, continuing until an empty page as in
   [Cloudflare's SDK pagination](https://github.com/cloudflare/cloudflare-typescript/blob/main/src/core/pagination.ts).
   A short nonempty page does not end enumeration. Teardown then deletes only entries whose raw
   `deployment_trigger.metadata.branch` equals `pr-<number>` and whose `environment` is `preview`. Enumeration finishes before deletion so
   removing entries cannot shift unread pages. HTTP errors, unsuccessful API responses, and
-  malformed deployment records fail the job; only a complete listing with no matches is a no-op.
+  malformed deployment records fail the job. If a delete fails, teardown verifies the end
+  state with a fresh complete inventory. It succeeds when no preview remains for this PR,
+  including when another actor removed it; an inconclusive inventory or remaining match fails.
 - **`CLOUDFLARE_PAGES_ENABLED` still applies.** Previews respect the same publication switch as
   production.
 
@@ -403,7 +412,8 @@ history; it does not host the Pages copy or keep the branch alias alive. GitHub'
 requires repository **Administration: write**, which the automatic `GITHUB_TOKEN` permissions
 cannot grant. Retaining the environment avoids adding a long-lived repository-admin credential
 to preview teardown. These environment entries accumulate intentionally; an administrator may
-remove them separately if the Settings list becomes inconvenient.
+remove them separately after verifying all Pages previews for that PR are gone. Retain the
+deployment history while cleanup may still be needed.
 
 Cloudflare documents [unlimited active preview deployments](https://developers.cloudflare.com/pages/platform/limits/#preview-deployments).
 The same limits page gives monthly **build** quotas (500 on Free, 5,000 on Pro, 20,000 on Business)

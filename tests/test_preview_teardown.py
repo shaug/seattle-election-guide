@@ -35,6 +35,8 @@ def _run_teardown(
     failed_page: int = 0,
     delete_fails: bool = False,
     reject_page_size: bool = False,
+    verification_pages: Sequence[object] | None = None,
+    token: str = "fixture-token",
 ) -> tuple[subprocess.CompletedProcess[str], list[dict[str, Any]]]:
     workflow = yaml.load(
         (PROJECT_ROOT / ".github/workflows/deploy-pr-preview.yml").read_text(encoding="utf-8"),
@@ -47,6 +49,8 @@ def _run_teardown(
     )
     fixtures = tmp_path / "pages.json"
     fixtures.write_text(json.dumps(pages), encoding="utf-8")
+    verification = tmp_path / "verification.json"
+    verification.write_text(json.dumps(verification_pages), encoding="utf-8")
     calls = tmp_path / "calls.jsonl"
     commands = tmp_path / "bin"
     commands.mkdir()
@@ -76,6 +80,10 @@ if pathlib.Path(sys.argv[0]).name == "curl":
         sys.exit(22)
     if page == int(os.environ["FAILED_PAGE"]):
         sys.exit(22)
+    if pathlib.Path("delete-attempted").exists():
+        verification = json.loads(pathlib.Path(os.environ["VERIFICATION"]).read_text())
+        if verification is not None:
+            pages = verification
     payload = pages[page - 1]
     text = payload if isinstance(payload, str) else json.dumps(payload)
     pathlib.Path(args[args.index("--output") + 1]).write_text(text)
@@ -86,6 +94,7 @@ elif args[:4] == ["wrangler", "pages", "deployment", "list"]:
 elif args[:4] == ["wrangler", "pages", "deployment", "delete"]:
     assert args[5:] == ["--project-name", "seattle-elections", "--force"]
     record(action="delete", id=args[4])
+    pathlib.Path("delete-attempted").touch()
     if os.environ["DELETE_FAILS"] == "true":
         sys.exit(1)
 else:
@@ -103,12 +112,13 @@ else:
             **os.environ,
             "PATH": f"{commands}{os.pathsep}{os.environ['PATH']}",
             "FIXTURES": str(fixtures),
+            "VERIFICATION": str(verification),
             "CALLS": str(calls),
             "FAILED_PAGE": str(failed_page),
             "DELETE_FAILS": str(delete_fails).lower(),
             "REJECT_PAGE_SIZE": str(reject_page_size).lower(),
             "CLOUDFLARE_ACCOUNT_ID": "fixture-account",
-            "CLOUDFLARE_API_TOKEN": "fixture-token",
+            "CLOUDFLARE_API_TOKEN": token,
             "PREVIEW_BRANCH": "pr-269",
         },
         capture_output=True,
@@ -172,6 +182,9 @@ def test_teardown_no_matches_is_success_only_after_enumeration(
         _page([{"id": "missing-branch", "environment": "preview"}]),
         _page([{"Id": "projection", "Branch": "pr-269"}]),
         _page([_deployment("", "pr-269")]),
+        {"success": True, "errors": [{"code": 10000}], "result": []},
+        "",
+        json.dumps({"success": False}) + "\n" + json.dumps(_page([])),
         "invalid JSON",
     ],
 )
@@ -202,7 +215,41 @@ def test_teardown_propagates_deletion_failure(tmp_path: Path) -> None:
         {"action": "list", "page": 1},
         {"action": "list", "page": 2},
         {"action": "delete", "id": "target"},
+        {"action": "list", "page": 1},
+        {"action": "list", "page": 2},
     ]
+
+
+@pytest.mark.parametrize(
+    "verification_pages,success",
+    [
+        ([_page([_deployment("unrelated", "pr-2690")]), _page([])], True),
+        ([_page([_deployment("unrelated", "pr-270")]), "invalid JSON"], False),
+        ([_page([_deployment("remaining", "pr-269")]), _page([])], False),
+        ([_page([]) | {"success": False}], False),
+    ],
+)
+def test_failed_delete_requires_fresh_complete_absence(
+    tmp_path: Path, verification_pages: list[object], success: bool
+) -> None:
+    result, calls = _run_teardown(
+        tmp_path,
+        [_page([_deployment("target", "pr-269")]), _page([])],
+        delete_fails=True,
+        verification_pages=verification_pages,
+    )
+    assert (result.returncode == 0) is success, result.stderr
+    assert calls[2:] == [
+        {"action": "delete", "id": "target"},
+        *[{"action": "list", "page": page} for page in range(1, len(verification_pages) + 1)],
+    ]
+
+
+def test_missing_cloudflare_credentials_fails_before_listing(tmp_path: Path) -> None:
+    result, calls = _run_teardown(tmp_path, [_page([])], token="")
+    assert result.returncode != 0
+    assert "CLOUDFLARE_API_TOKEN" in result.stderr
+    assert calls == []
 
 
 def test_teardown_enumerates_server_sized_pages_until_empty(tmp_path: Path) -> None:
@@ -261,7 +308,13 @@ def _pr_state(
 
 
 def _read_preview_state(
-    tmp_path: Path, payload: object, *, expected_head: str = "", api_fails: bool = False
+    tmp_path: Path,
+    payload: object,
+    *,
+    expected_head: str = "",
+    api_fails: bool = False,
+    deploy_result: str = "",
+    history: object = None,
 ) -> tuple[subprocess.CompletedProcess[str], dict[str, str]]:
     workflow = yaml.load(
         (PROJECT_ROOT / ".github/workflows/deploy-pr-preview.yml").read_text(encoding="utf-8"),
@@ -280,6 +333,13 @@ def _read_preview_state(
     gh.write_text(
         f"#!{sys.executable}\n"
         "import os, pathlib, sys\n"
+        'if sys.argv[1:] == ["api", "--method", "GET", '
+        '"repos/shaug/seattle-election-guide/deployments", "-f", "environment=pr-269", '
+        '"-F", "per_page=1"]:\n'
+        '    pathlib.Path("history-read").touch()\n'
+        '    if os.environ["HISTORY"] == "null": sys.exit(1)\n'
+        '    print(os.environ["HISTORY"])\n'
+        "    sys.exit(0)\n"
         'assert sys.argv[1:] == ["api", "--method", "GET", '
         '"repos/shaug/seattle-election-guide/pulls/269"]\n'
         'if os.environ["API_FAILS"] == "true": sys.exit(1)\n'
@@ -299,6 +359,9 @@ def _read_preview_state(
             "GITHUB_OUTPUT": str(output),
             "GITHUB_REPOSITORY": "shaug/seattle-election-guide",
             "PR_NUMBER": "269",
+            "GITHUB_API_URL": "https://api.github.com",
+            "PREVIEW_DEPLOY_RESULT": deploy_result,
+            "HISTORY": json.dumps(history),
             "EXPECTED_HEAD": expected_head,
         },
         capture_output=True,
@@ -312,6 +375,52 @@ def _read_preview_state(
         else {}
     )
     return result, outputs
+
+
+def _record(environment: str = "pr-269") -> dict[str, object]:
+    return {
+        "id": 123,
+        "repository_url": "https://api.github.com/repos/shaug/seattle-election-guide",
+        "environment": environment,
+    }
+
+
+@pytest.mark.parametrize(
+    "history,cleanup",
+    [
+        (list[object](), "false"),
+        ([_record()], "true"),
+        ([_record("pr-2690")], None),
+        ([_record() | {"repository_url": "https://api.github.com/repos/other/repo"}], None),
+        ([{"environment": "pr-269"}], None),
+        ({"message": "Not Found"}, None),
+        (None, None),
+    ],
+)
+def test_skipped_upload_reconciles_only_confirmed_pr_history(
+    tmp_path: Path, history: object, cleanup: str | None
+) -> None:
+    result, outputs = _read_preview_state(
+        tmp_path, _pr_state(state="closed"), deploy_result="skipped", history=history
+    )
+    assert (tmp_path / "history-read").exists()
+    if cleanup is None:
+        assert result.returncode != 0
+        assert outputs == {}
+    else:
+        assert result.returncode == 0, result.stderr
+        assert outputs["cleanup"] == cleanup
+
+
+@pytest.mark.parametrize("job_result", ["success", "failure", "cancelled"])
+def test_missing_history_after_current_attempt_is_inconclusive(
+    tmp_path: Path, job_result: str
+) -> None:
+    result, outputs = _read_preview_state(
+        tmp_path, _pr_state(labels=()), deploy_result=job_result, history=[]
+    )
+    assert result.returncode != 0
+    assert outputs == {}
 
 
 @pytest.mark.parametrize(
@@ -336,9 +445,10 @@ def test_preview_current_state_controls_deployment_and_cleanup(
 def test_preview_label_readded_before_cleanup_keeps_the_current_preview(tmp_path: Path) -> None:
     # A delayed unlabeled event may observe an already re-added label. The fresh
     # policy must protect the preview, independent of that old event's contents.
-    result, outputs = _read_preview_state(tmp_path, _pr_state())
+    result, outputs = _read_preview_state(tmp_path, _pr_state(), deploy_result="skipped")
     assert result.returncode == 0, result.stderr
     assert outputs["cleanup"] == "false"
+    assert not (tmp_path / "history-read").exists()
 
 
 def test_preview_removed_during_build_is_deleted_without_touching_production(
@@ -349,6 +459,13 @@ def test_preview_removed_during_build_is_deleted_without_touching_production(
     result, outputs = _read_preview_state(state_dir, _pr_state(labels=()), expected_head="a" * 40)
     assert result.returncode == 0, result.stderr
     assert outputs["deploy"] == "false"
+    assert outputs["cleanup"] == "true"
+    current_dir = tmp_path / "after-upload"
+    current_dir.mkdir()
+    result, outputs = _read_preview_state(
+        current_dir, _pr_state(labels=()), deploy_result="success", history=[_record()]
+    )
+    assert result.returncode == 0, result.stderr
     assert outputs["cleanup"] == "true"
     result, calls = _run_teardown(
         tmp_path,
@@ -420,6 +537,8 @@ def test_preview_lifecycle_serializes_reconciliation_and_rechecks_before_upload(
     recheck = next(step for step in steps if step.get("id") == "recheck")
     admit = workflow["jobs"]["admission"]["steps"][0]
     cleanup = next(step for step in teardown["steps"] if step.get("id") == "current")
+    assert cleanup["env"]["PREVIEW_DEPLOY_RESULT"] == "${{ needs.deploy.result }}"
+    assert teardown["permissions"]["deployments"] == "read"
     assert admit["run"] == recheck["run"] == cleanup["run"]
     assert admit["id"] == "admit"
     assert steps.index(recheck) + 1 == steps.index(upload)
