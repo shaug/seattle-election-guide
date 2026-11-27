@@ -3250,6 +3250,39 @@ def test_release_validation_accounts_for_the_results_capture_and_corrections_lin
     assert report.passed, [check for check in report.checks if not check.passed]
 
 
+@pytest.mark.parametrize(
+    ("override", "aligned"),
+    [
+        ("", True),
+        (".screen-meter { justify-content: center !important; }", False),
+        (".screen-meter strong { text-align: right !important; }", False),
+    ],
+    ids=["aligned", "centered-fill", "right-aligned-label"],
+)
+def test_responsive_meter_alignment_audit(tmp_path: Path, override: str, aligned: bool) -> None:
+    view_model = _view_model(tmp_path / "fixture")
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(html.replace("</head>", f"<style>{override}</style></head>", 1))
+
+    def capture() -> Path:
+        return render_screenshot(
+            html_path,
+            tmp_path / "desktop.png",
+            find_chrome(),
+            width=1440,
+            height=1200,
+            expected_race_count=sum(len(section.races) for section in view_model.guide_sections),
+        )
+
+    if aligned:
+        assert capture().is_file()
+    else:
+        with pytest.raises(ValueError, match="'compactMetersLeftAligned': False") as failure:
+            capture()
+        assert "'fullMetersLeftAligned': False" in str(failure.value)
+
+
 def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
     view_model = _view_model(tmp_path / "fixture")
     html_path = tmp_path / "guide.html"
