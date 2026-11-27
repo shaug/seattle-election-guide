@@ -394,7 +394,8 @@ def _capture_emulated_viewport(
                     # item D14a): the label rides the fill's left edge.
                     "const meterAligned=(meter)=>{"
                     "const label=meter.querySelector('strong');const style=getComputedStyle(meter);"
-                    "return style.justifyContent==='flex-start'&&"
+                    # Chrome 158 serializes flex-start as its flow-start alias.
+                    "return ['flex-start','flow-start'].includes(style.justifyContent)&&"
                     "Boolean(label&&getComputedStyle(label).textAlign==='left');};"
                     "const compactInput=viewInputs.find(input=>input.value==='compact');"
                     "const fullInput=viewInputs.find(input=>input.value==='full');"

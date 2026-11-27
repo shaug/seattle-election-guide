@@ -529,6 +529,7 @@
       "test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources": "e2e",
       "test_nonempty_render_destination_is_preserved": "e2e",
       "test_overview_meter_progressively_discloses_endorsement_segments": "e2e",
+      "test_responsive_meter_alignment_audit": "e2e",
       "test_personalization_compact_caption_shows_only_the_lens_short_form": "e2e",
       "test_personalization_divergent_race_discloses_a_compact_comparison_on_its_card": "e2e",
       "test_personalization_full_panel_selection_shows_no_divergent_comparison": "e2e",
