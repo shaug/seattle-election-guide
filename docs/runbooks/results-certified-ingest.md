@@ -51,18 +51,21 @@ it should stay human-launched at least through the first full cycle.
 1. Collect the certified results in every representation offered — the results page, the
    machine-readable exports, and the canvass/certification documents King County publishes
    (abstract of votes, certification letter), which state the thing the site will assert:
-   that these numbers are final. King County's certified export is the CSV at
-   `https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/<year>/<month>/webresults-<date>-final.csv`
-   (`docs/RESULTS.md`, "Ingestion mechanics") — the adapter's parse target.
+   that these numbers are final. Start with the authority's published aggregate CSV
+   link for the exact election. A precinct export is not a substitute.
 
-   **The `-final` suffix is load-bearing.** The plain-dated `webresults-<date>.csv` names are the
-   daily interim exports published while counting is still underway; they stop appearing after the
-   last business day before certification and are never the certified capture's target, even when
-   one still 200s. For `wa-2026-primary` the certified export was `webresults-20260818-final.csv`;
-   `webresults-20260817.csv` still 200s as of this writing but is an interim count, and
-   `webresults-20260818.csv` / `webresults-20260819.csv` (the certification date and the day after)
-   404 outright (#408). Confirm the fetched file's own name carries `-final` before treating it as
-   the certified export.
+   Verify finality independently of the filename. If the CSV is not expressly
+   identified as certified, reconcile each in-scope county contest against the
+   authority's official final companion report: match each contest, every choice
+   (including write-ins when present), votes, and ballots with the contest. Retain
+   the source URLs, original hashes, reconciliation results, and certification-date
+   evidence for review. A filename or scheduled meeting date alone does not establish
+   certification. Hold certified ingest if the data, scope, or date cannot be verified.
+
+   In the August 2026 primary, the export used a `-final.csv` suffix (#408).
+   The November 2026 general election's published aggregate, `webresults-20261124.csv`,
+   matched its Official Final Election Results PDF for all 115 contests and 286
+   choice rows. This verifies the counts, not the date of certification.
 2. Capture and verify each artifact exactly as in
    `results-capture-election-night.md` steps 3 and 5 — same authority identity, same storage
    rule — with titles naming the certified status:
