@@ -15,8 +15,17 @@ def test_preliminary_schedule_is_opt_in_and_serialized() -> None:
     assert workflow["permissions"] == {"contents": "read", "actions": "read"}
     assert workflow["concurrency"]["cancel-in-progress"] is False
     job = workflow["jobs"]["prepare"]
-    assert "PRELIMINARY_RESULTS_REFRESH_ENABLED" in job["if"]
-    assert "== 'true'" in job["if"]
+    admission = workflow["jobs"]["lifecycle"]
+    assert "github.ref == 'refs/heads/main'" in admission["if"]
+    assert "github.run_attempt == 1" in admission["if"]
+    assert job["needs"] == "lifecycle"
+    assert job["if"] == "needs.lifecycle.outputs.active == 'true'"
+    checkout, read = admission["steps"]
+    assert checkout["with"]["ref"] == "refs/heads/main"
+    assert checkout["with"]["persist-credentials"] is False
+    assert admission["outputs"]["active"] == "${{ steps.state.outputs.active }}"
+    assert read["id"] == "state"
+    assert "PRELIMINARY_RESULTS_REFRESH_ENABLED" not in path.read_text()
     triggers = workflow.get("on", workflow.get(True))
     assert triggers["schedule"] == [{"cron": "17 * * * *"}]
 
