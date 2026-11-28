@@ -67,18 +67,23 @@ Schema, identity, classification or timestamp regressions stop admission without
 an HTTP failure. The State uses its full aggregate; County sources require inventory ancestry
 contained in King County. Lower corrected counts are not clamped.
 
-The hourly workflow remains opt-in: `PRELIMINARY_RESULTS_REFRESH_ENABLED` must equal `true`.
-It runs only from protected main and only on a first run attempt. The job token has repository
-and Actions read access. The existing archive GitHub App token requests only contents and
-pull-request write; it requests no workflow-write permission. Activation follows normal review
-and deployment of this implementation, not a local script or an unreviewed branch.
+The hourly schedule and manual dispatch read the lifecycle for this election from
+`config/results/wa-2026-general-preliminary.lifecycle` on protected `main`.
+The file currently contains `inactive`. The read-only job stops there. To resume
+eligible collection, review a change to the single line `active` on main. A missing
+or invalid file fails admission. Only a first attempt on main can proceed. The
+preparation job checks the admitted main revision before candidate recovery.
+It uses the existing archive App's contents and pull-request write permissions.
 
 Each eligible tick checks the fixed `codex/preliminary-results-refresh` branch and its PR first. After an ordinary upstream merge,
 a completed squash candidate whose entire tree equals current main starts a fresh
 refresh. The merge retains branch ancestry for the next normal fast-forward push;
 a real unmerged difference remains recovery work with no new source acquisition.
 An open PR suppresses new source requests until its review/delivery is complete. A pushed
-candidate missing its PR is recovered without reacquiring sources. Normal merge conflicts stop
+candidate without a PR can be recovered without reacquiring sources. A closed,
+unmerged same-repository PR at the retained branch's exact head stops the tick before
+merge or collection. Keep that branch and its evidence. A PR on a fork or an older
+head does not retire a distinct interrupted push. Unreadable history fails the job. Normal merge conflicts stop
 for reconciliation; there is no force push, client fallback, self-approval or self-merge.
 
 Before source work the job retains intent, restores the exact previous completion state and
